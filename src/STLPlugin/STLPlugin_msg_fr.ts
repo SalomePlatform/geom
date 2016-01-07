@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="fr_US">
+<TS version="2.0" language="fr_FR">
 <context>
     <name>@default</name>
     <message>
@@ -47,7 +47,7 @@
     <name>STLPlugin_ExportDlg</name>
     <message>
         <source>ASCII</source>
-        <translation type="unfinished">Save as ASCII</translation>
+        <translation>Sauver au format ASCII</translation>
     </message>
     <message>
         <source>RELATIVE</source>

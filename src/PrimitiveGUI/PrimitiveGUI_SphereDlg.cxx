@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -165,7 +165,7 @@ void PrimitiveGUI_SphereDlg::ConstructorsClicked( int constructorId )
   case 0:
     {
       globalSelection(); // close local contexts, if any
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+      localSelection( TopAbs_VERTEX );
 
       GroupDimensions->hide();
       GroupPoints->show();
@@ -268,7 +268,7 @@ void PrimitiveGUI_SphereDlg::SetEditCurrentArgument()
     GroupPoints->LineEdit1->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit1;
     globalSelection(); // close local contexts, if any
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+    localSelection( TopAbs_VERTEX );
     SelectionIntoArgument();
   }
 }
@@ -414,4 +414,15 @@ void PrimitiveGUI_SphereDlg::addSubshapesToStudy()
   if ( getConstructorId() == 0 ) {
     GEOMBase::PublishSubObject( myPoint.get() );
   }
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> PrimitiveGUI_SphereDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myPoint;
+  return res;
 }

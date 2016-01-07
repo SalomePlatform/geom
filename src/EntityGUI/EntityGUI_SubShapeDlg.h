@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -31,6 +31,11 @@
 
 #include <TColStd_IndexedMapOfInteger.hxx>
 
+class QCheckBox;
+class QComboBox;
+class QGroupBox;
+class QPushButton;
+class SalomeApp_DoubleSpinBox;
 class DlgRef_1Sel1List1Check3Btn;
 
 //=================================================================================
@@ -52,6 +57,7 @@ protected:
   virtual bool                        execute (ObjectList&);
   virtual GEOM::GEOM_Object_ptr       getFather (GEOM::GEOM_Object_ptr);
   virtual QString                     getNewObjectName (int CurrObj = -1) const;
+  virtual QList<GEOM::GeomObjPtr>     getSourceObjects();
 
   void                                closeEvent (QCloseEvent*);
 
@@ -66,15 +72,17 @@ private slots:
   void                                ComboTextChanged();
 
   void                                showOnlySelected();
+  void                                ClickOnOkFilter();
+#ifndef DISABLE_PLOT2DVIEWER
+  void                                ClickOnPlot();
+#endif
+  void                                MeasureToggled();
 
 private:
   void                                Init();
   void                                enterEvent (QEvent*);
 
   void                                ResetStateOfDialog();
-
-  unsigned int                        NumberOfSubShapes (const TopoDS_Shape&,
-                                                         const int) const;
 
   void                                activateSelection();
   int                                 getSelectedSubshapes (TColStd_IndexedMapOfInteger& theMapIndex);
@@ -87,11 +95,18 @@ private:
   GEOM::GEOM_Object_var               myObject;
   int                                 myDmMode;
 
-  bool                                myWithShape;
-
   bool                                myIsHiddenMain;
 
   DlgRef_1Sel1List1Check3Btn*         GroupPoints;
+  QCheckBox*                          myLessFilterCheck;
+  QCheckBox*                          myGreaterFilterCheck;
+  QComboBox*                          myLessFilterCombo;
+  QComboBox*                          myGreaterFilterCombo;
+  SalomeApp_DoubleSpinBox*            myLessFilterSpin;
+  SalomeApp_DoubleSpinBox*            myGreaterFilterSpin;
+  QPushButton*                        myApplyFilterButton;
+  QPushButton*                        myPlotDistributionButton;
+  QGroupBox*                          myFilterGrp;
 };
 
 #endif // ENTITYGUI_SUBSHAPEDLG_H

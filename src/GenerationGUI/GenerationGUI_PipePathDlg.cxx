@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -148,7 +148,7 @@ void GenerationGUI_PipePathDlg::SelectionTypeButtonClicked()
 {
   globalSelection();
   if (GroupPoints->CheckButton1->isChecked()) {
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+    localSelection(TopAbs_EDGE);
   }
   else {
     TColStd_MapOfInteger aMap;
@@ -269,7 +269,7 @@ void GenerationGUI_PipePathDlg::SetEditCurrentArgument()
     myEditCurrentArgument = GroupPoints->LineEdit2;
 
     if (GroupPoints->CheckButton1->isChecked()) {
-      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+      localSelection(TopAbs_EDGE);
     }
     else {
       TColStd_MapOfInteger aMap;
@@ -284,7 +284,7 @@ void GenerationGUI_PipePathDlg::SetEditCurrentArgument()
     myEditCurrentArgument = GroupPoints->LineEdit3;
 
     if (GroupPoints->CheckButton1->isChecked()) {
-      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+      localSelection(TopAbs_EDGE);
     }
     else {
       TColStd_MapOfInteger aMap;
@@ -390,4 +390,17 @@ void GenerationGUI_PipePathDlg::addSubshapesToStudy()
     GEOMBase::PublishSubObject(myBase1Objects[i].get());
   for (i = 0; i < myBase2Objects.count(); i++)
     GEOMBase::PublishSubObject(myBase2Objects[i].get());
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> GenerationGUI_PipePathDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res(myBase1Objects);
+  res << myShape ;
+  for (int i = 0; i < myBase2Objects.count(); i++)
+    res << myBase2Objects[i];
+  return res;
 }

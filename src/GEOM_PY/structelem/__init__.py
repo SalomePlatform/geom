@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -108,6 +108,8 @@ __all__ = ["parts", "orientation"]
 from salome.geom.geomtools import getGeompy
 from salome.geom.structelem import parts
 from salome.geom.structelem.parts import InvalidParameterError
+
+import GEOM
 
 ## This class manages the structural elements in the study. It is used to
 #  create a new structural element from a list of commands. The parameter

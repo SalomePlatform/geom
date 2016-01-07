@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -64,9 +64,11 @@
 #include <LightApp_DataObject.h>
 #include <SalomeApp_TypeFilter.h>
 #include <SalomeApp_Tools.h>
+#include "utilities.h"
 
 #include <SALOME_ListIO.hxx>
 #include <SALOME_Prs.h>
+#include "utilities.h"
 
 #include <SOCC_Prs.h>
 #include <SOCC_ViewModel.h>
@@ -79,7 +81,6 @@
 #include <OCCViewer_Utilities.h>
 
 // OCCT Includes
-#include <AIS_Drawer.hxx>
 #include <AIS_Dimension.hxx>
 #include <AIS_LengthDimension.hxx>
 #include <AIS_DiameterDimension.hxx>
@@ -133,6 +134,9 @@
 
 // Hard-coded value of shape deflection coefficient for VTK viewer
 const double VTK_MIN_DEFLECTION = 0.001;
+// If the next macro is defined, the deflection coefficient for VTK presentation
+// is limited by VTK_MIN_DEFLECTION
+//#define LIMIT_DEFLECTION_FOR_VTK
 
 // Pixmap caching support
 namespace
@@ -253,7 +257,20 @@ namespace
 #endif
     }
   }
-}
+
+  uint randomize( uint size )
+  {
+    static bool initialized = false;
+    if ( !initialized ) {
+      qsrand( QDateTime::currentDateTime().toTime_t() );
+      initialized = true;
+    }
+    uint v = qrand();
+    v = uint( (double)( v ) / RAND_MAX * size );
+    v = qMax( uint(0), qMin ( v, size-1 ) );
+    return v;
+  }
+} // namespace
 
 //================================================================
 // Function : getActiveStudy
@@ -460,25 +477,24 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
   myHasDisplayMode = false;
 
   int aType = resMgr->integerValue("Geometry", "type_of_marker", (int)Aspect_TOM_PLUS);
-  myWidth = resMgr->integerValue("Geometry", "edge_width", -1);
-  myIsosWidth = resMgr->integerValue("Geometry", "isolines_width", -1);
   
-  myTransparency = resMgr->integerValue("Geometry", "transparency", 0) / 100.;
-  myHasTransparency = false;
-
   myTypeOfMarker = (Aspect_TypeOfMarker)(std::min((int)Aspect_TOM_RING3, std::max((int)Aspect_TOM_POINT, aType)));
   myScaleOfMarker = (resMgr->integerValue("Geometry", "marker_scale", 1)-(int)GEOM::MS_10)*0.5 + 1.0;
   myScaleOfMarker = std::min(7.0, std::max(1., myScaleOfMarker));
 
+  // Next properties provide a way to customize displaying of presentations;
+  // for instance, this is useful for preview
   myColor = -1;
-  // This color is used for shape displaying. If it is equal -1 then
-  // default color is used.
   myTexture = "";
-
+  myNbIsos = -1;
   myWidth = -1;
+  myTransparency = -1;
   myType = -1;
+  myIsosColor = -1;
+  myIsosWidth = -1;
+
+  // This parameter is used for activisation/deactivisation (selection) of objects to be displayed
   myToActivate = true;
-  // This parameter is used for activisation/deactivisation of objects to be displayed
 
   // Activate parallel vizualisation only for testing purpose
   // and if the corresponding env variable is set to 1
@@ -816,6 +832,9 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   // - color for edges in shading+edges mode
   AISShape->SetEdgesInShadingColor( SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::OutlineColor ) ).value<QColor>() ) );
 
+  // - color of labels (textual fields and shape name)
+  AISShape->SetLabelColor( qColorFromResources( "label_color", QColor( 255, 255, 255 ) ) );
+
   // set display mode
   AISShape->SetDisplayMode( HasDisplayMode() ? 
                             // predefined display mode, manually set to displayer via GEOM_Displayer::SetDisplayMode() function 
@@ -823,11 +842,10 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
                             // display mode from properties
                             propMap.value( GEOM::propertyName( GEOM::DisplayMode ) ).toInt() );
 
-  // - face boundaries color
-  if( AISShape->DisplayMode() == GEOM_AISShape::ShadingWithEdges )
-    AISShape->Attributes()->SetFaceBoundaryDraw( Standard_True );
+  // - face boundaries color and line width
   anAspect = AISShape->Attributes()->FaceBoundaryAspect();
   anAspect->SetColor( SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::OutlineColor ) ).value<QColor>() ) );
+  anAspect->SetWidth( HasWidth() ? GetWidth() : propMap.value( GEOM::propertyName( GEOM::LineWidth ) ).toInt() );
   AISShape->Attributes()->SetFaceBoundaryAspect( anAspect );
 
   // set display vectors flag
@@ -836,6 +854,10 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   // set display vertices flag
   bool isVerticesMode = propMap.value( GEOM::propertyName( GEOM::Vertices ) ).toBool();
   AISShape->SetDisplayVertices( isVerticesMode );
+
+  // set display name flag
+  bool isNameMode = propMap.value( GEOM::propertyName( GEOM::ShowName ) ).toBool();
+  AISShape->SetDisplayName( isNameMode );
 
   // set transparency
   if( HasTransparency() ) {
@@ -851,12 +873,34 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   int isosWidth = propMap.value( GEOM::propertyName( GEOM::IsosWidth ) ).toInt();
   Handle(Prs3d_IsoAspect) uIsoAspect = AISShape->Attributes()->UIsoAspect();
   Handle(Prs3d_IsoAspect) vIsoAspect = AISShape->Attributes()->VIsoAspect();
-  uIsoAspect->SetColor( isosColor );
-  uIsoAspect->SetWidth( isosWidth );
-  uIsoAspect->SetNumber( uIsos );
-  vIsoAspect->SetColor( isosColor );
-  vIsoAspect->SetWidth( isosWidth );
-  vIsoAspect->SetNumber( vIsos );
+
+  if ( HasIsosColor() ) {
+    uIsoAspect->SetColor( (Quantity_NameOfColor)GetIsosColor() );
+    vIsoAspect->SetColor( (Quantity_NameOfColor)GetIsosColor() );
+  }
+  else {
+    uIsoAspect->SetColor( isosColor );
+    vIsoAspect->SetColor( isosColor );
+  }
+
+  if ( HasIsosWidth() ) {
+    uIsoAspect->SetWidth( GetIsosWidth() );
+    vIsoAspect->SetWidth( GetIsosWidth() );
+  }
+  else {
+    uIsoAspect->SetWidth( isosWidth );
+    vIsoAspect->SetWidth( isosWidth );
+  }
+  
+  if ( HasNbIsos() ) {
+    uIsoAspect->SetNumber( GetNbIsos() );
+    vIsoAspect->SetNumber( GetNbIsos() );
+  }
+  else {
+    uIsoAspect->SetNumber( uIsos );
+    vIsoAspect->SetNumber( vIsos );
+  }
+
   AISShape->Attributes()->SetUIsoAspect( uIsoAspect );
   AISShape->Attributes()->SetVIsoAspect( vIsoAspect );
 
@@ -1008,7 +1052,11 @@ void GEOM_Displayer::updateActorProperties( GEOM_Actor* actor, bool create )
   // actor->SetShape(myShape,aDefPropMap.value(GEOM::propertyName( GEOM::Deflection )).toDouble(),myType == GEOM_VECTOR);
   /////////////////////////////////////////////////////////////////////////
   if ( !actor->getTopo().IsSame( myShape ) )
+#ifdef LIMIT_DEFLECTION_FOR_VTK
     actor->SetShape( myShape, VTK_MIN_DEFLECTION, myType == GEOM_VECTOR );
+#else
+    actor->SetShape( myShape, qMax( propMap.value( GEOM::propertyName( GEOM::Deflection ) ).toDouble(), GEOM::minDeflection() ), myType == GEOM_VECTOR );
+#endif
 
   // set material
   Material_Model material;
@@ -1022,16 +1070,25 @@ void GEOM_Displayer::updateActorProperties( GEOM_Actor* actor, bool create )
 
   // - set number of iso-lines
   int nbIsos[2]= { 1, 1 };
-  QStringList isos = propMap.value( GEOM::propertyName( GEOM::NbIsos ) ).toString().split( GEOM::subSectionSeparator() );
-  nbIsos[0] = isos[0].toInt();
-  nbIsos[1] = isos[1].toInt();
+  if ( HasNbIsos() ) {
+    nbIsos[0] = GetNbIsos();
+    nbIsos[1] = GetNbIsos();
+  }
+  else {
+    QStringList isos = propMap.value( GEOM::propertyName( GEOM::NbIsos ) ).toString().split( GEOM::subSectionSeparator() );
+    nbIsos[0] = isos[0].toInt();
+    nbIsos[1] = isos[1].toInt();
+  }
   actor->SetNbIsos( nbIsos );
 
   // - set iso-lines width
-  actor->SetIsosWidth( propMap.value( GEOM::propertyName( GEOM::IsosWidth ) ).toInt() );
+  actor->SetIsosWidth( HasIsosWidth() ? GetIsosWidth() : propMap.value( GEOM::propertyName( GEOM::IsosWidth ) ).toInt() );
 
   // - set iso-lines color
-  c = propMap.value( GEOM::propertyName( GEOM::IsosColor ) ).value<QColor>();
+  if ( HasIsosColor() )
+    c = SalomeApp_Tools::color( Quantity_Color((Quantity_NameOfColor)GetIsosColor()) );
+  else
+    c = propMap.value( GEOM::propertyName( GEOM::IsosColor ) ).value<QColor>();
   actor->SetIsosColor( c.redF(), c.greenF(), c.blueF() );
 
   // set colors
@@ -1070,6 +1127,10 @@ void GEOM_Displayer::updateActorProperties( GEOM_Actor* actor, bool create )
   c = propMap.value( GEOM::propertyName( GEOM::OutlineColor ) ).value<QColor>();
   actor->SetEdgesInShadingColor( c.redF(), c.greenF(), c.blueF() );
 
+  // - color of labels (shape name)
+  c = colorFromResources( "label_color", QColor( 255, 255, 255 ) );
+  actor->SetLabelColor( c.redF(), c.greenF(), c.blueF() );
+
   // set opacity
   if( HasTransparency() ) {
     actor->SetOpacity( 1.0 - GetTransparency() );
@@ -1089,6 +1150,9 @@ void GEOM_Displayer::updateActorProperties( GEOM_Actor* actor, bool create )
 
   // set display vertices flag
   actor->SetVerticesMode( propMap.value( GEOM::propertyName( GEOM::Vertices ) ).toBool() );
+
+  // set display name flag
+  actor->SetNameMode( propMap.value( GEOM::propertyName( GEOM::ShowName ) ).toBool() );
 
   // set display mode
   int displayMode = HasDisplayMode() ? 
@@ -1170,11 +1234,12 @@ void GEOM_Displayer::updateDimensions( const Handle(SALOME_InteractiveObject)& t
 
   QColor  aQColor       = aResMgr->colorValue  ( "Geometry", "dimensions_color", QColor( 0, 255, 0 ) );
   int     aLineWidth    = aResMgr->integerValue( "Geometry", "dimensions_line_width", 1 );
-  double  aFontHeight   = aResMgr->doubleValue ( "Geometry", "dimensions_font_height", 10 );
+  QFont   aFont         = aResMgr->fontValue   ( "Geometry", "dimensions_font", QFont("Y14.5M-2009", 14) );
   double  anArrowLength = aResMgr->doubleValue ( "Geometry", "dimensions_arrow_length", 5 );
   bool    isUnitsShown  = aResMgr->booleanValue( "Geometry", "dimensions_show_units", false );
   QString aUnitsLength  = aResMgr->stringValue ( "Geometry", "dimensions_length_units", "m" );
   QString aUnitsAngle   = aResMgr->stringValue ( "Geometry", "dimensions_angle_units", "deg" );
+  bool    aUseText3d    = aResMgr->booleanValue( "Geometry", "dimensions_use_text3d", false );
 
   // restore dimension presentation from saved attribute or property data
   AIS_ListOfInteractive aRestoredDimensions;
@@ -1240,10 +1305,12 @@ void GEOM_Displayer::updateDimensions( const Handle(SALOME_InteractiveObject)& t
 
     aStyle->SetCommonColor( aColor );
     aStyle->MakeUnitsDisplayed( (Standard_Boolean) isUnitsShown );
-    aStyle->MakeText3d( Standard_True );
+    aStyle->MakeText3d( aUseText3d );
     aStyle->MakeTextShaded( Standard_True );
-    aStyle->SetExtensionSize( aFontHeight * 0.5 );
-    aStyle->TextAspect()->SetHeight( aFontHeight );
+    int fsize = aFont.pixelSize() != -1 ? aFont.pixelSize() : aFont.pointSize();
+    aStyle->SetExtensionSize( fsize * 0.5 );
+    aStyle->TextAspect()->SetFont( aFont.family().toLatin1().data() );
+    aStyle->TextAspect()->SetHeight( fsize );
     aStyle->ArrowAspect()->SetLength( anArrowLength );
     aStyle->LineAspect()->SetWidth( aLineWidth );
     aStyle->SetTextHorizontalPosition( aPrs->DimensionAspect()->TextHorizontalPosition() );
@@ -1704,6 +1771,7 @@ SALOME_Prs* GEOM_Displayer::buildPresentation( const QString& entry,
 
                   if ( !GeomObject->_is_nil() )
                   {
+                    theIO->setName( GeomObject->GetName() );
                     // finally set shape
                     setShape( GEOM_Client::get_client().GetShape( GeometryGUI::GetGeomGen(), GeomObject ) );
                   }
@@ -1784,7 +1852,7 @@ void GEOM_Displayer::internalReset()
  *  of their sub-shapes (with opened local context for OCC viewer)
  */
 //=================================================================
-void GEOM_Displayer::LocalSelection( const Handle(SALOME_InteractiveObject)& theIO, const int theMode )
+void GEOM_Displayer::LocalSelection( const Handle(SALOME_InteractiveObject)& theIO, const std::list<int> modes )
 {
   SUIT_Session* session = SUIT_Session::session();
   SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
@@ -1801,9 +1869,23 @@ void GEOM_Displayer::LocalSelection( const Handle(SALOME_InteractiveObject)& the
     if (!theIO.IsNull() && !vf->isVisible(theIO))
       Display(theIO);
     SALOME_Prs* prs = vf->CreatePrs( theIO.IsNull() ? 0 : theIO->getEntry() );
-    vf->LocalSelection( prs, theMode );
+    vf->LocalSelection( prs, modes );
     delete prs;  // delete presentation because displayer is its owner
   }
+}
+
+//=================================================================
+/*!
+ *  GEOM_Displayer::LocalSelection
+ *  Activate selection of CAD shapes with activisation of selection
+ *  of their sub-shapes (with opened local context for OCC viewer)
+ */
+//=================================================================
+void GEOM_Displayer::LocalSelection( const Handle(SALOME_InteractiveObject)& theIO, const int theMode )
+{
+  std::list<int> modes;
+  modes.push_back( theMode );
+  LocalSelection( theIO, modes );
 }
 
 //=================================================================
@@ -1919,11 +2001,25 @@ void GEOM_Displayer::GlobalSelection( const TColStd_MapOfInteger& theModes,
  *  of their sub-shapes (with opened local context for OCC viewer)
  */
 //=================================================================
-void GEOM_Displayer::LocalSelection( const SALOME_ListIO& theIOList, const int theMode )
+void GEOM_Displayer::LocalSelection( const SALOME_ListIO& theIOList, const std::list<int> modes )
 {
   SALOME_ListIteratorOfListIO Iter( theIOList );
   for ( ; Iter.More(); Iter.Next() )
-    LocalSelection( Iter.Value(), theMode );
+    LocalSelection( Iter.Value(), modes );
+}
+
+//=================================================================
+/*!
+ *  GEOM_Displayer::LocalSelection
+ *  Activate selection of CAD shapes with activisation of selection
+ *  of their sub-shapes (with opened local context for OCC viewer)
+ */
+//=================================================================
+void GEOM_Displayer::LocalSelection( const SALOME_ListIO& theIOList, const int theMode )
+{
+  std::list<int> modes;
+  modes.push_back( theMode );
+  LocalSelection( theIOList, modes );
 }
 
 //=================================================================
@@ -2009,15 +2105,9 @@ void GEOM_Displayer::UnsetColor()
 //=================================================================
 double GEOM_Displayer::SetTransparency( const double transparency )
 {
-  double aPrevTransparency = myTransparency;
-  if ( transparency < 0 ) {
-    UnsetTransparency();
-  }
-  else {
-    myTransparency = transparency;
-    myHasTransparency = true;
-  }
-  return aPrevTransparency;
+  double prevTransparency = myTransparency;
+  myTransparency = transparency;
+  return prevTransparency;
 }
 
 //=================================================================
@@ -2039,7 +2129,7 @@ double GEOM_Displayer::GetTransparency() const
 //=================================================================
 bool GEOM_Displayer::HasTransparency() const
 {
-  return myHasTransparency;
+  return myTransparency >= 0;
 }
 
 //=================================================================
@@ -2050,27 +2140,17 @@ bool GEOM_Displayer::HasTransparency() const
 //=================================================================
 double GEOM_Displayer::UnsetTransparency()
 {
-  double aPrevTransparency = myTransparency;
-  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-  myTransparency = resMgr->integerValue("Geometry", "transparency", 0) / 100.;
-  myHasTransparency = false;
-  return aPrevTransparency;
+  return SetTransparency( -1 );
 }
-
 
 //=================================================================
 /*!
  *  GEOM_Displayer::SetTexture
- *  Set color for shape displaying. If it is equal -1 then default color is used.
- *  Available values are from Quantity_NameOfColor enumeration
  */
 //=================================================================
 void GEOM_Displayer::SetTexture( const std::string& texureFileName )
 {
-  if(texureFileName!="")
-  {
-    myTexture = texureFileName;
-  }
+  myTexture = texureFileName;
 }
 
 bool GEOM_Displayer::HasTexture() const
@@ -2109,7 +2189,6 @@ void GEOM_Displayer::UnsetWidth()
   myWidth = -1;
 }
 
-
 int GEOM_Displayer::GetIsosWidth() const
 {
   return myIsosWidth;
@@ -2125,6 +2204,49 @@ bool GEOM_Displayer::HasIsosWidth() const
   return myIsosWidth != -1;
 }
 
+int GEOM_Displayer::SetNbIsos( const int nbIsos )
+{
+  int prevNbIsos = myNbIsos;
+  myNbIsos = nbIsos;
+  return prevNbIsos;
+}
+
+int GEOM_Displayer::UnsetNbIsos()
+{
+  return SetNbIsos( -1 );
+}
+
+int GEOM_Displayer::GetNbIsos() const
+{
+  return myNbIsos;
+}
+
+bool GEOM_Displayer::HasNbIsos() const
+{
+  return myNbIsos >= 0;
+}
+
+int GEOM_Displayer::SetIsosColor( const int color )
+{
+  int prevColor = myIsosColor;
+  myIsosColor = color;
+  return prevColor;
+}
+
+int GEOM_Displayer::GetIsosColor() const
+{
+  return myIsosColor;
+}
+
+bool GEOM_Displayer::HasIsosColor() const
+{
+  return myIsosColor != -1;
+}
+
+int GEOM_Displayer::UnsetIsosColor()
+{
+  return SetIsosColor( -1 );
+}
 
 //=================================================================
 /*!
@@ -2261,7 +2383,7 @@ SALOMEDS::Color GEOM_Displayer::getPredefinedUniqueColor()
     }
   }
 
-  static int currentColor = 0;
+  static int currentColor = randomize( colors.size() );
 
   SALOMEDS::Color color;
   color.R = (double)colors[currentColor].red()   / 255.0;
@@ -2444,6 +2566,9 @@ PropMap GEOM_Displayer::getDefaultPropertyMap()
 
   // - show vertices flag (false by default)
   propMap.insert( GEOM::propertyName( GEOM::Vertices ), false );
+
+  // - show name flag (false by default)
+  propMap.insert( GEOM::propertyName( GEOM::ShowName ), false );
 
   // - shading color (take default value from preferences)
   propMap.insert( GEOM::propertyName( GEOM::ShadingColor ),

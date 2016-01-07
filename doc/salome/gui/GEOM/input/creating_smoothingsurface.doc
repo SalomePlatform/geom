@@ -14,11 +14,11 @@ In this dialog you can specify the following parameters:
 - <b>Max BSpline surface degree</b> of the resulting BSpline surface;
 - <b>3D tolerance of initial approximation</b>
 
-\note <b>3D tolerance of initial approximation</b> represents a tolerance of
+\note <b>3D tolerance of the initial approximation</b> represents the tolerance of
 initial plate surface approximation. If this parameter is equal to 0 (default),
 its value is automatically computed as <em> max(0.0001, 10*error)</em>,
-where <em>error</em> is a 3D tolerance of the surface representing a maximal
-distance between computed plate surface and given points.
+where <em>error</em> is the 3D tolerance of the surface representing the maximal
+distance between the computed plate surface and given points.
 
 <b>Advanced options:</b> \ref preview_anchor "Preview"
 
@@ -28,7 +28,7 @@ Press "Apply" or "Apply & Close" button to get the resulting <em>GEOM_Object(Sur
 - \em thelPoints is a list of points or compounds of points;
 - \em theNbMax maximum number of Bezier pieces in the resulting surface;
 - \em theDegMax maximum degree;  
-- \em theDMax specifies 3D tolerance of initial approximation
+- \em theDMax specifies 3D tolerance of the initial approximation.
 
 Example:
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2013-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -23,12 +23,11 @@
 #ifndef _XAOPlugin_Driver_HXX
 #define _XAOPlugin_Driver_HXX
 
-// OCCT includes
-#include <TFunction_Driver.hxx>
+#include "GEOM_BaseDriver.hxx"
 
-DEFINE_STANDARD_HANDLE(XAOPlugin_Driver, TFunction_Driver);
+DEFINE_STANDARD_HANDLE(XAOPlugin_Driver, GEOM_BaseDriver);
 
-class XAOPlugin_Driver: public TFunction_Driver
+class XAOPlugin_Driver: public GEOM_BaseDriver
 {
 public:
   XAOPlugin_Driver();
@@ -39,7 +38,12 @@ public:
   Standard_Boolean MustExecute(const TFunction_Logbook&) const;
   virtual void Validate(TFunction_Logbook&) const {}
 
-DEFINE_STANDARD_RTTI(XAOPlugin_Driver)
+  virtual bool GetCreationInformation(std::string&             theOperationName,
+				      std::vector<GEOM_Param>& theParams);
+
+  static int GetFileNameTag() { return 1; } // where to store file name in GEOM_Function
+
+  DEFINE_STANDARD_RTTI(XAOPlugin_Driver)
 };
 
 #endif // _XAOPlugin_Driver_HXX

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -503,10 +503,13 @@ public:
                                   CORBA::Boolean isPlanarWanted);
   GEOM::GEOM_Object_ptr MakeFaceWires (GEOM::GEOM_List_ptr theWires,
                                        CORBA::Boolean isPlanarWanted);
+  GEOM::GEOM_Object_ptr MakeFaceWithConstraints (GEOM::GEOM_List_ptr theConstraints);
   GEOM::GEOM_Object_ptr MakeShell (GEOM::GEOM_List_ptr theFacesAndShells);
   GEOM::GEOM_Object_ptr MakeSolidShell (GEOM::GEOM_Object_ptr theShell);
   GEOM::GEOM_Object_ptr MakeSolidShells (GEOM::GEOM_List_ptr theShells);
   GEOM::GEOM_Object_ptr MakeCompound (GEOM::GEOM_List_ptr theShapes);
+  GEOM::GEOM_Object_ptr MakeSolidFromConnectedFaces (GEOM::GEOM_List_ptr theFacesOrShells,
+                                                     CORBA::Boolean isIntersect);
   GEOM::GEOM_Object_ptr MakeGlueFaces (GEOM::GEOM_Object_ptr theShape,
                                        CORBA::Double theTolerance,
                                        CORBA::Boolean doKeepNonSolids);
@@ -533,7 +536,6 @@ public:
                                           GEOM::GEOM_Object_ptr theShape,
                                           CORBA::Short theShapeType,
                                           GEOM::shape_state theState);
-
 
   //-----------------------------------------------------------//
   // BlocksOperations                                          //

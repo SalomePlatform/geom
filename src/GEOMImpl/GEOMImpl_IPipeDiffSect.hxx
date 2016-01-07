@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -25,20 +25,11 @@
 #ifndef _GEOMImpl_IPIPEDIFFSECT_HXX_
 #define _GEOMImpl_IPIPEDIFFSECT_HXX_
 
-#include "GEOM_Function.hxx"
 
+#include "GEOMImpl_IPipe.hxx"
 #include <TColStd_HSequenceOfTransient.hxx>
 
-#ifndef _GEOMImpl_IPIPE_HXX_
-#include "GEOMImpl_IPipe.hxx"
-#endif
-
-#define PIPEDS_LIST_BASES 1
-#define PIPEDS_LIST_LOCATIONS 3
-//#define PIPEDS_ARG_PATH 2
-#define PIPEDS_ARG_WITHCONTACT 4
-#define PIPEDS_ARG_WITHCORRECT 5
-
+// Position definitions are declared in the base class.
 
 class GEOMImpl_IPipeDiffSect : public GEOMImpl_IPipe
 {
@@ -81,6 +72,12 @@ class GEOMImpl_IPipeDiffSect : public GEOMImpl_IPipe
 
   int GetWithCorrectionMode()
   { return _func->GetInteger(PIPEDS_ARG_WITHCORRECT); }
+
+  void SetIsBySteps (int IsBySteps)
+  { _func->SetInteger(PIPEDS_ARG_BY_STEPS, IsBySteps); }
+
+  int GetIsBySteps()
+  { return _func->GetInteger(PIPEDS_ARG_BY_STEPS); }
 
 };
 

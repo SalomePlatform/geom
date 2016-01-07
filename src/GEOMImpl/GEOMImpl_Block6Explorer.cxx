@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -82,6 +82,27 @@
 #define NBVERTS 8
 
 #define PLANAR_FACE_MAX_TOLERANCE 1e-06
+
+// The following macro, when enabled, causes pcurves upgrade after MakeFilling algorithm
+// in MakeAnyFace function;
+// WARNING: it may lead to extra vertices generation by partition algorithm
+// in some cases, for example when fillet is made on a PipeTShape - 
+// see issues 0021568 and 0021550
+// VSR (15/05/2012): macro commented out (disabled) to avoid extra vertices!
+//#define MAKE_FACE_UPGRADE_PCURVES
+
+// The following macro, when enabled, causes fixing tolerance for pcurves
+// after BRepBuilderAPI_MakeFace + ShHealOper_ShapeProcess in MakeAnyFace function;
+// This sometimes allows to fix problems of extra vertices generation
+// see issue 0022706
+// VSR (17/11/2014): macro enabled
+#define MAKE_FACE_PCURVES_FIX_TOLERANCE
+
+#ifdef MAKE_FACE_PCURVES_FIX_TOLERANCE
+#include <BOPTools_AlgoTools.hxx>
+#include <NCollection_DataMap.hxx>
+#include <ShapeFix_ShapeTolerance.hxx>
+#endif
 
 static Standard_Integer mod4 (Standard_Integer nb)
 {
@@ -1362,11 +1383,7 @@ TCollection_AsciiString GEOMImpl_Block6Explorer::MakeAnyFace (const TopoDS_Wire&
   // 12.04.2006 for PAL12149 begin
   Handle(Geom_Surface) aGS = BRep_Tool::Surface(TopoDS::Face(aFace));
 
-// VSR: debug issues 0021568 and 0021550 (15/05/2012) - BEGIN
-// the following block, when enabled, leads to extra vertices generation by partition algorithm
-// in some cases, for example when fillet is made on a PipeTShape
-#if 0
-// VSR: debug issues 0021568 and 0021550 (15/05/2012) - END
+#ifdef MAKE_FACE_UPGRADE_PCURVES
   BRep_Builder BB;
   TopoDS_Iterator itw(theWire);
   for (; itw.More(); itw.Next())
@@ -1396,7 +1413,46 @@ TCollection_AsciiString GEOMImpl_Block6Explorer::MakeAnyFace (const TopoDS_Wire&
   }
   // 12.04.2006 for PAL12149 end
 
-  if (theResult.IsNull()) { // try to deal with pure result of filling
+  if (!theResult.IsNull()) {
+    // try to deal with result of BRepBuilderAPI_MakeFace + ShHealOper_ShapeProcess
+#if OCC_VERSION_LARGE >= 0x06080000
+#ifdef MAKE_FACE_PCURVES_FIX_TOLERANCE
+    // check and fix pcurves, if necessary
+    Standard_Real aT, aTolE, aD, aDMax;
+    TopExp_Explorer aExpF, aExpE;
+    NCollection_DataMap<TopoDS_Shape, Standard_Real, TopTools_ShapeMapHasher> aDMETol;
+    aExpF.Init(theResult, TopAbs_FACE);
+    for (; aExpF.More(); aExpF.Next()) {
+      const TopoDS_Face& aF = *(TopoDS_Face*)&aExpF.Current();
+      aExpE.Init(aF, TopAbs_EDGE);
+      for (; aExpE.More(); aExpE.Next()) {
+        const TopoDS_Edge& aE = *(TopoDS_Edge*)&aExpE.Current();
+        if (!BOPTools_AlgoTools::ComputeTolerance(aF, aE, aDMax, aT)) continue;
+        aTolE = BRep_Tool::Tolerance(aE);
+        if (aDMax < aTolE) continue;
+        if (aDMETol.IsBound(aE)) {
+          aD = aDMETol.Find(aE);
+          if (aDMax > aD) {
+            aDMETol.UnBind(aE);
+            aDMETol.Bind(aE, aDMax);
+          }
+        }
+        else {
+          aDMETol.Bind(aE, aDMax);
+        }
+      }
+    }
+    NCollection_DataMap<TopoDS_Shape, Standard_Real, TopTools_ShapeMapHasher>::Iterator aDMETolIt(aDMETol);
+    ShapeFix_ShapeTolerance sat;
+    for (; aDMETolIt.More(); aDMETolIt.Next()) {
+      sat.LimitTolerance(aDMETolIt.Key(), aDMETolIt.Value());
+    }
+#endif
+#endif
+  }
+  else {
+    // try to deal with pure result of BRepOffsetAPI_MakeFilling
+
     // Update tolerance
     Standard_Real aTol = MF.G0Error();
 

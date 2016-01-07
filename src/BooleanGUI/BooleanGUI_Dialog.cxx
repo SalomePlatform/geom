@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -187,7 +187,7 @@ void BooleanGUI_Dialog::Init()
   }
 
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
-           SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+          SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()), Qt::UniqueConnection);
 
   initName(mainFrame()->GroupConstructors->title());
 
@@ -198,9 +198,9 @@ void BooleanGUI_Dialog::Init()
   mainFrame()->RadioButton1->setFocus();
 
   globalSelection(GEOM_ALLSHAPES);
-
+  //localSelection(TopAbs_SHAPE); // VSR 24/09/2015: dectivate local selection in BOP (CoTech decision)
+  
   myGroup->PushButton1->click();
-  SelectionIntoArgument();
   resize(100,100);
 }
 
@@ -236,8 +236,7 @@ bool BooleanGUI_Dialog::ClickOnApply()
 //=================================================================================
 void BooleanGUI_Dialog::reset()
 {
-  myObjects = new GEOM::ListOfGO;
-  myObjects->length( 0 );       
+  myObjects.clear();
 }
 
 //=================================================================================
@@ -258,16 +257,16 @@ void BooleanGUI_Dialog::singleSelection()
     disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
     myGeomGUI->getApp()->selectionMgr()->clearSelected();
     connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
-            this, SLOT(SelectionIntoArgument()));
+            this, SLOT(SelectionIntoArgument()), Qt::UniqueConnection);
 
     if (myEditCurrentArgument == myGroup->LineEdit1) {
       myObject1 = aSelectedObject;
-      if (!myGroup->PushButton2->isHidden() && !myObjects->length())
+      if (!myGroup->PushButton2->isHidden() && !myObjects.count())
         myGroup->PushButton2->click();
     }
     else if (myEditCurrentArgument == myGroup->LineEdit2) {
-      myObjects->length(1);
-      myObjects[0] = aSelectedObject.get();
+      myObjects.clear();
+      myObjects << aSelectedObject;
       if (!myObject1)
         myGroup->PushButton1->click();
     }
@@ -287,23 +286,11 @@ void BooleanGUI_Dialog::multipleSelection()
   myEditCurrentArgument->setText( "" );
   reset();
         
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
-  myObjects->length(aSelList.Extent());
+  myObjects = getSelected( TopAbs_SHAPE, -1 );
 
-  int i = 0;
-  for (SALOME_ListIteratorOfListIO anIt (aSelList); anIt.More(); anIt.Next()) {
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIt.Value() );
-
-    if ( !CORBA::is_nil( aSelectedObject ) ) {
-      myObjects[i++] = aSelectedObject;
-    }
-  }
-
-  myObjects->length( i );
+  int i = myObjects.count();
   if ( i == 1 ) {
-    myEditCurrentArgument->setText( GEOMBase::GetName( myObjects[0] ) );
+    myEditCurrentArgument->setText( GEOMBase::GetName( myObjects.first().get() ) );
   } else if ( i > 0 ) {
     myEditCurrentArgument->setText( QString::number( i ) + "_" + tr( "GEOM_OBJECTS" ) );
   }
@@ -315,6 +302,7 @@ void BooleanGUI_Dialog::multipleSelection()
 //=================================================================================
 void BooleanGUI_Dialog::SelectionIntoArgument()
 {
+  myEditCurrentArgument->setText("");
   if ( myOperation == BooleanGUI::SECTION ||
       (myOperation == BooleanGUI::CUT &&
        myEditCurrentArgument == myGroup->LineEdit1)) {
@@ -349,11 +337,16 @@ void BooleanGUI_Dialog::SetEditCurrentArgument()
     myGroup->LineEdit1->setEnabled(false);
   }
 
+  globalSelection(GEOM_ALLSHAPES);
+  //localSelection(TopAbs_SHAPE); // VSR 24/09/2015: dectivate local selection in BOP (CoTech decision)
+
   // enable line edit
   myEditCurrentArgument->setEnabled(true);
   myEditCurrentArgument->setFocus();
   // after setFocus(), because it will be setDown(false) when loses focus
   send->setDown(true);
+
+  SelectionIntoArgument();
 }
 
 //=================================================================================
@@ -365,7 +358,7 @@ void BooleanGUI_Dialog::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-           this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ), Qt::UniqueConnection );
   processPreview();
 }
 
@@ -399,13 +392,13 @@ bool BooleanGUI_Dialog::isValid (QString&)
   switch (myOperation) {
     case BooleanGUI::FUSE:
     case BooleanGUI::COMMON:
-      isOK = myObjects->length() > 1;
+      isOK = myObjects.count() > 1;
     break;
   case BooleanGUI::CUT:
-      isOK = myObject1 && myObjects->length();
+    isOK = myObject1 && myObjects.count();
     break;
   case BooleanGUI::SECTION:
-      isOK = myObject1 && (myObjects->length() == 1);
+    isOK = myObject1 && (myObjects.count() == 1);
     break;
   default:
     break;
@@ -425,25 +418,30 @@ bool BooleanGUI_Dialog::execute (ObjectList& objects)
   GEOM::GEOM_IBooleanOperations_var anOper = GEOM::GEOM_IBooleanOperations::_narrow(getOperation());
   const bool isCheckSelfInte = myGroup->CheckBox1->isChecked();
 
+  GEOM::ListOfGO_var anObjects = new GEOM::ListOfGO();
+  anObjects->length( myObjects.count() );
+  for ( int i = 0; i < myObjects.count(); i++ )
+    anObjects[i] = myObjects[i].copy();
+
   switch (myOperation) {
     case BooleanGUI::FUSE:
       {
         const bool isRmExtraEdges = myGroup->CheckBox2->isChecked();
 
         anObj = anOper->MakeFuseList
-          (myObjects, isCheckSelfInte, isRmExtraEdges);
+          (anObjects, isCheckSelfInte, isRmExtraEdges);
       }
     break;
     case BooleanGUI::COMMON:
-      anObj = anOper->MakeCommonList(myObjects, isCheckSelfInte);
+      anObj = anOper->MakeCommonList(anObjects, isCheckSelfInte);
     break;
   case BooleanGUI::CUT:
       anObj =
-        anOper->MakeCutList(myObject1.get(), myObjects, isCheckSelfInte);
+        anOper->MakeCutList(myObject1.get(), anObjects, isCheckSelfInte);
     break;
   case BooleanGUI::SECTION:
       anObj = anOper->MakeBoolean
-        (myObject1.get(), myObjects[0], myOperation, isCheckSelfInte);
+        (myObject1.get(), anObjects[0], myOperation, isCheckSelfInte);
     break;
   default:
     break;
@@ -469,4 +467,26 @@ void BooleanGUI_Dialog::restoreSubShapes (SALOMEDS::Study_ptr   theStudy,
                                          /*theInheritFirstArg=*/myOperation == BooleanGUI::CUT,
                                          mainFrame()->CheckBoxAddPrefix->isChecked()); // ? false
   }
+}
+
+//=================================================================================
+// function : addSubshapesToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void BooleanGUI_Dialog::addSubshapesToStudy()
+{
+  GEOMBase::PublishSubObject( myObject1.get() );
+  for ( int i = 0; i < myObjects.count(); i++ )
+    GEOMBase::PublishSubObject( myObjects[i].get() );
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BooleanGUI_Dialog::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res(myObjects);
+  res << myObject1;
+  return res;
 }

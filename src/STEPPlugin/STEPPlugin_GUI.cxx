@@ -1,4 +1,4 @@
-// Copyright (C) 2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2014-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -36,9 +36,13 @@
 #include "GEOM_Operation.h"
 #include "GEOMBase.h"
 #include "GEOM_Displayer.h"
+#include "GEOM_GenericObjPtr.h"
+#include "STEPPlugin_ExportDlg.h"
 
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(STEPPlugin)
+
+typedef GEOM::GenericObjPtr<GEOM::ISTEPOperations> STEPOpPtr;
 
 //=======================================================================
 // function : STEPPlugin_GUI()
@@ -111,8 +115,8 @@ bool STEPPlugin_GUI::importSTEP( SUIT_Desktop* parent )
 
   SALOMEDS::Study_var dsStudy = GeometryGUI::ClientStudyToStudy( study->studyDS() );
   GEOM::GEOM_IOperations_var op = GeometryGUI::GetGeomGen()->GetPluginOperations( dsStudy->StudyId(), "STEPPluginEngine" );
-  GEOM::ISTEPOperations_var stepOp = GEOM::ISTEPOperations::_narrow( op );
-  if ( CORBA::is_nil( stepOp ) ) return false;
+  STEPOpPtr stepOp = GEOM::ISTEPOperations::_narrow( op );
+  if ( stepOp.isNull() ) return false;
 
   QStringList fileNames = app->getOpenFileNames( SUIT_FileDlg::getLastVisitedPath().isEmpty() ? QDir::currentPath() : QString(""),
 						 tr( "STEP_FILES" ),
@@ -128,7 +132,7 @@ bool STEPPlugin_GUI::importSTEP( SUIT_Desktop* parent )
     {
       QString fileName = fileNames.at( i );
       SUIT_OverrideCursor wc;
-      GEOM_Operation transaction( app, stepOp.in() );
+      GEOM_Operation transaction( app, stepOp.get() );
       bool ignoreUnits = false;
       
       try
@@ -189,6 +193,7 @@ bool STEPPlugin_GUI::importSTEP( SUIT_Desktop* parent )
 	  }
 	  transaction.commit();
 	  GEOM_Displayer( study ).Display( main.in() );
+          main->UnRegister();
 	}
 	else
 	{
@@ -228,8 +233,8 @@ bool STEPPlugin_GUI::exportSTEP( SUIT_Desktop* parent )
 
   SALOMEDS::Study_var dsStudy = GeometryGUI::ClientStudyToStudy( study->studyDS() );
   GEOM::GEOM_IOperations_var op = GeometryGUI::GetGeomGen()->GetPluginOperations( dsStudy->StudyId(), "STEPPluginEngine" );
-  GEOM::ISTEPOperations_var stepOp = GEOM::ISTEPOperations::_narrow( op );
-  if ( CORBA::is_nil( stepOp ) ) return false;
+  STEPOpPtr stepOp = GEOM::ISTEPOperations::_narrow( op );
+  if ( stepOp.isNull() ) return false;
 
   LightApp_SelectionMgr* sm = app->selectionMgr();
   if ( !sm ) return false;
@@ -246,25 +251,26 @@ bool STEPPlugin_GUI::exportSTEP( SUIT_Desktop* parent )
     
     if ( CORBA::is_nil( obj ) ) continue;
     
-    QString fileName = app->getFileName( false,
-					 QString( io->getName() ),
+    GEOM::length_unit anUnit;
+    QString fileName = STEPPlugin_ExportDlg::getFileName
+					(QString( io->getName() ),
 					 tr( "STEP_FILES" ),
 					 tr( "EXPORT_TITLE" ),
-					 parent );
+					 parent, anUnit);
     
     if ( fileName.isEmpty() )
       return false;
     
     SUIT_OverrideCursor wc;
     
-    GEOM_Operation transaction( app, stepOp.in() );
+    GEOM_Operation transaction( app, stepOp.get() );
     
     try
     {
       app->putInfo( tr( "GEOM_PRP_EXPORT" ).arg( fileName ) );
       transaction.start();
       
-      stepOp->ExportSTEP( obj, fileName.toUtf8().constData() );
+      stepOp->ExportSTEP( obj, fileName.toUtf8().constData(), anUnit);
       
       if ( stepOp->IsDone() )
       {

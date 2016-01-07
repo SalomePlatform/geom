@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2012-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -37,6 +37,7 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/src/GEOMImpl
   ${PROJECT_SOURCE_DIR}/src/GEOMGUI
   ${PROJECT_SOURCE_DIR}/src/GEOMBase
+  ${PROJECT_SOURCE_DIR}/src/GEOMUtils
   ${PROJECT_SOURCE_DIR}/src/DlgRef
   ${PROJECT_BINARY_DIR}/src/DlgRef
   ${CMAKE_CURRENT_SOURCE_DIR}
@@ -49,12 +50,17 @@ ADD_DEFINITIONS(
   ${QT_DEFINITIONS}
   )
 
+IF(WIN32)
+  ADD_DEFINITIONS(-DNOGDI)
+ENDIF(WIN32)
+
 # libraries to link to
 SET(_link_LIBRARIES
   GEOMObject
   GEOMClient
   GEOMImpl
   GEOMBase
+  GEOMUtils
   GEOM
   DlgRef
   )
@@ -68,6 +74,7 @@ SET(GenerationGUI_HEADERS
   GenerationGUI_FillingDlg.h
   GenerationGUI_PipeDlg.h
   GenerationGUI_PipePathDlg.h
+  GenerationGUI_ThicknessDlg.h
   )
 
 # header files / to be processed by moc
@@ -77,6 +84,7 @@ SET(_moc_HEADERS
   GenerationGUI_FillingDlg.h
   GenerationGUI_PipeDlg.h
   GenerationGUI_PipePathDlg.h
+  GenerationGUI_ThicknessDlg.h
   )
 
 # --- sources ---
@@ -91,6 +99,7 @@ SET(GenerationGUI_SOURCES
   GenerationGUI_FillingDlg.cxx
   GenerationGUI_PipeDlg.cxx
   GenerationGUI_PipePathDlg.cxx
+  GenerationGUI_ThicknessDlg.cxx
   ${_moc_SOURCES}
   )
 

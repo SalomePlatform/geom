@@ -1,4 +1,4 @@
-// Copyright (C) 2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2014-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -91,80 +91,16 @@ Standard_Integer VTKPlugin_ExportDriver::Execute( TFunction_Logbook& log ) const
   MESSAGE( "Export VTK into file " << aFileName );
   try
   {
-    GEOM_VertexSource* myVertexSource = GEOM_VertexSource::New();
-    GEOM_EdgeSource* myIsolatedEdgeSource = GEOM_EdgeSource::New();
-    GEOM_EdgeSource* myOneFaceEdgeSource = GEOM_EdgeSource::New();
-    GEOM_EdgeSource* mySharedEdgeSource = GEOM_EdgeSource::New();
-    GEOM_WireframeFace* myWireframeFaceSource = GEOM_WireframeFace::New();
-    GEOM_ShadingFace* myShadingFaceSource = GEOM_ShadingFace::New();
-
-    vtkAppendPolyData* myAppendFilter = vtkAppendPolyData::New();
-    myAppendFilter->AddInputConnection( myVertexSource->GetOutputPort() );
-    myAppendFilter->AddInputConnection( myIsolatedEdgeSource->GetOutputPort() );
-    myAppendFilter->AddInputConnection( myOneFaceEdgeSource->GetOutputPort() );
-    myAppendFilter->AddInputConnection( mySharedEdgeSource->GetOutputPort() );
-    //myAppendFilter->AddInputConnection( myWireframeFaceSource->GetOutputPort() ); // iso-lines are unnecessary
-    myAppendFilter->AddInputConnection( myShadingFaceSource->GetOutputPort() );
-
-    bool anIsVector = false;
-
-    // Is shape triangulated?
-    bool wasMeshed = true;
-    TopExp_Explorer ex;
-    TopLoc_Location aLoc;
-    for (ex.Init(aShape, TopAbs_FACE); ex.More(); ex.Next()) {
-      const TopoDS_Face& aFace = TopoDS::Face(ex.Current());
-      Handle(Poly_Triangulation) aPoly = BRep_Tool::Triangulation(aFace,aLoc);
-      if(aPoly.IsNull()) {
-        wasMeshed = false;
-        break;
-      }
-    }
-
-    GEOM::MeshShape( aShape, aDeflection );
-
-    TopExp_Explorer aVertexExp( aShape, TopAbs_VERTEX );
-    for( ; aVertexExp.More(); aVertexExp.Next() )
-    {
-      const TopoDS_Vertex& aVertex = TopoDS::Vertex( aVertexExp.Current() );
-      myVertexSource->AddVertex( aVertex );
-    }
-
-    TopTools_IndexedDataMapOfShapeListOfShape anEdgeMap;
-    TopExp::MapShapesAndAncestors( aShape, TopAbs_EDGE, TopAbs_FACE, anEdgeMap );
-
-    GEOM::SetShape( aShape,
-		    anEdgeMap,
-		    anIsVector,
-		    0,
-		    myIsolatedEdgeSource,
-		    myOneFaceEdgeSource,
-		    mySharedEdgeSource,
-		    myWireframeFaceSource,
-		    myShadingFaceSource );
-
-    myAppendFilter->Update();
-
     // Set "C" numeric locale to save numbers correctly
     Kernel_Utils::Localizer loc;
 
-    vtkPolyDataWriter* aWriter = vtkPolyDataWriter::New();
-    aWriter->SetInputConnection( myAppendFilter->GetOutputPort() );
+    vtkPolyData* pd = GEOM::GetVTKData( aShape, aDeflection );
+    vtkPolyDataWriter* aWriter = vtkPolyDataWriter::New();    
+    aWriter->SetInputData( pd );
     aWriter->SetFileName( aFileName.ToCString() );
     aWriter->Write();
     aWriter->Delete();
-
-    myVertexSource->Delete();
-    myIsolatedEdgeSource->Delete();
-    myOneFaceEdgeSource->Delete();
-    mySharedEdgeSource->Delete();
-    myWireframeFaceSource->Delete();
-    myShadingFaceSource->Delete();
-
-    myAppendFilter->Delete();
-
-    if(!wasMeshed)
-      BRepTools::Clean(aShape);
+    pd->Delete(); //instanciated by the GEOM::GetData(...) method
 
     return 1;
   }

@@ -38,4 +38,12 @@
 <br><h2>Creation of a Local Coordinate System</h2>
 \tui_script{basic_geom_objs_ex09.py}
 
+\anchor tui_creation_surface
+<br><h2>Creation of a Surface From Face</h2>
+\tui_script{basic_geom_objs_ex10.py}
+
+\anchor tui_creation_polyline
+<br><h2>Creation of 2D Polyline</h2>
+\tui_script{polyline.py}
+
 */

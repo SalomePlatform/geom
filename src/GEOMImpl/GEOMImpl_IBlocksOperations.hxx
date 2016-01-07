@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -125,16 +125,15 @@ class GEOMImpl_IBlocksOperations : public GEOM_IOperations {
     std::list<int>   incriminated;
   };
 
-  Standard_EXPORT Standard_Boolean CheckCompoundOfBlocksOld (Handle(GEOM_Object) theCompound,
-                                                             std::list<BCError>& theErrors);
-
   Standard_EXPORT Standard_Boolean CheckCompoundOfBlocks (Handle(GEOM_Object) theCompound,
+                                                          const Standard_Real theToleranceC1,
                                                           std::list<BCError>& theErrors);
 
   Standard_EXPORT TCollection_AsciiString PrintBCErrors (Handle(GEOM_Object)       theCompound,
                                                          const std::list<BCError>& theErrors);
 
-  Standard_EXPORT Handle(GEOM_Object) GetNonBlocks (Handle(GEOM_Object) theShape,
+  Standard_EXPORT Handle(GEOM_Object) GetNonBlocks (Handle(GEOM_Object)  theShape,
+                                                    const Standard_Real  theToleranceC1,
                                                     Handle(GEOM_Object)& theNonQuads);
 
   Standard_EXPORT Handle(GEOM_Object) RemoveExtraEdges (Handle(GEOM_Object) theShape,
@@ -148,7 +147,8 @@ class GEOMImpl_IBlocksOperations : public GEOM_IOperations {
                                              TopTools_ListOfShape& BLO,
                                              TopTools_ListOfShape& NOT,
                                              TopTools_ListOfShape& EXT,
-                                             TopTools_ListOfShape& NOQ);
+                                             TopTools_ListOfShape& NOQ,
+                                             const Standard_Real  theToleranceC1 = -1.);
 
   // Extract blocks from blocks compounds
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient) ExplodeCompoundOfBlocks

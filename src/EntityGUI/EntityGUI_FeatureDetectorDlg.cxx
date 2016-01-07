@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -26,7 +26,8 @@
 
 // SALOME includes
 #include "EntityGUI_FeatureDetectorDlg.h"
-#include <ShapeRec_FeatureDetector.hxx>
+#include "ShapeRec_FeatureDetector.hxx"
+#include "GEOM_Constants.h"
 
 #include <OCCViewer_ViewWindow.h>
 #include <OCCViewer_ViewManager.h>
@@ -399,7 +400,6 @@ void EntityGUI_FeatureDetectorDlg::SelectionIntoArgument()
   
   // TODO supprimer les lignes qui ne servent à rien le cas échéant
   SUIT_ViewWindow*       theViewWindow  = getDesktop()->activeWindow();
-  std::map< std::string , std::vector<Handle(AIS_InteractiveObject)> >::iterator AISit;
   SOCC_Viewer* soccViewer = (SOCC_Viewer*)(theViewWindow->getViewManager()->getViewModel());
 
   if (!myEditCurrentArgument->isEnabled())
@@ -433,24 +433,20 @@ void EntityGUI_FeatureDetectorDlg::SelectionIntoArgument()
     
     if ( myEditCurrentArgument == mySelectionGroup->LineEdit1 ) {
       myFace = aSelectedObject;
-      AISit = soccViewer->entry2aisobjects.find(myFaceEntry.toStdString());
-      if (AISit == soccViewer->entry2aisobjects.end())
+
+      SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+      if ( !study ) return;
+      LightApp_Application* app = ::qobject_cast<LightApp_Application*>( study->application() );
+      if ( !app ) return;
+      SUIT_ViewManager* vm = app->activeViewManager();
+      if ( !vm ) return;
+      PropMap propMap = study->getObjectProperties( vm->getGlobalId(), myFaceEntry );
+      QString theImgFileName = propMap.value( GEOM::propertyName( GEOM::Texture ) ).toString();
+      if ( theImgFileName.isEmpty() )
         return;
-      
-      Handle(AIS_InteractiveObject) myAIS = (*AISit).second[0];
-      Handle(GEOM_AISShape) myAISShape;
-      if( myAIS->IsInstance( STANDARD_TYPE(GEOM_AISShape) ) ) {
-        myAISShape = Handle(GEOM_AISShape)::DownCast( myAIS );
-      }
-      else
-        return ;
-      
-      std::string theImgFileName = myAISShape->TextureFile();      
-      if ( theImgFileName == "" )
-        return ;
 
       // Setting the image caracteristics
-      myDetector->SetPath( theImgFileName );
+      myDetector->SetPath( theImgFileName.toStdString() );
       height            =  myDetector->GetImgHeight();
       width             =  myDetector->GetImgWidth();
       pictureLeft       = -0.5 * width;              // X coordinate of the top left  corner of the background image in the view
@@ -946,5 +942,16 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
 //     res=true;
 //   }
   
+  return res;
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> EntityGUI_FeatureDetectorDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myFace;
   return res;
 }

@@ -25,7 +25,7 @@ By <b>Cartesian coordinates</b> , which can be either:
 - \b Relative coordinates \b DX, \b DY and \b DZ with respect to the previous applied point,
  
 By <b>Angular coordinates</b>, which include:
-- the \b Length of the segment and an \b Angle in the chosen plane (OXY for example) in \b Relative mode. The angle is then relative to a local coordinate system with the last point of the sketch as origin. </li>
+- the \b Length of the segment and an \b Angle in the chosen plane (OXY for example) in \b Relative mode. The angle is then relative to a local coordinate system with the last point of the sketch as origin.
    
 \image html 3dsketch_angle_rel.png
    

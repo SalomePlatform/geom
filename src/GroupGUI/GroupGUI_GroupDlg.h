@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -33,10 +33,14 @@
 #include <TColStd_DataMapOfIntegerInteger.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
 
+class QCheckBox;
+class QComboBox;
+class QPushButton;
 class QGroupBox;
 class QLineEdit;
 class QListWidget;
 class QButtonGroup;
+class SalomeApp_DoubleSpinBox;
 
 //=================================================================================
 // class    : GroupGUI_GroupDlg
@@ -61,6 +65,7 @@ protected:
   virtual bool                        isValid (QString&);
   virtual bool                        execute (ObjectList&);
   virtual GEOM::GEOM_Object_ptr       getFather (GEOM::GEOM_Object_ptr);
+  virtual QList<GEOM::GeomObjPtr>     getSourceObjects();
 
   void                                closeEvent (QCloseEvent*);
 
@@ -77,6 +82,11 @@ private slots:
   void                                remove();
   void                                showOnlySelected();
   void                                selectionChanged();
+  void                                ClickOnOkFilter();
+#ifndef DISABLE_PLOT2DVIEWER
+  void                                ClickOnPlot();
+#endif
+  void                                MeasureToggled();
 
 private:
   void                                Init();
@@ -105,6 +115,7 @@ private:
   TColStd_DataMapOfIntegerInteger     myMain2InPlaceIndices;
   QList<int>                          myGroupIdList;
   int                                 myDmMode;
+  bool                                myIsAccept;
 
   QPushButton*                        mySelBtn;
   QLineEdit*                          myMainName;
@@ -119,6 +130,15 @@ private:
   QPushButton*                        myHideSelBtn;
   QPushButton*                        myShowAllBtn;
   QListWidget*                        myIdList;
+  QCheckBox*                          myLessFilterCheck;
+  QCheckBox*                          myGreaterFilterCheck;
+  QComboBox*                          myLessFilterCombo;
+  QComboBox*                          myGreaterFilterCombo;
+  SalomeApp_DoubleSpinBox*            myLessFilterSpin;
+  SalomeApp_DoubleSpinBox*            myGreaterFilterSpin;
+  QPushButton*                        myApplyFilterButton;
+  QPushButton*                        myPlotDistributionButton;
+  QGroupBox*                          myFilterGrp;
 };
 
 #endif

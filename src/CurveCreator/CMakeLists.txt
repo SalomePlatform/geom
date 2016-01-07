@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2012-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -94,6 +94,7 @@ SET(_other_SOURCES
   CurveCreator_Diff.cxx
   CurveCreator_Displayer.cxx
   CurveCreator_Operation.cxx
+  CurveCreator_Section.cxx
   CurveCreator_Utils.cxx
   CurveCreator_UtilsICurve.cxx
 )

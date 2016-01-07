@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -35,10 +35,12 @@
 #include <ShapeProcessAPI_ApplySequence.hxx>
 #include <ShapeProcess_ShapeContext.hxx>
 
+#include "ShHealOper_Tool.hxx"
+
 ///  Class ShHealOper_ShapeProcess
 //Class for performing Shape healing operations on the shape.
 
-class ShHealOper_ShapeProcess 
+class ShHealOper_ShapeProcess : public ShHealOper_Tool
 {
  public:
   // ---------- PUBLIC METHODS ----------

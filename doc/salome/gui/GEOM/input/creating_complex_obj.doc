@@ -3,22 +3,24 @@
 \page create_complex_obj_page Creating Complex Objects
 
 <b>New entity -> Generation</b> sub-menu allows creating new geometric
-objects by modification and multiplication of the existing objects: 
+objects by modification and multiplication of the existing objects:
 
 
 <ul>
 <li>\subpage create_extrusion_page "Extrude" a 2D object by vector,
-creating a 3D object. </li> 
+creating a 3D object. </li>
 <li>\subpage create_revolution_page "Revolve" an object around an
 axis, creating a body of revolution.</li>
 <li>\subpage create_filling_page  "Create a surface" from a set of edges.</li>
-<li>\subpage create_extrusion_alongpath_page "Extrude an object along a path", 
+<li>\subpage create_extrusion_alongpath_page "Extrude an object along a path",
 creating a more complex trajectory object.</li>
 <li>\subpage create_pipe_path_page "Restore Path" of a pipe-like shape.</li>
+<li>\subpage create_thickness_page "Add thickness" to objects.</li>
+<li>\subpage create_groups_page "Generate Groups" for certain generation operations.</li>
 </ul>
 
 <b> New entity -> Advanced </b> sub-menu allows creating new geometric
-objects using advanced algorithms: 
+objects using advanced algorithms:
 
 <ul>
 <li>\subpage create_smoothingsurface_page "Smoothing surface" from a

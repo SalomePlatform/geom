@@ -31,6 +31,7 @@ provided by Geometry module.
     <li>\ref tui_working_with_groups_page</li>
     <li>\ref tui_building_by_blocks_page</li>
     <li>\ref tui_sketcher_page</li>
+    <li>\ref tui_3dsketcher_page</li>
     <li>\ref tui_advanced_geom_objs_page</li>
   </ul>
   <li>\subpage tui_viewing_geom_objs_page</li>

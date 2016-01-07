@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -37,11 +37,25 @@
 #include <TopoDS.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <TopTools_MapOfShape.hxx>
+
+namespace
+{
+  bool cmpNbSubShapes( const TopoDS_Shape& s1, const TopoDS_Shape& s2, TopAbs_ShapeEnum t)
+  {
+    int nbNew = 0, nbOld = 0;
+    TopExp_Explorer exp;
+    TopTools_MapOfShape shMap;
+    for ( exp.Init( s1, t ); exp.More(); exp.Next() ) if ( shMap.Add( exp.Current() ) ) ++nbNew;
+    shMap.Clear();
+    for ( exp.Init( s2, t ); exp.More(); exp.Next() ) if ( shMap.Add( exp.Current() ) ) ++nbOld;
+    return nbNew != nbOld;
+  }
+}
+
 //=======================================================================
 //function : ShHealOper_Sewing()
 //purpose  : Constructor
 //=======================================================================
-
 
 ShHealOper_Sewing::ShHealOper_Sewing (const TopoDS_Shape& theShape,
                                      const Standard_Real theTolerance)
@@ -248,15 +262,11 @@ Standard_Boolean ShHealOper_Sewing::getModifications(const TopoDS_Shape& theShap
 
 Standard_Boolean ShHealOper_Sewing::isSewed(const TopoDS_Shape& theShape) const
 {
-  Standard_Integer nbNewShells =0;
-  Standard_Integer nbOldShells =0;
-  TopExp_Explorer aExpShells(theShape,TopAbs_SHELL);
-  for( ; aExpShells.More(); aExpShells.Next())
-    nbNewShells++;
-  for( aExpShells.Init(myInitShape,TopAbs_SHELL); aExpShells.More(); aExpShells.Next())
-    nbOldShells++;
-  return (nbNewShells != nbOldShells);
+  return cmpNbSubShapes( theShape, myInitShape, TopAbs_SHELL ) ||
+         cmpNbSubShapes( theShape, myInitShape, TopAbs_EDGE )  ||
+         cmpNbSubShapes( theShape, myInitShape, TopAbs_VERTEX );
 }
+
 //=======================================================================
 //function : deleteFreeEdges
 //purpose  : 

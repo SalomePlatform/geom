@@ -1,0 +1,52 @@
+/*!
+
+\page transfer_data_page Transfer Data
+
+This operation performs copying of non-topological data
+from one shape to another. The topology of the destination object
+will not change, only non-topological data will be transferred
+(if it is present in the source object). It is possible to transfer
+the following data with this operation:
+<ul>
+<li> <b>Names</b></li>
+<li> <b>Materials</b></li>
+</ul>
+
+To use this operation, select in the Main Menu <b>Operations -> Transfer Data</b>.
+The following dialog box will appear.
+
+\image html transfer_data1.png "Transfer Data Dialog"
+
+In this dialog:
+<ul>
+<li> <b>Source Shape</b> is an object that is a source of non-topological data.</li>
+<li> <b>Destination Shape</b> is a data destination object. </li>
+<li> <b>Type of detection operation</b> allows choosing how to search sub-shapes of the 
+     <b>Source Shape</b> in the <b>Destination Shape</b>. The data are transferred
+     from these corresponding sub-shapes. The following methods are possible:
+    <ul>
+    <li><b>Get In Place</b> - the current implementation of Get In Place algorithm
+        (default value).</li>
+    <li><b>Get In Place (old)</b> - the old implementation of Get In Place
+        algorithm.</li>
+    <li><b>Get In Place By History</b> - Get In Place By History algorithm.</li>
+    </ul>
+</li>
+</ul>
+
+To copy the data click on \b Apply or <b>Apply and Close</b> button. 
+It is possible to see how many names and materials are copied as well as
+the maximum number of names and materials available for copying. This information is
+provided in the following message box:
+
+\image html transfer_data2.png "Transfer Data Information"
+
+<b>TUI Command:</b> <em>geompy.TransferData(ObjectFrom, ObjectTo, FindMethod),</em> 
+<br> where \em ObjectFrom is a data source object, \em ObjectTo is a
+destination object and \em FindMethod is a same shape detection method with
+default value \em GEOM.FSM_GetInPlace.
+
+Our <b>TUI Scripts</b> provide you with useful example of the use of
+\ref swig_TransferData "Transfer Data" functionality.
+ 
+*/

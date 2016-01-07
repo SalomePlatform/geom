@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -330,7 +330,7 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
 void BasicGUI_ArcDlg::SetEditCurrentArgument()
 {
   globalSelection(); // close local selection to clear it
-  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  localSelection( TopAbs_VERTEX );
 
   QPushButton* send = (QPushButton*)sender();
   switch ( getConstructorId() ) {
@@ -580,7 +580,7 @@ void BasicGUI_ArcDlg::ConstructorsClicked( int constructorId )
   }
 
   globalSelection(); // close local contexts, if any
-  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX ); //Select Vertex on All Shapes
+  localSelection( TopAbs_VERTEX ); //Select Vertex on All Shapes
   
   qApp->processEvents();
   updateGeometry();
@@ -621,4 +621,15 @@ void BasicGUI_ArcDlg::addSubshapesToStudy()
   default:
     break;
   }
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BasicGUI_ArcDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myPoint1 << myPoint2 << myPoint3;
+  return res;
 }

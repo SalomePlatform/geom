@@ -1,49 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.0" language="ja" sourcelanguage="en">
-<context>
+  <context>
     <name>@default</name>
     <message>
-        <source>MEN_EXPORTVTK</source>
-        <translation type="unfinished">VTK</translation>
+      <source>MEN_EXPORTVTK</source>
+      <translation>VTKエクスポート</translation>
     </message>
     <message>
-        <source>TOP_EXPORTVTK</source>
-        <translation type="unfinished">Export VTK</translation>
+      <source>TOP_EXPORTVTK</source>
+      <translation>VTKエクスポート</translation>
     </message>
     <message>
-        <source>STB_EXPORTVTK</source>
-        <translation type="unfinished">Export VTK</translation>
+      <source>STB_EXPORTVTK</source>
+      <translation>VTKエクスポート</translation>
     </message>
     <message>
-        <source>MEN_IMPORTVTK</source>
-        <translation type="unfinished">VTK</translation>
+      <source>MEN_IMPORTVTK</source>
+      <translation>VTKインポート</translation>
     </message>
     <message>
-        <source>TOP_IMPORTVTK</source>
-        <translation type="unfinished">Import VTK</translation>
+      <source>TOP_IMPORTVTK</source>
+      <translation>VTKインポート</translation>
     </message>
     <message>
-        <source>STB_IMPORTVTK</source>
-        <translation type="unfinished">Import VTK</translation>
+      <source>STB_IMPORTVTK</source>
+      <translation>VTKインポート</translation>
     </message>
-</context>
-<context>
+  </context>
+  <context>
     <name>VTKPlugin_GUI</name>
     <message>
-        <source>VTK_FILES</source>
-        <translation type="unfinished">VTK files( *.vtk )</translation>
+      <source>VTK_FILES</source>
+      <translation>VTKファイル( *.vtk )</translation>
     </message>
     <message>
-        <source>EXPORT_TITLE</source>
-        <translation type="unfinished">Export VTK</translation>
+      <source>EXPORT_TITLE</source>
+      <translation>VTKエクスポート</translation>
     </message>
-</context>
-<context>
+  </context>
+  <context>
     <name>VTKPlugin_ExportDlg</name>
     <message>
-        <source>DEFLECTION</source>
-        <translation type="unfinished">Deflection</translation>
+      <source>DEFLECTION</source>
+      <translation>たわみ</translation>
     </message>
-</context>
+  </context>
 </TS>

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -1391,4 +1391,39 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::RecomputeObject
   GetOperations()->GetSolver()->ComputeFunction(aLastFunction);
 
   return aGEOMObject._retn();
+}
+
+//=============================================================================
+/*!
+ *  MakeProjectionOnCylinder
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MakeProjectionOnCylinder
+                                   (GEOM::GEOM_Object_ptr theObject,
+                                    CORBA::Double         theRadius,
+                                    CORBA::Double         theStartAngle,
+                                    CORBA::Double         theAngleLength,
+                                    CORBA::Double         theAngleRotation)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the object
+  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+
+  if (anObject.IsNull()) {
+    return aGEOMObject._retn();
+  }
+
+  //Perform the transformation
+  Handle(GEOM_Object) aResObject = GetOperations()->MakeProjectionOnCylinder
+    (anObject, theRadius, theStartAngle, theAngleLength, theAngleRotation);
+
+  if (!GetOperations()->IsDone() || aResObject.IsNull()) {
+    return aGEOMObject._retn();
+  }
+
+  return GetObject(aResObject);
 }

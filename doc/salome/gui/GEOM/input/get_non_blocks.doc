@@ -5,24 +5,45 @@
 
 This operation retrieves all non-block solids and non-quadrangular faces from the selected shape.
 
-A non-block solid is a solid that does not have 6 faces, or has 6 faces, but some of them are not quadrangular.
+A block solid is a solid that has 6 quadrangular faces.
+
+A quadrangular face is a face that has 1 wire with 4 edges. If there are
+more than 4 edges in a single wire and C1 continuity mode is switched on,
+a face is quadrangular if it has 4 bounds of C1 continuity.
+
+All solids and faces from a shape that do not satisfy these conditions are
+returned by this operation.
 
 \image html measures2.png
 
-\b Preview option shows non block solids and faces in the viewer. 
+It is possible to select an \b Object to be explored, to check or uncheck
+<b>Use C1 criterion</b> option and to set the <b>Angular Tolerance</b>
+to check C1 continuity between neighbor edges in a wire.
 
-Press \b Apply or <b>Apply and Close</b> button to publish non block solids and faces in the Object
-Browser under the processed object. Solids and faces are published separately in two groups. 
+\b Preview option shows non-block solids and non-quadrangular faces in the viewer. 
+
+Press \b Apply or <b>Apply and Close</b> button to publish non-block solids
+and non-quadrangular faces in the Object Browser under the processed object.
+Solids and faces are published separately in two groups. 
 
 If no bad sub-shapes have been found, the corresponding warning is shown. 
 
 \image html measures2a.png
 
 \n <b>TUI Command:</b>
-<em>geompy.GetNonBlocks(Compound).</em> Returns a tuple of two GEOM_Objects. 
+<em>geompy.GetNonBlocks(theShape, theIsUseC1 = False, theAngTolerance = 1.e-12).</em> \n
+where \n
+\em theShape is the shape to explore, \n
+\em theIsUseC1 is the flag to check if there are 4 bounds on a face
+    taking into account C1 continuity, \n
+\em theAngTolerance the angular tolerance to check if two neighbor edges are
+    codirectional in the common vertex with this tolerance. This parameter is
+    used only if \em theIsUseC1 is set to True.
 
-The first object is a group of all non block solids; the second object is a group of all non
-quadrangular faces.
+This command returns a tuple of two GEOM_Objects. 
+
+The first object is a group of all non-block solids; the second object is a group
+of all non-quadrangular faces.
 
 See also a \ref tui_get_non_blocks_page "TUI example".
 

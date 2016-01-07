@@ -1,4 +1,4 @@
-// Copyright (C) 2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2014-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,23 @@
 module GEOM
 {
   /*!
+   *  \brief Units of length
+   */
+  enum length_unit
+  {
+    LU_INCH,
+    LU_MILLIMETER,
+    LU_FOOT,
+    LU_MILE,
+    LU_METER,
+    LU_KILOMETER,
+    LU_MILLIINCH,
+    LU_MICROMETER,
+    LU_CENTIMETER,
+    LU_MICROINCH
+  };
+
+  /*!
    *  \brief Interface for STEPPlugin modeling functions.
    */
   interface ISTEPOperations : GEOM::GEOM_IOperations
@@ -34,9 +51,11 @@ module GEOM
      *
      *  \param theObject Shape to be stored in the file.
      *  \param theFileName Name of the file to store the given shape in.
+     *  \param theUnit the length unit.
      */
     void ExportSTEP( in GEOM::GEOM_Object theObject, 
-                     in string            theFileName );
+                     in string            theFileName,
+                     in GEOM::length_unit theUnit);
       
     /*!
      *  \brief Import a shape from the STEP file.

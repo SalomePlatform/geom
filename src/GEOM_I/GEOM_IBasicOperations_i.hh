@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -52,8 +52,10 @@ class GEOM_I_EXPORT GEOM_IBasicOperations_i :
 						 CORBA::Double theY,
 						 CORBA::Double theZ);
 
-   GEOM::GEOM_Object_ptr MakePointOnCurve (GEOM::GEOM_Object_ptr theCurve,
-					   CORBA::Double theParameter);
+   GEOM::GEOM_Object_ptr MakePointOnCurve
+                      (GEOM::GEOM_Object_ptr theCurve,
+					   CORBA::Double         theParameter,
+                       CORBA::Boolean        takeOrientationIntoAccount);
 
    GEOM::GEOM_Object_ptr MakePointOnCurveByLength (GEOM::GEOM_Object_ptr theCurve,
 						   CORBA::Double         theLength,

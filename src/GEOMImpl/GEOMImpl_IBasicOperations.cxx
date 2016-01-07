@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -186,10 +186,11 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointWithReference
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IBasicOperations::makePointOnGeom
                     (Handle(GEOM_Object) theGeomObj,
-                     double theParam1,
-                     double theParam2,
-                     double theParam3,
+                     double              theParam1,
+                     double              theParam2,
+                     double              theParam3,
                      const PointLocation theLocation,
+                     const bool          takeOrientationIntoAccount,
                      Handle(GEOM_Object) theRefPoint)
 {
   SetErrorCode(KO);
@@ -226,6 +227,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::makePointOnGeom
     case PointOn_CurveByParam:
       aPI.SetCurve(aRefFunction);
       aPI.SetParameter(theParam1);
+      aPI.SetTakeOrientationIntoAccount(takeOrientationIntoAccount);
       break;
     case PointOn_CurveByLength:
       aPI.SetCurve(aRefFunction);
@@ -277,7 +279,8 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::makePointOnGeom
     {
     case PointOn_CurveByParam:
       GEOM::TPythonDump(aFunction) << aPoint << " = geompy.MakeVertexOnCurve("
-                                   << theGeomObj << ", " << theParam1 << ")";
+                                   << theGeomObj << ", " << theParam1 << ", "
+                                   << takeOrientationIntoAccount <<  ")";
       break;
     case PointOn_CurveByLength:
       GEOM::TPythonDump(aFunction) << aPoint << " = geompy.MakeVertexOnCurveByLength("
@@ -315,9 +318,12 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::makePointOnGeom
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnCurve
-                            (Handle(GEOM_Object) theCurve, double theParameter)
+                            (Handle(GEOM_Object) theCurve,
+                             double              theParameter,
+                             bool                takeOrientationIntoAccount)
 {
-  return makePointOnGeom(theCurve, theParameter, 0.0, 0.0, PointOn_CurveByParam);
+  return makePointOnGeom(theCurve, theParameter, 0.0, 0.0, PointOn_CurveByParam,
+                         takeOrientationIntoAccount);
 }
 
 //=============================================================================
@@ -344,7 +350,8 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnCurveByLength
                      double              theLength, 
                      Handle(GEOM_Object) theStartPoint)
 {
-  return makePointOnGeom(theCurve, theLength, 0.0, 0.0, PointOn_CurveByLength, theStartPoint);
+  return makePointOnGeom(theCurve, theLength, 0.0, 0.0, PointOn_CurveByLength,
+                         false, theStartPoint);
 }
 
 //=============================================================================

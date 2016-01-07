@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -20,83 +20,16 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <Standard_Stream.hxx>
-
-#include <Basics_OCCTVersion.hxx>
-
 #include <GEOMImpl_PipePathDriver.hxx>
-
-#include <GEOMImpl_IShapesOperations.hxx>
 #include <GEOMImpl_ShapeDriver.hxx>
 #include <GEOMImpl_IPipePath.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
 
-#include <ShapeAnalysis_FreeBounds.hxx>
-#include <ShapeAnalysis_Edge.hxx>
-#include <ShapeFix_Face.hxx>
-#include <ShapeFix_Shell.hxx>
-#include <ShapeFix_Shape.hxx>
-#include <ShapeFix_ShapeTolerance.hxx>
-
-#include <BRep_Tool.hxx>
-#include <BRep_Builder.hxx>
-#include <BRepBuilderAPI_Copy.hxx>
-#include <BRepBuilderAPI_MakeFace.hxx>
-#include <BRepBuilderAPI_MakeWire.hxx>
-#include <BRepBuilderAPI_Sewing.hxx>
-#include <BRepCheck_Analyzer.hxx>
-#include <BRepGProp.hxx>
-#include <BRepOffsetAPI_MakePipe.hxx>
-#include <BRepOffsetAPI_MakePipeShell.hxx>
-
 #include <BRepOffsetAPI_MiddlePath.hxx>
-
-#include <TopAbs.hxx>
-#include <TopExp.hxx>
-#include <TopExp_Explorer.hxx>
-#include <TopoDS.hxx>
-#include <TopoDS_Wire.hxx>
-#include <TopoDS_Edge.hxx>
-#include <TopoDS_Shape.hxx>
-#include <TopoDS_Solid.hxx>
-#include <TopoDS_Shell.hxx>
-#include <TopoDS_Face.hxx>
-#include <TopoDS_Compound.hxx>
-#include <TopTools_SequenceOfShape.hxx>
-#include <TopTools_HSequenceOfShape.hxx>
-#include <TopTools_IndexedDataMapOfShapeShape.hxx>
-#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
-#include <TopTools_ListIteratorOfListOfShape.hxx>
-
-#include <GProp_GProps.hxx>
-
-#include <GeomAPI_ProjectPointOnCurve.hxx>
-#include <GeomAPI_Interpolate.hxx>
-#include <Geom_TrimmedCurve.hxx>
-#include <Geom_Plane.hxx>
-#include <Geom_RectangularTrimmedSurface.hxx>
-#include <Geom_BezierSurface.hxx>
-#include <Geom_Line.hxx>
-#include <Geom_Conic.hxx>
-#include <Geom_BSplineCurve.hxx>
-#include <Geom_BSplineSurface.hxx>
-#include <GeomFill_BSplineCurves.hxx>
-#include <GeomConvert_ApproxCurve.hxx>
-#include <GeomConvert.hxx>
-
-#include <TColgp_SequenceOfPnt.hxx>
-#include <TColgp_HArray1OfPnt.hxx>
-#include <TColgp_Array2OfPnt.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
-
 #include <Precision.hxx>
-
 #include <Standard_NullObject.hxx>
-#include <Standard_TypeMismatch.hxx>
-#include <Standard_ConstructionError.hxx>
-
-#include "utilities.h"
 
 //=======================================================================
 //function : GetID

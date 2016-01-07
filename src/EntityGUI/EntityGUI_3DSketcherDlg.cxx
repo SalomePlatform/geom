@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -60,7 +60,6 @@
 #include <AIS_Trihedron.hxx>
 #include <AIS_AngleDimension.hxx>
 #include <AIS_LengthDimension.hxx>
-#include <AIS_Drawer.hxx>
 #include <Geom_Axis2Placement.hxx>
 #include <Geom_Plane.hxx>
 #include <SelectMgr_Selection.hxx>
@@ -328,7 +327,7 @@ void EntityGUI_3DSketcherDlg::Init()
   myLengthPrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
   myTextPrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
 
-  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+  localSelection(TopAbs_VERTEX);
 
   /* Get setting of step value from file configuration */
   double step = SUIT_Session::session()->resourceMgr()->doubleValue("Geometry", "SettingsGeomStep", 100.0);
@@ -824,7 +823,7 @@ void EntityGUI_3DSketcherDlg::ActivateThisDialog()
   connect(myGeomGUI->getApp()->selectionMgr(),
           SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+  localSelection(TopAbs_VERTEX);
   GEOMBase_Helper::displayPreview(true, false, true, true, myLineWidth);
 }
 

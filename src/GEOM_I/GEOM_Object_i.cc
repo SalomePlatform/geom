@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -36,6 +36,7 @@
 #include <TCollection_AsciiString.hxx>
 #include <TDF_Label.hxx>
 #include <TDF_Tool.hxx>
+#include <TDataStd_ListIteratorOfListOfExtendedString.hxx>
 #include <TopAbs.hxx>
 #include <TopoDS_Iterator.hxx>
 
@@ -156,6 +157,47 @@ GEOM::shape_type GEOM_Object_i::GetMinShapeType()
 GEOM::shape_type GEOM_Object_i::GetMaxShapeType()
 {
   return getMinMaxShapeType( _impl->GetValue(), false );
+}
+
+//================================================================================
+/*!
+ * GetSubShapeName
+ */
+//================================================================================
+
+char* GEOM_Object_i::GetSubShapeName(CORBA::Long subID)
+{
+  CORBA::String_var name("");
+
+  Handle(GEOM_Function) aMainFun = _impl->GetLastFunction();
+  if ( aMainFun.IsNull() ) return name._retn();
+
+  const TDataStd_ListOfExtendedString& aListEntries = aMainFun->GetSubShapeReferences();
+  TDataStd_ListIteratorOfListOfExtendedString anIt( aListEntries );
+  for (; anIt.More(); anIt.Next())
+  {
+    TCollection_AsciiString anEntry = anIt.Value();
+    Handle(GEOM_BaseObject) anObj =
+      GEOM_Engine::GetEngine()->GetObject( _impl->GetDocID(), anEntry.ToCString(), false );
+    if ( anObj.IsNull() ) continue;
+
+    TCollection_AsciiString aSubName = anObj->GetName();
+    if ( aSubName.IsEmpty() ) continue;
+
+    Handle(GEOM_Function) aFun = anObj->GetLastFunction();
+    if ( aFun.IsNull() ) continue;
+  
+    GEOM_ISubShape ISS( aFun );
+    Handle(TColStd_HArray1OfInteger) subIDs = ISS.GetIndices();
+    if ( subIDs.IsNull() || subIDs->Length() != 1 ) continue;
+
+    if ( subIDs->Value( subIDs->Lower() ) == subID )
+    {
+      name = aSubName.ToCString();
+      break;
+    }
+  }
+  return name._retn();
 }
 
 //=============================================================================
@@ -364,15 +406,20 @@ bool GEOM_Object_i::IsShape()
   return !_impl->GetValue().IsNull() && _impl->GetType() != GEOM_MARKER;
 }
 
-bool GEOM_Object_i::IsSame(GEOM::GEOM_Object_ptr other)
+bool GEOM_Object_i::IsSame(GEOM::GEOM_BaseObject_ptr other)
 {
-  TopoDS_Shape thisShape  = _impl->GetValue();
-  TopoDS_Shape otherShape;
-  if ( !CORBA::is_nil( other ) ) {
+  bool result = false;
+
+  GEOM::GEOM_Object_var shapePtr = GEOM::GEOM_Object::_narrow( other );
+  if ( !CORBA::is_nil( shapePtr ) ) {
+    CORBA::String_var entry = shapePtr->GetEntry();
     Handle(GEOM_Object) otherObject = Handle(GEOM_Object)::DownCast
-      ( GEOM_Engine::GetEngine()->GetObject( other->GetStudyID(), other->GetEntry(), false ));
-    if ( !otherObject.IsNull() )
-      otherShape = otherObject->GetValue();
+      ( GEOM_Engine::GetEngine()->GetObject( shapePtr->GetStudyID(), entry, false ));
+    if ( !otherObject.IsNull() ) {
+      TopoDS_Shape thisShape  = _impl->GetValue();
+      TopoDS_Shape otherShape = otherObject->GetValue();
+      result = !thisShape.IsNull() && !otherShape.IsNull() && thisShape.IsSame( otherShape );
+    }
   }
-  return thisShape.IsSame( otherShape );
+  return result;
 }

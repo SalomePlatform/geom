@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -27,10 +27,11 @@
 #include "GEOM_IHealingOperations_i.hh"
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"
+#include "ShHealOper_ModifStats.hxx"
 
-#include "utilities.h"
-#include "OpUtil.hxx"
-#include "Utils_ExceptHandlers.hxx"
+#include <utilities.h>
+#include <OpUtil.hxx>
+#include <Utils_ExceptHandlers.hxx>
 #include <Basics_Utils.hxx>
 
 #include <TColStd_HSequenceOfTransient.hxx>
@@ -316,8 +317,8 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::FillHoles (GEOM::GEOM_Object_pt
  *  Sew
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::Sew (GEOM::GEOM_Object_ptr theObject,
-                                                      CORBA::Double theTolerance)
+GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::Sew (const GEOM::ListOfGO& theObjects,
+                                                      CORBA::Double         theTolerance)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -328,14 +329,13 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::Sew (GEOM::GEOM_Object_ptr theO
   if (theTolerance < 0)
     return aGEOMObject._retn();
 
-  // Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
-  if (anObject.IsNull())
+  //Get the shapes
+  std::list< Handle(GEOM_Object) > aShapes;
+  if (! GetListOfObjectsImpl( theObjects, aShapes ))
     return aGEOMObject._retn();
 
   // Perform
-  Handle(GEOM_Object) aNewObject =
-    GetOperations()->Sew( anObject, theTolerance, false );
+  Handle(GEOM_Object) aNewObject = GetOperations()->Sew( aShapes, theTolerance, false );
   if (!GetOperations()->IsDone() || aNewObject.IsNull())
     return aGEOMObject._retn();
 
@@ -347,8 +347,9 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::Sew (GEOM::GEOM_Object_ptr theO
  *  SewAllowNonManifold
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::SewAllowNonManifold (GEOM::GEOM_Object_ptr theObject,
-                                                                      CORBA::Double theTolerance)
+GEOM::GEOM_Object_ptr
+GEOM_IHealingOperations_i::SewAllowNonManifold (const GEOM::ListOfGO& theObjects,
+                                                CORBA::Double         theTolerance)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -359,14 +360,13 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::SewAllowNonManifold (GEOM::GEOM
   if (theTolerance < 0)
     return aGEOMObject._retn();
 
-  // Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
-  if (anObject.IsNull())
+  //Get the shapes
+  std::list< Handle(GEOM_Object) > aShapes;
+  if (! GetListOfObjectsImpl( theObjects, aShapes ))
     return aGEOMObject._retn();
 
   // Perform
-  Handle(GEOM_Object) aNewObject =
-    GetOperations()->Sew( anObject, theTolerance, true );
+  Handle(GEOM_Object) aNewObject = GetOperations()->Sew( aShapes, theTolerance, true );
   if (!GetOperations()->IsDone() || aNewObject.IsNull())
     return aGEOMObject._retn();
 
@@ -378,20 +378,21 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::SewAllowNonManifold (GEOM::GEOM
  *  RemoveInternalFaces
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::RemoveInternalFaces (GEOM::GEOM_Object_ptr theCompound)
+GEOM::GEOM_Object_ptr
+GEOM_IHealingOperations_i::RemoveInternalFaces (const GEOM::ListOfGO& theSolids)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   // Set a not done flag
   GetOperations()->SetNotDone();
 
-  // Get the object
-  Handle(GEOM_Object) anObject = GetObjectImpl(theCompound);
-  if (anObject.IsNull())
+  // Get the objects
+  std::list< Handle(GEOM_Object) > aShapes;
+  if (! GetListOfObjectsImpl( theSolids, aShapes ))
     return aGEOMObject._retn();
 
   // Perform
-  Handle(GEOM_Object) aNewObject = GetOperations()->RemoveInternalFaces(anObject);
+  Handle(GEOM_Object) aNewObject = GetOperations()->RemoveInternalFaces(aShapes);
   if (!GetOperations()->IsDone() || aNewObject.IsNull())
     return aGEOMObject._retn();
 
@@ -425,6 +426,40 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::DivideEdge (GEOM::GEOM_Object_p
   // Perform
   Handle(GEOM_Object) aNewObject =
     GetOperations()->DivideEdge( anObject, theIndex, theValue, isByParameter );
+  if (!GetOperations()->IsDone() || aNewObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(aNewObject);
+}
+
+//=============================================================================
+/*!
+ *  DivideEdgeByPoint
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr
+GEOM_IHealingOperations_i::DivideEdgeByPoint (GEOM::GEOM_Object_ptr theObject,
+                                              CORBA::Short          theIndex,
+                                              const GEOM::ListOfGO& thePoints)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  // Set a not done flag
+  GetOperations()->SetNotDone();
+
+  // Get the object itself
+  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  if (anObject.IsNull())
+    return aGEOMObject._retn();
+
+  // Get the points
+  std::list< Handle(GEOM_Object) > aPoints;
+  if (! GetListOfObjectsImpl( thePoints, aPoints ))
+    return aGEOMObject._retn();
+
+  // Perform
+  Handle(GEOM_Object) aNewObject =
+    GetOperations()->DivideEdgeByPoint( anObject, theIndex, aPoints );
   if (!GetOperations()->IsDone() || aNewObject.IsNull())
     return aGEOMObject._retn();
 
@@ -473,9 +508,10 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::FuseCollinearEdgesWithinWire
  *  GetFreeBoundary
  */
 //=============================================================================
-CORBA::Boolean GEOM_IHealingOperations_i::GetFreeBoundary ( GEOM::GEOM_Object_ptr theObject,
-                                                            GEOM::ListOfGO_out theClosedWires,
-                                                            GEOM::ListOfGO_out theOpenWires )
+CORBA::Boolean
+GEOM_IHealingOperations_i::GetFreeBoundary ( const GEOM::ListOfGO & theObjects,
+                                             GEOM::ListOfGO_out     theClosedWires,
+                                             GEOM::ListOfGO_out     theOpenWires )
 {
   theClosedWires = new GEOM::ListOfGO;
   theOpenWires = new GEOM::ListOfGO;
@@ -483,14 +519,19 @@ CORBA::Boolean GEOM_IHealingOperations_i::GetFreeBoundary ( GEOM::GEOM_Object_pt
   // Set a not done flag
   GetOperations()->SetNotDone();
 
-  // Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
-  if (anObject.IsNull())
-    return false;
+  // Get the objects
+  Handle(TColStd_HSequenceOfTransient) anObjects = new TColStd_HSequenceOfTransient();
+  for ( size_t i = 0; i < theObjects.length(); ++i )
+  {
+    Handle(GEOM_Object) anObject = GetObjectImpl(theObjects[i]);
+    if (anObject.IsNull())
+      return false;
+    anObjects->Append( anObject );
+  }
 
   Handle(TColStd_HSequenceOfTransient) aClosed = new TColStd_HSequenceOfTransient();
   Handle(TColStd_HSequenceOfTransient) anOpen  = new TColStd_HSequenceOfTransient();
-  bool res = GetOperations()->GetFreeBoundary( anObject, aClosed, anOpen );
+  bool res = GetOperations()->GetFreeBoundary( anObjects, aClosed, anOpen );
 
   if ( !GetOperations()->IsDone() || !res )
     return false;
@@ -594,4 +635,34 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::LimitTolerance (GEOM::GEOM_Obje
     return aGEOMObject._retn();
 
   return GetObject(aNewObject);
+}
+
+//================================================================================
+/*!
+ * \brief Return information on what has been done by the last called healing method
+ */
+//================================================================================
+
+GEOM::ModifStatistics* GEOM_IHealingOperations_i::GetStatistics()
+{
+  const ShHealOper_ModifStats& stats = * GetOperations()->GetStatistics();
+  const std::set< ShHealOper_ModifStats::Datum >& modifs = stats.GetData();
+  std::set< ShHealOper_ModifStats::Datum >::const_iterator modif = modifs.begin();
+
+  GEOM::ModifStatistics_var statsVar = new GEOM::ModifStatistics();
+  statsVar->length( modifs.size() );
+  for ( int i = 0; modif != modifs.end(); ++modif, ++i )
+  {
+    statsVar[ i ].name = modif->myModif.c_str();
+    statsVar[ i ].count = modif->myCount;
+
+    // Cut off "Unknown message invoked with the keyword " at the beginning
+    const char* toRm = "Unknown message invoked with the keyword ";
+    const size_t lenToRm = strlen( toRm );
+    if ( modif->myModif.size() > lenToRm &&
+         modif->myModif.compare( 0, lenToRm, toRm ) == 0 )
+      statsVar[ i ].name = modif->myModif.substr( lenToRm ).c_str();
+  }
+
+  return statsVar._retn();
 }

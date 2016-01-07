@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -33,23 +33,19 @@
 #include "GEOM_IOperations.hxx"
 
 #include "GEOMAlgo_State.hxx"
+#include "GEOMUtils.hxx"
 
-#include <TopoDS_Shape.hxx>
-#include <TopTools_ListOfShape.hxx>
-#include <NCollection_DataMap.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <TColStd_HSequenceOfInteger.hxx>
 
-#include <Handle_Geom_Surface.hxx>
-
-#include <gp_Pnt.hxx>
+#include <Geom_Surface.hxx>
 
 #include <list>
-#include <functional>
 
 class GEOM_Engine;
 class Handle(GEOM_Object);
 class Handle(TColStd_HArray1OfInteger);
+class TopoDS_Shape;
 
 class GEOMImpl_IShapesOperations : public GEOM_IOperations
 {
@@ -85,40 +81,46 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
   Standard_EXPORT Handle(GEOM_Object) MakeFaceWires (std::list<Handle(GEOM_Object)> theWires,
                                                      const bool isPlanarWanted);
 
+  Standard_EXPORT Handle(GEOM_Object) MakeFaceFromSurface
+                                              (Handle(GEOM_Object) theFace,
+                                               Handle(GEOM_Object) theWire);
+                                               
+  Standard_EXPORT Handle(GEOM_Object) MakeFaceWithConstraints (std::list<Handle(GEOM_Object)> theConstraints);
+
   Standard_EXPORT Handle(GEOM_Object) MakeShell (std::list<Handle(GEOM_Object)> theShapes);
 
   Standard_EXPORT Handle(GEOM_Object) MakeSolidShells (std::list<Handle(GEOM_Object)> theShells);
 
   Standard_EXPORT Handle(GEOM_Object) MakeCompound (std::list<Handle(GEOM_Object)> theShapes);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeGlueFaces (Handle(GEOM_Object) theShape,
+  Standard_EXPORT Handle(GEOM_Object) MakeSolidFromConnectedFaces (std::list<Handle(GEOM_Object)> theFacesOrShells,
+                                                                   const Standard_Boolean isIntersect);
+
+  Standard_EXPORT Handle(GEOM_Object) MakeGlueFaces (std::list< Handle(GEOM_Object) >& theShapes,
                                                      const Standard_Real theTolerance,
                                                      const Standard_Boolean doKeepNonSolids);
 
-  //Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetGlueFaces (Handle(GEOM_Object) theShape,
-  //                                                                   const Standard_Real theTolerance);
-
-  Standard_EXPORT Handle(GEOM_Object) MakeGlueFacesByList (Handle(GEOM_Object) theShape,
+  Standard_EXPORT Handle(GEOM_Object) MakeGlueFacesByList (std::list< Handle(GEOM_Object) >& theShapes,
                                                            const Standard_Real theTolerance,
-                                                           std::list<Handle(GEOM_Object)> theFaces,
+                                                           std::list<Handle(GEOM_Object)>& theFaces,
                                                            const Standard_Boolean doKeepNonSolids,
                                                            const Standard_Boolean doGlueAllEdges);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeGlueEdges (Handle(GEOM_Object) theShape,
+  Standard_EXPORT Handle(GEOM_Object) MakeGlueEdges (std::list< Handle(GEOM_Object) >& theShapes,
                                                      const Standard_Real theTolerance);
 
-  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetGlueShapes (Handle(GEOM_Object) theShape,
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetGlueShapes (std::list< Handle(GEOM_Object) >& theShapes,
                                                                       const Standard_Real theTolerance,
                                                                       const TopAbs_ShapeEnum theType);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeGlueEdgesByList (Handle(GEOM_Object) theShape,
+  Standard_EXPORT Handle(GEOM_Object) MakeGlueEdgesByList (std::list< Handle(GEOM_Object) >& theShapes,
                                                            const Standard_Real theTolerance,
-                                                           std::list<Handle(GEOM_Object)> theEdges);
+                                                           std::list<Handle(GEOM_Object)> & theEdges);
 
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetExistingSubObjects(Handle(GEOM_Object)    theShape,
-									     const Standard_Boolean theGroupsOnly);
+                                                                             const Standard_Boolean theGroupsOnly);
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetExistingSubObjects(Handle(GEOM_Object)    theShape,
-									     const Standard_Integer theTypes = All);
+                                                                             const Standard_Integer theTypes = All);
   
   enum ExplodeType {
     EXPLODE_OLD_INCLUDE_MAIN,
@@ -156,6 +158,11 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
 
   Standard_EXPORT TCollection_AsciiString GetShapeTypeString (Handle(GEOM_Object) theShape);
 
+  Standard_EXPORT Standard_Boolean IsSubShapeBelongsTo(Handle(GEOM_Object) theSubObject,
+                                                       const Standard_Integer theSubObjectIndex,
+                                                       Handle(GEOM_Object) theObject,
+                                                       const Standard_Integer theObjectIndex);
+
   Standard_EXPORT Standard_Integer NumberOfSubShapes (Handle(GEOM_Object)    theShape,
                                                       const Standard_Integer theShapeType);
 
@@ -169,8 +176,9 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
                      const Standard_Integer theShapeType);
 
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient)
-    GetSharedShapes (std::list<Handle(GEOM_Object)> theShapes,
-                     const Standard_Integer         theShapeType);
+    GetSharedShapes (std::list<Handle(GEOM_Object)>& theShapes,
+                     const Standard_Integer          theShapeType,
+                     const bool                      theMultiShare = true);
 
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient)
     GetShapesOnPlane (const Handle(GEOM_Object)& theShape,
@@ -293,8 +301,6 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
                                                             Handle(GEOM_Object)    theCenter,
                                                             const Standard_Real    theRadius);
 
-  void GetShapeProperties(const TopoDS_Shape aShape, Standard_Real propertiesArray[], gp_Pnt & aPnt);
-
   Standard_EXPORT Handle(GEOM_Object) GetInPlace (Handle(GEOM_Object) theShapeWhere,
                                                   Handle(GEOM_Object) theShapeWhat);
 
@@ -382,6 +388,87 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
                                        const Handle(GEOM_Object)& theShape,
                                        const Standard_Integer theShapeType,
                                        GEOMAlgo_State theState);
+
+  /*!
+   * \brief Resize the input edge with the new Min and Max parameters.
+   * The input edge parameters range is [0, 1]. If theMin parameter is
+   * negative, the input edge is extended, otherwise it is shrinked by
+   * theMin parameter. If theMax is greater than 1, the edge is extended,
+   * otherwise it is shrinked by theMax parameter
+   * \param theEdge the input edge to be resized
+   * \param theMin the minimal parameter value
+   * \param theMax the maximal parameter value
+   * \retval Handle(GEOM_Object) - newly created edge
+   */
+  Standard_EXPORT Handle(GEOM_Object)
+                            ExtendEdge(const Handle(GEOM_Object)& theEdge,
+                                       const Standard_Real        theMin,
+                                       const Standard_Real        theMax);
+
+  /*!
+   * \brief Resize the input face with the new UMin, UMax, VMin and VMax
+   * parameters. The input face U and V parameters range is [0, 1]. If
+   * theUMin parameter is negative, the input face is extended, otherwise
+   * it is shrinked along U direction by theUMin parameter. If theUMax is
+   * greater than 1, the face is extended, otherwise it is shrinked along
+   * U direction by theUMax parameter. So as for theVMin, theVMax and
+   * V direction of the input face.
+   * \param theFace the input face to be resized
+   * \param theUMin the minimal U parameter value
+   * \param theUMax the maximal U parameter value
+   * \param theVMin the minimal V parameter value
+   * \param theVMax the maximal V parameter value
+   * \retval Handle(GEOM_Object) - newly created face
+   */
+  Standard_EXPORT Handle(GEOM_Object)
+                            ExtendFace(const Handle(GEOM_Object)& theFace,
+                                       const Standard_Real        theUMin,
+                                       const Standard_Real        theUMax,
+                                       const Standard_Real        theVMin,
+                                       const Standard_Real        theVMax);
+  
+  /*!
+   * \brief Make a surface from a face. This function takes some face as
+   * input parameter and creates new GEOM_Object, i.e. topological shape
+   * by extracting underlying surface of the source face and limiting it
+   * by the Umin, Umax, Vmin, Vmax parameters of the source face (in the
+   * parametrical space).
+   * \param theFace the input face
+   * \retval Handle(GEOM_Object) - newly created face
+   */
+  Standard_EXPORT Handle(GEOM_Object)
+                   MakeSurfaceFromFace(const Handle(GEOM_Object) &theFace);
+
+  /*!
+   * \brief Explode a shape into edges sorted in a row from a starting point.
+   * \param theShape - the shape to be exploded on edges.
+   * \param theStartPoint - the starting point.
+   * \return Ordered list of edges sorted in a row from a starting point.
+   */
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient)
+    GetSubShapeEdgeSorted (const Handle(GEOM_Object) &theShape,
+                           const Handle(GEOM_Object) &theStartPoint);
+
+  /*!
+   * \brief Return the list of subshapes that satisfies a certain tolerance
+   * criterion. The user defines the type of shapes to be returned, the
+   * condition and the tolerance value. The operation is defined for
+   * faces, edges and vertices only. E.g. for theShapeType FACE, theCondition
+   * CC_GT and theTolerance 1.e-7 this method returns all faces of theShape
+   * that have tolerances greater then 1.e7.
+   *
+   * \param theShape the shape to be exploded
+   * \param theShapeType the type of shapes to be returned. Can have the
+   *        values FACE, EDGE and VERTEX only.
+   * \param theCondition the condition type.
+   * \param theTolerance the tolerance filter.
+   * \return the list of shapes that satisfy the conditions.
+   */
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetSubShapesWithTolerance
+                     (const Handle(GEOM_Object)            &theShape,
+                      const Standard_Integer                theShapeType,
+                      const GEOMUtils::ComparisonCondition  theCondition,
+                      const Standard_Real                   theTolerance);
 
  private:
   Handle(GEOM_Object) MakeShape (std::list<Handle(GEOM_Object)>      theShapes,
@@ -504,6 +591,16 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
     getObjectsShapesOn(const Handle(GEOM_Object)&                theShape,
                        const Handle(TColStd_HSequenceOfInteger)& theShapeIDs,
                        TCollection_AsciiString &                 theShapeEntries);
+
+  /*!
+   * \brief Explode a shape into edges sorted in a row from a starting point.
+   * \param theShape - the shape to be exploded on edges.
+   * \param theStartPoint - the starting point.
+   * \return Ordered list of edges sorted in a row from a starting point.
+   */
+  Handle(TColStd_HSequenceOfInteger) getSubShapeEdgeSortedIDs
+                                (const Handle(GEOM_Object) &theShape,
+                                 const Handle(GEOM_Object) &theStartPoint);
 
   /*!
    * \brief Select the object created last

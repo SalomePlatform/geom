@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,8 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
+#include <Basics_OCCTVersion.hxx>
 
 #include <GEOMImpl_IMeasureOperations.hxx>
 #include <GEOMImpl_IMeasure.hxx>
@@ -48,6 +50,11 @@
 #include <BRepClass3d_SolidClassifier.hxx>
 #include <BRepClass_FaceClassifier.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
+#include <BRepExtrema_ShapeProximity.hxx>
+#if OCC_VERSION_LARGE > 0x06090000
+#include <BRepExtrema_SelfIntersection.hxx>
+#include <BRepExtrema_MapOfIntegerPackedMapOfInteger.hxx>
+#endif
 #include <BRepGProp.hxx>
 #include <BRepTools.hxx>
 #include <BRep_Tool.hxx>
@@ -56,6 +63,7 @@
 #include <GeomAPI_ProjectPointOnSurf.hxx>
 #include <GeomLProp_CLProps.hxx>
 #include <GeomLProp_SLProps.hxx>
+#include <Geom_Plane.hxx>
 #include <GProp_GProps.hxx>
 #include <GProp_PrincipalProps.hxx>
 #include <ShapeAnalysis.hxx>
@@ -66,9 +74,12 @@
 #include <TopoDS_Edge.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopTools_DataMapIteratorOfDataMapOfIntegerListOfShape.hxx>
+#include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
+
+#include <set>
 
 //=============================================================================
 /*!
@@ -136,6 +147,38 @@ GEOMImpl_IMeasureOperations::ShapeKind GEOMImpl_IMeasureOperations::KindOfShape
     return SK_NO_SHAPE;
   }
   const GEOMAlgo_ShapeInfo& anInfo = aSF.Info();
+
+  // specific processing for some "advandced" objects
+  switch ( geom_type ) {
+  case GEOM_MARKER:
+    // local coordinate systen
+    // (+) geompy.kind.LCS  xc yc zc xx xy xz yx yy yz zx zy zz
+
+    TopoDS_Face aFace = TopoDS::Face( aShape );
+    Handle(Geom_Plane) aPlane = Handle(Geom_Plane)::DownCast( BRep_Tool::Surface( aFace ) );
+    gp_Pnt aC = aPlane->Pln().Location();
+    gp_Ax3 anAx3 = aPlane->Pln().Position();
+
+    theDoubles->Append(aC.X());
+    theDoubles->Append(aC.Y());
+    theDoubles->Append(aC.Z());
+    
+    gp_Dir aD = anAx3.XDirection();
+    theDoubles->Append(aD.X());
+    theDoubles->Append(aD.Y());
+    theDoubles->Append(aD.Z());
+    aD = anAx3.YDirection();
+    theDoubles->Append(aD.X());
+    theDoubles->Append(aD.Y());
+    theDoubles->Append(aD.Z());
+    aD = anAx3.Direction();
+    theDoubles->Append(aD.X());
+    theDoubles->Append(aD.Y());
+    theDoubles->Append(aD.Z());
+
+    SetErrorCode(OK);
+    return SK_LCS;
+  }
 
   // Interprete results
   TopAbs_ShapeEnum aType = anInfo.Type();
@@ -518,35 +561,22 @@ GEOMImpl_IMeasureOperations::ShapeKind GEOMImpl_IMeasureOperations::KindOfShape
           theDoubles->Append(aD.X());
           theDoubles->Append(aD.Y());
           theDoubles->Append(aD.Z());
+
+          if (anInfo.KindOfBounds() != GEOMAlgo_KB_INFINITE)
+          {
+            // (+) geompy.kind.PLANAR  xo yo zo  dx dy dz  nb_edges nb_vertices
+            aKind = SK_PLANAR;
+            
+            theIntegers->Append(anInfo.NbSubShapes(TopAbs_EDGE));
+            theIntegers->Append(anInfo.NbSubShapes(TopAbs_VERTEX));
+          }
         }
         break;
       default:
-        if (anInfo.KindOfShape() == GEOMAlgo_KS_PLANE) {
-          // (+) geompy.kind.PLANAR  xo yo zo  dx dy dz  nb_edges nb_vertices
-
-          aKind = SK_PLANAR;
-
-          gp_Pnt aC = anInfo.Location();
-          theDoubles->Append(aC.X());
-          theDoubles->Append(aC.Y());
-          theDoubles->Append(aC.Z());
-
-          gp_Ax3 anAx3 = anInfo.Position();
-          gp_Dir aD = anAx3.Direction();
-          theDoubles->Append(aD.X());
-          theDoubles->Append(aD.Y());
-          theDoubles->Append(aD.Z());
-
-          theIntegers->Append(anInfo.NbSubShapes(TopAbs_EDGE));
-          theIntegers->Append(anInfo.NbSubShapes(TopAbs_VERTEX));
-        }
-        else {
-          // ??? geompy.kind.FACE  nb_edges nb_vertices _surface_type_id_
-          // (+) geompy.kind.FACE  nb_edges nb_vertices
-
-          theIntegers->Append(anInfo.NbSubShapes(TopAbs_EDGE));
-          theIntegers->Append(anInfo.NbSubShapes(TopAbs_VERTEX));
-        }
+        // ??? geompy.kind.FACE  nb_edges nb_vertices _surface_type_id_
+        // (+) geompy.kind.FACE  nb_edges nb_vertices
+        theIntegers->Append(anInfo.NbSubShapes(TopAbs_EDGE));
+        theIntegers->Append(anInfo.NbSubShapes(TopAbs_VERTEX));
       }
     }
     break;
@@ -1501,10 +1531,10 @@ TCollection_AsciiString GEOMImpl_IMeasureOperations::PrintShapeErrors
 //=============================================================================
 bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
                          (Handle(GEOM_Object)                 theShape,
+                          const SICheckLevel                  theCheckLevel,
                           Handle(TColStd_HSequenceOfInteger)& theIntersections)
 {
   SetErrorCode(KO);
-  bool isGood = false;
 
   if (theIntersections.IsNull())
     theIntersections = new TColStd_HSequenceOfInteger;
@@ -1512,13 +1542,13 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
     theIntersections->Clear();
 
   if (theShape.IsNull())
-    return isGood;
+    return false;
 
   Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
-  if (aRefShape.IsNull()) return isGood;
+  if (aRefShape.IsNull()) return false;
 
   TopoDS_Shape aShape = aRefShape->GetValue();
-  if (aShape.IsNull()) return isGood;
+  if (aShape.IsNull()) return false;
 
   // 0. Prepare data
   TopoDS_Shape aScopy;
@@ -1534,12 +1564,12 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
   //
   BOPAlgo_CheckerSI aCSI; // checker of self-interferences
   aCSI.SetArguments(aLCS);
+  aCSI.SetLevelOfCheck(theCheckLevel);
 
   // 1. Launch the checker
   aCSI.Perform();
   Standard_Integer iErr = aCSI.ErrorStatus();
 
-  isGood = true;
   //
   Standard_Integer aNbS, n1, n2;
   BOPDS_MapIteratorMapOfPassKey aItMPK;
@@ -1563,12 +1593,172 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
 
     theIntersections->Append(anIndices.FindIndex(aS1));
     theIntersections->Append(anIndices.FindIndex(aS2));
-    isGood = false;
   }
 
   if (!iErr) {
     SetErrorCode(OK);
   }
+
+  return theIntersections->IsEmpty();
+}
+
+//=============================================================================
+/*!
+ *  CheckSelfIntersectionsFast
+ */
+//=============================================================================
+bool GEOMImpl_IMeasureOperations::CheckSelfIntersectionsFast
+                         (Handle(GEOM_Object) theShape,
+			  float theDeflection, double theTolerance,
+                          Handle(TColStd_HSequenceOfInteger)& theIntersections)
+{
+  SetErrorCode(KO);
+
+  if (theIntersections.IsNull())
+    theIntersections = new TColStd_HSequenceOfInteger;
+  else
+    theIntersections->Clear();
+
+  if (theShape.IsNull())
+    return false;
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return false;
+
+  TopoDS_Shape aShape = aRefShape->GetValue();
+  if (aShape.IsNull()) return false;
+
+  // Prepare data
+  TopoDS_Shape aScopy;
+
+  GEOMAlgo_AlgoTools::CopyShape(aShape, aScopy);
+  GEOMUtils::MeshShape(aScopy, theDeflection);
+
+  // Map sub-shapes and their indices
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aScopy, anIndices);
+
+#if OCC_VERSION_LARGE > 0x06090000
+  // Checker of fast interferences
+  BRepExtrema_SelfIntersection aTool(aScopy, (theTolerance <= 0.) ? 0.0 : theTolerance);
+
+  // Launch the checker
+  aTool.Perform();
+  
+  const BRepExtrema_MapOfIntegerPackedMapOfInteger& intersections = aTool.OverlapElements();
+  
+  std::set<Standard_Integer> processed;
+  
+  for (BRepExtrema_MapOfIntegerPackedMapOfInteger::Iterator it(intersections); it.More(); it.Next()) {
+    Standard_Integer idxLeft = it.Key();
+    if (processed.count(idxLeft) > 0) continue; // already added
+    processed.insert(idxLeft);
+    const TColStd_PackedMapOfInteger& overlaps = it.Value();
+    for (TColStd_MapIteratorOfPackedMapOfInteger subit(overlaps); subit.More(); subit.Next()) {
+      Standard_Integer idxRight = subit.Key();
+      if (processed.count(idxRight) > 0) continue; // already added
+      const TopoDS_Shape& aS1 = aTool.GetSubShape(idxLeft);
+      const TopoDS_Shape& aS2 = aTool.GetSubShape(idxRight);
+      theIntersections->Append(anIndices.FindIndex(aS1));
+      theIntersections->Append(anIndices.FindIndex(aS2));
+    }
+  }
+
+  if (aTool.IsDone())
+    SetErrorCode(OK);
+#endif
+
+  return theIntersections->IsEmpty();
+}
+
+//=============================================================================
+/*!
+ *  FastIntersect
+ */
+//=============================================================================
+bool GEOMImpl_IMeasureOperations::FastIntersect (Handle(GEOM_Object) theShape1, Handle(GEOM_Object) theShape2,
+                                                 double theTolerance, float theDeflection,
+                                                 Handle(TColStd_HSequenceOfInteger)& theIntersections1,
+                                                 Handle(TColStd_HSequenceOfInteger)& theIntersections2)
+{
+  SetErrorCode(KO);
+  bool isGood = false;
+
+  if (theIntersections1.IsNull())
+    theIntersections1 = new TColStd_HSequenceOfInteger;
+  else
+    theIntersections1->Clear();
+
+  if (theIntersections2.IsNull())
+    theIntersections2 = new TColStd_HSequenceOfInteger;
+  else
+    theIntersections2->Clear();
+
+  if (theShape1.IsNull() || theShape2.IsNull()) {
+    SetErrorCode("Objects have NULL Shape");
+    return isGood;
+  }
+
+  if (theShape1 == theShape2) {
+    SetErrorCode("Objects are equal");
+    return isGood;
+  }
+  Handle(GEOM_Function) aRefShape1 = theShape1->GetLastFunction();
+  Handle(GEOM_Function) aRefShape2 = theShape2->GetLastFunction();
+  if (aRefShape1.IsNull() || aRefShape2.IsNull()) return isGood;
+
+  TopoDS_Shape aShape1 = aRefShape1->GetValue();
+  TopoDS_Shape aShape2 = aRefShape2->GetValue();
+  if (aShape1.IsNull() || aShape2.IsNull()) return isGood;
+
+  // 0. Prepare data
+  TopoDS_Shape aScopy1, aScopy2;
+  GEOMAlgo_AlgoTools::CopyShape(aShape1, aScopy1);
+  GEOMAlgo_AlgoTools::CopyShape(aShape2, aScopy2);
+
+  GEOMUtils::MeshShape(aScopy1, theDeflection);
+  GEOMUtils::MeshShape(aScopy2, theDeflection);
+  //
+  // Map sub-shapes and their indices
+  TopTools_IndexedMapOfShape anIndices1, anIndices2;
+  TopExp::MapShapes(aScopy1, anIndices1);
+  TopExp::MapShapes(aScopy2, anIndices2);
+
+  BOPCol_ListOfShape aLCS1, aLCS2;
+  aLCS1.Append(aScopy1); aLCS2.Append(aScopy2);
+  //
+  BRepExtrema_ShapeProximity aBSP; // checker of fast interferences
+  aBSP.LoadShape1(aScopy1); aBSP.LoadShape2(aScopy2);
+  aBSP.SetTolerance((theTolerance <= 0.) ? 0.0 : theTolerance);
+
+  // 1. Launch the checker
+  aBSP.Perform();
+ 
+  // 2. Get sets of IDs of overlapped faces
+#if OCC_VERSION_LARGE > 0x06090000
+  for (BRepExtrema_MapOfIntegerPackedMapOfInteger::Iterator anIt1 (aBSP.OverlapSubShapes1()); anIt1.More(); anIt1.Next())
+#else
+  for (BRepExtrema_OverlappedSubShapes::Iterator anIt1 (aBSP.OverlapSubShapes1()); anIt1.More(); anIt1.Next())
+#endif
+  {
+    const TopoDS_Shape& aS1 = aBSP.GetSubShape1(anIt1.Key());
+    theIntersections1->Append(anIndices1.FindIndex(aS1));
+  }
+  
+#if OCC_VERSION_LARGE > 0x06090000
+  for (BRepExtrema_MapOfIntegerPackedMapOfInteger::Iterator anIt2 (aBSP.OverlapSubShapes2()); anIt2.More(); anIt2.Next())
+#else
+  for (BRepExtrema_OverlappedSubShapes::Iterator anIt2 (aBSP.OverlapSubShapes2()); anIt2.More(); anIt2.Next())
+#endif
+  {
+    const TopoDS_Shape& aS2 = aBSP.GetSubShape2(anIt2.Key());
+    theIntersections2->Append(anIndices2.FindIndex(aS2));
+  }
+
+  isGood = !theIntersections1->IsEmpty() && !theIntersections1->IsEmpty();
+
+  if (aBSP.IsDone())
+    SetErrorCode(OK);
 
   return isGood;
 }
@@ -1654,9 +1844,11 @@ TCollection_AsciiString GEOMImpl_IMeasureOperations::WhatIs (Handle(GEOM_Object)
 
   try {
     OCC_CATCH_SIGNALS;
-    int iType, nbTypes [TopAbs_SHAPE];
-    for (iType = 0; iType < TopAbs_SHAPE; ++iType)
+    int iType, nbTypes [TopAbs_SHAPE], nbFlatType [TopAbs_SHAPE];
+    for (iType = 0; iType < TopAbs_SHAPE; ++iType) {
       nbTypes[iType] = 0;
+      nbFlatType[iType] = 0;
+    }
     nbTypes[aShape.ShapeType()]++;
 
     TopTools_MapOfShape aMapOfShape;
@@ -1666,12 +1858,16 @@ TCollection_AsciiString GEOMImpl_IMeasureOperations::WhatIs (Handle(GEOM_Object)
 
     TopTools_ListIteratorOfListOfShape itL (aListOfShape);
     for (; itL.More(); itL.Next()) {
-      TopoDS_Iterator it (itL.Value());
+      TopoDS_Shape sp = itL.Value();
+      TopoDS_Iterator it (sp);
       for (; it.More(); it.Next()) {
         TopoDS_Shape s = it.Value();
         if (aMapOfShape.Add(s)) {
           aListOfShape.Append(s);
           nbTypes[s.ShapeType()]++;
+          if ((sp.ShapeType() == TopAbs_COMPOUND) || (sp.ShapeType() == TopAbs_COMPSOLID)) {
+	    nbFlatType[s.ShapeType()]++;
+          }
         }
       }
     }
@@ -1684,7 +1880,23 @@ TCollection_AsciiString GEOMImpl_IMeasureOperations::WhatIs (Handle(GEOM_Object)
     Astr = Astr + " SOLID : " + TCollection_AsciiString(nbTypes[TopAbs_SOLID]) + "\n";
     Astr = Astr + " COMPSOLID : " + TCollection_AsciiString(nbTypes[TopAbs_COMPSOLID]) + "\n";
     Astr = Astr + " COMPOUND : " + TCollection_AsciiString(nbTypes[TopAbs_COMPOUND]) + "\n";
-    Astr = Astr + " SHAPE : " + TCollection_AsciiString(aMapOfShape.Extent());
+    Astr = Astr + " SHAPE : " + TCollection_AsciiString(aMapOfShape.Extent()) + "\n";
+
+    if ((aShape.ShapeType() == TopAbs_COMPOUND) || (aShape.ShapeType() == TopAbs_COMPSOLID)){
+      Astr = Astr + " --------------------- \n Flat content : \n";
+      if (nbFlatType[TopAbs_VERTEX] > 0)
+	Astr = Astr + " VERTEX : " + TCollection_AsciiString(nbFlatType[TopAbs_VERTEX]) + "\n";
+      if (nbFlatType[TopAbs_EDGE] > 0)
+	Astr = Astr + " EDGE : " + TCollection_AsciiString(nbFlatType[TopAbs_EDGE]) + "\n";
+      if (nbFlatType[TopAbs_WIRE] > 0)
+	Astr = Astr + " WIRE : " + TCollection_AsciiString(nbFlatType[TopAbs_WIRE]) + "\n";
+      if (nbFlatType[TopAbs_FACE] > 0)
+	Astr = Astr + " FACE : " + TCollection_AsciiString(nbFlatType[TopAbs_FACE]) + "\n";
+      if (nbFlatType[TopAbs_SHELL] > 0)
+	Astr = Astr + " SHELL : " + TCollection_AsciiString(nbFlatType[TopAbs_SHELL]) + "\n";
+      if (nbFlatType[TopAbs_SOLID] > 0)
+	Astr = Astr + " SOLID : " + TCollection_AsciiString(nbFlatType[TopAbs_SOLID]) + "\n";
+    }
   }
   catch (Standard_Failure) {
     Handle(Standard_Failure) aFail = Standard_Failure::Caught();

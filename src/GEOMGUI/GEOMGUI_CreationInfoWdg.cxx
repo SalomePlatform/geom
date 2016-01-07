@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -21,9 +21,13 @@
 // Author    : Edward AGAPOV (eap)
 
 #include "GEOMGUI_CreationInfoWdg.h"
+ 
+#include "GEOMImpl_Types.hxx"
 
-#include <SalomeApp_Application.h>
 #include <SUIT_Desktop.h>
+#include <SUIT_ResourceMgr.h>
+#include <SUIT_Session.h>
+#include <SalomeApp_Application.h>
 
 #include <QString>
 #include <QLabel>
@@ -38,33 +42,16 @@ GEOMGUI_CreationInfoWdg::GEOMGUI_CreationInfoWdg( SalomeApp_Application* app )
 //:QWidget( app->desktop() )
 {
   setWindowTitle( tr( "CREATION_INFO_TITLE" ) );
-  setObjectName( "geomCreationInformation" );
 
-  QFrame* frame = new QFrame( this );
-
-  QVBoxLayout* myLayout = new QVBoxLayout( this );
-  myLayout->addWidget( frame );
-  myLayout->setMargin(0);
-
-  QGroupBox* operationGB = new QGroupBox( tr( "OPERATION" ), frame );
-
-  myIconLbl      = new QLabel( operationGB );
-  myOperaionLnEd = new QLineEdit( operationGB );
-  myOperaionLnEd->setReadOnly( true );
-  myParamsTreeWd = new QTreeWidget( frame );
+  myParamsTreeWd = new QTreeWidget( this );
   myParamsTreeWd->setColumnCount( 2 );
   myParamsTreeWd->setHeaderLabels( QStringList() << tr( "PARAMETER" ) << tr( "VALUE" ) );
   myParamsTreeWd->header()->setStretchLastSection( true );
   myParamsTreeWd->header()->setResizeMode( 0, QHeaderView::ResizeToContents );
 
-  QHBoxLayout* operationLay = new QHBoxLayout( operationGB );
-  operationLay->addWidget( myIconLbl );
-  operationLay->addWidget( myOperaionLnEd );
-  operationLay->setMargin(5);
-
-  QVBoxLayout* aLayout = new QVBoxLayout( frame );
-  aLayout->addWidget( operationGB );
+  QVBoxLayout* aLayout = new QVBoxLayout( this );
   aLayout->addWidget( myParamsTreeWd );
+  aLayout->setMargin(11);
 
   // get a free dockable window id
   myWindowID = 10;
@@ -73,18 +60,25 @@ GEOMGUI_CreationInfoWdg::GEOMGUI_CreationInfoWdg( SalomeApp_Application* app )
   ++myWindowID; // pb when a GEOM is a sole module: CreationInfoWdg replaces Python console
 }
 
-void GEOMGUI_CreationInfoWdg::setOperation(const QPixmap& icon, const QString& name)
-{
-  myIconLbl->setPixmap( icon );
-  myOperaionLnEd->setText( name );
-
-  if ( name.isEmpty() )
-    myOperaionLnEd->setText( tr("NO_INFO"));
-}
-
-void GEOMGUI_CreationInfoWdg::addParam (const QString& name, const QString& value)
+QTreeWidgetItem* GEOMGUI_CreationInfoWdg::addOperation(const QPixmap& icon, const QString& name)
 {
   QTreeWidgetItem* item = new QTreeWidgetItem( myParamsTreeWd );
+
+  item->setIcon( 0, icon );
+  item->setText( 0, name );
+  if ( name.isEmpty() )
+    item->setText( 0, tr("NO_INFO"));
+
+  item->setExpanded( true );
+
+  return item;
+}
+
+void GEOMGUI_CreationInfoWdg::addParam (QTreeWidgetItem* operation,
+                                        const QString&   name,
+                                        const QString&   value)
+{
+  QTreeWidgetItem* item = new QTreeWidgetItem( operation );
 
   //item->setFlags( Qt::NoItemFlags );
   item->setExpanded( true );
@@ -95,12 +89,67 @@ void GEOMGUI_CreationInfoWdg::addParam (const QString& name, const QString& valu
 
 void GEOMGUI_CreationInfoWdg::clear()
 {
-  myIconLbl->setPixmap( QPixmap() );
-  myOperaionLnEd->setText( "" );
   myParamsTreeWd->clear();
 }
 
 GEOMGUI_CreationInfoWdg::~GEOMGUI_CreationInfoWdg()
 {
   //std::cout<<"~GEOMGUI_CreationInfoWdg"<<std::endl;
+}
+
+void GEOMGUI_CreationInfoWdg::setInfo( GEOM::CreationInformationSeq& info )
+{
+  clear();
+
+  QPixmap icon;
+  QString operationName;
+
+  try
+  {
+    if ( &info && info.length() > 0 )
+    {
+      SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+      for ( int j = 0, nb = info.length(); j < nb; ++j )
+      {
+        QString name = info[j].operationName.in();
+        if ( !name.isEmpty() )
+        {
+          // get plugin_name if any
+          QString plugin_name;
+          for ( size_t i = 0; i < info[j].params.length(); ++i )
+          {
+            QString value = info[j].params[i].name.in();
+            if ( value == PLUGIN_NAME )
+              plugin_name = info[j].params[i].value.in();
+          }
+          // get icon
+          QString prefix = plugin_name.isEmpty() ? "GEOM" : plugin_name;
+          if ( name.startsWith( "Import"))
+            icon = resMgr->loadPixmap( "GEOM", tr("ICO_IMPORT_SHAPE"), true );
+          else
+            icon = resMgr->loadPixmap( prefix, tr( ("ICO_"+name).toLatin1().constData() ), false );
+
+          // translate operation name
+          operationName = tr( ("MEN_"+name).toLatin1().constData() );
+          if ( operationName.startsWith( "MEN_" ))
+            operationName = name; // no translation
+
+          QTreeWidgetItem* operation = addOperation( icon, operationName );
+
+          // add parameters
+          for ( size_t i = 0; i < info[j].params.length(); ++i )
+            addParam( operation,
+                      info[j].params[i].name.in(),
+                      info[j].params[i].value.in() );
+        }
+      }
+    }
+    else
+    {
+      addOperation( icon, operationName );
+    }
+  }
+  catch (...)
+  {
+  }
 }

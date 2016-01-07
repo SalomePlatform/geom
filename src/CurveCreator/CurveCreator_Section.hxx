@@ -1,9 +1,9 @@
-// Copyright (C) 2013  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2013-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -24,11 +24,13 @@
 #define _CurveCreator_Section_HeaderFile
 
 #include "CurveCreator.hxx"
+#include "CurveCreator_ICurve.hxx"
 
 #include <string>
 
 //! Structure to store sections representing the CurveCreator_Curve object
-struct CurveCreator_Section
+struct CURVECREATOR_EXPORT CurveCreator_Section :
+  public CurveCreator_ISection
 {
   //! Constructor. Initializes object with default values.
   CurveCreator_Section() : myName("Section"),myType(CurveCreator::Polyline), myIsClosed(false)
@@ -39,6 +41,8 @@ struct CurveCreator_Section
   CurveCreator::SectionType myType;     //!< type of the section
   bool                      myIsClosed; //!< closed or not
 
+  //! A virtual method.
+  void GetDifferentPoints(const int theDimension, Handle(TColgp_HArray1OfPnt)& thePoints) const;
 };
 
 #endif

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -207,6 +207,29 @@ Handle(TColStd_HSequenceOfTransient) GEOM_IOperations_i::GetListOfObjectsImpl
   }
 
   return aResult;
+}
+
+//=======================================================================
+//function : GetListOfObjectsImpl
+//purpose  : 
+//=======================================================================
+
+bool GEOM_IOperations_i::GetListOfObjectsImpl(const GEOM::ListOfGO&             theObjects,
+                                              std::list< Handle(GEOM_Object) >& theList)
+{
+  int i;
+  int aNbObj = theObjects.length();
+
+  for (i = 0; i < aNbObj; i++) {
+    Handle(GEOM_Object) anObj = GetObjectImpl(theObjects[i]);
+
+    if (anObj.IsNull())
+      return false;
+
+    theList.push_back(anObj);
+  }
+
+  return true;
 }
 
 //=============================================================================

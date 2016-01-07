@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -29,7 +29,7 @@
 
 #include <GEOMBase_Skeleton.h>
 
-class DlgRef_1SelExt;
+class DlgRef_2SelExt;
 class SalomeApp_DoubleSpinBox;
 class QButtonGroup;
 
@@ -50,7 +50,9 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );
-  
+  virtual void                       addSubshapesToStudy();
+  virtual QList<GEOM::GeomObjPtr>    getSourceObjects();
+
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
@@ -58,13 +60,16 @@ private:
   
   bool                               getIsByParameter() const;
   int                                myIndex;
-  
+
 private:
   GEOM::GEOM_Object_var              myObject;
-  
-  DlgRef_1SelExt*                    GroupPoints;
+  QList<GEOM::GeomObjPtr>            myPoints;
+  bool                               myProjectionOK;
+
+  DlgRef_2SelExt*                    GroupPoints;
   QButtonGroup*                      myIsParameterGr;
   SalomeApp_DoubleSpinBox*           myValEdt;
+  QLabel*                            myValLbl;
 
 protected slots:
   void                               ClickOnOk();
@@ -76,6 +81,7 @@ protected slots:
   void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
+  void                               ConstructorsClicked( int );
 };
 
 #endif // REPAIRGUI_DIVIDEEDGEDLG_H

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -30,6 +30,9 @@
 #include "GEOMBase_Skeleton.h"
 #include "GEOM_GenericObjPtr.h"
 
+typedef std::map<QString, QList<GEOM::GeomObjPtr> > ObjectMap;
+
+
 class DlgRef_3Sel1Check;
 class DlgRef_3Sel2Check3Spin;
 
@@ -52,10 +55,20 @@ protected:
   virtual bool                       execute( ObjectList& );    
   virtual void                       addSubshapesToStudy();
   virtual bool                       extractPrefix() const;
+  virtual void                       restoreSubShapes
+                                 (SALOMEDS::Study_ptr, SALOMEDS::SObject_ptr);
+  virtual QList<GEOM::GeomObjPtr>    getSourceObjects();
 
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
+  void                               updateGenGroup();
+  void                               resetGenGroup
+                                        (QCheckBox *theGenGroup,
+                                         const bool isChecked,
+                                         const bool isClearPrefix);
+  void                               addGroups
+                                      (GEOM::ListOfGO_var &theResult);
   
 private:
   QList<GEOM::GeomObjPtr>            myBaseObjects;  /* Base shapes */
@@ -65,6 +78,14 @@ private:
   
   DlgRef_3Sel1Check*                 GroupPoints;
   DlgRef_3Sel2Check3Spin*            GroupMakePoints;
+  QCheckBox                         *myGenGroupCheckGP;
+  QLabel                            *myPrefixLblGP;
+  QLineEdit                         *myPrefixEditGP;
+  QCheckBox                         *myStepByStepCheckGMP;
+  QCheckBox                         *myGenGroupCheckGMP;
+  QLabel                            *myPrefixLblGMP;
+  QLineEdit                         *myPrefixEditGMP;
+  ObjectMap                          myGroupObjectsMap;
 
 private slots:
   void                               ClickOnOk();
@@ -74,6 +95,8 @@ private slots:
   void                               SetEditCurrentArgument();
   void                               ConstructorsClicked( int );
   void                               SelectionTypeButtonClicked();
+  void                               GenGroupClicked(bool);
+  void                               StepByStepClicked(bool);
 };
 
 #endif // GENERATIONGUI_PIPEDLG_H

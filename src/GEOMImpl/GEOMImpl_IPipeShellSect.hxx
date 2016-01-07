@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -22,16 +22,12 @@
 #ifndef _GEOMImpl_IPIPESHELLSECT_HXX_
 #define _GEOMImpl_IPIPESHELLSECT_HXX_
 
-#include "GEOM_Function.hxx"
 
-#ifndef _GEOMImpl_IPIPEDIFFSECT_HXX_
 #include "GEOMImpl_IPipeDiffSect.hxx"
-#endif
-
+#include "GEOM_Function.hxx"
 #include <TColStd_HSequenceOfTransient.hxx>
 
-#define PIPEDS_LIST_SUBBASES 6
-
+// Position definitions are declared in the base class GEOMImpl_IPipe.
 
 class GEOMImpl_IPipeShellSect : public GEOMImpl_IPipeDiffSect
 {

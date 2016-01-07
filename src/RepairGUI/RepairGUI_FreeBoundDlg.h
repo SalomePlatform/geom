@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -53,7 +53,8 @@ protected:
   virtual bool                          execute (ObjectList&);
   virtual GEOM::GEOM_Object_ptr         getFather (GEOM::GEOM_Object_ptr);
   virtual QString                       getNewObjectName (int CurrObj = -1) const; 
-                                                                                  
+  virtual QList<GEOM::GeomObjPtr>       getSourceObjects();
+
 private:
   void                                  Init();
   void                                  enterEvent (QEvent*);

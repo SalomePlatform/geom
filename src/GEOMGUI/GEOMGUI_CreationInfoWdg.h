@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,16 @@
 
 #include "GEOM_GEOMGUI.hxx"
 
+#include <SALOMEconfig.h>
+#include CORBA_SERVER_HEADER(GEOM_Gen)
+
 #include <QWidget>
 
-class QString;
 class QLabel;
 class QLineEdit;
+class QString;
 class QTreeWidget;
+class QTreeWidgetItem;
 class SalomeApp_Application;
 
 /*!
@@ -46,16 +50,18 @@ class GEOMGUI_EXPORT GEOMGUI_CreationInfoWdg : public QWidget
   GEOMGUI_CreationInfoWdg( SalomeApp_Application* app );
   ~GEOMGUI_CreationInfoWdg();
 
-  int getWinID() { return myWindowID; }
-
+  void setInfo( GEOM::CreationInformationSeq& info );
   void clear();
-  void setOperation(const QPixmap& icon, const QString& name);
-  void addParam    (const QString& name, const QString& value);
+
+  int getWinID() { return myWindowID; }
 
  private:
 
-  QLabel*      myIconLbl;
-  QLineEdit*   myOperaionLnEd;
+  QTreeWidgetItem* addOperation(const QPixmap& icon, const QString& name);
+  void addParam (QTreeWidgetItem* operation, const QString& name, const QString& value);
+
+ QLabel*      myIconLbl;
+  //QLineEdit*   myOperaionLnEd;
   QTreeWidget* myParamsTreeWd;
   int          myWindowID;
 

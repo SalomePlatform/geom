@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -29,6 +29,10 @@
 #include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
+#include <GEOMUtils.hxx>
+#ifndef DISABLE_PLOT2DVIEWER
+  #include <MeasureGUI_ShapeStatisticsDlg.h>
+#endif
 
 #include <OCCViewer_ViewModel.h>
 #include <SVTK_ViewModel.h>
@@ -36,6 +40,7 @@
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 #include <SALOME_ListIO.hxx>
+#include <SUIT_MessageBox.h>
 
 #include <SUIT_Desktop.h>
 #include <SUIT_ResourceMgr.h>
@@ -51,9 +56,65 @@
 
 #include <TColStd_IndexedMapOfInteger.hxx>
 
-#include <QMessageBox>
-
 #include <GEOMImpl_Types.hxx>
+
+namespace
+{
+  const char* const ShapeTypes [] = {
+    "Compound",
+    "Compsolid",
+    "Solid",
+    "Shell",
+    "Face",
+    "Wire",
+    "Edge",
+    "Vertex",
+    "Shape",
+    "Flat"
+  };
+
+  enum { Filter_LT, Filter_LE, Filter_GT, Filter_GE };
+
+  unsigned int NumberOfSubShapes(const TopoDS_Shape& S, const int shapeType, TopTools_MapOfShape& M)
+  {
+    unsigned int index = 0;
+
+    if (!S.IsNull()) {
+      if (S.ShapeType() == TopAbs_COMPOUND &&
+          (shapeType == TopAbs_SHAPE || shapeType == TopAbs_FLAT || shapeType == TopAbs_COMPOUND)) {
+        TopoDS_Iterator It(S, Standard_True, Standard_True);
+        for (; It.More(); It.Next()) {
+          TopoDS_Shape SS = It.Value();
+          if (M.Add(SS)) {
+            if (shapeType == TopAbs_FLAT) {
+              if (SS.ShapeType() != TopAbs_COMPOUND)
+                index++;
+              else
+                index += NumberOfSubShapes(SS, shapeType, M);
+            }
+            else if (shapeType == TopAbs_SHAPE || shapeType == SS.ShapeType()) {
+              index++;
+            }
+          }
+        }
+      }
+      else {
+        TopExp_Explorer Exp (S, TopAbs_ShapeEnum(shapeType));
+        for (; Exp.More(); Exp.Next()) {
+          if (M.Add(Exp.Current())) {
+            index++;
+          }
+        }
+      }
+    }
+    return index;
+  }
+  unsigned int NumberOfSubShapes(const TopoDS_Shape& S, const int shapeType)
+  {
+    TopTools_MapOfShape M;
+    return NumberOfSubShapes(S, shapeType, M);
+  }
+}
 
 //=================================================================================
 // class    : EntityGUI_SubShapeDlg
@@ -66,7 +127,6 @@ EntityGUI_SubShapeDlg::EntityGUI_SubShapeDlg(GeometryGUI* theGeometryGUI, QWidge
                                               bool modal, Qt::WindowFlags fl)
   : GEOMBase_Skeleton(theGeometryGUI, parent, modal, fl),
     myDmMode( -1 ),
-    myWithShape(true),
     myIsHiddenMain(false)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_SUBSHAPE")));
@@ -94,9 +154,40 @@ EntityGUI_SubShapeDlg::EntityGUI_SubShapeDlg(GeometryGUI* theGeometryGUI, QWidge
   GroupPoints->PushButton4->setText(tr("SHOW_ALL_SUB_SHAPES"));
   GroupPoints->LineEdit1->setReadOnly(true);
 
+  //filter group
+
+  myFilterGrp = new QGroupBox(tr("GEOM_FILTER"), centralWidget());
+  myLessFilterCheck = new QCheckBox(myFilterGrp);
+  myLessFilterCombo = new QComboBox(myFilterGrp);
+  myLessFilterCombo->addItem( tr("GEOM_LESS_THAN"), Filter_LT );
+  myLessFilterCombo->addItem( tr("GEOM_LESSOREQUAL_THAN"), Filter_LE );
+  myGreaterFilterCheck = new QCheckBox(myFilterGrp);
+  myGreaterFilterCombo = new QComboBox(myFilterGrp);
+  myGreaterFilterCombo->addItem( tr("GEOM_GREAT_THAN"), Filter_GT );
+  myGreaterFilterCombo->addItem( tr("GEOM_GREATOREQUAL_THAN"), Filter_GE );
+  myLessFilterSpin = new SalomeApp_DoubleSpinBox(myFilterGrp);
+  myGreaterFilterSpin = new SalomeApp_DoubleSpinBox(myFilterGrp);
+  myApplyFilterButton = new QPushButton(tr("GEOM_BUT_APPLY"), myFilterGrp);
+#ifndef DISABLE_PLOT2DVIEWER
+  myPlotDistributionButton = new QPushButton(tr("GEOM_PLOT_DISTRIBUTION"), myFilterGrp);
+#endif
+
+  QGridLayout* filterLayout = new QGridLayout(myFilterGrp);
+  filterLayout->addWidget(myLessFilterCheck,    0, 0);
+  filterLayout->addWidget(myLessFilterCombo,    0, 1);
+  filterLayout->addWidget(myLessFilterSpin,     0, 2);
+  filterLayout->addWidget(myGreaterFilterCheck, 1, 0);
+  filterLayout->addWidget(myGreaterFilterCombo, 1, 1);
+  filterLayout->addWidget(myGreaterFilterSpin,  1, 2);
+  filterLayout->addWidget(myApplyFilterButton,  0, 3);
+#ifndef DISABLE_PLOT2DVIEWER
+  filterLayout->addWidget(myPlotDistributionButton,  1, 3);
+#endif
+
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
   layout->addWidget(GroupPoints);
+  layout->addWidget(myFilterGrp);
   /***************************************************************/
 
   setIsOptimizedBrowsing(true);
@@ -128,23 +219,24 @@ EntityGUI_SubShapeDlg::~EntityGUI_SubShapeDlg()
 //=================================================================================
 void EntityGUI_SubShapeDlg::Init()
 {
+  // Get setting of step value from file configuration
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  double step = resMgr->doubleValue("Geometry", "SettingsGeomStep", 100);
+
+  // min, max, step and decimals for spin boxes
+  initSpinBox(myLessFilterSpin, 0., COORD_MAX, step, "length_precision" );
+  initSpinBox(myGreaterFilterSpin, 0., COORD_MAX, step, "length_precision" );
+  myLessFilterSpin->setValue( 0. );
+  myGreaterFilterSpin->setValue( 0. );
+
   /* init variables */
   myDmMode = -1;
   myEditCurrentArgument = GroupPoints->LineEdit1;
   myObject = GEOM::GEOM_Object::_nil();
 
-  myWithShape = true;
-
   /* type for sub-shape selection */
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Compound");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Compsolid");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Solid");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Shell");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Face");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Wire");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Edge");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Vertex");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Shape");
+  for ( int i = 0; i <= (int)GEOM::FLAT; i++ )
+    GroupPoints->ComboBox1->addItem(ShapeTypes[i], i);
 
   if (SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType()
       != OCCViewer_Viewer::Type())
@@ -166,12 +258,21 @@ void EntityGUI_SubShapeDlg::Init()
   connect(GroupPoints->PushButton3, SIGNAL(clicked()), this, SLOT(showOnlySelected()));
   connect(GroupPoints->PushButton4, SIGNAL(clicked()), this, SLOT(showOnlySelected()));
 
+  connect(myApplyFilterButton, SIGNAL(clicked()),         this, SLOT(ClickOnOkFilter()));
+#ifndef DISABLE_PLOT2DVIEWER
+  connect(myPlotDistributionButton, SIGNAL(clicked()),    this, SLOT(ClickOnPlot()));
+#endif
+  connect(myLessFilterCheck,   SIGNAL(stateChanged(int)), this, SLOT(MeasureToggled()));
+  connect(myGreaterFilterCheck,   SIGNAL(stateChanged(int)), this, SLOT(MeasureToggled()));
+
   connect(myGeomGUI->getApp()->selectionMgr(),
           SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   updateButtonState();
   resize(100,100);
   SelectionIntoArgument();
+  SubShapeToggled();
+  MeasureToggled();
 }
 
 //=================================================================================
@@ -223,18 +324,17 @@ void EntityGUI_SubShapeDlg::ClickOnOk()
     /* More than 30 sub-shapes : ask confirmation */
     unsigned int nb = NumberOfSubShapes(myShape, shapeType());
     if (nb > 30) {
-      const QString caption = tr("GEOM_CONFIRM");
-      const QString text = tr("GEOM_CONFIRM_INFO").arg(nb);
-      const QString button0 = tr("GEOM_BUT_EXPLODE");
-      const QString button1 = tr("GEOM_BUT_CANCEL");
-
-      if (QMessageBox::warning(this, caption, text, button0, button1) != 0)
+      if (SUIT_MessageBox::question( this,
+                                     tr("GEOM_CONFIRM"),
+                                     tr("GEOM_CONFIRM_INFO").arg(nb),
+                                     tr("GEOM_BUT_EXPLODE"),
+                                     tr("GEOM_BUT_CANCEL") ) != 0 )
         isOk = false;  /* aborted */
     }
   }
 
   if (isOk)
-    isOk = onAccept();
+    isOk = onAccept( true, true, false );
 
   if (isOk)
     ClickOnCancel();
@@ -253,12 +353,11 @@ bool EntityGUI_SubShapeDlg::ClickOnApply()
     /* More than 30 sub-shapes : ask confirmation */
     unsigned int nb = NumberOfSubShapes(myShape, shapeType());
     if (nb > 30) {
-      const QString caption = tr("GEOM_CONFIRM");
-      const QString text = tr("GEOM_CONFIRM_INFO").arg(nb);
-      const QString button0 = tr("GEOM_BUT_EXPLODE");
-      const QString button1 = tr("GEOM_BUT_CANCEL");
-
-      if (QMessageBox::warning(this, caption, text, button0, button1) != 0)
+      if (SUIT_MessageBox::question( this,
+                                     tr("GEOM_CONFIRM"),
+                                     tr("GEOM_CONFIRM_INFO").arg(nb),
+                                     tr("GEOM_BUT_EXPLODE"),
+                                     tr("GEOM_BUT_CANCEL") ) != 0 )
         return false;  /* aborted */
     }
   }
@@ -282,6 +381,8 @@ void EntityGUI_SubShapeDlg::SelectionIntoArgument()
   if (!isAllSubShapes())
     return;
 
+  int currentType = GroupPoints->ComboBox1->itemData( GroupPoints->ComboBox1->currentIndex() ).toInt();
+
   ResetStateOfDialog();
 
   QString aString = ""; /* name of selection */
@@ -291,87 +392,47 @@ void EntityGUI_SubShapeDlg::SelectionIntoArgument()
   aSelMgr->selectedObjects(aSelList);
 
   int nbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aString, true);
-  if (nbSel != 1)
-    return;
-
-  Handle(SALOME_InteractiveObject) IO = aSelList.First();
-  if (!IO->hasEntry()) {
-    SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
-    updateButtonState();
-    return;
-  }
-
-  if (myIsHiddenMain) {
-    GEOM_Displayer* aDisplayer = getDisplayer();
-    aDisplayer->Display(myObject);
-    myIsHiddenMain = false;
-  }
-
-  TopoDS_Shape S = GEOMBase::GetTopoFromSelection(aSelList);
-  if (S.IsNull() || S.ShapeType() == TopAbs_VERTEX) {
-    myObject = GEOM::GEOM_Object::_nil();
-    updateButtonState();
-    return;
-  }
-
-  myObject = GEOMBase::ConvertIOinGEOMObject(IO);
-  if (myObject->_is_nil()) {
-    updateButtonState();
-    return;
-  }
-
-  myShape = S;
-  GroupPoints->LineEdit1->setText(aString);
-
-  int SelectedShapeType = GroupPoints->ComboBox1->currentIndex();
-  int count = GroupPoints->ComboBox1->count();
-
-  if (myWithShape)
-    count = count - 1;
-
-  int i = 0;
-  // Solving PAL5590
-  if (myShape.ShapeType() == TopAbs_COMPOUND) {
-    unsigned int nb = NumberOfSubShapes(myShape, TopAbs_COMPOUND);
-    if (nb > 0)
-      i++;
-  }
-  while (i <= myShape.ShapeType()) {
-    GroupPoints->ComboBox1->removeItem(0);
-    i++;
-  }
-
-  if (myShape.ShapeType() == TopAbs_COMPOUND) {
-    if (myWithShape == false) {
-      GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Shape");
-      myWithShape = true;
+  if (nbSel == 1) {
+    Handle(SALOME_InteractiveObject) IO = aSelList.First();
+    if (!IO->hasEntry()) {
+      SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
     }
-  }
-  else {
-    if (myWithShape == true) {
-      GroupPoints->ComboBox1->removeItem(GroupPoints->ComboBox1->count() - 1);
-      myWithShape = false;
-    }
-  }
-
-  int count1 = GroupPoints->ComboBox1->count();
-  if (myWithShape)
-    count1 = count1 - 1;
-
-  if (SelectedShapeType > myShape.ShapeType()) {
-    if (SelectedShapeType == 8) {
-      if (myShape.ShapeType() != TopAbs_COMPOUND) {
-        GroupPoints->ComboBox1->setCurrentIndex(0);
-        ComboTextChanged();
+    else {
+      TopoDS_Shape S = GEOMBase::GetTopoFromSelection(aSelList);
+      if (S.IsNull() || S.ShapeType() == TopAbs_VERTEX) {
+        myObject = GEOM::GEOM_Object::_nil();
       }
-    }
-    else
-      GroupPoints->ComboBox1->setCurrentIndex(count1 - count + SelectedShapeType);
-  }
-  else {
-    GroupPoints->ComboBox1->setCurrentIndex(0);
-    ComboTextChanged();
-  }
+      else {
+        myObject = GEOMBase::ConvertIOinGEOMObject(IO);
+        if (!CORBA::is_nil(myObject)) {
+          myShape = S;
+          GroupPoints->LineEdit1->setText(aString);
+          int i = 0;
+          // Solving PAL5590
+          if (myShape.ShapeType() == TopAbs_COMPOUND) {
+            unsigned int nb = NumberOfSubShapes(myShape, TopAbs_COMPOUND);
+            if (nb > 0)
+              i++;
+          }
+          while (i <= myShape.ShapeType()) {
+            GroupPoints->ComboBox1->removeItem(0);
+            i++;
+          }
+          // remove Shape and Flat types for non-compound shapes
+          if (myShape.ShapeType() != TopAbs_COMPOUND) {
+            int idx = GroupPoints->ComboBox1->findData( (int)GEOM::SHAPE );
+            if ( idx != -1 ) GroupPoints->ComboBox1->removeItem( idx );
+            idx = GroupPoints->ComboBox1->findData( (int)GEOM::FLAT );
+            if ( idx != -1 ) GroupPoints->ComboBox1->removeItem( idx );
+          } // if (myShape.ShapeType() != TopAbs_COMPOUND)
+        } // if (!CORBA::is_nil(myObject))
+      } // if (S.IsNull() || S.ShapeType() == TopAbs_VERTEX)
+    } // if (!IO->hasEntry()) ... else
+  } // if (nbSel == 1)
+
+  int idx = GroupPoints->ComboBox1->findData( currentType );
+  if ( idx != -1 )
+    GroupPoints->ComboBox1->setCurrentIndex( idx );
 
   updateButtonState();
 }
@@ -420,29 +481,10 @@ void EntityGUI_SubShapeDlg::ResetStateOfDialog()
   myShape.Nullify();
   myEditCurrentArgument->setText("");
 
-  int SelectedShapeType = GroupPoints->ComboBox1->currentIndex();
-  int count = GroupPoints->ComboBox1->count();
-  if (myWithShape)
-    count = count - 1;
-
   /* type for sub-shape selection */
   GroupPoints->ComboBox1->clear();
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Compound");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Compsolid");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Solid");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Shell");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Face");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Wire");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Edge");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Vertex");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Shape");
-
-  myWithShape = true;
-
-  GroupPoints->ComboBox1->setCurrentIndex(8 - count + SelectedShapeType);
-
-  // to avoid recursion: SelectionIntoArgument->ResetStateOfDialog->ComboTextChanged->SubShapeToggled->activateSelection->(currentSelectionChanged)->SelectionIntoArgument
-  //ComboTextChanged();
+  for ( int i = 0; i <= (int)GEOM::FLAT; i++ )
+    GroupPoints->ComboBox1->addItem(ShapeTypes[i], i);
 
   updateButtonState();
 }
@@ -457,6 +499,16 @@ void EntityGUI_SubShapeDlg::SubShapeToggled()
   GroupPoints->PushButton2->setEnabled(!isAllSubShapes());
   GroupPoints->PushButton3->setEnabled(!isAllSubShapes());
   GroupPoints->PushButton4->setEnabled(!isAllSubShapes());
+  myFilterGrp->setEnabled(GroupPoints->CheckButton1->isEnabled() &&
+                          GroupPoints->CheckButton1->isChecked() &&
+                          shapeType() < GEOM::VERTEX);
+
+#ifndef DISABLE_PLOT2DVIEWER
+  myPlotDistributionButton->setEnabled( myFilterGrp->isEnabled() &&
+					( shapeType() == TopAbs_EDGE || 
+					  shapeType() == TopAbs_FACE ||
+					  shapeType() == TopAbs_SOLID ) );
+#endif
 
   activateSelection();
 }
@@ -473,58 +525,23 @@ void EntityGUI_SubShapeDlg::ComboTextChanged()
 }
 
 //=================================================================================
-// function : NumberOfSubShapes()
-// purpose  :
-//=================================================================================
-unsigned int EntityGUI_SubShapeDlg::NumberOfSubShapes(const TopoDS_Shape& S,
-                                                      const int shapeType) const
-{
-  if (S.IsNull())
-    return 0;
-
-  unsigned int index = 0;
-  TopTools_MapOfShape M;
-
-  if (S.ShapeType() == TopAbs_COMPOUND &&
-       (TopAbs_ShapeEnum(shapeType) == TopAbs_SHAPE ||
-         TopAbs_ShapeEnum(shapeType) == TopAbs_COMPSOLID ||
-         TopAbs_ShapeEnum(shapeType) == TopAbs_COMPOUND)) {
-    TopoDS_Iterator It(S, Standard_True, Standard_True);
-    for (; It.More(); It.Next()) {
-      if (M.Add(It.Value())) {
-        if (TopAbs_ShapeEnum(shapeType) == TopAbs_SHAPE ||
-             TopAbs_ShapeEnum(shapeType) == It.Value().ShapeType()) {
-          index++;
-        }
-      }
-    }
-  }
-  else {
-    TopExp_Explorer Exp (S, TopAbs_ShapeEnum(shapeType));
-    for (; Exp.More(); Exp.Next()) {
-      if (M.Add(Exp.Current())) {
-        index++;
-      }
-    }
-  }
-
-  M.Clear();
-  return index;
-}
-
-//=================================================================================
 // function : updateButtonState
 // purpose  :
 //=================================================================================
 void EntityGUI_SubShapeDlg::updateButtonState()
 {
-  if (SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() != OCCViewer_Viewer::Type() ||
-      myObject->_is_nil() || shapeType() == TopAbs_SHAPE || shapeType() == TopAbs_COMPOUND) {
-    GroupPoints->CheckButton1->setChecked(false);
-    GroupPoints->CheckButton1->setEnabled(false);
+  bool viewOk = SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() == OCCViewer_Viewer::Type();
+  bool shapeTypeOk = shapeType() != TopAbs_SHAPE && shapeType() != TopAbs_FLAT && shapeType() != TopAbs_COMPOUND;
+  bool objectOK = !CORBA::is_nil( myObject );
+
+  if ( viewOk && objectOK && shapeTypeOk ) {
+    GroupPoints->CheckButton1->setEnabled( true );
   }
-  else
-    GroupPoints->CheckButton1->setEnabled(true);
+  else {
+    GroupPoints->CheckButton1->setChecked( false );
+    GroupPoints->CheckButton1->setEnabled( false );
+  }
+  myFilterGrp->setEnabled(GroupPoints->CheckButton1->isEnabled() && GroupPoints->CheckButton1->isChecked());
 }
 
 //=================================================================================
@@ -533,7 +550,7 @@ void EntityGUI_SubShapeDlg::updateButtonState()
 //=================================================================================
 bool EntityGUI_SubShapeDlg::isAllSubShapes() const
 {
-  return !GroupPoints->CheckButton1->isChecked() || !GroupPoints->CheckButton1->isEnabled();
+  return !GroupPoints->CheckButton1->isEnabled() || !GroupPoints->CheckButton1->isChecked();
 }
 
 //=================================================================================
@@ -542,19 +559,7 @@ bool EntityGUI_SubShapeDlg::isAllSubShapes() const
 //=================================================================================
 int EntityGUI_SubShapeDlg::shapeType() const
 {
-  int type = GroupPoints->ComboBox1->currentIndex();
-
-  if (myObject->_is_nil())
-    return type;
-
-  // Solving PAL5590
-  type += myShape.ShapeType() + 1;
-  if (myShape.ShapeType() == TopAbs_COMPOUND &&
-      NumberOfSubShapes(myShape, TopAbs_COMPOUND) > 0) {
-    type--;
-  }
-
-  return type;
+  return GroupPoints->ComboBox1->itemData(GroupPoints->ComboBox1->currentIndex()).toInt();
 }
 
 //=================================================================================
@@ -891,4 +896,101 @@ GEOM::GEOM_Object_ptr EntityGUI_SubShapeDlg::getFather(GEOM::GEOM_Object_ptr)
 QString EntityGUI_SubShapeDlg::getNewObjectName (int) const
 {
   return QString::null;
+}
+
+//=================================================================================
+// function : ClickOnOkFilter()
+// purpose  : highlight and select entities which parameters (length, area or volume) are less than the value specified by the user
+//=================================================================================
+void EntityGUI_SubShapeDlg::ClickOnOkFilter()
+{
+  if (CORBA::is_nil(myObject) || isAllSubShapes() || shapeType() >= GEOM::VERTEX)
+    return;
+  
+  TopTools_IndexedMapOfShape aSubShapesMap;
+  TopExp::MapShapes(myShape, aSubShapesMap);
+  SALOME_View* view = GEOM_Displayer::GetActiveView();
+  getDisplayer()->Erase(myObject, false, false);
+  CORBA::String_var aMainEntry = myObject->GetStudyEntry();
+  QString anEntryBase = aMainEntry.in();
+
+  SALOME_ListIO toSelect;
+
+  TopExp_Explorer anExp (myShape, (TopAbs_ShapeEnum)shapeType());
+  for (; anExp.More(); anExp.Next())
+  {
+    TopoDS_Shape aSubShape = anExp.Current();
+    int index = aSubShapesMap.FindIndex(aSubShape);
+    QString anEntry = QString( "TEMP_" ) + anEntryBase + QString("_%1").arg(index);
+    if ( !getDisplayer()->IsDisplayed( anEntry ) )
+      continue;
+
+    double factor = GEOMUtils::ShapeToDouble(aSubShape).second;
+    double v1 = myLessFilterSpin->value();
+    double v2 = myGreaterFilterSpin->value();
+    bool isLess = myLessFilterCombo->itemData(myLessFilterCombo->currentIndex()).toInt() == Filter_LT ? factor < v1 : factor <= v1;
+    bool isGreater = myGreaterFilterCombo->itemData(myGreaterFilterCombo->currentIndex()).toInt() == Filter_GT ? factor > v2 : factor >= v2;
+    if ( ( myLessFilterCheck->isChecked() && myGreaterFilterCheck->isChecked() && isLess && isGreater ) ||
+         ( myLessFilterCheck->isChecked() && !myGreaterFilterCheck->isChecked() && isLess ) ||
+         ( myGreaterFilterCheck->isChecked() && !myLessFilterCheck->isChecked() && isGreater ) ) {
+      Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject();
+      io->setEntry( anEntry.toLatin1().constData() );
+      io->setName( myObject->GetName() );
+      toSelect.Append(io);
+    }
+  }
+  if ( toSelect.Extent() > 0 ) {
+    myGeomGUI->getApp()->selectionMgr()->setSelectedObjects(toSelect);
+    SUIT_MessageBox::information( this,
+                                  tr( "INF_INFO" ),
+                                  tr( "GEOM_SOME_SHAPES_SELECTED").arg( toSelect.Extent() ),
+                                  tr( "BUT_OK" ) );
+  }
+  else {
+    SUIT_MessageBox::information( this,
+                                  tr( "INF_INFO" ),
+                                  tr( "GEOM_NO_SHAPES_SELECTED" ),
+                                  tr( "BUT_OK" ) );
+  }
+  updateButtonState();
+}
+
+#ifndef DISABLE_PLOT2DVIEWER
+//=================================================================================
+// function : ClickOnPlot()
+// purpose  : opens "Shape Statistics" dialog box in order to plot sub-shapes distribution.
+//=================================================================================
+void EntityGUI_SubShapeDlg::ClickOnPlot()
+{
+  QDialog* dlg = new MeasureGUI_ShapeStatisticsDlg( this, myShape, (TopAbs_ShapeEnum)shapeType() );
+  if ( dlg ) {
+    dlg->show();
+  }
+}
+#endif
+
+//=================================================================================
+// function : MeasureToggled()
+// purpose  :
+//          : Called when 'myLessFilterCheck' or 'myGreaterFilterCheck' state change
+//=================================================================================
+void EntityGUI_SubShapeDlg::MeasureToggled()
+{
+  myLessFilterSpin->setEnabled(myLessFilterCheck->isChecked());
+  myLessFilterCombo->setEnabled(myLessFilterCheck->isChecked());
+  myGreaterFilterSpin->setEnabled(myGreaterFilterCheck->isChecked());
+  myGreaterFilterCombo->setEnabled(myGreaterFilterCheck->isChecked());
+  myApplyFilterButton->setEnabled(myLessFilterCheck->isChecked() || myGreaterFilterCheck->isChecked());
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> EntityGUI_SubShapeDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::GeomObjPtr aGeomObjPtr(myObject);
+  res << aGeomObjPtr;
+  return res;
 }

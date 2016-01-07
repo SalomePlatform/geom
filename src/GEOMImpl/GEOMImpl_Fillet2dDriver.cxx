@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -17,34 +17,25 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <Standard_Stream.hxx>
-
 #include <GEOMImpl_Fillet2dDriver.hxx>
 #include <GEOMImpl_IFillet2d.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOMImpl_ILocalOperations.hxx>
 #include <GEOMImpl_Block6Explorer.hxx>
 #include <GEOM_Function.hxx>
+#include <GEOMUtils.hxx>
 
 #include <BRepFilletAPI_MakeFillet2d.hxx>
-#include <BRepCheck_Analyzer.hxx>
-#include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
 
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
-#include <TopoDS_Edge.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <TopAbs.hxx>
-#include <TopExp_Explorer.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
+#include <TopTools_MapOfShape.hxx>
 
-#include <ShapeFix_ShapeTolerance.hxx>
-#include <ShapeFix_Shape.hxx>
-
-#include <Precision.hxx>
-#include <gp_Pnt.hxx>
 #include <StdFail_NotDone.hxx>
 
 //=======================================================================

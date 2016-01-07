@@ -1,5 +1,5 @@
 #  -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -1160,11 +1160,16 @@ class Sketcher2D:
         if self.closed:
             self.myCommand = self.myCommand + ":WW"
 
+        from salome.geom.geomBuilder import ParseSketcherCommand, RaiseIfFailed
+        Command,Parameters = ParseSketcherCommand(self.myCommand)
+
         import GEOM
-        if isinstance(WorkingPlane, list): wire = self.geompyD.CurvesOp.MakeSketcher(self.myCommand, WorkingPlane)
-        if isinstance(WorkingPlane, GEOM._objref_GEOM_Object): wire = self.geompyD.CurvesOp.MakeSketcherOnPlane(self.myCommand, WorkingPlane)
+        if isinstance(WorkingPlane, list): wire = self.geompyD.CurvesOp.MakeSketcher(Command, WorkingPlane)
+        if isinstance(WorkingPlane, GEOM._objref_GEOM_Object): wire = self.geompyD.CurvesOp.MakeSketcherOnPlane(Command, WorkingPlane)
 
         self.myCommand = "Sketcher"
+        RaiseIfFailed("Sketcher", self.geompyD.CurvesOp)
+        wire.SetParameters(Parameters)
         self.geompyD._autoPublish(wire, theName, "wire")
         return wire
         
@@ -1204,11 +1209,16 @@ class Sketcher2D:
         else:
             raise RuntimeError, "Sketcher2D.close() : can't build face on unclosed wire"
 
+        from salome.geom.geomBuilder import ParseSketcherCommand, RaiseIfFailed
+        Command,Parameters = ParseSketcherCommand(self.myCommand)
+
         import GEOM
-        if isinstance(WorkingPlane, list): face = self.geompyD.CurvesOp.MakeSketcher(self.myCommand, WorkingPlane)
-        if isinstance(WorkingPlane, GEOM._objref_GEOM_Object): face = self.geompyD.CurvesOp.MakeSketcherOnPlane(self.myCommand, WorkingPlane)
+        if isinstance(WorkingPlane, list): face = self.geompyD.CurvesOp.MakeSketcher(Command, WorkingPlane)
+        if isinstance(WorkingPlane, GEOM._objref_GEOM_Object): face = self.geompyD.CurvesOp.MakeSketcherOnPlane(Command, WorkingPlane)
 
         self.myCommand = "Sketcher"
+        RaiseIfFailed("Sketcher", self.geompyD.CurvesOp)
+        face.SetParameters(Parameters)
         self.geompyD._autoPublish(face, theName, "face")
         return face
 

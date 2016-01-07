@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -614,6 +614,7 @@ CORBA::Boolean GEOM_IBlocksOperations_i::IsCompoundOfBlocks
 //=============================================================================
 CORBA::Boolean GEOM_IBlocksOperations_i::CheckCompoundOfBlocks
                                           (GEOM::GEOM_Object_ptr theCompound,
+                                           const CORBA::Double   theToleranceC1,
                                            GEOM::GEOM_IBlocksOperations::BCErrors_out theErrors)
 {
   CORBA::Boolean isComp = false;
@@ -627,7 +628,8 @@ CORBA::Boolean GEOM_IBlocksOperations_i::CheckCompoundOfBlocks
 
   //Check
   std::list<GEOMImpl_IBlocksOperations::BCError> errList;
-  isComp = GetOperations()->CheckCompoundOfBlocks(aCompound, errList);
+  isComp = GetOperations()->CheckCompoundOfBlocks
+    (aCompound, theToleranceC1, errList);
   if (!GetOperations()->IsDone())
     return isComp;
 
@@ -749,6 +751,7 @@ char* GEOM_IBlocksOperations_i::PrintBCErrors
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetNonBlocks
                                       (GEOM::GEOM_Object_ptr theShape,
+                                       const CORBA::Double   theToleranceC1,
                                        GEOM::GEOM_Object_out theNonQuads)
 {
   GEOM::GEOM_Object_var aGEOMObject;
@@ -765,7 +768,8 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetNonBlocks
 
   //Get the result
   Handle(GEOM_Object) aFaces;
-  Handle(GEOM_Object) anObject = GetOperations()->GetNonBlocks(aShape, aFaces);
+  Handle(GEOM_Object) anObject =
+    GetOperations()->GetNonBlocks(aShape, theToleranceC1, aFaces);
   if (!GetOperations()->IsDone())
     return aGEOMObject._retn();
 

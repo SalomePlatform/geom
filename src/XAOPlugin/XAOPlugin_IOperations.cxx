@@ -1,4 +1,4 @@
-// Copyright (C) 2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2014-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -258,7 +258,7 @@ void XAOPlugin_IOperations::exportFields( std::list<Handle(GEOM_Field)> fieldLis
 
 void XAOPlugin_IOperations::exportSubshapes( const Handle(GEOM_Object)& shape, XAO::BrepGeometry* geometry )
 {
-  Handle(TColStd_HSequenceOfTransient) subObjects = myShapesOperations->GetExistingSubObjects( shape, false );
+  Handle(TColStd_HSequenceOfTransient) subObjects = myShapesOperations->GetExistingSubObjects( shape, GEOMImpl_IShapesOperations::SubShapes );
   int nbSubObjects = subObjects->Length();
   // set the names of the sub shapes
   for (int i = 1; i <= nbSubObjects; i++)
@@ -469,6 +469,8 @@ bool XAOPlugin_IOperations::ImportXAO( const char* fileName,
   Handle(GEOM_Function) function = shape->AddFunction(XAOPlugin_Driver::GetID(), IMPORT_SHAPE);
   if (function.IsNull()) return false;
   if (function->GetDriverGUID() != XAOPlugin_Driver::GetID()) return false;
+
+  function->SetString( XAOPlugin_Driver::GetFileNameTag(), fileName );
 
   // set the geometry
   if (xaoGeometry->getFormat() == XAO::BREP)

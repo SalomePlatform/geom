@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -36,6 +36,7 @@ class GEOMImpl_IShapes
     SHAPE_ARG_SHAPES    = 1, // for Wire, Shell, Solid and Compound
     SHAPE_ARG_BASE      = 2, // for Face, Solid and Sub-shape
     SHAPE_ARG_PLANAR    = 3, // for Face
+    SHAPE_ARG_INTERSECT = 3, // for Solid From Connected Faces (NOTE: same value as SHAPE_ARG_PLANAR is used!)
     SHAPE_ARG_SUBTYPE   = 4, // for Sub-shape
     SHAPE_ARG_INDICES   = 5, // for Sub-shape
     SHAPE_ARG_TOLERANCE = 6, // linear tolerance (for Wire, Edge)
@@ -80,6 +81,11 @@ class GEOMImpl_IShapes
   { _func->SetReal(SHAPE_ARG_ANGLE_TOL, theValue); }
 
   Standard_Real GetAngularTolerance() { return _func->GetReal(SHAPE_ARG_ANGLE_TOL); }
+
+  void SetIsIntersect(const Standard_Boolean isIntersect)
+  {_func->SetInteger(SHAPE_ARG_INTERSECT, isIntersect ? 1 : 0);}
+
+  Standard_Boolean GetIsIntersect() { return (_func->GetInteger(SHAPE_ARG_INTERSECT) == 1); }
 
  private:
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -68,10 +68,12 @@ static
 void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Solid& aSd)
 {
   Standard_Boolean bIsStepSphere;
-  Standard_Integer i, aNbF, aNbCyl, aNbCon, aNbPgn, aNbRct, aNbCrc, aNbX;
+  Standard_Integer i, aNbF, aNbCyl, aNbCon, aNbPgn, aNbRct;
+  Standard_Integer aNbShells, aNbCrc, aNbX;
   TopoDS_Shape aFCyl, aFCon;
   TopTools_IndexedMapOfShape aMF;
   GEOMAlgo_KindOfName aKNF;
+  GEOMAlgo_KindOfDef aKD;
   //
   GEOMAlgo_ShapeInfo& aInfo=myMapInfo.ChangeFromKey(aSd);
   aInfo.SetKindOfName(GEOMAlgo_KN_UNKNOWN);
@@ -83,7 +85,37 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Solid& aSd)
     return;
   }
   //
+  //modified by NIZNHY-PKV Tue Jun 09 08:35:23 2015f
+  if (aNbF==2) {
+    // case requested by the customer
+    // specific solid that should be treated as a sphere
+    bIsStepSphere=TreatStepSphere(aSd);
+    if (bIsStepSphere) {
+      return;
+    }
+  }
+  //modified by NIZNHY-PKV Tue Jun 09 08:35:28 2015t
+  //
+  aKD=GEOMAlgo_KD_SPECIFIED;
+  for (i=1; i<=aNbF && aKD==GEOMAlgo_KD_SPECIFIED; ++i) {
+    const TopoDS_Shape& aF=aMF(i);
+    GEOMAlgo_ShapeInfo& aInfoF=myMapInfo.ChangeFromKey(aF);
+    aKD=aInfoF.KindOfDef();
+  }
+  if (aKD!=GEOMAlgo_KD_SPECIFIED) {
+    aInfo.SetKindOfName(GEOMAlgo_KN_SOLID); 
+    return;
+  }
+  //
+  aNbShells=GEOMAlgo_ShapeInfoFiller::NbShells(aSd);
+  if (aNbShells>1) {
+    aInfo.SetKindOfName(GEOMAlgo_KN_SOLID); 
+    return;
+  }
+  //
+  //
   if (aNbF==1) {
+    // mb: sphere, torus
     const TopoDS_Shape& aF=aMF(1);
     GEOMAlgo_ShapeInfo& aInfoF=myMapInfo.ChangeFromKey(aF);
     aKNF=aInfoF.KindOfName(); // mb: sphere, torus
@@ -99,7 +131,8 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Solid& aSd)
       return;
     }
   }
-  //modified by NIZNHY-PKV Tue Jul 03 13:23:55 2012f
+  //modified by NIZNHY-PKV Tue Jun 09 08:36:08 2015f
+  /*
   else if (aNbF==2) {
     // specific solid that should be treated as a sphere
     bIsStepSphere=TreatStepSphere(aSd);
@@ -107,7 +140,8 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Solid& aSd)
       return;
     }
   }
-  //modified by NIZNHY-PKV Tue Jul 03 13:23:57 2012t
+  */
+  //modified by NIZNHY-PKV Tue Jun 09 08:36:12 2015t
   //
   aNbCyl=0;
   aNbCon=0;
@@ -229,11 +263,9 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Solid& aSd)
       const gp_Dir& aDNj=aIFj.Position().Direction();
       //
       aDot=aDNi*aDNj;
-      //modified by NIZNHY-PKV Tue Jul 03 10:01:56 2012f
       if (aDot<0.) {
         aDot=-aDot;
       }
-      //modified by NIZNHY-PKV Tue Jul 03 10:01:52 2012t
       if (fabs(1.-aDot)<0.0001) {
         aMp.Add(i);
         aMp.Add(j);
@@ -248,6 +280,8 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Solid& aSd)
     return;
   }
   //
+  iMin=-1;
+  iMax=-1;
   aDistMin=1.e15;
   aDistMax=-aDistMin;
   for (i=0; i<aNbFi; ++i) {
@@ -308,21 +342,10 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
   TopTools_IndexedMapOfShape aMV;
   BRepTools_WireExplorer aWExp;
   GEOMAlgo_KindOfName aKN, aKNE;
-  GEOMAlgo_KindOfShape aKS;
   //
   GEOMAlgo_ShapeInfo& aInfo=myMapInfo.ChangeFromKey(aF);
-  aKN=GEOMAlgo_KN_UNKNOWN;
-  aInfo.SetKindOfName(GEOMAlgo_KN_UNKNOWN);
   //
-  aKS=aInfo.KindOfShape();
-  if (aKS!=GEOMAlgo_KS_PLANE) {
-    return;
-  }
-  //
-  if (aInfo.KindOfBounds()==GEOMAlgo_KB_INFINITE) {
-    aInfo.SetKindOfName(GEOMAlgo_KN_PLANE);
-    return;
-  }
+  aInfo.SetKindOfDef(GEOMAlgo_KD_ARBITRARY);
   //
   aNbV=aInfo.NbSubShapes(TopAbs_VERTEX);
   aNbE=aInfo.NbSubShapes(TopAbs_EDGE);
@@ -330,9 +353,8 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
   // 1. may be it is circle/ellipse
   if (aNbV==1 && aNbE==1) {
     aExp.Init(aF, TopAbs_EDGE);
-    for (; aExp.More(); aExp.Next()) {
+    if (aExp.More()) {
       aE=aExp.Current();
-      break;
     }
     //
     const GEOMAlgo_ShapeInfo& aInfoE=myMapInfo.FindFromKey(aE);
@@ -343,6 +365,7 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
       aInfo.SetRadius1(aInfoE.Radius1());
       aInfo.SetLocation(aInfoE.Location());
       aInfo.SetPosition(aInfoE.Position());
+      aInfo.SetKindOfDef(GEOMAlgo_KD_SPECIFIED);
     }
     if (aKNE==GEOMAlgo_KN_ELLIPSE) {
       aKN=GEOMAlgo_KN_DISKELLIPSE;
@@ -351,22 +374,29 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
       aInfo.SetRadius2(aInfoE.Radius2());
       aInfo.SetLocation(aInfoE.Location());
       aInfo.SetPosition(aInfoE.Position());
+      aInfo.SetKindOfDef(GEOMAlgo_KD_SPECIFIED);
+    }
+    return;
+  }// if (aNbV==1 && aNbE==1) {
+  //
+  //
+  Standard_Boolean bSegment;
+  //
+  bSegment=Standard_True;
+  aExp.Init(aF, TopAbs_EDGE);
+  for (; aExp.More() && bSegment; aExp.Next()) {
+    aE=aExp.Current();
+    const GEOMAlgo_ShapeInfo& aInfoE=myMapInfo.FindFromKey(aE);
+    aKNE=aInfoE.KindOfName();
+    if (aKNE!=GEOMAlgo_KN_SEGMENT) {
+      bSegment=!bSegment;
     }
   }
   //
-  // 2. may be it is rectangle
-  else  {
-    aExp.Init(aF, TopAbs_EDGE);
-    for (; aExp.More(); aExp.Next()) {
-      aE=aExp.Current();
-      const GEOMAlgo_ShapeInfo& aInfoE=myMapInfo.FindFromKey(aE);
-      aKNE=aInfoE.KindOfName();
-      if (aKNE!=GEOMAlgo_KN_SEGMENT) {
-        return;
-      }
-    }
-    //
-    aInfo.SetKindOfName(GEOMAlgo_KN_POLYGON);
+  if (bSegment) {
+  // 2. may be it is TRIANGLE, POLYGON, QUADRANGLE, RECTANGLE
+    aInfo.SetKindOfDef(GEOMAlgo_KD_SPECIFIED);
+    aInfo.SetKindOfName(GEOMAlgo_KN_POLYGON); 
     //
     if (aNbV==3 && aNbE==3) {
       aInfo.SetKindOfName(GEOMAlgo_KN_TRIANGLE);
@@ -393,266 +423,133 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
       //
       aInfo.SetLocation(aPc);
       aInfo.SetPosition(aAx3);
-      //
-      return;
-    }
+    } // if (aNbV==3 && aNbE==3) {
     //
-    if (!(aNbV==4 && aNbE==4)) {
-      return;
-    }
-    //
-    // aNbV==4 && aNbE==4 and all edges are segments
-    aIt.Initialize(aF);
-    for (; aIt.More(); aIt.Next()){
-      aW=TopoDS::Wire(aIt.Value());
-      break;
-    }
-    //
-    aWExp.Init(aW, aF);
-    for (i=0; aWExp.More(); aWExp.Next(), ++i) {
-      aEx=aWExp.Current();
-      const GEOMAlgo_ShapeInfo& aInfoEx=myMapInfo.FindFromKey(aEx);
-      aDx[i]=aInfoEx.Direction();
-      aPx[i]=aInfoEx.Location();
-    }
-    //
-    for (i=0; i<4; ++i) {
-      j=(i==3) ? 0 : i+1;
-      aDot=aDx[i]*aDx[j];
-      if (fabs (aDot) > myTolerance) {
-        aInfo.SetKindOfName(GEOMAlgo_KN_QUADRANGLE);
-        return;
+    if (aNbV==4 && aNbE==4) {
+      aIt.Initialize(aF);
+      if (aIt.More()) {
+        aW=*((TopoDS_Wire*)&aIt.Value());
       }
-    }
-    //
-    // rectangle
-    aInfo.SetKindOfName(GEOMAlgo_KN_RECTANGLE);
-    //
-    // shift location to the center and calc. sizes
-    aXYZc.SetCoord(0.,0.,0.);
-    TopExp::MapShapes(aF, TopAbs_VERTEX, aMV);
-    for (i=1; i<=aNbV; ++i) {
-      const TopoDS_Vertex& aV=TopoDS::Vertex(aMV(i));
-      aP=BRep_Tool::Pnt(aV);
-      const gp_XYZ& aXYZ=aP.XYZ();
-      aXYZc=aXYZc+aXYZ;
-    }
-    //
-    // Location : aPc in center of rectangle
-    // Position : 0z is plane normal
-    //            0x is along length
-    //
-    aXYZc.Divide(4.);
-    aPc.SetXYZ(aXYZc);
-    //
-    gp_Lin aL0(aPx[0], aDx[0]);
-    gp_Lin aL1(aPx[1], aDx[1]);
-    //
-    aD0=aL0.Distance(aPc);
-    aD1=aL1.Distance(aPc);
-    //
-    aLength=aD0;
-    aWidth =aD1;
-    aDX=aL1.Direction();
-    if (aD0<aD1) {
-      aLength=aD1;
-      aWidth =aD0;
-      aDX=aL0.Direction();
-    }
-    //
-    aLength=2.*aLength;
-    aWidth =2.*aWidth;
-    //
-    aInfo.SetLocation(aPc);
-    aInfo.SetLength(aLength);
-    aInfo.SetWidth(aWidth);
-    //
-    const gp_Dir& aDZ=aPln.Axis().Direction();
-    gp_Ax2 aAx2(aPc, aDZ, aDX);
-    gp_Ax3 aAx3(aAx2);
-    aInfo.SetPosition(aAx3);
-  }
+      //
+      aWExp.Init(aW, aF);
+      for (i=0; aWExp.More(); aWExp.Next(), ++i) {
+        aEx=aWExp.Current();
+        const GEOMAlgo_ShapeInfo& aInfoEx=myMapInfo.FindFromKey(aEx);
+        aDx[i]=aInfoEx.Direction();
+        aPx[i]=aInfoEx.Location();
+      }
+      //
+      Standard_Boolean isRectangle = Standard_True;
+      for (i=0; i<4; ++i) {
+        j=(i==3) ? 0 : i+1;
+        aDot=aDx[i]*aDx[j];
+        if (fabs (aDot) > myTolerance) {
+          isRectangle = Standard_False;
+          break;
+        }
+      }
+      //
+      // rectangle
+      // shift location to the center
+      aXYZc.SetCoord(0.,0.,0.);
+      TopExp::MapShapes(aF, TopAbs_VERTEX, aMV);
+      for (i=1; i<=aNbV; ++i) {
+        const TopoDS_Vertex& aV=TopoDS::Vertex(aMV(i));
+        aP=BRep_Tool::Pnt(aV);
+        const gp_XYZ& aXYZ=aP.XYZ();
+        aXYZc=aXYZc+aXYZ;
+      }
+      //
+      // Location : aPc in center of rectangle
+      // Position : 0z is plane normal
+      //            0x is along the first edge (quadrangle) or
+      //            along length (rectangle)
+      //
+      aXYZc.Divide(4.);
+      aPc.SetXYZ(aXYZc);
+      aDX=aDx[0];
+      aInfo.SetLocation(aPc);
 
-  return;
+      if (isRectangle) {
+      // Calculate sizes
+        gp_Lin aL0(aPx[0], aDx[0]);
+        gp_Lin aL1(aPx[1], aDx[1]);
+        //
+        aD0=aL0.Distance(aPc);
+        aD1=aL1.Distance(aPc);
+        //
+        aLength=aD1;
+        aWidth =aD0;
+        
+        if (aD0>aD1) {
+          aLength=aD0;
+          aWidth =aD1;
+          aDX=aDx[1];
+        }
+        //
+        aLength=2.*aLength;
+        aWidth =2.*aWidth;
+        //
+        aInfo.SetLength(aLength);
+        aInfo.SetWidth(aWidth);
+        aInfo.SetKindOfName(GEOMAlgo_KN_RECTANGLE);
+      } else {
+        aInfo.SetKindOfName(GEOMAlgo_KN_QUADRANGLE);
+      }
+      //
+      const gp_Dir& aDZ=aPln.Axis().Direction();
+      gp_Ax2 aAx2(aPc, aDZ, aDX);
+      gp_Ax3 aAx3(aAx2);
+      aInfo.SetPosition(aAx3);
+      //
+    }// if (aNbV==4 && aNbE==4) {
+    return;
+  }// if (bSegment) {
+  //
+  //aInfo.SetKindOfName(GEOMAlgo_KN_PLANE);
 }
 //=======================================================================
 //function : FillDetails
 //purpose  :
 //=======================================================================
 void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
-                                           const gp_Sphere& )
+                                           const gp_Sphere& )//aSph)
 {
+  
   Standard_Integer aNbV, aNbE, aNbSE, aNbDE;
   TopoDS_Edge aE;
   TopExp_Explorer aExp;
   TopTools_MapOfShape aM;
-  GEOMAlgo_KindOfShape aKS, aKSE;
+  GEOMAlgo_KindOfShape aKSE;//, aKSE;
   //
   GEOMAlgo_ShapeInfo& aInfo=myMapInfo.ChangeFromKey(aF);
-  aInfo.SetKindOfName(GEOMAlgo_KN_UNKNOWN);
-  //
-  aKS=aInfo.KindOfShape();
-  if (aKS!=GEOMAlgo_KS_SPHERE) {
-    return;
-  }
-  //
+  // 
+  aInfo.SetKindOfDef(GEOMAlgo_KD_ARBITRARY);
   aNbV=aInfo.NbSubShapes(TopAbs_VERTEX);
   aNbE=aInfo.NbSubShapes(TopAbs_EDGE);
-  if (!(aNbV==2 && aNbE==3)) {
-    return;
-  }
-  //
-  aNbSE=0;
-  aNbDE=0;
-  aExp.Init(aF, TopAbs_EDGE);
-  for (; aExp.More(); aExp.Next()) {
-    aE=TopoDS::Edge(aExp.Current());
-    if(aM.Add(aE)) {
-      const GEOMAlgo_ShapeInfo& aInfoE=myMapInfo.FindFromKey(aE);
-      aKSE=aInfoE.KindOfShape();
-      //
-      if (BRep_Tool::IsClosed(aE, aF)) {
-        ++aNbSE;
-      }
-      else if (aKSE==GEOMAlgo_KS_DEGENERATED) {
-        ++aNbDE;
-      }
-    }
-  }
-  //
-  if (!(aNbSE==1 && aNbDE==2)) {
-    return;
-  }
-  aInfo.SetKindOfName(GEOMAlgo_KN_SPHERE);
-}
-//=======================================================================
-//function : FillDetails
-//purpose  :
-//=======================================================================
-void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
-                                           const gp_Cone& )//aCone)
-{
-  Standard_Integer aNbV, aNbE, aNbCE, aNbSE, aNbDE, i;
-  Standard_Real aR[3], aHeight;
-  gp_Pnt aPC[3], aPD, aPc, aPX[3];
-  TopoDS_Vertex aVD;
-  TopoDS_Edge aE;
-  TopoDS_Iterator aIt;
-  TopExp_Explorer aExp;
-  TopTools_MapOfShape aM;
-  GEOMAlgo_KindOfShape aKS, aKSE;
-  GEOMAlgo_KindOfName aKN, aKNE;
-  GEOMAlgo_KindOfClosed aKCE;
-  //
-  GEOMAlgo_ShapeInfo& aInfo=myMapInfo.ChangeFromKey(aF);
-  aKN=GEOMAlgo_KN_UNKNOWN;
-  aInfo.SetKindOfName(aKN);
-  //
-  aKS=aInfo.KindOfShape();
-  if (aKS!=GEOMAlgo_KS_CONE) {
-    return;
-  }
-  //
-  if (aInfo.KindOfBounds()==GEOMAlgo_KB_INFINITE) {
-    return;
-  }
-  //
-  aNbV=aInfo.NbSubShapes(TopAbs_VERTEX);
-  aNbE=aInfo.NbSubShapes(TopAbs_EDGE);
-  if (!(aNbV==2 && aNbE==3)) {
-    return;
-  }
-  //
-  i=0;
-  aNbCE=0;
-  aNbSE=0;
-  aNbDE=0;
-  aExp.Init(aF, TopAbs_EDGE);
-  for (; aExp.More(); aExp.Next()) {
-    aE=TopoDS::Edge(aExp.Current());
-    if(aM.Add(aE)) {
-      const GEOMAlgo_ShapeInfo& aInfoE=myMapInfo.FindFromKey(aE);
-      aKNE=aInfoE.KindOfName();
-      aKCE=aInfoE.KindOfClosed();
-      aKSE=aInfoE.KindOfShape();
-      if (aKNE==GEOMAlgo_KN_CIRCLE && aKCE==GEOMAlgo_KC_CLOSED) {
-        aPC[i]=aInfoE.Location();
-        aR[i]=aInfoE.Radius1();
+  if (aNbV==2 && aNbE==3) {
+    aNbSE=0;
+    aNbDE=0;
+    aExp.Init(aF, TopAbs_EDGE);
+    for (; aExp.More(); aExp.Next()) {
+      aE=TopoDS::Edge(aExp.Current());
+      if(aM.Add(aE)) {
+        const GEOMAlgo_ShapeInfo& aInfoE=myMapInfo.FindFromKey(aE);
+        aKSE=aInfoE.KindOfShape();
         //
-        aIt.Initialize(aE);
-        for (; aIt.More(); aIt.Next()) {
-          aVD=TopoDS::Vertex(aIt.Value());
-          break;
-        }
-        aPX[i]=BRep_Tool::Pnt(aVD);
-        //
-        ++i;
-        ++aNbCE;
-      }
-      else if (aKNE==GEOMAlgo_KN_SEGMENT) {
         if (BRep_Tool::IsClosed(aE, aF)) {
           ++aNbSE;
         }
-      }
-      else if (aKSE==GEOMAlgo_KS_DEGENERATED) {
-        aIt.Initialize(aE);
-        for (; aIt.More(); aIt.Next()) {
-          aVD=TopoDS::Vertex(aIt.Value());
-          break;
+        else if (aKSE==GEOMAlgo_KS_DEGENERATED) {
+          ++aNbDE;
         }
-        //
-        aPD=BRep_Tool::Pnt(aVD);
-        //
-        ++aNbDE;
       }
     }
+    //
+    if (aNbSE==1 && aNbDE==2) {
+      aInfo.SetKindOfDef(GEOMAlgo_KD_SPECIFIED);
+    }
   }
-  //
-  if (!((aNbCE==2 || (aNbCE==1 && aNbDE==1)) && aNbSE==1)) {
-    return;
-  }
-  //
-  if (aNbDE==1) {
-    aPC[1]=aPD;
-    aR[1]=0.;
-  }
-  //
-  aHeight=aPC[0].Distance(aPC[1]);
-  //
-  Standard_Real aRmin, aRmax;
-  gp_Ax2 aAx2new;
-  //
-  if (aR[0]>aR[1]) {
-    aRmin=aR[1];
-    aRmax=aR[0];
-    aPc=aPC[0];
-    gp_Vec aVz(aPC[0], aPC[1]);
-    gp_Vec aVx(aPC[0], aPX[0]);
-    gp_Dir aDz(aVz);
-    gp_Dir aDx(aVx);
-    gp_Ax2 aAx2(aPc, aDz, aDx);
-    aAx2new=aAx2;
-  }
-  else {
-    aRmin=aR[0];
-    aRmax=aR[1];
-    aPc=aPC[1];
-    gp_Vec aVz(aPC[1], aPC[0]);
-    gp_Vec aVx(aPC[1], aPX[1]);
-    gp_Dir aDz(aVz);
-    gp_Dir aDx(aVx);
-    gp_Ax2 aAx2(aPc, aDz, aDx);
-    aAx2new=aAx2;
-  }
-  //
-  gp_Ax3 aAx3(aAx2new);
-  aInfo.SetLocation(aPc);
-  aInfo.SetPosition(aAx3);
-  aInfo.SetRadius1(aRmax);
-  aInfo.SetRadius2(aRmin);
-  aInfo.SetHeight(aHeight);
-  //
-  aInfo.SetKindOfName(GEOMAlgo_KN_CONE);
 }
 //=======================================================================
 //function : FillDetails
@@ -660,6 +557,7 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
 //=======================================================================
 void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
                                            const gp_Cylinder& aCyl)
+     
 {
   Standard_Integer i, aNbV, aNbE, aNbCE, aNbSE;
   Standard_Real aT0, aT1, aHeight;
@@ -667,78 +565,185 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
   TopoDS_Edge aE;
   TopExp_Explorer aExp;
   TopTools_MapOfShape aM;
-  GEOMAlgo_KindOfShape aKS;
-  GEOMAlgo_KindOfName aKN, aKNE;
+  GEOMAlgo_KindOfName aKNE;
   GEOMAlgo_KindOfClosed aKCE;
   //
   GEOMAlgo_ShapeInfo& aInfo=myMapInfo.ChangeFromKey(aF);
-  aKN=GEOMAlgo_KN_UNKNOWN;
-  aInfo.SetKindOfName(aKN);
   //
-  aKS=aInfo.KindOfShape();
-  if (aKS!=GEOMAlgo_KS_CYLINDER) {
-    return;
-  }
-  //
-  if (aInfo.KindOfBounds()==GEOMAlgo_KB_INFINITE) {
-    return;
-  }
-  //
+  aInfo.SetKindOfDef(GEOMAlgo_KD_ARBITRARY);
   aNbV=aInfo.NbSubShapes(TopAbs_VERTEX);
   aNbE=aInfo.NbSubShapes(TopAbs_EDGE);
-  if (!(aNbV==2 && aNbE==3)) {
-    return;
-  }
-  //
-  i=0;
-  aNbCE=0;
-  aNbSE=0;
-  aExp.Init(aF, TopAbs_EDGE);
-  for (; aExp.More(); aExp.Next()) {
-    aE=TopoDS::Edge(aExp.Current());
-    if(aM.Add(aE)) {
-      const GEOMAlgo_ShapeInfo& aInfoE=myMapInfo.FindFromKey(aE);
-      aKNE=aInfoE.KindOfName();
-      aKCE=aInfoE.KindOfClosed();
-      if (aKNE==GEOMAlgo_KN_CIRCLE && aKCE==GEOMAlgo_KC_CLOSED) {
-        aPC[aNbCE]=aInfoE.Location();
-        ++aNbCE;
-      }
-      else if (aKNE==GEOMAlgo_KN_SEGMENT) {
-        if (BRep_Tool::IsClosed(aE, aF)) {
-          ++aNbSE;
+  if (aNbV==2 && aNbE==3) {
+    const gp_Ax1& aAx1=aCyl.Axis();
+    const gp_Dir& aDir=aAx1.Direction();
+    const gp_Pnt& aPLoc=aAx1.Location();
+    //
+    i=0;
+    aNbCE=0;
+    aNbSE=0;
+    aExp.Init(aF, TopAbs_EDGE);
+    for (; aExp.More(); aExp.Next()) {
+      aE=TopoDS::Edge(aExp.Current());
+      if(aM.Add(aE)) {
+        const GEOMAlgo_ShapeInfo& aInfoE=myMapInfo.FindFromKey(aE);
+        aKNE=aInfoE.KindOfName();
+        aKCE=aInfoE.KindOfClosed();
+        if (aKNE==GEOMAlgo_KN_CIRCLE && aKCE==GEOMAlgo_KC_CLOSED) {
+          aPC[aNbCE]=aInfoE.Location();
+          ++aNbCE;
+        }
+        else if (aKNE==GEOMAlgo_KN_SEGMENT) {
+          if (BRep_Tool::IsClosed(aE, aF)) {
+            ++aNbSE;
+          }
         }
       }
     }
-  }
-  //
-  if (!(aNbCE==2 && aNbSE==1)) {
-    return;
-  }
-  //
-  const gp_Ax1& aAx1=aCyl.Axis();
-  const gp_Dir& aDir=aAx1.Direction();
-  const gp_Pnt& aPLoc=aAx1.Location();
-  gp_Lin aLin(aPLoc, aDir);
-  //
-  aT0=ElCLib::Parameter(aLin, aPC[0]);
-  aT1=ElCLib::Parameter(aLin, aPC[1]);
-  //
-  aPc=aPC[0];;
-  if (aT0>aT1) {
-    aPc=aPC[1];
-  }
-  aHeight=aPC[0].Distance(aPC[1]);
-  //
-  gp_Ax3 aAx3=aCyl.Position();
-  aAx3.SetLocation(aPc);
-  //
-  aInfo.SetKindOfName(GEOMAlgo_KN_CYLINDER);
-  aInfo.SetPosition(aAx3);
-  aInfo.SetLocation(aPc);
-  aInfo.SetHeight(aHeight);
+    //
+    if (aNbCE==2 && aNbSE==1) {
+      gp_Lin aLin(aPLoc, aDir);
+      //
+      aT0=ElCLib::Parameter(aLin, aPC[0]);
+      aT1=ElCLib::Parameter(aLin, aPC[1]);
+      //
+      aPc=aPC[0];
+      if (aT0>aT1) {
+        aPc=aPC[1];
+      }
+      aHeight=aPC[0].Distance(aPC[1]);
+      //
+      gp_Ax3 aAx3=aCyl.Position();
+      aAx3.SetLocation(aPc);
+      //
+      aInfo.SetPosition(aAx3);
+      aInfo.SetLocation(aPc);
+      aInfo.SetHeight(aHeight);
+      //
+      aInfo.SetKindOfDef(GEOMAlgo_KD_SPECIFIED);
+      return; // conventional cylinder
+    }//if (aNbCE==2 && aNbSE==1) {
+  }//if (aNbV==2 && aNbE==3) {
 }
-
+//=======================================================================
+//function : FillDetails
+//purpose  :
+//=======================================================================
+void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
+                                           const gp_Cone& aCone)
+{
+  Standard_Integer aNbV, aNbE, aNbCE, aNbSE, aNbDE, i;
+  Standard_Real aR[3], aHeight, aRmin, aRmax;
+  gp_Pnt aPC[3], aPD, aPc, aPX[3];
+  TopoDS_Vertex aVD;
+  TopoDS_Edge aE;
+  TopoDS_Iterator aIt;
+  TopExp_Explorer aExp;
+  TopTools_MapOfShape aM;
+  GEOMAlgo_KindOfShape aKSE;
+  GEOMAlgo_KindOfName aKNE;
+  GEOMAlgo_KindOfClosed aKCE;
+  //
+  GEOMAlgo_ShapeInfo& aInfo=myMapInfo.ChangeFromKey(aF);
+  //
+  aInfo.SetKindOfDef(GEOMAlgo_KD_ARBITRARY);
+  //
+  aNbV=aInfo.NbSubShapes(TopAbs_VERTEX);
+  aNbE=aInfo.NbSubShapes(TopAbs_EDGE);
+  if (aNbV==2 && aNbE==3) {
+    i=0;
+    aNbCE=0;
+    aNbSE=0;
+    aNbDE=0;
+    aExp.Init(aF, TopAbs_EDGE);
+    for (; aExp.More(); aExp.Next()) {
+      aE=TopoDS::Edge(aExp.Current());
+      if(aM.Add(aE)) {
+        const GEOMAlgo_ShapeInfo& aInfoE=myMapInfo.FindFromKey(aE);
+        aKNE=aInfoE.KindOfName();
+        aKCE=aInfoE.KindOfClosed();
+        aKSE=aInfoE.KindOfShape();
+        if (aKNE==GEOMAlgo_KN_CIRCLE && aKCE==GEOMAlgo_KC_CLOSED) {
+          aPC[i]=aInfoE.Location();
+          aR[i]=aInfoE.Radius1();
+          //
+          aIt.Initialize(aE);
+          if (aIt.More()) {
+            aVD=*((TopoDS_Vertex*)&aIt.Value());
+          }
+          aPX[i]=BRep_Tool::Pnt(aVD);
+          //
+          ++i;
+          ++aNbCE;
+        }
+        else if (aKNE==GEOMAlgo_KN_SEGMENT) {
+          if (BRep_Tool::IsClosed(aE, aF)) {
+            ++aNbSE;
+          }
+        }
+        else if (aKSE==GEOMAlgo_KS_DEGENERATED) {
+          aIt.Initialize(aE);
+          if (aIt.More()) {
+            aVD=*((TopoDS_Vertex*)&aIt.Value());
+          }
+          //
+          aPD=BRep_Tool::Pnt(aVD);
+          //
+          ++aNbDE;
+        }
+      }
+    }
+    //
+    if ((aNbCE==2 || (aNbCE==1 && aNbDE==1)) && aNbSE==1) {
+      if (aNbDE==1) {
+        aPC[1]=aPD;
+        aR[1]=0.;
+      }
+      //
+      aHeight=aPC[0].Distance(aPC[1]);
+      //
+      
+      gp_Ax2 aAx2new;
+      //
+      if (aR[0]>aR[1]) {
+        aRmin=aR[1];
+        aRmax=aR[0];
+        aPc=aPC[0];
+        gp_Vec aVz(aPC[0], aPC[1]);
+        gp_Vec aVx(aPC[0], aPX[0]);
+        gp_Dir aDz(aVz);
+        gp_Dir aDx(aVx);
+        gp_Ax2 aAx2(aPc, aDz, aDx);
+        aAx2new=aAx2;
+      }
+      else {
+        aRmin=aR[0];
+        aRmax=aR[1];
+        aPc=aPC[1];
+        gp_Vec aVz(aPC[1], aPC[0]);
+        gp_Vec aVx(aPC[1], aPX[1]);
+        gp_Dir aDz(aVz);
+        gp_Dir aDx(aVx);
+        gp_Ax2 aAx2(aPc, aDz, aDx);
+        aAx2new=aAx2;
+      }
+      //
+      gp_Ax3 aAx3(aAx2new);
+      aInfo.SetLocation(aPc);
+      aInfo.SetPosition(aAx3);
+      aInfo.SetRadius1(aRmax);
+      aInfo.SetRadius2(aRmin);
+      aInfo.SetHeight(aHeight);
+      //
+      aInfo.SetKindOfDef(GEOMAlgo_KD_SPECIFIED);
+      return;
+    }//if ((aNbCE==2 || (aNbCE==1 && aNbDE==1)) && aNbSE==1) {
+  }//if (aNbV==2 && aNbE==3) {
+  //
+  aInfo.SetRadius1 (aCone.RefRadius());
+  //
+  aRmin=0.;   // ZZ
+  aInfo.SetRadius2(aRmin);
+}
 //=======================================================================
 //function : FillDetails
 //purpose  :
@@ -746,6 +751,7 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
 void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
                                            const gp_Torus& )
 {
+  
   Standard_Integer aNbV, aNbE, aNbSE;
   TopoDS_Edge aE;
   TopExp_Explorer aExp;
@@ -753,46 +759,43 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
   GEOMAlgo_KindOfShape aKS;
   //
   GEOMAlgo_ShapeInfo& aInfo=myMapInfo.ChangeFromKey(aF);
-  aInfo.SetKindOfName(GEOMAlgo_KN_UNKNOWN);
+  aInfo.SetKindOfDef(GEOMAlgo_KD_ARBITRARY);
   //
   aKS=aInfo.KindOfShape();
   if (aKS!=GEOMAlgo_KS_TORUS) {
     return;
   }
-  //
+  
   aNbV=aInfo.NbSubShapes(TopAbs_VERTEX);
-  aNbE=aInfo.NbSubShapes(TopAbs_EDGE);
-  if (!(aNbV==1 && aNbE==2)) {
-    return;
-  }
-  //
-  aNbSE=0;
-  aExp.Init(aF, TopAbs_EDGE);
-  for (; aExp.More(); aExp.Next()) {
-    aE=TopoDS::Edge(aExp.Current());
-    if (aM.Add(aE)) {
-      if (BRep_Tool::IsClosed(aE, aF)) {
-        ++aNbSE;
+  aNbE=aInfo.NbSubShapes(TopAbs_EDGE); 
+  
+  if (aNbV==1 && aNbE==2) {
+    aNbSE=0;
+    aExp.Init(aF, TopAbs_EDGE);
+    for (; aExp.More(); aExp.Next()) {
+      aE=TopoDS::Edge(aExp.Current());
+      if (aM.Add(aE)) {
+        if (BRep_Tool::IsClosed(aE, aF)) {
+          ++aNbSE;
+        }
       }
     }
+    //
+    if (aNbSE==2) {
+      aInfo.SetKindOfDef(GEOMAlgo_KD_SPECIFIED);
+    }
   }
-  //
-  if (aNbSE!=2) {
-    return;
-  }
-  aInfo.SetKindOfName(GEOMAlgo_KN_TORUS);
 }
-//modified by NIZNHY-PKV Tue Jul 03 13:29:41 2012f
 //=======================================================================
 //function : TreatStepSphere
 //purpose  :
 //=======================================================================
-Standard_Boolean
-  GEOMAlgo_ShapeInfoFiller::TreatStepSphere(const TopoDS_Solid& aSd)
+Standard_Boolean  GEOMAlgo_ShapeInfoFiller::TreatStepSphere
+  (const TopoDS_Solid& aSd)
 {
   Standard_Boolean bRet, bIsAllowedType, bOnlyClosed, bIsEqual;
   Standard_Integer j;
-  Standard_Real aTolAng, aTolLin;
+  Standard_Real aTolAng, aTol;
   Standard_Real aVolume, aVolumeS, dV, aArea, aAreaS, dA;
   gp_Sphere aSphere[2];
   GeomAbs_SurfaceType aST;
@@ -801,7 +804,7 @@ Standard_Boolean
   TopExp_Explorer aExp;
   //
   bRet=Standard_False;
-  aTolLin=Precision::Confusion();
+  aTol=Precision::Confusion();
   aTolAng=Precision::Angular();
   //
   aExp.Init(aSd, TopAbs_FACE);
@@ -822,7 +825,7 @@ Standard_Boolean
     aSphere[j]=aGAS.Sphere();
   }
   //
-  bIsEqual=IsEqual(aSphere[0], aSphere[1], aTolLin);
+  bIsEqual=IsEqual(aSphere[0], aSphere[1], aTol);
   if (!bIsEqual) {
     return bRet;
   }
@@ -834,24 +837,30 @@ Standard_Boolean
   //
   aVolume=aSphere[0].Volume();
   //
-  BRepGProp::VolumeProperties(aSd, aGProps,  bOnlyClosed);
+  //modified by NIZNHY-PKV Tue Jun 09 08:39:47 2015f
+  BRepGProp::VolumeProperties(aSd, aGProps, aTol,  bOnlyClosed);
+  //BRepGProp::VolumeProperties(aSd, aGProps,  bOnlyClosed);
+  //modified by NIZNHY-PKV Tue Jun 09 08:39:50 2015t
   aVolumeS=aGProps.Mass();
   if (aVolumeS<0.) {
     aVolumeS=-aVolumeS;
   }
   //
   dV=fabs(aVolumeS-aVolume);
-  if (dV>aTolLin) {
+  if (dV>aTol) {
     return bRet;
   }
   //--------------------------------
   aArea=aSphere[0].Area();
   //
-  BRepGProp::SurfaceProperties(aSd, aGProps);
+  //modified by NIZNHY-PKV Tue Jun 09 08:23:54 2015f
+  BRepGProp::SurfaceProperties(aSd, aGProps, aTol);
+  //BRepGProp::SurfaceProperties(aSd, aGProps);
+  //modified by NIZNHY-PKV Tue Jun 09 08:23:56 2015t
   aAreaS=aGProps.Mass();
   //
   dA=fabs(aAreaS-aArea);
-  if (dA>aTolLin) {
+  if (dA>aTol) {
     return bRet;
   }
   //
@@ -899,4 +908,3 @@ Standard_Boolean IsEqual(const gp_Sphere& aSp1,
   //
   return bRet;
 }
-//modified by NIZNHY-PKV Tue Jul 03 13:29:43 2012t

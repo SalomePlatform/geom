@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2012-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -66,6 +66,7 @@ SET(_uic_files
 
 SET(TransformationGUI_HEADERS
   TransformationGUI.h
+  TransformationGUI_ExtensionDlg.h
   TransformationGUI_MultiTranslationDlg.h
   TransformationGUI_MultiRotationDlg.h
   TransformationGUI_TranslationDlg.h
@@ -74,11 +75,13 @@ SET(TransformationGUI_HEADERS
   TransformationGUI_ScaleDlg.h
   TransformationGUI_OffsetDlg.h
   TransformationGUI_ProjectionDlg.h
+  TransformationGUI_ProjectionOnCylDlg.h
   TransformationGUI_PositionDlg.h
   )
 
 # header files / to be processed by moc
 SET(_moc_HEADERS
+  TransformationGUI_ExtensionDlg.h
   TransformationGUI_MultiTranslationDlg.h
   TransformationGUI_MultiRotationDlg.h
   TransformationGUI_TranslationDlg.h
@@ -87,6 +90,7 @@ SET(_moc_HEADERS
   TransformationGUI_ScaleDlg.h
   TransformationGUI_OffsetDlg.h
   TransformationGUI_ProjectionDlg.h
+  TransformationGUI_ProjectionOnCylDlg.h
   TransformationGUI_PositionDlg.h
   )
 
@@ -100,6 +104,7 @@ QT4_WRAP_CPP(_moc_SOURCES ${_moc_HEADERS})
 
 SET(TransformationGUI_SOURCES
   TransformationGUI.cxx
+  TransformationGUI_ExtensionDlg.cxx
   TransformationGUI_MultiTranslationDlg.cxx
   TransformationGUI_MultiRotationDlg.cxx
   TransformationGUI_TranslationDlg.cxx
@@ -108,6 +113,7 @@ SET(TransformationGUI_SOURCES
   TransformationGUI_ScaleDlg.cxx
   TransformationGUI_OffsetDlg.cxx
   TransformationGUI_ProjectionDlg.cxx
+  TransformationGUI_ProjectionOnCylDlg.cxx
   TransformationGUI_PositionDlg.cxx
   ${_moc_SOURCES}
   ${_uic_files}

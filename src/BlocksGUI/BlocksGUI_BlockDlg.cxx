@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -387,7 +387,7 @@ void BlocksGUI_BlockDlg::SetEditCurrentArgument()
   aSender->setDown(true);
 
   globalSelection(); // close local contexts, if any
-  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_FACE); //Select Faces on All Shapes
+  localSelection(TopAbs_FACE); //Select Faces on All Shapes
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
 }
@@ -400,7 +400,7 @@ void BlocksGUI_BlockDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   globalSelection(); // close local contexts, if any
-  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_FACE); //Select Faces on All Shapes
+  localSelection(TopAbs_FACE); //Select Faces on All Shapes
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
   displayPreview(true);
@@ -500,4 +500,16 @@ void BlocksGUI_BlockDlg::addSubshapesToStudy()
   default:
     break;
   }
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BlocksGUI_BlockDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myFace1 << myFace2 << myFace3
+      << myFace4 << myFace5 << myFace6;
+  return res;
 }

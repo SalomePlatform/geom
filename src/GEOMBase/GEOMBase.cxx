@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -808,7 +808,7 @@ bool GEOMBase::IsShape( GEOM::GEOM_Object_ptr object )
 // function : TypeName()
 // purpose  : Get string representation for the shape type
 //=======================================================================
-QString GEOMBase::TypeName( TopAbs_ShapeEnum type )
+QString GEOMBase::TypeName( TopAbs_ShapeEnum type, bool capitalize )
 {
   QString name = "shape";
   switch( type ) {
@@ -831,6 +831,8 @@ QString GEOMBase::TypeName( TopAbs_ShapeEnum type )
   default:
     break;
   }
+  if ( capitalize && !name.isEmpty() )
+    name = name.left(1).toUpper() + name.mid(1);
   return name;
 }
 
@@ -857,7 +859,7 @@ QString GEOMBase::GetEntry( GEOM::GEOM_Object_ptr object )
 // Function : PublishSubObject
 // Purpose  : Publish sub-shape under the main object
 //================================================================
-void GEOMBase::PublishSubObject( GEOM::GEOM_Object_ptr object )
+void GEOMBase::PublishSubObject( GEOM::GEOM_Object_ptr object, const QString& name )
 {
   SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
   if ( study && !CORBA::is_nil( object ) ) {
@@ -866,9 +868,9 @@ void GEOMBase::PublishSubObject( GEOM::GEOM_Object_ptr object )
     GEOM::GEOM_Object_var father = object->GetMainShape();
     QString fatherEntry = GetEntry( father );
     if ( entry.isEmpty() && !CORBA::is_nil( father ) && !fatherEntry.isEmpty() ) {
-      QString name = GetName( object );
+      QString aName = !name.isEmpty() ? name : GetName( object );
       GeometryGUI::GetGeomGen()->AddInStudy( GeometryGUI::ClientStudyToStudy( studyDS ),
-                                             object, name.toLatin1().data(), father.in() );
+                                             object, aName.toLatin1().data(), father.in() );
     }
   }
 }

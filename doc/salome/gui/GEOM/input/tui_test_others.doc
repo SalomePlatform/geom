@@ -96,6 +96,9 @@
 \anchor swig_GetSharedShapes
 \until "sharedEdge_"
 
+\anchor swig_TransferData
+\until subBlackWhite[1]
+
 \anchor swig_CheckAndImprove
 \until "blocksComp"
 

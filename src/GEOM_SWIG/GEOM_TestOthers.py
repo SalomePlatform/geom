@@ -1,5 +1,5 @@
 #  -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 # CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -561,6 +561,18 @@ def TestOtherOperations (geompy, math):
     geompy.addToStudy(shEdge, "sharedEdge_" + `ind`)
     ind = ind + 1
     pass
+
+  # TransferData
+  path = os.getenv("DATA_DIR")
+  fileName = path + "/Shapes/Step/black_and_white.step"
+  blackWhite = geompy.ImportSTEP(fileName)
+  blackWhiteCopy = geompy.MakeCopy(blackWhite[0])
+  subBlackWhite = geompy.SubShapeAll(blackWhiteCopy, GEOM.SOLID)
+  geompy.TransferData(blackWhite[0], blackWhiteCopy)
+  geompy.addToStudy(blackWhite[0], "blackWhite")
+  geompy.addToStudy(blackWhiteCopy, "blackWhiteCopy")
+  geompy.addToStudyInFather( blackWhiteCopy, subBlackWhite[0], "" )
+  geompy.addToStudyInFather( blackWhiteCopy, subBlackWhite[1], "" )
 
   # CheckAndImprove
   blocksComp = geompy.CheckAndImprove(part)

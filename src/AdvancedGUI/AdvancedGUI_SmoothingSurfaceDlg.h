@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2013-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -45,6 +45,8 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );
+  virtual void                       addSubshapesToStudy();
+  virtual QList<GEOM::GeomObjPtr>    getSourceObjects();
 
 private:
   void                               Init();

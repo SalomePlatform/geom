@@ -1,5 +1,5 @@
 #  -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 # CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -178,6 +178,13 @@ def TestAll (geompy, math):
   Face2    = geompy.MakeFace(Sketcher, WantPlanarFace)
   Face3    = geompy.MakeFaceHW (100., 200., 1)       #(2 Doubles, 1 Int)->GEOM_Object
   Face4    = geompy.MakeFaceObjHW (vz, 200., 100.)   #(1 GEOM_Object, 2 Doubles)->GEOM_Object
+  Face5    = geompy.MakeFaceFromSurface(Face, Sketcher) #(2 GEOM_Objects)->GEOM_Object
+  
+  Cut2 = geompy.MakeCutList(Sphere1, [Box1], True)
+  #(List of GEOM_Object)->GEOM_Object
+  Face6 = geompy.MakeFaceWithConstraints([geompy.GetSubShape(Cut2, [5]),  geompy.GetSubShape(Cut2, [3]), 
+                                          geompy.GetSubShape(Cut2, [11]), geompy.GetSubShape(Cut2, [3]),
+                                          geompy.GetSubShape(Cut2, [13]), geompy.GetSubShape(Cut2, [3])])
   Disk     = geompy.MakeDiskPntVecR (p0, vz, radius) #(2 GEOM_Object, 1 Double)->GEOM_Object
   Disk2    = geompy.MakeDiskThreePnt(p0, p200, pz)   #(3 GEOM_Object)->GEOM_Object
   Disk3    = geompy.MakeDiskR(100., 1)               #(1 Doubles, 1 Int)->GEOM_Object
@@ -189,7 +196,13 @@ def TestAll (geompy, math):
                                prism1_faces[3], prism1_faces[4],
                                prism1_faces[5], prism1_faces[2]])
   Solid    = geompy.MakeSolid([Shell1])              #(List of GEOM_Object)->GEOM_Object
-
+  
+  Box1_translation = geompy.MakeTranslation(Box1, 10, 0, 0)
+  Box1_shell = geompy.SubShapeAllSorted(Box1, geompy.ShapeType["SHELL"])[0]
+  Box1_translation_shell = geompy.SubShapeAllSorted(Box1_translation, geompy.ShapeType["SHELL"])[0]
+  
+  Solid_from_shells = geompy.MakeSolidFromConnectedFaces([Box1_shell, Box1_translation_shell], 1) #(List of GEOM_Object, Boolean)->GEOM_Object
+  
   # Create Isoline
   Isoline = geompy.MakeIsoline(Face1, True, 0.5)     #(1 GEOM_Object, Boolean, Double)->GEOM_Object
 
@@ -216,7 +229,6 @@ def TestAll (geompy, math):
   Line3 = geompy.MakeLineTwoFaces(prism1_faces[0], prism1_faces[1]) #(2 GEOM_Object)->GEOM_Object
 
   #Create advanced objects
-  Copy             = geompy.MakeCopy(Box)                      #(GEOM_Object)->GEOM_Object
   Prism            = geompy.MakePrismVecH(Face, vz, 100.0)     #(2 GEOM_Object, Double)->GEOM_Object
   Prism2Ways       = geompy.MakePrismVecH2Ways(Face, vz, 10.0) #(2 GEOM_Object, Double)->GEOM_Object
   PrismTwoPnt      = geompy.MakePrism(Face2, p0, pxyz)         #(3 GEOM_Object)->GEOM_Object
@@ -229,6 +241,13 @@ def TestAll (geompy, math):
                                         tol2d, tol3d, nbiter)  #(GEOM_Object, 4 Doubles, Short)->GEOM_Object
   Pipe             = geompy.MakePipe(Wire, Edge)               #(2 GEOM_Object)->GEOM_Object
   Sewing           = geompy.MakeSewing([Face, S], precision)   #(List Of GEOM_Object, Double)->GEOM_Object
+  ThickSolid       = geompy.MakeCopy(Box)
+  faces            = geompy.SubShapeAllSortedCentres(Box, geompy.ShapeType["FACE"])
+  shell            = geompy.MakeShell([faces[0], faces[1], faces[2]])
+  faceIDs          = geompy.SubShapeAllSortedCentresIDs(ThickSolid, geompy.ShapeType["FACE"])
+  ThickShell       = geompy.MakeThickSolid(shell, 50)          #(GEOM_Object, Double)->GEOM_Object
+  geompy.Thicken(ThickSolid, 50, [faceIDs[0], faceIDs[1]])     #(GEOM_Object) modification
+  Copy             = geompy.MakeCopy(Box)                      #(GEOM_Object)->GEOM_Object
 
   #Transform objects
   Translation = geompy.MakeTranslationTwoPoints(Box, px, pz)    #(3 GEOM_Object)->GEOM_Object
@@ -252,8 +271,12 @@ def TestAll (geompy, math):
   Position    = geompy.MakePosition(Box, cs1, cs2)   #(3 GEOM_Object)->GEOM_Object
   Position2   = geompy.PositionAlongPath(Box, Arc, 0.5, 1, 0)  #(2 GEOM_Object, 1 Double, 2 Bool)->GEOM_Object
   Offset      = geompy.MakeOffset(Box, 10.)          #(GEOM_Object, Double)->GEOM_Object
-  Orientation = geompy.ChangeOrientation(Box)
   ProjOnWire  = geompy.MakeProjectionOnWire(p0, Wire)
+  ProjOnCyl   = geompy.MakeProjectionOnCylinder(Wire, 100)
+  Orientation = geompy.ChangeOrientation(Box)
+  ExtEdge     = geompy.ExtendEdge(Edge1, -0.3, 1.3)
+  ExtFace     = geompy.ExtendFace(Face5, -0.3, 1.3, -0.1, 1.1)
+  Surface     = geompy.MakeSurfaceFromFace(Face5)
 
   #IDList for Fillet/Chamfer
   prism_edges = geompy.ExtractShapes(Prism, geompy.ShapeType["EDGE"], True)
@@ -386,6 +409,7 @@ def TestAll (geompy, math):
 
   id_Common  = geompy.addToStudy(Common,  "Common")
   id_Cut     = geompy.addToStudy(Cut,     "Cut")
+  id_Cut2    = geompy.addToStudy(Cut2,    "Cut2")
   id_Fuse    = geompy.addToStudy(Fuse,    "Fuse")
   id_Section = geompy.addToStudy(Section, "Section")
 
@@ -397,6 +421,8 @@ def TestAll (geompy, math):
   id_Face2    = geompy.addToStudy(Face2,    "Face from Sketcher")
   id_Face3    = geompy.addToStudy(Face3,    "Face Height Width")
   id_Face4    = geompy.addToStudy(Face4,    "Face Plane_HW")
+  id_Face5    = geompy.addToStudy(Face5,    "Face from surface and wire")
+  id_Face6    = geompy.addToStudy(Face6,    "Face from edges with constraints")
   id_Disk     = geompy.addToStudy(Disk,     "Disk PntVecR")
   id_Disk2    = geompy.addToStudy(Disk2,    "Disk Three Points")
   id_Disk3    = geompy.addToStudy(Disk3,    "Disk OXY Radius")
@@ -411,11 +437,16 @@ def TestAll (geompy, math):
   id_Prism1   = geompy.addToStudy(Prism1,     "Prism by Two Pnt")
   id_Shell1   = geompy.addToStudy(Shell1,   "Shell from Prism1 faces")
   id_Solid    = geompy.addToStudy(Solid,    "Solid")
+  id_Solid1   = geompy.addToStudy(Solid_from_shells,   "Solid1")
+  
   id_Compound = geompy.addToStudy(Compound, "Compound")
 
   id_Plane2   = geompy.addToStudy(Plane2,   "Plane on Face")
 
   id_Copy       = geompy.addToStudy(Copy,       "Copy")
+  id_ThickShell = geompy.addToStudy(ThickShell, "ThickShell")
+  id_ThickSolid = geompy.addToStudy(ThickSolid, "ThickSolid")
+
   id_Prism            = geompy.addToStudy(Prism,            "Prism")
   id_Prism2Ways       = geompy.addToStudy(Prism2Ways,       "Prism2Ways")
   id_PrismTwoPnt      = geompy.addToStudy(PrismTwoPnt,      "PrismTwoPnt")
@@ -467,6 +498,10 @@ def TestAll (geompy, math):
   id_Offset      = geompy.addToStudy(Offset,        "Offset")
   id_Orientation = geompy.addToStudy(Orientation,   "Orientation")
   id_ProjOnWire  = geompy.addToStudy(ProjOnWire[1], "ProjOnWire")
+  id_ProjOnCyl   = geompy.addToStudy(ProjOnCyl,     "ProjOnCyl")
+  id_ExtEdge     = geompy.addToStudy(ExtEdge,       "ExtendedEdge")
+  id_ExtFace     = geompy.addToStudy(ExtFace,       "ExtendedFace")
+  id_Surface     = geompy.addToStudy(Surface,       "Surface From Face")
 
   id_Fillet   = geompy.addToStudy(Fillet,   "Fillet")
   id_Fillet2  = geompy.addToStudy(Fillet2,  "Fillet2")
@@ -489,7 +524,7 @@ def TestAll (geompy, math):
 
   id_Partition  = geompy.addToStudy(Partition, "Partition")
   id_Partition1 = geompy.addToStudy(Partition1, "Half Partition")
-
+  
   #Decompose objects
 
   # SubShape
@@ -540,5 +575,20 @@ def TestAll (geompy, math):
   geompy.RestoreSubShapes(RotatPnt, [], GEOM.FSM_Transformed)
   geompy.RestoreSubShapes(Partition, [Box])
   geompy.RestoreSubShapes(Partition1)
+
+  # GetSubShapeEdgeSorted
+  p1 = geompy.GetFirstVertex(Sketcher)
+  p2 = geompy.GetFirstVertex(Sketcher3d_1)
+  p3 = geompy.GetFirstVertex(Sketcher3d_2)
+  geompy.GetSubShapeEdgeSorted(Sketcher, p1, "OrderedEdges")
+  geompy.GetSubShapeEdgeSorted(Sketcher3d_1, p2, "OrderedEdges")
+  geompy.GetSubShapeEdgeSorted(Sketcher3d_2, p3, "OrderedEdges")
+
+  # GetSubShapesWithTolerance
+  geompy.GetSubShapesWithTolerance(Box, GEOM.FACE, GEOM.CC_GT, 1.e-8, "gt")
+  geompy.GetSubShapesWithTolerance(Box, GEOM.FACE, GEOM.CC_GE, 1.e-7, "ge")
+  geompy.GetSubShapesWithTolerance(Box, GEOM.FACE, GEOM.CC_LT, 2.e-7, "lt")
+  geompy.GetSubShapesWithTolerance(Box, GEOM.FACE, GEOM.CC_LE, 1.e-7, "le")
+
 
   print "DONE"

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -361,9 +361,9 @@ void TransformationGUI_RotationDlg::SetEditCurrentArgument()
     GroupPoints->LineEdit5->setEnabled(false);
 
     if (getConstructorId() == 0)
-      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+      localSelection(TopAbs_EDGE);
     else
-      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+      localSelection(TopAbs_VERTEX);
   }
   else if (send == GroupPoints->PushButton4) {
     myEditCurrentArgument = GroupPoints->LineEdit4;
@@ -375,7 +375,7 @@ void TransformationGUI_RotationDlg::SetEditCurrentArgument()
     GroupPoints->LineEdit2->setEnabled(false);
     GroupPoints->LineEdit5->setEnabled(false);
 
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+    localSelection(TopAbs_VERTEX);
   }
   else if (send == GroupPoints->PushButton5) {
     myEditCurrentArgument = GroupPoints->LineEdit5;
@@ -387,7 +387,7 @@ void TransformationGUI_RotationDlg::SetEditCurrentArgument()
     GroupPoints->LineEdit2->setEnabled(false);
     GroupPoints->LineEdit4->setEnabled(false);
 
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+    localSelection(TopAbs_VERTEX);
   }
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
@@ -615,4 +615,18 @@ void TransformationGUI_RotationDlg::addSubshapesToStudy()
       break;
     }
   }
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> TransformationGUI_RotationDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  if ( GroupPoints->CheckButton1->isChecked() ) {
+    res.append(myObjects);
+    res << myAxis << myCentPoint << myPoint1 << myPoint2;
+  }
+  return res;
 }

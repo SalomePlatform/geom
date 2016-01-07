@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -116,12 +116,14 @@ class GEOM_I_EXPORT GEOM_IBlocksOperations_i :
 				     CORBA::Long&          theNbBlocks);
 
   CORBA::Boolean CheckCompoundOfBlocks (GEOM::GEOM_Object_ptr theCompound,
+                                        const CORBA::Double   theToleranceC1,
 					GEOM::GEOM_IBlocksOperations::BCErrors_out theErrors);
 
   char* PrintBCErrors (GEOM::GEOM_Object_ptr theCompound,
 		       const GEOM::GEOM_IBlocksOperations::BCErrors& theErrors);
 
   GEOM::GEOM_Object_ptr GetNonBlocks (GEOM::GEOM_Object_ptr theShape,
+                                      const CORBA::Double   theToleranceC1,
                                       GEOM::GEOM_Object_out theNonQuads);
 
   GEOM::GEOM_Object_ptr RemoveExtraEdges (GEOM::GEOM_Object_ptr theShape,

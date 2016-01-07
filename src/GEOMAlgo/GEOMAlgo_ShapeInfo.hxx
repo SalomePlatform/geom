@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -37,6 +37,7 @@
 #include <GEOMAlgo_KindOfName.hxx>
 #include <GEOMAlgo_KindOfBounds.hxx>
 #include <GEOMAlgo_KindOfClosed.hxx>
+#include <GEOMAlgo_KindOfDef.hxx>
 
 
 //=======================================================================
@@ -62,7 +63,8 @@ class GEOMAlgo_ShapeInfo
     TopAbs_ShapeEnum Type() const;
 
   Standard_EXPORT
-    void SetNbSubShapes(const TopAbs_ShapeEnum aType,const Standard_Integer aNb) ;
+    void SetNbSubShapes(const TopAbs_ShapeEnum aType,
+                        const Standard_Integer aNb) ;
 
   Standard_EXPORT
     Standard_Integer NbSubShapes(const TopAbs_ShapeEnum aType) const;
@@ -90,6 +92,12 @@ class GEOMAlgo_ShapeInfo
 
   Standard_EXPORT
     GEOMAlgo_KindOfClosed KindOfClosed() const;
+
+  Standard_EXPORT
+    void SetKindOfDef(const GEOMAlgo_KindOfDef aT) ;
+
+  Standard_EXPORT
+    GEOMAlgo_KindOfDef KindOfDef() const;
 
   Standard_EXPORT
     void SetLocation(const gp_Pnt& aP) ;
@@ -189,6 +197,7 @@ class GEOMAlgo_ShapeInfo
   GEOMAlgo_KindOfName myKindOfName;
   GEOMAlgo_KindOfBounds myKindOfBounds;
   GEOMAlgo_KindOfClosed myKindOfClosed;
+  GEOMAlgo_KindOfDef myKindOfDef;
   gp_Pnt myLocation;
   gp_Dir myDirection;
   gp_Ax3 myPosition;

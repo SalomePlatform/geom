@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -64,6 +64,7 @@ class LightApp_Selection;
 class SUIT_ViewManager;
 class SalomeApp_Study;
 class GEOMGUI_CreationInfoWdg;
+class GEOMGUI_TextTreeWdg;
 
 //=================================================================================
 // class    : GeometryGUI
@@ -145,8 +146,10 @@ public:
   virtual bool                isDraggable( const SUIT_DataObject* what ) const;
   virtual bool                isDropAccepted( const SUIT_DataObject* where ) const;
   virtual void                dropObjects( const DataObjectList& what, 
-					   SUIT_DataObject* where,
-					   const int row, Qt::DropAction action );
+                                           SUIT_DataObject* where,
+                                           const int row, Qt::DropAction action );
+
+  void                        emitDimensionsUpdated( QString entry );
 
 public slots:
   virtual bool                deactivateModule( SUIT_Study* );
@@ -176,6 +179,7 @@ signals :
   void                        SignalDefaultStepValueChanged( double newVal );
   void                        SignalDependencyTreeParamChanged( const QString&, const QString& );
   void                        SignalDependencyTreeRenameObject( const QString& );
+  void                        DimensionsUpdated( const QString& );
 
 protected:
   virtual LightApp_Selection* createSelection() const;
@@ -223,6 +227,8 @@ private:
   int                         myLocalSelectionMode; //Select Only
 
   GEOMGUI_CreationInfoWdg*    myCreationInfoWdg;
+  
+  GEOMGUI_TextTreeWdg*       myTextTreeWdg;
   
   SALOME_ListIO               myTopLevelIOList;               
 

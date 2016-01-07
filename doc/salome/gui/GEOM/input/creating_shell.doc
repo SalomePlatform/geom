@@ -6,7 +6,7 @@ To create a \b Shell in the <b>Main Menu</b> select <b>New Entity - >
 Build - > Shell</b>
 
 \n You can create a \b Shell from a compound of faces or a list of faces or shells.
-\n The \b Result will be a \b GEOM_Object (shell).
+\n The \b Result will be a \b GEOM_Object. It can be either a single shell or, in specific cases, a compound of shells.
 
 \n <b>TUI Command:</b> <em>geompy.MakeShell(ListOfShape)</em>
 \n <b>Arguments:</b> Name + Compound of faces or List of faces having connected edges.

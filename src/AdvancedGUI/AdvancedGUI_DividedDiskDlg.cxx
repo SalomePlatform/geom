@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -335,11 +335,11 @@ void AdvancedGUI_DividedDiskDlg::SetEditCurrentArgument()
   disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
   if (myEditCurrentArgument == GroupPntVecR->LineEdit2) {
     globalSelection(); // close local contexts, if any
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+    localSelection(TopAbs_EDGE);
   }
   else {
     globalSelection(); // close local contexts, if any
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+    localSelection(TopAbs_VERTEX);
   }
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
@@ -456,5 +456,16 @@ bool AdvancedGUI_DividedDiskDlg::execute (ObjectList& objects)
   if (res)
     objects.push_back(anObj._retn());
 
+  return res;
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> AdvancedGUI_DividedDiskDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myPoint << myDir;
   return res;
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2014-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -36,9 +36,12 @@
 #include "GEOM_Operation.h"
 #include "GEOMBase.h"
 #include "GEOM_Displayer.h"
+#include "GEOM_GenericObjPtr.h"
 
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(BREPPlugin)
+
+typedef GEOM::GenericObjPtr<GEOM::IBREPOperations> BREPOpPtr;
 
 //=======================================================================
 // function : BREPPlugin_GUI()
@@ -111,8 +114,8 @@ bool BREPPlugin_GUI::importBREP( SUIT_Desktop* parent )
 
   SALOMEDS::Study_var dsStudy = GeometryGUI::ClientStudyToStudy( study->studyDS() );
   GEOM::GEOM_IOperations_var op = GeometryGUI::GetGeomGen()->GetPluginOperations( dsStudy->StudyId(), "BREPPluginEngine" );
-  GEOM::IBREPOperations_var brepOp = GEOM::IBREPOperations::_narrow( op );
-  if ( CORBA::is_nil( brepOp ) ) return false;
+  BREPOpPtr brepOp = GEOM::IBREPOperations::_narrow( op );
+  if ( brepOp.isNull() ) return false;
   
   QStringList fileNames = app->getOpenFileNames( SUIT_FileDlg::getLastVisitedPath().isEmpty() ? QDir::currentPath() : QString(""),
 						 tr( "BREP_FILES" ),
@@ -126,7 +129,7 @@ bool BREPPlugin_GUI::importBREP( SUIT_Desktop* parent )
     foreach( QString fileName, fileNames )
     {
       SUIT_OverrideCursor wc;
-      GEOM_Operation transaction( app, brepOp.in() );
+      GEOM_Operation transaction( app, brepOp.get() );
       
       try
       {
@@ -145,6 +148,7 @@ bool BREPPlugin_GUI::importBREP( SUIT_Desktop* parent )
 	  entryList.append( so->GetID() );
 	  transaction.commit();
 	  GEOM_Displayer( study ).Display( main.in() );
+          main->UnRegister();
 	}
 	else
 	{
@@ -183,8 +187,8 @@ bool BREPPlugin_GUI::exportBREP( SUIT_Desktop* parent )
 
   SALOMEDS::Study_var dsStudy = GeometryGUI::ClientStudyToStudy( study->studyDS() );
   GEOM::GEOM_IOperations_var op = GeometryGUI::GetGeomGen()->GetPluginOperations( dsStudy->StudyId(), "BREPPluginEngine" );
-  GEOM::IBREPOperations_var brepOp = GEOM::IBREPOperations::_narrow( op );
-  if ( CORBA::is_nil( brepOp ) ) return false;
+  BREPOpPtr brepOp = GEOM::IBREPOperations::_narrow( op );
+  if ( brepOp.isNull() ) return false;
 
   LightApp_SelectionMgr* sm = app->selectionMgr();
   if ( !sm ) return false;
@@ -212,7 +216,7 @@ bool BREPPlugin_GUI::exportBREP( SUIT_Desktop* parent )
     
     SUIT_OverrideCursor wc;
     
-    GEOM_Operation transaction( app, brepOp.in() );
+    GEOM_Operation transaction( app, brepOp.get() );
     
     try
     {

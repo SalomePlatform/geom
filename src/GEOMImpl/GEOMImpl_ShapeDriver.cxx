@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -24,12 +24,14 @@
 
 #include <GEOMImpl_IIsoline.hxx>
 #include <GEOMImpl_IShapes.hxx>
+#include <GEOMImpl_IShapeExtend.hxx>
 #include <GEOMImpl_IVector.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOMImpl_Block6Explorer.hxx>
 
 #include <GEOM_Function.hxx>
 #include <GEOMUtils_Hatcher.hxx>
+#include <GEOMAlgo_State.hxx>
 
 // OCCT Includes
 #include <ShapeFix_Wire.hxx>
@@ -42,6 +44,7 @@
 #include <BRepAlgo_FaceRestrictor.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
 #include <BRepBuilderAPI_Sewing.hxx>
+#include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeSolid.hxx>
@@ -55,6 +58,8 @@
 
 #include <ShapeAnalysis.hxx>
 #include <ShapeAnalysis_FreeBounds.hxx>
+
+#include <TNaming_CopyShape.hxx>
 
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
@@ -76,12 +81,14 @@
 #include <GCPnts_AbscissaPoint.hxx>
 
 #include <Geom_TrimmedCurve.hxx>
+#include <Geom_RectangularTrimmedSurface.hxx>
 #include <Geom_Surface.hxx>
 #include <GeomAbs_CurveType.hxx>
 #include <GeomConvert_CompCurveToBSplineCurve.hxx>
 #include <GeomConvert.hxx>
 #include <GeomLProp.hxx>
 
+#include <TColStd_IndexedDataMapOfTransientTransient.hxx>
 #include <TColStd_SequenceOfReal.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <TColStd_Array1OfReal.hxx>
@@ -95,10 +102,66 @@
 #include <Standard_TypeMismatch.hxx>
 #include <Standard_ConstructionError.hxx>
 
-// Uncomment this definition to check if type of created shape is the same
-// as expected. For further details please see the Mantis issue
-// http://salome.mantis.opencascade.com/view.php?id=22674 
-//#define RESULT_TYPE_CHECK
+#include <BOPAlgo_PaveFiller.hxx>
+#include <BOPAlgo_MakerVolume.hxx>
+
+#include <list>
+
+namespace
+{
+  // check that compound includes only shapes of expected type
+  bool checkCompound( TopoDS_Shape& c, TopAbs_ShapeEnum t )
+  {
+    TopoDS_Iterator it( c, Standard_True, Standard_True );
+
+    // empty compound is OK only if we explicitly create a compound of shapes
+    bool result = true;
+
+    // => if expected type is TopAbs_SHAPE, we allow compound consisting of any shapes, this above check is enough
+    // => otherwise we have to check compound's content
+    // => compound sometimes can contain enclosed compound(s), we process them recursively and rebuild initial compound
+
+    if ( t != TopAbs_SHAPE ) {
+      result = it.More();
+      std::list<TopoDS_Shape> compounds, shapes;
+      compounds.push_back( c );
+      while ( !compounds.empty() && result ) {
+        // check that compound contains only shapes of expected type
+        TopoDS_Shape cc = compounds.front();
+        compounds.pop_front();
+        it.Initialize( cc, Standard_True, Standard_True );
+        for ( ; it.More() && result; it.Next() ) {
+          TopAbs_ShapeEnum tt = it.Value().ShapeType();
+          if ( tt == TopAbs_COMPOUND || tt == TopAbs_COMPSOLID ) {
+            compounds.push_back( it.Value() );
+            continue;
+          }
+          shapes.push_back( it.Value() );
+          result = tt == t;
+        }
+      }
+      if ( result ) {
+        if ( shapes.empty() ) {
+          result = false;
+        }
+        else if ( shapes.size() == 1 ) {
+          c = shapes.front();
+        }
+        else {
+          BRep_Builder b;
+          TopoDS_Compound newc;
+          b.MakeCompound( newc );
+          std::list<TopoDS_Shape> ::const_iterator sit;
+          for ( sit = shapes.begin(); sit != shapes.end(); ++sit )
+          b.Add( newc, *sit );
+          c = newc;
+        }
+      }
+    }
+
+    return result;
+  }
+}
 
 //modified by NIZNHY-PKV Wed Dec 28 13:48:20 2011f
 //static
@@ -139,16 +202,17 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
 
   TopoDS_Shape aShape;
   TCollection_AsciiString aWarning;
-#ifdef RESULT_TYPE_CHECK
+
+  // this is an exact type of expected shape, or shape in a compound if compound is allowed as a result (see below)
   TopAbs_ShapeEnum anExpectedType = TopAbs_SHAPE;
-#endif
+  // this should be true if result can be a compound of shapes of strict type (see above)
+  bool allowCompound = false;
 
   BRep_Builder B;
 
   if (aType == WIRE_EDGES) {
-#ifdef RESULT_TYPE_CHECK
+    // result may be only a single wire
     anExpectedType = TopAbs_WIRE;
-#endif
 
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
 
@@ -159,9 +223,9 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     aShape = MakeWireFromEdges(aShapes, aTolerance);
   }
   else if (aType == FACE_WIRE) {
-#ifdef RESULT_TYPE_CHECK
+    // result may be a face or a compound of faces
     anExpectedType = TopAbs_FACE;
-#endif
+    allowCompound = true;
 
     Handle(GEOM_Function) aRefBase = aCI.GetBase();
     TopoDS_Shape aShapeBase = aRefBase->GetValue();
@@ -178,7 +242,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
         Standard_NullObject::Raise
           ("Shape for face construction is not closed");
     }
-    else if (aShapeBase.ShapeType() == TopAbs_EDGE && aShapeBase.Closed()) {
+    else if (aShapeBase.ShapeType() == TopAbs_EDGE && BRep_Tool::IsClosed(aShapeBase)) {
       BRepBuilderAPI_MakeWire MW;
       MW.Add(TopoDS::Edge(aShapeBase));
       if (!MW.IsDone()) {
@@ -196,9 +260,9 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     }
   }
   else if (aType == FACE_WIRES) {
-#ifdef RESULT_TYPE_CHECK
+    // result may be a face or a compound of faces
     anExpectedType = TopAbs_FACE;
-#endif
+    allowCompound = true;
 
     // Try to build a face from a set of wires and edges
     int ind;
@@ -212,6 +276,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     // 1. Extract all edges from the given arguments
     TopTools_MapOfShape aMapEdges;
     Handle(TopTools_HSequenceOfShape) aSeqEdgesIn = new TopTools_HSequenceOfShape;
+    TColStd_IndexedDataMapOfTransientTransient aMapTShapes;
 
     for (ind = 1; ind <= nbshapes; ind++) {
       Handle(GEOM_Function) aRefSh_i = Handle(GEOM_Function)::DownCast(aShapes->Value(ind));
@@ -220,9 +285,18 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       TopExp_Explorer anExpE_i (aSh_i, TopAbs_EDGE);
       for (; anExpE_i.More(); anExpE_i.Next()) {
         if (aMapEdges.Add(anExpE_i.Current())) {
-          aSeqEdgesIn->Append(anExpE_i.Current());
+          // Copy the original shape.
+          TopoDS_Shape aShapeCopy;
+
+          TNaming_CopyShape::CopyTool
+            (anExpE_i.Current(), aMapTShapes, aShapeCopy);
+          aSeqEdgesIn->Append(aShapeCopy);
         }
       }
+    }
+
+    if (aSeqEdgesIn->IsEmpty()) {
+      Standard_ConstructionError::Raise("No edges given");
     }
 
     // 2. Connect edges to wires of maximum length
@@ -315,10 +389,47 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       aShape = C;
     }
   }
+  else if (aType == FACE_FROM_SURFACE) {
+    // result may be only a face
+    anExpectedType = TopAbs_FACE;
+
+    Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
+
+    if (aShapes.IsNull() == Standard_False) {
+      Standard_Integer aNbShapes = aShapes->Length();
+
+      if (aNbShapes == 2) {
+        Handle(GEOM_Function) aRefFace =
+          Handle(GEOM_Function)::DownCast(aShapes->Value(1));
+        Handle(GEOM_Function) aRefWire =
+          Handle(GEOM_Function)::DownCast(aShapes->Value(2));
+
+        if (aRefFace.IsNull() == Standard_False &&
+            aRefWire.IsNull() == Standard_False) {
+          TopoDS_Shape aShFace = aRefFace->GetValue();
+          TopoDS_Shape aShWire = aRefWire->GetValue();
+
+          if (aShFace.IsNull()    == Standard_False &&
+              aShFace.ShapeType() == TopAbs_FACE    &&
+              aShWire.IsNull()    == Standard_False &&
+              aShWire.ShapeType() == TopAbs_WIRE) {
+            TopoDS_Face             aFace = TopoDS::Face(aShFace);
+            TopoDS_Wire             aWire = TopoDS::Wire(aShWire);
+            Handle(Geom_Surface)    aSurf = BRep_Tool::Surface(aFace);
+            BRepBuilderAPI_MakeFace aMkFace(aSurf, aWire);
+
+            if (aMkFace.IsDone()) {
+              aShape = aMkFace.Shape();
+            }
+          }
+        }
+      }
+    }
+  }
   else if (aType == SHELL_FACES) {
-#ifdef RESULT_TYPE_CHECK
+    // result may be only a shell or a compound of shells
     anExpectedType = TopAbs_SHELL;
-#endif
+    allowCompound = true;
 
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
     unsigned int ind, nbshapes = aShapes->Length();
@@ -376,41 +487,10 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     }
 
   }
-  else if (aType == SOLID_SHELL) {
-#ifdef RESULT_TYPE_CHECK
-    anExpectedType = TopAbs_SOLID;
-#endif
-
-    Handle(GEOM_Function) aRefShell = aCI.GetBase();
-    TopoDS_Shape aShapeShell = aRefShell->GetValue();
-    if (!aShapeShell.IsNull() && aShapeShell.ShapeType() == TopAbs_COMPOUND) {
-      TopoDS_Iterator It (aShapeShell, Standard_True, Standard_True);
-      if (It.More()) aShapeShell = It.Value();
-    }
-    if (aShapeShell.IsNull() || aShapeShell.ShapeType() != TopAbs_SHELL) {
-      Standard_NullObject::Raise("Shape for solid construction is null or not a shell");
-    }
-
-    BRepCheck_Shell chkShell(TopoDS::Shell(aShapeShell));
-    if (chkShell.Closed() == BRepCheck_NotClosed) return 0;
-
-    TopoDS_Solid Sol;
-    B.MakeSolid(Sol);
-    B.Add(Sol, aShapeShell);
-    BRepClass3d_SolidClassifier SC (Sol);
-    SC.PerformInfinitePoint(Precision::Confusion());
-    if (SC.State() == TopAbs_IN) {
-      B.MakeSolid(Sol);
-      B.Add(Sol, aShapeShell.Reversed());
-    }
-
-    aShape = Sol;
-
-  }
   else if (aType == SOLID_SHELLS) {
-#ifdef RESULT_TYPE_CHECK
+    // result may be only a solid or a compound of solids
     anExpectedType = TopAbs_SOLID;
-#endif
+    allowCompound = true;
 
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
     unsigned int ind, nbshapes = aShapes->Length();
@@ -426,9 +506,18 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       }
       if (aShapeShell.ShapeType() == TopAbs_COMPOUND) {
         TopoDS_Iterator It (aShapeShell, Standard_True, Standard_True);
-        if (It.More()) aShapeShell = It.Value();
+        for (; It.More(); It.Next()) {
+          TopoDS_Shape aSubShape = It.Value();
+          if (aSubShape.ShapeType() == TopAbs_SHELL) {
+            aMkSolid.Add(TopoDS::Shell(aSubShape));
+            ish++;
+          }
+          else
+            Standard_TypeMismatch::Raise
+              ("Shape for solid construction is neither a shell nor a compound of shells");
+        }
       }
-      if (aShapeShell.ShapeType() == TopAbs_SHELL) {
+      else if (aShapeShell.ShapeType() == TopAbs_SHELL) {
         aMkSolid.Add(TopoDS::Shell(aShapeShell));
         ish++;
       }
@@ -444,9 +533,8 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       aShape = Sol;
   }
   else if (aType == COMPOUND_SHAPES) {
-#ifdef RESULT_TYPE_CHECK
-    anExpectedType = TopAbs_COMPOUND;
-#endif
+    // result may be only a compound of any shapes
+    allowCompound = true;
 
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
     unsigned int ind, nbshapes = aShapes->Length();
@@ -466,34 +554,9 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     aShape = C;
 
   }
-  /*
-  else if (aType == REVERSE_ORIENTATION) {
-    Handle(GEOM_Function) aRefShape = aCI.GetBase();
-    TopoDS_Shape aShape_i = aRefShape->GetValue();
-    if (aShape_i.IsNull()) {
-       Standard_NullObject::Raise("Shape for reverse is null");
-    }
-
-    BRepBuilderAPI_Copy Copy(aShape_i);
-    if( Copy.IsDone() ) {
-      TopoDS_Shape tds = Copy.Shape();
-      if( tds.IsNull() ) {
-        Standard_ConstructionError::Raise("Orientation aborted : Can not reverse the shape");
-      }
-
-      if( tds.Orientation() == TopAbs_FORWARD)
-        tds.Orientation(TopAbs_REVERSED);
-      else
-        tds.Orientation(TopAbs_FORWARD);
-
-      aShape = tds;
-    }
-  }
-  */
   else if (aType == EDGE_WIRE) {
-#ifdef RESULT_TYPE_CHECK
+    // result may be only an edge
     anExpectedType = TopAbs_EDGE;
-#endif
 
     Handle(GEOM_Function) aRefBase = aCI.GetBase();
     TopoDS_Shape aWire = aRefBase->GetValue();
@@ -503,10 +566,48 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
 
     aShape = MakeEdgeFromWire(aWire, LinTol, AngTol);
   }
+  else if (aType == SOLID_FACES) {
+    // result may be only a solid or a compound of solids
+    anExpectedType = TopAbs_SOLID;
+    allowCompound = true;
+    
+    Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
+    unsigned int ind, nbshapes = aShapes->Length();
+    
+    // add faces
+    BOPCol_ListOfShape aLS;
+    for (ind = 1; ind <= nbshapes; ind++) {
+      Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast(aShapes->Value(ind));
+      TopoDS_Shape aShape_i = aRefShape->GetValue();
+      if (aShape_i.IsNull()) {
+        Standard_NullObject::Raise("Shape for solid construction is null");
+      }
+      if (aShape_i.ShapeType() == TopAbs_COMPOUND) {
+        TopoDS_Iterator It (aShape_i, Standard_True, Standard_True);
+        for (; It.More(); It.Next()) {
+          TopoDS_Shape aSubShape = It.Value();
+          if (aSubShape.ShapeType() == TopAbs_FACE || aSubShape.ShapeType() == TopAbs_SHELL)
+            aLS.Append(aSubShape);
+          else
+            Standard_TypeMismatch::Raise
+              ("Shape for solid construction is neither a list of faces and/or shells "
+               "nor a compound of faces and/or shells");
+        }
+      }
+      aLS.Append(aShape_i);
+    }
+
+    BOPAlgo_MakerVolume aMV;
+    aMV.SetArguments(aLS);
+    aMV.SetIntersect(aCI.GetIsIntersect());
+    aMV.Perform();
+    if (aMV.ErrorStatus()) return 0;
+
+    aShape = aMV.Shape();
+  }
   else if (aType == EDGE_CURVE_LENGTH) {
-#ifdef RESULT_TYPE_CHECK
+    // result may be only an edge
     anExpectedType = TopAbs_EDGE;
-#endif
 
     GEOMImpl_IVector aVI (aFunction);
 
@@ -581,10 +682,11 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     BRepBuilderAPI_MakeEdge aME (ReOrientedCurve, UFirst, aParam);
     if (aME.IsDone())
       aShape = aME.Shape();
-  } else if (aType == SHAPE_ISOLINE) {
-#ifdef RESULT_TYPE_CHECK
+  }
+  else if (aType == SHAPE_ISOLINE) {
+    // result may be only an edge or compound of edges
     anExpectedType = TopAbs_EDGE;
-#endif
+    allowCompound = true;
 
     GEOMImpl_IIsoline     aII (aFunction);
     Handle(GEOM_Function) aRefFace = aII.GetFace();
@@ -612,13 +714,84 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
         ("Shape for isoline construction is not a face");
     }
   }
+  else if (aType == EDGE_UV) {
+    // result may be only an edge
+    anExpectedType = TopAbs_EDGE;
+
+    GEOMImpl_IShapeExtend aSE (aFunction);
+    Handle(GEOM_Function) aRefEdge   = aSE.GetShape();
+    TopoDS_Shape          aShapeEdge = aRefEdge->GetValue();
+
+    if (aShapeEdge.ShapeType() == TopAbs_EDGE) {
+      TopoDS_Edge anEdge = TopoDS::Edge(aShapeEdge);
+
+      aShape = ExtendEdge(anEdge, aSE.GetUMin(), aSE.GetUMax());
+    }
+  }
+  else if (aType == FACE_UV) {
+    // result may be only a face
+    anExpectedType = TopAbs_FACE;
+
+    GEOMImpl_IShapeExtend aSE (aFunction);
+    Handle(GEOM_Function) aRefFace   = aSE.GetShape();
+    TopoDS_Shape          aShapeFace = aRefFace->GetValue();
+
+    if (aShapeFace.ShapeType() == TopAbs_FACE) {
+      TopoDS_Face aFace = TopoDS::Face(aShapeFace);
+
+      aFace.Orientation(TopAbs_FORWARD);
+      aShape = ExtendFace(aFace, aSE.GetUMin(), aSE.GetUMax(),
+                          aSE.GetVMin(), aSE.GetVMax()); 
+    }
+  }
+  else if (aType == SURFACE_FROM_FACE) {
+    // result may be only a face
+    anExpectedType = TopAbs_FACE;
+
+    GEOMImpl_IShapeExtend aSE (aFunction);
+    Handle(GEOM_Function) aRefFace   = aSE.GetShape();
+    TopoDS_Shape          aShapeFace = aRefFace->GetValue();
+
+    if (aShapeFace.ShapeType() == TopAbs_FACE) {
+      TopoDS_Face          aFace    = TopoDS::Face(aShapeFace);
+      Handle(Geom_Surface) aSurface = BRep_Tool::Surface(aFace);
+
+      if (aSurface.IsNull() == Standard_False) {
+        Handle(Standard_Type) aType = aSurface->DynamicType();
+        Standard_Real         aU1;
+        Standard_Real         aU2;
+        Standard_Real         aV1;
+        Standard_Real         aV2;
+
+         // Get U, V bounds of the face.
+        aFace.Orientation(TopAbs_FORWARD);
+        ShapeAnalysis::GetFaceUVBounds(aFace, aU1, aU2, aV1, aV2);
+
+        // Get the surface of original type
+        while (aType == STANDARD_TYPE(Geom_RectangularTrimmedSurface)) {
+          Handle(Geom_RectangularTrimmedSurface) aTrSurface =
+            Handle(Geom_RectangularTrimmedSurface)::DownCast(aSurface);
+
+          aSurface = aTrSurface->BasisSurface();
+          aType    = aSurface->DynamicType();
+        }
+
+        const Standard_Real     aTol = BRep_Tool::Tolerance(aFace);
+        BRepBuilderAPI_MakeFace aMF(aSurface, aU1, aU2, aV1, aV2, aTol);
+
+        if (aMF.IsDone()) {
+          aShape = aMF.Shape();
+        }
+      }
+    }
+  }
   else {
   }
 
   if (aShape.IsNull()) return 0;
 
   // Check shape validity
-  BRepCheck_Analyzer ana (aShape, false);
+  BRepCheck_Analyzer ana (aShape, true);
   if (!ana.IsValid()) {
     //Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
     // For Mantis issue 0021772: EDF 2336 GEOM: Non valid face created from two circles
@@ -627,34 +800,18 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     aShape = aSfs->Shape();
   }
 
-#ifdef RESULT_TYPE_CHECK
-  // Check if the result shape type is compatible with the expected.
+  // Check if the result shape is of expected type.
   const TopAbs_ShapeEnum aShType = aShape.ShapeType();
 
-  if (anExpectedType != TopAbs_SHAPE && anExpectedType != aShType) {
-    if (aShType == TopAbs_COMPOUND) {
-      // The result is compound. Check its sub-shapes.
-      TopoDS_Iterator anIter(aShape);
-
-      if (!anIter.More()) {
-        // The result is an empty compound.
-        Standard_ConstructionError::Raise("Result type check failed");
-      }
-
-      for (; anIter.More(); anIter.Next()) {
-        const TopAbs_ShapeEnum aSubType = anIter.Value().ShapeType();
-
-        if (anExpectedType != aSubType) {
-          // There is an incompatible type.
-          Standard_ConstructionError::Raise("Result type check failed");
-        }
-      }
-    } else {
-      // There is an incompatible type.
-      Standard_ConstructionError::Raise("Result type check failed");
-    }
+  bool ok = false;
+  if ( aShType == TopAbs_COMPOUND || aShType == TopAbs_COMPSOLID ) {
+    ok = allowCompound && checkCompound( aShape, anExpectedType );
   }
-#endif
+  else {
+    ok = ( anExpectedType == TopAbs_SHAPE ) || ( aShType == anExpectedType );
+  }
+  if (!ok)
+    Standard_ConstructionError::Raise("Result type check failed");
 
   aFunction->SetValue(aShape);
 
@@ -753,6 +910,7 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
     TColStd_SequenceOfReal TolSeq;
     GeomAbs_CurveType CurType;
     TopoDS_Vertex FirstVertex, LastVertex;
+    Standard_Real aPntShiftDist = 0.;
 
     BRepTools_WireExplorer wexp(theWire) ;
     for (; wexp.More(); wexp.Next())
@@ -789,11 +947,13 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
       {
         Standard_Boolean Done = Standard_False;
         Standard_Real NewFpar, NewLpar;
-        GeomAdaptor_Curve GAprevcurve(CurveSeq.Last());
+        Handle(Geom_Geometry) aTrsfGeom = CurveSeq.Last()->Transformed
+                      (LocSeq.Last().Location().Transformation());
+        GeomAdaptor_Curve GAprevcurve(Handle(Geom_Curve)::DownCast(aTrsfGeom));
         TopoDS_Vertex CurVertex = wexp.CurrentVertex();
         TopoDS_Vertex CurFirstVer = TopExp::FirstVertex(anEdge);
         TopAbs_Orientation ConnectByOrigin = (CurVertex.IsSame(CurFirstVer))? TopAbs_FORWARD : TopAbs_REVERSED;
-        if (aCurve == CurveSeq.Last())
+        if (aCurve == CurveSeq.Last() && aLoc.IsEqual(LocSeq.Last().Location()))
         {
           NewFpar = fpar;
           NewLpar = lpar;
@@ -830,6 +990,18 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
                 gp_Pnt P2 = ElCLib::Value(lpar, aLine);
                 NewFpar = ElCLib::Parameter(PrevLine, P1);
                 NewLpar = ElCLib::Parameter(PrevLine, P2);
+
+                // Compute shift
+                if (ConnectByOrigin == TopAbs_FORWARD) {
+                  gp_Pnt aNewP2 = ElCLib::Value(NewLpar, PrevLine);
+
+                  aPntShiftDist += P2.Distance(aNewP2);
+                } else {
+                  gp_Pnt aNewP1 = ElCLib::Value(NewFpar, PrevLine);
+
+                  aPntShiftDist += P1.Distance(aNewP1);
+                }
+
                 if (NewLpar < NewFpar)
                 {
                   Standard_Real MemNewFpar = NewFpar;
@@ -849,6 +1021,8 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
                   Abs(aCircle.Radius() - PrevCircle.Radius()) <= LinTol &&
                   aCircle.Axis().IsParallel(PrevCircle.Axis(), AngTol))
               {
+                const Standard_Boolean isFwd = ConnectByOrigin == TopAbs_FORWARD;
+
                 if (aCircle.Axis().Direction() * PrevCircle.Axis().Direction() < 0.)
                 {
                   Standard_Real memfpar = fpar;
@@ -860,6 +1034,18 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
                 gp_Pnt P2 = ElCLib::Value(lpar, aCircle);
                 NewFpar = ElCLib::Parameter(PrevCircle, P1);
                 NewLpar = ElCLib::Parameter(PrevCircle, P2);
+
+                // Compute shift
+                if (isFwd) {
+                  gp_Pnt aNewP2 = ElCLib::Value(NewLpar, PrevCircle);
+
+                  aPntShiftDist += P2.Distance(aNewP2);
+                } else {
+                  gp_Pnt aNewP1 = ElCLib::Value(NewFpar, PrevCircle);
+
+                  aPntShiftDist += P1.Distance(aNewP1);
+                }
+
                 if (NewLpar < NewFpar)
                   NewLpar += 2.*M_PI;
                 //Standard_Real MemNewFpar = NewFpar, MemNewLpar =  NewLpar;
@@ -885,6 +1071,8 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
                   Abs(anEllipse.MinorRadius() - PrevEllipse.MinorRadius()) <= LinTol &&
                   anEllipse.Axis().IsParallel(PrevEllipse.Axis(), AngTol))
               {
+                const Standard_Boolean isFwd = ConnectByOrigin == TopAbs_FORWARD;
+
                 if (anEllipse.Axis().Direction() * PrevEllipse.Axis().Direction() < 0.)
                 {
                   Standard_Real memfpar = fpar;
@@ -896,6 +1084,18 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
                 gp_Pnt P2 = ElCLib::Value(lpar, anEllipse);
                 NewFpar = ElCLib::Parameter(PrevEllipse, P1);
                 NewLpar = ElCLib::Parameter(PrevEllipse, P2);
+
+                // Compute shift
+                if (isFwd) {
+                  gp_Pnt aNewP2 = ElCLib::Value(NewLpar, PrevEllipse);
+
+                  aPntShiftDist += P2.Distance(aNewP2);
+                } else {
+                  gp_Pnt aNewP1 = ElCLib::Value(NewFpar, PrevEllipse);
+
+                  aPntShiftDist += P1.Distance(aNewP1);
+                }
+
                 if (NewLpar < NewFpar)
                   NewLpar += 2.*M_PI;
                 if (ConnectByOrigin == TopAbs_FORWARD)
@@ -924,6 +1124,18 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
                 gp_Pnt P2 = ElCLib::Value(lpar, aHypr);
                 NewFpar = ElCLib::Parameter(PrevHypr, P1);
                 NewLpar = ElCLib::Parameter(PrevHypr, P2);
+
+                // Compute shift
+                if (ConnectByOrigin == TopAbs_FORWARD) {
+                  gp_Pnt aNewP2 = ElCLib::Value(NewLpar, PrevHypr);
+
+                  aPntShiftDist += P2.Distance(aNewP2);
+                } else {
+                  gp_Pnt aNewP1 = ElCLib::Value(NewFpar, PrevHypr);
+
+                  aPntShiftDist += P1.Distance(aNewP1);
+                }
+
                 if (NewLpar < NewFpar)
                 {
                   Standard_Real MemNewFpar = NewFpar;
@@ -948,6 +1160,18 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
                 gp_Pnt P2 = ElCLib::Value(lpar, aParab);
                 NewFpar = ElCLib::Parameter(PrevParab, P1);
                 NewLpar = ElCLib::Parameter(PrevParab, P2);
+
+                // Compute shift
+                if (ConnectByOrigin == TopAbs_FORWARD) {
+                  gp_Pnt aNewP2 = ElCLib::Value(NewLpar, PrevParab);
+
+                  aPntShiftDist += P2.Distance(aNewP2);
+                } else {
+                  gp_Pnt aNewP1 = ElCLib::Value(NewFpar, PrevParab);
+
+                  aPntShiftDist += P1.Distance(aNewP1);
+                }
+
                 if (NewLpar < NewFpar)
                 {
                   Standard_Real MemNewFpar = NewFpar;
@@ -977,14 +1201,15 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
           LocSeq.Append(aLocShape);
           FparSeq.Append(fpar);
           LparSeq.Append(lpar);
-          TolSeq.Append(BRep_Tool::Tolerance(CurVertex));
+          TolSeq.Append(aPntShiftDist + BRep_Tool::Tolerance(CurVertex));
+          aPntShiftDist = 0.;
           CurType = aType;
         }
       } // end of else (CurveSeq.IsEmpty()) -> not first time
     } // end for (; wexp.More(); wexp.Next())
 
     LastVertex = wexp.CurrentVertex();
-    TolSeq.Append(BRep_Tool::Tolerance(LastVertex));
+    TolSeq.Append(aPntShiftDist + BRep_Tool::Tolerance(LastVertex));
 
     FirstVertex.Orientation(TopAbs_FORWARD);
     LastVertex.Orientation(TopAbs_REVERSED);
@@ -1236,6 +1461,150 @@ TopoDS_Shape GEOMImpl_ShapeDriver::MakeIsoline
   return aResult;
 }
 
+//=============================================================================
+/*!
+ * \brief Returns an extended edge.
+ */
+//=============================================================================
+
+TopoDS_Shape GEOMImpl_ShapeDriver::ExtendEdge
+                         (const TopoDS_Edge   &theEdge,
+                          const Standard_Real  theMin,
+                          const Standard_Real  theMax) const
+{
+  TopoDS_Shape        aResult;
+  Standard_Real       aF;
+  Standard_Real       aL;
+  Handle(Geom_Curve)  aCurve   = BRep_Tool::Curve(theEdge, aF, aL);
+  const Standard_Real aTol     = BRep_Tool::Tolerance(theEdge);
+  Standard_Real       aRange2d = aL - aF;
+
+  if (aCurve.IsNull() == Standard_False && aRange2d > aTol) {
+    Standard_Real aMin = aF + aRange2d*theMin;
+    Standard_Real aMax = aF + aRange2d*theMax;
+
+    Handle(Standard_Type) aType = aCurve->DynamicType();
+
+    // Get the curve of original type
+    while (aType == STANDARD_TYPE(Geom_TrimmedCurve)) {
+      Handle(Geom_TrimmedCurve) aTrCurve =
+        Handle(Geom_TrimmedCurve)::DownCast(aCurve);
+
+      aCurve = aTrCurve->BasisCurve();
+      aType  = aCurve->DynamicType();
+    }
+
+    if (aCurve->IsPeriodic()) {
+      // The curve is periodic. Check if a new range is less then a period.
+      if (aMax - aMin > aCurve->Period()) {
+        aMax = aMin + aCurve->Period();
+      }
+    } else {
+      // The curve is not periodic. Check if aMin and aMax within bounds.
+      aMin = Max(aMin, aCurve->FirstParameter());
+      aMax = Min(aMax, aCurve->LastParameter());
+    }
+
+    if (aMax - aMin > aTol) {
+      // Create a new edge.
+      BRepBuilderAPI_MakeEdge aME (aCurve, aMin, aMax);
+
+      if (aME.IsDone()) {
+        aResult = aME.Shape();
+      }
+    }
+  }
+
+  return aResult;
+}
+
+//=============================================================================
+/*!
+ * \brief Returns an extended face.
+ */
+//=============================================================================
+
+TopoDS_Shape GEOMImpl_ShapeDriver::ExtendFace
+                         (const TopoDS_Face   &theFace,
+                          const Standard_Real  theUMin,
+                          const Standard_Real  theUMax,
+                          const Standard_Real  theVMin,
+                          const Standard_Real  theVMax) const
+{
+  TopoDS_Shape         aResult;
+  Handle(Geom_Surface) aSurface = BRep_Tool::Surface(theFace);
+  const Standard_Real  aTol     = BRep_Tool::Tolerance(theFace);
+  Standard_Real        aU1;
+  Standard_Real        aU2;
+  Standard_Real        aV1;
+  Standard_Real        aV2;
+
+  // Get U, V bounds of the face.
+  ShapeAnalysis::GetFaceUVBounds(theFace, aU1, aU2, aV1, aV2);
+
+  const Standard_Real aURange = aU2 - aU1;
+  const Standard_Real aVRange = aV2 - aV1;
+
+  if (aSurface.IsNull() == Standard_False &&
+      aURange > aTol && aURange > aTol) {
+    Handle(Standard_Type) aType = aSurface->DynamicType();
+
+    // Get the surface of original type
+    while (aType == STANDARD_TYPE(Geom_RectangularTrimmedSurface)) {
+      Handle(Geom_RectangularTrimmedSurface) aTrSurface =
+        Handle(Geom_RectangularTrimmedSurface)::DownCast(aSurface);
+
+      aSurface = aTrSurface->BasisSurface();
+      aType    = aSurface->DynamicType();
+    }
+
+    Standard_Real aUMin = aU1 + aURange*theUMin;
+    Standard_Real aUMax = aU1 + aURange*theUMax;
+    Standard_Real aVMin = aV1 + aVRange*theVMin;
+    Standard_Real aVMax = aV1 + aVRange*theVMax;
+
+    aSurface->Bounds(aU1, aU2, aV1, aV2);
+
+    if (aSurface->IsUPeriodic()) {
+      // The surface is U-periodic. Check if a new U range is less
+      // then a period.
+      if (aUMax - aUMin > aSurface->UPeriod()) {
+        aUMax = aUMin + aSurface->UPeriod();
+      }
+    } else {
+      // The surface is not V-periodic. Check if aUMin and aUMax
+      // within bounds.
+      aUMin = Max(aUMin, aU1);
+      aUMax = Min(aUMax, aU2);
+    }
+
+    if (aSurface->IsVPeriodic()) {
+      // The surface is V-periodic. Check if a new V range is less
+      // then a period.
+      if (aVMax - aVMin > aSurface->VPeriod()) {
+        aVMax = aVMin + aSurface->VPeriod();
+      }
+    } else {
+      // The surface is not V-periodic. Check if aVMin and aVMax
+      // within bounds.
+      aVMin = Max(aVMin, aV1);
+      aVMax = Min(aVMax, aV2);
+    }
+
+    if (aUMax - aUMin > aTol && aVMax - aVMin > aTol) {
+      // Create a new edge.
+      BRepBuilderAPI_MakeFace aMF
+        (aSurface, aUMin, aUMax, aVMin, aVMax, aTol);
+    
+      if (aMF.IsDone()) {
+        aResult = aMF.Shape();
+      }
+    }
+  }
+
+  return aResult;
+}
+
 //================================================================================
 /*!
  * \brief Returns a name of creation operation and names and values of creation parameters
@@ -1268,14 +1637,37 @@ GetCreationInformation(std::string&             theOperationName,
     AddParam( theParams, "Wires/edges", aCI.GetShapes() );
     AddParam( theParams, "Is planar wanted", aCI.GetIsPlanar() );
     break;
+  case FACE_FROM_SURFACE:
+  {
+    theOperationName = "FACE";
+
+    Handle(TColStd_HSequenceOfTransient) shapes = aCI.GetShapes();
+
+    if (shapes.IsNull() == Standard_False) {
+      Standard_Integer aNbShapes = shapes->Length();
+
+      if (aNbShapes > 0) {
+        AddParam(theParams, "Face", shapes->Value(1));
+
+        if (aNbShapes > 1) {
+          AddParam(theParams, "Wire", shapes->Value(2));
+        }
+      }
+    }
+    break;
+  }
   case SHELL_FACES:
     theOperationName = "SHELL";
     AddParam( theParams, "Objects", aCI.GetShapes() );
     break;
-  case SOLID_SHELL:
   case SOLID_SHELLS:
     theOperationName = "SOLID";
     AddParam( theParams, "Objects", aCI.GetShapes() );
+    break;
+  case SOLID_FACES:
+    theOperationName = "SOLID_FROM_FACES";
+    AddParam( theParams, "Objects", aCI.GetShapes() );
+    AddParam( theParams, "Is intersect", aCI.GetIsIntersect() );
     break;
   case COMPOUND_SHAPES:
     theOperationName = "COMPOUND";
@@ -1305,7 +1697,13 @@ GetCreationInformation(std::string&             theOperationName,
     if ( !shapes.IsNull() && shapes->Length() > 1 )
       AddParam( theParams, "Shape", shapes->Value(2) );
     AddParam( theParams, "Shape type", TopAbs_ShapeEnum( aCI.GetSubShapeType() ));
-    AddParam( theParams, "State", TopAbs_State((int) aCI.GetTolerance() ));
+    AddParam( theParams, "State" );
+    GEOMAlgo_State st = GEOMAlgo_State( (int) ( aCI.GetTolerance()+0.1 ) );
+    const char* stName[] = { "UNKNOWN","IN","OUT","ON","ONIN","ONOUT","INOUT" };
+    if ( 0 <= st && st <= GEOMAlgo_ST_INOUT )
+      theParams.back() << stName[ st ];
+    else
+      theParams.back() << (int) st;
     break;
   }
   case SHAPE_ISOLINE:
@@ -1316,6 +1714,36 @@ GetCreationInformation(std::string&             theOperationName,
     AddParam(theParams, "Face", aII.GetFace());
     AddParam(theParams, "Isoline type", (aII.GetIsUIso() ? "U" : "V"));
     AddParam(theParams, "Parameter", aII.GetParameter());
+    break;
+  }
+  case EDGE_UV:
+  {
+    GEOMImpl_IShapeExtend aSE (function);
+
+    theOperationName = "EDGE_EXTEND";
+    AddParam(theParams, "Edge", aSE.GetShape());
+    AddParam(theParams, "Min", aSE.GetUMin());
+    AddParam(theParams, "Max", aSE.GetUMax());
+    break;
+  }
+  case FACE_UV:
+  {
+    GEOMImpl_IShapeExtend aSE (function);
+
+    theOperationName = "FACE_EXTEND";
+    AddParam(theParams, "Face", aSE.GetShape());
+    AddParam(theParams, "UMin", aSE.GetUMin());
+    AddParam(theParams, "UMax", aSE.GetUMax());
+    AddParam(theParams, "VMin", aSE.GetVMin());
+    AddParam(theParams, "VMax", aSE.GetVMax());
+    break;
+  }
+  case SURFACE_FROM_FACE:
+  {
+    GEOMImpl_IShapeExtend aSE (function);
+
+    theOperationName = "SURFACE_FROM_FACE";
+    AddParam(theParams, "Face", aSE.GetShape());
     break;
   }
   default:

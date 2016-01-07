@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -42,7 +42,7 @@ class RepairGUI_SewingDlg : public GEOMBase_Skeleton
 {
   Q_OBJECT
 
-public:
+  public:
   RepairGUI_SewingDlg( GeometryGUI*, QWidget* = 0, bool = false );
   ~RepairGUI_SewingDlg();
 
@@ -51,33 +51,34 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );
-  
+  virtual QList<GEOM::GeomObjPtr>    getSourceObjects();
+
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
   void                               initSelection();
 
 private:
-  GEOM::GEOM_Object_var              myObject;
+  QList<GEOM::GeomObjPtr>            myObjects;
 
   DlgRef_1SelExt*                    GroupPoints;
   QCheckBox*                         myAllowNonManifoldChk;
   SalomeApp_DoubleSpinBox*           myTolEdt;
   QPushButton*                       myFreeBoundBtn;
-  
+
   int                                myClosed; // Number of free closed boundaries detected. Calculated in execute(), used in onDetect().
   int                                myOpen;   // Number of free open   boundaries detected. Calculated in execute(), used in onDetect().
-  
+
 private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
-  
+
   void                               ActivateThisDialog();
-  
+
   void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
-  
+
   void                               onDetect();
 };
 

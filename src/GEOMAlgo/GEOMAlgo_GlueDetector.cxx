@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -90,7 +90,6 @@ GEOMAlgo_GlueDetector::GEOMAlgo_GlueDetector()
 //=======================================================================
 GEOMAlgo_GlueDetector::~GEOMAlgo_GlueDetector()
 {}
-//modified by NIZNHY-PKV Tue Mar 13 12:26:50 2012f
 //=======================================================================
 //function : StickedShapes
 //purpose  :
@@ -100,7 +99,6 @@ const TopTools_IndexedDataMapOfShapeListOfShape&
 {
   return myStickedShapes;
 }
-//modified by NIZNHY-PKV Tue Mar 13 12:26:54 2012t
 //=======================================================================
 //function : Perform
 //purpose  :
@@ -124,12 +122,10 @@ void GEOMAlgo_GlueDetector::Perform()
     return;
   }
   //
-  //modified by NIZNHY-PKV Wed Mar 14 08:00:09 2012f
   CheckDetected();
   if (myErrorStatus) {
     return;
   }
-  //modified by NIZNHY-PKV Wed Mar 14 08:00:12 2012t
   //
   DetectEdges();
   if (myErrorStatus) {
@@ -206,7 +202,7 @@ void GEOMAlgo_GlueDetector::DetectVertices()
     TColStd_MapIteratorOfMapOfInteger aIt1;
     //
     aMIP.Add(i);
-    while(1) {
+    for(;;) {
       aNbIP=aMIP.Extent();
       aIt1.Initialize(aMIP);
       for(; aIt1.More(); aIt1.Next()) {
@@ -460,7 +456,6 @@ void GEOMAlgo_GlueDetector::EdgePassKey(const TopoDS_Edge& aE,
   //
   aPK.SetShapes(aLV);
 }
-//modified by NIZNHY-PKV Tue Mar 13 09:54:18 2012f
 //=======================================================================
 //function : CheckDetected
 //purpose  :
@@ -607,4 +602,3 @@ Standard_Integer CheckAncesstors
   //
   return iRet;
 }
-//modified by NIZNHY-PKV Tue Mar 13 09:54:59 2012t

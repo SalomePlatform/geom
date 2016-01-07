@@ -1,4 +1,4 @@
-// Copyright (C) 2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2014-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -37,9 +37,12 @@
 #include "GEOM_Operation.h"
 #include "GEOMBase.h"
 #include "GEOM_Displayer.h"
+#include "GEOM_GenericObjPtr.h"
 
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(IGESPlugin)
+
+typedef GEOM::GenericObjPtr<GEOM::IIGESOperations> IGESOpPtr;
 
 //=======================================================================
 // function : IGESPlugin_GUI()
@@ -109,8 +112,8 @@ bool IGESPlugin_GUI::importIGES( SUIT_Desktop* parent )
 
   SALOMEDS::Study_var dsStudy = GeometryGUI::ClientStudyToStudy( study->studyDS() );
   GEOM::GEOM_IOperations_var op = GeometryGUI::GetGeomGen()->GetPluginOperations( dsStudy->StudyId(), "IGESPluginEngine" );
-  GEOM::IIGESOperations_var igesOp = GEOM::IIGESOperations::_narrow( op );
-  if ( CORBA::is_nil( igesOp ) ) return false;
+  IGESOpPtr igesOp = GEOM::IIGESOperations::_narrow( op );
+  if ( igesOp.isNull() ) return false;
 
   QStringList fileNames = app->getOpenFileNames( SUIT_FileDlg::getLastVisitedPath().isEmpty() ? QDir::currentPath() : QString(""),
 						 tr( "IGES_FILES" ),
@@ -126,7 +129,7 @@ bool IGESPlugin_GUI::importIGES( SUIT_Desktop* parent )
     {
       QString fileName = fileNames.at( i );
       SUIT_OverrideCursor wc;
-      GEOM_Operation transaction( app, igesOp.in() );
+      GEOM_Operation transaction( app, igesOp.get() );
       bool ignoreUnits = false;
       
       try
@@ -182,6 +185,7 @@ bool IGESPlugin_GUI::importIGES( SUIT_Desktop* parent )
 	  entryList.append( so->GetID() );
 	  transaction.commit();
 	  GEOM_Displayer( study ).Display( main.in() );
+          main->UnRegister();
 	}
 	else
 	{
@@ -221,8 +225,8 @@ bool IGESPlugin_GUI::exportIGES( SUIT_Desktop* parent )
 
   SALOMEDS::Study_var dsStudy = GeometryGUI::ClientStudyToStudy( study->studyDS() );
   GEOM::GEOM_IOperations_var op = GeometryGUI::GetGeomGen()->GetPluginOperations( dsStudy->StudyId(), "IGESPluginEngine" );
-  GEOM::IIGESOperations_var igesOp = GEOM::IIGESOperations::_narrow( op );
-  if ( CORBA::is_nil( igesOp ) ) return false;
+  IGESOpPtr igesOp = GEOM::IIGESOperations::_narrow( op );
+  if ( igesOp.isNull() ) return false;
 
   LightApp_SelectionMgr* sm = app->selectionMgr();
   if ( !sm ) return false;
@@ -251,7 +255,7 @@ bool IGESPlugin_GUI::exportIGES( SUIT_Desktop* parent )
     
     SUIT_OverrideCursor wc;
     
-    GEOM_Operation transaction( app, igesOp.in() );
+    GEOM_Operation transaction( app, igesOp.get() );
     
     try
     {

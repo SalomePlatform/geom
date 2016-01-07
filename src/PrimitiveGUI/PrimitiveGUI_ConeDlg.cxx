@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -308,7 +308,7 @@ void PrimitiveGUI_ConeDlg::SetEditCurrentArgument()
     GroupPoints->LineEdit2->setEnabled(false);
 
     globalSelection(GEOM_POINT); // to break previous local selection
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+    localSelection(TopAbs_VERTEX);
   }
   else if (send == GroupPoints->PushButton2) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
@@ -317,7 +317,7 @@ void PrimitiveGUI_ConeDlg::SetEditCurrentArgument()
     GroupPoints->LineEdit1->setEnabled(false);
 
     globalSelection(GEOM_LINE);// to break previous local selection
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+    localSelection(TopAbs_EDGE);
   }
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
@@ -497,4 +497,15 @@ void PrimitiveGUI_ConeDlg::addSubshapesToStudy()
     GEOMBase::PublishSubObject( myPoint.get() );
     GEOMBase::PublishSubObject( myDir.get() );
   }
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> PrimitiveGUI_ConeDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myPoint << myDir;
+  return res;
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -119,7 +119,7 @@ Standard_Integer GEOMImpl_CylinderDriver::Execute(TFunction_Logbook& log) const
       BRepPrimAPI_MakeCylinder MC (anAxes, aCI.GetR(), Abs(aCI.GetH()));
       MC.Build();
       if (!MC.IsDone()) {
-	StdFail_NotDone::Raise("Cylinder can't be computed from the given parameters");
+        StdFail_NotDone::Raise("Cylinder can't be computed from the given parameters");
       }
       aShape = MC.Shape();
       break;
@@ -130,7 +130,7 @@ Standard_Integer GEOMImpl_CylinderDriver::Execute(TFunction_Logbook& log) const
       BRepPrimAPI_MakeCylinder MC (anAxes, aCI.GetR(), Abs(aCI.GetH()), aCI.GetA());
       MC.Build();
       if (!MC.IsDone()) {
-	StdFail_NotDone::Raise("Cylinder can't be computed from the given parameters. Failure.");
+        StdFail_NotDone::Raise("Cylinder can't be computed from the given parameters. Failure.");
       }
       aShape = MC.Shape();
       break;
@@ -169,16 +169,28 @@ GetCreationInformation(std::string&             theOperationName,
     AddParam( theParams, "Radius", aCI.GetR() );
     AddParam( theParams, "Height", aCI.GetH() );
     break;
-  case CONE_PNT_VEC_R1_R2_H:
+  case CYLINDER_R_H_A:
+    AddParam( theParams, "Radius", aCI.GetR() );
+    AddParam( theParams, "Height", aCI.GetH() );
+    AddParam( theParams, "Angle",  aCI.GetA() );
+    break;
+  case CYLINDER_PNT_VEC_R_H:
     AddParam( theParams, "Base Point", aCI.GetPoint() );
     AddParam( theParams, "Vector", aCI.GetVector() );
     AddParam( theParams, "Radius", aCI.GetR() );
     AddParam( theParams, "Height", aCI.GetH() );
     break;
+  case CYLINDER_PNT_VEC_R_H_A:
+    AddParam( theParams, "Base Point", aCI.GetPoint() );
+    AddParam( theParams, "Vector", aCI.GetVector() );
+    AddParam( theParams, "Radius", aCI.GetR() );
+    AddParam( theParams, "Height", aCI.GetH() );
+    AddParam( theParams, "Angle",  aCI.GetA() );
+    break;
   default:
     return false;
   }
-  
+
   return true;
 }
 

@@ -2,43 +2,43 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="fr_FR">
 <context>
-  <name>DependencyTree_View</name>
+    <name>DependencyTree_View</name>
     <message>
-      <source>DEPENDENCY_TREE</source>
-      <translation type="unfinished">Dependency Tree</translation>
+        <source>DEPENDENCY_TREE</source>
+        <translation>Arbre des dépendances</translation>
     </message>
     <message>
-      <source>MOVE_NODES</source>
-      <translation type="unfinished">Move nodes</translation>
+        <source>MOVE_NODES</source>
+        <translation>Déplacer les noeuds</translation>
     </message>
     <message>
-      <source>HIERARCHY_DEPTH</source>
-      <translation type="unfinished">Hierarchy depth  </translation>
+        <source>HIERARCHY_DEPTH</source>
+        <translation>Niveau hiérarchique</translation>
     </message>
     <message>
-      <source>DISPLAY_ASCENDANTS</source>
-      <translation type="unfinished">Display ascendants</translation>
+        <source>DISPLAY_ASCENDANTS</source>
+        <translation>Montrer les liens ascendants</translation>
     </message>
     <message>
-      <source>DISPLAY_DESCENDANTS</source>
-      <translation type="unfinished">Display descendants</translation>
+        <source>DISPLAY_DESCENDANTS</source>
+        <translation>Montrer les liens descendants</translation>
     </message>
     <message>
-      <source>SHOW_ALL</source>
-      <translation type="unfinished">Show all</translation>
+        <source>SHOW_ALL</source>
+        <translation>Montrer tout</translation>
     </message>
     <message>
-      <source>UPDATE</source>
-      <translation type="unfinished">Update</translation>
+        <source>UPDATE</source>
+        <translation>Mise à jour</translation>
     </message>
-  <name>DependencyTree_ViewModel</name>
+    <name>DependencyTree_ViewModel</name>
     <message>
-      <source>MEN_REBUILD_THE_TREE</source>
-      <translation type="unfinished">Rebuild the tree</translation>
+        <source>MEN_REBUILD_THE_TREE</source>
+        <translation>Reconstruire l'arbre</translation>
     </message>
     <message>
-      <source>MEN_REDUCE_STUDY</source>
-      <translation type="unfinished">Reduce study</translation>
+        <source>MEN_REDUCE_STUDY</source>
+        <translation>Réduire l'étude</translation>
     </message>
 </context>
 </TS>

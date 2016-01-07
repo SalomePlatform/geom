@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -27,9 +27,10 @@
 #ifndef ShHealOper_Tool_HeaderFile
 #define ShHealOper_Tool_HeaderFile
 
-#include <MMgt_TShared.hxx>
 #include <ShapeBuild_ReShape.hxx>
 #include <TopoDS_Shape.hxx>
+
+#include "ShHealOper_ModifStats.hxx"
 
 ///  Class ShHealOper_Tool
 //
@@ -69,12 +70,12 @@ class ShHealOper_Tool
   }
   //Returns modified shape obtained after operation from initial shape.
 
-  inline Standard_Boolean IsDone() const 
+  inline Standard_Boolean IsDone() const
   {
     return myDone;
   }
   //Returns status of the operation.
-  
+
   inline void SetContext(Handle(ShapeBuild_ReShape)& theContext)
   {
     myContext = theContext;
@@ -91,17 +92,31 @@ class ShHealOper_Tool
   {
     return myErrorStatus;
   }
- protected:
+
+  ShHealOper_ModifStats& GetStatistics()
+  {
+    return myStatistics;
+  }
+
+  const ShHealOper_ModifStats& GetStatistics() const
+  {
+    return myStatistics;
+  }
+  // Returns statistics of what is done
+
+protected:
   // ---------- PROTECTED FIELDS ----------
 
   Handle(ShapeBuild_ReShape) myContext;
-  TopoDS_Shape myInitShape;
-  TopoDS_Shape myResultShape;
-  Standard_Boolean myDone;
-  ShHealOper_Error myErrorStatus;
- public:
-// Declaration of CASCADE RTTI
-//DEFINE_STANDARD_RTTI (ShHealOper_Tool)
+  TopoDS_Shape               myInitShape;
+  TopoDS_Shape               myResultShape;
+  Standard_Boolean           myDone;
+  ShHealOper_Error           myErrorStatus;
+  ShHealOper_ModifStats      myStatistics;
+
+public:
+  // Declaration of CASCADE RTTI
+  //DEFINE_STANDARD_RTTI (ShHealOper_Tool)
 };
 
 // Definition of HANDLE object using Standard_DefineHandle.hxx

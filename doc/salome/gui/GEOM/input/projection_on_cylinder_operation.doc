@@ -1,0 +1,47 @@
+/*!
+
+\page projection_on_cylinder_operation_page Projection on Cylinder
+
+\n To produce a <b>Projection on Cylinder</b> in the <b>Main Menu</b> select
+<b>Operations - > Transformation - > Projection on Cylinder</b>
+
+\n This operation makes a projection of a <b>Source planar wire or face</b> on
+a cylinder defined by its radius. The cylinder's coordinate system is
+the same as the global coordinate system. The result represents a wire or
+a face that represents a projection of the source shape onto a cylinder.
+
+To make a projection it is necessary to define:
+- \b Object to be projected. It can be either a planar wire or a face;
+- \b Radius of the cylinder;
+- <b>Starting angle</b> from the cylinder's X axis around Z axis. This is
+the angle of the projection start.
+- <b>Length angle</b> where the total length of
+the wire should be projected. If it is unchecked the projection is not scaled and the natural
+wire length is kept for the projection.
+- <b>Rotation angle</b> the angle between the tangent vector to
+the first curve at the first point of the object projection in 2D space
+and U-direction of the cylinder in 2D space.
+- \ref restore_presentation_parameters_page "Advanced options".
+
+\image html proj_on_cyl_dlg.png
+
+\n The following figure explains the meaning of each input angle:
+
+\image html proj_on_cyl_angles.png "Input angles of projection on the cylinder"
+
+\n <b>Example:</b>
+
+\image html proj_on_cyl_preview.png "The curve (in red) and its projection on the cylinder"
+
+\n <b>TUI Command:</b> <em>geompy.MakeProjectionOnCylinder(theObject, theRadius,
+theStartAngle=0.0, theAngleLength=-1.0, theAngleRotation=0.0),</em>
+where \em theObject is a shape to be projected, \em theRadius
+is a cylinder radius, \em theStartAngle is the starting angle of projection in
+radians, \em theAngleLength the projection length angle in radians,
+\em theAngleRotation projection rotation angle in radians.
+The \em Result will be a \em GEOM_Object.
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_projection "Transformation Operations".
+
+*/

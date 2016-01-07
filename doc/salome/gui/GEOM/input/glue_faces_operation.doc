@@ -8,7 +8,7 @@
 \n This operation glues faces that are coincident with respect to the
 given tolerance value.
 
-\n <b>Arguments:</b> Name + Compound of shapes + Tolerance value.
+\n <b>Arguments:</b> Name + Shapes + Tolerance value.
 \n <b>Advanced option:</b>
    \ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 \n The \b Result will be a \b GEOM_Object.
@@ -17,8 +17,9 @@ given tolerance value.
 
 
 \n <b>TUI Commands:</b>
-\n <em>geompy.MakeGlueFaces(theShape,theTolerance,doKeepNonSolids)</em>,
-\n where \em theShape is a compound of shapes to be glued, \em
+
+<em>geompy.MakeGlueFaces( theShapes, theTolerance, doKeepNonSolids )</em>,
+\n where \em theShapes is either a list or compound of shapes to be glued, \em
  theTolerance is a maximum distance between two faces, which can
  be considered as coincident. The \em doKeepNonSolids flag allows to
  throw away non-solids from the result, if false. The \b Result will
@@ -38,20 +39,23 @@ performed and displays a notification.
 possible to select the faces for gluing in the 3D viewer.
 The selected faces will be marked in white.
 
-\n When the faces are glued their edges are glued as well. By default, other
+When the faces are glued their edges are glued as well. By default, other
 edges are not glued. To force gluing of all edges, check <b>Glue all coincident edges</b>
-checkbox.
+check-box.
 
 \n <b>TUI Commands:</b>
-\n <em>geompy.GetGlueFaces(theShape,theTolerance)</em>,
-\n where \em theShape is a compound of shapes to be glued, \em
- theTolerance is a maximum distance between two faces, which can
- be considered as coincident. The \b Result will be a list of \b
- GEOM_Objects, containing one sub-shape per each detected set of
- coincident sub-shapes.
 
-\n <em>geompy.MakeGlueFacesByList(theShape,theTolerance,theFaces,doKeepNonSolids,doGlueAllEdges)</em>,
-\n where \em theShape is a compound of shapes to be glued, \em
+<em>geompy.GetGlueFaces( theShapes, theTolerance )</em>,
+\n where \em theShapes is a list or compound of shapes to be glued, \em
+theTolerance is a maximum distance between two faces, which can
+be considered as coincident. The \b Result will be a list of \b
+GEOM_Objects (faces), containing one sub-shape per each detected set of
+coincident sub-shapes. For example if there are two coincident faces
+in selected shapes, the result list contains one of the two coincident faces.
+
+<em>geompy.MakeGlueFacesByList( theShapes, theTolerance, theFaces,
+  doKeepNonSolids, doGlueAllEdges )</em>,
+\n where \em theShapes is either a list or compound of shapes to be glued, \em
  theTolerance is a maximum distance between two faces, which can
  be considered as coincident, \em theFaces is a list of
  sub-shapes to be glued. The \em doKeepNonSolids flag allows to throw

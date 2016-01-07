@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2012-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -76,6 +76,7 @@ SET(OperationGUI_HEADERS
   OperationGUI_GetSharedShapesDlg.h
   OperationGUI_ExtrudedFeatureDlg.h
   OperationGUI_ClippingDlg.h
+  OperationGUI_TransferDataDlg.h
   )
 
 # header files / to be processed by moc
@@ -89,6 +90,7 @@ SET(_moc_HEADERS
   OperationGUI_GetSharedShapesDlg.h
   OperationGUI_ExtrudedFeatureDlg.h
   OperationGUI_ClippingDlg.h
+  OperationGUI_TransferDataDlg.h
   )
 
 # header files / uic wrappings
@@ -110,6 +112,7 @@ SET(OperationGUI_SOURCES
   OperationGUI_ChamferDlg.cxx
   OperationGUI_ExtrudedFeatureDlg.cxx
   OperationGUI_ClippingDlg.cxx
+  OperationGUI_TransferDataDlg.cxx
   ${_moc_SOURCES}
   ${_uic_files}
   )

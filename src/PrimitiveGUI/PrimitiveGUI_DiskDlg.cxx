@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -397,11 +397,11 @@ void PrimitiveGUI_DiskDlg::SetEditCurrentArgument()
   disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
   if (myEditCurrentArgument == GroupPntVecR->LineEdit2) {
     globalSelection(); // close local contexts, if any
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+    localSelection(TopAbs_EDGE);
   }
   else {
     globalSelection(); // close local contexts, if any
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+    localSelection(TopAbs_VERTEX);
   }
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
@@ -561,4 +561,15 @@ void PrimitiveGUI_DiskDlg::addSubshapesToStudy()
   default:
     break;
   }
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> PrimitiveGUI_DiskDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myPoint << myDir << myPoint1 << myPoint2 << myPoint3;
+  return res;
 }

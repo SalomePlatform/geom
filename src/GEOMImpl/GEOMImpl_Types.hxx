@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -20,6 +20,10 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+#ifndef GEOMImpl_Types_HXX
+#define GEOMImpl_Types_HXX
+
+#include <TopAbs_ShapeEnum.hxx>
 
 // GEOM_Object types
 
@@ -113,10 +117,13 @@
 
 #define GEOM_POLYLINE2D 56
 
+#define GEOM_TRANSFER_DATA 57
+
 //GEOM_Function types
 
 #define COPY_WITH_REF    1
 #define COPY_WITHOUT_REF 2
+#define TRANSFER_DATA    3
 
 #define IMPORT_SHAPE 1
 #define EXPORT_SHAPE 2
@@ -178,8 +185,9 @@
 #define OFFSET_THICKENING 3
 #define OFFSET_THICKENING_COPY 4
 
-#define PROJECTION_COPY    1
-#define PROJECTION_ON_WIRE 2
+#define PROJECTION_COPY        1
+#define PROJECTION_ON_WIRE     2
+#define PROJECTION_ON_CYLINDER 3
 
 #define SCALE_SHAPE      1
 #define SCALE_SHAPE_COPY 2
@@ -205,10 +213,10 @@
 #define DISK_THREE_PNT    2
 #define DISK_R            3
 
-#define CYLINDER_R_H         	1
-#define CYLINDER_PNT_VEC_R_H 	2
-#define CYLINDER_R_H_A       	3
-#define CYLINDER_PNT_VEC_R_H_A 	4
+#define CYLINDER_R_H            1
+#define CYLINDER_PNT_VEC_R_H    2
+#define CYLINDER_R_H_A          3
+#define CYLINDER_PNT_VEC_R_H_A  4
 
 #define CONE_R1_R2_H         1
 #define CONE_PNT_VEC_R1_R2_H 2
@@ -292,7 +300,7 @@
 #define WIRE_EDGES          1
 #define FACE_WIRE           2
 #define SHELL_FACES         3
-#define SOLID_SHELL         4
+//#define SOLID_SHELL         4
 #define SOLID_SHELLS        5
 #define COMPOUND_SHAPES     6
 #define SUBSHAPE_SORTED     7
@@ -303,7 +311,11 @@
 #define EDGE_CURVE_LENGTH   12
 #define SHAPES_ON_SHAPE     13
 #define SHAPE_ISOLINE       14
-
+#define FACE_FROM_SURFACE   15
+#define EDGE_UV             16
+#define FACE_UV             17
+#define SURFACE_FROM_FACE   18
+#define SOLID_FACES         19
 
 #define ARCHIMEDE_TYPE 1
 
@@ -320,8 +332,10 @@
 #define FUSE_COLLINEAR_EDGES  10
 #define SEWING_NON_MANIFOLD   11
 #define REMOVE_INTERNAL_FACES 12
+#define DIVIDE_EDGE_BY_POINT  13
 
 #define BASIC_FILLING 1
+#define FILLING_ON_CONSTRAINTS 2
 
 #define GLUE_FACES         1
 #define GLUE_FACES_BY_LIST 2
@@ -369,6 +383,15 @@
 #define USER_TYPE 200     // Base type for GEOM advanced shapes
 #define USER_TYPE_EX 1000 // Base type for GEOM plugins
 
+// Transfer data method type
+#define TD_GET_IN_PLACE            1
+#define TD_GET_IN_PLACE_OLD        2
+#define TD_GET_IN_PLACE_BY_HISTORY 3
 
-//Plugins specified constants
+// Plugins specified constants
 #define PLUGIN_NAME "Plugin Name"
+
+// Flat type for TopAbs
+enum { TopAbs_FLAT = TopAbs_SHAPE+1 };
+
+#endif // GEOMImpl_Types_HXX

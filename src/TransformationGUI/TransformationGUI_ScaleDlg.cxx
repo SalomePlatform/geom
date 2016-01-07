@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -325,7 +325,7 @@ void TransformationGUI_ScaleDlg::SetEditCurrentArgument()
   else if (send == PushButton2) {
     myEditCurrentArgument = LineEdit2;
 
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+    localSelection(TopAbs_VERTEX);
 
     PushButton1->setDown(false);
     LineEdit1->setEnabled(false);
@@ -532,4 +532,16 @@ void TransformationGUI_ScaleDlg::addSubshapesToStudy()
   {
     GEOMBase::PublishSubObject( myPoint.get() );
   }
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> TransformationGUI_ScaleDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res(myObjects);
+  if ( CheckBoxCopy->isChecked() )
+    res << myPoint;
+  return res;
 }

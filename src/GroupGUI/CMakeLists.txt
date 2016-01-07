@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2012-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -34,10 +34,12 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_BINARY_DIR}/idl
   ${PROJECT_BINARY_DIR}
   ${PROJECT_SOURCE_DIR}/src/OBJECT
+  ${PROJECT_SOURCE_DIR}/src/GEOMUtils
   ${PROJECT_SOURCE_DIR}/src/GEOMClient
   ${PROJECT_SOURCE_DIR}/src/GEOMImpl
   ${PROJECT_SOURCE_DIR}/src/GEOMGUI
   ${PROJECT_SOURCE_DIR}/src/GEOMBase
+  ${PROJECT_SOURCE_DIR}/src/MeasureGUI
   ${PROJECT_SOURCE_DIR}/src/DlgRef
   ${PROJECT_BINARY_DIR}/src/DlgRef
   ${CMAKE_CURRENT_SOURCE_DIR}
@@ -54,6 +56,8 @@ ADD_DEFINITIONS(
 # libraries to link to
 SET(_link_LIBRARIES
   GEOMBase
+  GEOMUtils
+  MeasureGUI
   )
 
 # --- resources ---

@@ -17,11 +17,20 @@ Select one of the found solutions in the \b Solution list to display it in the V
 Press \b Apply or <b>Apply and Close</b> button to create a set of closest
 points, corresponding to all found solutions.
 
+\note This dialog supports navigation through the selectable objects (in OCC 3D viewer only):
+- Scroll mouse wheel with pressed \em Ctrl key or press \em "S", \em "P" keys when input focus is
+in the viewer to navigate between selectable objects.
+- Press left mouse button to select an appropriate object to the dialog box.
+.
+For more details, please refer to the \em "Functionality common for OCC and VTK viewers" chapter
+of the GUI module's documentation.
+
 <b>TUI Commands:</b>
-\n<em>aDist = geompy.MinDistance(Shape1, Shape2),</em>
-\n<em>[aDist, DX, DY, DZ] = geompy.MinDistanceComponents(Shape1, Shape2),</em>
-\n<em>[nbSols, (x11, y11, z11, x21, y21, z21, ...)] = geompy.ClosestPoints(Shape1, Shape2),</em>
-\n where \em Shape1 and \em Shape2 are the shapes, between which the minimal
+- <em>aDist = geompy.MinDistance(Shape1, Shape2),</em>
+- <em>[aDist, DX, DY, DZ] = geompy.MinDistanceComponents(Shape1, Shape2),</em>
+- <em>[nbSols, (x11, y11, z11, x21, y21, z21, ...)] = geompy.ClosestPoints(Shape1, Shape2),</em>
+.
+where \em Shape1 and \em Shape2 are the shapes, between which the minimal
 distance is computed.
 
 See also a \ref tui_min_distance_page "TUI example".

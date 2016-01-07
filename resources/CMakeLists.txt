@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2012-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -35,6 +35,7 @@ SET( _res_files
   GEOM.config
   GEOMDS_Resources
   ShHealing
+  Y14.5M-2009.ttf
   3dsketch.png
   isoline.png
   isoline_v.png
@@ -54,6 +55,8 @@ SET( _res_files
   build_edge_wire.png
   build_edge_curve.png
   build_face.png
+  build_face_surface.png
+  build_face_constraints.png
   build_shell.png
   build_solid.png
   build_wire.png
@@ -88,10 +91,13 @@ SET( _res_files
   displayonly.png
   displayall.png
   draft.png
+  edgeextension.png
   erase.png
   eraseall.png
   extruded_boss.png
   extruded_cut.png
+  facetosurface.png
+  faceextension.png
   face_hw.png
   face_vechw.png
   feature_detect.png
@@ -108,6 +114,7 @@ SET( _res_files
   fuse_collinear_edges.png
   geometry.png
   import_picture.png
+  import.png
   limit_tolerance.png
   line.png
   line2points.png
@@ -127,6 +134,9 @@ SET( _res_files
   normale.png
   offset.png
   projection.png
+  projection_on_edge.png
+  projection_on_wire.png
+  proj_on_cyl.png
   origin_and_vectors.png
   partition.png
   partitionkeep.png
@@ -144,6 +154,7 @@ SET( _res_files
   planeworkingorigin.png
   point2.png
   pointonedge.png
+  pointonedgebypoint.png
   pointonface.png
   point_line_intersection.png
   polyline.png
@@ -164,6 +175,7 @@ SET( _res_files
   shapesonshape.png
   shared_shapes.png
   sketch.png
+  solid_from_faces.png
   sphere.png
   spheredxyz.png
   spherepoint.png
@@ -171,10 +183,13 @@ SET( _res_files
   supressHolesOnFaceShell.png
   supressface.png
   supresshole.png
+  thickness.png
+  thickness2.png
   tolerance.png
   torus.png
   torusdxyz.png
   toruspointvector.png
+  transfer_data.png
   translationDxyz.png
   translationPoints.png
   translationVector.png
@@ -249,6 +264,7 @@ SET( _res_files
   check_blocks_compound.png
   get_non_blocks.png
   check_self_intersections.png
+  fast_intersect.png
   free_faces.png
   propagate.png
   redo.png

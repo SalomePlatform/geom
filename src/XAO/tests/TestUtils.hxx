@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2013-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -40,7 +40,7 @@ namespace XAO
         {
             std::ifstream rstr;
             int length;
-            rstr.open(filePath.c_str());
+            rstr.open(filePath.c_str(), std::ios_base::binary);
             rstr.seekg(0, rstr.end);        // go to the end
             length = rstr.tellg();          // report location (this is the length)
             rstr.seekg(0, rstr.beg);        // go back to the beginning

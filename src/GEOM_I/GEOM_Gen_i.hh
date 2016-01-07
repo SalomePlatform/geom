@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -201,7 +201,7 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
 
   //Collects dependencies of the given objects from other ones
   SALOMEDS::TMPFile* GetDependencyTree(SALOMEDS::Study_ptr theStudy,
-				       const GEOM::string_array& theObjectEntries);
+                                       const GEOM::string_array& theObjectEntries);
 
   //-----------------------------------------------------------------------//
   // Transaction methods                                                   //
@@ -301,37 +301,30 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   virtual char* getVersion();
 
   // Create a new folder object
-  SALOMEDS::SObject_ptr CreateFolder(const char* theName, 
-				     SALOMEDS::SObject_ptr theFather);
+  SALOMEDS::SObject_ptr CreateFolder(const char* theName,
+                                     SALOMEDS::SObject_ptr theFather);
 
   // Move GEOM object to the specified folder
-  void MoveToFolder(GEOM::GEOM_Object_ptr theObject, 
-		    SALOMEDS::SObject_ptr theFolder);
+  void MoveToFolder(GEOM::GEOM_Object_ptr theObject,
+                    SALOMEDS::SObject_ptr theFolder);
 
   // Move list of GEOM objects to the specified folder
-  void MoveListToFolder (const GEOM::ListOfGO& theListOfGO, 
-			 SALOMEDS::SObject_ptr theFolder);
+  void MoveListToFolder (const GEOM::ListOfGO& theListOfGO,
+                         SALOMEDS::SObject_ptr theFolder);
 
   // Move objects to the specified position
   void Move( const GEOM::object_list& what,
-	     SALOMEDS::SObject_ptr where,
-	     CORBA::Long row );
-
-  // SIMAN-related functions (check out/check in) : import data to study
-  virtual Engines::ListOfIdentifiers* importData(CORBA::Long studyId,
-						 Engines::DataContainer_ptr data,
-						 const Engines::ListOfOptions& options);
-  // SIMAN-related functions (check out/check in) : get modified data
-  virtual Engines::ListOfData* getModifiedData(CORBA::Long studyId);
+             SALOMEDS::SObject_ptr where,
+             CORBA::Long row );
 
   /*! \brief Fills 3 lists that is used to clean study of redundant objects.
    *         To be used from GUI.
    */
   void GetEntriesToReduceStudy(SALOMEDS::Study_ptr theStudy,
-			       GEOM::string_array& theSelectedEntries,
-			       GEOM::string_array& theParentEntries,
-			       GEOM::string_array& theSubEntries,
-			       GEOM::string_array& theOtherEntries);
+                               GEOM::string_array& theSelectedEntries,
+                               GEOM::string_array& theParentEntries,
+                               GEOM::string_array& theSubEntries,
+                               GEOM::string_array& theOtherEntries);
 
   //-----------------------------------------------------------------------//
   // Internal methods                                                      //
@@ -381,28 +374,28 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
                              const Standard_CString& GrName,
                              GEOM::ListOfGO_var aResList);
 
-  void getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo, 
-                            GEOMUtils::LevelsList &upLevelList,  
-			    std::map< std::string, std::set<std::string> > &passedEntries,
+  void getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo,
+                            GEOMUtils::LevelsList &upLevelList,
+                            std::map< std::string, std::set<std::string> > &passedEntries,
                             int level = 0 );
 
-  void getDownwardDependency( GEOM::GEOM_BaseObject_ptr gbo, 
-                              GEOMUtils::LevelsList &downLevelList, 
-			      std::map< std::string, std::set<std::string> > &passedEntries,
+  void getDownwardDependency( GEOM::GEOM_BaseObject_ptr gbo,
+                              GEOMUtils::LevelsList &downLevelList,
+                              std::map< std::string, std::set<std::string> > &passedEntries,
                               int level = 0 );
 
   void includeParentDependencies(GEOM::GEOM_BaseObject_ptr gbo,
-				 std::set<std::string>& aSelected,
-				 std::set<std::string>& aParents, 
-				 std::set<std::string>& aChildren, 
-				 std::set<std::string>& anOthers);
+                                 std::set<std::string>& aSelected,
+                                 std::set<std::string>& aParents,
+                                 std::set<std::string>& aChildren,
+                                 std::set<std::string>& anOthers);
 
   void includeSubObjects(SALOMEDS::Study_ptr theStudy,
-			 const std::string& aSelectedEntry,
-			 std::set<std::string>& aSelected,
-			 std::set<std::string>& aParents, 
-			 std::set<std::string>& aChildren, 
-			 std::set<std::string>& anOthers);
+                         const std::string& aSelectedEntry,
+                         std::set<std::string>& aSelected,
+                         std::set<std::string>& aParents,
+                         std::set<std::string>& aChildren,
+                         std::set<std::string>& anOthers);
 
   void LoadPlugin(const std::string& theLibName);
 

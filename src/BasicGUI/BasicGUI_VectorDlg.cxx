@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -204,7 +204,7 @@ void BasicGUI_VectorDlg::ConstructorsClicked( int constructorId )
       GroupPoints->LineEdit2->setEnabled( false );
 
       globalSelection(); // close local contexts, if any
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+      localSelection( TopAbs_VERTEX );
       connect( myGeomGUI->getApp()->selectionMgr(),
                SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
       break;
@@ -325,7 +325,7 @@ void BasicGUI_VectorDlg::SetEditCurrentArgument()
   myEditCurrentArgument->setFocus();
   //  SelectionIntoArgument();
   globalSelection(); // close local selection to clear it
-  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  localSelection( TopAbs_VERTEX );
   send->setDown(true);
   displayPreview(true);
 }
@@ -471,4 +471,15 @@ void BasicGUI_VectorDlg::addSubshapesToStudy()
     GEOMBase::PublishSubObject( myPoint1.get() );
     GEOMBase::PublishSubObject( myPoint2.get() );
   }
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BasicGUI_VectorDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myPoint1 << myPoint2;
+  return res;
 }

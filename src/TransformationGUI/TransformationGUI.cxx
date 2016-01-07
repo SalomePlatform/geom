@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -39,6 +39,7 @@
 #include <SalomeApp_Study.h>
 #include <SALOME_ListIO.hxx>
 
+#include "TransformationGUI_ExtensionDlg.h"          // Method EXTENSION
 #include "TransformationGUI_MultiTranslationDlg.h"   // Method MULTI TRANSLATION
 #include "TransformationGUI_MultiRotationDlg.h"      // Method MULTI ROTATION
 #include "TransformationGUI_TranslationDlg.h"        // Method TRANSLATION
@@ -48,6 +49,7 @@
 #include "TransformationGUI_OffsetDlg.h"             // Method OFFSET
 #include "TransformationGUI_ProjectionDlg.h"         // Method PROJECTION
 #include "TransformationGUI_PositionDlg.h"           // Method POSITION
+#include "TransformationGUI_ProjectionOnCylDlg.h"    // Method PROJECTION ON CYLINDER
 
 //=======================================================================
 // function : TransformationGUI()
@@ -101,6 +103,9 @@ bool TransformationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case GEOMOp::OpProjection:     // PROJECTION
     aDlg = new TransformationGUI_ProjectionDlg( getGeometryGUI(), parent );
     break;
+  case GEOMOp::OpProjOnCyl:      // PROJECTION ON CYLINDER
+    aDlg = new TransformationGUI_ProjectionOnCylDlg( getGeometryGUI(), parent );
+    break;
   case GEOMOp::OpMultiTranslate: // MULTI TRANSLATION
     aDlg = new TransformationGUI_MultiTranslationDlg( getGeometryGUI(), parent );
     break;
@@ -150,6 +155,9 @@ bool TransformationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
         }
       } // for (; aSelIt.More(); aSelIt.Next())
     }
+    break;
+  case GEOMOp::OpExtension:     // EXTENSION
+    aDlg = new TransformationGUI_ExtensionDlg( getGeometryGUI(), parent );
     break;
   default:
     app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) );

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -22,15 +22,10 @@
 #ifndef _GEOMImpl_IPIPEBINORMAL_HXX_
 #define _GEOMImpl_IPIPEBINORMAL_HXX_
 
-#include "GEOM_Function.hxx"
 
-#ifndef _GEOMImpl_IPIPE_HXX_
 #include "GEOMImpl_IPipe.hxx"
-#endif
 
-#define PIPE_ARG_BASE 1
-#define PIPE_ARG_PATH 2
-#define PIPE_ARG_VEC  3
+// Position definitions are declared in the base class.
 
 class GEOMImpl_IPipeBiNormal : public GEOMImpl_IPipe
 {

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -34,6 +34,7 @@
 
 #include "GEOM_Engine.hxx"
 #include "GEOM_BaseObject.hxx"
+#include "GEOMImpl_Types.hxx"
 
 #include <Basics_OCCTVersion.hxx>
 
@@ -259,4 +260,83 @@ GEOM::ListOfLong* GEOM_IInsertOperations_i::GetAllTextures()
   return anIDs._retn();
 }
 
+//=============================================================================
+/*!
+ *  TransferData
+ */
+//=============================================================================
+CORBA::Boolean GEOM_IInsertOperations_i::TransferData
+        (GEOM::GEOM_Object_ptr                                 theObjectFrom,
+         GEOM::GEOM_Object_ptr                                 theObjectTo,
+         GEOM::find_shape_method                               theFindMethod,
+         GEOM::GEOM_IInsertOperations::ListOfTransferDatum_out theResult)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
 
+  if (CORBA::is_nil(theObjectFrom) || CORBA::is_nil(theObjectTo))
+  {
+    return false;
+  }
+
+  //Get the reference shape
+  Handle(GEOM_Object) aShapeFrom = GetObjectImpl(theObjectFrom);
+  Handle(GEOM_Object) aShapeTo   = GetObjectImpl(theObjectTo);
+
+  if (aShapeFrom.IsNull() || aShapeTo.IsNull())
+  {
+    return false;
+  }
+
+  bool isOk = false;
+  std::list<GEOMImpl_IInsertOperations::TransferDatum> aData;
+  int aFindMethod = -1;
+
+  switch (theFindMethod) {
+  case GEOM::FSM_GetInPlace:
+    aFindMethod = TD_GET_IN_PLACE;
+    break;
+  case GEOM::FSM_GetInPlaceByHistory:
+    aFindMethod = TD_GET_IN_PLACE_BY_HISTORY;
+    break;
+  case GEOM::FSM_GetInPlace_Old:
+    aFindMethod = TD_GET_IN_PLACE_OLD;
+    break;
+  default:
+    break;
+  }
+
+  // Transfer data.
+  if (aFindMethod > 0) {
+    isOk = GetOperations()->TransferData
+      (aShapeFrom, aShapeTo, aFindMethod, aData);
+  }
+
+  if (isOk) {
+    // Copy results.
+    const int aNbDatum = aData.size();
+    GEOM::GEOM_IInsertOperations::ListOfTransferDatum_var aResult =
+      new GEOM::GEOM_IInsertOperations::ListOfTransferDatum;
+
+    aResult->length(aNbDatum);
+
+    // fill the local CORBA array with values from lists
+    std::list<GEOMImpl_IInsertOperations::TransferDatum>::const_iterator
+      anIt = aData.begin();
+    int i = 0;
+
+    for (; anIt != aData.end(); i++, anIt++) {
+      GEOM::GEOM_IInsertOperations::TransferDatum_var aDatum =
+        new GEOM::GEOM_IInsertOperations::TransferDatum;
+
+      aDatum->myName      = CORBA::string_dup(anIt->myName.ToCString());
+      aDatum->myNumber    = anIt->myNumber;
+      aDatum->myMaxNumber = anIt->myMaxNumber;
+      aResult[i]          = aDatum;
+    }
+
+    theResult = aResult._retn();
+  }
+
+  return isOk;
+}

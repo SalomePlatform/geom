@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -34,6 +34,7 @@
 #include <SUIT_Session.h>
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
+#include "utilities.h"
 
 #include <TopoDS_Shape.hxx>
 #include <TopoDS.hxx>
@@ -187,9 +188,9 @@ bool EntityGUI_PictureImportDlg::execute( ObjectList& objects )
   delete pixmap;
   
   GEOM::GEOM_Object_var P1 = aBasicOperations->MakePointXYZ( -0.5*width, -0.5*height, 0 );
-  GEOM::GEOM_Object_var P2 = aBasicOperations->MakePointXYZ( -0.5*width,  0.5*height, 0 );
+  GEOM::GEOM_Object_var P2 = aBasicOperations->MakePointXYZ(  0.5*width, -0.5*height, 0 );
   GEOM::GEOM_Object_var P3 = aBasicOperations->MakePointXYZ(  0.5*width,  0.5*height, 0 );
-  GEOM::GEOM_Object_var P4 = aBasicOperations->MakePointXYZ(  0.5*width, -0.5*height, 0 );
+  GEOM::GEOM_Object_var P4 = aBasicOperations->MakePointXYZ( -0.5*width,  0.5*height, 0 );
   
   GEOM::GEOM_Object_var aFace = aBlocksOperations->MakeQuad4Vertices(P1,P2,P3,P4);
   getDisplayer()->SetDisplayMode(3);

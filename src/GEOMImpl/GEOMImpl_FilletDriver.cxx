@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -20,30 +20,29 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <Standard_Stream.hxx>
-
 #include <GEOMImpl_FilletDriver.hxx>
 #include <GEOMImpl_IFillet.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOMImpl_ILocalOperations.hxx>
+#include <GEOMUtils.hxx>
 #include <GEOM_Function.hxx>
 
 #include <BRepFilletAPI_MakeFillet.hxx>
-#include <BRepCheck_Analyzer.hxx>
-#include <BRep_Tool.hxx>
-
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopAbs.hxx>
 #include <TopExp_Explorer.hxx>
-
-#include <ShapeFix_ShapeTolerance.hxx>
-#include <ShapeFix_Shape.hxx>
-
-#include <Precision.hxx>
-#include <gp_Pnt.hxx>
 #include <StdFail_NotDone.hxx>
+
+// Debug PipeTShape function: uncomment the macro below to correct tolerance
+// of resulting face after fillet creation
+// VSR 30/12/2014: macro disabled
+//#define FIX_FACE_TOLERANCE
+// Debug PipeTShape function: uncomment the macro below to correct tolerance
+// of resulting curves after fillet creation
+// VSR 30/12/2014: macro disabled
+//#define FIX_CURVES_TOLERANCES
 
 //=======================================================================
 //function : GetID
@@ -131,24 +130,20 @@ Standard_Integer GEOMImpl_FilletDriver::Execute(TFunction_Logbook& log) const
   if (!fill.IsDone()) {
     StdFail_NotDone::Raise("Fillet can't be computed on the given shape with the given radius");
   }
-  aShape = fill.Shape();
+  aShape = GEOMUtils::ReduceCompound( fill.Shape() );
 
   if (aShape.IsNull()) return 0;
 
-  // Check shape validity
-  BRepCheck_Analyzer ana (aShape, false);
-  if (!ana.IsValid()) {
-    // 08.07.2008 added by skl during fixing bug 19761 from Mantis
-    ShapeFix_ShapeTolerance aSFT;
-    aSFT.LimitTolerance(aShape, Precision::Confusion(),
-                        Precision::Confusion(), TopAbs_SHAPE);
-    Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape(aShape);
-    aSfs->Perform();
-    aShape = aSfs->Shape();
-    ana.Init(aShape);
-    if (!ana.IsValid())
-      StdFail_NotDone::Raise("Fillet algorithm have produced an invalid shape result");
-  }
+#if defined(FIX_CURVES_TOLERANCES)
+  bool isOk = GEOMUtils::FixShapeCurves(aShape);
+#elif defined(FIX_FACE_TOLERANCE)
+  bool isOk = GEOMUtils::FixShapeTolerance(aShape, TopAbs_FACE);
+#else
+  // 08.07.2008 added by skl during fixing bug 19761 from Mantis
+  bool isOk = GEOMUtils::CheckShape(aShape) || GEOMUtils::FixShapeTolerance(aShape);
+#endif
+  if ( !isOk )
+    StdFail_NotDone::Raise("Fillet algorithm have produced an invalid shape result");
 
   aFunction->SetValue(aShape);
 

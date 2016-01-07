@@ -5,26 +5,59 @@
 To create a \b Face in the <b>Main Menu</b> select <b>New Entity - >
 Build - > Face</b>
 
-\n To create a \b Face you need to select input shape(s). The list of
-input shapes can include shapes of any type; if the shapes are nor
-wires or edges, the algorithm extracts all edges from
-the input shapes and works on the obtaineed edges.
+There are three algorithms to create a \b Face. In all cases the \b Result
+of the operation will be a GEOM_Object (FACE).
+
+\n Firstly, to create a \b Face you need to select input shape(s). The list of
+input shapes can include shapes of any type except vertices; if the shapes are
+neither wires nor edges, the algorithm extracts all edges from
+the input shapes and works on the obtained edges.
 \n The edges and wires do not necessarily have to be closed, the
 algorithm automatically builds a wire of maximum length from all
-given edges and wires. If it founds multiple closed wires, it can
-build a face with holes or some separate faces, depending on the
-placement of the wires. If some resulting wires remain open, they will
-be added in the resulting compound "as is".
+given edges and wires. If several closed wires are detected the algorithm tries
+to create a face with holes. It is possible only if there is only one wire
+that can be interpreted as an outer one; other wires can be considered as
+inner ones.
 \n Check <b>Try to create a planar face</b> to create a planar
 face or nothing if it is impossible.
-\note Please note, that the resulting face can have a huge tolerance, if the initial wire has a big deviation from the plane. If the final tolerance exceeds 1e-06, a warning will be shown, but the face will be created and published in the study in a normal way. Using such faces can lead to failures or unpredictable results in most operations.
+\note Please note, that the resulting face can have a huge tolerance, if
+the initial wire has a big deviation from the plane. If the final tolerance
+exceeds 1e-06, a warning will be shown, but the face will be created
+and published in the study in a normal way. Using such faces can lead to failures
+or unpredictable results in most operations.
 
-\n The \b Result will be a \b GEOM_Object (FACE).
+\n The \b Result will be a \b GEOM_Object. It can be either a single face or, in specific cases, a compound of faces.
 
 \n <b>TUI Command:</b> <em>geompy.MakeFaceWires([list of Shapes], isPlanarWanted)</em>
 \n <b>Arguments:</b> Name + 1 wire.
 
-\image html neo-obj4.png
+\image html neo-obj4.png "Create face by input shape(s)"
+
+\n Secondly, it is possible to create a face based on another face's surface and bounded by a wire.
+
+\n The \b Result will be a \b GEOM_Object (face).
+
+\n <b>TUI Command:</b> <em>geompy.MakeFaceFromSurface(theFace, theWire)</em>
+\n <b>Arguments:</b> Name + 1 face + 1 wire.
+
+\image html neo-obj4_2.png "Create face by another face's surface"
+
+Thirdly, it is possible to create a \b Face by specifying a set of edges forming a closed wire
+and constraints:
+- Specify an input wire by selecting it in the object browser or in the viewer.
+  The input wire will be exploded on edges which will be shown in the \b Constraints list box.
+- Specify constraints by associating faces with the edges. 
+
+\note Please note, that the constraint face must be connected to a reference edge.
+
+\n The \b Result will be a \b GEOM_Object (face).
+
+\n <b>TUI Command:</b> <em>geompy.MakeFaceWithConstraints([List of constraints])</em>
+\n <b>Arguments:</b> Name + List of input edges and constraint faces. If a constraint
+face is missing for some edge, this means that there is no constraint associated to this edge.
+\note Set of edges should form a closed wire.
+
+\image html neo-obj4_3.png "Create face by a wire and its constraints"
 
 \n <b>Example:</b>
 
@@ -34,7 +67,7 @@ face or nothing if it is impossible.
 
 \image html facesn3.png "Examples of faces"
 
-Our <b>TUI Scripts</b> provide you with useful examples of creation of 
+Our <b>TUI Scripts</b> provide you with useful examples of creation of
 \ref tui_creation_face "Advanced Geometric Objects".
 
 */

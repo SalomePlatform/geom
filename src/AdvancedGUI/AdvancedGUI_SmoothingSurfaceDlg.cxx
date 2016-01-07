@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2013-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -119,6 +119,8 @@ void AdvancedGUI_SmoothingSurfaceDlg::Init()
 
   showOnlyPreviewControl();
 
+  globalSelection();
+  localSelection( TopAbs_VERTEX );
   //@@ initialize dialog box widgets here @@//
 
   // Signal/slot connections
@@ -160,7 +162,8 @@ bool AdvancedGUI_SmoothingSurfaceDlg::ClickOnApply()
     return false;
 
   initName();
-
+  globalSelection();
+  localSelection( TopAbs_VERTEX );
   return true;
 }
 
@@ -171,6 +174,8 @@ bool AdvancedGUI_SmoothingSurfaceDlg::ClickOnApply()
 void AdvancedGUI_SmoothingSurfaceDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
+  globalSelection();
+  localSelection( TopAbs_VERTEX );
   //displayPreview();
 }
 
@@ -247,6 +252,26 @@ bool AdvancedGUI_SmoothingSurfaceDlg::execute (ObjectList& objects)
     objects.push_back(anObj._retn());
 
   return res;
+}
+
+//=================================================================================
+// function : addSubshapesToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void AdvancedGUI_SmoothingSurfaceDlg::addSubshapesToStudy()
+{
+  for ( int i = 0; i < myPoints.count(); i++ )
+    GEOMBase::PublishSubObject( myPoints[i].get() );
+}
+
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> AdvancedGUI_SmoothingSurfaceDlg::getSourceObjects()
+{
+  return myPoints;
 }
 
 //=================================================================================
@@ -337,5 +362,7 @@ void AdvancedGUI_SmoothingSurfaceDlg::SetEditCurrentArgument()
   if ( sender() == GroupPoints->PushButton1 )
     myEditCurrentArgument = GroupPoints->LineEdit1;
   myEditCurrentArgument->setFocus();
+  globalSelection();
+  localSelection( TopAbs_VERTEX );
   SelectionIntoArgument();
 }

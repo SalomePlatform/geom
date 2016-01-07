@@ -1,4 +1,4 @@
-// Copyright (C) 2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2014-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@
 // KERNEL includes
 #include <utilities.h>
 #include <Basics_Utils.hxx>
+#include <Basics_OCCTVersion.hxx>
 
 // GEOM includes
 #include "GEOM_Function.hxx"
@@ -32,6 +33,13 @@
 #include <BRepBuilderAPI_Copy.hxx>
 #include <StlAPI_Writer.hxx>
 #include <TopoDS_Shape.hxx>
+#include <Bnd_Box.hxx>
+#include <BRepBndLib.hxx>
+#include <BRepTools.hxx>
+#include <BRepMesh_IncrementalMesh.hxx>
+
+#define MAX2(X, Y)      ( Abs(X) > Abs(Y) ? Abs(X) : Abs(Y) )
+#define MAX3(X, Y, Z)   ( MAX2 ( MAX2(X, Y) , Z ) )
 
 //=======================================================================
 //function : GetID
@@ -84,15 +92,31 @@ Standard_Integer STLPlugin_ExportDriver::Execute( TFunction_Logbook& log ) const
   try
   {
     StlAPI_Writer aWriter;
+    // copy source shape
+    BRepBuilderAPI_Copy aCopy( aShape, Standard_False );
+    TopoDS_Shape aCopyShape = aCopy.Shape();
+    // ASCII mode
+    aWriter.ASCIIMode() = anIsASCII;
+#if OCC_VERSION_LARGE > 0x06080000
+    if ( anIsRelative ) {
+      Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
+      Bnd_Box bndBox;
+      BRepBndLib::Add( aShape, bndBox );
+      bndBox.Get( aXmin, aYmin, aZmin, aXmax, aYmax, aZmax );
+      aDeflection = MAX3( aXmax-aXmin, aYmax-aYmin, aZmax-aZmin ) * aDeflection;
+    }
+    //Compute triangulation
+    BRepTools::Clean( aCopyShape );
+    BRepMesh_IncrementalMesh aMesh( aCopyShape, aDeflection );
+#else
     // set relative mode on false for using custom deflection coefficient
     aWriter.RelativeMode( ) = anIsRelative;
-    aWriter.ASCIIMode() = anIsASCII;
     if( anIsRelative )
       aWriter.SetCoefficient( aDeflection );
     else
       aWriter.SetDeflection( aDeflection );
-    BRepBuilderAPI_Copy aCopy( aShape, Standard_False );
-    aWriter.Write( aCopy.Shape(), aFileName.ToCString() );
+#endif
+    aWriter.Write( aCopyShape, aFileName.ToCString() );
     log.SetTouched( Label() );
     return 1;
   }

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -234,7 +234,7 @@ void GenerationGUI_RevolDlg::SetEditCurrentArgument()
     myEditCurrentArgument = GroupPoints->LineEdit2;
     GroupPoints->PushButton1->setDown(false);
     GroupPoints->LineEdit1->setEnabled(false);
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+    localSelection(TopAbs_EDGE);
   }
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
@@ -374,4 +374,15 @@ void GenerationGUI_RevolDlg::addSubshapesToStudy()
 bool GenerationGUI_RevolDlg::extractPrefix() const
 {
   return myBaseObjects.count() > 1;
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> GenerationGUI_RevolDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res(myBaseObjects);
+  res << myAxis;
+  return res;
 }

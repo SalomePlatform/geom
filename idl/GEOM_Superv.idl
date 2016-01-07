@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -391,10 +391,13 @@ module GEOM
                           in boolean     isPlanarWanted) ;
     GEOM_Object MakeFaceWires (in GEOM_List theWires,
                                in boolean   isPlanarWanted) ;
+    GEOM_Object MakeFaceWithConstraints(in GEOM_List theConstraints);
     GEOM_Object MakeShell (in GEOM_List theFacesAndShells) ;
     GEOM_Object MakeSolidShell (in GEOM_Object theShell) ;
     GEOM_Object MakeSolidShells (in GEOM_List theShells) ;
     GEOM_Object MakeCompound (in GEOM_List theShapes) ;
+    GEOM_Object MakeSolidFromConnectedFaces (in GEOM_List theFacesOrShells,
+					     in boolean isIntersect);
     GEOM_Object MakeGlueFaces (in GEOM_Object theShape,
                                in double theTolerance,
                                in boolean doKeepNonSolids);

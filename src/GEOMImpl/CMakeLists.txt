@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2012-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -33,6 +33,7 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/src/SKETCHER
   ${PROJECT_SOURCE_DIR}/src/ARCHIMEDE
   ${PROJECT_SOURCE_DIR}/src/XAO
+  ${PROJECT_SOURCE_DIR}/src/ShHealOper
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
@@ -96,6 +97,7 @@ SET(GEOMImpl_HEADERS
   GEOMImpl_ITranslate.hxx
   GEOMImpl_IMirror.hxx
   GEOMImpl_IProjection.hxx
+  GEOMImpl_IProjOnCyl.hxx
   GEOMImpl_IOffset.hxx
   GEOMImpl_IScale.hxx
   GEOMImpl_IRotate.hxx
@@ -110,12 +112,14 @@ SET(GEOMImpl_HEADERS
   GEOMImpl_ICone.hxx
   GEOMImpl_ISphere.hxx
   GEOMImpl_ITorus.hxx
+  GEOMImpl_ITransferData.hxx
   GEOMImpl_IPrism.hxx
   GEOMImpl_IPipe.hxx
   GEOMImpl_IPipePath.hxx
   GEOMImpl_IRevolution.hxx
   GEOMImpl_IMeasure.hxx
   GEOMImpl_IShapes.hxx
+  GEOMImpl_IShapeExtend.hxx
   GEOMImpl_IFilling.hxx
   GEOMImpl_IThruSections.hxx
   GEOMImpl_IPartition.hxx
@@ -195,6 +199,7 @@ SET(GEOMImpl_SOURCES
   GEOMImpl_IFieldOperations.cxx
   GEOMImpl_IBaseIEOperations.cxx
   GEOMImpl_IPolyline2D.cxx
+  GEOMImpl_ITransferData.cxx
   GEOMImpl_Gen.cxx
   GEOMImpl_PointDriver.cxx
   GEOMImpl_VectorDriver.cxx

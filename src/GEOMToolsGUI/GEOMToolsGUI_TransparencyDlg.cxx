@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -282,7 +282,7 @@ void GEOMToolsGUI_TransparencyDlg::SetTransparency()
       return;
     }
 
-    SUIT_OverrideCursor();
+    SUIT_OverrideCursor wc;
     for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
       aView->SetTransparency( It.Value(), newValue );
       aStudy->setObjectProperty( aMgrId , It.Value()->getEntry(), GEOM::propertyName( GEOM::Transparency ) , newValue );
@@ -306,7 +306,7 @@ void GEOMToolsGUI_TransparencyDlg::SetTransparency()
       return;
     }
     
-    SUIT_OverrideCursor();
+    SUIT_OverrideCursor wc;
     OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>( window->getViewManager()->getViewModel() );
     if ( !vm )
       return;

@@ -51,11 +51,27 @@ spots and strips.</li>
 possible face size.</li>
 </ul>
 <li><b>Drop Small Edges</b> (DropSmallEdges) - removes edges, which
-merge with neighbouring edges.</li>
+merge with neighboring edges.</li>
 <ul>
 <li><b>3D Tolerance</b> (DropSmallEdges.Tolerance3d) - defines minimum
 possible distance between two parallel edges.</li>
 </ul>
+<li><b>Drop Small Solids</b> (DropSmallSolids) - removes small
+  solids or merges them with neighboring ones.</li>
+<ul>
+<li><b>Width factor tol.</b> (DropSmallSolids.WidthFactorThreshold) -
+  defines the maximum value of <em>2V/S</em> of a solid, which is
+  considered small, where \a V is the volume and \a S is the surface area of
+  the solid.</li>
+<li><b>Volume tol.</b> (DropSmallSolids.VolumeThreshold) - defines
+  the maximum volume of a solid, which is considered small.</li>
+<li><b>To merge solids</b> (DropSmallSolids.MergeSolids) - if
+  activated, small solids are removed, else small solids are merged to
+  adjacent non-small solids or left untouched if they cannot be merged.
+</li>
+</ul>
+If the both tolerances are activated a solid is considered small if
+it meets both criteria.
 <li><b>Split Angle</b> (SplitAngle) - splits faces based on conical
 surfaces, surfaces of revolution and cylindrical surfaces in segments
 using a certain angle.</li>

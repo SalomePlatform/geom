@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -245,27 +245,24 @@ void MeasureGUI_Skeleton::SetEditCurrentArgument()
 //=================================================================================
 void MeasureGUI_Skeleton::SelectionIntoArgument()
 {
-  myObj = GEOM::GEOM_Object::_nil();
+  myObj.nullify();
 
   LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
   SALOME_ListIO aSelList;
   aSelMgr->selectedObjects(aSelList);
 
-  GEOM::GEOM_Object_var aSelectedObject = GEOM::GEOM_Object::_nil();
-
   if (aSelList.Extent() > 0) {
-    aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
+    myObj = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
   }
 
-  if (aSelectedObject->_is_nil()) {
+  if ( !myObj ) {
     mySelEdit->setText("");
     processObject();
     erasePreview();
     return;
   }
 
-  myObj = aSelectedObject;
-  mySelEdit->setText(GEOMBase::GetName(myObj));
+  mySelEdit->setText(GEOMBase::GetName(myObj.get()));
   processObject();
   redisplayPreview();
 }
@@ -327,7 +324,7 @@ void MeasureGUI_Skeleton::redisplayPreview()
   erasePreview( false );
 
   try {
-    SUIT_OverrideCursor();
+    SUIT_OverrideCursor wc;
 
     getDisplayer()->SetColor( Quantity_NOC_VIOLET );
     getDisplayer()->SetToActivate( false );
@@ -356,7 +353,7 @@ void MeasureGUI_Skeleton::activateSelection()
 //=================================================================================
 bool MeasureGUI_Skeleton::isValid( QString& )
 {
-  return !myObj->_is_nil();
+  return myObj;
 }
 
 //================================================================

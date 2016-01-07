@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2012-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -29,6 +29,7 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/src/GEOM
   ${PROJECT_SOURCE_DIR}/src/GEOMAlgo
   ${PROJECT_SOURCE_DIR}/src/GEOMUtils
+  ${PROJECT_SOURCE_DIR}/src/ShHealOper
   ${PROJECT_BINARY_DIR}/idl
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${PROJECT_BINARY_DIR}

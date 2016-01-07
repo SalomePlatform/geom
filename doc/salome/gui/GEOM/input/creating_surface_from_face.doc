@@ -1,0 +1,27 @@
+/*!
+
+\page create_surface_from_face_page Surface From Face
+
+To create a <b>Surface From Face</B> in the <b>Main Menu</b> select <b>New Entity - > Basic - > Surface From Face</b>
+
+\n This function takes a face at input and creates a new
+<b>GEOM_Object</b>, i.e. topological shape by extracting the underlying surface
+of the source face and limiting it by the <b>Umin, Umax, Vmin</b> and <b>Vmax</b>
+parameters of the source face (in the parametric space).
+\n
+\ref restore_presentation_parameters_page "Advanced options".
+
+\n <b>TUI Command:</b> <em>geompy.MakeSurfaceFromFace(theFace)</em>,
+where \em theFace the input face.
+\n <b>Arguments:</b> Name + Object (Face).
+
+\image html surface_from_face1.png "Surface From Face"
+
+\n <b>Example:</b>
+
+\image html surface_from_face_example.png "Original Face (white) and Created Surface"
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_creation_surface "Surface From Face" creation.
+
+*/

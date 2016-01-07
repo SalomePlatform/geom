@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -259,7 +259,7 @@ void TransformationGUI_PositionDlg::ConstructorsClicked (int constructorId)
 void TransformationGUI_PositionDlg::SelectionTypeButtonClicked()
 {
   if ( Group1->CheckButton2->isChecked() ) {
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+    localSelection( TopAbs_EDGE );
   } else {
     TColStd_MapOfInteger aMap;
     aMap.Add(GEOM_WIRE);
@@ -433,7 +433,7 @@ void TransformationGUI_PositionDlg::SetEditCurrentArgument()
     Group1->CheckButton2->setEnabled(true);
 
     if ( Group1->CheckButton2->isChecked() ) {
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+      localSelection( TopAbs_EDGE );
     } else {
       TColStd_MapOfInteger aMap;
       aMap.Add(GEOM_WIRE);
@@ -607,4 +607,18 @@ void TransformationGUI_PositionDlg::addSubshapesToStudy()
 {
   if ( getConstructorId() == 2 )
     GEOMBase::PublishSubObject( myPath.get() );
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> TransformationGUI_PositionDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  if ( Group1->CheckButton1->isChecked() ) {
+    res.append(myObjects);
+    res << myStartLCS << myEndLCS << myPath;
+  }
+  return res;
 }

@@ -2,55 +2,52 @@
 
 \page reduce_study_page Reduce Study
 
-The user sometimes needs to keep in the study only some objects that 
+It can be sometimes necessary to keep in the study only the objects that 
 present the final result(s) of the design operations and to delete all 
-other objects which do not contribute to these results.
+other objects, which do not contribute to these results.
 
-The feature is especially useful when the user designs the whole model 
-through the GUI and wants to generate simplified "clean" Python dump only 
-at the end of the model construction with no "useless" objects in the 
-%GEOM module.
+This is especially useful when the model is designed using the GUI 
+and it is necessary to generate a simplified "clean" Python dump without "useless" objects 
+at the end of the model construction.
 
-User can open dialog box by selecting desirable object(s) in Object 
-Browser or OCC Viewer and calling "Reduce study" popup item.
+This feature can be activated by selecting the desirable object(s) in Object 
+Browser or OCC Viewer and calling "Reduce study" context item.
 
 \image html reduce_study_dialog.png
 
 <ul>
 
 <li><b> Objects to be kept</b> - objects that will be kept in the study after 
-applying operation of reduce study. The list of objects being selected by 
+applying reduce study operation. The objects selected by 
 the user are highlighted in bold font.</li>
 
 <li><b> Objects to be removed</b> - objects that will be deleted.</li>
 
-\note Mentioned views provide possibility to show/hide object(s) in 
-current Viewer using "eye" icon near each item of tree. Also user can 
-show/hide ALL objects in tree by clicking "eye" icon in the head of tree view.
+\note It is possible to show/hide object(s) in the 
+current Viewer using "eye" icon next to each tree item. 
+ALL objects in the tree can be shown/hidden by clicking the "eye" icon in the head of the tree view.
 
-<li><b> Intermediate objects</b> group box allows to choose an action 
-that will be performed with the objects that took part in the operations 
-chain to produce the selected object(s):
+<li><b> Intermediate objects</b> group box allows choosing what should be done with the objects that are used to produce the selected object(s):
+<li><b> Sub-objects</b> group box allows choosing the same operations for 
+sub-objects of the selected object(s).</li>
+
 <ul>
 <li>Keep - object(s) will be kept in the study;</li>
 <li>Unpublish - object(s) will be unpublished (hidden) from the study;</li>
 <li>Remove - object(s) will be removed from the study. \note Since use of 
-this option can lead to the broken Dump Python script, the warning message 
-will be shown at the operation commiting to confirm/reject removing 
-intermediate objects.</li>
+this option can cause a broken Dump Python script, the warning message 
+is shown confirm/reject removing intermediate objects.</li>
 </ul>
 </li>
 
-<li><b> Sub-objects</b> group box allows to choose the same operations for 
-sub-objects of selected item(s): keep, unpublish or remove.</li>
 
-<li><b> Remove empty folders</b> - if this option is checked, then all folders, 
+<li><b> Remove empty folders</b> - if this option is checked, all folders, 
 which will become empty after removing unused objects from the study, 
 will be also removed; otherwise, empty folders will be kept.</li>
 
-<li><b> Soft removal</b> - if this option is checked, operation will just 
-unpublish the redundant objects from the study instead of their hard delete.
-\n Soft removal would keep all the data in the study to give the user a 
+<li><b> Soft removal</b> - if this option is checked, the operation will 
+unpublish the redundant objects from the study instead of deleting them.
+\n So, soft removal keeps all data in the study to give the user a 
 chance to revert this operation using \ref publish_hidden_objects 
 "Publish Objects" dialog box.</li>
 

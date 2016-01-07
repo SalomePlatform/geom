@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -220,7 +220,7 @@ void BasicGUI_LineDlg::ConstructorsClicked( int constructorId )
                                  myEditCurrentArgument == GroupFaces->LineEdit2 ) ?
     TopAbs_FACE : TopAbs_VERTEX;
   globalSelection(); // close local selection to clear it
-  localSelection( GEOM::GEOM_Object::_nil(), aNeedType );
+  localSelection( aNeedType );
 
   qApp->processEvents();
   updateGeometry();
@@ -318,7 +318,7 @@ void BasicGUI_LineDlg::SetEditCurrentArgument()
                                  myEditCurrentArgument == GroupFaces->LineEdit2 ) ?
     TopAbs_FACE : TopAbs_VERTEX;
   globalSelection(); // close local selection to clear it
-  localSelection( GEOM::GEOM_Object::_nil(), aNeedType );
+  localSelection( aNeedType );
 
   myEditCurrentArgument->setFocus();
   //  SelectionIntoArgument();
@@ -431,4 +431,15 @@ void BasicGUI_LineDlg::addSubshapesToStudy()
   default:
     break;
   }
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BasicGUI_LineDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myPoint1 << myPoint2 << myFace1 << myFace2;
+  return res;
 }

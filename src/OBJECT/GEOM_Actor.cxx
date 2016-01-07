@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -37,12 +37,16 @@
 #include "GEOM_WireframeFace.h" 
 #include "GEOM_ShadingFace.h"
 #include "GEOM_PainterPolyDataMapper.h"
+#include "GEOMUtils.hxx" 
 #include "SVTK_Actor.h"
 
 #include <OCC2VTK_Tools.h>
+#include <GEOMUtils.hxx>
 
 #include <vtkObjectFactory.h> 
 #include <vtkRenderer.h> 
+#include <vtkTextActor.h>
+#include <vtkTextProperty.h>
 #include <vtkProperty.h> 
 #include <vtkPointPicker.h>
 #include <vtkCellPicker.h>
@@ -83,6 +87,7 @@ GEOM_Actor::GEOM_Actor():
   myIsSelected(false), 
   myVectorMode(false),
   myVerticesMode(false),
+  myNameMode(false),
 
   myVertexActor(GEOM_DeviceActor::New(),true), 
   myVertexSource(GEOM_VertexSource::New(),true), 
@@ -113,6 +118,8 @@ GEOM_Actor::GEOM_Actor():
   // !!! Presentation of GEOM_Actor is drawing only with help of actors
   // defined in this class !!!
   myPolyDataMapper(GEOM_PainterPolyDataMapper::New(),true),
+
+  myTextActor( vtkTextActor::New() ),
 
   myHighlightProp(vtkProperty::New()),
   myPreHighlightProp(vtkProperty::New()),
@@ -201,6 +208,7 @@ GEOM_Actor::GEOM_Actor():
   setDisplayMode(0); // WIRE FRAME
   SetVectorMode(0);  //
   SetVerticesMode(0);  //
+  SetNameMode(0); 
 } 
  
  
@@ -245,6 +253,7 @@ SetModified()
   this->mySharedEdgeSource->Modified(); 
   this->myWireframeFaceSource->Modified(); 
   this->myShadingFaceSource->Modified(); 
+  this->myTextActor->Modified();
 } 
 
 void  
@@ -274,6 +283,8 @@ AddToRender(vtkRenderer* theRenderer)
  
   myVertexActor->AddToRender(theRenderer); 
   myStandaloneVertexActor->AddToRender(theRenderer); 
+
+  theRenderer->AddActor( myTextActor );
 }
  
 void 
@@ -296,6 +307,7 @@ RemoveFromRender(vtkRenderer* theRenderer)
   myVertexActor->RemoveFromRender(theRenderer);
   myStandaloneVertexActor->RemoveFromRender(theRenderer);
 
+  theRenderer->RemoveActor( myTextActor );
   
   SetSelected(false);
   SetVisibility(false);
@@ -326,9 +338,9 @@ setDisplayMode(int theMode)
     myIsolatedEdgeActor->GetProperty()->SetColor(myIsolatedEdgeColor[0],
                                                  myIsolatedEdgeColor[1],
                                                  myIsolatedEdgeColor[2]);
-    mySharedEdgeActor->GetProperty()->SetColor(myIsolatedEdgeColor[0],
-                                               myIsolatedEdgeColor[1],
-                                               myIsolatedEdgeColor[2]);
+    mySharedEdgeActor->GetProperty()->SetColor(mySharedEdgeColor[0],
+                                               mySharedEdgeColor[1],
+                                               mySharedEdgeColor[2]);
     myOneFaceEdgeActor->GetProperty()->SetColor(myOneFaceEdgeColor[0],
                                                myOneFaceEdgeColor[1],
                                                myOneFaceEdgeColor[2]);
@@ -373,6 +385,8 @@ SetVisibility(int theVisibility)
   myVertexActor->SetVisibility(theVisibility && (isOnlyVertex || (myVerticesMode && (!myIsSelected && !myIsPreselected))));// must be added new mode points
 
   myStandaloneVertexActor->SetVisibility(theVisibility);
+
+  myTextActor->SetVisibility( theVisibility && myNameMode );
 }
  
 
@@ -428,22 +442,56 @@ GEOM_Actor
   return myVerticesMode;
 }
 
+void
+GEOM_Actor
+::SetShapeName()
+{
+  if( !getIO() || myShape.IsNull() )
+    return;
+
+  gp_Ax3 anAx3 = GEOMUtils::GetPosition(myShape);
+  double center[3] = { anAx3.Location().X(),
+                       anAx3.Location().Y(),
+                       anAx3.Location().Z() };
+  double* pos = center;
+  myTextActor->GetTextProperty()->SetFontSize( 16 );
+  myTextActor->GetTextProperty()->ShadowOn();
+  myTextActor->GetPositionCoordinate()->SetCoordinateSystemToWorld();
+  myTextActor->GetPositionCoordinate()->SetValue(pos);
+  myTextActor->SetInput( getIO()->getName() );
+}
+
+void
+GEOM_Actor
+::SetNameMode(bool theMode)
+{
+  myNameMode = theMode;
+  myTextActor->SetVisibility(theMode);
+  SetModified();
+}
+
+bool
+GEOM_Actor
+::GetNameMode()
+{
+  return myNameMode;
+}
+
 void  
 GEOM_Actor:: 
-SetDeflection(float theDeflection) 
+SetDeflection(double theDeflection) 
 { 
-  if( myDeflection == theDeflection ) 
-    return;
-    
-  myDeflection = theDeflection; 
- 
-  GEOM::MeshShape(myShape,myDeflection);
-  
-  SetModified(); 
+  double aDeflection = ( theDeflection <= 0 ) ? GEOMUtils::DefaultDeflection() : theDeflection;
+
+  if ( myDeflection != aDeflection ) {
+    myDeflection = aDeflection; 
+    GEOMUtils::MeshShape( myShape, myDeflection );
+    SetModified(); 
+  }
 }
 
 void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
-                           float theDeflection,
+                           double theDeflection,
                            bool theIsVector)
 {
   myShape = theShape;
@@ -469,13 +517,13 @@ void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
   TopTools_IndexedDataMapOfShapeListOfShape anEdgeMap;
   TopExp::MapShapesAndAncestors(theShape,TopAbs_EDGE,TopAbs_FACE,anEdgeMap);
   
-  GEOM::SetShape(theShape,anEdgeMap,theIsVector,
-                 myStandaloneVertexSource.Get(),
-                 myIsolatedEdgeSource.Get(),
-                 myOneFaceEdgeSource.Get(),
-                 mySharedEdgeSource.Get(),
-                 myWireframeFaceSource.Get(),
-                 myShadingFaceSource.Get());
+  GEOM::ShapeToVTK(theShape,anEdgeMap,theIsVector,
+                   myStandaloneVertexSource.Get(),
+                   myIsolatedEdgeSource.Get(),
+                   myOneFaceEdgeSource.Get(),
+                   mySharedEdgeSource.Get(),
+                   myWireframeFaceSource.Get(),
+                   myShadingFaceSource.Get());
   isOnlyVertex =  
     myIsolatedEdgeSource->IsEmpty() &&
     myOneFaceEdgeSource->IsEmpty() &&
@@ -490,18 +538,11 @@ void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
     myHighlightActor->GetDeviceActor()->SetInfinitive(true);
   }
 
+  SetShapeName();
+
   // 0051777: TC7.2.0: Element could not be selected in Hypothesis Construction
   myAppendFilter->Update();
 }
-
-// OLD METHODS
-void GEOM_Actor::setDeflection(double adef) {
-#ifdef MYDEBUG
-  MESSAGE ( "GEOM_Actor::setDeflection" );
-#endif
-  SetDeflection((float)adef);
-}
-
 
 // warning! must be checked!
 // SetHighlightProperty
@@ -689,15 +730,6 @@ void GEOM_Actor::setInputShape(const TopoDS_Shape& ashape, double adef1,
 #endif
 }
 
-double GEOM_Actor::getDeflection()
-{
-#ifdef MYDEBUG
-  MESSAGE ( "GEOM_Actor::getDeflection" );
-#endif
-  return (double) GetDeflection();
-}
-
-
 double GEOM_Actor::isVector()
 {
 #ifdef MYDEBUG
@@ -822,6 +854,15 @@ void GEOM_Actor::SetFreeEdgeColor(double r, double g, double b)
 void GEOM_Actor::SetIsosColor(double r, double g, double b)
 {
   myWireframeFaceActor->GetProperty()->SetColor(r, g, b);
+}
+
+/*!
+  \brief Set color of labels
+  This actor is shown only if 'Show name' is switched-on, see SetVisibility()
+*/
+void GEOM_Actor::SetLabelColor(double r, double g, double b)
+{
+  myTextActor->GetTextProperty()->SetColor(r, g, b);
 }
 
 void GEOM_Actor::SetMaterial(std::vector<vtkProperty*> theProps)

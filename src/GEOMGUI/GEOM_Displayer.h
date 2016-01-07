@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -162,7 +162,20 @@ public:
   void          SetIsosWidth  ( const int );
   int           GetIsosWidth  () const;
   bool          HasIsosWidth  () const;
+ 
+  /* Set nb iso-libes for displaying. Use -1 to set default values. */
+  int           SetNbIsos( const int );
+  int           UnsetNbIsos();
+  int           GetNbIsos() const;
+  bool          HasNbIsos() const;
   
+  /* Set color for iso-lines displaying. If it is equal -1 then default color is used.
+     Available values are from Quantity_NameOfColor enumeration */
+  int           SetIsosColor  ( const int );
+  int           UnsetIsosColor();
+  int           GetIsosColor  () const;
+  bool          HasIsosColor  () const;
+ 
   /* Set display mode shape displaying. If it is equal -1 then display mode is used. */
   int           SetDisplayMode( const int );
   int           GetDisplayMode() const;
@@ -186,7 +199,9 @@ public:
   bool          ToActivate() const;
 
   /* Activate/Deactivate selection*/
+  void         LocalSelection( const Handle(SALOME_InteractiveObject)&, const std::list<int> );
   void         LocalSelection( const Handle(SALOME_InteractiveObject)&, const int );
+  void         LocalSelection( const SALOME_ListIO& theIOList, const std::list<int> );
   void         LocalSelection( const SALOME_ListIO& theIOList, const int );
   void         GlobalSelection( const int = GEOM_ALLOBJECTS, const bool = false );
   void         GlobalSelection( const TColStd_MapOfInteger&, const bool = false, const QList<int>* = 0 );
@@ -289,13 +304,14 @@ protected:
   int                              myColor;
   double                           myWidth;
   int                              myIsosWidth;
+  int                              myNbIsos;
+  int                              myIsosColor;
   bool                             myToActivate;
   int                              myDisplayMode;
   bool                             myHasDisplayMode;
   Aspect_TypeOfMarker              myTypeOfMarker;
   double                           myScaleOfMarker;
   double                           myTransparency;
-  bool                             myHasTransparency;
 
 private:
   SalomeApp_Application* myApp;

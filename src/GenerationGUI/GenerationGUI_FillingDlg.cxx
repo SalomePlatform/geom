@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -35,7 +35,8 @@
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
-#include <TopoDS_Iterator.hxx>
+#include <TColStd_MapOfInteger.hxx>
+
 #include <GEOMImpl_Types.hxx>
 
 //=================================================================================
@@ -105,7 +106,7 @@ void GenerationGUI_FillingDlg::Init()
   myEditCurrentArgument = GroupPoints->LineEdit1;
   GroupPoints->LineEdit1->setReadOnly(true);
 
-  globalSelection(GEOM_COMPOUND);
+  initSelection();
 
   int SpecificStep1 = 1;
   double SpecificStep2 = 0.0001;
@@ -186,7 +187,29 @@ bool GenerationGUI_FillingDlg::ClickOnApply()
     return false;
 
   initName();
+  initSelection();
+
   return true;
+}
+
+//=================================================================================
+// function : initSelection
+// purpose  :
+//=================================================================================
+void GenerationGUI_FillingDlg::initSelection()
+{
+  TColStd_MapOfInteger aTypes;
+  aTypes.Add( GEOM_EDGE );
+  aTypes.Add( GEOM_WIRE );
+  aTypes.Add( GEOM_COMPOUND );
+
+  std::list<int> needTypes;
+  needTypes.push_back( TopAbs_EDGE );
+  needTypes.push_back( TopAbs_WIRE );
+  needTypes.push_back( TopAbs_COMPOUND );
+
+  globalSelection( aTypes );
+  localSelection( needTypes );
 }
 
 //=================================================================================
@@ -199,18 +222,13 @@ void GenerationGUI_FillingDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText("");
 
   if (myEditCurrentArgument == GroupPoints->LineEdit1) {
-    myCompound = getSelected(TopAbs_COMPOUND);
-    if (myCompound) {
-      if (myCompound->GetMaxShapeType() < GEOM::WIRE || myCompound->GetMinShapeType() > GEOM::EDGE) {
-        myCompound.nullify();
-      }
-      else {
-        QString aName = GEOMBase::GetName(myCompound.get());
-        myEditCurrentArgument->setText(aName);
-      }
+    QList<GEOM::GeomObjPtr> objs = getSelected(TopAbs_SHAPE, -1);
+    GEOMBase::Synchronize(myObjects, objs);
+    if ( !myObjects.isEmpty() ) {
+      QString aName = myObjects.count() > 1 ? QString( "%1_objects").arg( myObjects.count() ) : GEOMBase::GetName( myObjects[0].get() );
+      myEditCurrentArgument->setText( aName );
     }
   }
-
   processPreview();
 }
 
@@ -221,12 +239,11 @@ void GenerationGUI_FillingDlg::SelectionIntoArgument()
 void GenerationGUI_FillingDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  globalSelection(GEOM_ALLSHAPES);
 
   if (send == GroupPoints->PushButton1) {
     GroupPoints->LineEdit1->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit1;
-    globalSelection(GEOM_COMPOUND);
+    initSelection();
     this->SelectionIntoArgument();
   }
 }
@@ -240,7 +257,7 @@ void GenerationGUI_FillingDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
            SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  globalSelection(GEOM_COMPOUND);
+  initSelection();
   processPreview();
 }
 
@@ -319,12 +336,12 @@ GEOM::GEOM_IOperations_ptr GenerationGUI_FillingDlg::createOperation()
 //=================================================================================
 bool GenerationGUI_FillingDlg::isValid(QString& msg)
 {
-  bool ok = GroupPoints->SpinBox1->isValid(msg, !IsPreview()) &&
-            GroupPoints->SpinBox2->isValid(msg, !IsPreview()) &&
-            GroupPoints->SpinBox3->isValid(msg, !IsPreview()) &&
-            GroupPoints->SpinBox4->isValid(msg, !IsPreview()) &&
-            GroupPoints->SpinBox5->isValid(msg, !IsPreview()) &&
-            myCompound;
+  bool ok = ( GroupPoints->SpinBox1->isValid(msg, !IsPreview()) &&
+              GroupPoints->SpinBox2->isValid(msg, !IsPreview()) &&
+              GroupPoints->SpinBox3->isValid(msg, !IsPreview()) &&
+              GroupPoints->SpinBox4->isValid(msg, !IsPreview()) &&
+              GroupPoints->SpinBox5->isValid(msg, !IsPreview()) &&
+              myObjects.count() );
   return ok;
 }
 
@@ -340,21 +357,26 @@ bool GenerationGUI_FillingDlg::execute(ObjectList& objects)
   GEOM::filling_oper_method aMethod;
   switch (GroupPoints->ComboBox1->currentIndex())
   {
-    case 0:  aMethod = GEOM::FOM_Default; break;
-    case 1:  aMethod = GEOM::FOM_UseOri; break;
-    case 2:  aMethod = GEOM::FOM_AutoCorrect; break;
-    default: break;
+  case 0:  aMethod = GEOM::FOM_Default; break;
+  case 1:  aMethod = GEOM::FOM_UseOri; break;
+  case 2:  aMethod = GEOM::FOM_AutoCorrect; break;
+  default: break;
   }
 
+  GEOM::ListOfGO_var objList = new GEOM::ListOfGO;
+  objList->length( myObjects.count() );
+  for ( int i = 0; i < myObjects.count(); ++i )
+    objList[i] = myObjects[i].copy();
+
   GEOM::GEOM_Object_var anObj =
-    anOper->MakeFilling(myCompound.get(),
-                         GroupPoints->SpinBox1->value(),
-                         GroupPoints->SpinBox4->value(),
-                         GroupPoints->SpinBox2->value(),
-                         GroupPoints->SpinBox5->value(),
-                         GroupPoints->SpinBox3->value(),
-                         aMethod,
-                         GroupPoints->CheckBox1->isChecked());
+    anOper->MakeFilling(objList,
+                        GroupPoints->SpinBox1->value(),
+                        GroupPoints->SpinBox4->value(),
+                        GroupPoints->SpinBox2->value(),
+                        GroupPoints->SpinBox5->value(),
+                        GroupPoints->SpinBox3->value(),
+                        aMethod,
+                        GroupPoints->CheckBox1->isChecked());
   if (!anObj->_is_nil())
   {
     if (!IsPreview())
@@ -371,4 +393,23 @@ bool GenerationGUI_FillingDlg::execute(ObjectList& objects)
   }
 
   return true;
+}
+
+//=================================================================================
+// function : addSubshapesToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void GenerationGUI_FillingDlg::addSubshapesToStudy()
+{
+  foreach( GEOM::GeomObjPtr o, myObjects )
+    GEOMBase::PublishSubObject( o.get() );
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> GenerationGUI_FillingDlg::getSourceObjects()
+{
+  return myObjects;
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -252,10 +252,14 @@ Standard_Boolean ShHealOper_CloseContour::fixGaps(const Handle(ShapeExtend_WireD
         Standard_Integer ind1 = (ind2 >1 ? ind2 -1 : theWire->NbEdges());
         TopoDS_Edge aE1= theWire->Edge(ind1);
         TopoDS_Edge aE2= theWire->Edge(ind2);
-        if(!myModeVertex)
+        if(!myModeVertex) {
           buildEdge(aE1,aE2,theCommonFaces);
-        else
+          myStatistics.AddModif("An edge added to close a wire");
+        }
+        else {
           myMaxTolerance = RealLast();
+          myStatistics.AddModif("Tolerance of vertex increased to close a wire");
+        }
         if(ind2 == ind1) break;
       }
     }
@@ -268,8 +272,9 @@ Standard_Boolean ShHealOper_CloseContour::fixGaps(const Handle(ShapeExtend_WireD
 //function : checkOneFace
 //purpose  : 
 //=======================================================================
-Standard_Boolean ShHealOper_CloseContour::checkOneFace(const Handle(ShapeExtend_WireData)& theSewd,
-                                                       TopTools_SequenceOfShape& theCommonFaces) const
+Standard_Boolean
+ShHealOper_CloseContour::checkOneFace(const Handle(ShapeExtend_WireData)& theSewd,
+                                      TopTools_SequenceOfShape& theCommonFaces) const
 {
   TopTools_IndexedMapOfShape amapfaces;
   TopoDS_Edge aEdge1 = theSewd->Edge(1);

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -26,7 +26,9 @@ namespace GEOMOp {
   enum {
     // ToolsGUI --------------------//--------------------------------
     OpDelete              = 1020,   // MENU EDIT  - DELETE
+#ifndef DISABLE_PYCONSOLE
     OpCheckGeom           = 1030,   // MENU TOOLS - CHECK GEOMETRY
+#endif
     OpMaterialsLibrary    = 1040,   // MENU TOOLS - MATERIALS LIBRARY
     OpSelectVertex        = 1100,   // POPUP MENU - SELECT ONLY - VERTEX
     OpSelectEdge          = 1101,   // POPUP MENU - SELECT ONLY - EDGE
@@ -59,7 +61,9 @@ namespace GEOMOp {
     OpIsosWidth           = 1261,   // POPUP MENU - LINE WIDTH - ISOS WIDTH
     OpCreateFolder        = 1262,   // POPUP MENU - CREATE FOLDER
     OpSortChildren        = 1263,   // POPUP MENU - SORT CHILD ITEMS
+#ifndef DISABLE_GRAPHICSVIEW
     OpShowDependencyTree  = 1264,   // POPUP MENU - SHOW DEPENDENCY TREE
+#endif
     OpReduceStudy         = 1265,   // POPUP MENU - REDUCE STUDY
     // DisplayGUI ------------------//--------------------------------
     OpSwitchVectors       = 2001,   // MENU VIEW  - DISPLAY MODE - SHOW/HIDE EDGE DIRECTION
@@ -70,6 +74,7 @@ namespace GEOMOp {
     OpDMShadingWithEdges  = 2012,   // MENU VIEW  - DISPLAY MODE - SHADING WITH EDGES
     OpDMTexture           = 2013,   // MENU VIEW  - DISPLAY MODE - TEXTURE
     OpSwitchVertices      = 2014,   // MENU VIEW  - DISPLAY MODE - SHOW/HIDE VERTICES
+    OpSwitchName          = 2015,   // MENU VIEW  - DISPLAY MODE - SHOW/HIDE NAME
     OpShow                = 2100,   // POPUP MENU - SHOW
     OpShowOnly            = 2101,   // POPUP MENU - SHOW ONLY
     OpHide                = 2102,   // POPUP MENU - HIDE
@@ -82,6 +87,7 @@ namespace GEOMOp {
     OpBringToFront        = 2205,   // POPUP MENU - BRING TO FRONT
     OpClsBringToFront     = 2206,
     OpVertices            = 2208,   // POPUP MENU - DISPLAY MODE - SHOW VERTICES
+    OpShowName            = 2209,   // POPUP MENU - DISPLAY MODE - SHOW NAME
     // BasicGUI --------------------//--------------------------------
     OpPoint               = 3000,   // MENU NEW ENTITY - BASIC - POINT
     OpLine                = 3001,   // MENU NEW ENTITY - BASIC - LINE
@@ -94,6 +100,7 @@ namespace GEOMOp {
     OpLCS                 = 3008,   // MENU NEW ENTITY - BASIC - LOCAL COORDINATE SYSTEM
     OpOriginAndVectors    = 3009,   // MENU NEW ENTITY - BASIC - ORIGIN AND BASE VECTORS
     OpIsoline             = 3010,   // MENU NEW ENTITY - BASIC - ISOLINE
+    OpSurfaceFromFace     = 3011,   // MENU NEW ENTITY - BASIC - SURFACE FROM FACE
     // PrimitiveGUI ----------------//--------------------------------
     OpBox                 = 3100,   // MENU NEW ENTITY - PRIMITIVES - BOX
     OpCylinder            = 3101,   // MENU NEW ENTITY - PRIMITIVES - CYLINDER
@@ -108,6 +115,7 @@ namespace GEOMOp {
     OpFilling             = 3202,   // MENU NEW ENTITY - GENERATION - FILLING
     OpPipe                = 3203,   // MENU NEW ENTITY - GENERATION - EXTRUSION ALONG PATH
     OpPipePath            = 3204,   // MENU NEW ENTITY - GENERATION - RESTORE PATH
+    OpThickness           = 3205,   // MENU NEW ENTITY - GENERATION - THICKNESS
     // EntityGUI -------------------//--------------------------------
     Op2dSketcher          = 3300,   // MENU NEW ENTITY - SKETCHER
     Op3dSketcher          = 3301,   // MENU NEW ENTITY - 3D SKETCHER
@@ -143,6 +151,8 @@ namespace GEOMOp {
     OpMultiRotate         = 3607,   // MENU OPERATIONS - TRANSFORMATION - MULTI-ROTATION
     OpReimport            = 3608,   // POPUP MENU - RELOAD IMPORTED
     OpProjection          = 3609,   // MENU OPERATIONS - TRANSFORMATION - PROJECTION
+    OpExtension           = 3610,   // MENU OPERATIONS - TRANSFORMATION - EXTENSION
+    OpProjOnCyl           = 3611,   // MENU OPERATIONS - TRANSFORMATION - PROJECTION ON CYLINDER
     // OperationGUI ----------------//--------------------------------
     OpPartition           = 3700,   // MENU OPERATION - PARTITION
     OpArchimede           = 3701,   // MENU OPERATION - ARCHIMEDE
@@ -155,6 +165,7 @@ namespace GEOMOp {
     OpSharedShapes        = 3708,   // MENU OPERATION - GET SHARED SHAPES
     OpExtrudedBoss        = 3709,   // MENU OPERATION - ETRUDED BOSS
     OpExtrudedCut         = 3710,   // MENU OPERATION - ETRUDED CUT
+    OpTransferData        = 3711,   // MENU OPERATION - TRANSFER DATA
     // RepairGUI -------------------//--------------------------------
     OpSewing              = 4000,   // MENU REPAIR - SEWING
     OpSuppressFaces       = 4001,   // MENU REPAIR - SUPPRESS FACES
@@ -191,6 +202,11 @@ namespace GEOMOp {
     OpManageDimensions    = 5014,   // MENU MEASURES - MANAGE DIMENSIONS
     OpShowAllDimensions   = 5015,   // POPUP MENU - SHOW ALL DIMENSIONS
     OpHideAllDimensions   = 5016,   // POPUP MENU - HIDE ALL DIMENSIONS
+    OpFastCheckInters     = 5017,   // MENU MEASURES - FAST CHECK INTERSECTIONS
+    OpInspectObj	  = 5018,       // MENU MEASURES - INSPECT OBJECT
+#ifndef DISABLE_PLOT2DVIEWER
+    OpShapeStatistics	  = 5019,   // MENU MEASURES - SHAPE STATISTICS
+#endif
     // GroupGUI --------------------//--------------------------------
     OpGroupCreate         = 6000,   // MENU GROUP - CREATE
     OpGroupEdit           = 6001,   // MENU GROUP - EDIT

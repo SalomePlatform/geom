@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -262,10 +262,7 @@ bool BuildGUI_ShellDlg::execute( ObjectList& objects )
   GEOM::GEOM_Object_var anObj = anOper->MakeShell( objlist.in() );
 
   if ( !anObj->_is_nil() ) {
-    TopoDS_Shape aShell;
-    GEOMBase::GetShape(anObj, aShell, TopAbs_SHELL);
-
-    if (aShell.IsNull()) {
+    if (anObj->GetShapeType() == GEOM::COMPOUND) {
       SUIT_MessageBox::warning(this,
                                QObject::tr("GEOM_WRN_WARNING"),
                                QObject::tr("GEOM_WRN_FACES_NOT_SHELL"));
@@ -274,5 +271,14 @@ bool BuildGUI_ShellDlg::execute( ObjectList& objects )
   }
 
   return true;
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BuildGUI_ShellDlg::getSourceObjects()
+{
+  return myFacesAndShells;
 }
 

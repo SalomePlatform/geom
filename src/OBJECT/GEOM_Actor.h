@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -51,6 +51,7 @@ class GEOM_ShadingFace;
 typedef GEOM_SmartPtr<GEOM_ShadingFace> PSFaceSource;
 
 class vtkRenderer;
+class vtkTextActor;
 
 class vtkAppendPolyData;
 typedef GEOM_SmartPtr<vtkAppendPolyData> PAppendFilter;
@@ -62,11 +63,11 @@ public:
   static GEOM_Actor* New();
 
   void SetShape(const TopoDS_Shape& theShape,
-                float theDeflection,
+                double theDeflection,
                 bool theIsVector = false);
 
-  void SetDeflection(float theDeflection);
-  float GetDeflection() const{ return myDeflection;}
+  void SetDeflection(double theDeflection);
+  double GetDeflection() const{ return myDeflection;}
 
   void AddToRender(vtkRenderer* theRenderer);
   void RemoveFromRender(vtkRenderer* theRenderer);
@@ -93,7 +94,6 @@ public:
   vtkProperty* GetSharedEdgeProperty();
   vtkProperty* GetFaceEdgeProperty();
 
-  void setDeflection(double adef);
   virtual void setDisplayMode(int thenewmode);
 
   // Description:
@@ -108,7 +108,6 @@ public:
   const TopoDS_Shape& getTopo();
   void setInputShape(const TopoDS_Shape& ashape, double adef1,
                      int imode, bool isVector = false);
-  double getDeflection();
   double isVector();
 
   // SubShape
@@ -140,6 +139,8 @@ public:
   void SetEdgesInShadingColor(double r, double g, double b);
   // Color of iso-lines
   void SetIsosColor(double r, double g, double b);
+  // Color of labels
+  void SetLabelColor(double r, double g, double b);
 
 
   // Material
@@ -212,10 +213,20 @@ public:
   bool
   GetVerticesMode();
 
+  //! Name mode management
+  virtual
+  void
+  SetNameMode(const bool theMode);
+
+  virtual
+  bool
+  GetNameMode();
+
 protected:
   void SetModified();
 
   void GetMatrix(vtkCamera* theCam, vtkMatrix4x4 *result);
+  void SetShapeName();
 
   GEOM_Actor();
   ~GEOM_Actor();
@@ -224,13 +235,14 @@ private:
   TopoDS_Shape myShape;
   bool isOnlyVertex;
 
-  float myDeflection;
+  double myDeflection;
   bool myIsForced;
 
   //  EDisplayMode myDisplayMode;
   bool myIsSelected;
   bool myVectorMode;
   bool myVerticesMode;
+  bool myNameMode;
 
   PDeviceActor myVertexActor;
   PVertexSource myVertexSource;
@@ -254,6 +266,9 @@ private:
   PSFaceSource myShadingFaceSource;
 
   PDeviceActor myHighlightActor;
+
+  vtkTextActor* myTextActor;
+
   vtkSmartPointer<vtkProperty>  myHighlightProp;
   vtkSmartPointer<vtkProperty>  myPreHighlightProp;
   vtkSmartPointer<vtkProperty>  myShadingFaceProp;

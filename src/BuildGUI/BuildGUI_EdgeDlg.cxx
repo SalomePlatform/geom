@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -145,7 +145,7 @@ void BuildGUI_EdgeDlg::Init()
   myEditCurrentArgument = GroupPoints->LineEdit1;
   GroupPoints->PushButton1->setDown(true);
   globalSelection(); // close local contexts, if any
-  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+  localSelection(TopAbs_VERTEX);
 
   // signals and slots connections
   connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
@@ -210,7 +210,7 @@ void BuildGUI_EdgeDlg::ConstructorsClicked(int constructorId)
   case 0:
     {
       globalSelection(); // close local contexts, if any
-      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+      localSelection(TopAbs_VERTEX);
 
       myEditCurrentArgument = GroupPoints->LineEdit1;
       GroupPoints->LineEdit1->setText("");
@@ -229,7 +229,7 @@ void BuildGUI_EdgeDlg::ConstructorsClicked(int constructorId)
   case 1:
     {
       globalSelection(); // close local contexts, if any
-      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_WIRE);
+      localSelection(TopAbs_WIRE);
 
       myEditCurrentArgument = GroupWire->LineEdit1;
       GroupWire->LineEdit1->setText("");
@@ -244,7 +244,7 @@ void BuildGUI_EdgeDlg::ConstructorsClicked(int constructorId)
   case 2:
     {
       globalSelection(); // close local contexts, if any
-      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+      localSelection(TopAbs_EDGE);
 
       myEditCurrentArgument = GroupOnCurve->LineEdit1;
       GroupOnCurve->LineEdit1->setText("");
@@ -302,7 +302,7 @@ void BuildGUI_EdgeDlg::SelectionIntoArgument()
     myEditCurrentArgument->setText(aName);
 
     globalSelection();
-    localSelection(GEOM::GEOM_Object::_nil(), aNeedType);
+    localSelection(aNeedType);
 
     if (myEditCurrentArgument == GroupPoints->LineEdit1) {
       myPoint1 = aSelectedObject;
@@ -359,7 +359,7 @@ void BuildGUI_EdgeDlg::SetEditCurrentArgument()
     GroupOnCurve->LineEdit2->setEnabled(false);
 
     globalSelection(); // close local contexts, if any
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+    localSelection(TopAbs_EDGE);
   }
   else if (send == GroupOnCurve->PushButton2) {
     myEditCurrentArgument = GroupOnCurve->LineEdit2;
@@ -367,7 +367,7 @@ void BuildGUI_EdgeDlg::SetEditCurrentArgument()
     GroupOnCurve->LineEdit1->setEnabled(false);
 
     globalSelection(); // close local contexts, if any
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+    localSelection(TopAbs_VERTEX);
   }
 
   // enable line edit
@@ -520,4 +520,15 @@ void BuildGUI_EdgeDlg::addSubshapesToStudy()
   default:
     break;
   }
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BuildGUI_EdgeDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myPoint1 << myPoint2 << myWire << myCurve << myStartPoint;
+  return res;
 }

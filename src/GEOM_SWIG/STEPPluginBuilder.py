@@ -1,5 +1,5 @@
 #  -*- coding: iso-8859-1 -*-
-# Copyright (C) 2014  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2014-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@
 #
 
 from GEOM import ISTEPOperations
+import GEOM
 
 # Engine Library Name
 __libraryName__ = "STEPPluginEngine"
@@ -30,17 +31,19 @@ def GetSTEPPluginOperations(self):
 ## Export the given shape into a file with given name in STEP format.
 #  @param theObject Shape to be stored in the file.
 #  @param theFileName Name of the file to store the given shape in.
+#  @param theUnit the length unit (see GEOM::length_unit). In meters by default.
 #  @ingroup l2_import_export
-def ExportSTEP(self, theObject, theFileName):
+def ExportSTEP(self, theObject, theFileName, theUnit=GEOM.LU_METER):
     """
     Export the given shape into a file with given name in STEP format.
 
     Parameters: 
         theObject Shape to be stored in the file.
         theFileName Name of the file to store the given shape in.
+        theUnit the length unit (see GEOM::length_unit). In meters by default.
     """
     anOp = GetSTEPPluginOperations(self)
-    anOp.ExportSTEP(theObject, theFileName)
+    anOp.ExportSTEP(theObject, theFileName, theUnit)
     if anOp.IsDone() == 0:
         raise RuntimeError,  "Export : " + anOp.GetErrorCode()
         pass

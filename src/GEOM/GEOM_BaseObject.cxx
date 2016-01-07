@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -493,18 +493,17 @@ Handle(TColStd_HSequenceOfTransient) GEOM_BaseObject::GetLastDependency()
  */
 //================================================================================
 
-Handle(TFunction_Driver) GEOM_BaseObject::GetCreationDriver()
+Handle(TFunction_Driver) GEOM_BaseObject::GetCreationDriver(int funNb)
 {
-  Handle(TFunction_Driver) aDriver;
-
-  Handle(GEOM_Function) function = GetFunction(1);
+  Handle(TFunction_Driver) driver;
+  Handle(GEOM_Function) function = GetFunction(funNb);
   if ( !function.IsNull() )
   {
     Standard_GUID aGUID = function->GetDriverGUID();
-    if ( TFunction_DriverTable::Get()->FindDriver(aGUID, aDriver))
-      aDriver->Init( function->GetEntry() );
+    if ( TFunction_DriverTable::Get()->FindDriver(aGUID, driver ))
+      driver->Init( function->GetEntry() );
   }
-  return aDriver;
+  return driver;
 }
 
 //=============================================================================

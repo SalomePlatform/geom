@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -23,11 +23,12 @@
 
 #include "RepairGUI_LimitToleranceDlg.h"
 
-#include <DlgRef.h>
-#include <GeometryGUI.h>
-#include <GEOMBase.h>
-#include <SalomeApp_DoubleSpinBox.h>
+#include "DlgRef.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+#include "RepairGUI.h"
 
+#include <SalomeApp_DoubleSpinBox.h>
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 #include <SalomeApp_Study.h>
@@ -41,6 +42,7 @@
 #include <SUIT_ViewManager.h>
 #include <OCCViewer_ViewModel.h>
 #include <SALOME_ListIO.hxx>
+#include "utilities.h"
 
 #include <GEOMImpl_Types.hxx>
 
@@ -303,6 +305,8 @@ bool RepairGUI_LimitToleranceDlg::execute(ObjectList& objects)
     QStringList aParameters;
     aParameters << myTolEdt->text();
     anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+    if ( !IsPreview() )
+      RepairGUI::ShowStatistics( anOper, this );
     objects.push_back(anObj._retn());
   }
 
@@ -324,7 +328,6 @@ bool RepairGUI_LimitToleranceDlg::onAcceptLocal()
 
   bool aLocked = aStudy->GetProperties()->IsLocked();
   if (aLocked) {
-    MESSAGE("GEOMBase_Helper::onAccept - ActiveStudy is locked");
     SUIT_MessageBox::warning(this, tr("WRN_WARNING"), tr("WRN_STUDY_LOCKED"), tr("BUT_OK"));
     return false;
   }
@@ -439,4 +442,16 @@ void RepairGUI_LimitToleranceDlg::restoreSubShapes(SALOMEDS::Study_ptr   theStud
                                         GEOM::FSM_GetInPlace, /*theInheritFirstArg=*/true,
                                         mainFrame()->CheckBoxAddPrefix->isChecked());
   }
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> RepairGUI_LimitToleranceDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::GeomObjPtr aGeomObjPtr(myObject);
+  res << aGeomObjPtr;
+  return res;
 }

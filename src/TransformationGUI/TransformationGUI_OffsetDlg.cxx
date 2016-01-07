@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -327,4 +327,16 @@ double TransformationGUI_OffsetDlg::GetOffset() const
 void TransformationGUI_OffsetDlg::CreateCopyModeChanged()
 {
   mainFrame()->GroupBoxName->setEnabled( GroupPoints->CheckButton1->isChecked() );
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> TransformationGUI_OffsetDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  if ( GroupPoints->CheckButton1->isChecked() )
+    res.append( myObjects );
+  return res;
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -29,24 +29,40 @@ class GEOM_VertexSource;
 class GEOM_EdgeSource;
 class GEOM_WireframeFace;
 class GEOM_ShadingFace;
+class vtkPolyData;
 
 namespace GEOM
 {
-  // moved from GEOM_AssemblyBuilder
-  OCC2VTK_EXPORT void MeshShape(const TopoDS_Shape theShape,
-                                float& theDeflection,
-                                bool theForced = true);
-  
-  // moved from GEOM_Actor
-  OCC2VTK_EXPORT void SetShape(const TopoDS_Shape& theShape,
-                               const TopTools_IndexedDataMapOfShapeListOfShape& theEdgeMap,
-                               bool theIsVector,
-                               GEOM_VertexSource* theStandaloneVertexSource,
-                               GEOM_EdgeSource* theIsolatedEdgeSource,
-                               GEOM_EdgeSource* theOneFaceEdgeSource,
-                               GEOM_EdgeSource* theSharedEdgeSource,
-                               GEOM_WireframeFace* theWireframeFaceSource,
-                               GEOM_ShadingFace* theShadingFaceSource);
+  /*!
+   * \brief Convert shape to the VTK data sources
+   * \param theShape shape
+   * \param theEdgeMape map that stores face-to-edge relations
+   * \param theIsVector boolen flag, when \c true causes generating additional
+   * dataset for edges orientation vectors
+   * \param theStandaloneVertexSource output standalone vertices data source
+   * \param theIsolatedEdgeSource output standalone edges data source
+   * \param theOneFaceEdgeSource output face edges data source
+   * \param theSharedEdgeSource output face shared edges data source
+   * \param theWireframeFaceSource output wireframe mode faces data source
+   * \param theShadingFaceSource output shading mode faces data source
+   */
+  OCC2VTK_EXPORT void ShapeToVTK( const TopoDS_Shape& theShape,
+				  const TopTools_IndexedDataMapOfShapeListOfShape& theEdgeMap,
+				  bool theIsVector,
+				  GEOM_VertexSource* theStandaloneVertexSource,
+				  GEOM_EdgeSource* theIsolatedEdgeSource,
+				  GEOM_EdgeSource* theOneFaceEdgeSource,
+				  GEOM_EdgeSource* theSharedEdgeSource,
+				  GEOM_WireframeFace* theWireframeFaceSource,
+				  GEOM_ShadingFace* theShadingFaceSource );
+
+  /*!
+   * \brief Get VTK mesh data from the shape
+   * \param theShape shape
+   * \param theDeflection requested deflection coefficient
+   * \return VTK data set
+   */
+  OCC2VTK_EXPORT vtkPolyData* GetVTKData( const TopoDS_Shape& theShape, float theDeflection );
 }
 
 #endif // OCC2VTK_TOOLS_H

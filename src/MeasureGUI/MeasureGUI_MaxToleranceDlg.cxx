@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -26,6 +26,7 @@
 //
 #include "MeasureGUI_MaxToleranceDlg.h"
 #include "MeasureGUI_Widgets.h"
+#include <GEOMBase.h>
 #include "DlgRef.h"
 
 #include <SUIT_Session.h>
@@ -163,7 +164,7 @@ bool MeasureGUI_MaxToleranceDlg::getParameters( double& theMinFaceToler,
   else {
     GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
     try {
-      anOper->GetTolerance( myObj, 
+      anOper->GetTolerance( myObj.get(), 
                             theMinFaceToler, theMaxFaceToler,   theMinEdgeToler,
                             theMaxEdgeToler, theMinVertexToler, theMaxVertexToler );
     }
@@ -174,4 +175,33 @@ bool MeasureGUI_MaxToleranceDlg::getParameters( double& theMinFaceToler,
 
     return anOper->IsDone();
   }
+}
+
+//=================================================================================
+// function : activateSelection()
+// purpose  :
+//=================================================================================
+void MeasureGUI_MaxToleranceDlg::activateSelection()
+{
+  globalSelection( GEOM_ALLSHAPES );
+  localSelection( TopAbs_SHAPE );
+}
+
+void MeasureGUI_MaxToleranceDlg::SelectionIntoArgument()
+{
+  myObj.nullify();
+  QList<TopAbs_ShapeEnum> aTypes;
+  aTypes << TopAbs_EDGE << TopAbs_WIRE << TopAbs_FACE << TopAbs_SHELL << TopAbs_SOLID << TopAbs_COMPSOLID << TopAbs_COMPOUND << TopAbs_SHAPE;
+  myObj = getSelected( aTypes );
+ 
+  if (!myObj) {
+    mySelEdit->setText("");
+    processObject();
+    erasePreview();
+    return;
+  }
+
+  mySelEdit->setText(GEOMBase::GetName(myObj.get()));
+  processObject();
+  redisplayPreview();
 }

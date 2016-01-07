@@ -4,27 +4,37 @@
 
 This operation is a special case of <b>Explode</b> operation. It
 produces sub-shapes of the exploded shape (the first shape in the list
-of argument shapes), which are shared with all other shapes in the
-arguments.
+of argument shapes), which are shared with other shapes in the
+arguments. The argument shapes can also be contained in a compound or
+group.
 
 To use this operation, select in the Main Menu <b>Operations -> Get
 Shared Shapes.</b> The following dialog box will appear.
 
 \image html shared_shapes.png
 
-<ul>
-<li> <b>Name</b> is the base name of the resulting shapes; </li>
-<li> <b>Shapes</b> are the shapes to fing shared sub-shapes of; </li>
-<li> <b>Sub-shapes Type</b> is the type of required sub-shapes; </li>
-</ul>
+In this dialog:
+- <b>Name</b> is the base name of the resulting shapes.
+- <b>Shapes</b> are the shapes whose shared sub-shapes should be found.
+- <b>Sub-shapes Type</b> is the type of required sub-shapes.
+- <b>Shared by all</b> option specifies what type of shared sub-shapes should be checked:
+  - \b On: searches for sub-shapes from the first input shape shared with all other input shapes;
+  - \b Off: searches for sub-shapes shared between couples of input shapes.
 
-\n <b>Advanced options</b> \ref preview_anchor "Preview"
+\note For the case when "Shared by all" option is switched off - if an input list of shapes
+contains a single compound, the sub-shapes shared between all possible couples of its top-level shapes
+are searched for; otherwise, only sub-shapes that are shared between the first input shape and 
+all other input shapes are searched.
 
-\n <b>TUI Command:</b> <em> geompy.GetSharedShapesMulti(Shapes,
-Type),</em> where \em Shapes is a list of shapes to fing shared sub-
-shapes of and \em Type is the type of required sub-shapes.
+<b>Advanced options:</b> \ref preview_anchor "Preview"
+
+<b>TUI Command:</b> <em> geompy.GetSharedShapesMulti( Shapes, Type ),</em> 
+<br> where \em Shapes is a list or compound of shapes, whose shared sub-
+shapes should be found and \em Type is the type of required sub-shapes.
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
-\ref swig_GetSharedShapes "Get Shared Shapes" functionality.
+Get Shared Shapes functionality:
+- \ref tui_shared_shapes "Example 1"
+- \ref swig_GetSharedShapes "Example 2"
  
 */

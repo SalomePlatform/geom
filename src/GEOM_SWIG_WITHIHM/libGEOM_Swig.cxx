@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -400,6 +400,18 @@ void GEOM_Swig::setVectorsMode( const char* theEntry, bool theOn, bool theUpdate
 void GEOM_Swig::setVerticesMode( const char* theEntry, bool theOn, bool theUpdateViewer )
 {
   ProcessVoidEvent( new TSetPropertyEvent( theEntry, GEOM::propertyName( GEOM::Vertices ), 
+                                           theOn, theUpdateViewer ) );
+}
+
+/*!
+  \brief Show / hide name of shape for the presentation
+  \param theEntry geometry object's entry
+  \param theOn \c true to show name or \c false otherwise
+  \param theUpdateViewer \c true to update active view's contents
+*/
+void GEOM_Swig::setNameMode( const char* theEntry, bool theOn, bool theUpdateViewer )
+{
+  ProcessVoidEvent( new TSetPropertyEvent( theEntry, GEOM::propertyName( GEOM::ShowName ),
                                            theOn, theUpdateViewer ) );
 }
 

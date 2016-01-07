@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -33,6 +33,7 @@
 #include "GEOMGUI_OCCSelector.h"
 #include "GEOMGUI_Selection.h"
 #include "GEOMGUI_CreationInfoWdg.h"
+#include "GEOMGUI_TextTreeWdg.h"
 #include "GEOMGUI_DimensionProperty.h"
 #include "GEOM_Constants.h"
 #include "GEOM_Displayer.h"
@@ -50,8 +51,6 @@
 #include <SUIT_Session.h>
 #include <SUIT_ViewManager.h>
 
-#include <PyInterp_Interp.h>
-
 #include <OCCViewer_ViewWindow.h>
 #include <OCCViewer_ViewPort3d.h>
 #include <OCCViewer_ViewModel.h>
@@ -65,7 +64,9 @@
 #include <SVTK_InteractorStyle.h>
 #include <SVTK_ViewModel.h>
 
+#ifndef DISABLE_GRAPHICSVIEW
 #include <GraphicsView_Viewer.h>
+#endif
 
 #include <SalomeApp_Application.h>
 #include <SalomeApp_DataObject.h>
@@ -86,6 +87,7 @@
 #include <SALOMEDS_SObject.hxx>
 
 #include <Basics_OCCTVersion.hxx>
+#include <QtxFontEdit.h>
 
 // External includes
 #include <QDir>
@@ -97,8 +99,8 @@
 #include <QString>
 #include <QPainter>
 #include <QSignalMapper>
+#include <QFontDatabase>
 
-#include <AIS_Drawer.hxx>
 #include <AIS_ListOfInteractive.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 #include <Prs3d_Drawer.hxx>
@@ -108,6 +110,7 @@
 #include <NCollection_DataMap.hxx>
 
 #include <TColStd_HArray1OfByte.hxx>
+#include <TColStd_SequenceOfHAsciiString.hxx>
 
 #include <utilities.h>
 
@@ -116,6 +119,10 @@
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx>
+
+#include <Font_SystemFont.hxx>
+#include <Font_FontMgr.hxx>
+#include <TCollection_HAsciiString.hxx>
 
 #include "GEOM_version.h"
 #include "GEOMImpl_Types.hxx" // dangerous hxx (defines short-name macros) - include after all
@@ -219,6 +226,7 @@ GeometryGUI::GeometryGUI() :
   myLocalSelectionMode = GEOM_ALLOBJECTS;
 
   myCreationInfoWdg = 0;
+  myTextTreeWdg = 0;
 
   connect( Material_ResourceMgr::resourceMgr(), SIGNAL( changed() ), this, SLOT( updateMaterials() ) );
 
@@ -430,7 +438,11 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   SUIT_ViewWindow* window = desk->activeWindow();
   bool ViewOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
   bool ViewVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
+#ifndef DISABLE_GRAPHICSVIEW
   bool ViewDep = ( window && window->getViewManager()->getType() == GraphicsView_Viewer::Type() );
+#else
+  bool ViewDep = 0;
+#endif
   // if current viewframe is not of OCC and not of VTK type - return immediately
   // fix for IPAL8958 - allow some commands to execute even when NO viewer is active (rename for example)
   QList<int> NotViewerDependentCommands;
@@ -471,7 +483,9 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpSelectCompound:     // POPUP MENU - SELECT ONLY - COMPOUND
   case GEOMOp::OpSelectAll:          // POPUP MENU - SELECT ONLY - SELECT ALL
   case GEOMOp::OpDelete:             // MENU EDIT - DELETE
+#ifndef DISABLE_PYCONSOLE
   case GEOMOp::OpCheckGeom:          // MENU TOOLS - CHECK GEOMETRY
+#endif
   case GEOMOp::OpMaterialsLibrary:   // MENU TOOLS - MATERIALS LIBRARY
   case GEOMOp::OpDeflection:         // POPUP MENU - DEFLECTION COEFFICIENT
   case GEOMOp::OpColor:              // POPUP MENU - COLOR
@@ -498,7 +512,9 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpClsBringToFront:    //
   case GEOMOp::OpCreateFolder:       // POPUP MENU - CREATE FOLDER
   case GEOMOp::OpSortChildren:       // POPUP MENU - SORT CHILD ITEMS
+#ifndef DISABLE_GRAPHICSVIEW
   case GEOMOp::OpShowDependencyTree: // POPUP MENU - SHOW DEPENDENCY TREE
+#endif
   case GEOMOp::OpReduceStudy:        // POPUP MENU - REDUCE STUDY
     libName = "GEOMToolsGUI";
     break;
@@ -514,12 +530,14 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpShow:               // MENU VIEW - DISPLAY
   case GEOMOp::OpSwitchVectors:      // MENU VIEW - VECTOR MODE
   case GEOMOp::OpSwitchVertices:     // MENU VIEW - VERTICES MODE
+  case GEOMOp::OpSwitchName:         // MENU VIEW - VERTICES MODE
   case GEOMOp::OpWireframe:          // POPUP MENU - WIREFRAME
   case GEOMOp::OpShading:            // POPUP MENU - SHADING
   case GEOMOp::OpShadingWithEdges:   // POPUP MENU - SHADING WITH EDGES
   case GEOMOp::OpTexture:            // POPUP MENU - TEXTURE
   case GEOMOp::OpVectors:            // POPUP MENU - VECTORS
   case GEOMOp::OpVertices:           // POPUP MENU - VERTICES
+  case GEOMOp::OpShowName:           // POPUP MENU - SHOW NAME
     libName = "DisplayGUI";
     break;
   case GEOMOp::OpPoint:              // MENU BASIC - POINT
@@ -547,12 +565,14 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpFilling:            // MENU GENERATION - FILLING
   case GEOMOp::OpPipe:               // MENU GENERATION - PIPE
   case GEOMOp::OpPipePath:           // MENU GENERATION - RESTORE PATH
+  case GEOMOp::OpThickness:          // MENU GENERATION - THICKNESS
     libName = "GenerationGUI";
     break;
   case GEOMOp::Op2dSketcher:         // MENU ENTITY - SKETCHER
   case GEOMOp::Op3dSketcher:         // MENU ENTITY - 3D SKETCHER
   case GEOMOp::OpIsoline:            // MENU BASIC  - ISOLINE
   case GEOMOp::OpExplode:            // MENU ENTITY - EXPLODE
+  case GEOMOp::OpSurfaceFromFace:    // MENU ENTITY - SURFACE FROM FACE
 #ifdef WITH_OPENCV
   case GEOMOp::OpFeatureDetect:      // MENU ENTITY - FEATURE DETECTION
 #endif
@@ -584,9 +604,11 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpScale:              // MENU TRANSFORMATION - SCALE
   case GEOMOp::OpOffset:             // MENU TRANSFORMATION - OFFSET
   case GEOMOp::OpProjection:         // MENU TRANSFORMATION - PROJECTION
+  case GEOMOp::OpProjOnCyl:          // MENU TRANSFORMATION - PROJECTION ON CYLINDER
   case GEOMOp::OpMultiTranslate:     // MENU TRANSFORMATION - MULTI-TRANSLATION
   case GEOMOp::OpMultiRotate:        // MENU TRANSFORMATION - MULTI-ROTATION
   case GEOMOp::OpReimport:           // CONTEXT(POPUP) MENU - RELOAD_IMPORTED
+  case GEOMOp::OpExtension:          // MENU TRANSFORMATION - EXTENSION
     libName = "TransformationGUI";
     break;
   case GEOMOp::OpPartition:          // MENU OPERATION - PARTITION
@@ -600,6 +622,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpSharedShapes:       // MENU OPERATION - GET SHARED SHAPES
   case GEOMOp::OpExtrudedBoss:       // MENU OPERATION - EXTRUDED BOSS
   case GEOMOp::OpExtrudedCut:        // MENU OPERATION - EXTRUDED CUT
+  case GEOMOp::OpTransferData:       // MENU OPERATION - TRANSFER DATA
     libName = "OperationGUI";
     break;
   case GEOMOp::OpSewing:             // MENU REPAIR - SEWING
@@ -619,6 +642,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpRemoveExtraEdges:   // MENU REPAIR - REMOVE EXTRA EDGES
   case GEOMOp::OpFuseEdges:          // MENU REPAIR - FUSE COLLINEAR EDGES
   case GEOMOp::OpUnionFaces:         // MENU REPAIR - UNION FACES
+  case GEOMOp::OpInspectObj:         // MENU REPAIR - INSPECT OBJECT
     libName = "RepairGUI";
     break;
   case GEOMOp::OpProperties:         // MENU MEASURE - PROPERTIES
@@ -635,7 +659,11 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpGetNonBlocks:       // MENU MEASURE - Get NON BLOCKS
   case GEOMOp::OpPointCoordinates:   // MENU MEASURE - POINT COORDINATES
   case GEOMOp::OpCheckSelfInters:    // MENU MEASURE - CHECK SELF INTERSECTIONS
+  case GEOMOp::OpFastCheckInters:    // MENU MEASURE - FAST CHECK INTERSECTIONS
   case GEOMOp::OpManageDimensions:   // MENU MEASURE - MANAGE DIMENSIONS
+#ifndef DISABLE_PLOT2DVIEWER
+  case GEOMOp::OpShapeStatistics:    // MENU MEASURE - SHAPE STATISTICS
+#endif
   case GEOMOp::OpShowAllDimensions:  // POPUP MENU - SHOW ALL DIMENSIONS
   case GEOMOp::OpHideAllDimensions:  // POPUP MENU - HIDE ALL DIMENSIONS
     libName = "MeasureGUI";
@@ -870,6 +898,11 @@ void GeometryGUI::createOriginAndBaseVectors()
         GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOX, "OX" );
         GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOY, "OY" );
         GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOZ, "OZ" );
+        anOrigin->UnRegister();
+        anOX->UnRegister();
+        anOY->UnRegister();
+        anOZ->UnRegister();
+        aBasicOperations->UnRegister();
 
         getApp()->updateObjectBrowser( true );
       }
@@ -900,6 +933,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpPlane,      "PLANE" );
   createGeomAction( GEOMOp::OpLCS,        "LOCAL_CS" );
   createGeomAction( GEOMOp::OpOriginAndVectors, "ORIGIN_AND_VECTORS" );
+  createGeomAction( GEOMOp::OpSurfaceFromFace,  "SURFACE_FROM_FACE" );
 
   createGeomAction( GEOMOp::OpBox,        "BOX" );
   createGeomAction( GEOMOp::OpCylinder,   "CYLINDER" );
@@ -914,6 +948,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpFilling,     "FILLING" );
   createGeomAction( GEOMOp::OpPipe,        "PIPE" );
   createGeomAction( GEOMOp::OpPipePath,    "PIPE_PATH" );
+  createGeomAction( GEOMOp::OpThickness,   "THICKNESS" );
 
   createGeomAction( GEOMOp::OpGroupCreate, "GROUP_CREATE" );
   createGeomAction( GEOMOp::OpGroupEdit,   "GROUP_EDIT" );
@@ -931,7 +966,6 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   createGeomAction( GEOMOp::Op2dSketcher,  "SKETCH" );
   createGeomAction( GEOMOp::Op3dSketcher,  "3DSKETCH" );
-  createGeomAction( GEOMOp::OpIsoline,     "ISOLINE" );
   createGeomAction( GEOMOp::OpExplode,     "EXPLODE" );
 #ifdef WITH_OPENCV
   createGeomAction( GEOMOp::OpFeatureDetect,"FEATURE_DETECTION" );
@@ -958,8 +992,10 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpScale,          "SCALE" );
   createGeomAction( GEOMOp::OpOffset,         "OFFSET" );
   createGeomAction( GEOMOp::OpProjection,     "PROJECTION" );
+  createGeomAction( GEOMOp::OpProjOnCyl,      "PROJ_ON_CYL" );
   createGeomAction( GEOMOp::OpMultiTranslate, "MUL_TRANSLATION" );
   createGeomAction( GEOMOp::OpMultiRotate,    "MUL_ROTATION" );
+  createGeomAction( GEOMOp::OpExtension,      "EXTENSION" );
 
   createGeomAction( GEOMOp::OpPartition,      "PARTITION" );
   createGeomAction( GEOMOp::OpArchimede,      "ARCHIMEDE" );
@@ -968,6 +1004,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   //createGeomAction( GEOMOp::OpClipping,        "CLIPPING" );
   createGeomAction( GEOMOp::OpShapesOnShape,  "GET_SHAPES_ON_SHAPE" );
   createGeomAction( GEOMOp::OpSharedShapes,   "GET_SHARED_SHAPES" );
+  createGeomAction( GEOMOp::OpTransferData,   "TRANSFER_DATA" );
   createGeomAction( GEOMOp::OpExtrudedCut,    "EXTRUDED_CUT" );
   createGeomAction( GEOMOp::OpExtrudedBoss,   "EXTRUDED_BOSS" );
   createGeomAction( GEOMOp::OpFillet1d,       "FILLET_1D" );
@@ -994,6 +1031,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpRemoveExtraEdges, "REMOVE_EXTRA_EDGES" );
   createGeomAction( GEOMOp::OpFuseEdges,        "FUSE_EDGES" );
   createGeomAction( GEOMOp::OpUnionFaces,       "UNION_FACES" );
+  createGeomAction( GEOMOp::OpInspectObj,       "INSPECT_OBJECT" );
 
   createGeomAction( GEOMOp::OpPointCoordinates, "POINT_COORDS" );
   createGeomAction( GEOMOp::OpProperties,       "BASIC_PROPS" );
@@ -1011,9 +1049,15 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpCheckCompound,    "CHECK_COMPOUND" );
   createGeomAction( GEOMOp::OpGetNonBlocks,     "GET_NON_BLOCKS" );
   createGeomAction( GEOMOp::OpCheckSelfInters,  "CHECK_SELF_INTERSECTIONS" );
+  createGeomAction( GEOMOp::OpFastCheckInters,  "FAST_CHECK_INTERSECTIONS" );
+#ifndef DISABLE_PLOT2DVIEWER
+  createGeomAction( GEOMOp::OpShapeStatistics,  "SHAPE_STATISTICS" );
+#endif
 
+#ifndef DISABLE_PYCONSOLE
 #ifdef _DEBUG_ // PAL16821
   createGeomAction( GEOMOp::OpCheckGeom,        "CHECK_GEOMETRY" );
+#endif
 #endif
 
   createGeomAction( GEOMOp::OpMaterialsLibrary,   "MATERIALS_LIBRARY" );
@@ -1026,6 +1070,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpShow,             "DISPLAY" );
   createGeomAction( GEOMOp::OpSwitchVectors,    "VECTOR_MODE");
   createGeomAction( GEOMOp::OpSwitchVertices,   "VERTICES_MODE");
+  createGeomAction( GEOMOp::OpSwitchName,       "NAME_MODE");
   createGeomAction( GEOMOp::OpSelectVertex,     "VERTEX_SEL_ONLY" ,"", 0, true );
   createGeomAction( GEOMOp::OpSelectEdge,       "EDGE_SEL_ONLY", "", 0, true );
   createGeomAction( GEOMOp::OpSelectWire,       "WIRE_SEL_ONLY", "",  0, true );
@@ -1048,6 +1093,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpIsosWidth,        "ISOS_WIDTH");
   createGeomAction( GEOMOp::OpVectors,          "POP_VECTORS", "", 0, true );
   createGeomAction( GEOMOp::OpVertices,         "POP_VERTICES", "", 0, true );
+  createGeomAction( GEOMOp::OpShowName,         "POP_SHOW_NAME", "", 0, true );
   createGeomAction( GEOMOp::OpDeflection,       "POP_DEFLECTION" );
   createGeomAction( GEOMOp::OpColor,            "POP_COLOR" );
   createGeomAction( GEOMOp::OpSetTexture,       "POP_SETTEXTURE" );
@@ -1066,7 +1112,9 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpPredefMaterCustom,    "POP_PREDEF_MATER_CUSTOM" );
   createGeomAction( GEOMOp::OpCreateFolder, "POP_CREATE_FOLDER" );
   createGeomAction( GEOMOp::OpSortChildren, "POP_SORT_CHILD_ITEMS" );
+#ifndef DISABLE_GRAPHICSVIEW
   createGeomAction( GEOMOp::OpShowDependencyTree, "POP_SHOW_DEPENDENCY_TREE" );
+#endif
   createGeomAction( GEOMOp::OpReduceStudy,       "POP_REDUCE_STUDY" );
   createGeomAction( GEOMOp::OpShowAllDimensions, "POP_SHOW_ALL_DIMENSIONS" );
   createGeomAction( GEOMOp::OpHideAllDimensions, "POP_HIDE_ALL_DIMENSIONS" );
@@ -1109,6 +1157,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::Op2dPolylineEditor, basicId, -1 );
   createMenu( GEOMOp::Op3dSketcher,       basicId, -1 );
   createMenu( GEOMOp::OpIsoline,          basicId, -1 );
+  createMenu( GEOMOp::OpSurfaceFromFace, basicId, -1 );
   createMenu( separator(),                basicId, -1 );
   createMenu( GEOMOp::OpVector,           basicId, -1 );
   createMenu( GEOMOp::OpPlane,            basicId, -1 );
@@ -1131,6 +1180,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpFilling,    genId, -1 );
   createMenu( GEOMOp::OpPipe,       genId, -1 );
   createMenu( GEOMOp::OpPipePath,   genId, -1 );
+  createMenu( GEOMOp::OpThickness,  genId, -1 );
 
   //int advId = createMenu( tr( "MEN_ADVANCED" ), newEntId, -1 );
   //createMenu( GEOMOp::OpSmoothingSurface, advId, -1 );
@@ -1194,6 +1244,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpScale,          transId, -1 );
   createMenu( GEOMOp::OpOffset,         transId, -1 );
   createMenu( GEOMOp::OpProjection,     transId, -1 );
+  createMenu( GEOMOp::OpExtension,      transId, -1 );
+  createMenu( GEOMOp::OpProjOnCyl,      transId, -1 );
   createMenu( separator(),              transId, -1 );
   createMenu( GEOMOp::OpMultiTranslate, transId, -1 );
   createMenu( GEOMOp::OpMultiRotate,    transId, -1 );
@@ -1209,6 +1261,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpArchimede,     operId, -1 );
   createMenu( GEOMOp::OpShapesOnShape, operId, -1 );
   createMenu( GEOMOp::OpSharedShapes,  operId, -1 );
+  createMenu( GEOMOp::OpTransferData,  operId, -1 );
 
   createMenu( separator(), operId, -1 );
 
@@ -1265,11 +1318,18 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpCheckCompound,   measurId, -1 );
   createMenu( GEOMOp::OpGetNonBlocks,    measurId, -1 );
   createMenu( GEOMOp::OpCheckSelfInters, measurId, -1 );
+  createMenu( GEOMOp::OpFastCheckInters, measurId, -1 );
+  createMenu( GEOMOp::OpInspectObj,      measurId, -1 );
+#ifndef DISABLE_PLOT2DVIEWER
+  createMenu( GEOMOp::OpShapeStatistics, measurId, -1 );
+#endif
 
   int toolsId = createMenu( tr( "MEN_TOOLS" ), -1, -1, 50 );
+#ifndef DISABLE_PYCONSOLE
 #if defined(_DEBUG_) || defined(_DEBUG) // PAL16821
   createMenu( separator(),         toolsId, -1 );
   createMenu( GEOMOp::OpCheckGeom, toolsId, -1 );
+#endif
 #endif
 
   createMenu( separator(),         toolsId, -1 );
@@ -1287,6 +1347,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( separator(),                  dispmodeId, -1 );
   createMenu( GEOMOp::OpSwitchVectors,      dispmodeId, -1 );
   createMenu( GEOMOp::OpSwitchVertices,     dispmodeId, -1 );
+  createMenu( GEOMOp::OpSwitchName,         dispmodeId, -1 );
 
   createMenu( separator(),       viewId, -1 );
   createMenu( GEOMOp::OpShowAll, viewId, -1 );
@@ -1319,6 +1380,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::Op2dPolylineEditor, basicTbId ); 
   createTool( GEOMOp::Op3dSketcher,       basicTbId ); //rnc
   createTool( GEOMOp::OpIsoline,          basicTbId );
+  createTool( GEOMOp::OpSurfaceFromFace,  basicTbId );
   createTool( GEOMOp::OpPlane,            basicTbId );
   createTool( GEOMOp::OpLCS,              basicTbId );
   createTool( GEOMOp::OpOriginAndVectors, basicTbId );
@@ -1353,6 +1415,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpFilling,    genTbId );
   createTool( GEOMOp::OpPipe,       genTbId );
   createTool( GEOMOp::OpPipePath,   genTbId );
+  createTool( GEOMOp::OpThickness,  genTbId );
 
   int transTbId = createTool( tr( "TOOL_TRANSFORMATION" ), QString( "GEOMTransformation" ) );
   createTool( GEOMOp::OpTranslate,      transTbId );
@@ -1362,6 +1425,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpScale,          transTbId );
   createTool( GEOMOp::OpOffset,         transTbId );
   createTool( GEOMOp::OpProjection,     transTbId );
+  createTool( GEOMOp::OpExtension,      transTbId );
+  createTool( GEOMOp::OpProjOnCyl,      transTbId );
   createTool( separator(),              transTbId );
   createTool( GEOMOp::OpMultiTranslate, transTbId );
   createTool( GEOMOp::OpMultiRotate,    transTbId );
@@ -1372,6 +1437,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpArchimede,       operTbId );
   createTool( GEOMOp::OpShapesOnShape,   operTbId );
   createTool( GEOMOp::OpSharedShapes,    operTbId );
+  createTool( GEOMOp::OpTransferData,    operTbId );
 
   int featTbId = createTool( tr( "TOOL_FEATURES" ), QString( "GEOMModification" ) );
   createTool( GEOMOp::OpFillet1d,        featTbId );
@@ -1409,6 +1475,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpCheckCompound,    measureTbId );
   createTool( GEOMOp::OpGetNonBlocks,     measureTbId );
   createTool( GEOMOp::OpCheckSelfInters,  measureTbId );
+  createTool( GEOMOp::OpFastCheckInters,  measureTbId );
 
   int picturesTbId = createTool( tr( "TOOL_PICTURES" ), QString( "GEOMPictures" ) );
   createTool( GEOMOp::OpPictureImport,    picturesTbId );
@@ -1433,7 +1500,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   QString clientOCCorOB_AndSomeVisible = clientOCCorOB + " and selcount>0 and isVisible";
 
   QString autoColorPrefix =
-    "(client='ObjectBrowser' or client='OCCViewer') and type='Shape' and selcount=1 and isOCC=true";
+    "(client='ObjectBrowser' or client='OCCViewer' or client='VTKViewer') and type='Shape' and selcount=1";
 
   QtxPopupMgr* mgr = popupMgr();
 
@@ -1480,6 +1547,9 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  GEOMOp::OpVertices ), dispmodeId, -1 ); // vertices
   mgr->setRule( action( GEOMOp::OpVertices ), clientOCCorVTK_AndSomeVisible  + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpVertices ), clientOCCorVTK + " and isVerticesMode", QtxPopupMgr::ToggleRule );
+  mgr->insert( action(  GEOMOp::OpShowName ), dispmodeId, -1 ); // show name
+  mgr->setRule( action( GEOMOp::OpShowName ), clientOCCorVTK_AndSomeVisible  + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpShowName ), clientOCCorVTK + " and isNameMode", QtxPopupMgr::ToggleRule );
   mgr->insert( separator(), -1, -1 );     // -----------
 
   mgr->insert( action(  GEOMOp::OpColor ), -1, -1 ); // color
@@ -1588,9 +1658,11 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  GEOMOp::OpSortChildren ), -1, -1 ); // Sort child items
   mgr->setRule( action( GEOMOp::OpSortChildren ), QString("client='ObjectBrowser' and $component={'GEOM'} and nbChildren>1"), QtxPopupMgr::VisibleRule );
 
+#ifndef DISABLE_GRAPHICSVIEW
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpShowDependencyTree ), -1, -1 ); // Show dependency tree
   mgr->setRule( action( GEOMOp::OpShowDependencyTree ), clientOCCorVTKorOB + " and selcount>0 and ($component={'GEOM'}) and type='Shape'", QtxPopupMgr::VisibleRule );
+#endif
 
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpReduceStudy ), -1, -1 ); // Reduce Study
@@ -1641,7 +1713,7 @@ void GeometryGUI::addPluginActions()
       // icon
       QPixmap icon;
       if ( !adata.icon.empty() )
-	icon = resMgr->loadPixmap( pdata.name.c_str(), adata.icon.c_str() );
+        icon = resMgr->loadPixmap( pdata.name.c_str(), adata.icon.c_str() );
       // menu text (path)
       QStringList smenus = QString( adata.menuText.c_str() ).split( "/" );
       QString actionName = smenus.last();
@@ -1658,30 +1730,30 @@ void GeometryGUI::addPluginActions()
       actionStat = actionStat.toUpper().prepend( "STB_" );
 
       createAction( id, // ~ adata.label
-		    tr( actionTool.toLatin1().constData() ),
-		    icon,
-		    tr( actionName.toLatin1().constData() ),
-		    tr( actionStat.toLatin1().constData() ),
-		    QKeySequence( tr( adata.accel.c_str() ) ),
-		    application()->desktop(),
-		    false /*toggle*/,
-		    this, SLOT( OnGUIEvent() ),
-		    QString() /*shortcutAction*/ );
+                    tr( actionTool.toLatin1().constData() ),
+                    icon,
+                    tr( actionName.toLatin1().constData() ),
+                    tr( actionStat.toLatin1().constData() ),
+                    QKeySequence( tr( adata.accel.c_str() ) ),
+                    application()->desktop(),
+                    false /*toggle*/,
+                    this, SLOT( OnGUIEvent() ),
+                    QString() /*shortcutAction*/ );
       
       int menuId = -1;
       foreach ( QString subMenu, smenus ) {
-	QStringList subMenuList = subMenu.split( ":" );
-	QString subMenuName = subMenuList[0].toUpper().prepend( "MEN_" );
-	int subMenuGroup = subMenuList.size() > 1 ? subMenuList[1].toInt() : -1;
-	menuId = createMenu( tr( subMenuName.toLatin1().constData() ), menuId, -1, subMenuGroup );
+        QStringList subMenuList = subMenu.split( ":" );
+        QString subMenuName = subMenuList[0].toUpper().prepend( "MEN_" );
+        int subMenuGroup = subMenuList.size() > 1 ? subMenuList[1].toInt() : -1;
+        menuId = createMenu( tr( subMenuName.toLatin1().constData() ), menuId, -1, subMenuGroup );
       }
       createMenu( id, menuId, -1 );
       
       if ( !stools.isEmpty() ) {
-	QString subTool = stools[0];
-	subTool = subTool.toUpper().prepend( "TOOL_" );
-	int toolId = createTool( tr( subTool.toLatin1().constData() ) );
-	createTool(id, toolId);
+        QString subTool = stools[0];
+        subTool = subTool.toUpper().prepend( "TOOL_" );
+        int toolId = createTool( tr( subTool.toLatin1().constData() ) );
+        createTool(id, toolId);
       }
 
       // add action id to map
@@ -1711,17 +1783,18 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
 
   // import Python module that manages GEOM plugins (need to be here because SalomePyQt API uses active module)
   PyGILState_STATE gstate = PyGILState_Ensure();
-  PyObjWrapper pluginsmanager = PyImport_ImportModuleNoBlock((char*)"salome_pluginsmanager");
+  PyObject* pluginsmanager = PyImport_ImportModuleNoBlock((char*)"salome_pluginsmanager");
   if ( !pluginsmanager ) {
     PyErr_Print();
   }
   else {
-    PyObjWrapper result =
+    PyObject* result =
       PyObject_CallMethod(pluginsmanager, (char*)"initialize", (char*)"isss", 1, "geom",
-                          tr("MEN_NEW_ENTITY").toStdString().c_str(),
-                          tr("GEOM_PLUGINS_OTHER").toStdString().c_str());
+                          tr("MEN_NEW_ENTITY").toUtf8().data(),
+                          tr("GEOM_PLUGINS_OTHER").toUtf8().data());
     if ( !result )
       PyErr_Print();
+    Py_XDECREF(result);
   }
   PyGILState_Release(gstate);
   // end of GEOM plugins loading
@@ -1746,6 +1819,11 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
     myCreationInfoWdg = new GEOMGUI_CreationInfoWdg( getApp() );
   getApp()->insertDockWindow( myCreationInfoWdg->getWinID(), myCreationInfoWdg );
   getApp()->placeDockWindow( myCreationInfoWdg->getWinID(), Qt::LeftDockWidgetArea );
+
+  if ( !myTextTreeWdg )
+    myTextTreeWdg = new GEOMGUI_TextTreeWdg( getApp() );
+  getApp()->insertDockWindow( myTextTreeWdg->getWinID(), myTextTreeWdg );
+  getApp()->placeDockWindow( myTextTreeWdg->getWinID(), Qt::LeftDockWidgetArea );
 
   //NPAL 19674
   SALOME_ListIO selected;
@@ -1785,6 +1863,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
     }
   }
 
+  Py_XDECREF(pluginsmanager);
   return true;
 }
 
@@ -1808,8 +1887,15 @@ bool GeometryGUI::deactivateModule( SUIT_Study* study )
 
   disconnect( selMrg, SIGNAL( currentSelectionChanged() ), this, SLOT( updateCreationInfo() ));
   disconnect( selMrg, SIGNAL( currentSelectionChanged() ), this, SLOT( updateFieldColorScale() ));
-  getApp()->removeDockWindow( myCreationInfoWdg->getWinID() );
-  myCreationInfoWdg = 0;
+  if ( myCreationInfoWdg ) {
+    getApp()->removeDockWindow( myCreationInfoWdg->getWinID() );
+    myCreationInfoWdg = 0;
+  }
+  if ( myTextTreeWdg ) {
+    getApp()->removeDockWindow( myTextTreeWdg->getWinID() );
+    disconnect( application(), 0, myTextTreeWdg, 0 );
+    myTextTreeWdg = 0;
+  }
 
   EmitSignalCloseAllDialogs();
 
@@ -1840,8 +1926,8 @@ void GeometryGUI::onWindowActivated( SUIT_ViewWindow* win )
   if ( !win )
     return;
 
-  const bool ViewOCC = ( win->getViewManager()->getType() == OCCViewer_Viewer::Type() );
-  //const bool ViewVTK = ( win->getViewManager()->getType() == SVTK_Viewer::Type() );
+  const bool ViewOCC = ( win->getViewManager() ? win->getViewManager()->getType() == OCCViewer_Viewer::Type() : false );
+  //const bool ViewVTK = ( win->getViewManager() ? win->getViewManager()->getType() == SVTK_Viewer::Type() : false );
 
   // disable non-OCC viewframe menu commands
 //  action( GEOMOp::Op2dSketcher )->setEnabled( ViewOCC ); // SKETCHER
@@ -1864,9 +1950,13 @@ void GeometryGUI::windows( QMap<int, int>& mappa ) const
 {
   mappa.insert( SalomeApp_Application::WT_ObjectBrowser, Qt::LeftDockWidgetArea );
   mappa.insert( SalomeApp_Application::WT_NoteBook, Qt::LeftDockWidgetArea );
+#ifndef DISABLE_PYCONSOLE
   mappa.insert( SalomeApp_Application::WT_PyConsole, Qt::BottomDockWidgetArea );
+#endif
   if ( myCreationInfoWdg )
     mappa.insert( myCreationInfoWdg->getWinID(), Qt::LeftDockWidgetArea );
+  if ( myTextTreeWdg )
+    mappa.insert( myTextTreeWdg->getWinID(), Qt::LeftDockWidgetArea );
 }
 
 void GeometryGUI::viewManagers( QStringList& lst ) const
@@ -1982,38 +2072,15 @@ void GeometryGUI::updateCreationInfo()
   // pass creation info of geomObj to myCreationInfoWdg
 
   if ( myCreationInfoWdg ) {
-    QPixmap icon;
-    QString operationName;
-    myCreationInfoWdg->setOperation( icon, operationName );
 
+    GEOM::CreationInformationSeq_var info;
     try {
       OCC_CATCH_SIGNALS;
-      GEOM::CreationInformation_var info = geomObj->GetCreationInformation();
-      if ( &info.in() ) {
-        SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-        QString name = info->operationName.in();
-        if ( !name.isEmpty() ) {
-	  
-	  QString plugin_name;
-          for ( size_t i = 0; i < info->params.length(); ++i ) {
-            myCreationInfoWdg->addParam( info->params[i].name.in(),
-                                         info->params[i].value.in() );
-            QString value = info->params[i].name.in();
-	    if( value == PLUGIN_NAME ) {
-	      plugin_name = info->params[i].value.in();
-	    }
-	  }
-	  QString prefix = plugin_name.isEmpty() ? "GEOM" : plugin_name;
-          icon = resMgr->loadPixmap( prefix, tr( ("ICO_"+name).toLatin1().constData() ), false );
-          operationName = tr( ("MEN_"+name).toLatin1().constData() );
-          if ( operationName.startsWith( "MEN_" ))
-            operationName = name; // no translation
-          myCreationInfoWdg->setOperation( icon, operationName );
-        }
-      }
+      info = geomObj->GetCreationInformation();
     }
     catch (...) {
     }
+    myCreationInfoWdg->setInfo( info );
   }
 }
 
@@ -2201,6 +2268,8 @@ void GeometryGUI::OnSetMaterial(const QString& theName)
 
 void GeometryGUI::createPreferences()
 {
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+
   int tabId = addPreference( tr( "PREF_TAB_SETTINGS" ) );
 
   int genGroup = addPreference( tr( "PREF_GROUP_GENERAL" ), tabId );
@@ -2231,6 +2300,11 @@ void GeometryGUI::createPreferences()
   addPreference( tr( "PREF_ISOS_COLOR" ), genGroup,
                  LightApp_Preferences::Color, "Geometry", "isos_color" );
 
+  addPreference( tr( "PREF_LABEL_COLOR" ), genGroup,
+                 LightApp_Preferences::Color, "Geometry", "label_color" );
+
+  addPreference( "", genGroup, LightApp_Preferences::Space );
+
   addPreference( tr( "PREF_TOPLEVEL_COLOR" ), genGroup,
                  LightApp_Preferences::Color, "Geometry", "toplevel_color" );
 
@@ -2238,7 +2312,7 @@ void GeometryGUI::createPreferences()
                       LightApp_Preferences::Selector, "Geometry", "toplevel_dm" );
 
   int transparency = addPreference( tr( "PREF_TRANSPARENCY" ), genGroup,
-				    LightApp_Preferences::IntSpin, "Geometry", "transparency" );
+                                    LightApp_Preferences::IntSpin, "Geometry", "transparency" );
 
   int defl = addPreference( tr( "PREF_DEFLECTION" ), genGroup,
                             LightApp_Preferences::DblSpin, "Geometry", "deflection_coeff" );
@@ -2292,12 +2366,36 @@ void GeometryGUI::createPreferences()
   setPreferenceProperty( aDimLineWidthId, "min", 1 );
   setPreferenceProperty( aDimLineWidthId, "max", 5 );
 
-  int aDimFontHeightId = addPreference( tr( "PREF_DIMENSIONS_FONT_HEIGHT" ), aDimGroupId,
-                                        LightApp_Preferences::DblSpin, "Geometry", "dimensions_font_height" );
+  int aDimFontId = addPreference( tr( "PREF_DIMENSIONS_FONT" ), aDimGroupId, LightApp_Preferences::Font, "Geometry", "dimensions_font" );
 
-  setPreferenceProperty( aDimFontHeightId, "min", 1e-9 );
-  setPreferenceProperty( aDimFontHeightId, "max", 1e+9 );
-  setPreferenceProperty( aDimFontHeightId, "precision", 9 );
+  int f = QtxFontEdit::Family | QtxFontEdit::Size;
+  setPreferenceProperty( aDimFontId, "features", f );
+  setPreferenceProperty( aDimFontId, "mode", QtxFontEdit::Custom );
+
+  Handle(Font_FontMgr) fmgr = Font_FontMgr::GetInstance();
+  QString aFontFile = "";
+  resMgr->value("resources", "GEOM", aFontFile);
+  aFontFile = aFontFile + QDir::separator() + "Y14.5M-2009.ttf";
+  // add enginier font into combobox
+  int fontID = QFontDatabase::addApplicationFont( aFontFile );
+  Handle(Font_SystemFont) sf = new Font_SystemFont( 
+    new TCollection_HAsciiString("Y14.5M-2009"), 
+    Font_FA_Regular, 
+    new TCollection_HAsciiString(aFontFile.toLatin1().data()) );
+  // register font in OCC font manager
+  fmgr->RegisterFont( sf, Standard_False );
+
+  // get list of supported fonts by OCC
+  QStringList anOCCFonts;
+  TColStd_SequenceOfHAsciiString theFontsNames;
+  fmgr->GetAvailableFontsNames( theFontsNames );
+  for(Standard_Integer i=1; i<=theFontsNames.Length(); i++) {
+    Handle(TCollection_HAsciiString) str = theFontsNames(i);
+    anOCCFonts << str->ToCString();
+  }
+  anOCCFonts.removeDuplicates();
+  // set the supported fonts into combobox to use its only
+  setPreferenceProperty( aDimFontId, "fonts", anOCCFonts );
 
   int aDimArrLengthId = addPreference( tr( "PREF_DIMENSIONS_ARROW_LENGTH" ), aDimGroupId,
                                        LightApp_Preferences::DblSpin, "Geometry", "dimensions_arrow_length" );
@@ -2311,9 +2409,6 @@ void GeometryGUI::createPreferences()
 
   int anAngUnitsId = addPreference( tr( "PREF_DIMENSIONS_ANGLE_UNITS" ), aDimGroupId,
                                    LightApp_Preferences::Selector, "Geometry", "dimensions_angle_units" );
-
-  addPreference( tr( "PREF_DIMENSIONS_SHOW_UNITS" ), aDimGroupId,
-                 LightApp_Preferences::Bool, "Geometry", "dimensions_show_units" );
 
   QStringList aListOfLengthUnits;
   aListOfLengthUnits << "m";
@@ -2329,12 +2424,18 @@ void GeometryGUI::createPreferences()
   setPreferenceProperty( aLengthUnitsId, "strings", aListOfLengthUnits );
   setPreferenceProperty( anAngUnitsId,   "strings", aListOfAngUnits );
 
+  addPreference( tr( "PREF_DIMENSIONS_SHOW_UNITS" ), aDimGroupId,
+                 LightApp_Preferences::Bool, "Geometry", "dimensions_show_units" );
+
   int aDimDefFlyout = addPreference( tr( "PREF_DIMENSIONS_DEFAULT_FLYOUT" ), aDimGroupId,
                                      LightApp_Preferences::DblSpin, "Geometry", "dimensions_default_flyout" );
 
   setPreferenceProperty( aDimDefFlyout, "min", 1e-9 );
   setPreferenceProperty( aDimDefFlyout, "max", 1e+9 );
   setPreferenceProperty( aDimDefFlyout, "precision", 9 );
+
+  addPreference( tr( "PREF_DIMENSIONS_USE_TEXT3D" ), aDimGroupId,
+                 LightApp_Preferences::Bool, "Geometry", "dimensions_use_text3d" );
 
   int isoGroup = addPreference( tr( "PREF_ISOS" ), tabId );
   setPreferenceProperty( isoGroup, "columns", 2 );
@@ -2442,7 +2543,6 @@ void GeometryGUI::createPreferences()
   QList<QVariant> aMarkerTypeIndicesList;
   QList<QVariant> aMarkerTypeIconsList;
 
-  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   for ( int i = GEOM::MT_POINT; i < GEOM::MT_USER; i++ ) {
     QString icoFile = QString( "ICON_VERTEX_MARKER_%1" ).arg( i );
     QPixmap pixmap = resMgr->loadPixmap( "GEOM", tr( qPrintable( icoFile ) ) );
@@ -2521,6 +2621,9 @@ void GeometryGUI::createPreferences()
 
   addPreference( tr( "GEOM_PREVIEW" ), operationsGroup,
                  LightApp_Preferences::Bool, "Geometry", "geom_preview" );
+
+  addPreference( tr( "PREF_HIDE_INPUT_OBJECT" ), operationsGroup,
+                 LightApp_Preferences::Bool, "Geometry", "hide_input_object" );
 
   int DependencyViewId = addPreference( tr( "PREF_TAB_DEPENDENCY_VIEW" ) );
 
@@ -2601,11 +2704,13 @@ void GeometryGUI::preferencesChanged( const QString& section, const QString& par
     }
     else if ( param == QString("dimensions_color")        ||
               param == QString("dimensions_line_width")   ||
-              param == QString("dimensions_font_height")  ||
+              param == QString("dimensions_font")         ||
               param == QString("dimensions_arrow_length") ||
               param == QString("dimensions_show_units")   ||
               param == QString("dimensions_length_units") ||
-              param == QString("dimensions_angle_units") )
+              param == QString("dimensions_angle_units")  ||
+              param == QString("dimensions_use_text3d")  ||
+              param == QString("label_color") )
     {
       SalomeApp_Application* anApp = getApp();
       if ( !anApp )
@@ -2636,7 +2741,22 @@ void GeometryGUI::preferencesChanged( const QString& section, const QString& par
         aViewer->GetVisible( aVisible );
         aDisplayer.Redisplay( aVisible, false, aViewer );
       }
-
+      if ( param == QString( "label_color" ) ) {
+        ViewManagerList aVMsVTK;
+        anApp->viewManagers( SVTK_Viewer::Type(), aVMsVTK );
+        ViewManagerList::Iterator anIt = aVMsVTK.begin();
+        for ( ; anIt != aVMsVTK.end(); ++anIt )
+        {
+            SVTK_Viewer* aViewer = dynamic_cast<SVTK_Viewer*>( (*anIt)->getViewModel() );
+            if ( !aViewer )
+            {
+              continue;
+            }
+            SALOME_ListIO aVisible;
+            aViewer->GetVisible( aVisible );
+            aDisplayer.Redisplay( aVisible, false, aViewer );
+          }
+      }
       aDisplayer.UpdateViewer();
     }
     else if ( param.startsWith( "dependency_tree") )
@@ -2787,6 +2907,11 @@ void GeometryGUI::storeVisualParameters (int savePoint)
         if (aProps.contains(GEOM::propertyName( GEOM::Vertices ))) {
           param = occParam + GEOM::propertyName( GEOM::Vertices );
           ip->setParameter(entry, param.toStdString(), aProps.value(GEOM::propertyName( GEOM::Vertices )).toString().toStdString());
+        }
+
+        if (aProps.contains(GEOM::propertyName( GEOM::ShowName ))) {
+          param = occParam + GEOM::propertyName( GEOM::ShowName );
+          ip->setParameter(entry, param.toStdString(), aProps.value(GEOM::propertyName( GEOM::ShowName )).toString().toStdString());
         }
 
         if (aProps.contains(GEOM::propertyName( GEOM::Deflection ))) {
@@ -2961,6 +3086,8 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
         aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::EdgesDirection ), val == "true" || val == "1");
       } else if (paramNameStr == GEOM::propertyName( GEOM::Vertices )) {
         aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::Vertices ), val == "true" || val == "1");
+      } else if (paramNameStr == GEOM::propertyName( GEOM::ShowName )) {
+        aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::ShowName ), val == "true" || val == "1");
       } else if (paramNameStr == GEOM::propertyName( GEOM::Deflection )) {
         aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::Deflection ), val.toDouble());
       } else if (paramNameStr == GEOM::propertyName( GEOM::PointMarker )) {
@@ -3009,11 +3136,37 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
   }
 }
 
+// Compute current name mode of the viewer
+void UpdateNameMode( SalomeApp_Application* app )
+{
+  bool isMode = false;
+  SalomeApp_Study* aStudy = dynamic_cast< SalomeApp_Study* >( app->activeStudy() );
+  SUIT_ViewWindow* viewWindow = app->desktop()->activeWindow();
+  GEOM_Displayer displayer( aStudy );
+  int aMgrId = viewWindow->getViewManager()->getGlobalId();
+
+  SALOME_View* window = displayer.GetActiveView();
+  if ( !window ) return;
+
+  SALOME_ListIO anIOlst;
+  window->GetVisible( anIOlst );
+
+  for ( SALOME_ListIteratorOfListIO It( anIOlst ); It.More(); It.Next() ) {
+    Handle( SALOME_InteractiveObject ) io = It.Value();
+    QVariant v = aStudy->getObjectProperty( aMgrId, io->getEntry(), GEOM::propertyName( GEOM::ShowName ), QVariant() );
+    bool isIONameMode =  v.isValid() ? v.toBool() : false;
+    if( isIONameMode )
+      isMode = true;
+  }
+  viewWindow->setProperty( "NameMode", isMode );
+}
+
 void GeometryGUI::onViewAboutToShow()
 {
   SUIT_ViewWindow* window = application()->desktop()->activeWindow();
   QAction* a = action( GEOMOp::OpSwitchVectors );
   QAction* aVerticesAction = action( GEOMOp::OpSwitchVertices );
+  QAction* aNameAction = action( GEOMOp::OpSwitchName );
   if ( window ) {
     a->setEnabled(true);
     bool vmode = window->property("VectorsMode").toBool();
@@ -3021,11 +3174,17 @@ void GeometryGUI::onViewAboutToShow()
     aVerticesAction->setEnabled(true);
     vmode = window->property("VerticesMode").toBool();
     aVerticesAction->setText ( vmode == 1 ? tr( "MEN_VERTICES_MODE_OFF" ) : tr("MEN_VERTICES_MODE_ON") );
+    UpdateNameMode( getApp() );
+    aNameAction->setEnabled(true);
+    vmode = window->property("NameMode").toBool();
+    aNameAction->setText ( vmode == 1 ? tr( "MEN_NAME_MODE_OFF" ) : tr("MEN_NAME_MODE_ON") );
   } else {
     a->setText ( tr("MEN_VECTOR_MODE_ON") );
     a->setEnabled(false);
     aVerticesAction->setText ( tr("MEN_VERTICES_MODE_ON") );
     aVerticesAction->setEnabled(false);
+    aNameAction->setText ( tr("MEN_NAME_MODE_ON") );
+    aNameAction->setEnabled(false);
   }
 }
 
@@ -3368,4 +3527,9 @@ void GeometryGUI::dropObjects( const DataObjectList& what, SUIT_DataObject* wher
 
   // update Object browser
   getApp()->updateObjectBrowser( false );
+}
+
+void GeometryGUI::emitDimensionsUpdated( QString entry )
+{
+  emit DimensionsUpdated( entry );
 }

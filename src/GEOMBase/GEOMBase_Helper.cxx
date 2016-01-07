@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -46,8 +46,10 @@
 #include <LightApp_DataOwner.h>
 #include <SalomeApp_Tools.h>
 #include <SALOME_ListIO.hxx>
+#include "utilities.h"
 
 #include <SALOME_Prs.h>
+#include "utilities.h"
 
 #include <OCCViewer_ViewModel.h>
 #include <SVTK_ViewModel.h>
@@ -259,7 +261,8 @@ void GEOMBase_Helper::displayPreview( const bool   display,
                                       const bool   toRemoveFromEngine,
                                       const double lineWidth,
                                       const int    displayMode,
-                                      const int    color )
+                                      const int    color,
+                                      const bool   append )
 {
   if(!display) {
     erasePreview( update );
@@ -275,7 +278,8 @@ void GEOMBase_Helper::displayPreview( const bool   display,
     return;
   }
 
-  erasePreview( false );
+  if( !append )
+    erasePreview( false );
 
   try {
     SUIT_OverrideCursor wc;
@@ -407,12 +411,12 @@ void GEOMBase_Helper::erasePreview( const bool update )
     {
       SUIT_ViewManager* aViewManager = myViewWindow->getViewManager();
       if ( aViewManager->getType() == OCCViewer_Viewer::Type() ||
-	   aViewManager->getType() == SVTK_Viewer::Type() )
+           aViewManager->getType() == SVTK_Viewer::Type() )
       {
-	SUIT_ViewModel* aViewModel = aViewManager->getViewModel();
-	SALOME_View* aView = dynamic_cast<SALOME_View*>(aViewModel);
-	if (aView)
-	  aView->Erase( getDisplayer(), *anIter, true );
+        SUIT_ViewModel* aViewModel = aViewManager->getViewModel();
+        SALOME_View* aView = dynamic_cast<SALOME_View*>(aViewModel);
+        if (aView)
+          aView->Erase( getDisplayer(), *anIter, true );
       }
     }
     delete *anIter;
@@ -461,9 +465,9 @@ void GEOMBase_Helper::activate( const int theType )
 //================================================================
 // Function : localSelection
 // Purpose  : Activate selection of sub-shapes in accordance with mode
-//            theMode is from TopAbs_ShapeEnum
+//            modes are from TopAbs_ShapeEnum
 //================================================================
-void GEOMBase_Helper::localSelection( const ObjectList& theObjs, const int theMode )
+void GEOMBase_Helper::localSelection( const ObjectList& theObjs, const std::list<int> modes )
 {
   SALOME_ListIO aListOfIO;
 
@@ -479,7 +483,7 @@ void GEOMBase_Helper::localSelection( const ObjectList& theObjs, const int theMo
         anEntry.toLatin1().constData(), "GEOM", strdup( GEOMBase::GetName( anObj ).toLatin1().constData() ) ) );
   }
 
-  getDisplayer()->LocalSelection( aListOfIO, theMode );
+  getDisplayer()->LocalSelection( aListOfIO, modes );
 }
 
 //================================================================
@@ -487,19 +491,64 @@ void GEOMBase_Helper::localSelection( const ObjectList& theObjs, const int theMo
 // Purpose  : Activate selection of sub-shapes in accordance with mode
 //            theMode is from TopAbs_ShapeEnum
 //================================================================
-void GEOMBase_Helper::localSelection( GEOM::GEOM_Object_ptr obj, const int mode )
+void GEOMBase_Helper::localSelection( const ObjectList& theObjs, const int theMode )
+{
+  std::list<int> modes;
+  modes.push_back( theMode );
+  localSelection( theObjs, modes );
+}
+
+//================================================================
+// Function : localSelection
+// Purpose  : Activate selection of sub-shapes in accordance with mode
+//            modes are from TopAbs_ShapeEnum
+//================================================================
+void GEOMBase_Helper::localSelection( GEOM::GEOM_Object_ptr obj, const std::list<int> modes )
 {
   // If object is null local selection for all objects is activated
   if ( obj->_is_nil() ) {
-    getDisplayer()->LocalSelection( Handle(SALOME_InteractiveObject)(), mode );
+    getDisplayer()->LocalSelection( Handle(SALOME_InteractiveObject)(), modes );
     return;
   }
 
   ObjectList objList;
   objList.push_back( obj );
-  localSelection( objList, mode );
+  localSelection( objList, modes );
 }
 
+//================================================================
+// Function : localSelection
+// Purpose  : Activate selection of sub-shapes in accordance with mode
+//            mode is from TopAbs_ShapeEnum
+//================================================================
+void GEOMBase_Helper::localSelection( GEOM::GEOM_Object_ptr obj, const int mode )
+{
+  std::list<int> modes;
+  modes.push_back( mode );
+  localSelection( obj, modes );
+}
+
+//================================================================
+// Function : localSelection
+// Purpose  : Activate selection of sub-shapes in accordance with mode
+//            modes are from TopAbs_ShapeEnum
+//================================================================
+void GEOMBase_Helper::localSelection( const std::list<int> modes )
+{
+  localSelection( GEOM::GEOM_Object::_nil(), modes );
+}
+
+//================================================================
+// Function : localSelection
+// Purpose  : Activate selection of sub-shapes in accordance with mode
+//            mode is from TopAbs_ShapeEnum
+//================================================================
+void GEOMBase_Helper::localSelection( const int mode )
+{
+  std::list<int> modes;
+  modes.push_back( mode );
+  localSelection( modes );
+}
 
 //================================================================
 // Function : globalSelection
@@ -833,6 +882,7 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, b
         showError();
       }
       else {
+        QList<GEOM::GeomObjPtr> anObjectList = getSourceObjects( );
         addSubshapesToStudy(); // add Sub-shapes if local selection
         const int nbObjs = objects.size();
         QStringList anEntryList;
@@ -843,21 +893,21 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, b
             QString aName = getObjectName(obj);
             if (aName.isEmpty()) {
               aName = getNewObjectName(currObj);
-	            if ( nbObjs > 1 ) {
-		            if (aName.isEmpty())
-		              aName = getPrefix(obj);
-		              if (nbObjs <= 30) {
-		                // Try to find a unique name
-		                aName = GEOMBase::GetDefaultName(aName, extractPrefix());
-		              } else {
-		                // Don't check name uniqueness in case of numerous objects
-		                aName = aName + "_" + QString::number(aNumber++);
-		              }
-	            } else {
-		            // PAL6521: use a prefix, if some dialog box doesn't reimplement getNewObjectName()
-		            if ( aName.isEmpty() )
-		              aName = GEOMBase::GetDefaultName( getPrefix( obj ) );
-	            }
+                    if ( nbObjs > 1 ) {
+                            if (aName.isEmpty())
+                              aName = getPrefix(obj);
+                              if (nbObjs <= 30) {
+                                // Try to find a unique name
+                                aName = GEOMBase::GetDefaultName(aName, extractPrefix());
+                              } else {
+                                // Don't check name uniqueness in case of numerous objects
+                                aName = aName + "_" + QString::number(aNumber++);
+                              }
+                    } else {
+                            // PAL6521: use a prefix, if some dialog box doesn't reimplement getNewObjectName()
+                            if ( aName.isEmpty() )
+                              aName = GEOMBase::GetDefaultName( getPrefix( obj ) );
+                    }
             }
             anEntryList << addInStudy( obj, aName.toLatin1().constData() );
             // updateView=false
@@ -894,6 +944,8 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, b
             }
             anApp->putInfo( QObject::tr("GEOM_PRP_DONE") );
           }
+          if ( anObjectList.count() > 0 )
+            hideSourceObjects( anObjectList );
           result = true;
         }
         else
@@ -1137,10 +1189,10 @@ GEOM::GEOM_Object_ptr GEOMBase_Helper::findObjectInFather( GEOM::GEOM_Object_ptr
         if ( !CORBA::is_nil( cobject ) ) {
           GEOM::ListOfLong_var indices = cobject->GetSubShapeIndices();
           int length = indices->length();
-	  // VSR 18/03/2014: we need only sub-shapes with single sub-shape index (to exclude groups, etc)
-	  if ( length == 1 && indices[0] == theIndex ) {
-	    object = cobject;
-	    break;
+          // VSR 18/03/2014: we need only sub-shapes with single sub-shape index (to exclude groups, etc)
+          if ( length == 1 && indices[0] == theIndex ) {
+            object = cobject;
+            break;
           }
         }
       }
@@ -1157,6 +1209,17 @@ GEOM::GEOM_Object_ptr GEOMBase_Helper::findObjectInFather( GEOM::GEOM_Object_ptr
 void GEOMBase_Helper::addSubshapesToStudy()
 {
   //Impemented in Dialogs, called from Accept method
+}
+
+//================================================================
+// Function : getSourceObjects
+// Purpose  : Virtual method to get source objects
+//================================================================
+QList<GEOM::GeomObjPtr> GEOMBase_Helper::getSourceObjects()
+{
+  //Impemented in Dialogs, called from Accept method
+  QList<GEOM::GeomObjPtr> res;
+  return res;
 }
 
 //================================================================
@@ -1328,6 +1391,19 @@ QList<GEOM::GeomObjPtr> GEOMBase_Helper::getSelected( const QList<TopAbs_ShapeEn
     }
   }
   return result;
+}
+//================================================================
+// Function : hideSourceObject
+// Purpose  :
+//================================================================
+void GEOMBase_Helper::hideSourceObjects( QList<GEOM::GeomObjPtr> theObject )
+{
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  if ( resMgr->booleanValue( "Geometry", "hide_input_object", true) ) {
+    GEOM_Displayer* aDisplayer = getDisplayer();
+    for ( int i = 0; i < theObject.count(); i++ )
+      aDisplayer->Erase( theObject[i].get() );
+  }
 }
 
 //================================================================

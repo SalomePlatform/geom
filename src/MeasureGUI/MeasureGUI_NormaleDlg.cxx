@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -267,7 +267,7 @@ void MeasureGUI_NormaleDlg::SetEditCurrentArgument()
     GroupArgs->PushButton2->setDown(false);
     GroupArgs->LineEdit2->setEnabled(false);
 
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_FACE);
+    localSelection(TopAbs_FACE);
   }
   else if (send == GroupArgs->PushButton2) {
     myEditCurrentArgument = GroupArgs->LineEdit2;
@@ -275,7 +275,7 @@ void MeasureGUI_NormaleDlg::SetEditCurrentArgument()
     GroupArgs->PushButton1->setDown(false);
     GroupArgs->LineEdit1->setEnabled(false);
 
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+    localSelection(TopAbs_VERTEX);
   }
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
@@ -359,4 +359,16 @@ bool MeasureGUI_NormaleDlg::execute (ObjectList& objects)
     objects.push_back(anObj._retn());
 
   return true;
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> MeasureGUI_NormaleDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::GeomObjPtr aGeomObjPtr1(myFace), aGeomObjPtr2(myPoint);
+  res << aGeomObjPtr1 << aGeomObjPtr2;
+  return res;
 }

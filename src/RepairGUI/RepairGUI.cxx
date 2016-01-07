@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -29,6 +29,7 @@
 
 #include <SUIT_Desktop.h>
 #include <SUIT_Session.h>
+#include <SUIT_OverrideCursor.h>
 #include <SalomeApp_Application.h>
 
 #include "RepairGUI_SewingDlg.h"        // Method SEWING
@@ -47,6 +48,7 @@
 #include "RepairGUI_RemoveExtraEdgesDlg.h"  // Method REMOVE EXTRA EDGES
 #include "RepairGUI_FuseEdgesDlg.h"         // Method FUSE COLLINEAR EDGES
 #include "RepairGUI_UnionFacesDlg.h"        // Method UNION FACES
+#include "RepairGUI_InspectObjectDlg.h"     // Method INSPECT OBJECT
 
 //=======================================================================
 // function : RepairGUI()
@@ -96,6 +98,7 @@ bool RepairGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case GEOMOp::OpRemoveExtraEdges: aDlg = new RepairGUI_RemoveExtraEdgesDlg  (getGeometryGUI(), parent); break;
   case GEOMOp::OpFuseEdges:        aDlg = new RepairGUI_FuseEdgesDlg         (getGeometryGUI(), parent); break;
   case GEOMOp::OpUnionFaces:       aDlg = new RepairGUI_UnionFacesDlg        (getGeometryGUI(), parent); break;
+  case GEOMOp::OpInspectObj:       aDlg = new RepairGUI_InspectObjectDlg     (getGeometryGUI(), parent); break;
   default:
     app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
     break;
@@ -120,4 +123,101 @@ extern "C"
   {
     return new RepairGUI( parent );
   }
+}
+
+//=====================================================================================
+// Statistics dialog
+//=====================================================================================
+
+#include <QDialog>
+#include <QHBoxLayout>
+#include <QHeaderView>
+#include <QPushButton>
+#include <QString>
+#include <QStringList>
+#include <QTableWidget>
+#include <QTableWidget>
+#include <QTableWidgetItem>
+#include <QVBoxLayout>
+
+namespace
+{
+  class StatsDlg : public QDialog
+  {
+  public:
+    StatsDlg( GEOM::ModifStatistics_var stats, QWidget* parent );
+  };
+
+  StatsDlg::StatsDlg( GEOM::ModifStatistics_var stats, QWidget* parent ): QDialog( parent )
+  {
+    setModal( true );
+    setWindowTitle( tr( "GEOM_HEALING_STATS_TITLE" ) );
+    setMinimumWidth( 500 );
+
+    const int nbRows = stats->length();
+    const int nbCols = 2;
+    QTableWidget* table = new QTableWidget( nbRows, nbCols, this );
+    table->setEditTriggers( QAbstractItemView::NoEditTriggers );
+    table->horizontalHeader()->setResizeMode( 1, QHeaderView::Interactive );
+    table->horizontalHeader()->setStretchLastSection( true );
+
+    QStringList headers;
+    headers << tr( "GEOM_HEALING_STATS_COL_1" );
+    headers << tr( "GEOM_HEALING_STATS_COL_2" );
+    table->setHorizontalHeaderLabels( headers );
+
+    // buttons
+
+    QPushButton* okBtn = new QPushButton( tr( "GEOM_BUT_OK" ), this );
+    okBtn->setAutoDefault( true );
+    okBtn->setDefault( true );
+    okBtn->setFocus();
+    // QPushButton* helpBtn = new QPushButton( tr( "GEOM_BUT_HELP" ), this );
+    // helpBtn->setAutoDefault( true );
+
+    QHBoxLayout* btnLayout = new QHBoxLayout;
+    btnLayout->setMargin( 0 );
+    btnLayout->setSpacing( 6 );
+
+    btnLayout->addStretch();
+    btnLayout->addWidget( okBtn );
+    btnLayout->addStretch();
+    // btnLayout->addWidget( helpBtn );
+
+    QVBoxLayout* aLay = new QVBoxLayout( this );
+    aLay->setMargin( 9 );
+    aLay->setSpacing( 6 );
+    aLay->addWidget( table );
+    aLay->addLayout( btnLayout );
+
+    // fill the table
+    for ( int row = 0; row < nbRows; ++row )
+    {
+      table->setItem( row, 0, new QTableWidgetItem( QString::number( stats[ row ].count )));
+      table->setItem( row, 1, new QTableWidgetItem( tr( stats[ row ].name.in() )));
+    }
+
+    connect( okBtn,       SIGNAL( clicked() ), this, SLOT( reject() ));
+    //connect( helpBtn,     SIGNAL( clicked() ), this, SLOT( help() ));
+  }
+}
+
+//================================================================================
+/*!
+ * \brief Show a dialog providing info on what is done by healing
+ */
+//================================================================================
+
+void RepairGUI::ShowStatistics( GEOM::GEOM_IHealingOperations_var anOper, QWidget* parent )
+{
+  GEOM::ModifStatistics_var stats = anOper->GetStatistics();
+
+  if ( ! &stats.in() || stats->length() == 0 )
+    return;
+
+  SUIT_OverrideCursor wc;
+  wc.suspend();
+
+  StatsDlg dlg( stats, parent );
+  dlg.exec();
 }

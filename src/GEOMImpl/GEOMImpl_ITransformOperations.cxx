@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -35,6 +35,7 @@
 #include <GEOMImpl_ITranslate.hxx>
 #include <GEOMImpl_IMirror.hxx>
 #include <GEOMImpl_IProjection.hxx>
+#include <GEOMImpl_IProjOnCyl.hxx>
 #include <GEOMImpl_IOffset.hxx>
 #include <GEOMImpl_IScale.hxx>
 #include <GEOMImpl_IRotate.hxx>
@@ -217,7 +218,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateTwoPointsCopy
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be moved
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   //Add a translate function
   Handle(GEOM_Function) aFunction =
@@ -270,7 +271,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateDXDYDZCopy
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be moved
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   //Add a translate function
   Handle(GEOM_Function) aFunction =
@@ -375,7 +376,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateVectorCopy
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be moved
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   //Add a translate function
   Handle(GEOM_Function) aFunction =
@@ -806,7 +807,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorPlaneCopy
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be mirrored
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   //Add a mirror function
   Handle(GEOM_Function) aFunction =
@@ -909,7 +910,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorPointCopy
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be mirrored
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   //Add a mirror function
   Handle(GEOM_Function) aFunction =
@@ -1012,7 +1013,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorAxisCopy
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be mirrored
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   //Add a mirror function
   Handle(GEOM_Function) aFunction =
@@ -1113,7 +1114,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShapeCopy
   if (anOriginal.IsNull()) return NULL; //There is no function which creates an object to be offset
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   //Add a new Offset function
   Handle(GEOM_Function) aFunction =
@@ -1155,8 +1156,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShapeCopy
  *  ProjectShapeCopy
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_ITransformOperations::ProjectShapeCopy
-       (Handle(GEOM_Object) theSource, Handle(GEOM_Object) theTarget)
+Handle(GEOM_Object)
+GEOMImpl_ITransformOperations::ProjectShapeCopy (Handle(GEOM_Object) theSource,
+                                                 Handle(GEOM_Object) theTarget)
 {
   SetErrorCode(KO);
 
@@ -1165,35 +1167,54 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ProjectShapeCopy
   Handle(GEOM_Function) aLastFunction = theSource->GetLastFunction();
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be projected
 
-  //Add a new Projection object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_PROJECTION);
+  Handle(GEOM_Object) aCopy;
 
-  //Add a Projection function
-  Handle(GEOM_Function) aFunction =
-    aCopy->AddFunction(GEOMImpl_ProjectionDriver::GetID(), PROJECTION_COPY);
+  TopoDS_Shape aTarget = theTarget->GetValue();
+  if ( aTarget.IsNull() ) return NULL;
+  if ( aTarget.ShapeType() == TopAbs_EDGE ||
+       aTarget.ShapeType() == TopAbs_WIRE )
+  {
+    // a TPythonDump prevents dumping ProjectPointOnWire(),
+    // dump of MakeProjection() is done at the end of this function
+    GEOM::TPythonDump preventDump(aLastFunction, /*append=*/true);
+    Standard_Integer dummy;
+    ProjectPointOnWire( theSource, theTarget, aCopy, dummy );
+    if ( aCopy.IsNull() || !IsDone() )
+      return NULL;
+  }
+  else
+  {
+    //Add a new Projection object
+    aCopy = GetEngine()->AddObject(GetDocID(), GEOM_PROJECTION);
 
-  //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_ProjectionDriver::GetID()) return NULL;
+    //Add a Projection function
+    Handle(GEOM_Function) aFunction =
+      aCopy->AddFunction(GEOMImpl_ProjectionDriver::GetID(), PROJECTION_COPY);
 
-  GEOMImpl_IMirror aTI (aFunction);
-  aTI.SetPlane(theTarget->GetLastFunction());
-  aTI.SetOriginal(aLastFunction);
+    //Check if the function is set correctly
+    if (aFunction->GetDriverGUID() != GEOMImpl_ProjectionDriver::GetID()) return NULL;
 
-  //Compute the Projection
-  try {
-    OCC_CATCH_SIGNALS;
-    if (!GetSolver()->ComputeFunction(aFunction)) {
-      SetErrorCode("Projection driver failed");
+    GEOMImpl_IMirror aTI (aFunction);
+    aTI.SetPlane(theTarget->GetLastFunction());
+    aTI.SetOriginal(aLastFunction);
+
+    //Compute the Projection
+    try {
+      OCC_CATCH_SIGNALS;
+      if (!GetSolver()->ComputeFunction(aFunction)) {
+        SetErrorCode("Projection driver failed");
+        return NULL;
+      }
+    }
+    catch (Standard_Failure) {
+      Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+      SetErrorCode(aFail->GetMessageString());
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
-    return NULL;
-  }
 
   //Make a Python command
+  Handle(GEOM_Function) aFunction = aCopy->GetLastFunction();
   GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakeProjection("
                                << theSource << ", " << theTarget << ")";
 
@@ -1343,7 +1364,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShapeCopy
   if (anOriginal.IsNull()) return NULL; //There is no function which creates an object to be scaled
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   //Add a scale function
   Handle(GEOM_Function) aFunction =
@@ -1534,7 +1555,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionShapeCopy
   if (anOriginal.IsNull()) return NULL; //There is no function which creates an object to be set in position
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   //Add a position function
   Standard_Integer aType = POSITION_SHAPE_COPY;
@@ -1713,7 +1734,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::RotateCopy (Handle(GEOM_Objec
   if (aLastFunction.IsNull()) return NULL;  //There is no function which creates an object to be rotated
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   //Add a rotate function
   aFunction = aCopy->AddFunction(GEOMImpl_RotateDriver::GetID(), ROTATE_COPY);
@@ -2067,7 +2088,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::RotateThreePointsCopy (Handle
   if (aLastFunction.IsNull()) return NULL;  //There is no function which creates an object to be rotated
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   //Add a rotate function
   aFunction = aCopy->AddFunction(GEOMImpl_RotateDriver::GetID(), ROTATE_THREE_POINTS_COPY);
@@ -2124,7 +2145,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TransformLikeOtherCopy
   if (aSampleFunc.IsNull()) return NULL; // There is no function which creates a sample object
 
   // Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   // Add a transform function (depends on theSample function)
   Handle(GEOM_Function) aFunction =
@@ -2246,4 +2267,75 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TransformLikeOtherCopy
 
   SetErrorCode(OK);
   return aCopy;
+}
+
+//=============================================================================
+/*!
+ *  MakeProjectionOnCylinder
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ITransformOperations::MakeProjectionOnCylinder
+                             (const Handle(GEOM_Object) &theObject,
+                              const Standard_Real        theRadius,
+                              const Standard_Real        theStartAngle,
+                              const Standard_Real        theAngleLength,
+                              const Standard_Real        theAngleRotation)
+{
+  SetErrorCode(KO);
+
+  if (theObject.IsNull()) {
+    return NULL;
+  }
+
+  Handle(GEOM_Function) aLastFunction = theObject->GetLastFunction();
+
+  if (aLastFunction.IsNull()) {
+    //There is no function which creates an object to be projected
+    return NULL;
+  }
+
+  //Add a new Projection object
+  Handle(GEOM_Object) aResult =
+    GetEngine()->AddObject(GetDocID(), GEOM_PROJECTION);
+
+  //Add a Projection function
+  Handle(GEOM_Function) aFunction = aResult->AddFunction
+    (GEOMImpl_ProjectionDriver::GetID(), PROJECTION_ON_CYLINDER);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ProjectionDriver::GetID()) {
+    return aResult;
+  }
+
+  GEOMImpl_IProjOnCyl aProj (aFunction);
+
+  aProj.SetShape(aLastFunction);
+  aProj.SetRadius(theRadius);
+  aProj.SetStartAngle(theStartAngle);
+  aProj.SetAngleLength(theAngleLength);
+  aProj.SetAngleRotation(theAngleRotation);
+
+  //Compute the Projection
+  try {
+    OCC_CATCH_SIGNALS;
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Projection driver failed");
+      return aResult;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return aResult;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction)
+    << aResult << " = geompy.MakeProjectionOnCylinder("
+    << theObject << ", " << theRadius << ", " << theStartAngle
+    << ", " << theAngleLength << ", " << theAngleRotation << ")";
+
+  SetErrorCode(OK);
+
+  return aResult;
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -31,16 +31,11 @@
 
 #include <TNaming_CopyShape.hxx>
 
-#include <ShapeFix_ShapeTolerance.hxx>
-#include <ShapeFix_Shape.hxx>
-
 #include <BRep_Builder.hxx>
-#include <BRepAlgo.hxx>
 #include <BRepAlgoAPI_Common.hxx>
 #include <BRepAlgoAPI_Cut.hxx>
 #include <BRepAlgoAPI_Fuse.hxx>
 #include <BRepAlgoAPI_Section.hxx>
-#include <BRepCheck_Analyzer.hxx>
 #include <BOPAlgo_CheckerSI.hxx>
 #include <BOPDS_DS.hxx>
 
@@ -73,33 +68,23 @@ static TopoDS_Shape RemoveExtraEdges(const TopoDS_Shape &theShape)
 {
   TopoDS_Shape aResult;
 
-  if (theShape.IsNull() == Standard_False) {
+  if (!theShape.IsNull()) {
     BlockFix_BlockFixAPI aTool;
 
     aTool.OptimumNbFaces() = 0;
     aTool.SetShape(theShape);
     aTool.Perform();
-    aResult = aTool.Shape();
+    TopoDS_Shape aShape = aTool.Shape();
 
-    // Repair result
-    BRepCheck_Analyzer anAna (aResult, false);
-    Standard_Boolean isValid = anAna.IsValid();
-
-    if (!isValid) {
+    if (GEOMUtils::CheckShape(aShape)) {
+      aResult = aShape;
+    }
+    else {
       TopoDS_Shape aFixed;
       ShHealOper_ShapeProcess aHealer;
-
-      aHealer.Perform(aResult, aFixed);
-
-      if (aHealer.isDone()) {
+      aHealer.Perform(aShape, aFixed);
+      if (aHealer.isDone() && GEOMUtils::CheckShape(aFixed))
         aResult = aFixed;
-        anAna.Init(aResult, false);
-        isValid = anAna.IsValid();
-      }
-    }
-
-    if (!isValid) {
-      aResult.Nullify();
     }
   }
 
@@ -153,11 +138,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
 
       if (!aShape1.IsNull() && !aShape2.IsNull()) {
         // check arguments for Mantis issue 0021019
-        BRepCheck_Analyzer ana (aShape1, Standard_True);
-        if (!ana.IsValid())
-          StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
-        ana.Init(aShape2);
-        if (!ana.IsValid())
+        if (!GEOMUtils::CheckShape(aShape1, true) || !GEOMUtils::CheckShape(aShape2, true))
           StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
 
         if (isCheckSelfInte) {
@@ -211,10 +192,9 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
         aShape = aRefShape->GetValue();
 	
         if (!aShape.IsNull()) {
-          BRepCheck_Analyzer anAna (aShape, Standard_True);
-          if (!anAna.IsValid()) {
+          // check arguments for Mantis issue 0021019
+          if (!GEOMUtils::CheckShape(aShape, true))
             StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
-          }
 
           BOPAlgo_CheckerSI aCSI;  // checker of self-interferences
 
@@ -239,11 +219,9 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
           for (i = 2; i <= nbShapes; i++) {
 	    aRefShape = Handle(GEOM_Function)::DownCast(aShapes->Value(i));
 	    aShape2 = aRefShape->GetValue();
-	    anAna.Init(aShape2);
-	    
-	    if (!anAna.IsValid()) {
+            
+            if (!GEOMUtils::CheckShape(aShape2, true))
 	      StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
-	    }
 	    
             if (isCheckSelfInte) {
               BOPCol_ListOfShape aList2;
@@ -280,11 +258,8 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
 
       if (!aShape.IsNull()) {
         // check arguments for Mantis issue 0021019
-        BRepCheck_Analyzer anAna (aShape, Standard_True);
-
-        if (!anAna.IsValid()) {
+        if (!GEOMUtils::CheckShape(aShape, true))
           StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
-        }
 
 	BOPAlgo_CheckerSI aCSI;  // checker of self-interferences
 
@@ -315,11 +290,9 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
         for (i = 1; i <= nbShapes; i++) {
           aRefTool = Handle(GEOM_Function)::DownCast(aTools->Value(i));
           aTool = aRefTool->GetValue();
-          anAna.Init(aTool);
 
-          if (!anAna.IsValid()) {
+          if (!GEOMUtils::CheckShape(aTool, true))
             StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
-          }
 
           if (isCheckSelfInte) {
             BOPCol_ListOfShape aList2;
@@ -572,91 +545,8 @@ TopoDS_Shape GEOMImpl_BooleanDriver::performOperation
   }
 
   // 08.07.2008 skl for bug 19761 from Mantis
-  BRepCheck_Analyzer ana (aShape, Standard_True);
-  ana.Init(aShape);
-  if (!ana.IsValid()) {
-    ShapeFix_ShapeTolerance aSFT;
-    aSFT.LimitTolerance(aShape, Precision::Confusion(),
-                        Precision::Confusion(), TopAbs_SHAPE);
-    Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape(aShape);
-    aSfs->Perform();
-    aShape = aSfs->Shape();
-    ana.Init(aShape);
-    if (!ana.IsValid())
-      Standard_ConstructionError::Raise("Boolean operation aborted : non valid shape result");
-  }
-
-  // BEGIN: Mantis issue 0021060: always limit tolerance of BOP result
-  // 1. Get shape parameters for comparison
-  int nbTypes [TopAbs_SHAPE];
-  {
-    for (int iType = 0; iType < TopAbs_SHAPE; ++iType)
-      nbTypes[iType] = 0;
-    nbTypes[aShape.ShapeType()]++;
-
-    TopTools_MapOfShape aMapOfShape;
-    aMapOfShape.Add(aShape);
-    TopTools_ListOfShape aListOfShape;
-    aListOfShape.Append(aShape);
-
-    TopTools_ListIteratorOfListOfShape itL (aListOfShape);
-    for (; itL.More(); itL.Next()) {
-      TopoDS_Iterator it (itL.Value());
-      for (; it.More(); it.Next()) {
-        TopoDS_Shape s = it.Value();
-        if (aMapOfShape.Add(s)) {
-          aListOfShape.Append(s);
-          nbTypes[s.ShapeType()]++;
-        }
-      }
-    }
-  }
-
-  // 2. Limit tolerance
-  TopoDS_Shape aShapeCopy;
-  TColStd_IndexedDataMapOfTransientTransient aMapTShapes;
-  TNaming_CopyShape::CopyTool(aShape, aMapTShapes, aShapeCopy);
-  ShapeFix_ShapeTolerance aSFT;
-  aSFT.LimitTolerance(aShapeCopy, Precision::Confusion(), Precision::Confusion(), TopAbs_SHAPE);
-  Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape (aShapeCopy);
-  aSfs->Perform();
-  aShapeCopy = aSfs->Shape();
-
-  // 3. Check parameters
-  ana.Init(aShapeCopy);
-  if (ana.IsValid()) {
-    int iType, nbTypesCopy [TopAbs_SHAPE];
-
-    for (iType = 0; iType < TopAbs_SHAPE; ++iType)
-      nbTypesCopy[iType] = 0;
-    nbTypesCopy[aShapeCopy.ShapeType()]++;
-
-    TopTools_MapOfShape aMapOfShape;
-    aMapOfShape.Add(aShapeCopy);
-    TopTools_ListOfShape aListOfShape;
-    aListOfShape.Append(aShapeCopy);
-
-    TopTools_ListIteratorOfListOfShape itL (aListOfShape);
-    for (; itL.More(); itL.Next()) {
-      TopoDS_Iterator it (itL.Value());
-      for (; it.More(); it.Next()) {
-        TopoDS_Shape s = it.Value();
-        if (aMapOfShape.Add(s)) {
-          aListOfShape.Append(s);
-          nbTypesCopy[s.ShapeType()]++;
-        }
-      }
-    }
-
-    bool isEqual = true;
-    for (iType = 0; iType < TopAbs_SHAPE && isEqual; ++iType) {
-      if (nbTypes[iType] != nbTypesCopy[iType])
-        isEqual = false;
-    }
-    if (isEqual)
-      aShape = aShapeCopy;
-  }
-  // END: Mantis issue 0021060
+  if ( !GEOMUtils::CheckShape(aShape, true) && !GEOMUtils::FixShapeTolerance(aShape) )
+    Standard_ConstructionError::Raise("Boolean operation aborted : non valid shape result");
 
   return aShape;
 }

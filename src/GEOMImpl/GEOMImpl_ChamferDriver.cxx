@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -20,14 +20,12 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <Standard_Stream.hxx>
-
 #include <GEOMImpl_ChamferDriver.hxx>
 #include <GEOMImpl_IChamfer.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOMImpl_ILocalOperations.hxx>
 #include <GEOMImpl_Block6Explorer.hxx>
-
+#include <GEOMUtils.hxx>
 #include <GEOM_Function.hxx>
 
 #include <BRepLib.hxx>
@@ -35,22 +33,16 @@
 #include <BRepTools.hxx>
 #include <BRepFilletAPI_MakeChamfer.hxx>
 
-#include <ShapeFix_Shape.hxx>
-#include <ShapeFix_ShapeTolerance.hxx>
-
 #include <TopAbs.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Iterator.hxx>
-#include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 
-#include <Precision.hxx>
-#include <gp_Pnt.hxx>
 #include <StdFail_NotDone.hxx>
 
 //=======================================================================
@@ -62,7 +54,6 @@ const Standard_GUID& GEOMImpl_ChamferDriver::GetID()
   static Standard_GUID aChamferDriver("FF1BBB42-5D14-4df2-980B-3A668264EA16");
   return aChamferDriver;
 }
-
 
 //=======================================================================
 //function : GEOMImpl_ChamferDriver
@@ -264,17 +255,12 @@ Standard_Integer GEOMImpl_ChamferDriver::Execute(TFunction_Logbook& log) const
   if (!fill.IsDone()) {
     StdFail_NotDone::Raise("Chamfer can not be computed on the given shape with the given parameters");
   }
-  aShape = fill.Shape();
+  aShape = GEOMUtils::ReduceCompound( fill.Shape() );
 
   if (aShape.IsNull()) return 0;
 
   // reduce tolerances
-  ShapeFix_ShapeTolerance aSFT;
-  aSFT.LimitTolerance(aShape, Precision::Confusion(),
-                      Precision::Confusion(), TopAbs_SHAPE);
-  Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape(aShape);
-  aSfs->Perform();
-  aShape = aSfs->Shape();
+  GEOMUtils::FixShapeTolerance( aShape );
 
   // fix SameParameter flag
   BRepLib::SameParameter(aShape, 1.E-5, Standard_True);

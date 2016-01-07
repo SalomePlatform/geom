@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -42,6 +42,7 @@
 #include <SUIT_ViewWindow.h>
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
+#include "utilities.h"
 
 #include <TopoDS_Shape.hxx>
 #include <TopoDS.hxx>
@@ -55,6 +56,7 @@
 #include "EntityGUI_SketcherDlg.h"        // Sketcher
 #include "EntityGUI_3DSketcherDlg.h"      // Sketcher
 #include "EntityGUI_IsolineDlg.h"         // Isoline
+#include "EntityGUI_SurfFromFaceDlg.h"    // Surface From Face
 #include "EntityGUI_SubShapeDlg.h"        // Method SUBSHAPE
 #include "EntityGUI_FeatureDetectorDlg.h" // Feature Detection
 #include "EntityGUI_PictureImportDlg.h"   // Import Picture in viewer
@@ -105,6 +107,9 @@ bool EntityGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
     break;
   case GEOMOp::OpIsoline:    // ISOLINE
     aDlg = new EntityGUI_IsolineDlg( getGeometryGUI(), parent );
+    break;
+  case GEOMOp::OpSurfaceFromFace:    // SURFACE FROM FACE
+    aDlg = new EntityGUI_SurfFromFaceDlg( getGeometryGUI(), parent );
     break;
   case GEOMOp::OpExplode:    // EXPLODE
     aDlg = new EntityGUI_SubShapeDlg( getGeometryGUI(), parent );

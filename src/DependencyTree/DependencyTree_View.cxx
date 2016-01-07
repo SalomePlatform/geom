@@ -1,4 +1,4 @@
-// Copyright (C) 2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2014-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -352,6 +352,18 @@ void DependencyTree_View::onRebuildModel()
 }
 
 //=================================================================================
+// function : resizeEvent()
+// purpose  : reimplemented from QGraphicsView::resizeEvent()
+//=================================================================================
+void DependencyTree_View::resizeEvent(QResizeEvent *event)
+{
+  QPointF aCenter = mapToScene( event->oldSize().width()/2,
+                                event->oldSize().height()/2 );
+  QGraphicsView::resizeEvent( event );
+  centerOn( aCenter.x(),aCenter.y() );
+}
+
+//=================================================================================
 // function : onUpdateModel()
 // purpose  : slot for updating tree model for main objects in viewer
 //=================================================================================
@@ -477,7 +489,7 @@ void DependencyTree_View::parseTree()
       GEOMUtils::LevelInfo::const_iterator node;
       for( node = Levelup.begin(); node != Levelup.end(); node++ ) {
         DependencyTree_Object* object = myTreeMap[ node->first ];
-        addArrow( Main_object, object );
+        addArrow( object, Main_object );
       }
     }
     parseTreeWardArrow( i->second.first );
@@ -515,7 +527,7 @@ void DependencyTree_View::parseTreeWardArrow( const GEOMUtils::LevelsList& theWa
       for( int link = 0; link < Links.size(); link++ ) {
         DependencyTree_Object* LinkObject = myTreeMap[ Links[ link ] ];
         if( object && LinkObject )
-          addArrow( object, LinkObject );
+          addArrow( LinkObject, object );
       }
     }
   }
@@ -613,7 +625,7 @@ void DependencyTree_View::drawTree()
         for( node = Levelup.begin(); node != Levelup.end(); node++ ) {
           DependencyTree_Object* object = myTreeMap[ node->first ];
           DependencyTree_Arrow* arrow =
-            myArrows[ std::pair<DependencyTree_Object*,DependencyTree_Object*>( Main_object, object )];
+            myArrows[ std::pair<DependencyTree_Object*,DependencyTree_Object*>( object, Main_object )];
           if( arrow && !isItemAdded( arrow ) )
             addItem( arrow );
         }
@@ -670,7 +682,7 @@ void DependencyTree_View::drawWardArrows( const GEOMUtils::LevelsList& theWard )
       for( int link = 0; link < Links.size(); link++ ) {
         DependencyTree_Object* LinkObject = myTreeMap[ Links[ link ] ];
         if( isItemAdded( object ) && isItemAdded( LinkObject ) ) {
-          DependencyTree_Arrow* arrow = myArrows[ std::pair<DependencyTree_Object*,DependencyTree_Object*>( object, LinkObject ) ];
+          DependencyTree_Arrow* arrow = myArrows[ std::pair<DependencyTree_Object*,DependencyTree_Object*>( LinkObject, object ) ];
           if( arrow && !isItemAdded( arrow ) )
             addItem( arrow );
         }
@@ -689,7 +701,7 @@ void DependencyTree_View::updateView()
     return;
 
   drawTree();
-  fitAll();
+  fitWindow();
 }
 
 //=================================================================================
@@ -732,6 +744,23 @@ void DependencyTree_View::clearView( bool isClearModel )
     myMaxUpwardLevelsNumber = 0;
     myIsUpdate = true;
   }
+}
+
+//=================================================================================
+// function : fitWindow()
+// purpose  : scale the window considering a size of scene
+//=================================================================================
+void DependencyTree_View::fitWindow()
+{
+  int sizeFactor = 4;
+  if( objectsBoundingRect(true).width() > sizeFactor*size().width() ||
+      objectsBoundingRect(true).height() > sizeFactor*size().width() ) {
+    QRectF aRect = QRectF( -sizeFactor*size().width()/2, -sizeFactor*size().height()/2,
+                           sizeFactor*size().width(), sizeFactor*size().height() );
+    fitInView( aRect, Qt::KeepAspectRatio );
+  }
+  else
+    fitAll();
 }
 
 //=================================================================================

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -29,7 +29,13 @@
 
 #include <GEOMBase_Skeleton.h>
 
-class MeasureGUI_1Sel1TextView2ListBox;
+class QCheckBox;
+class QLabel;
+class QLineEdit;
+class QListWidget;
+class QPushButton;
+class QTextBrowser;
+class SalomeApp_DoubleSpinBox;
 
 //=================================================================================
 // class    : MeasureGUI_CheckCompoundOfBlocksDlg
@@ -47,7 +53,7 @@ public:
 protected:
   // redefined from GEOMBase_Helper and GEOMBase_Skeleton
   virtual GEOM::GEOM_IOperations_ptr  createOperation();
-  virtual bool                        isValid( QString& );
+  virtual bool                        isValid( QString &msg );
   virtual bool                        execute( ObjectList& );
   virtual void                        processObject();
 
@@ -61,6 +67,8 @@ private slots:
   
   void                                onErrorsListSelectionChanged();
   void                                onSubShapesListSelectionChanged();
+  void                                SetUseC1Tolerance();
+  void                                onDisplayPreview();
   
 private:
   void                                Init();
@@ -71,7 +79,14 @@ private:
 
 private:
   GEOM::GEOM_Object_var               myObj;
-  MeasureGUI_1Sel1TextView2ListBox*   myGrp;
+  QLineEdit                          *myObjectName;
+  QPushButton                        *mySelButton;
+  QCheckBox                          *myUseC1Check;
+  QLabel                             *myTolLbl;
+  SalomeApp_DoubleSpinBox            *mySpinTol;
+  QTextBrowser                       *myTextView;
+  QListWidget                        *myListBox1;
+  QListWidget                        *myListBox2;
 };
 
 #endif // MEASUREGUI_CHECKCOMPOUNDOFBLOCKSDLG_H

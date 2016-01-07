@@ -1,4 +1,4 @@
-// Copyright (C) 2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2014-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -35,9 +35,12 @@
 #include "GEOM_Operation.h"
 #include "GEOMBase.h"
 #include "GEOM_Displayer.h"
+#include "GEOM_GenericObjPtr.h"
 
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(VTKPlugin)
+
+typedef GEOM::GenericObjPtr<GEOM::IVTKOperations> VTKOpPtr;
 
 //=======================================================================
 // function : VTKPlugin_GUI()
@@ -102,8 +105,8 @@ bool VTKPlugin_GUI::exportVTK( SUIT_Desktop* parent )
 
   SALOMEDS::Study_var dsStudy = GeometryGUI::ClientStudyToStudy( study->studyDS() );
   GEOM::GEOM_IOperations_var op = GeometryGUI::GetGeomGen()->GetPluginOperations( dsStudy->StudyId(), "VTKPluginEngine" );
-  GEOM::IVTKOperations_var stlOp = GEOM::IVTKOperations::_narrow( op );
-  if ( CORBA::is_nil( stlOp ) ) return false;
+  VTKOpPtr vtkOp = GEOM::IVTKOperations::_narrow( op );
+  if ( vtkOp.isNull() ) return false;
 
   LightApp_SelectionMgr* sm = app->selectionMgr();
   if ( !sm ) return false;
@@ -132,16 +135,16 @@ bool VTKPlugin_GUI::exportVTK( SUIT_Desktop* parent )
     
     SUIT_OverrideCursor wc;
     
-    GEOM_Operation transaction( app, stlOp.in() );
+    GEOM_Operation transaction( app, vtkOp.get() );
     
     try
     {
       app->putInfo( tr( "GEOM_PRP_EXPORT" ).arg( fileName ) );
       transaction.start();
       
-      stlOp->ExportVTK( obj, fileName.toUtf8().constData(), deflection  );
+      vtkOp->ExportVTK( obj, fileName.toUtf8().constData(), deflection  );
       
-      if ( stlOp->IsDone() )
+      if ( vtkOp->IsDone() )
       {
 	transaction.commit();
       }
@@ -150,7 +153,7 @@ bool VTKPlugin_GUI::exportVTK( SUIT_Desktop* parent )
 	transaction.abort();
 	SUIT_MessageBox::critical( parent,
 				   tr( "GEOM_ERROR" ),
-				   tr( "GEOM_PRP_ABORT" ) + "\n" + tr( stlOp->GetErrorCode() ) );
+				   tr( "GEOM_PRP_ABORT" ) + "\n" + tr( vtkOp->GetErrorCode() ) );
 	return false;
       }
     }

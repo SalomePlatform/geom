@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -35,9 +35,7 @@ GEOMAlgo_KS_PLANE,
 GEOMAlgo_KS_CIRCLE,
 GEOMAlgo_KS_LINE,
 GEOMAlgo_KS_DEGENERATED,
-//modified by NIZNHY-PKV Tue Jul 03 10:28:09 2012f
 GEOMAlgo_KS_BSPLINE
-//modified by NIZNHY-PKV Tue Jul 03 10:28:11 2012t
 };
 
 #ifndef _Standard_PrimitiveTypes_HeaderFile

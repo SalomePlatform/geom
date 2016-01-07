@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -219,7 +219,6 @@ bool BlocksGUI_TrsfDlg::ClickOnApply()
 //=================================================================================
 void BlocksGUI_TrsfDlg::SelectionIntoArgument()
 {
-  erasePreview();
   myEditCurrentArgument->setText("");
 
   // Get index of current selection focus
@@ -273,7 +272,6 @@ void BlocksGUI_TrsfDlg::SelectionIntoArgument()
     }
     myEditCurrentArgument->setText(aName);
     myFaces[aCurrFocus] = anIndex;
-    processPreview();
   }
 
   switch (aCurrFocus) {
@@ -316,6 +314,8 @@ void BlocksGUI_TrsfDlg::SelectionIntoArgument()
   default:
     break;
   }
+
+  processPreview();
 }
 
 //=================================================================================
@@ -379,6 +379,8 @@ void BlocksGUI_TrsfDlg::SetEditCurrentArgument()
   aSender->setDown(true);
 
   activateSelection();
+
+  processPreview();
 }
 
 //=================================================================================
@@ -617,5 +619,17 @@ bool BlocksGUI_TrsfDlg::execute (ObjectList& objects)
   if (!anObj->_is_nil())
     objects.push_back(anObj._retn());
 
+  return res;
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BlocksGUI_TrsfDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::GeomObjPtr aGeomObjPtr(myShape);
+  res << aGeomObjPtr;
   return res;
 }

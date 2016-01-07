@@ -159,6 +159,14 @@
             <source>ICON_DLG_BUILD_FACE</source>
             <translation>build_face.png</translation>
         </message>
+        <message>
+            <source>ICON_DLG_BUILD_FACE_SURFACE</source>
+            <translation>build_face_surface.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_BUILD_FACE_CONSTRAINTS</source>
+            <translation>build_face_constraints.png</translation>
+        </message>
 	<message>
             <source>ICON_DLG_FACE_HW</source>
             <translation>face_hw.png</translation>
@@ -170,6 +178,10 @@
         <message>
             <source>ICON_DLG_BUILD_SHELL</source>
             <translation>build_shell.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_SOLID_FROM_FACES</source>
+            <translation>solid_from_faces.png</translation>
         </message>
         <message>
             <source>ICON_DLG_BUILD_SOLID</source>
@@ -228,6 +240,10 @@
             <translation>union_faces.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_INSPECT_OBJECT</source>
+            <translation>inspect_object.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_CHECKSHAPE</source>
             <translation>check.png</translation>
         </message>
@@ -242,6 +258,10 @@
         <message>
             <source>ICON_DLG_CHECK_SELF_INTERSECTIONS</source>
             <translation>check_self_intersections.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_FAST_CHECK_INTERSECTIONS</source>
+            <translation>fast_intersect.png</translation>
         </message>
         <message>
             <source>ICON_DLG_CIRCLE_PNTS</source>
@@ -286,6 +306,10 @@
         <message>
             <source>ICON_DLG_DIVIDE_EDGE</source>
             <translation>pointonedge.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_DIVIDE_EDGE_BY_PNT</source>
+            <translation>pointonedgebypoint.png</translation>
         </message>
         <message>
             <source>ICON_DLG_ELLIPSE_PV</source>
@@ -420,8 +444,28 @@
             <translation>offset.png</translation>
         </message>
         <message>
-            <source>ICON_DLG_PROJECTION</source>
+            <source>ICON_DLG_PROJECTION_ON_FACE</source>
             <translation>projection.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_PROJECTION_ON_WIRE</source>
+            <translation>projection_on_wire.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_PROJECTION_ON_EDGE</source>
+            <translation>projection_on_edge.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_EXTEND_EDGE</source>
+            <translation>edgeextension.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_EXTEND_FACE</source>
+            <translation>faceextension.png</translation>
+        </message>
+        <message>
+            <source>ICO_DLG_PROJ_ON_CYL</source>
+            <translation>proj_on_cyl.png</translation>
         </message>
         <message>
             <source>ICON_DLG_PARTITION</source>
@@ -514,6 +558,14 @@
 	<message>
             <source>ICON_DLG_PRISM_DXDYDZ</source>
             <translation>prism3.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_THICKNESS</source>
+            <translation>thickness.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_THICKNESS_HOLLOWED</source>
+            <translation>thickness2.png</translation>
         </message>
         <message>
             <source>ICON_DLG_PROPAGATE</source>
@@ -804,6 +856,10 @@
             <translation>marker_13.png</translation>
         </message>
         <message>
+            <source>ICON_SURFACE_FROM_FACE</source>
+            <translation>facetosurface.png</translation>
+        </message>
+        <message>
             <source>ICO_ARC</source>
             <translation>arc.png</translation>
         </message>
@@ -846,6 +902,10 @@
         <message>
             <source>ICO_CHECK_SELF_INTERSECTIONS</source>
             <translation>check_self_intersections.png</translation>
+        </message>
+        <message>
+            <source>ICO_FAST_CHECK_INTERSECTIONS</source>
+            <translation>fast_intersect.png</translation>
         </message>
         <message>
             <source>ICO_CHECK_FREE_BNDS</source>
@@ -962,6 +1022,10 @@
         <message>
             <source>ICO_EXTRUSION</source>
             <translation>prism.png</translation>
+        </message>
+        <message>
+            <source>ICO_THICKNESS</source>
+            <translation>thickness.png</translation>
         </message>
         <message>
             <source>ICO_FACE</source>
@@ -1090,6 +1154,14 @@
         <message>
             <source>ICO_PROJECTION</source>
             <translation>projection.png</translation>
+        </message>
+        <message>
+            <source>ICO_EXTENSION</source>
+            <translation>edgeextension.png</translation>
+        </message>
+        <message>
+            <source>ICO_PROJ_ON_CYL</source>
+            <translation>proj_on_cyl.png</translation>
         </message>
         <message>
             <source>ICO_ORIGIN_AND_VECTORS</source>
@@ -1236,8 +1308,16 @@
             <translation>isoline_v.png</translation>
         </message>
         <message>
+            <source>ICO_SURFACE_FROM_FACE</source>
+            <translation>facetosurface.png</translation>
+        </message>
+        <message>
             <source>ICO_SOLID</source>
             <translation>build_solid.png</translation>
+        </message>
+        <message>
+            <source>ICO_SOLID_FROM_FACES</source>
+            <translation>solid_from_face.png</translation>
         </message>
         <message>
             <source>ICO_SOLID_SEL_ONLY</source>
@@ -1304,6 +1384,14 @@
             <translation>shared_shapes.png</translation>
         </message>
         <message>
+            <source>ICO_TRANSFER_DATA</source>
+            <translation>transfer_data.png</translation>
+        </message>
+        <message>
+            <source>ICO_IMPORT_SHAPE</source>
+            <translation>import.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_POINT_FACE</source>
             <translation>pointonface.png</translation>
         </message>
@@ -1314,6 +1402,10 @@
         <message>
             <source>ICON_DLG_SHARED_SHAPES</source>
             <translation>shared_shapes.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_TRANSFER_DATA</source>
+            <translation>transfer_data.png</translation>
         </message>
         <message>
             <source>ICON_DLG_SCALE_ALONG_AXES</source>

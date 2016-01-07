@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -47,7 +47,9 @@ protected:
   // redefined from GEOMBase_Helper
   virtual GEOM::GEOM_IOperations_ptr  createOperation();
   virtual bool                        isValid( QString& );
+  virtual void                        addSubshapesToStudy();
   virtual bool                        execute( ObjectList& );
+  virtual QList<GEOM::GeomObjPtr>     getSourceObjects();
 
 private slots:
   void                                ClickOnOk();
@@ -61,10 +63,11 @@ private:
   void                                Init();
   void                                enterEvent( QEvent* );
   void                                processObject();
+  void                                activateSelection();
   bool                                getParameters( double&, double&, double& );
   
 private:
-  GEOM::GEOM_Object_var               myObj;
+  GEOM::GeomObjPtr                    myObj;
   MeasureGUI_1Sel3LineEdit*           myGrp;
 };
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #  -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2012-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -117,16 +117,22 @@ if __name__ == "__main__":
     if len( args ) < 1: sys.exit("Plugin name is not specified")
 
     f = open(options.output, "w")
-    
+
+    if len(args) > 1:
+        plugins_names = " ".join(args) + " plugins"
+    elif len(args) == 1:
+        plugins_names = args[0] + " plugin"
+    else:
+        plugins_names = ""
     output = []
     if options.dummygeomhelp:
         output.append( "## @package geomBuilder" )
-        output.append( "#  Documentation of the methods dynamically added by the " + plugin_name + " Geometry plug-in to the geomBuilder class." )
+        output.append( "#  Documentation of the methods dynamically added by the " + plugins_names + " to the @b %geomBuilder class." )
         # Add dummy Geometry help
         # This is supposed to be done when generating documentation for Geometry module plug-ins
         output.append( "#  @note The documentation below does not provide complete description of class @b %geomBuilder" )
         output.append( "#  from @b geomBuilder package. This documentation provides only information about" )
-        output.append( "#  the methods dynamically added to the %geomBuilder class by the " + plugin_name + " plugin" )
+        output.append( "#  the methods dynamically added to the %geomBuilder class by the " + plugins_names + "." )
         output.append( "#  For more details on the %geomBuilder class, please refer to the SALOME %Geometry module" )
         output.append( "#  documentation." )
         pass

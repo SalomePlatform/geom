@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -20,22 +20,14 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <Standard_Stream.hxx>
-
 #include <GEOMImpl_TranslateDriver.hxx>
 #include <GEOMImpl_ITranslate.hxx>
-#include <GEOMImpl_ITransformOperations.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
 #include <GEOMUtils.hxx>
 
-#include <ShapeFix_Shape.hxx>
-#include <ShapeFix_ShapeTolerance.hxx>
-
 #include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
-#include <BRepCheck_Analyzer.hxx>
-#include <BRepBuilderAPI_Transform.hxx>
 
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
@@ -43,8 +35,6 @@
 #include <TopoDS_Compound.hxx>
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
-#include <TopoDS_Vertex.hxx>
-#include <TopoDS_Edge.hxx>
 
 #include <gp_Trsf.hxx>
 #include <gp_Pnt.hxx>
@@ -197,7 +187,6 @@ Standard_Integer GEOMImpl_TranslateDriver::Execute(TFunction_Logbook& log) const
       B.Add(aCompound, anOriginal.Located(aLocRes));
     }
     aShape = aCompound;
-    //aShape = GEOMImpl_ITransformOperations::TranslateShape1D(anOriginal, &TI);
   }
   else if (aType == TRANSLATE_2D) {
     Standard_Integer nbtimes1 = TI.GetNbIter1(), nbtimes2 = TI.GetNbIter2();
@@ -242,25 +231,13 @@ Standard_Integer GEOMImpl_TranslateDriver::Execute(TFunction_Logbook& log) const
       }
     }
     aShape = aCompound;
-    //aShape = GEOMImpl_ITransformOperations::TranslateShape2D(anOriginal, &TI);
   }
   else return 0;
 
   if (aShape.IsNull()) return 0;
 
-  BRepCheck_Analyzer ana (aShape, Standard_True);
-  if (!ana.IsValid()) {
-    ShapeFix_ShapeTolerance aSFT;
-    aSFT.LimitTolerance(aShape,Precision::Confusion(),Precision::Confusion());
-    Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape(aShape);
-    aSfs->SetPrecision(Precision::Confusion());
-    aSfs->Perform();
-    aShape = aSfs->Shape();
-
-    ana.Init(aShape, Standard_False);
-    if (!ana.IsValid())
-      Standard_ConstructionError::Raise("Scaling aborted : algorithm has produced an invalid shape result");
-  }
+  if ( !GEOMUtils::CheckShape(aShape, true) && !GEOMUtils::FixShapeTolerance(aShape) )
+    Standard_ConstructionError::Raise("Scaling aborted : algorithm has produced an invalid shape result");
 
   aFunction->SetValue(aShape);
 

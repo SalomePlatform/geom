@@ -7,7 +7,7 @@
 \n This operation glues edges that are coincident with respect to the
 given tolerance value.
 
-\n <b>Arguments:</b> Name + Compound of shapes + Tolerance value.
+\n <b>Arguments:</b> Name + Shapes + Tolerance value.
 \n <b>Advanced option:</b>
    \ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 \n The \b Result will be a \b GEOM_Object.
@@ -16,10 +16,10 @@ given tolerance value.
 \image html glue4.png
 
 \n <b>TUI Command:</b>
-\n <em>geompy.MakeGlueEdges(theShape,theTolerance)</em>,
-\n where \em theShape is a compound of shapes to be glued, and \em 
- theTolerance is a maximum distance between two faces/edges, which can
- be considered as coincident. 
+<p><em>geompy.MakeGlueEdges( theShapes, theTolerance )</em>,
+\n where \em theShapes is a list or compound of shapes to be
+glued, and \em theTolerance is a maximum distance between two
+edges, which can be considered as coincident.
 
 \n It is also possible to manually select the edges that will be 
 glued - select the shape, specify the tolerance and press \b Detect button.
@@ -36,23 +36,24 @@ possible to select the edges for gluing in the 3D viewer.
 The selected edges will be marked in white.
 
 \n <b>TUI Command:</b>
-\n <em>geompy.GetGlueEdges(theShape,theTolerance)</em>,
-\n where \em theShape is a compound of shapes to be glued, \em
+<p><em>geompy.GetGlueEdges( theShapes, theTolerance )</em>,
+\n where \em theShape is either a list or compound of shapes to be glued, \em
  theTolerance is a maximum distance between two edges, which can
  be considered as coincident. The \b Result will be a list of \b
- GEOM_Objects, containing one sub-shape per each detected set of
- coincident sub-shapes.
+ GEOM_Objects (edges), containing one sub-shape per each detected set of
+ coincident sub-shapes. For example, if there are two coincident edges
+in the selected shapes, the result list contains one of the two coincident edges.
 
-\n <em>geompy.MakeGlueEdgesByList(theShape,theTolerance,theEdges)</em>,
-\n where \em theShape is a compound of shapes to be glued, \em
- theTolerance is a maximum distance between two edges, which can
+<em>geompy.MakeGlueEdgesByList( theShapes, theTolerance, theEdges )</em>,
+\n where \em theShape is a list or compound of shapes to be glued, 
+\em theTolerance is a maximum distance between two edges, which can
  be considered as coincident, \em theEdges is a list of
- sub-shapes to be glued. 
+ edges to be glued. 
 
 \n <b>Example:</b>
 
 \image html glue8.png
-<center><em>Box with an edge that can be glued</em></center>
+<center><em>Two boxes with an edge that can be glued</em></center>
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 <b>Repairing Operations</b> \ref tui_glue_edges "Glue Edges".

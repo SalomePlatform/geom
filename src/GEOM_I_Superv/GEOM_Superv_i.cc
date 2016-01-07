@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -722,7 +722,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointOnCurve (GEOM::GEOM_Object_ptr the
   beginService( " GEOM_Superv_i::MakePointOnCurve" );
   MESSAGE("GEOM_Superv_i::MakePointOnCurve");
   getBasicOp();
-  GEOM::GEOM_Object_ptr anObj = myBasicOp->MakePointOnCurve(theRefCurve, theParameter);
+  GEOM::GEOM_Object_ptr anObj = myBasicOp->MakePointOnCurve(theRefCurve, theParameter, false);
   endService( " GEOM_Superv_i::MakePointOnCurve" );
   return anObj;
 }
@@ -1403,9 +1403,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipe (GEOM::GEOM_Object_ptr theBase,
   beginService( " GEOM_Superv_i::MakePipe" );
   MESSAGE("GEOM_Superv_i::MakePipe");
   get3DPrimOp();
-  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakePipe(theBase, thePath);
+  GEOM::ListOfGO_var aList = my3DPrimOp->MakePipe(theBase, thePath, false);
   endService( " GEOM_Superv_i::MakePipe" );
-  return anObj;
+  return aList[0];
 }
 
 //=============================================================================
@@ -1453,8 +1453,11 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilling (GEOM::GEOM_Object_ptr theShape
   beginService( " GEOM_Superv_i::MakeFilling" );
   MESSAGE("GEOM_Superv_i::MakeFilling");
   get3DPrimOp();
+  GEOM::ListOfGO_var objList = new GEOM::ListOfGO;
+  objList->length( 1 );
+  objList[0] = theShape;
   GEOM::GEOM_Object_ptr anObj =
-    my3DPrimOp->MakeFilling(theShape, theMinDeg, theMaxDeg, theTol2D, theTol3D,
+    my3DPrimOp->MakeFilling(objList, theMinDeg, theMaxDeg, theTol2D, theTol3D,
                             theNbIter, theMethod, theApprox);
   endService( " GEOM_Superv_i::MakeFilling" );
   return anObj;
@@ -1509,9 +1512,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeWithDifferentSections
   beginService( " GEOM_Superv_i::MakePipeWithDifferentSections" );
   MESSAGE("GEOM_Superv_i::MakePipeWithDifferentSections");
   get3DPrimOp();
-  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakePipeWithDifferentSections(theBases,theLocations, thePath,theWithContact,theWithCorrections);
+  GEOM::ListOfGO_var aList = my3DPrimOp->MakePipeWithDifferentSections(theBases,theLocations, thePath,theWithContact,theWithCorrections, false, false);
   endService( " GEOM_Superv_i::MakePipeWithDifferentSections" );
-  return anObj;
+  return aList[0];
 }
 
 
@@ -1529,12 +1532,13 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeWithShellSections
   beginService( " GEOM_Superv_i::MakePipeWithShellSections" );
   MESSAGE("GEOM_Superv_i::MakePipeWithShellSections");
   get3DPrimOp();
-  GEOM::GEOM_Object_ptr anObj =
+  GEOM::ListOfGO_var aList =
     my3DPrimOp->MakePipeWithShellSections(theBases, theSubBases,
                                           theLocations, thePath,
-                                          theWithContact, theWithCorrections);
+                                          theWithContact, theWithCorrections,
+                                          false);
   endService( " GEOM_Superv_i::MakePipeWithShellSections" );
-  return anObj;
+  return aList[0];
 }
 
 
@@ -1548,10 +1552,10 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeShellsWithoutPath
   beginService( " GEOM_Superv_i::MakePipeShellsWithoutPath" );
   MESSAGE("GEOM_Superv_i::MakePipeShellsWithoutPath");
   get3DPrimOp();
-  GEOM::GEOM_Object_ptr anObj =
-    my3DPrimOp->MakePipeShellsWithoutPath(theBases,theLocations);
+  GEOM::ListOfGO_var aList =
+    my3DPrimOp->MakePipeShellsWithoutPath(theBases,theLocations, false);
   endService( " GEOM_Superv_i::MakePipeShellsWithoutPath" );
-  return anObj;
+  return aList[0];
 }
 
 
@@ -1566,10 +1570,10 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeBiNormalAlongVector
   beginService( " GEOM_Superv_i::MakePipeBiNormalAlongVector" );
   MESSAGE("GEOM_Superv_i::MakePipeBiNormalAlongVector");
   get3DPrimOp();
-  GEOM::GEOM_Object_ptr anObj =
-    my3DPrimOp->MakePipeBiNormalAlongVector(theBase, thePath, theVec);
+  GEOM::ListOfGO_var aList =
+    my3DPrimOp->MakePipeBiNormalAlongVector(theBase, thePath, theVec, false);
   endService( " GEOM_Superv_i::MakePipeBiNormalAlongVector" );
-  return anObj;
+  return aList[0];
 }
 
 
@@ -2272,6 +2276,24 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFaceWires (GEOM::GEOM_List_ptr theWires
 }
 
 //=============================================================================
+//  MakeFaceWithConstraints:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFaceWithConstraints (GEOM::GEOM_List_ptr theConstraints)
+{
+  beginService( " GEOM_Superv_i::MakeFaceWithConstraints" );
+  MESSAGE("GEOM_Superv_i::MakeFaceWithConstraints");
+  if (GEOM_List_i<GEOM::ListOfGO>* aConstraints =
+      dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theConstraints, myPOA).in())) {
+    getShapesOp();
+    GEOM::GEOM_Object_ptr anObj = myShapesOp->MakeFaceWithConstraints(aConstraints->GetList());
+    endService( " GEOM_Superv_i::MakeFaceWithConstraints" );
+    return anObj;
+  }
+  endService( " GEOM_Superv_i::MakeFaceWithConstraints" );
+  return NULL;
+}
+
+//=============================================================================
 //  MakeShell:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeShell (GEOM::GEOM_List_ptr theFacesAndShells)
@@ -2339,6 +2361,25 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCompound (GEOM::GEOM_List_ptr theShapes
 }
 
 //=============================================================================
+//  MakeSolidFromConnectedFaces:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSolidFromConnectedFaces (GEOM::GEOM_List_ptr theFacesOrShells,
+                                                                  CORBA::Boolean isIntersect)
+{
+  beginService( " GEOM_Superv_i::MakeSolidFromConnectedFaces" );
+  MESSAGE("GEOM_Superv_i::MakeSolidFromConnectedFaces");
+  if (GEOM_List_i<GEOM::ListOfGO>* aListImpl =
+      dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theFacesOrShells, myPOA).in())) {
+    getShapesOp();
+    GEOM::GEOM_Object_ptr anObj = myShapesOp->MakeSolidFromConnectedFaces(aListImpl->GetList(), isIntersect);
+    endService( " GEOM_Superv_i::MakeSolidFromConnectedFaces" );
+    return anObj;
+  }
+  endService( " GEOM_Superv_i::MakeSolidFromConnectedFaces" );
+  return NULL;
+}
+
+//=============================================================================
 //  MakeGlueFaces:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeGlueFaces (GEOM::GEOM_Object_ptr theShape,
@@ -2348,8 +2389,11 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeGlueFaces (GEOM::GEOM_Object_ptr theSha
   beginService( " GEOM_Superv_i::MakeGlueFaces" );
   MESSAGE("GEOM_Superv_i::MakeGlueFaces");
   getShapesOp();
+  GEOM::ListOfGO_var objList = new GEOM::ListOfGO;
+  objList->length( 1 );
+  objList[0] = theShape;
   GEOM::GEOM_Object_ptr anObj =
-    myShapesOp->MakeGlueFaces(theShape, theTolerance, doKeepNonSolids);
+    myShapesOp->MakeGlueFaces(objList, theTolerance, doKeepNonSolids);
   endService( " GEOM_Superv_i::MakeGlueFaces" );
   return anObj;
 }
@@ -2363,7 +2407,10 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::GetGlueFaces (GEOM::GEOM_Object_ptr theShape,
   beginService( " GEOM_Superv_i::GetGlueFaces" );
   MESSAGE("GEOM_Superv_i::GetGlueFaces");
   getShapesOp();
-  GEOM::ListOfGO* aList = myShapesOp->GetGlueFaces(theShape, theTolerance);
+  GEOM::ListOfGO_var objList = new GEOM::ListOfGO;
+  objList->length( 1 );
+  objList[0] = theShape;
+  GEOM::ListOfGO* aList = myShapesOp->GetGlueFaces(objList, theTolerance);
   GEOM_List_i<GEOM::ListOfGO>* aListPtr = new GEOM_List_i<GEOM::ListOfGO>(*(aList));
   MESSAGE(" List of "<<aListPtr->GetList().length()<<" element(s)");
   endService( " GEOM_Superv_i::GetGlueFaces" );
@@ -2382,8 +2429,11 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeGlueFacesByList (GEOM::GEOM_Object_ptr 
   beginService( " GEOM_Superv_i::MakeGlueFacesByList" );
   MESSAGE("GEOM_Superv_i::MakeGlueFacesByList");
   getShapesOp();
+  GEOM::ListOfGO_var objList = new GEOM::ListOfGO;
+  objList->length( 1 );
+  objList[0] = theShape;
   GEOM::GEOM_Object_ptr anObj =
-    myShapesOp->MakeGlueFacesByList(theShape, theTolerance, theFaces,
+    myShapesOp->MakeGlueFacesByList(objList, theTolerance, theFaces,
                                     doKeepNonSolids, doGlueAllEdges);
   endService( " GEOM_Superv_i::MakeGlueFacesByList" );
   return anObj;
@@ -2713,7 +2763,7 @@ CORBA::Boolean GEOM_Superv_i::CheckCompoundOfBlocks
   beginService( " GEOM_Superv_i::CheckCompoundOfBlocks" );
   MESSAGE("GEOM_Superv_i::CheckCompoundOfBlocks");
   getBlocksOp();
-  CORBA::Boolean aRes = myBlocksOp->CheckCompoundOfBlocks(theCompound, theErrors);
+  CORBA::Boolean aRes = myBlocksOp->CheckCompoundOfBlocks(theCompound, -1., theErrors);
   endService( " GEOM_Superv_i::CheckCompoundOfBlocks" );
   return aRes;
 }
@@ -3513,7 +3563,10 @@ void GEOM_Superv_i::ExportSTEP( GEOM::GEOM_Object_ptr theObject,
   beginService( " GEOM_Superv_i::ExportSTEP" );
   MESSAGE("GEOM_Superv_i::ExportSTEP");
   getSTEPPluginOp();
-  mySTEPOp->ExportSTEP( theObject, theFileName );
+
+  const GEOM::length_unit aUnit = GEOM::LU_METER;
+
+  mySTEPOp->ExportSTEP( theObject, theFileName, aUnit );
   endService( " GEOM_Superv_i::ExportSTEP" );
 }
 

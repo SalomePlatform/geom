@@ -1,9 +1,9 @@
-// Copyright (C) 2013  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2013-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -29,7 +29,9 @@
 #include <gp_Pnt.hxx>
 #include <Geom_Curve.hxx>
 #include <TopoDS_Shape.hxx>
+#include <TopoDS_Wire.hxx>
 #include <TColgp_HArray1OfPnt.hxx>
+#include <Geom_BSplineCurve.hxx>
 
 #include <list>
 #include <vector> // TODO: remove
@@ -131,6 +133,28 @@ public:
                                                  const int theX, const int theY,
                                                  gp_Pnt& thePoint, gp_Pnt& thePoint1,
                                                  gp_Pnt& thePoint2 );
+
+  /**
+   * The algorithm builds the cubic B-spline passing through the points that the
+   * tangent vector in each given point P is calculated by the following way:
+   * if point P is preceded by a point A and is followed by a point B then
+   * the tangent vector is equal to (P - A) / |P - A| + (B - P) / |B - P|;
+   * if point P is preceded by a point A but is not followed by any point then
+   * the tangent vector is equal to P - A;
+   * if point P is followed by a point B but is not preceded by any point then
+   * the tangent vector is equal to B - P.
+   */
+  CURVECREATOR_EXPORT static bool constructBSpline( const Handle(TColgp_HArray1OfPnt)& thePoints,
+                                                    const Standard_Boolean theIsClosed,
+                                                    Handle(Geom_BSplineCurve)& theBSpline );
+
+  /**
+   * Constructs the wire corresponding to the section.
+   */
+  CURVECREATOR_EXPORT static TopoDS_Wire ConstructWire(
+    Handle(TColgp_HArray1OfPnt) thePoints,
+    const bool theIsPolyline,
+    const bool theIsClosed);
 
 protected:
   /*

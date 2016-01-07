@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -55,7 +55,6 @@
 #include <gce_MakePln.hxx>
 #include <Precision.hxx>
 #include <AIS.hxx>
-#include <AIS_Drawer.hxx>
 #include <Prs3d_LineAspect.hxx> 
 #include <IntTools_EdgeEdge.hxx>
 #include <IntTools_SequenceOfCommonPrts.hxx>
@@ -136,7 +135,10 @@ void MeasureGUI_AngleDlg::Init()
   // init variables
   myGrp->LineEdit1->setText("");
   myGrp->LineEdit2->setText("");
-  myObj = myObj2 = GEOM::GEOM_Object::_nil();
+  myGrp->LineEdit1->setEnabled(true);
+  myGrp->LineEdit2->setEnabled(false);
+  myObj.nullify();
+  myObj2.nullify();
 
   mySelBtn   = myGrp->PushButton1;
   mySelEdit  = myGrp->LineEdit1;
@@ -149,7 +151,7 @@ void MeasureGUI_AngleDlg::Init()
   connect(mySelEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(mySelBtn2,  SIGNAL(clicked()),       this, SLOT(SetEditCurrentArgument()));
 
-  globalSelection(GEOM_LINE);
+  activateSelection();  
   MeasureGUI_Skeleton::Init();
 }
 
@@ -159,15 +161,7 @@ void MeasureGUI_AngleDlg::Init()
 //=================================================================================
 void MeasureGUI_AngleDlg::SelectionIntoArgument()
 {
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
-
-  GEOM::GEOM_Object_var aSelectedObject = GEOM::GEOM_Object::_nil();
-
-  if (aSelList.Extent() > 0) {
-    aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-  }
+  GEOM::GeomObjPtr aSelectedObject = getSelected( TopAbs_EDGE );
 
   // clear selection
   disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
@@ -177,12 +171,12 @@ void MeasureGUI_AngleDlg::SelectionIntoArgument()
 
   if (myEditCurrentArgument == mySelEdit) {
     myObj = aSelectedObject;
-    if (!myObj->_is_nil() && myObj2->_is_nil())
+    if (myObj && !myObj2)
       myGrp->PushButton2->click();
   }
   else {
     myObj2 = aSelectedObject;
-    if (!myObj2->_is_nil() && myObj->_is_nil())
+    if (myObj2 && !myObj)
       myGrp->PushButton1->click();
   }
 
@@ -195,8 +189,8 @@ void MeasureGUI_AngleDlg::SelectionIntoArgument()
 //=================================================================================
 void MeasureGUI_AngleDlg::processObject()
 {
-  myGrp->LineEdit1->setText(!myObj->_is_nil()  ? GEOMBase::GetName(myObj ) : "");
-  myGrp->LineEdit2->setText(!myObj2->_is_nil() ? GEOMBase::GetName(myObj2) : "");
+  myGrp->LineEdit1->setText(myObj  ? GEOMBase::GetName(myObj.get()) : "");
+  myGrp->LineEdit2->setText(myObj2 ? GEOMBase::GetName(myObj2.get()) : "");
 
   double anAngle = 0.;
   if (getParameters(anAngle)) {
@@ -220,7 +214,7 @@ bool MeasureGUI_AngleDlg::getParameters (double& theAngle)
   if (isValid(msg)) {
     GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
     try {
-      theAngle = anOper->GetAngle(myObj, myObj2);
+      theAngle = anOper->GetAngle(myObj.get(), myObj2.get());
     }
     catch(const SALOME::SALOME_Exception& e) {
       SalomeApp_Tools::QtCatchCorbaException(e);
@@ -262,7 +256,7 @@ void MeasureGUI_AngleDlg::SetEditCurrentArgument()
   }
 
   disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
-  globalSelection(GEOM_LINE);
+  activateSelection();
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
 
@@ -304,10 +298,11 @@ void MeasureGUI_AngleDlg::LineEditReturnPressed()
 SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
 {
   double anAngle = 0.;
+  myGrp->LineEdit3->setText("");
 
   SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
 
-  if (myObj->_is_nil() || myObj2->_is_nil() || !getParameters(anAngle) ||
+  if (!myObj || !myObj2 || !getParameters(anAngle) ||
        vw->getViewManager()->getType() != OCCViewer_Viewer::Type())
     return 0;
 
@@ -315,8 +310,8 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
     try {
       OCC_CATCH_SIGNALS;
       TopoDS_Shape S1, S2;
-      if (GEOMBase::GetShape(myObj , S1, TopAbs_EDGE) &&
-           GEOMBase::GetShape(myObj2, S2, TopAbs_EDGE)) {
+      if (GEOMBase::GetShape(myObj.get() , S1, TopAbs_EDGE) &&
+        GEOMBase::GetShape(myObj2.get(), S2, TopAbs_EDGE)) {
         TopoDS_Edge anEdge1 = TopoDS::Edge(S1);
         TopoDS_Edge anEdge2 = TopoDS::Edge(S2);
 
@@ -399,5 +394,15 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
 //=================================================================================
 bool MeasureGUI_AngleDlg::isValid (QString& msg)
 {
-  return MeasureGUI_Skeleton::isValid(msg) && !myObj2->_is_nil();
+  return MeasureGUI_Skeleton::isValid(msg) && myObj2;
+}
+
+//=================================================================================
+// function : activateSelection()
+// purpose  :
+//=================================================================================
+void MeasureGUI_AngleDlg::activateSelection()
+{
+  globalSelection(GEOM_LINE);
+  localSelection( TopAbs_EDGE );
 }

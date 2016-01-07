@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -83,11 +83,13 @@ public:
   Standard_EXPORT ~GEOMImpl_PipeDriver() {};
 
   Standard_EXPORT static TopoDS_Shape CreatePipeWithDifferentSections
-                                     (const TopoDS_Wire& theWirePath,
-                                      const Handle(TopTools_HSequenceOfShape) theBases,
-                                      const Handle(TopTools_HSequenceOfShape) theLocs,
-                                      const Standard_Boolean theWithContact,
-                                      const Standard_Boolean theWithCorrect);
+                  (const TopoDS_Wire                       &theWirePath,
+                   const Handle(TopTools_HSequenceOfShape)  theBases,
+                   const Handle(TopTools_HSequenceOfShape)  theLocs,
+                   const Standard_Boolean                   theWithContact,
+                   const Standard_Boolean                   theWithCorrect,
+                   const Standard_Boolean                   IsBySteps,
+                         Handle(TColStd_HArray1OfInteger)  *theGroups = NULL);
 
   Standard_EXPORT virtual
   bool GetCreationInformation(std::string&             theOperationName,

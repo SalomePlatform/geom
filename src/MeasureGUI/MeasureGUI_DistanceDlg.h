@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -99,7 +99,9 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr  createOperation();
   virtual bool                        isValid (QString&);
   virtual bool                        execute (ObjectList&);
+  virtual void                        addSubshapesToStudy();
   virtual QString                     getNewObjectName (int CurrObj = -1) const; 
+  virtual QList<GEOM::GeomObjPtr>     getSourceObjects();
 
   void                                redisplayPreview();
   virtual void                        processObject();
@@ -108,10 +110,11 @@ protected:
 private:
   void                                Init();
   void                                enterEvent (QEvent*);
+  void                                activateSelection();
 
 private:
-  GEOM::GEOM_Object_var               myObj1;
-  GEOM::GEOM_Object_var               myObj2;
+  GEOM::GeomObjPtr                    myObj1;
+  GEOM::GeomObjPtr                    myObj2;
 
   MeasureGUI_DistanceGroup*           myGrp;
   GEOM::ListOfDouble_var              myDbls;

@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2012-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,8 @@
 INCLUDE_DIRECTORIES(
   ${CAS_INCLUDE_DIRS}
   ${KERNEL_INCLUDE_DIRS}
+  ${PROJECT_SOURCE_DIR}/src/GEOMUtils
+  ${PROJECT_SOURCE_DIR}/src/GEOM
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
@@ -34,6 +36,7 @@ ADD_DEFINITIONS(
 # libraries to link to
 SET(_link_LIBRARIES
   ${CAS_KERNEL} ${CAS_TKBool} ${CAS_TKBO} ${CAS_TKMesh}
+  GEOMbasic GEOMUtils
   ${KERNEL_SALOMELocalTrace}
   )
 
@@ -48,6 +51,7 @@ SET(GEOMAlgo_HEADERS
   GEOMAlgo_BuilderShape.hxx
   GEOMAlgo_Clsf.hxx
   GEOMAlgo_ClsfBox.hxx
+  GEOMAlgo_ClsfQuad.hxx
   GEOMAlgo_ClsfSolid.hxx
   GEOMAlgo_ClsfSurf.hxx
   GEOMAlgo_CoupleOfShapes.hxx
@@ -60,6 +64,7 @@ SET(GEOMAlgo_HEADERS
   GEOMAlgo_FinderShapeOn2.hxx
   GEOMAlgo_FinderShapeOnQuad.hxx
   GEOMAlgo_GetInPlace.hxx
+  GEOMAlgo_GetInPlaceAPI.hxx
   GEOMAlgo_GlueAnalyser.hxx
   GEOMAlgo_GlueDetector.hxx
   GEOMAlgo_Gluer.hxx
@@ -75,6 +80,7 @@ SET(GEOMAlgo_HEADERS
   GEOMAlgo_IndexedDataMapOfShapeState.hxx
   GEOMAlgo_KindOfBounds.hxx
   GEOMAlgo_KindOfClosed.hxx
+  GEOMAlgo_KindOfDef.hxx
   GEOMAlgo_KindOfName.hxx
   GEOMAlgo_KindOfShape.hxx
   GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx
@@ -112,17 +118,16 @@ SET(GEOMAlgo_SOURCES
   GEOMAlgo_BuilderShape.cxx
   GEOMAlgo_Clsf.cxx
   GEOMAlgo_ClsfBox.cxx
+  GEOMAlgo_ClsfQuad.cxx
   GEOMAlgo_ClsfSolid.cxx
   GEOMAlgo_ClsfSurf.cxx
   GEOMAlgo_CoupleOfShapes.cxx
-  GEOMAlgo_FinderShapeOn.cxx
-  GEOMAlgo_FinderShapeOn1.cxx
   GEOMAlgo_FinderShapeOn2.cxx
-  GEOMAlgo_FinderShapeOnQuad.cxx
   GEOMAlgo_GetInPlace.cxx
   GEOMAlgo_GetInPlace_1.cxx
   GEOMAlgo_GetInPlace_2.cxx
   GEOMAlgo_GetInPlace_3.cxx
+  GEOMAlgo_GetInPlaceAPI.cxx
   GEOMAlgo_GlueAnalyser.cxx
   GEOMAlgo_GlueDetector.cxx
   GEOMAlgo_Gluer.cxx
@@ -142,7 +147,7 @@ SET(GEOMAlgo_SOURCES
   GEOMAlgo_ShapeInfoFiller.cxx
   GEOMAlgo_ShapeInfoFiller_1.cxx
   GEOMAlgo_ShapeSolid.cxx
-  GEOMAlgo_ShellSolid.cxx	
+  GEOMAlgo_ShellSolid.cxx
   GEOMAlgo_SolidSolid.cxx
   GEOMAlgo_Splitter.cxx
   GEOMAlgo_StateCollector.cxx

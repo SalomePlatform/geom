@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -55,10 +55,42 @@ inline Standard_Boolean IsEqual (const TopoDS_Shape& S1, const TopoDS_Shape& S2)
 namespace GEOMUtils
 {
 
+  /**
+   * This enumeration represents comparison conditions.
+   */
+  enum ComparisonCondition {
+    CC_GT, ///< Greater then
+    CC_GE, ///< Greater then or equal to
+    CC_LT, ///< Less then
+    CC_LE  ///< Less then or equal to
+  };
+
   typedef std::vector<std::string> NodeLinks;
   typedef std::map<std::string, NodeLinks> LevelInfo;
   typedef std::vector<LevelInfo> LevelsList;
   typedef std::map<std::string,std::pair<LevelsList,LevelsList> > TreeModel;
+
+  /*!
+   * \brief Compute numerical functor for the shape.
+   *
+   * Resulting value can be used to sort out shapes according to some parameter.
+   * 
+   * Returns a pair of two values (dist, functor) where
+   * - \a dist is a some value that is computed according to the center of mass of given shape;
+   * - \a functor is a numerical functor value
+   *
+   * The numerical functor is computed according to the shape's topological properties as follows:
+   * - orientation for vertices 
+   * - length for edges and wires
+   * - area for faces and shells
+   * - volume for solids, compounds, compsolids
+   *
+   * If \a isOldSorting parameter is set to \c true, for all cases linear properties of the shape
+   * are used (to support backward compatibility in some methods). By default, this parameter is
+   * set to \c false.
+   */
+  Standard_EXPORT std::pair<double, double> ShapeToDouble (const TopoDS_Shape& theShape,
+                                                           bool isOldSorting = false);
 
   /*!
    * \brief Get Local Coordinate System, corresponding to the given shape.
@@ -193,11 +225,161 @@ namespace GEOMUtils
    */
   Standard_EXPORT gp_Pnt ConvertClickToPoint( int x, int y, Handle(V3d_View) theView );
 
-  Standard_EXPORT void ConvertTreeToString( const TreeModel &theTree,
-					    std::string &DependencyStr );
+  /*!
+   * \brief Convert dependency tree data to the string representation
+   *
+   * \param tree dependency tree data
+   * \param dependencyStr output string
+   */
+  Standard_EXPORT void ConvertTreeToString( const TreeModel& tree,
+					    std::string& dependencyStr );
 
-  Standard_EXPORT void ConvertStringToTree( const std::string &theDependencyStr,
-					    TreeModel &tree );
+  /*!
+   * \brief Restore dependency tree data from the string representation
+   *
+   * \param dependencyStr string representation of tree data
+   * \param tree output dependency tree data
+   */
+  Standard_EXPORT void ConvertStringToTree( const std::string& dependencyStr,
+					    TreeModel& tree );
+
+  /*!
+   * \brief Check shape
+   *
+   * \param shape input shape object
+   * \param checkGeometry when set to \c true, causes check of underlying geometry
+   *        in addition to the topology
+   * \return \c true if shape is valid or \c false otherwise
+   */
+  Standard_EXPORT bool CheckShape( TopoDS_Shape& shape, bool checkGeometry = false );
+  
+  /*!
+   * \brief Limit shape tolerance to the given value
+   *
+   * \param shape shape being fixed
+   * \param type topology type which tolerance is to be limited; TopAbs_SHAPE means
+   *             all types of topology
+   * \param tolerance expected tolerance value (1e-7 by default)
+   * \param checkGeometry check geometry validity of result
+   * \return \c true if resulting shape is valid
+   *
+   * \note Resulting tolerance of the shape is not mandatory equal to requested value
+   *       as it might be changed by fixshape operation in order to get valid shape where possible
+   * \note By default, result only checked for topology validity; check of geometry can be done by
+   *       passing \c true to \a checkGeometry parameter
+   */
+  Standard_EXPORT bool FixShapeTolerance( TopoDS_Shape& shape,
+                                          TopAbs_ShapeEnum type,
+                                          Standard_Real tolerance = Precision::Confusion(),
+                                          bool checkGeometry = false );
+
+  /*!
+   * \brief Limit shape tolerance to the given value
+   * This is overloaded function, it behaves exactly as previous one
+   */
+  Standard_EXPORT bool FixShapeTolerance( TopoDS_Shape& shape,
+                                          Standard_Real tolerance = Precision::Confusion(),
+                                          bool checkGeometry = false );
+
+  /*!
+   * \brief Limit shape tolerance to the given value
+   * This is overloaded function, it behaves exactly as previous one
+   */
+  Standard_EXPORT bool FixShapeTolerance( TopoDS_Shape& shape,
+                                          bool checkGeometry );
+
+  /*!
+   * \brief Fix curves of the given shape
+   * 
+   * The function checks each curve of the input shape in the following way:
+   * - compute deviation of the curve from the underlying surface in a set of points
+   *   computed with the certain discretization step value
+   * - find maximum tolerance between computed deviation values
+   * - limit tolerance of the curve with the computed maximum value
+   * 
+   * \param shape shape being fixed
+   * \return \c true if resulting shape is valid
+   */
+  Standard_EXPORT bool FixShapeCurves( TopoDS_Shape& shape );
+
+  /*!
+   * \brief Write shape to the BREP file
+   *
+   * \param source shape
+   * \return \c true if file was written or \c false otherwise
+   */
+  Standard_EXPORT bool Write( const TopoDS_Shape& shape,
+                              const char* fileName );
+  
+  /*!
+   * \brief Extract single SOLID from COMPSOLID or COMPOUND.
+   *
+   * If the argument shape is a COMPUND or COMPSOLID and there's
+   * only single simple-shape type inside, this sub-shape is returned as a result;
+   * otherwise, the shape is not changed.
+   *
+   * \param shape compound or compsolid being processed.
+   * \retval TopoDS_Shape resulting shape
+   */
+  Standard_EXPORT TopoDS_Shape ReduceCompound( const TopoDS_Shape& shape );
+
+  /*!
+   * \brief Generate triangulation for the shape.
+   *
+   * \param shape shape being meshed
+   * \param deflection deflection coefficient to be used
+   * \param forced if \c true, causes generation of mesh regardless it is already present in the shape
+   */
+  Standard_EXPORT void MeshShape( const TopoDS_Shape shape,
+                                  double deflection, bool forced = true );
+
+  /*!
+   * \brief Get default deflection coefficient used for triangulation
+   * \return default deflection value
+   */
+  Standard_EXPORT double DefaultDeflection();
+
+  /**
+   * \brief Check if the shape is not a closed wire or edge.
+   *
+   * This function is used for pipe creation algorithm to test if
+   * the pipe path is not closed. It returns false if theShape is a wire or
+   * an edge with coincident end vertices. Otherwise it returns true.
+   *
+   * \param theShape the shape to be tested.
+   * \return true if theShape is not a closed wire or edge.
+   */
+  Standard_EXPORT bool IsOpenPath(const TopoDS_Shape &theShape);
+
+  /**
+   * This function compares two tolerances. The shape tolerance (the first
+   * argument) is considered less than the reference tolerance (the second
+   * argument) if theTolShape < theTolRef - Tolerance(theTolRef). theTolShape is
+   * considered greater than theTolRef if theTolShape > theTolRef +
+   * Tolerance(theTolRef). Otherwise these tolerances are equal.
+   * Tolerance(theTolRef) = theTolRef*DEFAULT_TOLERANCE_TOLERANCE. But this value
+   * should not be greated than DEFAULT_MAX_TOLERANCE_TOLERANCE.
+   *
+   * \param theTolShape the shape tolerance
+   * \param theTolRef the reference tolerance
+   * \return -1 if theTolShape is less than theTolRef; 1 if theTolShape is greater
+   * than theTolRef; 0 if they are equal
+   */
+  Standard_EXPORT int CompareToleranceValues(const double theTolShape,
+                                             const double theTolRef);
+
+  /**
+   * Check if the comarison of tolerances fit the condition. The comparison of
+   * tolerances is performed using the function CompareToleranceValues.
+   *
+   * \param theCondition the condition
+   * \param theTolShape the shape tolerance
+   * \param theTolRef the reference tolerance
+   * \return true if the shape tolerance fits the condition; false otherwise.
+   */
+  Standard_EXPORT bool IsFitCondition(const ComparisonCondition theCondition,
+                                      const double              theTolShape,
+                                      const double              theTolRef);
 
 };
 

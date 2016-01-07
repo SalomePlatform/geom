@@ -1,27 +1,29 @@
 /*!
 
-\page section_opeartion_page Section
+\page section_opeartion_page Intersection
 
-\b Section operation creates an edge or a wire representing the intersection of surfaces of two shapes.
+\b Intersection operation creates a vertex, an edge, a wire or a compound
+of them representing the intersection of two shapes.
 
-To produce it, select in the main menu <b>Operations - > Boolean - > Section</b>
+To produce it, select in the main menu <b>Operations - > Boolean - > Intersection</b>
 
-\image html neo-section.png "Section dialog"
+\image html neo-section.png "Intersection dialog"
 
 In this dialog:
 - Input or accept the default \b Name of the resulting shape. 
 - Click the arrow button and select in the Object Browser or in the Viewer the intersecting <b>Objects</b>.
-- Activate the corresponding check-box if you wish to <b> Detect Self-intersections </b>.
+- Activate the corresponding check-box if you wish to <b> Detect Self-intersections</b>. If a self-intersection detected the operation fails.
 - Activate \ref restore_presentation_parameters_page "Advanced options" if required.
-- Press "Apply" or "Apply & Close" button to get the result (EDGE or WIRE).
+- Press "Apply" or "Apply & Close" button to get the result (VERTEX, EDGE, WIRE or COMPOUND).
 
-\note This algorithm does not find all types of self-intersections. It is tuned
-      to detect vertex/vertex, vertex/edge, edge/edge, vertex/face and edge/face
-      intersections. Face/face intersections detection is switched off as it
-      is a time-consuming operation that gives an impact on performance. To find
-      all self-intersections use \ref check_self_intersections_page
-      "Detect Self-intersection tool".
-	  
+\note This dialog supports navigation through the selectable objects (in OCC 3D viewer only):
+- Scroll mouse wheel with pressed \em Ctrl key or press \em "S", \em "P" keys when input focus is
+in the viewer to navigate between selectable objects.
+- Press left mouse button to select an appropriate object to the dialog box.
+.
+For more details, please refer to the \em "Functionality common for OCC and VTK viewers" chapter
+of the GUI module's documentation.
+
 This operation can be performed using a <b>TUI Command:</b> 
 
 <em>geompy.MakeSection(s1, s2, checkSelfInte)</em>

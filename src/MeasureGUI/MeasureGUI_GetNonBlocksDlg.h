@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -28,7 +28,11 @@
 
 #include <GEOMBase_Skeleton.h>
 
-class DlgRef_1Sel;
+class QCheckBox;
+class QLabel;
+class QLineEdit;
+class QPushButton;
+class SalomeApp_DoubleSpinBox;
 
 //=================================================================================
 // class    : MeasureGUI_GetNonBlocksDlg
@@ -45,9 +49,10 @@ public:
 protected:
   // redefined from GEOMBase_Helper
   virtual GEOM::GEOM_IOperations_ptr  createOperation();
-  virtual bool                        isValid (QString&);
+  virtual bool                        isValid (QString &msg);
   virtual bool                        execute (ObjectList&);
   virtual GEOM::GEOM_Object_ptr       getFather (GEOM::GEOM_Object_ptr);
+  virtual QList<GEOM::GeomObjPtr>     getSourceObjects();
 
 private slots:
   void                                ClickOnOk();
@@ -56,6 +61,7 @@ private slots:
   void                                LineEditReturnPressed();
   void                                SelectionIntoArgument();
   void                                SetEditCurrentArgument();
+  void                                SetUseC1Tolerance();
   
 private:
   void                                Init();
@@ -64,7 +70,11 @@ private:
 
 private:
   GEOM::GEOM_Object_var               myObj;
-  DlgRef_1Sel*                        myGrp;
+  QLineEdit                          *myObjectName;
+  QPushButton                        *mySelButton;
+  QCheckBox                          *myUseC1Check;
+  QLabel                             *myTolLbl;
+  SalomeApp_DoubleSpinBox            *mySpinTol;
 };
 
 #endif // MEASUREGUI_GETNONBLOCKSDLG_H

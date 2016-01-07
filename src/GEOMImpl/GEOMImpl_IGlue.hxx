@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -26,9 +26,9 @@
 
 #include <TColStd_HSequenceOfTransient.hxx>
 
-#define GLUE_ARG_BASE   1
-#define GLUE_ARG_TOLER  2
-#define GLUE_ARG_FACES  3
+#define GLUE_ARG_BASE    1
+#define GLUE_ARG_TOLER   2
+#define GLUE_ARG_FACES   3
 #define GLUE_ARG_KEEPALL 4
 #define GLUE_ARG_GLUEEDG 5
 
@@ -38,10 +38,11 @@ class GEOMImpl_IGlue
 
   GEOMImpl_IGlue(Handle(GEOM_Function) theFunction): _func(theFunction) {}
 
-  void SetBase(Handle(GEOM_Function) theRefBase)
-  { _func->SetReference(GLUE_ARG_BASE, theRefBase); }
+  void SetBase(const Handle(TColStd_HSequenceOfTransient)& theShapes)
+  { _func->SetReferenceList(GLUE_ARG_BASE, theShapes); }
 
-  Handle(GEOM_Function) GetBase() { return _func->GetReference(GLUE_ARG_BASE); }
+  Handle(TColStd_HSequenceOfTransient) GetBase()
+  { return _func->GetReferenceList(GLUE_ARG_BASE); }
 
   void SetTolerance(const Standard_Real theTolerance)
   { _func->SetReal(GLUE_ARG_TOLER, theTolerance); }

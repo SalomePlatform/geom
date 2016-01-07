@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -67,6 +67,8 @@ OperationGUI_PartitionDlg::OperationGUI_PartitionDlg( GeometryGUI* theGeometryGU
   mainFrame()->GroupConstructors->setTitle( tr( "GEOM_PARTITION" ) );
   mainFrame()->RadioButton1->setIcon( image0 );
   mainFrame()->RadioButton2->setIcon( image1 );
+  mainFrame()->RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton2->close();
   mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
   mainFrame()->RadioButton3->close();
 
@@ -550,4 +552,30 @@ int OperationGUI_PartitionDlg::GetLimit() const
   }
 
   return aLimit;
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> OperationGUI_PartitionDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  for (int i = 0; i < myListShapes.length(); i++) {
+    GEOM::GeomObjPtr aGeomObjPtr(myListShapes[i]);
+    res << aGeomObjPtr;
+  }
+  for (int i = 0; i < myListTools.length(); i++) {
+    GEOM::GeomObjPtr aGeomObjPtr(myListTools[i]);
+    res << aGeomObjPtr;
+  }
+  for (int i = 0; i < myListRemoveInside.length(); i++) {
+    GEOM::GeomObjPtr aGeomObjPtr(myListRemoveInside[i]);
+    res << aGeomObjPtr;
+  }
+  for (int i = 0; i < myListKeepInside.length(); i++) {
+    GEOM::GeomObjPtr aGeomObjPtr(myListKeepInside[i]);
+    res << aGeomObjPtr;
+  }
+  return res;
 }

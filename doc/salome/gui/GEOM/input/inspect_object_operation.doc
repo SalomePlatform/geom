@@ -1,0 +1,65 @@
+/*!
+
+\page inspect_object_operation_page Inspect Object
+
+This operation allows browsing the contents of the selected shape.
+
+To <b>Inspect Object</b>, in the <b>Main Menu</b> select <b>Measures - > Inspect Object</b>.
+
+The dialog can be used in two modes. The first one is a tree view mode:
+\image html inspect_object.png "Dialog in the tree view mode"
+
+This is a default mode that allows to inspect an object in the form of tree
+starting from the shape itself. Its children are its direct sub-shapes that
+have they own children as sub-shapes etc. till most very base sub-shapes,
+i.e. vertices.
+
+The second mode is a filtering one. It is activated when the user selects
+<b>Tolerance filter</b> check box:
+\image html inspect_object2.png "Dialog in the filtering mode"
+
+In this mode the user can check the type of sub-shapes to work with using
+the radio-buttons. The type can be either \b Vertex, \b Edge or \b Face.
+Then the user choses a tolerance criterion to be applied to filter out
+sub-shapes. It is possible to chose one of the following values:
+- \b > - greater than (default value)
+- \b >= - greater than or equal to
+- \b < - lower than
+- \b <= - lower than or equal to
+
+The last parameter to be chosen is the tolerance value. The result is the shapes
+of a certain type that satisfy the defined tolerance criterion. E.g. if the user
+chooses \b Face, criterion \b > and tolerance value equal to \b 1.e-6 the faces
+with the tolerance greater than \b 1.e-6 are displayed.
+
+It is possible to set maximal and minimal value of the tolerance using the
+buttons <b>Max value</b> and <b>Min value</b>. These values are displayed in
+the labels <b>Max :</b> and <b>Min :</b>
+
+In this dialog never mind of its mode it is possible to:
+- Click on the "selection" button and select an object to inspect in the Object Browser or in the viewer.
+- Show/hide sub-shape(s) in the 3D viewer, by pressing "eye" icon in the first column of the tree view.
+- Show/hide all sub-shapes in the tree, by pressing "eye" icon in the first column of the tree view header or
+  by pressing <b>Show all</b>/<b>Hide all</b> buttons.
+- Rename the selected sub-shape by double-clicking on the item or pressing <F2> key.
+- Show the selected sub-shape(s) in the 3D viewer by pressing <b>Show Selected</b> button.
+- Show the selected sub-shape(s) in the 3D viewer and erase all currently shown objects by pressing <b>Show Only Selected</b> button.
+- Hide the selected sub-shape(s) from the 3D viewer by pressing <b>Hide Selected</b> button.
+- Publish the selected sub-shapes in the study, by pressing <b>Publish Selected</b> button.
+- Close dialog box, by pressing <b>Close</b> button.
+
+\n <b>TUI Command:</b>
+
+A command to filter sub-shapes is defined:
+
+<em>geompy.GetSubShapesWithTolerance(theShape, theShapeType, theCondition, theTolerance),</em> \n
+where \n
+\em theShape is the shape to be exploded. \n
+\em theShapeType is the type of sub-shapes to be returned. Can have
+    the values \b GEOM.FACE, \b GEOM.EDGE and \b GEOM.VERTEX only.\n
+\em theCondition is the condition type (the value of GEOM.comparison_condition emuneration).\n
+\em theTolerance is the tolerance filter.
+
+See also a \ref swig_GetSubShapesWithTolerance "TUI example".
+
+*/

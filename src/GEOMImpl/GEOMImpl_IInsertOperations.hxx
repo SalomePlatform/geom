@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -49,6 +49,14 @@ class Handle_TColStd_HArray1OfByte;
 
 class GEOMImpl_IInsertOperations : public GEOM_IOperations {
  public:
+
+  struct TransferDatum
+  {
+    TCollection_AsciiString myName;
+    long                    myNumber;
+    long                    myMaxNumber;
+  };
+
   Standard_EXPORT GEOMImpl_IInsertOperations(GEOM_Engine* theEngine, int theDocID);
   Standard_EXPORT ~GEOMImpl_IInsertOperations();
 
@@ -78,6 +86,12 @@ class GEOMImpl_IInsertOperations : public GEOM_IOperations {
 							                               int& theWidth, int& theHeight);
 
   Standard_EXPORT std::list<int> GetAllTextures();
+
+  Standard_EXPORT bool TransferData
+                          (const Handle(GEOM_Object)      &theObjectFrom,
+                           const Handle(GEOM_Object)      &theObjectTo,
+                           const int                       theFindMethod,
+                                 std::list<TransferDatum> &theResult);
 
  private:
   std::vector<Handle(Resource_Manager)> myResMgrList;

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -20,47 +20,29 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <Standard_Stream.hxx>
-
 #include <GEOMImpl_PartitionDriver.hxx>
 #include <GEOMImpl_IPartition.hxx>
 #include <GEOMImpl_Types.hxx>
-
+#include <GEOMUtils.hxx>
 #include <GEOM_Object.hxx>
 #include <GEOM_Function.hxx>
-
 #include <GEOMAlgo_Splitter.hxx>
 
 #include <TDataStd_IntegerArray.hxx>
 #include <TNaming_CopyShape.hxx>
 
-//#include <BRepBuilderAPI_Copy.hxx>
-#include <BRep_Tool.hxx>
-#include <BRepAlgo.hxx>
-#include <BRepTools.hxx>
-
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
-#include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
-#include <TopoDS_Vertex.hxx>
-#include <TopoDS_Wire.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_DataMapOfShapeShape.hxx>
 
-#include <ShapeFix_ShapeTolerance.hxx>
-#include <ShapeFix_Shape.hxx>
-
 #include <TColStd_IndexedDataMapOfTransientTransient.hxx>
-#include <TColStd_ListIteratorOfListOfInteger.hxx>
-#include <TColStd_ListOfInteger.hxx>
 #include <Standard_NullObject.hxx>
 #include <StdFail_NotDone.hxx>
-#include <Precision.hxx>
-#include <gp_Pnt.hxx>
 #include <BOPAlgo_CheckerSI.hxx>
 #include <BOPCol_IndexedDataMapOfShapeListOfShape.hxx>
 #include <BOPCol_ListOfShape.hxx>
@@ -444,17 +426,8 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
     Standard_ConstructionError::Raise("Partition aborted : non valid shape result");
   //end of IPAL21418
 
-  if (!BRepAlgo::IsValid(aShape)) {
-    // 08.07.2008 added by skl during fixing bug 19761 from Mantis
-    ShapeFix_ShapeTolerance aSFT;
-    aSFT.LimitTolerance(aShape, Precision::Confusion(),
-                        Precision::Confusion(), TopAbs_SHAPE);
-    Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape(aShape);
-    aSfs->Perform();
-    aShape = aSfs->Shape();
-    if (!BRepAlgo::IsValid(aShape))
-      Standard_ConstructionError::Raise("Partition aborted : non valid shape result");
-  }
+  if ( !GEOMUtils::CheckShape(aShape, true) && !GEOMUtils::FixShapeTolerance(aShape) )
+    Standard_ConstructionError::Raise("Partition aborted : non valid shape result");
 
   aFunction->SetValue(aShape);
 

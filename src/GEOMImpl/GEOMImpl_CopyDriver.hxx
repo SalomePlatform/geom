@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -26,41 +26,14 @@
 #ifndef _GEOMImpl_CopyDriver_HeaderFile
 #define _GEOMImpl_CopyDriver_HeaderFile
 
-#ifndef _TColStd_SequenceOfExtendedString_HeaderFile
-#include <TColStd_SequenceOfExtendedString.hxx>
-#endif
-#ifndef _Standard_TypeMismatch_HeaderFile
-#include <Standard_TypeMismatch.hxx>
-#endif
-
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-
-#ifndef _Standard_Macro_HeaderFile
-#include <Standard_Macro.hxx>
-#endif
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-#ifndef _Standard_GUID_HeaderFile
-#include <Standard_GUID.hxx>
-#endif 
-
-#ifndef _TFunction_Driver_HeaderFile
-#include <TFunction_Driver.hxx>
-#endif
-#ifndef _TFunction_Logbook_HeaderFile
-#include <TFunction_Logbook.hxx>
-#endif
-#ifndef _Standard_CString_HeaderFile
-#include <Standard_CString.hxx>
-#endif
-
-class TColStd_SequenceOfExtendedString;
+class TopoDS_Shape;
+class TopTools_IndexedDataMapOfShapeListOfShape;
+class TopTools_IndexedMapOfShape;
+class Standard_GUID;
 
 
 #include "GEOM_BaseDriver.hxx"
+
 
 DEFINE_STANDARD_HANDLE( GEOMImpl_CopyDriver, GEOM_BaseDriver );
 
@@ -82,6 +55,30 @@ Standard_EXPORT ~GEOMImpl_CopyDriver() {};
                               std::vector<GEOM_Param>& params);
 
 DEFINE_STANDARD_RTTI( GEOMImpl_CopyDriver )
+
+private:
+
+  Standard_Integer transferData(TFunction_Logbook& log) const;
+
+  Standard_Boolean getInPlace
+    (const TopoDS_Shape                              &theSourceShape,
+     const TopTools_IndexedMapOfShape                &theSourceIndices,
+     const TopoDS_Shape                              &theDestinationShape,
+           TopTools_IndexedDataMapOfShapeListOfShape &theMapSourceDest) const;
+
+  Standard_Boolean getInPlaceOld
+    (const Handle(GEOM_Function)                     &theSourceShapeRef,
+     const TopTools_IndexedMapOfShape                &theSourceIndices,
+     const TopoDS_Shape                              &theDestinationShape,
+           TopTools_IndexedDataMapOfShapeListOfShape &theMapSourceDest) const;
+
+  Standard_Boolean getInPlaceByHistory
+    (const Handle(GEOM_Function)                     &theSourceShapeRef,
+     const TopTools_IndexedMapOfShape                &theSourceIndices,
+     const TopoDS_Shape                              &theDestinationShape,
+     const Handle(GEOM_Function)                     &theDestinationRef,
+           TopTools_IndexedDataMapOfShapeListOfShape &theMapSourceDest) const;
+
 };
 
 #endif

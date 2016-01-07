@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -268,50 +268,59 @@ char* GEOM_BaseObject_i::GetParameters()
  */
 //================================================================================
 
-GEOM::CreationInformation* GEOM_BaseObject_i::GetCreationInformation()
+GEOM::CreationInformationSeq* GEOM_BaseObject_i::GetCreationInformation()
 {
-  GEOM::CreationInformation_var info = new GEOM::CreationInformation;
+  GEOM::CreationInformationSeq_var info = new GEOM::CreationInformationSeq();
 
-  Handle(GEOM_BaseDriver) driver =
-    Handle(GEOM_BaseDriver)::DownCast( _impl->GetCreationDriver() );
-  if ( !driver.IsNull() )
+  int nbFun = _impl->GetNbFunctions();
+  info->length( nbFun );
+  int nbI = 0;
+  for ( int i = 1; i <= nbFun; ++i )
   {
-    std::vector<GEOM_Param> params;
-    std::string             operationName;
-    try
+    Handle(GEOM_BaseDriver) driver =
+      Handle(GEOM_BaseDriver)::DownCast( _impl->GetCreationDriver( i ));
+    if ( !driver.IsNull() )
     {
-      OCC_CATCH_SIGNALS;
-      if ( driver->GetCreationInformation( operationName, params ))
+      std::vector<GEOM_Param> params;
+      std::string             operationName;
+      try
       {
-        info->operationName = operationName.c_str();
-        info->params.length( params.size() );
-        for ( size_t i = 0; i < params.size(); ++i )
+        OCC_CATCH_SIGNALS;
+        if ( driver->GetCreationInformation( operationName, params ))
         {
-          info->params[i].name  = params[i].name.c_str();
-          info->params[i].value = params[i].value.c_str();
+          info[nbI].operationName = operationName.c_str();
+          info[nbI].params.length( params.size() );
+          for ( size_t i = 0; i < params.size(); ++i )
+          {
+            info[nbI].params[i].name  = params[i].name.c_str();
+            info[nbI].params[i].value = params[i].value.c_str();
+          }
+          nbI++;
         }
-      }
 #ifdef _DEBUG_
-      if ( operationName.empty() )
+        if ( operationName.empty() )
+        {
+          cout << endl << endl << endl << "Warning: " << endl << "Dear developer!!!" << endl
+               << "  Consider implementing "
+               <<    typeid(*(driver.operator->())).name() << "::GetCreationInformation() " << endl
+               << "  for the case of operation which has created '" << GetName() << "' object" << endl
+               << "PLEEEEEEEASE" << endl
+               << "\tPLEEEEEEEASE" << endl
+               << "\t\tPLEEEEEEEASE" << endl
+               << "\t\t\tPLEEEEEEEASE" << endl
+               << "\t\t\t\tPLEEEEEEEASE" << endl;
+        }
+#endif
+      }
+      catch(...)
       {
-        cout << endl << endl << endl << "Warning: " << endl << "Dear developer!!!" << endl
-             << "  Consider implementing "
-             <<    typeid(*(driver.operator->())).name() << "::GetCreationInformation() " << endl
-             << "  for the case of operation which has created '" << GetName() << "' object" << endl
-             << "PLEEEEEEEASE" << endl
-             << "\tPLEEEEEEEASE" << endl
-             << "\t\tPLEEEEEEEASE" << endl
-             << "\t\t\tPLEEEEEEEASE" << endl
-             << "\t\t\t\tPLEEEEEEEASE" << endl;
-      }
-#endif
-    }
-    catch(...)
-    {
 #ifdef _DEBUG_
-      cout << "Ecxeption in GEOM_BaseObject_i::GetCreationInformation()" << endl;
+        cout << "Ecxeption in GEOM_BaseObject_i::GetCreationInformation()" << endl;
 #endif
+      }
     }
   }
+  info->length( nbI );
+
   return info._retn();
 }

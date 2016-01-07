@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -47,7 +47,6 @@
 // OCCT Includes
 #include <Geom_Plane.hxx>
 #include <AIS_LengthDimension.hxx>
-#include <AIS_Drawer.hxx>
 #include <Prs3d_LineAspect.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
@@ -128,6 +127,12 @@ void MeasureGUI_DistanceDlg::Init()
   myEditCurrentArgument = myGrp->LineEdit1;
   myDbls = new GEOM::ListOfDouble();
 
+  myGrp->LineEdit1->setEnabled(true);
+  myGrp->LineEdit2->setEnabled(false);
+
+  myObj1.nullify();
+  myObj2.nullify();
+
   // signals and slots connections
   connect(buttonOk(),         SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply(),      SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -140,7 +145,7 @@ void MeasureGUI_DistanceDlg::Init()
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
 
-  globalSelection();
+  activateSelection();
   SelectionIntoArgument();
 }
 
@@ -164,6 +169,7 @@ bool MeasureGUI_DistanceDlg::ClickOnApply()
     return false;
 
   initName();
+  activateSelection();
   return true;
 }
 
@@ -178,7 +184,7 @@ void MeasureGUI_DistanceDlg::ActivateThisDialog()
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
 
-  globalSelection();
+  activateSelection();
   redisplayPreview();
 }
 
@@ -230,15 +236,9 @@ void MeasureGUI_DistanceDlg::SolutionSelected (int i)
 //=================================================================================
 void MeasureGUI_DistanceDlg::SelectionIntoArgument()
 {
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
-
-  GEOM::GEOM_Object_var aSelectedObject = GEOM::GEOM_Object::_nil();
-
-  if (aSelList.Extent() > 0) {
-    aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First());
-  }
+  QList<TopAbs_ShapeEnum> aTypes;
+  aTypes << TopAbs_VERTEX << TopAbs_EDGE << TopAbs_WIRE << TopAbs_FACE << TopAbs_SHELL << TopAbs_SOLID << TopAbs_COMPSOLID << TopAbs_COMPOUND << TopAbs_SHAPE;
+  GEOM::GeomObjPtr aSelectedObject = getSelected( aTypes );
 
   // clear selection
   disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
@@ -248,12 +248,12 @@ void MeasureGUI_DistanceDlg::SelectionIntoArgument()
 
   if (myEditCurrentArgument == myGrp->LineEdit1) {
     myObj1 = aSelectedObject;
-    if (!myObj1->_is_nil() && myObj2->_is_nil())
+    if (myObj1 && !myObj2)
       myGrp->PushButton2->click();
   }
   else {
     myObj2 = aSelectedObject;
-    if (!myObj2->_is_nil() && myObj1->_is_nil())
+    if (myObj2 && !myObj1)
       myGrp->PushButton1->click();
   }
 
@@ -297,8 +297,8 @@ void MeasureGUI_DistanceDlg::SetEditCurrentArgument()
 //=================================================================================
 void MeasureGUI_DistanceDlg::processObject()
 {
-  myGrp->LineEdit1->setText(!myObj1->_is_nil() ? GEOMBase::GetName(myObj1) : "");
-  myGrp->LineEdit2->setText(!myObj2->_is_nil() ? GEOMBase::GetName(myObj2) : "");
+  myGrp->LineEdit1->setText(myObj1 ? GEOMBase::GetName(myObj1.get()) : "");
+  myGrp->LineEdit2->setText(myObj2 ? GEOMBase::GetName(myObj2.get()) : "");
 
   myGrp->ComboBox1->clear();
   myDbls->length(0);
@@ -311,7 +311,7 @@ void MeasureGUI_DistanceDlg::processObject()
 
   GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow(getOperation());
   try {
-    nbSols = anOper->ClosestPoints(myObj1, myObj2, myDbls);
+    nbSols = anOper->ClosestPoints(myObj1.get(), myObj2.get(), myDbls);
   }
   catch (const SALOME::SALOME_Exception& e) {
     SalomeApp_Tools::QtCatchCorbaException(e);
@@ -340,7 +340,7 @@ SALOME_Prs* MeasureGUI_DistanceDlg::buildPrs()
 
   int currSol = myGrp->ComboBox1->currentIndex();
 
-  if (myObj1->_is_nil() || myObj2->_is_nil() ||
+  if (!myObj1 || !myObj2 ||
       currSol == -1 || (currSol+1)*6 > myDbls->length() ||
       vw->getViewManager()->getType() != OCCViewer_Viewer::Type())
     return 0;
@@ -424,7 +424,7 @@ GEOM::GEOM_IOperations_ptr MeasureGUI_DistanceDlg::createOperation()
 //=================================================================================
 bool MeasureGUI_DistanceDlg::isValid (QString& msg)
 {
-  return !myObj1->_is_nil() && !myObj2->_is_nil();
+  return myObj1 && myObj2;
 }
 
 //=================================================================================
@@ -437,7 +437,7 @@ bool MeasureGUI_DistanceDlg::execute (ObjectList& objects)
   GEOM::GEOM_IBasicOperations_var aBasicOper = getGeomEngine()->GetIBasicOperations(getStudyId());
 
   GEOM::ListOfDouble_var aDbls;
-  int nbSols = anOper->ClosestPoints(myObj1, myObj2, aDbls);
+  int nbSols = anOper->ClosestPoints(myObj1.get(), myObj2.get(), aDbls);
 
   if (anOper->IsDone()) {
     bool doPublishAll = true;
@@ -483,6 +483,16 @@ bool MeasureGUI_DistanceDlg::execute (ObjectList& objects)
 }
 
 //=================================================================================
+// function : activateSelection()
+// purpose  :
+//=================================================================================
+void MeasureGUI_DistanceDlg::activateSelection()
+{
+  globalSelection( GEOM_ALLSHAPES );
+  localSelection( TopAbs_SHAPE );
+}
+
+//=================================================================================
 // function : redisplayPreview()
 // purpose  :
 //=================================================================================
@@ -497,7 +507,7 @@ void MeasureGUI_DistanceDlg::redisplayPreview()
   erasePreview(false);
 
   try {
-    SUIT_OverrideCursor();
+    SUIT_OverrideCursor wc;
 
     getDisplayer()->SetColor(Quantity_NOC_VIOLET);
     getDisplayer()->SetToActivate(false);
@@ -517,9 +527,30 @@ void MeasureGUI_DistanceDlg::redisplayPreview()
 QString MeasureGUI_DistanceDlg::getNewObjectName (int currObj) const
 {
   QString aName = tr("GEOM_MINDIST_NAME") + QString("_%1_").arg((currObj+1)/2);
-  aName += GEOMBase::GetName(currObj%2 ? myObj1 : myObj2);
+  aName += GEOMBase::GetName(currObj%2 ? myObj1.get() : myObj2.get());
 
   return aName;
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void MeasureGUI_DistanceDlg::addSubshapesToStudy()
+{
+  GEOMBase::PublishSubObject( myObj1.get() );
+  GEOMBase::PublishSubObject( myObj2.get() );
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> MeasureGUI_DistanceDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myObj1 << myObj2;
+  return res;
 }
 
 //=================================================================================

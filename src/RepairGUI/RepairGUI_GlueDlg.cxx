@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -30,6 +30,7 @@
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
 #include <SalomeApp_DoubleSpinBox.h>
+#include "utilities.h"
 
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
@@ -44,6 +45,7 @@
 #include <SUIT_ViewManager.h>
 #include <OCCViewer_ViewModel.h>
 #include <SALOME_ListIO.hxx>
+#include "utilities.h"
 
 #include <GEOMImpl_Types.hxx>
 
@@ -91,7 +93,7 @@ RepairGUI_GlueDlg::RepairGUI_GlueDlg(GeometryGUI* theGeometryGUI, QWidget* paren
 
   GroupPoints = new DlgRef_1SelExt(centralWidget());
   GroupPoints->GroupBox1->setTitle(tr("GEOM_GLUE"));
-  GroupPoints->TextLabel1->setText(tr("GEOM_SELECTED_SHAPE"));
+  GroupPoints->TextLabel1->setText(tr("GEOM_SELECTED_SHAPES"));
   GroupPoints->PushButton1->setIcon(image0);
   GroupPoints->LineEdit1->setReadOnly(true);
 
@@ -108,7 +110,7 @@ RepairGUI_GlueDlg::RepairGUI_GlueDlg(GeometryGUI* theGeometryGUI, QWidget* paren
 
   GroupPoints2 = new DlgRef_1SelExt(centralWidget());
   GroupPoints2->GroupBox1->setTitle(tr("GEOM_GLUE"));
-  GroupPoints2->TextLabel1->setText(tr("GEOM_SELECTED_SHAPE"));
+  GroupPoints2->TextLabel1->setText(tr("GEOM_SELECTED_SHAPES"));
   GroupPoints2->PushButton1->setIcon(image0);
   GroupPoints2->LineEdit1->setReadOnly(true);
 
@@ -191,7 +193,7 @@ void RepairGUI_GlueDlg::Init()
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
 
-  myObject = GEOM::GEOM_Object::_nil();
+  myObjects.clear();
 
   //myGeomGUI->SetState(0);
   //globalSelection(GEOM_COMPOUND);
@@ -330,17 +332,13 @@ void RepairGUI_GlueDlg::SelectionIntoArgument()
 
   erasePreview();
   myEditCurrentArgument->setText("");
-  myObject = GEOM::GEOM_Object::_nil();
+  myObjects.clear();
 
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
+  myObjects = getSelected( TopAbs_SHAPE, -1 );
 
-  if (aSelList.Extent() == 1) {
-    Handle(SALOME_InteractiveObject) anIO = aSelList.First();
-    myObject = GEOMBase::ConvertIOinGEOMObject(anIO);
-    if (!CORBA::is_nil(myObject))
-      myEditCurrentArgument->setText(GEOMBase::GetName(myObject));
+  if ( !myObjects.isEmpty() ) {
+    QString aName = myObjects.count() > 1 ? QString( "%1_objects").arg( myObjects.count() ) : GEOMBase::GetName( myObjects[0].get() );
+    myEditCurrentArgument->setText( aName );
   }
   updateButtonState();
 }
@@ -432,7 +430,7 @@ bool RepairGUI_GlueDlg::isValid(QString& msg)
     ok = myTolEdt2->isValid(msg, !IsPreview());
     break;
   }
-  return !myObject->_is_nil() && (IsPreview() || v > 0.) && ok;
+  return !myObjects.isEmpty() && (IsPreview() || v > 0.) && ok;
 }
 
 //=================================================================================
@@ -444,15 +442,20 @@ bool RepairGUI_GlueDlg::execute(ObjectList& objects)
   bool aResult = false;
   objects.clear();
 
+  GEOM::ListOfGO_var objList = new GEOM::ListOfGO;
+  objList->length( myObjects.count() );
+  for ( int i = 0; i < myObjects.count(); ++i )
+    objList[i] = myObjects[i].copy();
+
   GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow(getOperation());
   switch (getConstructorId()) {
   case 0:
     {
       GEOM::GEOM_Object_var anObj;
       if (myGlueMode == TopAbs_FACE)
-        anObj = anOper->MakeGlueFaces(myObject, myTolEdt->value(), true);
+        anObj = anOper->MakeGlueFaces( objList, myTolEdt->value(), true);
       else if (myGlueMode == TopAbs_EDGE)
-        anObj = anOper->MakeGlueEdges(myObject, myTolEdt->value());
+        anObj = anOper->MakeGlueEdges( objList, myTolEdt->value());
 
       aResult = !anObj->_is_nil();
       if (aResult && !IsPreview())
@@ -506,11 +509,11 @@ bool RepairGUI_GlueDlg::execute(ObjectList& objects)
       GEOM::GEOM_Object_var anObj;
       if (myGlueMode == TopAbs_FACE) {
         bool doGlueAllEdges = myGlueAllEdgesChk->isChecked();
-        anObj = anOper->MakeGlueFacesByList(myObject, myTolEdt2->value(), aListForGlue.in(),
+        anObj = anOper->MakeGlueFacesByList( objList, myTolEdt2->value(), aListForGlue.in(),
                                             true, doGlueAllEdges);
       }
       else if (myGlueMode == TopAbs_EDGE)
-        anObj = anOper->MakeGlueEdgesByList(myObject, myTolEdt2->value(), aListForGlue.in());
+        anObj = anOper->MakeGlueEdgesByList( objList, myTolEdt2->value(), aListForGlue.in());
 
       aResult = !anObj->_is_nil();
 
@@ -612,8 +615,6 @@ bool RepairGUI_GlueDlg::onAcceptLocal()
     return false;
   }
 
-  erasePreview(false);
-
   try {
     if (openCommand()) {
       SUIT_OverrideCursor wc;
@@ -669,6 +670,8 @@ bool RepairGUI_GlueDlg::onAcceptLocal()
     abortCommand();
   }
 
+  erasePreview(false);
+
   updateViewer();
   activateSelection();
   updateButtonState();
@@ -693,12 +696,17 @@ void RepairGUI_GlueDlg::onDetect()
   buttonApply()->setEnabled(false);
   globalSelection(GEOM_ALLSHAPES);
 
+  GEOM::ListOfGO_var objList = new GEOM::ListOfGO;
+  objList->length( myObjects.count() );
+  for ( int i = 0; i < myObjects.count(); ++i )
+    objList[i] = myObjects[i].copy();
+
   GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow(getOperation());
   GEOM::ListOfGO_var aList;
   if (myGlueMode == TopAbs_FACE)
-    aList = anOper->GetGlueFaces(myObject.in(), myTolEdt2->value());
+    aList = anOper->GetGlueFaces( objList, myTolEdt2->value());
   else if (myGlueMode == TopAbs_EDGE)
-    aList = anOper->GetGlueEdges(myObject.in(), myTolEdt2->value());
+    aList = anOper->GetGlueEdges( objList, myTolEdt2->value());
 
   for (int i = 0, n = aList->length(); i < n; i++)
     myTmpObjs << GEOM::GeomObjPtr(aList[i].in());
@@ -719,7 +727,10 @@ void RepairGUI_GlueDlg::onDetect()
 
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument())) ;
-  SUIT_MessageBox::information(this, tr("GEOM_FREE_BOUNDS_TLT"), msg, tr("Close"));
+  if ( myGlueMode == TopAbs_FACE )
+    SUIT_MessageBox::information(this, tr("GEOM_GLUE_FACES_DETECT_TITLE"), msg, tr("Close"));
+  else
+    SUIT_MessageBox::information(this, tr("GEOM_GLUE_EDGES_DETECT_TITLE"), msg, tr("Close"));
   updateButtonState();
   activateSelection();
 }
@@ -739,7 +750,7 @@ void RepairGUI_GlueDlg::activateSelection()
                 this, SLOT(SelectionIntoArgument()));
 
     globalSelection(GEOM_ALLSHAPES);
-    if (myObject->_is_nil())
+    if ( myObjects.isEmpty() )
       SelectionIntoArgument();
 
     connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
@@ -768,7 +779,7 @@ void RepairGUI_GlueDlg::activateSelection()
 void RepairGUI_GlueDlg::updateButtonState()
 {
   int anId = getConstructorId();
-  bool hasMainObj = !myObject->_is_nil();
+  bool hasMainObj = !myObjects.isEmpty();
   if (anId == 0) {
     buttonOk()->setEnabled(hasMainObj);
     buttonApply()->setEnabled(hasMainObj);
@@ -831,4 +842,16 @@ void RepairGUI_GlueDlg::ClickOnCancel()
 {
   clearTemporary();
   GEOMBase_Skeleton::ClickOnCancel();
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> RepairGUI_GlueDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res(myObjects);
+  for (int i = 0; i < myTmpObjs.count(); i++)
+    res << myTmpObjs[i];
+  return res;
 }

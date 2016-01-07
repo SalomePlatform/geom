@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -28,10 +28,11 @@
 #include "GEOM_AISShape.hxx"
 #include "GEOM_AISVector.hxx"
 
+#include <GEOMUtils.hxx>
+
 #include <Basics_OCCTVersion.hxx>
 
 // Open CASCADE Includes
-#include <AIS_Drawer.hxx>
 #include <AIS_InteractiveContext.hxx>
 #include <BRep_Tool.hxx>
 #include <GCPnts_AbscissaPoint.hxx>
@@ -107,10 +108,17 @@ static void getEntityOwners( const Handle(AIS_InteractiveObject)& theObj,
     Handle(SelectMgr_Selection) sel = theObj->Selection( m );
 
     for ( sel->Init(); sel->More(); sel->Next() ) {
-      Handle(SelectBasics_SensitiveEntity) entity = sel->Sensitive();
-      if ( entity.IsNull() )
+#if OCC_VERSION_LARGE > 0x06080100
+      const Handle(SelectMgr_SensitiveEntity) aHSenEntity = sel->Sensitive();
+      if( aHSenEntity.IsNull() )
         continue;
 
+      Handle(SelectBasics_SensitiveEntity) entity = aHSenEntity->BaseSensitive();
+#else
+      Handle(SelectBasics_SensitiveEntity) entity = sel->Sensitive();
+#endif
+      if ( entity.IsNull() )
+        continue;
       Handle(SelectMgr_EntityOwner) owner =
         Handle(SelectMgr_EntityOwner)::DownCast(entity->OwnerId());
       if ( !owner.IsNull() )
@@ -253,24 +261,21 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
     }
     case ShadingWithEdges:
     {
-      shadingMode(aPresentationManager, aPrs, Shading);
       myDrawer->SetFaceBoundaryDraw( Standard_True );
-      Handle(Prs3d_LineAspect) aBoundaryAspect =
-        new Prs3d_LineAspect ( myEdgesInShadingColor, Aspect_TOL_SOLID, myOwnWidth );
-      myDrawer->SetFaceBoundaryAspect (aBoundaryAspect);
+      shadingMode(aPresentationManager, aPrs, Shading);
+      if( anIsColorField && myFieldDimension == 1 ) {
+        myDrawer->SetFaceBoundaryDraw( Standard_False );
+        drawField( aPrs );
+      }
       break;
     }
     case TexturedShape:
     {
-      if(!isTopLev)
 #ifdef USE_TEXTURED_SHAPE
 	AIS_TexturedShape::Compute(aPresentationManager, aPrs, aMode);
 #else
 	AIS_Shape::Compute(aPresentationManager, aPrs, aMode);
 #endif
-      else 
-	shadingMode(aPresentationManager, aPrs, Shading);
-      break;
     }
   }
   if (isShowVectors())
@@ -327,6 +332,9 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
   if( anIsTextField )
     drawField( aPrs, true );
 
+  if( isShowName() )
+    drawName( aPrs );
+
   //  aPrs->ReCompute(); // for hidden line recomputation if necessary...
 }
 
@@ -338,6 +346,10 @@ void GEOM_AISShape::SetShadingColor(const Quantity_Color &aCol)
 void GEOM_AISShape::SetEdgesInShadingColor(const Quantity_Color &aCol)
 {
   myEdgesInShadingColor = aCol;
+}
+
+void GEOM_AISShape::SetLabelColor(const Quantity_Color &aCol) {
+  myLabelColor = aCol;
 }
 
 void GEOM_AISShape::highlightSubShapes(const TColStd_IndexedMapOfInteger& aIndexMap, 
@@ -379,6 +391,11 @@ void GEOM_AISShape::SetDisplayVectors(bool isDisplayed)
 void GEOM_AISShape::SetDisplayVertices(bool isDisplayed)
 {
   myDisplayVertices = isDisplayed;
+}
+
+void GEOM_AISShape::SetDisplayName(bool isDisplayed)
+{
+  myDisplayName = isDisplayed;
 }
 
 void GEOM_AISShape::shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
@@ -430,10 +447,10 @@ void GEOM_AISShape::setTopLevel(Standard_Boolean f) {
       myPrevDisplayMode = DisplayMode();
     Standard_Integer dm;
     switch(topLevelDisplayMode()) {
-      case TopKeepCurrent :      dm = myPrevDisplayMode; break;
-      case TopWireFrame :        dm = Wireframe;         break;     
+      case TopWireFrame :        dm = Wireframe;         break;
+      case TopShading :          dm = Shading;           break;
       case TopShadingWithEdges : dm = ShadingWithEdges;  break;
-      default :                  dm = Shading;           break;
+      default :                  dm = myPrevDisplayMode; break;
     }
     SetDisplayMode(dm);
   } else {
@@ -560,6 +577,7 @@ void GEOM_AISShape::drawField( const Handle(Prs3d_Presentation)& thePrs,
 
           Handle(Graphic3d_AspectText3d) anAspectText3d = new Graphic3d_AspectText3d();
           anAspectText3d->SetStyle( Aspect_TOST_ANNOTATION );
+          anAspectText3d->SetColor( myLabelColor );
           aGroup->SetPrimitivesAspect( anAspectText3d );
 
           aGroup->Text( aString.toLatin1().constData(), aVertex, 14 );
@@ -606,6 +624,24 @@ void GEOM_AISShape::drawField( const Handle(Prs3d_Presentation)& thePrs,
       }
     }
   }
+}
+
+void GEOM_AISShape::drawName( const Handle(Prs3d_Presentation)& thePrs )
+{
+  Handle(Graphic3d_Group) aGroup = Prs3d_Root::NewGroup( thePrs );
+
+  gp_Ax3 anAx3 = GEOMUtils::GetPosition(myshape);
+  gp_Pnt aCenter = anAx3.Location();
+
+  Graphic3d_Vertex aVertex( aCenter.X(), aCenter.Y(), aCenter.Z() );
+
+  Handle(Graphic3d_AspectText3d) anAspectText3d = new Graphic3d_AspectText3d();
+  anAspectText3d->SetStyle( Aspect_TOST_ANNOTATION );
+  anAspectText3d->SetColor( myLabelColor );
+  aGroup->SetPrimitivesAspect( anAspectText3d );
+
+  const char* aName = getIO()->getName();
+  aGroup->Text( TCollection_ExtendedString( aName ), aVertex, 16 );
 }
 
 Standard_Boolean GEOM_AISShape::computeMassCenter( const TopoDS_Shape& theShape,

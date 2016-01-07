@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -56,7 +56,7 @@ public:
 
 
   Standard_EXPORT GEOM_Function(const TDF_Label& theEntry, const Standard_GUID& theGUID, int theType);
-  Standard_EXPORT ~GEOM_Function() {}
+  Standard_EXPORT ~GEOM_Function();
 
   Standard_EXPORT TDF_Label GetOwnerEntry();
 
@@ -152,6 +152,17 @@ public:
   //Returns a list of references to other function arguments at position thePosition
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetReferenceList (int thePosition);
 
+  // Save a pointer to a data holder intended to pass data Driver -> Operation.
+  // This method should be called by Operation to set the data holder.
+  // An instance of GEOM_Function that sets the data holder will remove the
+  // corresponding OCAF attribute at it's destruction
+  Standard_EXPORT void SetCallBackData( void* data );
+
+  // Returns a pointer to a data holder intended to pass data Driver -> Operation.
+  // This method should be called by Driver to get the data holder to fill it in.
+  // Returns NULL if the Operation have not set the data holder.
+  Standard_EXPORT void* GetCallBackData();
+
   //Sets a TopoDS_Shape argument at position thePosition
   //void SetShape(int thePosition, const TopoDS_Shape& theShape);
 
@@ -190,6 +201,7 @@ public:
 
   TDF_Label _label;
   bool      _isDone;
+  bool      _isCallBackData;
 };
 
 #endif

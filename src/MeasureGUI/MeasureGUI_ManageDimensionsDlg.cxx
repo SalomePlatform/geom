@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -29,6 +29,7 @@
 #include "MeasureGUI_DimensionFilter.h"
 
 #include <GEOMGUI_DimensionProperty.h>
+#include <GEOMGUI_TextTreeWdg.h>
 #include <GEOMUtils.hxx>
 #include <GEOMGUI_OCCSelector.h>
 #include <GEOM_AISDimension.hxx>
@@ -134,7 +135,7 @@ MeasureGUI_ManageDimensionsDlg::MeasureGUI_ManageDimensionsDlg( GeometryGUI* the
   {
     myObjectSelector->PushButton1->click();
   }
-
+  myIsNeedRedisplay = false;
   setHelpFileName("managing_dimensions_page.html");
 }
 
@@ -771,6 +772,8 @@ bool MeasureGUI_ManageDimensionsDlg::ClickOnApply()
 
   mySavedPropertyState.SaveToAttribute( aStudy, myEditObject->GetStudyEntry() );
 
+  myGeomGUI->emitDimensionsUpdated( QString( myEditObject->GetStudyEntry() ) );
+
   return true;
 }
 
@@ -806,7 +809,11 @@ void MeasureGUI_ManageDimensionsDlg::OnFinish()
                              GEOM::propertyName( GEOM::Dimensions ),
                              QVariant() );
 
-  redisplay( myEditObject.get() );
+  if ( myIsNeedRedisplay ) {
+    redisplay( myEditObject.get() );
+  }
+  
+  myGeomGUI->emitDimensionsUpdated( QString( myEditObject->GetStudyEntry() ) );
 }
 
 //=================================================================================
@@ -889,8 +896,8 @@ void MeasureGUI_ManageDimensionsDlg::SetEditObject( const GEOM::GeomObjPtr& theO
 
   if ( myEditObject.isNull() )
   {
+    myDimensionView->TreeWidget->clear();
     myDimensionView->setEnabled( false );
-
     return;
   }
 
@@ -955,8 +962,6 @@ void MeasureGUI_ManageDimensionsDlg::RestoreState()
                              myEditObject->GetStudyEntry(),
                              GEOM::propertyName( GEOM::Dimensions ),
                              QVariant() );
-
-  RedisplayObject();
 }
 
 //=================================================================================
@@ -1107,8 +1112,8 @@ bool MeasureGUI_ManageDimensionsDlg::AllowedToCancelChanges()
                                             tr( "WRN_MSG_CHANGES_LOST" ),
                                             QMessageBox::Ok,
                                             QMessageBox::Cancel );
-
-  return aResponse == QMessageBox::Ok;
+  myIsNeedRedisplay = ( aResponse == QMessageBox::Ok );
+  return myIsNeedRedisplay;
 }
 
 //=================================================================================

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2013-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -162,7 +162,7 @@ XAOPlugin_ExportDlg::XAOPlugin_ExportDlg(GeometryGUI* geometryGUI, QWidget* pare
   layout->addWidget(gbxFilter);
 
   // set help
-  setHelpFileName("xao_format_page.html");
+  setHelpFileName("import_export_geom_obj_page.html#io_xao");
 
   Init();
 }
@@ -450,7 +450,7 @@ bool XAOPlugin_ExportDlg::execute()
   // call engine function
   GEOM::IXAOOperations_var aXAOOp = GEOM::IXAOOperations::_narrow( getOperation() );
   res = aXAOOp->ExportXAO(m_mainObj, groups, fields,
-                          author.toStdString().c_str(),
-                          fileName.toStdString().c_str());
+                          author.toUtf8().constData(),
+                          fileName.toUtf8().constData());
   return res;
 }

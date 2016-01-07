@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2012-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -42,6 +42,7 @@ SET(_link_LIBRARIES
   ${CAS_TKG3d}
   ${CAS_TKV3d}
   ${CAS_TKGeomBase}
+  ${CAS_TKBO}
   ${LIBXML2_LIBRARIES}
   ${KERNEL_SALOMELocalTrace}
   )
@@ -51,6 +52,10 @@ SET(_link_LIBRARIES
 SET(GEOMUtils_HEADERS
   GEOMUtils.hxx
   GEOMUtils_Hatcher.hxx
+  GEOMUtils_HTrsfCurve2d.hxx
+  GEOMUtils_ShapeStatistics.hxx
+  GEOMUtils_Trsf2d.hxx
+  GEOMUtils_TrsfCurve2d.hxx
   GEOMUtils_XmlHandler.hxx
   )
 # --- sources ---
@@ -58,6 +63,10 @@ SET(GEOMUtils_HEADERS
 SET(GEOMUtils_SOURCES
   GEOMUtils.cxx
   GEOMUtils_Hatcher.cxx
+  GEOMUtils_HTrsfCurve2d.cxx
+  GEOMUtils_ShapeStatistics.cxx
+  GEOMUtils_Trsf2d.cxx
+  GEOMUtils_TrsfCurve2d.cxx
   GEOMUtils_XmlHandler.cxx
   )
 

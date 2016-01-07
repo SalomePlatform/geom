@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -361,7 +361,8 @@ class Beam(StructuralElementPart):
         face2 = self.geom.MakeFace(wire2, True)
         shell = self.geom.MakePipeWithDifferentSections([wire1, wire2],
                                                         [point1, point2],
-                                                        path, False, False)
+                                                        path, False, False,
+                                                        False)
         closedShell = self.geom.MakeShell([face1, face2, shell])
         solid = self.geom.MakeSolid([closedShell])
         return solid
@@ -790,13 +791,10 @@ class StructuralElementPart2D(StructuralElementPart):
                                           self.geom.ShapeType["FACE"])
             for face in faces:
                 offsetFace = self._makeFaceOffset(face, offset)
-                # get tangent plane on surface by parameters
+                # get the center of the face and the normal at the center
                 center = self.geom.MakeVertexOnSurface(offsetFace,
                                                        uParam, vParam)
-                tangPlane = self.geom.MakeTangentPlaneOnFace(offsetFace,
-                                                             uParam, vParam,
-                                                             1.0)
-                normal = self.geom.GetNormal(tangPlane)
+                normal = self.geom.GetNormal(offsetFace, center)
                 marker = self._orientation.buildMarker(self.geom,
                                                        center, normal)
                 listMarkers.append(marker)

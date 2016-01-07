@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -135,7 +135,9 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnLinesIntersection
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnCurve
-                  (GEOM::GEOM_Object_ptr theCurve,  CORBA::Double theParameter)
+                  (GEOM::GEOM_Object_ptr theCurve,
+                   CORBA::Double         theParameter,
+                   CORBA::Boolean        takeOrientationIntoAccount)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -147,8 +149,8 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnCurve
   if (aReference.IsNull()) return aGEOMObject._retn();
 
   //Create the point
-  Handle(GEOM_Object) anObject =
-    GetOperations()->MakePointOnCurve(aReference, theParameter);
+  Handle(GEOM_Object) anObject = GetOperations()->MakePointOnCurve
+        (aReference, theParameter, takeOrientationIntoAccount);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

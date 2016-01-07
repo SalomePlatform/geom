@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -42,6 +42,7 @@ public:
   void setDisplayMode( const char* theEntry, int theMode, bool theUpdateViewer = true );
   void setVectorsMode( const char* theEntry, bool theOn, bool theUpdateViewer = true );
   void setVerticesMode( const char* theEntry, bool theOn, bool theUpdateViewer = true );
+  void setNameMode( const char* theEntry, bool theOn, bool theUpdateViewer = true );
   void setColor( const char* theEntry, int theRed, int theGreen, int theBlue, bool theUpdateViewer = true );
   void setTransparency( const char* theEntry, float theTransparency, bool theUpdateViewer = true );
   void setIsos( const char* theEntry, int theNbU, int theNbV, bool theUpdateViewer = true );

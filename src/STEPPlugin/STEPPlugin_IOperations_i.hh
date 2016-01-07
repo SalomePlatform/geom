@@ -1,4 +1,4 @@
-// Copyright (C) 2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2014-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -43,7 +43,8 @@ public:
 			    STEPPlugin_IOperations* theImpl );
   ~STEPPlugin_IOperations_i();
 
-  void            ExportSTEP( GEOM::GEOM_Object_ptr, const char* );
+  void            ExportSTEP( GEOM::GEOM_Object_ptr, const char*,
+                              GEOM::length_unit );
   GEOM::ListOfGO* ImportSTEP( const char*, const bool );
   char*           ReadValue( const char*, const char* );
 

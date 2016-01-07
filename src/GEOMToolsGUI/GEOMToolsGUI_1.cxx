@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -24,7 +24,9 @@
 //  File   : GEOMToolsGUI_1.cxx
 //  Author : Sergey ANIKIN, Open CASCADE S.A.S. (sergey.anikin@opencascade.com)
 
+#ifndef DISABLE_PYCONSOLE
 #include <PyConsole_Console.h>
+#endif
 
 #include "GEOMToolsGUI.h"
 #include "GEOMToolsGUI_TransparencyDlg.h"
@@ -47,9 +49,11 @@
 #include <GEOMBase.h>
 #include <GEOM_Actor.h>
 
+#ifndef DISABLE_GRAPHICSVIEW
 #include <DependencyTree_ViewModel.h>
 #include <DependencyTree_View.h>
 #include <DependencyTree_Selector.h>
+#endif
 
 #include <Basics_OCCTVersion.hxx>
 
@@ -74,6 +78,10 @@
 #include <SUIT_MessageBox.h>
 #include <SUIT_Tools.h>
 
+#include <STD_TabDesktop.h>
+
+#include <QtxWorkstack.h>
+
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
 #include <SalomeApp_Module.h>
@@ -86,7 +94,6 @@
 #include "utilities.h"
 
 // OCCT Includes
-#include <AIS_Drawer.hxx>
 #include <Prs3d_IsoAspect.hxx>
 #include <Prs3d_PointAspect.hxx>
 #include <Graphic3d_AspectMarker3d.hxx>
@@ -98,6 +105,7 @@
 
 // QT Includes
 #include <QAction>
+#include <QApplication>
 #include <QColorDialog>
 #include <QInputDialog>
 #include <QFileDialog>
@@ -112,14 +120,17 @@
 // VTK includes
 #include <vtkRenderer.h>
 
-class QtxDialog;
 // If the next macro is defined, autocolor feature works for all sub-shapes;
 // if it is undefined, autocolor feature works for groups only
 #define GENERAL_AUTOCOLOR
 // Below macro, when uncommented, switches on simplified (more performant) algorithm
 // of auto-color picking up
 #define SIMPLE_AUTOCOLOR
+// Below macro, when defined, switches on automatic layouting of OCC and Dependecy views
+// on Show Dependencies operation
+#define LAYOUT_DEPVIEW
 
+#ifndef DISABLE_PYCONSOLE
 void GEOMToolsGUI::OnCheckGeometry()
 {
   SalomeApp_Application* app =
@@ -129,6 +140,7 @@ void GEOMToolsGUI::OnCheckGeometry()
   if (pyConsole)
     pyConsole->exec("from GEOM_usinggeom import *");
 }
+#endif
 
 void GEOMToolsGUI::OnAutoColor()
 {
@@ -185,9 +197,9 @@ void GEOMToolsGUI::OnAutoColor()
   
     QColor c( (int)( aColor.R * 255.0 ), (int)( aColor.G * 255.0 ), (int)( aColor.B * 255.0 ) );
 
-    SUIT_OverrideCursor();
+    SUIT_OverrideCursor wc;
     
-    appStudy->setObjectProperty( aMgrId, aChildObject->GetEntry(), GEOM::propertyName( GEOM::Color ), c );
+    appStudy->setObjectProperty( aMgrId, aChildObject->GetStudyEntry(), GEOM::propertyName( GEOM::Color ), c );
     Handle( SALOME_InteractiveObject ) io = new SALOME_InteractiveObject( aChildObject->GetStudyEntry(), "GEOM", "" );
     if ( window->isVisible( io ) ) displayer.Redisplay( io, false );
   }
@@ -260,10 +272,17 @@ void GEOMToolsGUI::OnColor()
   color = QColorDialog::getColor( v.value<QColor>(), app->desktop() );
   if ( !color.isValid() ) return;
 
+  SALOMEDS::Color aSColor;
+  aSColor.R = (double)color.red() / 255.0;
+  aSColor.G = (double)color.green() / 255.0;
+  aSColor.B = (double)color.blue() / 255.0;
+
   // iterate through list of objects and assign new color
-  SUIT_OverrideCursor();
+  SUIT_OverrideCursor wc;
   for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
     Handle( SALOME_InteractiveObject ) io = It.Value();
+    GEOM::GEOM_Object_var aObject = GEOMBase::ConvertIOinGEOMObject( io );
+    if ( !CORBA::is_nil( aObject ) ) aObject->SetColor( aSColor );
     appStudy->setObjectProperty( aMgrId, io->getEntry(), GEOM::propertyName( GEOM::Color ), color );
     if ( window->isVisible( io ) ) displayer.Redisplay( io, false );
   }
@@ -404,7 +423,7 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
     NbIsosDlg->setV( VIso );
 
     if ( NbIsosDlg->exec() ) {
-      SUIT_OverrideCursor();     
+      SUIT_OverrideCursor wc;     
       newNbUIso = NbIsosDlg->getU();
       newNbVIso = NbIsosDlg->getV();
     } else //Cancel case
@@ -460,7 +479,7 @@ void GEOMToolsGUI::OnDeflection()
     ( SUIT_Session::session()->activeApplication()->desktop() );
   DeflectionDlg->setTheDC( aDC );
   if ( DeflectionDlg->exec() ) {
-    SUIT_OverrideCursor();
+    SUIT_OverrideCursor wc;
     aDC = DeflectionDlg->getTheDC();
 
     for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
@@ -661,7 +680,7 @@ void GEOMToolsGUI::OnEdgeWidth()
 
   Dlg->setTheLW( aWidth );
   if ( Dlg->exec() ) {
-    SUIT_OverrideCursor();
+    SUIT_OverrideCursor wc;
     aWidth = Dlg->getTheLW();
   } else
     return; //Cancel case
@@ -704,7 +723,7 @@ void GEOMToolsGUI::OnIsosWidth() {
 
   Dlg->setTheLW( aWidth );
   if ( Dlg->exec() ) {
-    SUIT_OverrideCursor();
+    SUIT_OverrideCursor wc;
     aWidth = Dlg->getTheLW();
   } else
     return; //Cancel case
@@ -869,6 +888,7 @@ void GEOMToolsGUI::OnSortChildren()
   app->updateObjectBrowser( true );
 }
 
+#ifndef DISABLE_GRAPHICSVIEW
 void GEOMToolsGUI::OnShowDependencyTree()
 {
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
@@ -876,31 +896,50 @@ void GEOMToolsGUI::OnShowDependencyTree()
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   if ( !app ) return;
 
-  SUIT_ViewManager *svm = app->getViewManager( GraphicsView_Viewer::Type(), false );
+#ifdef LAYOUT_DEPVIEW
+  SUIT_ViewManager* occVm = app->getViewManager( OCCViewer_Viewer::Type(), true );
+  SUIT_ViewWindow* occVw = occVm->getActiveView();
+#endif
+  SUIT_ViewManager* depVm = app->getViewManager( GraphicsView_Viewer::Type(), false );
+  SUIT_ViewWindow* depVw = 0;
 
-  if( !svm ) {
+  if ( !depVm ) {
     DependencyTree_View* view = new DependencyTree_View();
     DependencyTree_ViewModel* viewModel = new DependencyTree_ViewModel( GraphicsView_Viewer::Type(), view );
-    SUIT_ViewManager *svm = app->createViewManager( viewModel );
+    depVm = app->createViewManager( viewModel );
 
     LightApp_SelectionMgr* selMgr = app->selectionMgr();
     new DependencyTree_Selector( viewModel, (SUIT_SelectionMgr*)selMgr );
 
-    SUIT_ViewWindow* svw = svm->getActiveView();
+    depVw = depVm->getActiveView();
     GraphicsView_ViewFrame* aViewFrame = 0;
-    if (!svw) svw = svm->createViewWindow();
-    if (svw) aViewFrame = dynamic_cast<GraphicsView_ViewFrame*>(svw);
+    if ( !depVw ) depVw = depVm->createViewWindow();
+    if ( depVw ) aViewFrame = dynamic_cast<GraphicsView_ViewFrame*>( depVw );
 
     view->init( aViewFrame );
-    svm->setTitle( view->getViewName() );
+    depVm->setTitle( view->getViewName() );
   }
-  else
-    if( DependencyTree_ViewModel* viewModel = dynamic_cast<DependencyTree_ViewModel*>( svm->getViewModel() ) )
-      if( DependencyTree_View* view = dynamic_cast<DependencyTree_View*>( viewModel->getActiveViewPort() ) ) {
-        svm->getActiveView()->setFocus();
-        view->updateModel();
-      }
+  else if ( DependencyTree_ViewModel* viewModel = dynamic_cast<DependencyTree_ViewModel*>( depVm->getViewModel() ) ) {
+    if ( DependencyTree_View* view = dynamic_cast<DependencyTree_View*>( viewModel->getActiveViewPort() ) ) {
+      depVw = depVm->getActiveView();
+      view->updateModel();
+    }
+  }
+
+#ifdef LAYOUT_DEPVIEW
+  // layout views properly
+  STD_TabDesktop* d = dynamic_cast<STD_TabDesktop*>( app->desktop() );
+  if ( d && depVw && occVw ) {
+    QtxWorkstack* ws = d->workstack();
+    ws->stack();
+    QApplication::instance()->processEvents();
+    ws->Split( depVw, Qt::Horizontal, QtxWorkstack::SplitMove );
+    occVw->setFocus();
+  }
+#endif
+  depVw->setFocus();
 }
+#endif
 
 void GEOMToolsGUI::OnReduceStudy()
 {

@@ -39,6 +39,14 @@ Do you still want to delete these objects?</translation>
         <translation>NewObject</translation>
     </message>
     <message>
+        <source>DEVIDE_EDGE_BAD_PROJ_MSG</source>
+        <translation>Projection outside the edge</translation>
+    </message>
+    <message>
+        <source>DEVIDE_EDGE_BY_PROJ_POINT</source>
+        <translation>Points to project</translation>
+    </message>
+    <message>
         <source>ERROR_SHAPE_TYPE</source>
         <translation>Object of incorrect type selected!
 Please, select face, shell or solid and try again</translation>
@@ -408,6 +416,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>NonBlocksGroup</translation>
     </message>
     <message>
+        <source>GEOM_USE_C1_CRITERION</source>
+        <translation>Use C1 criterion</translation>
+    </message>
+    <message>
         <source>GEOM_CHECK_INFOS</source>
         <translation>Object And Its Topological Information</translation>
     </message>
@@ -416,20 +428,12 @@ Please, select face, shell or solid and try again</translation>
         <translation>Detect Self-intersections</translation>
     </message>
     <message>
-        <source>GEOM_CHECK_SELF_INTERSECTIONS_FAILED</source>
-        <translation>Detection of self-intersections failed</translation>
+        <source>GEOM_FAST_CHECK_INTERSECTIONS</source>
+        <translation>Fast intersection</translation>
     </message>
     <message>
-        <source>GEOM_NO_SELF_INTERSECTIONS</source>
-        <translation>There are no self-intersections in the shape</translation>
-    </message>
-    <message>
-        <source>GEOM_SELF_INTERSECTIONS_FOUND</source>
-        <translation>Some self-intersections detected</translation>
-    </message>
-    <message>
-        <source>GEOM_CHECK_SELF_INTERSECTIONS_ERRORS</source>
-        <translation>Warning: there were errors during the operation, so the list may be incomplete.</translation>
+        <source>GEOM_SHAPE_STATISTICS</source>
+        <translation>Shape Statistics</translation>
     </message>
     <message>
         <source>GEOM_CIRCLE</source>
@@ -537,7 +541,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_CYLINDER_ANGLE_ERR</source>
-        <translation>Angle values 0 and 360 are unsafe to build proper volumes. Please uncheck the "Angle" box to use the regular cylinder constructor.</translation>
+        <translation>Angle values 0 and 360 are unsafe to build proper volumes. Please uncheck the &quot;Angle&quot; box to use the regular cylinder constructor.</translation>
     </message>
     <message>
         <source>GEOM_D1</source>
@@ -577,7 +581,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_DIVIDE_EDGE_TITLE</source>
-        <translation>Addition of point</translation>
+        <translation>Addition of points</translation>
     </message>
     <message>
         <source>GEOM_DX</source>
@@ -676,6 +680,18 @@ Please, select face, shell or solid and try again</translation>
         <translation>Construction by Extrusion</translation>
     </message>
     <message>
+        <source>GEOM_THICKNESS_TITLE</source>
+        <translation>Thickness Construction</translation>
+    </message>
+    <message>
+        <source>GEOM_THICKNESS_NAME</source>
+        <translation>Thickness</translation>
+    </message>
+    <message>
+        <source>GEOM_TOWARDS_INSIDE</source>
+        <translation>Thicken towards the inside</translation>
+    </message>
+    <message>
         <source>GEOM_SCALE_PRISM</source>
         <translation>Scale the face opposite to the base</translation>
     </message>
@@ -708,8 +724,28 @@ Please, select face, shell or solid and try again</translation>
         <translation>Face creation from wires and/or edges</translation>
     </message>
     <message>
+        <source>GEOM_FACE_FROM_SURFACE</source>
+        <translation>Face creation from surface bounded by wire</translation>
+    </message>
+    <message>
         <source>GEOM_FACE_OPT</source>
         <translation>Try to create a planar face</translation>
+    </message>
+    <message>
+        <source>GEOM_FACE_FFWC</source>
+        <translation>Face creation from wire and constraints</translation>
+    </message>
+    <message>
+        <source>GEOM_CONSTRAINTS</source>
+        <translation>Constraints</translation>
+    </message>
+    <message>
+        <source>GEOM_FACE_CONSTRAINT</source>
+        <translation>Constraint Face</translation>
+    </message>
+    <message>
+        <source>GEOM_SOLID_FROM_FACE_OPT</source>
+        <translation>Intersect/sew shapes</translation>
     </message>
     <message>
         <source>MAKE_FACE_TOLERANCE_TOO_BIG</source>
@@ -790,7 +826,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_FILLING_COMPOUND</source>
-        <translation>Input compound</translation>
+        <translation>Input contours</translation>
     </message>
     <message>
         <source>GEOM_FILLING_MAX_DEG</source>
@@ -837,6 +873,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Free faces</translation>
     </message>
     <message>
+        <source>GEOM_FREE_FACES_NAME</source>
+        <translation>Free_face</translation>
+    </message>
+    <message>
         <source>GEOM_FREE_FACES_TITLE</source>
         <translation>Free faces</translation>
     </message>
@@ -867,6 +907,14 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_GLUE_EDGES_TITLE</source>
         <translation>Glue edges</translation>
+    </message>
+    <message>
+        <source>GEOM_GLUE_EDGES_DETECT_TITLE</source>
+        <translation>Coincident edges detection</translation>
+    </message>
+    <message>
+        <source>GEOM_GLUE_FACES_DETECT_TITLE</source>
+        <translation>Coincident faces detection</translation>
     </message>
     <message>
         <source>GLUE_ERROR_STICKED_SHAPES</source>
@@ -1201,16 +1249,48 @@ Please, select face, shell or solid and try again</translation>
         <translation>Division pattern</translation>
     </message>
     <message>
-        <source>GEOM_PROJECTION</source>
-        <translation>Projection</translation>
-    </message>
-    <message>
-        <source>GEOM_PROJECTION_TITLE</source>
+        <source>GEOM_PROJECTION_ON_FACE</source>
         <translation>Projection on Face</translation>
     </message>
     <message>
-        <source>GEOM_SOURCE_OBJECT</source>
+        <source>GEOM_PROJECTION_ON_WIRE</source>
+        <translation>Projection on Wire</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJECTION_ON_EDGE</source>
+        <translation>Projection on Edge</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJECTION_TITLE</source>
+        <translation>Projection</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJECTION_NAME</source>
+        <translation>Projection</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJ_ON_FACE_SOURCE</source>
         <translation>Source vertex, edge or wire</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJ_ON_FACE_TARGET</source>
+        <translation>Target face</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJ_ON_WIRE_SOURCE</source>
+        <translation>Source vertex</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJ_ON_WIRE_TARGET</source>
+        <translation>Target wire</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJ_ON_EDGE_SOURCE</source>
+        <translation>Source vertex</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJ_ON_EDGE_TARGET</source>
+        <translation>Target edge</translation>
     </message>
     <message>
         <source>GEOM_SOLUTION</source>
@@ -1219,10 +1299,6 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_SOLUTION_I</source>
         <translation>Solution %1</translation>
-    </message>
-    <message>
-        <source>GEOM_TARGET_OBJECT</source>
-        <translation>Target face</translation>
     </message>
     <message>
         <source>GEOM_WITH_CONTACT</source>
@@ -1275,6 +1351,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_LENGTH_VALUE</source>
         <translation>By length</translation>
+    </message>
+    <message>
+        <source>GEOM_TAKE_ORIENTATION_INTO_ACCOUNT</source>
+        <translation>Take edge orientation into account</translation>
     </message>
     <message>
         <source>GEOM_PARTITION</source>
@@ -1339,6 +1419,18 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_SELECT_UNPUBLISHED_EDGES</source>
         <translation>Select unpublished edges</translation>
+    </message>
+    <message>
+        <source>GEOM_GENERATE_GROUPS</source>
+        <translation>Generate Groups</translation>
+    </message>
+    <message>
+        <source>GEOM_GROUP_NAME_PREFIX</source>
+        <translation>Group Names Prefix</translation>
+    </message>
+    <message>
+        <source>GEOM_STEP_BY_STEP</source>
+        <translation>Step-by-step generation</translation>
     </message>
     <message>
         <source>GEOM_PLANE</source>
@@ -1638,11 +1730,11 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_SECTION</source>
-        <translation>Section</translation>
+        <translation>Intersection</translation>
     </message>
     <message>
         <source>GEOM_SECTION_TITLE</source>
-        <translation>Section Of Two Objects</translation>
+        <translation>Intersection Of Two Objects</translation>
     </message>
     <message>
         <source>GEOM_SELECTED_FACE</source>
@@ -1655,6 +1747,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_SELECTED_SHAPE</source>
         <translation>Selected shape</translation>
+    </message>
+    <message>
+        <source>GEOM_SELECTED_SHAPES</source>
+        <translation>Selected shapes</translation>
     </message>
     <message>
         <source>GEOM_SELECTION</source>
@@ -1933,6 +2029,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Solid Construction</translation>
     </message>
     <message>
+        <source>GEOM_SOLID_SHELLS</source>
+        <translation>Make Solid From Shells</translation>
+    </message>
+    <message>
+        <source>GEOM_SOLID_FACES</source>
+        <translation>Make Solid From Connected Set Of Faces/Shells</translation>
+    </message>
+    <message>
         <source>GEOM_SPHERE</source>
         <translation>Sphere</translation>
     </message>
@@ -2058,7 +2162,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_SUPRESSFACE</source>
-        <translation>Supress Face</translation>
+        <translation>Suppress Face</translation>
     </message>
     <message>
         <source>GEOM_SUPRESSFACE_SELECT</source>
@@ -2322,7 +2426,11 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_WRN_FACES_NOT_SHELL</source>
-        <translation>Unable to create a shell. Result is a compound of faces.</translation>
+        <translation>Unable to create single shell. Result is a compound of shells.</translation>
+    </message>
+    <message>
+        <source>GEOM_WRN_FACES_NOT_FACE</source>
+        <translation>Unable to create single face. Result is a compound of faces.</translation>
     </message>
     <message>
         <source>WRN_SHAPE_UNCLOSED</source>
@@ -2335,6 +2443,26 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>WRN_NULL_OBJECT_OR_SHAPE</source>
         <translation>Shape %1 for solid creation is null</translation>
+    </message>
+    <message>
+        <source>GROUP_DOWN</source>
+        <translation>Down</translation>
+    </message>
+    <message>
+        <source>GROUP_UP</source>
+        <translation>Up</translation>
+    </message>
+    <message>
+        <source>GROUP_SIDE1</source>
+        <translation>Side1</translation>
+    </message>
+    <message>
+        <source>GROUP_SIDE2</source>
+        <translation>Side2</translation>
+    </message>
+    <message>
+        <source>GROUP_OTHER</source>
+        <translation>Other</translation>
     </message>
     <message>
         <source>GEOM_X</source>
@@ -2361,12 +2489,12 @@ Please, select face, shell or solid and try again</translation>
         <translation>2D Polyline</translation>
     </message>
     <message>
-      <source>TOP_CURVE_CREATOR</source>
-      <translation>Create 2D polyline</translation>
+        <source>TOP_CURVE_CREATOR</source>
+        <translation>Create 2D polyline</translation>
     </message>
     <message>
-      <source>STB_CURVE_CREATOR</source>
-      <translation>Create 2D polyline</translation>
+        <source>STB_CURVE_CREATOR</source>
+        <translation>Create 2D polyline</translation>
     </message>
     <message>
         <source>MEN_ALL_SEL_ONLY</source>
@@ -2439,6 +2567,14 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>MEN_CHECK_SELF_INTERSECTIONS</source>
         <translation>Detect Self-intersections</translation>
+    </message>
+    <message>
+        <source>MEN_FAST_CHECK_INTERSECTIONS</source>
+        <translation>Fast intersection</translation>
+    </message>
+    <message>
+        <source>MEN_SHAPE_STATISTICS</source>
+        <translation>Shape Statistics</translation>
     </message>
     <message>
         <source>MEN_CHECK_FREE_BNDS</source>
@@ -2722,7 +2858,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>MEN_MEASURES</source>
-        <translation>Measures</translation>
+        <translation>Inspection</translation>
     </message>
     <message>
         <source>MEN_MIN_DIST</source>
@@ -2761,6 +2897,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Projection</translation>
     </message>
     <message>
+        <source>MEN_PROJ_ON_CYL</source>
+        <translation>Projection on Cylinder</translation>
+    </message>
+    <message>
         <source>MEN_OPERATIONS</source>
         <translation>Operations</translation>
     </message>
@@ -2779,6 +2919,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>MEN_PIPE_PATH</source>
         <translation>Restore Path</translation>
+    </message>
+    <message>
+        <source>MEN_THICKNESS</source>
+        <translation>Thickness</translation>
     </message>
     <message>
         <source>MEN_PLANE</source>
@@ -2897,6 +3041,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Show Vertices</translation>
     </message>
     <message>
+        <source>MEN_POP_SHOW_NAME</source>
+        <translation>Show Name</translation>
+    </message>
+    <message>
         <source>MEN_PREFERENCES</source>
         <translation>Preferences</translation>
     </message>
@@ -2938,7 +3086,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>MEN_SECTION</source>
-        <translation>Section</translation>
+        <translation>Intersection</translation>
     </message>
     <message>
         <source>MEN_SELECT_ONLY</source>
@@ -2985,8 +3133,16 @@ Please, select face, shell or solid and try again</translation>
         <translation>Isoline</translation>
     </message>
     <message>
+        <source>MEN_SURFACE_FROM_FACE</source>
+        <translation>Surface From Face</translation>
+    </message>
+    <message>
         <source>MEN_SOLID</source>
         <translation>Solid</translation>
+    </message>
+    <message>
+        <source>MEN_SOLID_FROM_FACES</source>
+        <translation>Solid from connected faces</translation>
     </message>
     <message>
         <source>MEN_SOLID_SEL_ONLY</source>
@@ -3077,6 +3233,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Hide Vertices</translation>
     </message>
     <message>
+        <source>MEN_NAME_MODE_ON</source>
+        <translation>Show Name</translation>
+    </message>
+    <message>
+        <source>MEN_NAME_MODE_OFF</source>
+        <translation>Hide Name</translation>
+    </message>
+    <message>
         <source>MEN_WIREFRAME</source>
         <translation>Wireframe</translation>
     </message>
@@ -3101,6 +3265,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Custom...</translation>
     </message>
     <message>
+        <source>MEN_EDGE_EXTEND</source>
+        <translation>Extended Edge</translation>
+    </message>
+    <message>
+        <source>MEN_FACE_EXTEND</source>
+        <translation>Extended Face</translation>
+    </message>
+    <message>
         <source>NAME_LBL</source>
         <translation>Name: </translation>
     </message>
@@ -3110,7 +3282,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>PREF_DEFLECTION</source>
-        <translation>Deflection coefficient</translation>
+        <translation>Default deflection coefficient</translation>
     </message>
     <message>
         <source>GEOM_PREF_def_precision</source>
@@ -3158,7 +3330,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>PREF_TRANSPARENCY</source>
-        <translation>Transparency</translation>
+        <translation>Default transparency</translation>
     </message>
     <message>
         <source>PREF_FREE_BOUND_COLOR</source>
@@ -3182,11 +3354,15 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>PREF_GROUP_VERTEX</source>
-        <translation>Marker of Points</translation>
+        <translation>Default marker of points</translation>
     </message>
     <message>
         <source>PREF_ISOS_COLOR</source>
         <translation>Color of isolines</translation>
+    </message>
+    <message>
+        <source>PREF_LABEL_COLOR</source>
+        <translation>Color of labels</translation>
     </message>
     <message>
         <source>PREF_TOPLEVEL_COLOR</source>
@@ -3258,11 +3434,11 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>PREF_EDGE_WIDTH</source>
-        <translation>Edges width</translation>
+        <translation>Default edges width</translation>
     </message>
     <message>
         <source>PREF_ISOLINES_WIDTH</source>
-        <translation>Iso lines width</translation>
+        <translation>Default isolines width</translation>
     </message>
     <message>
         <source>PREF_PREVIEW_EDGE_WIDTH</source>
@@ -3289,8 +3465,8 @@ Please, select face, shell or solid and try again</translation>
         <translation>Line width</translation>
     </message>
     <message>
-        <source>PREF_DIMENSIONS_FONT_HEIGHT</source>
-        <translation>Font height</translation>
+        <source>PREF_DIMENSIONS_FONT</source>
+        <translation>Font</translation>
     </message>
     <message>
         <source>PREF_DIMENSIONS_ARROW_LENGTH</source>
@@ -3313,8 +3489,16 @@ Please, select face, shell or solid and try again</translation>
         <translation>Show units of measurement</translation>
     </message>
     <message>
+        <source>PREF_DIMENSIONS_USE_TEXT3D</source>
+        <translation>Use 3D text</translation>
+    </message>
+    <message>
+        <source>PREF_HIDE_INPUT_OBJECT</source>
+        <translation>Hide input objects from the viewer</translation>
+    </message>
+    <message>
         <source>PREF_ISOS</source>
-        <translation>Number of isolines</translation>
+        <translation>Default number of isolines</translation>
     </message>
     <message>
         <source>PREF_ISOS_U</source>
@@ -3362,7 +3546,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>REMOVE_HOLES_NEW_OBJ_NAME</source>
-        <translation>SupressHoles</translation>
+        <translation>SuppressHoles</translation>
     </message>
     <message>
         <source>REMOVE_INT_WIRES_NEW_OBJ_NAME</source>
@@ -3429,6 +3613,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Detect Self-intersections</translation>
     </message>
     <message>
+        <source>STB_FAST_CHECK_INTERSECTIONS</source>
+        <translation>Fast intersection</translation>
+   </message>
+    <message>
+        <source>STB_SHAPE_STATISTICS</source>
+        <translation>Shape Statistics</translation>
+   </message>
+   <message>
         <source>STB_CHECK_FREE_BNDS</source>
         <translation>Check free boundaries</translation>
     </message>
@@ -3677,6 +3869,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Project a point, an edge or a wire on a face</translation>
     </message>
     <message>
+        <source>STB_PROJ_ON_CYL</source>
+        <translation>Project a wire or a face on a cylinder</translation>
+    </message>
+    <message>
         <source>STB_ORIGIN_AND_VECTORS</source>
         <translation>Create an origin and base Vectors</translation>
     </message>
@@ -3691,6 +3887,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>STB_PIPE_PATH</source>
         <translation>Restore path from a pipe-like shape</translation>
+    </message>
+    <message>
+        <source>STB_THICKNESS</source>
+        <translation>Make a thick solid</translation>
     </message>
     <message>
         <source>STB_PLANE</source>
@@ -3769,6 +3969,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Show Vertices</translation>
     </message>
     <message>
+        <source>STB_POP_SHOW_NAME</source>
+        <translation>Show Name</translation>
+    </message>
+    <message>
         <source>STB_POP_SETTEXTURE</source>
         <translation>Add a texture</translation>
     </message>
@@ -3810,7 +4014,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>STB_SECTION</source>
-        <translation>Section</translation>
+        <translation>Intersection</translation>
     </message>
     <message>
         <source>STB_SEWING</source>
@@ -3831,6 +4035,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>STB_VECTOR_MODE</source>
         <translation>Change Edge Presentation Mode</translation>
+    </message>
+    <message>
+        <source>STB_NAME_MODE</source>
+        <translation>Show/Hide names of visible shapes</translation>
     </message>
     <message>
         <source>STB_SHADING_COLOR</source>
@@ -3859,6 +4067,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>STB_ISOLINE</source>
         <translation>Create U- or V-Isoline</translation>
+    </message>
+    <message>
+        <source>STB_SURFACE_FROM_FACE</source>
+        <translation>Create a Surface From Face</translation>
     </message>
     <message>
         <source>STB_SOLID</source>
@@ -3938,7 +4150,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>SUPRESS_FACE_NEW_OBJ_NAME</source>
-        <translation>SupressFaces</translation>
+        <translation>SuppressFaces</translation>
     </message>
     <message>
         <source>ShHealOper_ErrorExecution_msg</source>
@@ -4035,6 +4247,14 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_CHECK_SELF_INTERSECTIONS</source>
         <translation>Detect Self-intersections</translation>
+    </message>
+    <message>
+        <source>TOP_FAST_CHECK_INTERSECTIONS</source>
+        <translation>Fast intersection</translation>
+    </message>
+    <message>
+        <source>TOP_SHAPE_STATISTICS</source>
+        <translation>Shape Statistics</translation>
     </message>
     <message>
         <source>TOP_CHECK_FREE_BNDS</source>
@@ -4277,6 +4497,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Projection</translation>
     </message>
     <message>
+        <source>TOP_PROJ_ON_CYL</source>
+        <translation>Projection on Cylinder</translation>
+    </message>
+    <message>
         <source>TOP_ORIGIN_AND_VECTORS</source>
         <translation>Create an origin and base Vectors</translation>
     </message>
@@ -4291,6 +4515,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_PIPE_PATH</source>
         <translation>Restore path</translation>
+    </message>
+    <message>
+        <source>TOP_THICKNESS</source>
+        <translation>Thickness</translation>
     </message>
     <message>
         <source>TOP_PLANE</source>
@@ -4390,7 +4618,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>TOP_SECTION</source>
-        <translation>Section</translation>
+        <translation>Intersection</translation>
     </message>
     <message>
         <source>TOP_SEWING</source>
@@ -4423,6 +4651,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_ISOLINE</source>
         <translation>Isoline</translation>
+    </message>
+    <message>
+        <source>TOP_SURFACE_FROM_FACE</source>
+        <translation>Surface From Face</translation>
     </message>
     <message>
         <source>TOP_SOLID</source>
@@ -4590,7 +4822,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_REMOVE_WEBS</source>
-        <translation>Compound of solids</translation>
+        <translation>Solids</translation>
     </message>
     <message>
         <source>REMOVE_WEBS_NEW_OBJ_NAME</source>
@@ -4675,6 +4907,18 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>STB_UNION_FACES</source>
         <translation>Union faces</translation>
+    </message>
+    <message>
+        <source>TOP_INSPECT_OBJECT</source>
+        <translation>Inspect Object</translation>
+    </message>
+    <message>
+        <source>MEN_INSPECT_OBJECT</source>
+        <translation>Inspect Object</translation>
+    </message>
+    <message>
+        <source>STB_INSPECT_OBJECT</source>
+        <translation>Inspect Object</translation>
     </message>
     <message>
         <source>TOP_NORMALE</source>
@@ -4905,6 +5149,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Z%1 :</translation>
     </message>
     <message>
+        <source>GEOM_A_I</source>
+        <translation>A%1 :</translation>
+    </message>
+    <message>
         <source>GEOM_SHAPES_ON_SHAPE_TITLE</source>
         <translation>Get shapes on shape</translation>
     </message>
@@ -4967,6 +5215,30 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>STB_GET_SHARED_SHAPES</source>
         <translation>Get shared shapes</translation>
+    </message>
+    <message>
+        <source>TOP_TRANSFER_DATA</source>
+        <translation>Transfer Data</translation>
+    </message>
+    <message>
+        <source>MEN_TRANSFER_DATA</source>
+        <translation>Transfer Data</translation>
+    </message>
+    <message>
+        <source>STB_TRANSFER_DATA</source>
+        <translation>Transfer Data</translation>
+    </message>
+    <message>
+        <source>TOP_EXTENSION</source>
+        <translation>Extend Edge or Face</translation>
+    </message>
+    <message>
+        <source>MEN_EXTENSION</source>
+        <translation>Extension</translation>
+    </message>
+    <message>
+        <source>STB_EXTENSION</source>
+        <translation>Extend Edge or Face</translation>
     </message>
     <message>
         <source>GEOM_PUBLISH_RESULT_GRP</source>
@@ -5108,6 +5380,74 @@ shells and solids on the other hand.</translation>
         <source>CC_PNT_ITEM_X_Y_Z</source>
         <translation>X=%1, Y=%2, Z=%3</translation>
     </message>
+    <message>
+        <source>GEOM_FILTER</source>
+        <translation>Filter</translation>
+    </message>
+    <message>
+        <source>GEOM_LESS_THAN</source>
+        <translation>Less Than</translation>
+    </message>
+    <message>
+        <source>GEOM_LESSOREQUAL_THAN</source>
+        <translation>Equal or Less Than</translation>
+    </message>
+    <message>
+        <source>GEOM_GREAT_THAN</source>
+        <translation>Greater Than</translation>
+    </message>
+    <message>
+        <source>GEOM_GREATOREQUAL_THAN</source>
+        <translation>Equal or Greater Than</translation>
+    </message>
+    <message>
+        <source>GEOM_SOME_SHAPES_SELECTED</source>
+        <translation>%1 shape(s) has(have) been selected</translation>
+    </message>
+    <message>
+        <source>GEOM_NO_SHAPES_SELECTED</source>
+        <translation>There are no shapes that meet filtering parameters</translation>
+    </message>
+    <message>
+        <source>GEOM_HEALING_STATS_TITLE</source>
+        <translation>What is done</translation>
+    </message>
+    <message>
+        <source>GEOM_HEALING_STATS_COL_1</source>
+        <translation>Count</translation>
+    </message>
+    <message>
+        <source>GEOM_HEALING_STATS_COL_2</source>
+        <translation>Modification</translation>
+    </message>
+    <message>
+        <source>GEOM_PLOT_DISTRIBUTION</source>
+        <translation>Plot</translation>
+    </message>
+    <message>
+        <source>GEOM_X_AXIS</source>
+        <translation>X Axis</translation>
+    </message>
+    <message>
+        <source>GEOM_Y_AXIS</source>
+        <translation>Y Axis</translation>
+    </message>
+    <message>
+        <source>GEOM_Z_AXIS</source>
+        <translation>Z Axis</translation>
+    </message>
+    <message>
+        <source>GEOM_DIM_AXES</source>
+        <translation>Dimensions along local axes</translation>
+    </message>
+    <message>
+        <source>SHOW_ALL_BTN</source>
+        <translation>Show all</translation>
+    </message>
+    <message>
+        <source>HIDE_ALL_BTN</source>
+        <translation>Hide all</translation>
+    </message>
 </context>
 <context>
     <name>GeometryGUI</name>
@@ -5157,27 +5497,11 @@ shells and solids on the other hand.</translation>
     </message>
     <message>
         <source>TOOL_MEASURES</source>
-        <translation>Measures</translation>
+        <translation>Inspection</translation>
     </message>
     <message>
         <source>TOOL_IMPORTEXPORT</source>
         <translation>Import / Export XAO</translation>
-    </message>
-    <message>
-        <source>TABLE_SECTION</source>
-        <translation>Section</translation>
-    </message>
-    <message>
-        <source>TABLE_INDEX</source>
-        <translation>Index</translation>
-    </message>
-    <message>
-        <source>TABLE_X</source>
-        <translation>X</translation>
-    </message>
-    <message>
-        <source>TABLE_Y</source>
-        <translation>Y</translation>
     </message>
 </context>
 <context>
@@ -5472,6 +5796,25 @@ shells and solids on the other hand.</translation>
     <message>
         <source>X=%1, Y=%2, Z=%3</source>
         <translation>X=%1, Y=%2, Z=%3</translation>
+    </message>
+</context>
+<context>
+    <name>CurveCreator_TableView</name>
+    <message>
+        <source>TABLE_SECTION</source>
+        <translation>Section</translation>
+    </message>
+    <message>
+        <source>TABLE_INDEX</source>
+        <translation>Index</translation>
+    </message>
+    <message>
+        <source>TABLE_X</source>
+        <translation>X</translation>
+    </message>
+    <message>
+        <source>TABLE_Y</source>
+        <translation>Y</translation>
     </message>
 </context>
 <context>
@@ -5832,10 +6175,6 @@ Number of sketch points too small</translation>
         <source>GEOM_ADD_THICKNESS</source>
         <translation>Add thickness (edges or wires only)</translation>
     </message>
-    <message>
-        <source>GEOM_TOWARDS_INSIDE</source>
-        <translation>Thicken towards the inside</translation>
-    </message>
 </context>
 <context>
     <name>GroupGUI</name>
@@ -6175,14 +6514,6 @@ Number of sketch points too small</translation>
     <message>
         <source>REMOVE_BTN</source>
         <translation>Remove</translation>
-    </message>
-    <message>
-        <source>SHOW_ALL_BTN</source>
-        <translation>Show all</translation>
-    </message>
-    <message>
-        <source>HIDE_ALL_BTN</source>
-        <translation>Hide all</translation>
     </message>
     <message>
         <source>DISTANCE_ITEM</source>
@@ -6580,6 +6911,22 @@ Please close this message box and select edges for gluing</translation>
         <translation>Enabling this option may result in a very time-consuming operation for some input shapes.
 Would you like to continue?</translation>
     </message>
+    <message>
+        <source>WIDTH_FACTOR_TOL</source>
+        <translation>Width factor tol.</translation>
+    </message>
+    <message>
+        <source>VOLUME_TOL</source>
+        <translation>Volume tol.</translation>
+    </message>
+    <message>
+        <source>TO_MERGE_SOLIDS</source>
+        <translation>To merge solids</translation>
+    </message>
+    <message>
+        <source>SELECT_ALL</source>
+        <translation>Select All</translation>
+    </message>
 </context>
 <context>
     <name>GEOMToolsGUI_DeleteDlg</name>
@@ -6767,6 +7114,10 @@ Do you want to create new material?</translation>
         <source>GEOM_SHARED_SHAPE</source>
         <translation>Shared_%1</translation>
     </message>
+    <message>
+        <source>GEOM_SHARED_SHAPES_MULTISHARE</source>
+        <translation>Shared by all</translation>
+    </message>
 </context>
 <context>
     <name>GEOMToolsGUI_PublishDlg</name>
@@ -6870,6 +7221,49 @@ Do you want to create new material?</translation>
     </message>
 </context>
 <context>
+    <name>RepairGUI_InspectObjectDlg</name>
+    <message>
+        <source>GEOM_INSPECT_OBJECT_TITLE</source>
+        <translation>Inspect object</translation>
+    </message>
+    <message>
+        <source>GEOM_INSPECT_OBJECT_MAIN_SHAPE</source>
+        <translation>Main shape</translation>
+    </message>
+    <message>
+      <source>GEOM_INSPECT_TOLERANCE_FILTER</source>
+      <translation>Tolerance filter</translation>
+    </message>
+    <message>
+      <source>GEOM_INSPECT_RESET_MIN</source>
+      <translation>Min value</translation>
+    </message>
+    <message>
+      <source>GEOM_INSPECT_RESET_MAX</source>
+      <translation>Max value</translation>
+    </message>
+    <message>
+      <source>GEOM_INSPECT_OBJECT_SHOW</source>
+        <translation>Show Selected</translation>
+    </message>
+    <message>
+        <source>GEOM_INSPECT_OBJECT_SHOW_ONLY</source>
+        <translation>Show Only Selected</translation>
+    </message>
+    <message>
+        <source>GEOM_INSPECT_OBJECT_HIDE</source>
+        <translation>Hide Selected</translation>
+    </message>
+    <message>
+        <source>GEOM_INSPECT_OBJECT_PUBLISH</source>
+        <translation>Publish Selected</translation>
+    </message>
+    <message>
+        <source>GEOM_INSPECT_OBJECT_NAME</source>
+        <translation>Name</translation>
+    </message>
+</context>
+<context>
     <name>GEOMGUI_CreationInfoWdg</name>
     <message>
         <source>CREATION_INFO_TITLE</source>
@@ -6893,6 +7287,17 @@ Do you want to create new material?</translation>
     </message>
 </context>
 <context>
+    <name>GEOMGUI_TextTreeWdg</name>
+    <message>
+        <source>TEXT_TREE_VIEW_TITLE</source>
+        <translation>Text</translation>
+    </message>
+    <message>
+        <source>TEXT_TREE_VIEW_NAME</source>
+        <translation>Name</translation>
+    </message>
+</context>
+<context>
     <name>EntityGUI_IsolineDlg</name>
     <message>
         <source>GEOM_ISOLINE_TITLE</source>
@@ -6909,6 +7314,311 @@ Do you want to create new material?</translation>
     <message>
         <source>GEOM_ISOLINE_V</source>
         <translation>V-Isoline</translation>
+    </message>
+</context>
+<context>
+    <name>MeasureGUI_CheckSelfIntersectionsDlg</name>
+    <message>
+        <source>GEOM_CHECK_INTERSECT_TYPE</source>
+        <translation>Self-intersection Detection Type</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_INTERSECTIONS</source>
+        <translation>Self-intersections</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_SUBSHAPES</source>
+        <translation>Sub-shapes</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_CHECK_LEVEL</source>
+        <translation>Level of check</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_SUMMARY</source>
+        <translation>Summary</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_COMPUTE</source>
+        <translation>Compute self-intersections</translation>
+    </message>
+    <message>
+        <source>GEOM_SELF_INTERSECTION_NAME</source>
+        <translation>Self_intersection</translation>
+    </message>
+    <message>
+        <source>GEOM_NO_SELF_INTERSECTIONS</source>
+        <translation>There are no self-intersections in the shape</translation>
+    </message>
+    <message>
+        <source>GEOM_SELF_INTERSECTIONS_FOUND</source>
+        <translation>Some self-intersections detected</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_SELF_INTERSECTIONS_FAILED</source>
+        <translation>Detection of self-intersections failed</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_SELF_INTERSECTIONS_ERRORS</source>
+        <translation>Warning: there were errors during the operation, so the list may be incomplete.</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_V_V</source>
+        <translation>Vertex to Vertex</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_V_E</source>
+        <translation>Vertex to Edge + all above</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_E_E</source>
+        <translation>Edge to Edge + all above</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_V_F</source>
+        <translation>Vertex to Face + all above</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_E_F</source>
+        <translation>Edge to Face + all above</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_ALL</source>
+        <translation>Face to Face + all above</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INT_DEFLECT</source>
+        <translation>Deflection coefficient</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INT_DETECT_GAPS</source>
+        <translation>Detect gaps with tolerance</translation>
+    </message>
+</context>
+<context>
+    <name>MeasureGUI_FastCheckIntersectionsDlg</name>
+    <message>
+        <source>GEOM_FAST_CHECK_INT_DEFLECT</source>
+        <translation>Deflection coefficient</translation>
+    </message>
+    <message>
+        <source>GEOM_FAST_CHECK_INT_DETECT_GAPS</source>
+        <translation>Detect gaps with tolerance</translation>
+    </message>
+    <message>
+        <source>GEOM_FAST_CHECK_INT_SUBSHAPES</source>
+        <translation>Sub-shapes of Object %1:</translation>
+    </message>
+    <message>
+        <source>GEOM_FAST_CHECK_INT_COMPUTE</source>
+        <translation>Compute intersections</translation>
+    </message>
+    <message>
+        <source>GEOM_FAST_INTERSECTION_NAME</source>
+        <translation>Fast_intersection</translation>
+    </message>
+    <message>
+        <source>GEOM_FAST_INTERSECTION_FAILS</source>
+        <translation>No intersections</translation>
+    </message>
+    <message>
+        <source>GEOM_FAST_CHECK_OBJ</source>
+        <translation>Objects And Results</translation>
+    </message>
+</context>
+<context>
+    <name>MeasureGUI_ShapeStatisticsDlg</name>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_TYPE</source>
+        <translation>Type</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_LENGTH</source>
+        <translation>Edges length</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_AREA</source>
+        <translation>Faces area</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_VOLUME</source>
+        <translation>Solids volume</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_NB_INTERVALS</source>
+        <translation>Number of intervals</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_SCALAR_RANGE</source>
+        <translation>Scalar range</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_COMPUTE</source>
+        <translation>Compute</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MIN</source>
+        <translation>Min</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MAX</source>
+        <translation>Max</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_CREATE_GROUPS</source>
+        <translation>Create Groups</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_DISTRIBUTION_NB_ENT</source>
+        <translation>Number of entities</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MIN_ERROR</source>
+        <translation>Set minimal range value or switch-off Scalar range</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MAX_ERROR</source>
+        <translation>Set maximal range value or switch-off Scalar range</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MIN_MAX_ERROR</source>
+        <translation>Minimal range value can not be more than maximal</translation>
+    </message>
+    <message>
+        <source>GEOM_MSG_GROUPS_CREATED</source>
+        <translation>%1 groups created</translation>
+    </message>
+</context>
+<context>
+    <name>TransformationGUI_ExtensionDlg</name>
+    <message>
+        <source>GEOM_EXTENSION_TITLE</source>
+        <translation>Extension of Edge or Face</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION</source>
+        <translation>Extension</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_MIN</source>
+        <translation>First Parameter</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_MAX</source>
+        <translation>Last Parameter</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_MIN_U</source>
+        <translation>First U-Parameter</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_MAX_U</source>
+        <translation>Last U-Parameter</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_MIN_V</source>
+        <translation>First V-Parameter</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_MAX_V</source>
+        <translation>Last V-Parameter</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_EDGE_NAME</source>
+        <translation>ExtendedEdge</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_FACE_NAME</source>
+        <translation>ExtendedFace</translation>
+    </message>
+</context>
+<context>
+    <name>EntityGUI_SurfFromFaceDlg</name>
+    <message>
+        <source>GEOM_SURF_FROM_FACE_TITLE</source>
+        <translation>Surface From Face Construction</translation>
+    </message>
+    <message>
+        <source>GEOM_SURF_FROM_FACE</source>
+        <translation>Surface From Face</translation>
+    </message>
+    <message>
+        <source>GEOM_SURF_FROM_FACE_NAME</source>
+        <translation>SurfaceFromFace</translation>
+    </message>
+</context>
+<context>
+    <name>OperationGUI_TransferDataDlg</name>
+    <message>
+        <source>GEOM_TRANSFER_DATA_TITLE</source>
+        <translation>Transfer Data</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA</source>
+        <translation>Transfer Data</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_FROM</source>
+        <translation>Source Shape</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_TO</source>
+        <translation>Destination Shape</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_METHOD</source>
+        <translation>Type of Detection Operation</translation>
+    </message>
+    <message>
+        <source>GEOM_TD_METHOD_GETINPLACE</source>
+        <translation>Get In Place</translation>
+    </message>
+    <message>
+        <source>GEOM_TD_METHOD_GETINPLACE_OLD</source>
+        <translation>Get In Place (old)</translation>
+    </message>
+    <message>
+        <source>GEOM_TD_METHOD_GETINPLACE_HISTORY</source>
+        <translation>Get In Place By History</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_INFO</source>
+        <translation>Transfer Data: Information</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_NOT_COPIED</source>
+        <translation>There is nothing to be copied.</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_COPIED</source>
+        <translation>The following data are copied:</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_NAMES</source>
+        <translation>Names: %1 of %2</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_MATERIALS</source>
+        <translation>Materials: %1 of %2</translation>
+    </message>
+</context>
+<context>
+    <name>TransformationGUI_ProjectionOnCylDlg</name>
+    <message>
+        <source>GEOM_PROJ_ON_CYL_TITLE</source>
+        <translation>Projection On A Cylinder</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJ_ON_CYL_START_ANGLE</source>
+        <translation>Starting angle</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJ_ON_CYL_LENGTH_ANGLE</source>
+        <translation>Length angle</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJ_ON_CYL_ROTATION_ANGLE</source>
+        <translation>Rotation angle</translation>
     </message>
 </context>
 </TS>

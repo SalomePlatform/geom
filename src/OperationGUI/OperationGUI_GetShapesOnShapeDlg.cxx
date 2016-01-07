@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -352,4 +352,16 @@ void OperationGUI_GetShapesOnShapeDlg::ComboTextChanged()
   // VRS ???? What is it for ??? commented for a while...
   //bool IsEnabled = GroupPoints->ComboBox1->currentIndex() < 3;
   processPreview();
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> OperationGUI_GetShapesOnShapeDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::GeomObjPtr aGeomObjPtr1(myObject1), aGeomObjPtr2(myObject2);
+  res << aGeomObjPtr1 << aGeomObjPtr2;
+  return res;
 }

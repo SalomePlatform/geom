@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -291,7 +291,7 @@ void BasicGUI_PlaneDlg::ConstructorsClicked( int constructorId )
       
       /* for the first argument */
       globalSelection(); // close local contexts, if any
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+      localSelection( TopAbs_VERTEX );
       break;
     }
   case 1: /* plane from 3 points */
@@ -315,7 +315,7 @@ void BasicGUI_PlaneDlg::ConstructorsClicked( int constructorId )
       
       /* for the first argument */
       globalSelection(); // close local contexts, if any
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+      localSelection( TopAbs_VERTEX );
       break;
     }
   case 2: /* plane from a planar face */
@@ -331,7 +331,7 @@ void BasicGUI_PlaneDlg::ConstructorsClicked( int constructorId )
       GroupFace->PushButton1->setDown( true );
       
       globalSelection(); // close local contexts, if any
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_FACE );
+      localSelection( TopAbs_FACE );
       break;
     }
   case 3: /* plane from a 2 Vectors */
@@ -347,7 +347,7 @@ void BasicGUI_PlaneDlg::ConstructorsClicked( int constructorId )
       Group2Vec->PushButton1->setDown( true );
       
       globalSelection(); // close local contexts, if any
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+      localSelection( TopAbs_EDGE );
       break;
     }
   case 4: /* plane from a LCS */
@@ -575,7 +575,7 @@ void BasicGUI_PlaneDlg::SetEditCurrentArgument()
   if ( myEditCurrentArgument == GroupPntDir->LineEdit2 || 
        myEditCurrentArgument == Group2Vec->LineEdit1   ||
        myEditCurrentArgument == Group2Vec->LineEdit2 ) {
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+    localSelection( TopAbs_EDGE );
   } else if ( myEditCurrentArgument == GroupFace->LineEdit1 ) {
     TColStd_MapOfInteger aMap;
     aMap.Add( GEOM_PLANE );
@@ -585,7 +585,7 @@ void BasicGUI_PlaneDlg::SetEditCurrentArgument()
     globalSelection( GEOM_MARKER );
   }
   else { // 3 Pnts
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+    localSelection( TopAbs_VERTEX );
   }
 
   //  SelectionIntoArgument();
@@ -786,4 +786,16 @@ void BasicGUI_PlaneDlg::addSubshapesToStudy()
  default:
    break;
   }
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BasicGUI_PlaneDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myPoint << myDir << myPoint1 << myPoint2 << myPoint3
+      << myFace << myVec1 << myVec2 << myLCS;
+  return res;
 }

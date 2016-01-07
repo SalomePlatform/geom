@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -239,7 +239,6 @@ Standard_Integer PntInSolid(const TopoDS_Solid& aZ,
   gp_Pnt aPx;
   gp_Pnt2d aP2Dx;
   gp_Vec aDNx;
-
   TopoDS_Face aF;
   TopExp_Explorer aExp;
   //
@@ -247,9 +246,8 @@ Standard_Integer PntInSolid(const TopoDS_Solid& aZ,
   aCoef=10.;
   //
   aExp.Init (aZ, TopAbs_FACE);
-  for (; aExp.More() ; aExp.Next()) {
+  if (aExp.More()) {
     aF=*((TopoDS_Face*)&aExp.Current());
-    break;
   }
   //
   iErr=PntInFace(aF, aPx, aP2Dx);
@@ -368,28 +366,30 @@ Standard_Integer PntInFace(const TopoDS_Face& aF,
   //
   // 4.
   aNbDomains=aHatcher.NbDomains(aIx);
-  for (i=1; i<=aNbDomains; ++i) {
-    const HatchGen_Domain& aDomain=aHatcher.Domain (aIx, i) ;
-    bHasFirstPoint=aDomain.HasFirstPoint();
-    if (!bHasFirstPoint) {
-      iErr=5;
-      return iErr;
-    }
-    //
-    aV1=aDomain.FirstPoint().Parameter();
-    //
-    bHasSecondPoint=aDomain.HasSecondPoint();
-    if (!bHasSecondPoint) {
-      iErr=6;
-      return iErr;
-    }
-    //
-    aV2=aDomain.SecondPoint().Parameter();
-    //
-    aVx=IntTools_Tools::IntermediatePoint(aV1, aV2);
-    //
-    break;
+  if (!aNbDomains) {
+    iErr=5;
+    return iErr;
   }
+  //
+  i=1;
+  const HatchGen_Domain& aDomain=aHatcher.Domain (aIx, i) ;
+  bHasFirstPoint=aDomain.HasFirstPoint();
+  if (!bHasFirstPoint) {
+    iErr=5;
+    return iErr;
+  }
+  //
+  aV1=aDomain.FirstPoint().Parameter();
+  //
+  bHasSecondPoint=aDomain.HasSecondPoint();
+  if (!bHasSecondPoint) {
+    iErr=6;
+    return iErr;
+  }
+  //
+  aV2=aDomain.SecondPoint().Parameter();
+  //
+  aVx=IntTools_Tools::IntermediatePoint(aV1, aV2);
   //
   aS->D0(aUx, aVx, aPx);
   //

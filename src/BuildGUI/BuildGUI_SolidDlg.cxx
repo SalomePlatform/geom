@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -50,30 +50,37 @@
 BuildGUI_SolidDlg::BuildGUI_SolidDlg( GeometryGUI* theGeometryGUI, QWidget* parent )
   : GEOMBase_Skeleton( theGeometryGUI, parent )
 {
-  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_BUILD_SOLID" ) ) );
-  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
+  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_BUILD_SOLID" ) ) );
+  QPixmap image2( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_SOLID_FROM_FACES" ) ) );
 
   setWindowTitle( tr( "GEOM_SOLID_TITLE" ) );
 
   /***************************************************************/
   mainFrame()->GroupConstructors->setTitle( tr( "GEOM_SOLID" ) );
-  mainFrame()->RadioButton1->setIcon( image0 );
-  mainFrame()->RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
-  mainFrame()->RadioButton2->close();
+  mainFrame()->RadioButton1->setIcon( image1 );
+  mainFrame()->RadioButton2->setIcon( image2 );
   mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
   mainFrame()->RadioButton3->close();
 
   GroupSolid = new DlgRef_1Sel1Check( centralWidget() );
-
-  GroupSolid->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
+  GroupSolid->GroupBox1->setTitle( tr( "GEOM_SOLID_SHELLS" ) );
   GroupSolid->TextLabel1->setText( tr( "GEOM_OBJECTS" ) );
   GroupSolid->CheckButton1->setText( tr( "GEOM_CREATE_SINGLE_SOLID" ) );
-  GroupSolid->PushButton1->setIcon( image1 );
+  GroupSolid->PushButton1->setIcon( image0 );
   GroupSolid->LineEdit1->setReadOnly( true );
+
+  GroupFaces = new DlgRef_1Sel1Check( centralWidget() );
+  GroupFaces->GroupBox1->setTitle( tr( "GEOM_SOLID_FACES" ) );
+  GroupFaces->TextLabel1->setText( tr( "GEOM_OBJECTS" ) );
+  GroupFaces->CheckButton1->setText( tr( "GEOM_SOLID_FROM_FACE_OPT" ) );
+  GroupFaces->PushButton1->setIcon( image0 );
+  GroupFaces->LineEdit1->setReadOnly( true );
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
   layout->addWidget( GroupSolid );
+  layout->addWidget( GroupFaces );
   /***************************************************************/
 
   setHelpFileName("create_solid_page.html");
@@ -118,7 +125,10 @@ void BuildGUI_SolidDlg::Init()
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
   connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
+  connect(this,      SIGNAL(constructorsClicked(int)), this, SLOT(ConstructorsClicked(int)));
+
   connect( GroupSolid->PushButton1,  SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
+  connect( GroupFaces->PushButton1,  SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
   connect( GroupSolid->CheckButton1, SIGNAL( toggled( bool ) ), this, SLOT( EnableNameField( bool ) ) );
 
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
@@ -126,6 +136,8 @@ void BuildGUI_SolidDlg::Init()
 
   initName( tr( "GEOM_SOLID" ) );
   SelectionIntoArgument();
+
+  ConstructorsClicked(0);
 }
 
 
@@ -150,9 +162,45 @@ bool BuildGUI_SolidDlg::ClickOnApply()
     return false;
 
   initName();
+
+  myEditCurrentArgument->setText("");
+  ConstructorsClicked(getConstructorId());
+
   return true;
 }
 
+//=================================================================================
+// function : ConstructorsClicked()
+// purpose  : Radio button management
+//=================================================================================
+void BuildGUI_SolidDlg::ConstructorsClicked(int constructorId)
+{
+  switch (constructorId) {
+  case 0:
+    {
+      globalSelection();
+      GroupFaces->hide();
+      GroupSolid->show();
+      myEditCurrentArgument = GroupSolid->LineEdit1;
+      GroupSolid->LineEdit1->setText("");
+      break;
+    }
+  case 1:
+    {
+      globalSelection();
+      GroupSolid->hide();
+      GroupFaces->show();
+      myEditCurrentArgument = GroupFaces->LineEdit1;
+      GroupFaces->LineEdit1->setText("");
+      break;
+    }
+  }
+
+  qApp->processEvents();
+  updateGeometry();
+  resize(minimumSizeHint());
+  SelectionIntoArgument();
+}
 
 //=================================================================================
 // function : SelectionIntoArgument()
@@ -164,7 +212,10 @@ void BuildGUI_SolidDlg::SelectionIntoArgument()
 
   //myShells = getSelected( TopAbs_SHELL, -1 );
   QList<TopAbs_ShapeEnum> types;
+  if (myEditCurrentArgument == GroupSolid->LineEdit1)
   types << TopAbs_SHELL << TopAbs_COMPOUND;
+  else if (myEditCurrentArgument == GroupFaces->LineEdit1)
+  types << TopAbs_FACE << TopAbs_SHELL << TopAbs_COMPOUND;
   myShells = getSelected( types, -1 );
 
   if ( !myShells.isEmpty() ) {
@@ -180,18 +231,25 @@ void BuildGUI_SolidDlg::SelectionIntoArgument()
 void BuildGUI_SolidDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  if ( send != GroupSolid->PushButton1 )
-    return;
 
-  //globalSelection( GEOM_SHELL );
   TColStd_MapOfInteger aMap;
-  aMap.Add( GEOM_SHELL );
-  aMap.Add( GEOM_COMPOUNDFILTER );
   QList<int> aSubShapes;
-  aSubShapes.append( GEOM_SHELL );
-  globalSelection( aMap, aSubShapes );
+  aMap.Add( GEOM_COMPOUNDFILTER );
 
-  myEditCurrentArgument = GroupSolid->LineEdit1;
+  if (send == GroupSolid->PushButton1) {
+    aMap.Add( GEOM_SHELL );
+	aSubShapes.append( GEOM_SHELL );
+	globalSelection( aMap, aSubShapes );
+	myEditCurrentArgument = GroupSolid->LineEdit1;
+  }
+  else if (send == GroupFaces->PushButton1) {
+    aMap.Add( GEOM_SHELL );
+    aMap.Add( GEOM_FACE );
+    aSubShapes.append( GEOM_SHELL );
+    aSubShapes.append( GEOM_FACE );
+    globalSelection( aMap, aSubShapes );
+    myEditCurrentArgument = GroupFaces->LineEdit1;
+  }
 
   myEditCurrentArgument->setFocus();
   SelectionIntoArgument();
@@ -205,16 +263,10 @@ void BuildGUI_SolidDlg::SetEditCurrentArgument()
 void BuildGUI_SolidDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+           this, SLOT(SelectionIntoArgument()));
 
-  //globalSelection( GEOM_SHELL );
-  TColStd_MapOfInteger aMap;
-  aMap.Add( GEOM_SHELL );
-  aMap.Add( GEOM_COMPOUNDFILTER );
-  QList<int> aSubShapes;
-  aSubShapes.append( GEOM_SHELL );
-  globalSelection( aMap, aSubShapes );
+  ConstructorsClicked(getConstructorId());
 }
 
 
@@ -257,15 +309,14 @@ bool BuildGUI_SolidDlg::isValid (QString& msg)
 
   GEOM::MeasureOpPtr anOp;
   anOp.take(myGeomGUI->GetGeomGen()->GetIMeasureOperations(getStudyId()));
-
-  if (!GroupSolid->CheckButton1->isChecked() || myShells.count() == 1) {
-    for (int i = 0, n = myShells.count(); i < n && ok; i++) {
-      CORBA::String_var aRes = anOp->IsGoodForSolid(myShells[i].get());
-      if (strlen(aRes.in())) {
-        msg = QObject::tr(aRes.in()).arg(GEOMBase::GetName(myShells[i].get()));
-        ok = false;
-      }
-    }
+  if (getConstructorId() == 0 && (!GroupSolid->CheckButton1->isChecked() || myShells.count() == 1)) {
+	for (int i = 0, n = myShells.count(); i < n && ok; i++) {
+	  CORBA::String_var aRes = anOp->IsGoodForSolid(myShells[i].get());
+	  if (strlen(aRes.in())) {
+		msg = QObject::tr(aRes.in()).arg(GEOMBase::GetName(myShells[i].get()));
+		ok = false;
+	  }
+	}
   }
   return ok;
 }
@@ -315,26 +366,52 @@ bool BuildGUI_SolidDlg::isClosed( GEOM::GEOM_Object_ptr shell )
 bool BuildGUI_SolidDlg::execute( ObjectList& objects )
 {
   GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
+  GEOM::GEOM_Object_var anObj;
 
-  if ( GroupSolid->CheckButton1->isChecked() ) {
-    GEOM::ListOfGO_var objlist = new GEOM::ListOfGO();
-    objlist->length( myShells.count() );
-    for ( int i = 0; i < myShells.count(); i++ )
-      objlist[i] = myShells[i].copy();
+  switch (getConstructorId()) {
+    case 0:
+    {
+	if ( GroupSolid->CheckButton1->isChecked() ) {
+	  GEOM::ListOfGO_var objlist = new GEOM::ListOfGO();
+	  objlist->length( myShells.count() );
+	  for ( int i = 0; i < myShells.count(); i++ )
+		objlist[i] = myShells[i].copy();
 
-    GEOM::GEOM_Object_var anObj = anOper->MakeSolidShells( objlist.in() );
+	  anObj = anOper->MakeSolidShells( objlist.in() );
 
-    if ( !anObj->_is_nil() )
-      objects.push_back( anObj._retn() );
-  }
-  else {
-    for ( int i = 0, n = myShells.count(); i< n; i++ ) {
-      GEOM::GEOM_Object_var anObj = anOper->MakeSolidShell( myShells[ i ].get() );
+	  if ( !anObj->_is_nil() ) objects.push_back( anObj._retn() );
+	}
+	else {
+	  for ( int i = 0, n = myShells.count(); i< n; i++ ){
+		anObj = anOper->MakeSolidShell( myShells[ i ].get() );
 
-     if ( !anObj->_is_nil() )
-       objects.push_back( anObj._retn() );
+		if ( !anObj->_is_nil() ) objects.push_back( anObj._retn() );
+	  }
+	}
+	break;
+    }
+    case 1:
+    {
+      GEOM::ListOfGO_var objlist = new GEOM::ListOfGO();
+      objlist->length( myShells.count() );
+      for ( int i = 0; i < myShells.count(); i++ )
+        objlist[i] = myShells[i].copy();
+
+    	anObj = anOper->MakeSolidFromConnectedFaces( objlist.in(), GroupFaces->CheckButton1->isChecked() );
+
+    	if ( !anObj->_is_nil() ) objects.push_back( anObj._retn() );
+      break;
     }
   }
 
   return true;
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BuildGUI_SolidDlg::getSourceObjects()
+{
+  return myShells;
 }

@@ -6,15 +6,13 @@ For a detailed description of the Partition operation please refer to <a href="S
 It provides a general review of the Partition and Boolean operations algorithms, describes the usage methodology and highlights
 major limitations of these operations.
 
-Perhaps you also ask yourself : \ref partition_explanation "What's the difference between partition, compounds and fuse operation ?"
+Perhaps you also ask yourself : \ref partition_explanation "What's the difference between partition, compounds and fuse operation?"
 
-To produce a \b Partition in the <b>Main Menu</b> select <b>Operations - > Partition</b>
+To produce a \b Partition in the <b>Main Menu</b> select <b>Operations -> Partition</b>
 
-This operation builds a compound by intersection of several shapes
-with a set of tool objects or with a plane.
-The \b Result will be a \b GEOM_Object.
+This operation builds a compound by partitioning a set of input objects by a set of tool objects.
 
-<br><h2>Intersection of two shapes.</h2>
+The \b Result of the operation is a \b GEOM_Object.
 
 \image html partition1.png
 
@@ -22,7 +20,7 @@ The \b Result will be a \b GEOM_Object.
 first list will be intersected with the shapes from the second list) +
 Resulting Type of shape.
 
-As far as the intersection of two objects can produce any type of
+As far as the partition of two objects can produce any type of
 geometrical objects, <b>Resulting type</b> box allows choosing the
 preferable result, i.e. a solid, a shell, a list of faces, etc.
 
@@ -45,8 +43,8 @@ face intersects with the box, see the corresponding \ref partition_picture_3 "pi
 <b>No sub-shapes intersection (Compounds only)</b> check box affects
 only input shapes of the Compound type.
 - If this option is switched off (default behavior) each input compound will be automatically
-exploded into sub-shapes and the intersection between these shapes will be also computed.
-- If this option is switched on, the intersection between sub-shapes will not be performed.
+exploded into sub-shapes and the partition between these shapes will be also computed.
+- If this option is switched on, the partition between sub-shapes will not be performed.
 In this case the Partition algorithm will work faster, but the result might differ from the 
 default behavior.
 
@@ -59,7 +57,7 @@ If self-intersection is detected, the operation is aborted.
 
 \note This algorithm does not find all types of self-intersections. It is tuned
       to detect vertex/vertex, vertex/edge, edge/edge, vertex/face and edge/face
-      intersections. Face/face intersections detection is switched off as it
+      interferences. Face/face interference detection is switched off as it
       is a time-consuming operation that gives an impact on performance. To find
       all self-intersections please use \ref check_self_intersections_page
       "Detect Self-intersection tool".
@@ -96,28 +94,16 @@ be checked for self-intersection prior to the operation.
 - Other parameters are obsolete and kept only for compatibility with
 previous versions of SALOME.
 
-<br><h2>Intersection of a Shape and a Plane.</h2>
-
-\image html partition2.png
-
-<b>Arguments:</b> Name + 1 shape to be intersected + 1 cutting plane.
-
-Activate \ref restore_presentation_parameters_page "Advanced options" if required.
-
-<b>TUI Command:</b>
-
-<em>geompy.MakeHalfPartition(Shape, Plane)</em>, where:
-- \em Shape is a source shape to be intersected by the \em Plane
-- \em Plane is a tool shape, to intersect the \em Shape.
-
 <b>Examples:</b>
 
-\image html partitionsn1.png "Box intersected by a plane"
+\anchor partition_picture_1
+\image html partitionsn1.png "Input data: box intersected by plane"
 
-\image html partitionsn2.png "Result of intersection"
+\anchor partition_picture_2
+\image html partitionsn2.png "Result: box partitioned by plane"
 
 \anchor partition_picture_3
-\image html partitionsn3.png "Result of intersection of a box and a plane (both as \em Objects, no tools) with the Resulting type \em Solid and checked 'Keep shapes of lower type'"
+\image html partitionsn3.png "Result: partitioned box and plane (both as \em Objects); resulting type is \em Solid; option 'Keep shapes of lower type' is on"
 
 Our <b>TUI Scripts</b> provide you with useful examples of \ref tui_partition "Basic Operations".
 

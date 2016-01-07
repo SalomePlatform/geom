@@ -10,8 +10,8 @@ Entity - > Primitives - > Cylinder</b>
 
 \n Firstly, you can define a \b Cylinder by the <b>Base Point</b> (the central
 point of the cylinder base), the \b Vector (the axis of the cylinder),
-and its dimensions: the \b Radius and the \b Height. Also, you can optionally specify
-the \b Angle in order to create a portion of cylinder.
+and its dimensions: the \b Radius and the \b Height. You can optionally specify
+the \b Angle to create a portion of cylinder.
 
 \n <b>TUI Command:</b> <em>geompy.MakeCylinder(Point, Axis, Radius, Height)</em>
 \n <b>Arguments:</b>  Name + 1 vertex + 1 vector + 2 values
@@ -26,8 +26,8 @@ the \b Angle in order to create a portion of cylinder.
 \n Secondly, you can define a \b Cylinder by the given \b Radius and
 \b Height at the origin of coordinate system. The axis of the cylinder
 will be collinear to the OZ axis of the coordinate system. 
-Similarly to first constructor, you can optionally specify the \b Angle
-in order to create a portion of cylinder.
+Similarly to the first constructor, you can optionally specify the \b Angle
+to create a portion of cylinder.
 
 \n <b>TUI Command:</b> <em>geompy.MakeCylinderRH(Radius, Height)</em>
 \n <b>Arguments:</b> Name + 2 values (Dimensions at origin: radius and

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -84,11 +84,8 @@ void GEOMAlgo_Gluer2::Clear()
   myImagesToWork.Clear();
   myOriginsToWork.Clear();
   myKeepNonSolids=Standard_False;
-  //modified by NIZNHY-PKV Tue Mar 13 13:38:28 2012f
   myDetector.Clear();
-  //modified by NIZNHY-PKV Tue Mar 13 13:38:30 2012t
 }
-//modified by NIZNHY-PKV Tue Mar 13 12:26:50 2012f
 //=======================================================================
 //function : StickedShapes
 //purpose  :
@@ -98,12 +95,12 @@ const TopTools_IndexedDataMapOfShapeListOfShape&
 {
   return myDetector.StickedShapes();
 }
-//modified by NIZNHY-PKV Tue Mar 13 12:26:54 2012t
 //=======================================================================
 //function : SetShapesToGlue
 //purpose  :
 //=======================================================================
-void GEOMAlgo_Gluer2::SetShapesToGlue(const TopTools_DataMapOfShapeListOfShape& aM)
+void GEOMAlgo_Gluer2::SetShapesToGlue
+  (const TopTools_DataMapOfShapeListOfShape& aM)
 {
   myShapesToGlue=aM;
 }
@@ -241,6 +238,7 @@ void GEOMAlgo_Gluer2::CheckData()
   myWarningStatus=0;
   //
   aNbSG=myShapesToGlue.Extent();
+  aType=TopAbs_SHAPE;
   if (aNbSG) {
     // Check myShapesToGlue
     aItDMSLS.Initialize(myShapesToGlue);
@@ -587,6 +585,7 @@ void GEOMAlgo_Gluer2::BuildResult()
   myErrorStatus=0;
   myWarningStatus=0;
   //
+  bHasImage=Standard_False;
   aItC.Initialize(myArgument);
   for (; aItC.More(); aItC.Next()) {
     const TopoDS_Shape& aCx=aItC.Value();

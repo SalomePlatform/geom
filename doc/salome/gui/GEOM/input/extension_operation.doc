@@ -1,0 +1,55 @@
+/*!
+
+\page extension_operation_page Extension 
+
+\n To produce an \b Extension of an Edge or a Face select in the <b>Main Menu</b> 
+<b>Operations - > Transformation - > Extension</b>. The type of extension is defined using the radio buttons.
+
+Firstly it is possible to resize an \b Edge by modifying its first
+and last parameters
+
+\image html extension1.png "Edge Extension" 
+
+\n <b>TUI Command:</b> <em>geompy.ExtendEdge(theEdge, theMin, theMax)</em>,
+where \em theEdge the input edge to be resized, \em theMin the minimal
+parameter value, \em theMax the maximal parameter value.
+\n <b>Arguments:</b> Name + Object (Edge) + 2 values (Min and Max Parameters).
+
+\n <b>Example:</b>
+
+\image html extend_edge_example.png "Original edge (white) and extended edge"
+
+\note The input Edge parameters range is [0, 1]. If \b theMin parameter is
+      negative, the input Edge is extended, otherwise it is shrinked by
+      \b theMin parameter. If \b theMax is greater than 1, the Edge is
+      extended, otherwise it is shrinked by \b theMax parameter.
+	
+Secondly it is possible to resize a \b Face by modifying its 
+minimal and maximal U- and V-Parameters. 
+
+ \image html extension2.png "Face Extension" 
+ 
+\n <b>TUI Command:</b> <em>geompy.ExtendFace(theFace, theUMin, theUMax,
+theVMin, theVMax)</em>, where \em theFace the input face to be resized,
+\em theUMin the minimal U-Parameter value, \em theUMax the maximal U-Parameter
+value, \em theVMin the minimal V-Parameter value, \em theVMax the maximal
+V-Parameter value.
+\n <b>Arguments:</b> Name + Object (Face) + 4 values (Min and Max U- and
+V-Parameters).
+
+
+\n <b>Example:</b>
+
+\image html extend_face_example.png "The original face (gray) and a result face shrinked along U-Direction and extended along V-Direction"
+
+\note The input Face U- and V-Parameters range is [0, 1]. If \b theUMin
+      parameter is negative, the input Face is extended, otherwise it is
+      shrinked along U-Direction by \b theUMin parameter. If \b theUMax is
+      greater than 1, the Face is extended, otherwise it is shrinked along
+      U-Direction by \b theUMax parameter. The same applies to \b theVMin, \b theVMax
+      and V-Direction of the input Face.
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_extend "Extension Operations".
+
+*/

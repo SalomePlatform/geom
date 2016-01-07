@@ -48,4 +48,51 @@
 Ignoring units will cause model scaling (as dimensions are supposed to be specified in meters).</translation>
     </message>
 </context>
+<context>
+    <name>STEPPlugin_ExportDlg</name>
+    <message>
+        <source>STEP_LENGTH_UNITS</source>
+        <translation>Length units</translation>
+    </message>
+    <message>
+        <source>STEP_UNITS_INCH</source>
+        <translation>inch</translation>
+    </message>
+    <message>
+        <source>STEP_UNITS_MILLIMETER</source>
+        <translation>millimeter</translation>
+    </message>
+    <message>
+        <source>STEP_UNITS_FOOT</source>
+        <translation>foot</translation>
+    </message>
+    <message>
+        <source>STEP_UNITS_MILE</source>
+        <translation>mile</translation>
+    </message>
+    <message>
+        <source>STEP_UNITS_METER</source>
+        <translation>meter</translation>
+    </message>
+    <message>
+        <source>STEP_UNITS_KILOMETER</source>
+        <translation>kilometer</translation>
+    </message>
+    <message>
+        <source>STEP_UNITS_MILLIINCH</source>
+        <translation>milliinch</translation>
+    </message>
+    <message>
+        <source>STEP_UNITS_MICROMETER</source>
+        <translation>micrometer</translation>
+    </message>
+    <message>
+        <source>STEP_UNITS_CENTIMETER</source>
+        <translation>centimeter</translation>
+    </message>
+    <message>
+        <source>STEP_UNITS_MICROINCH</source>
+        <translation>microinch</translation>
+    </message>
+</context>
 </TS>

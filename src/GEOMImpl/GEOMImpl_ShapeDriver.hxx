@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -104,6 +104,16 @@ private:
   TopoDS_Shape MakeIsoline(const TopoDS_Face &theFace,
                            const bool         IsUIso,
                            const double       theParameter) const;
+
+  TopoDS_Shape ExtendEdge(const TopoDS_Edge   &theEdge,
+                          const Standard_Real  theMin,
+                          const Standard_Real  theMax) const;
+
+  TopoDS_Shape ExtendFace(const TopoDS_Face   &theFace,
+                          const Standard_Real  theUMin,
+                          const Standard_Real  theUMax,
+                          const Standard_Real  theVMin,
+                          const Standard_Real  theVMax) const;
 
 };
 

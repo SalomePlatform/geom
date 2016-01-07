@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -411,8 +411,14 @@ bool OperationGUI_Fillet1d2dDlg::execute (ObjectList& objects)
     anOper->MakeFillet1D(myShape, getRadius(), aListOfIndexes, GroupVertexes->CheckButton1->isChecked()) : 
     anOper->MakeFillet2D(myShape, getRadius(), aListOfIndexes);
 
-  if (!anObj->_is_nil())
+  if (!anObj->_is_nil()) {
+    if (!IsPreview()) {
+      QStringList aParameters;
+      aParameters << GroupVertexes->SpinBox_DX->text();
+      anObj->SetParameters(aParameters.join(":").toUtf8().constData());
+    }
     objects.push_back(anObj._retn());
+  }
 
   return true;
 }
@@ -424,4 +430,16 @@ bool OperationGUI_Fillet1d2dDlg::execute (ObjectList& objects)
 double OperationGUI_Fillet1d2dDlg::getRadius() const
 {
   return GroupVertexes->SpinBox_DX->value();
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> OperationGUI_Fillet1d2dDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::GeomObjPtr aGeomObjPtr(myShape);
+  res << aGeomObjPtr;
+  return res;
 }

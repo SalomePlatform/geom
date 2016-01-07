@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -62,6 +62,8 @@
 #include <TCollection_AsciiString.hxx>
 #include <TCollection_ExtendedString.hxx>
 
+#include <cstdlib>
+
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
@@ -76,6 +78,7 @@
 #define HISTORY_LABEL 4
 #define SUBSHAPES_LABEL 5 // 0020756: GetGroups
 #define NAMING_LABEL 6 // 0020750: Naming during STEP import
+#define CALLBACK_LABEL 1 // TDataStd_Comment
 
 #ifdef KEEP_ORIENTATION_0021251
 #define ORIENTATION_LABEL 7 // 0021251: TNaming_NamedShape doesn't store orientation
@@ -124,7 +127,7 @@ Handle(GEOM_Function) GEOM_Function::GetFunction(const TDF_Label& theEntry)
  */
 //=============================================================================
 GEOM_Function::GEOM_Function(const TDF_Label& theEntry, const Standard_GUID& theGUID, int theType)
-: _label(theEntry)
+  : _label(theEntry), _isCallBackData(false)
 {
   TFunction_Function::Set(theEntry, theGUID);
   TDataStd_Integer::Set(theEntry, theType);
@@ -137,6 +140,21 @@ GEOM_Function::GEOM_Function(const TDF_Label& theEntry, const Standard_GUID& the
 
   aNode = TDataStd_TreeNode::Set(theEntry, GetFunctionTreeID());
   aRoot->Append(aNode);
+}
+
+//================================================================================
+/*!
+ * \brief 
+ * 
+ * 
+ */
+//================================================================================
+
+GEOM_Function::~GEOM_Function()
+{
+  if ( _isCallBackData ) {
+    _label.FindChild( CALLBACK_LABEL ).ForgetAttribute( TDataStd_Comment::GetID() );
+  }
 }
 
 //================================================================================
@@ -571,9 +589,10 @@ TCollection_AsciiString GEOM_Function::GetString(int thePosition)
   Handle(TDataStd_Comment) aString;
   TDF_Label anArgLabel = ARGUMENT(thePosition);
   if(!anArgLabel.FindAttribute(TDataStd_Comment::GetID(), aString)) return aRes;
-
+  char *str = new char[aString->Get().LengthOfCString()+1];
+  aString->Get().ToUTF8CString(str);
+  aRes = TCollection_AsciiString(str);
   _isDone = true;
-  aRes = TCollection_AsciiString(aString->Get());
   return aRes;
 }
 
@@ -926,6 +945,52 @@ TDF_Label GEOM_Function::GetArgumentHistoryEntry (const TDF_Label&       theArgu
 TDF_Label GEOM_Function::GetNamingEntry (const Standard_Boolean create)
 {
   return _label.FindChild(NAMING_LABEL, create);
+}
+
+//================================================================================
+/*!
+ * Save a pointer to a data holder intended to pass temporary data Driver -> Operation.
+ * This method should be called by Operation to set the data holder.
+ * An instance of GEOM_Function that sets the data holder will remove the
+ * corresponding OCAF attribute at it's destruction
+ */
+//================================================================================
+
+void GEOM_Function::SetCallBackData( void* data )
+{
+  std::ostringstream strm;
+  strm << (long long) data;
+  TCollection_ExtendedString string( strm.str().c_str() );
+
+  TDF_Label aChild = _label.FindChild(CALLBACK_LABEL);
+  TDataStd_Comment::Set(aChild, string);
+
+  _isCallBackData = true; // I will remove TDataStd_Comment at destruction
+}
+
+//================================================================================
+/*!
+ * Returns a pointer to a data holder intended to pass data Driver -> Operation.
+ * This method should be called by Driver to get the data holder to fill it in.
+ * Returns NULL if the Operation have not set the data holder.
+ */
+//================================================================================
+
+void* GEOM_Function::GetCallBackData()
+{
+  Handle(TDataStd_Comment) aComment;
+  TDF_Label aChild = _label.FindChild( CALLBACK_LABEL );
+  if(!aChild.FindAttribute(TDataStd_Comment::GetID(), aComment)) return NULL;
+  TCollection_AsciiString string( aComment->Get() );
+
+  long long address;
+#ifndef WIN32
+  address = atoll ( string.ToCString() );
+#else
+  address = _strtoi64 ( string.ToCString(), NULL, 10 );
+#endif
+
+  return reinterpret_cast<void*> ( address );
 }
 
 IMPLEMENT_STANDARD_HANDLE (GEOM_Function, Standard_Transient);

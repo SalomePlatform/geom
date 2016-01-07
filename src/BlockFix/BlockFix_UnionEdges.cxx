@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -88,6 +88,37 @@
 
 #include "utilities.h"
 
+//=======================================================================
+//function : IsToMerge
+//purpose  : This method return Standard_True if two edges have common
+//           vertex. This vertex is returned by output parameter. The
+//           difference with the method TopExp::CommonVertex is only in
+//           the case if there are two common vertices. In this case
+//           this method returns the last vertex of theEdge1, not the first
+//           one that TopExp::CommonVertex does.
+//=======================================================================
+static Standard_Boolean GetCommonVertex(const TopoDS_Edge   &theEdge1,
+                                        const TopoDS_Edge   &theEdge2,
+                                              TopoDS_Vertex &theCommon)
+{
+  Standard_Boolean   isFound = Standard_True;
+  ShapeAnalysis_Edge aSae;
+  TopoDS_Vertex      aVF1 = aSae.FirstVertex(theEdge1);
+  TopoDS_Vertex      aVL1 = aSae.LastVertex(theEdge1);
+  TopoDS_Vertex      aVF2 = aSae.FirstVertex(theEdge2);
+  TopoDS_Vertex      aVL2 = aSae.LastVertex(theEdge2);
+
+  if (aVL1.IsSame(aVF2) || aVL1.IsSame(aVL2)) {
+    theCommon = aVL1;
+  } else if (aVF1.IsSame(aVL2) || aVF1.IsSame(aVF2)) {
+    theCommon = aVF1;
+  } else {
+    theCommon.Nullify();
+    isFound = Standard_False;
+  }
+
+  return isFound;
+}
 
 //=======================================================================
 //function : IsToMerge
@@ -95,9 +126,11 @@
 //           be merged. The edges can be merged if:
 //             1. They belong to same faces.
 //             2. They either both seam or both not seam on each face.
-//             3. They are based on coincident lines, or:
-//             4. They are based on coincident circles, or:
-//             5. They are based on either Bezier of BSplines.
+//             3. There are no another edges (e.g. seam) on each common face
+//                that are connected to the common vertex of two edges.
+//             4. They are based on coincident lines, or:
+//             5. They are based on coincident circles, or:
+//             6. They are based on either Bezier of BSplines.
 //=======================================================================
 static Standard_Boolean IsToMerge
     (const TopoDS_Edge                               &theEdge1,
@@ -108,7 +141,6 @@ static Standard_Boolean IsToMerge
   Standard_Boolean aResult  = Standard_False;
   Standard_Boolean isDegen1 = BRep_Tool::Degenerated(theEdge1);
   Standard_Boolean isDegen2 = BRep_Tool::Degenerated(theEdge2);
-  Standard_Boolean isCompareGeom = Standard_False;
 
   if (isDegen1 && isDegen2) {
     // Both of edges are degenerated.
@@ -129,7 +161,7 @@ static Standard_Boolean IsToMerge
 
         isSame = Standard_True;
 
-        for (; anIter1.More(); anIter1.Next()) {
+        for (; anIter1.More() && isSame; anIter1.Next()) {
           TopoDS_Face aFace1 = TopoDS::Face(anIter1.Value());
           TopTools_ListIteratorOfListOfShape  anIter2(aLst2);
 
@@ -141,6 +173,44 @@ static Standard_Boolean IsToMerge
               Standard_Boolean isSeam2 = BRep_Tool::IsClosed(theEdge2, aFace1);
 
               isSame = (isSeam1 && isSeam2) || (isSeam1 == isSeam2);
+
+              if (isSame) {
+                // Check if there are no other edges (e.g. seam) on this face
+                // that are connected to the common vertex.
+                TopoDS_Vertex aVCommon;
+
+                if (GetCommonVertex(theEdge1, theEdge2, aVCommon)) {
+                  TopTools_IndexedDataMapOfShapeListOfShape aMapVE;
+
+                  TopExp::MapShapesAndAncestors
+                    (aFace1, TopAbs_VERTEX, TopAbs_EDGE, aMapVE);
+
+                  if (aMapVE.Contains(aVCommon)) {
+                    TopTools_ListIteratorOfListOfShape 
+                      anItE(aMapVE.FindFromKey(aVCommon));
+
+                    for (; anItE.More(); anItE.Next()) {
+                      const TopoDS_Shape &anEdge = anItE.Value();
+
+                      if (!theEdge1.IsSame(anEdge) &&
+                          !theEdge2.IsSame(anEdge)) {
+                        // There is another edge that shares the common vertex.
+                        // Nothing to merge.
+                        isSame = Standard_False;
+                        break;
+                      }
+                    }
+                  } else {
+                    // Common vertex doesn't belong to the face.
+                    // Nothing to merge. NEVERREACHED.
+                    isSame = Standard_False;
+                  }
+                } else {
+                  // No common vertex. Nothing to merge. NEVERREACHED.
+                  isSame = Standard_False;
+                }
+              }
+
               break;
             }
           }
@@ -289,7 +359,7 @@ static TopoDS_Edge GlueEdgesWithPCurves(const TopTools_SequenceOfShape& aChain,
     
     if (i > 1)
     {
-      TopExp::CommonVertex(PrevEdge, anEdge, CV);
+      GetCommonVertex(PrevEdge, anEdge, CV);
       Standard_Real Tol = BRep_Tool::Tolerance(CV);
       tabtolvertex(i-2) = Tol;
     }
@@ -511,16 +581,24 @@ static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
       if (C.IsNull()) {
         // jfa for Mantis issue 0020228
         if (PV1.Distance(PV2) > Precision::Confusion()) continue;
-        // closed chain
-        if (edge1.Orientation() == TopAbs_FORWARD) {
-          C = C1;
-        } else {
-          C = Handle(Geom_Circle)::DownCast(C1->Reversed());
+        // closed chain. Make a closed circular edge starting from V1.
+        gp_Ax1 anAxis = C1->Axis();
+
+        if (edge1.Orientation() == TopAbs_REVERSED) {
+          anAxis.Reverse();
         }
+
+        const gp_Pnt &aP0 = anAxis.Location();
+        gp_Dir        aDX(PV1.XYZ().Subtracted(aP0.XYZ()));
+        gp_Ax2        aNewAxis(aP0, anAxis.Direction(), aDX);
+
+        C = new Geom_Circle(aNewAxis, C1->Radius());
 
         B.MakeEdge (E,C,Precision::Confusion());
         B.Add(E,V1);
         B.Add(E,V2);
+        B.UpdateVertex(V1, 0., E, 0.);
+        B.UpdateVertex(V2, 2.*M_PI, E, 0.);
       }
       else {
         gp_Pnt P0 = C->Location();

@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2012-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -39,6 +39,7 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/src/GEOMImpl
   ${PROJECT_SOURCE_DIR}/src/GEOMGUI
   ${PROJECT_SOURCE_DIR}/src/GEOMBase
+  ${PROJECT_SOURCE_DIR}/src/MeasureGUI
   ${PROJECT_SOURCE_DIR}/src/SKETCHER
   ${PROJECT_SOURCE_DIR}/src/CurveCreator
   ${PROJECT_SOURCE_DIR}/src/ShapeRecognition
@@ -67,6 +68,7 @@ SET(_link_LIBRARIES
   DlgRef
   GEOMSketcher
   CurveCreator
+  MeasureGUI
   )
 
 # optional sources
@@ -108,6 +110,7 @@ SET(EntityGUI_HEADERS
   EntityGUI_PolylineDlg.h
   EntityGUI_3DSketcherDlg.h
   EntityGUI_IsolineDlg.h
+  EntityGUI_SurfFromFaceDlg.h
   EntityGUI_SubShapeDlg.h
   EntityGUI_FeatureDetectorDlg.h
   EntityGUI_PictureImportDlg.h
@@ -121,6 +124,7 @@ SET(_moc_HEADERS
   EntityGUI_PolylineDlg.h
   EntityGUI_3DSketcherDlg.h
   EntityGUI_IsolineDlg.h
+  EntityGUI_SurfFromFaceDlg.h
   EntityGUI_SubShapeDlg.h
   EntityGUI_PictureImportDlg.h
   ${FeatureDetectorDlg_moc_h}
@@ -142,6 +146,7 @@ SET(EntityGUI_SOURCES
   EntityGUI_PolylineDlg.cxx
   EntityGUI_3DSketcherDlg.cxx
   EntityGUI_IsolineDlg.cxx
+  EntityGUI_SurfFromFaceDlg.cxx
   EntityGUI_SubShapeDlg.cxx
   EntityGUI_PictureImportDlg.cxx
   ${FeatureDetectorDlg_Sources}

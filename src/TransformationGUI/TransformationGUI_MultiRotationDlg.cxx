@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -330,7 +330,7 @@ void TransformationGUI_MultiRotationDlg::SetEditCurrentArgument()
   else if (send == GroupArgs->PushButton2) {
     myEditCurrentArgument = GroupArgs->LineEdit2;
 
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+    localSelection(TopAbs_EDGE);
 
     GroupArgs->PushButton1->setDown(false);
     GroupArgs->LineEdit1->setEnabled(false);
@@ -548,6 +548,17 @@ void TransformationGUI_MultiRotationDlg::addSubshapesToStudy()
   default:
     break;
   }
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> TransformationGUI_MultiRotationDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myBase << myVector;
+  return res;
 }
 
 //=================================================================================

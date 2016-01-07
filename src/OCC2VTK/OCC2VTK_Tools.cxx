@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,7 @@
 #include "GEOM_EdgeSource.h" 
 #include "GEOM_WireframeFace.h" 
 #include "GEOM_ShadingFace.h"
+#include "GEOMUtils.hxx"
 
 #include <Bnd_Box.hxx>
 #include <BRep_Tool.hxx>
@@ -35,76 +36,34 @@
 #include <TopoDS.hxx>
 #include <TopTools_ListOfShape.hxx>
 
-#define MAX2(X, Y)    (Abs(X) > Abs(Y) ? Abs(X) : Abs(Y))
-#define MAX3(X, Y, Z) (MAX2(MAX2(X,Y), Z))
 
-
-#define DEFAULT_DEFLECTION 0.001
+#include <TopExp.hxx>
+#include <vtkAppendPolyData.h>
+#include <vtkPolyData.h>
+#include <BRepBuilderAPI_Copy.hxx>
 
 namespace GEOM
 {
-  void MeshShape(const TopoDS_Shape theShape,
-                 float& theDeflection,
-                 bool theForced ) {
-    
-    Standard_Real aDeflection = theDeflection <= 0 ? DEFAULT_DEFLECTION : theDeflection;
-    
-    //If deflection <= 0, than return default deflection
-    if(theDeflection <= 0)
-      theDeflection = aDeflection;  
-    
-    // Is shape triangulated?
-    Standard_Boolean alreadymeshed = Standard_True;
-    TopExp_Explorer ex;
-    TopLoc_Location aLoc;
-    for (ex.Init(theShape, TopAbs_FACE); ex.More(); ex.Next()) {
-      const TopoDS_Face& aFace = TopoDS::Face(ex.Current());
-      Handle(Poly_Triangulation) aPoly = BRep_Tool::Triangulation(aFace,aLoc);
-      if(aPoly.IsNull()) { 
-        alreadymeshed = Standard_False; 
-        break; 
-      }
-    }
-
-    if(!alreadymeshed || theForced) {
-      Bnd_Box B;
-      BRepBndLib::Add(theShape, B);
-      if ( B.IsVoid() )
-        return; // NPAL15983 (Bug when displaying empty groups) 
-      Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
-      B.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
-
-      // This magic line comes from Prs3d_ShadedShape.gxx in OCCT
-      aDeflection = MAX3(aXmax-aXmin, aYmax-aYmin, aZmax-aZmin) * aDeflection * 4;
-      
-      //Clean triangulation before compute incremental mesh
-      BRepTools::Clean(theShape);
-      
-      //Compute triangulation
-      BRepMesh_IncrementalMesh MESH(theShape,aDeflection); 
-    }
-  }
-
-  void SetShape(const TopoDS_Shape& theShape,
-                const TopTools_IndexedDataMapOfShapeListOfShape& theEdgeMap,
-                bool theIsVector,
-                GEOM_VertexSource* theStandaloneVertexSource,
-                GEOM_EdgeSource* theIsolatedEdgeSource,
-                GEOM_EdgeSource* theOneFaceEdgeSource,
-                GEOM_EdgeSource* theSharedEdgeSource,
-                GEOM_WireframeFace* theWireframeFaceSource,
-                GEOM_ShadingFace* theShadingFaceSource)
+  void ShapeToVTK( const TopoDS_Shape& theShape,
+                   const TopTools_IndexedDataMapOfShapeListOfShape& theEdgeMap,
+                   bool theIsVector,
+                   GEOM_VertexSource* theStandaloneVertexSource,
+                   GEOM_EdgeSource* theIsolatedEdgeSource,
+                   GEOM_EdgeSource* theOneFaceEdgeSource,
+                   GEOM_EdgeSource* theSharedEdgeSource,
+                   GEOM_WireframeFace* theWireframeFaceSource,
+                   GEOM_ShadingFace* theShadingFaceSource )
   {
     if (theShape.ShapeType() == TopAbs_COMPOUND) {
       TopoDS_Iterator anItr(theShape);
       for (; anItr.More(); anItr.Next()) {
-        SetShape(anItr.Value(),theEdgeMap,theIsVector,
-                 theStandaloneVertexSource,
-                 theIsolatedEdgeSource,
-                 theOneFaceEdgeSource,
-                 theSharedEdgeSource,
-                 theWireframeFaceSource,
-                 theShadingFaceSource);
+        ShapeToVTK( anItr.Value(),theEdgeMap,theIsVector,
+                    theStandaloneVertexSource,
+                    theIsolatedEdgeSource,
+                    theOneFaceEdgeSource,
+                    theSharedEdgeSource,
+                    theWireframeFaceSource,
+                    theShadingFaceSource );
       }
     }
 
@@ -158,5 +117,70 @@ namespace GEOM
         }
       }
     }
+  }
+
+  vtkPolyData* GetVTKData( const TopoDS_Shape& theShape, float theDeflection )
+  {
+    vtkPolyData* ret = 0;
+
+    BRepBuilderAPI_Copy aCopy(theShape);
+    if (aCopy.IsDone() ) {
+
+      TopoDS_Shape aShape = aCopy.Shape();
+      
+      try {
+        GEOM_VertexSource* myVertexSource = GEOM_VertexSource::New();
+        GEOM_EdgeSource* myIsolatedEdgeSource = GEOM_EdgeSource::New();
+        GEOM_EdgeSource* myOneFaceEdgeSource = GEOM_EdgeSource::New();
+        GEOM_EdgeSource* mySharedEdgeSource = GEOM_EdgeSource::New();
+        GEOM_WireframeFace* myWireframeFaceSource = GEOM_WireframeFace::New();
+        GEOM_ShadingFace* myShadingFaceSource = GEOM_ShadingFace::New();
+        
+        vtkAppendPolyData* myAppendFilter = vtkAppendPolyData::New();
+        myAppendFilter->AddInputConnection( myVertexSource->GetOutputPort() );
+        myAppendFilter->AddInputConnection( myIsolatedEdgeSource->GetOutputPort() );
+        myAppendFilter->AddInputConnection( myOneFaceEdgeSource->GetOutputPort() );
+        myAppendFilter->AddInputConnection( mySharedEdgeSource->GetOutputPort() );      
+        myAppendFilter->AddInputConnection( myShadingFaceSource->GetOutputPort() );
+        
+        bool anIsVector = false;
+        
+        GEOMUtils::MeshShape( aShape, theDeflection );
+        TopExp_Explorer aVertexExp( aShape, TopAbs_VERTEX );
+        for( ; aVertexExp.More(); aVertexExp.Next() ) {
+          const TopoDS_Vertex& aVertex = TopoDS::Vertex( aVertexExp.Current() );
+          myVertexSource->AddVertex( aVertex );
+        }
+      
+        TopTools_IndexedDataMapOfShapeListOfShape anEdgeMap;
+        TopExp::MapShapesAndAncestors( aShape, TopAbs_EDGE, TopAbs_FACE, anEdgeMap );
+        
+        ShapeToVTK( aShape,
+                    anEdgeMap,
+                    anIsVector,
+                    0,
+                    myIsolatedEdgeSource,
+                    myOneFaceEdgeSource,
+                    mySharedEdgeSource,
+                    myWireframeFaceSource,
+                    myShadingFaceSource );
+        
+        myAppendFilter->Update();
+        
+        myVertexSource->Delete();
+        myIsolatedEdgeSource->Delete();
+        myOneFaceEdgeSource->Delete();
+        mySharedEdgeSource->Delete();
+        myWireframeFaceSource->Delete();
+        myShadingFaceSource->Delete();
+        
+        ret = vtkPolyData::New();
+        ret->ShallowCopy(myAppendFilter->GetOutput());
+        myAppendFilter->Delete();
+      }
+      catch(Standard_Failure) {
+      }
+    }
+    return ret;
   }
 }

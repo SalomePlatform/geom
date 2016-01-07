@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -82,6 +82,20 @@ GetCreationInformation(std::string&             theOperationName,
     // field.addStep(step, stamp, values)
     AddParam( theParams, "Step", data.GetStepID() );
     AddParam( theParams, "Stamp", data.GetStepStamp() );
+  }
+  else if ( funType == GEOM_Field::FUN_CHANGE_COMP_NAMES )
+  {
+    theOperationName = "Change component names";
+  }
+  else if ( funType == GEOM_Field::FUN_CHANGE_STEP_STAMP )
+  {
+    theOperationName = "Change stamp";
+    AddParam( theParams, "Stamp", data.GetStepStamp() );
+  }
+  else if ( funType == GEOM_Field::FUN_CHANGE_VALUE )
+  {
+    theOperationName = "FIELD_EDIT";//"Change values";
+    AddParam( theParams, "Values", "..." );
   }
   else
   {

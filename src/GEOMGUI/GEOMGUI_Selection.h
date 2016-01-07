@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -68,6 +68,7 @@ private:
   QString               selectionMode() const;
   bool                  isVectorsMode( const int ) const;
   bool                  isVerticesMode( const int ) const;
+  bool                  isNameMode( const int ) const;
   bool                  hasChildren( const int ) const;
   int                   nbChildren( const int ) const;
   bool                  hasConcealedChildren( const int ) const;

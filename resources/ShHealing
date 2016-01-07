@@ -18,6 +18,10 @@ ShapeProcess.FixFaceSize.Tolerance                   	: 0.05
 
 ShapeProcess.DropSmallEdges.Tolerance3d              	: 0.05
 
+ShapeProcess.DropSmallSolids.WidthFactorThreshold       : 1
+ShapeProcess.DropSmallSolids.VolumeThreshold            : 1000
+ShapeProcess.DropSmallSolids.MergeSolids                : 1
+
 ShapeProcess.BSplineRestriction.SurfaceMode		: 1
 ShapeProcess.BSplineRestriction.Curve3dMode		: 1
 ShapeProcess.BSplineRestriction.Curve2dMode		: 1
@@ -209,6 +213,11 @@ ShapeProcess.SameParameter.Tolerance3d			: 1.e-7
 
 ! DropSmallEdges                        : Eliminate small edges by removing or merging with neighbour
 ! DropSmallEdges.Tolerance3d            : Tolerance (3d)
+
+! DropSmallSolids                       : Eliminate small solids by a) removing them or b) absorbing them by adjacent larger solids.
+! DropSmallSolids.WidthFactorThreshold  : Maximum value of 2V/S of a solid where V is volume and S is surface area of the solid.
+! DropSmallSolids.VolumeThreshold       : Maximum volume of a solid.
+! DropSmallSolids.MergeSolids           : If false, solids are removed; otherwise, solids are merged to adjacent larger solids.
 
 ! FixShape.Tolerance3d			: Tolerance (3d) for fixing of shape.
 ! FixShape.MaxTolerance3d		: Maximal possible value of increasing of tolerance during fixing.

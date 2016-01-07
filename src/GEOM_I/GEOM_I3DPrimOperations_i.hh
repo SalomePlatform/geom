@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -153,10 +153,12 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
                                         GEOM::GEOM_Object_ptr theBase,
                                         CORBA::Double         theHeight,
                                         CORBA::Double         theAngle,
-                                        CORBA::Boolean        theFuse);
-                            
-  GEOM::GEOM_Object_ptr MakePipe (GEOM::GEOM_Object_ptr theBase,
-				  GEOM::GEOM_Object_ptr thePath);
+                                        CORBA::Boolean        theFuse,
+                                        CORBA::Boolean        theInvert);
+
+  GEOM::ListOfGO* MakePipe (GEOM::GEOM_Object_ptr theBase,
+                            GEOM::GEOM_Object_ptr thePath,
+                            CORBA::Boolean        IsGenerateGroups);
 
   GEOM::GEOM_Object_ptr MakeRevolutionAxisAngle (GEOM::GEOM_Object_ptr theBase,
 						 GEOM::GEOM_Object_ptr theAxis,
@@ -166,7 +168,7 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
 						      GEOM::GEOM_Object_ptr theAxis,
 						      CORBA::Double theAngle);
 
-  GEOM::GEOM_Object_ptr MakeFilling(GEOM::GEOM_Object_ptr theShape,
+  GEOM::GEOM_Object_ptr MakeFilling(const GEOM::ListOfGO& theContours,
                                     CORBA::Long theMinDeg, CORBA::Long theMaxDeg,
                                     CORBA::Double theTol2D, CORBA::Double theTol3D,
                                     CORBA::Long theNbIter,
@@ -177,30 +179,41 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
 					 CORBA::Boolean theModeSolid,
 					 CORBA::Double thePreci,
 					 CORBA::Boolean theRuled);
-  
-  GEOM::GEOM_Object_ptr MakePipeWithDifferentSections(const GEOM::ListOfGO& theBases,
-						      const GEOM::ListOfGO& theLocations,
-						      GEOM::GEOM_Object_ptr thePath,
-						      CORBA::Boolean theWithContact,
-						      CORBA::Boolean theWithCorrections);
 
-  GEOM::GEOM_Object_ptr MakePipeWithShellSections(const GEOM::ListOfGO& theBases,
-						  const GEOM::ListOfGO& theSubBases,
-						  const GEOM::ListOfGO& theLocations,
-						  GEOM::GEOM_Object_ptr thePath,
-						  CORBA::Boolean theWithContact,
-						  CORBA::Boolean theWithCorrections);
+  GEOM::ListOfGO* MakePipeWithDifferentSections
+                           (const GEOM::ListOfGO        &theBases,
+                            const GEOM::ListOfGO        &theLocations,
+                                  GEOM::GEOM_Object_ptr  thePath,
+                                  CORBA::Boolean         theWithContact,
+                                  CORBA::Boolean         theWithCorrections,
+                                  CORBA::Boolean         IsBySteps,
+                                  CORBA::Boolean         IsGenerateGroups);
 
-  GEOM::GEOM_Object_ptr MakePipeShellsWithoutPath(const GEOM::ListOfGO& theBases,
-						  const GEOM::ListOfGO& theLocations);
+  GEOM::ListOfGO* MakePipeWithShellSections
+                           (const GEOM::ListOfGO        &theBases,
+                            const GEOM::ListOfGO        &theSubBases,
+                            const GEOM::ListOfGO        &theLocations,
+                                  GEOM::GEOM_Object_ptr  thePath,
+                                  CORBA::Boolean         theWithContact,
+                                  CORBA::Boolean         theWithCorrections,
+                                  CORBA::Boolean         IsGenerateGroups);
 
-  GEOM::GEOM_Object_ptr MakePipeBiNormalAlongVector (GEOM::GEOM_Object_ptr theBase,
-						     GEOM::GEOM_Object_ptr thePath,
-						     GEOM::GEOM_Object_ptr theVec);
-  
-  GEOM::GEOM_Object_ptr MakeThickening (GEOM::GEOM_Object_ptr theObject,
-                                        CORBA::Double theOffset,
-                                        CORBA::Boolean isCopy);
+  GEOM::ListOfGO* MakePipeShellsWithoutPath
+                           (const GEOM::ListOfGO &theBases,
+                            const GEOM::ListOfGO &theLocations,
+                                  CORBA::Boolean  IsGenerateGroups);
+
+  GEOM::ListOfGO* MakePipeBiNormalAlongVector
+                           (GEOM::GEOM_Object_ptr theBase,
+                            GEOM::GEOM_Object_ptr thePath,
+                            GEOM::GEOM_Object_ptr theVec,
+                            CORBA::Boolean        IsGenerateGroups);
+
+  GEOM::GEOM_Object_ptr MakeThickening (GEOM::GEOM_Object_ptr   theObject,
+                                        const GEOM::ListOfLong &theFacesIDs,
+                                        CORBA::Double           theOffset,
+                                        CORBA::Boolean          isCopy,
+                                        CORBA::Boolean          theInside);
 
   GEOM::GEOM_Object_ptr RestorePath (GEOM::GEOM_Object_ptr theShape,
                                      GEOM::GEOM_Object_ptr theBase1,

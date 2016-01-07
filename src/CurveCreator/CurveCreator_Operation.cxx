@@ -1,9 +1,9 @@
-// Copyright (C) 2013  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2013-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -341,7 +341,7 @@ void CurveCreator_Operation::apply(CurveCreator_Curve *theCurve)
 
           int nbPoints = pInt[0];
           int nbCoords = pInt[1];
-          int nbParams = 3+nbCoords;
+          int nbParams = 3+nbCoords*sizeof(double)/sizeof(int);
           for (int i = 0; i < nbPoints*nbParams; i=i+nbParams) {
             aCoords.clear();
             aPoints.clear();

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -40,6 +40,24 @@
 #include <TopoDS_Iterator.hxx>
 #include <TopoDS_Shape.hxx>
 
+namespace
+{
+  GEOM::shape_type maxShapeType(const GEOM::ListOfGO& objs)
+  {
+    GEOM::shape_type r = GEOM::SHAPE;
+    for ( int i = 0; i < objs.length(); i++ ) {
+      GEOM::shape_type t = objs[i]->GetShapeType();
+      if ( t == GEOM::COMPOUND || t == GEOM::COMPSOLID )
+        t = objs[i]->GetMaxShapeType();
+      else if ( t < GEOM::VERTEX )
+        t = GEOM::shape_type( (int)t+1 );
+      r = qMin( r, t );
+      if ( r <= GEOM::SOLID ) break;
+    }
+    return r;
+  }
+}
+
 //=================================================================================
 // class    : OperationGUI_GetSharedShapesDlg()
 // purpose  : Constructs a OperationGUI_GetSharedShapesDlg which is a child of 'parent', with the
@@ -75,7 +93,7 @@ OperationGUI_GetSharedShapesDlg::OperationGUI_GetSharedShapesDlg
   GroupPoints->LineEdit1->setReadOnly(true);
   GroupPoints->LineEdit2->hide();
   GroupPoints->LineEdit1->setEnabled(true);
-  GroupPoints->CheckButton1->hide();
+  GroupPoints->CheckButton1->setText(tr("GEOM_SHARED_SHAPES_MULTISHARE"));
 
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
@@ -103,15 +121,7 @@ OperationGUI_GetSharedShapesDlg::~OperationGUI_GetSharedShapesDlg()
 //=================================================================================
 void OperationGUI_GetSharedShapesDlg::Init()
 {
-  /* type for sub-shape selection */
-  GroupPoints->ComboBox1->addItem(tr("GEOM_SOLID"));
-  GroupPoints->ComboBox1->addItem(tr("GEOM_SHELL"));
-  GroupPoints->ComboBox1->addItem(tr("GEOM_FACE"));
-  GroupPoints->ComboBox1->addItem(tr("GEOM_WIRE"));
-  GroupPoints->ComboBox1->addItem(tr("GEOM_EDGE"));
-  GroupPoints->ComboBox1->addItem(tr("GEOM_VERTEX"));
-
-  GroupPoints->ComboBox1->setCurrentIndex(0);
+  initTypes();
 
   showOnlyPreviewControl();
 
@@ -127,6 +137,8 @@ void OperationGUI_GetSharedShapesDlg::Init()
 
   connect(GroupPoints->ComboBox1, SIGNAL(activated(int)), this, SLOT(ComboTextChanged()));
 
+  connect(GroupPoints->CheckButton1, SIGNAL(clicked()), this, SLOT(processPreview()));
+
   connect(myGeomGUI->getApp()->selectionMgr(),
            SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
@@ -135,6 +147,35 @@ void OperationGUI_GetSharedShapesDlg::Init()
 
   ConstructorsClicked(0);
   GroupPoints->PushButton1->click();
+}
+
+void OperationGUI_GetSharedShapesDlg::initTypes()
+{
+  GEOM::shape_type t = maxShapeType( myListShapes );
+
+  int idx = GroupPoints->ComboBox1->count() > 0 ? 
+    GroupPoints->ComboBox1->itemData( GroupPoints->ComboBox1->currentIndex() ).toInt() : -1;
+
+  GroupPoints->ComboBox1->clear();
+
+  if ( t == GEOM::SHAPE || t <= GEOM::SOLID )
+    GroupPoints->ComboBox1->addItem( tr( "GEOM_SOLID" ), int( GEOM::SOLID ) );
+  if ( t == GEOM::SHAPE || t <= GEOM::SHELL )
+    GroupPoints->ComboBox1->addItem( tr( "GEOM_SHELL" ), int( GEOM::SHELL ) );
+  if ( t == GEOM::SHAPE || t <= GEOM::FACE )
+    GroupPoints->ComboBox1->addItem( tr( "GEOM_FACE" ), int( GEOM::FACE ) );
+  if ( t == GEOM::SHAPE || t <= GEOM::WIRE )
+    GroupPoints->ComboBox1->addItem( tr( "GEOM_WIRE" ), int( GEOM::WIRE ) );
+  if ( t == GEOM::SHAPE || t <= GEOM::EDGE )
+    GroupPoints->ComboBox1->addItem( tr( "GEOM_EDGE" ), int( GEOM::EDGE ) );
+  if ( t == GEOM::SHAPE || t <= GEOM::VERTEX )
+    GroupPoints->ComboBox1->addItem( tr( "GEOM_VERTEX" ), int( GEOM::VERTEX ) );
+
+  idx = GroupPoints->ComboBox1->findData( idx );
+  GroupPoints->ComboBox1->setCurrentIndex( idx >= 0 ? idx : 0 );
+
+  if ( idx < 0 )
+    ComboTextChanged();
 }
 
 //=================================================================================
@@ -148,7 +189,6 @@ void OperationGUI_GetSharedShapesDlg::ConstructorsClicked (int constructorId)
 
   myListShapes.length(0);
 
-  GroupPoints->ComboBox1->setCurrentIndex(0);
   GroupPoints->PushButton1->setDown(true);
 
   myEditCurrentArgument = GroupPoints->LineEdit1;
@@ -210,6 +250,9 @@ void OperationGUI_GetSharedShapesDlg::SelectionIntoArgument()
   }
 
   GEOMBase::ConvertListOfIOInListOfGO(aSelList, myListShapes, true);
+
+  initTypes();
+
   if (!myListShapes.length())
     return;
 
@@ -278,19 +321,8 @@ void OperationGUI_GetSharedShapesDlg::ComboTextChanged()
 //=================================================================================
 int OperationGUI_GetSharedShapesDlg::GetType() const
 {
-  int aLimit = GroupPoints->ComboBox1->currentIndex();
-
-  switch (aLimit) {
-  case 0:  aLimit = GEOM::SOLID ; break;
-  case 1:  aLimit = GEOM::SHELL ; break;
-  case 2:  aLimit = GEOM::FACE  ; break;
-  case 3:  aLimit = GEOM::WIRE  ; break;
-  case 4:  aLimit = GEOM::EDGE  ; break;
-  case 5:  aLimit = GEOM::VERTEX; break;
-  default: aLimit = GEOM::SHAPE ;
-  }
-
-  return aLimit;
+  return GroupPoints->ComboBox1->count() > 0 ?
+    GroupPoints->ComboBox1->itemData( GroupPoints->ComboBox1->currentIndex() ).toInt() : (int)GEOM::SHAPE;
 }
 
 //=================================================================================
@@ -308,11 +340,13 @@ GEOM::GEOM_IOperations_ptr OperationGUI_GetSharedShapesDlg::createOperation()
 //=================================================================================
 bool OperationGUI_GetSharedShapesDlg::isValid (QString& msg)
 {
-  if (myListShapes.length() < 2) {
+  bool isOK = myListShapes.length() > 1 ||
+    ( myListShapes.length() > 0 && myListShapes[0]->GetShapeType() == GEOM::COMPOUND );
+
+  if ( !isOK )
     msg = tr("MSG_SHARED_SHAPES_TOO_FEW_SHAPES");
-    return false;
-  }
-  return true;
+
+  return isOK;
 }
 
 //=================================================================================
@@ -322,7 +356,7 @@ bool OperationGUI_GetSharedShapesDlg::isValid (QString& msg)
 bool OperationGUI_GetSharedShapesDlg::execute (ObjectList& objects)
 {
   GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow(getOperation());
-  GEOM::ListOfGO_var aList = anOper->GetSharedShapesMulti(myListShapes, GetType());
+  GEOM::ListOfGO_var aList = anOper->GetSharedShapesMulti(myListShapes, GetType(), GroupPoints->CheckButton1->isChecked());
 
   if (!aList->length())
     return false;
@@ -357,17 +391,30 @@ QString OperationGUI_GetSharedShapesDlg::getPrefixByType () const
 {
   QString aPref;
 
-  int aLimit = GroupPoints->ComboBox1->currentIndex();
-
-  switch (aLimit) {
-  case 0:  aPref = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_SOLID")) ; break;
-  case 1:  aPref = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_SHELL")) ; break;
-  case 2:  aPref = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_FACE"))  ; break;
-  case 3:  aPref = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_WIRE"))  ; break;
-  case 4:  aPref = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_EDGE"))  ; break;
-  case 5:  aPref = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_VERTEX")); break;
-  default: aPref = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_SHAPE")) ;
+  switch ( GetType() ) {
+  case GEOM::SOLID:  aPref = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_SOLID")) ; break;
+  case GEOM::SHELL:  aPref = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_SHELL")) ; break;
+  case GEOM::FACE:   aPref = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_FACE"))  ; break;
+  case GEOM::WIRE:   aPref = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_WIRE"))  ; break;
+  case GEOM::EDGE:   aPref = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_EDGE"))  ; break;
+  case GEOM::VERTEX: aPref = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_VERTEX")); break;
+  default:           aPref = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_SHAPE")) ; break;
   }
 
   return aPref;
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> OperationGUI_GetSharedShapesDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::ListOfGO aListPtr(myListShapes);
+  for (int i = 0; i < aListPtr.length(); i++) {
+    GEOM::GeomObjPtr aGeomObjPtr(aListPtr[i]);
+    res << aGeomObjPtr;
+  }
+  return res;
 }

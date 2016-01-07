@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -48,10 +48,11 @@
 //function : GetState
 //purpose  :
 //=======================================================================
- Standard_Integer GEOMAlgo_SurfaceTools::GetState(const gp_Pnt& aP,
-                                                  const GeomAdaptor_Surface& aGAS,
-                                                  const Standard_Real aTol,
-                                                  TopAbs_State& aState)
+ Standard_Integer GEOMAlgo_SurfaceTools::GetState
+  (const gp_Pnt& aP,
+   const GeomAdaptor_Surface& aGAS,
+   const Standard_Real aTol,
+   TopAbs_State& aState)
 {
   Standard_Integer    iErr  = 0;
   GeomAbs_SurfaceType aType = aGAS.GetType();
@@ -95,10 +96,11 @@
 //function : GetState
 //purpose  :
 //=======================================================================
- Standard_Integer GEOMAlgo_SurfaceTools::GetState(const gp_Pnt& aP,
-                                                  const Handle(Geom_Surface)& aSurf,
-                                                  const Standard_Real aTol,
-                                                  TopAbs_State& aState)
+ Standard_Integer GEOMAlgo_SurfaceTools::GetState
+  (const gp_Pnt& aP,
+   const Handle(Geom_Surface)& aSurf,
+   const Standard_Real aTol,
+   TopAbs_State& aState)
 {
   Standard_Integer iErr;
   GeomAdaptor_Surface aGAS;
@@ -114,7 +116,8 @@
 //function : ReverseState
 //purpose  :
 //=======================================================================
- TopAbs_State GEOMAlgo_SurfaceTools::ReverseState(const TopAbs_State aState)
+ TopAbs_State GEOMAlgo_SurfaceTools::ReverseState
+  (const TopAbs_State aState)
 {
   TopAbs_State aRSt=aState;
   //
@@ -135,10 +138,11 @@
 //function : IsCoaxial
 //purpose  :
 //=======================================================================
-Standard_Boolean GEOMAlgo_SurfaceTools::IsCoaxial(const gp_Pnt& aP1,
-                                                  const gp_Pnt& aP2,
-                                                  const gp_Cylinder& aCyl,
-                                                  const Standard_Real aTol)
+Standard_Boolean GEOMAlgo_SurfaceTools::IsCoaxial
+  (const gp_Pnt& aP1,
+   const gp_Pnt& aP2,
+   const gp_Cylinder& aCyl,
+   const Standard_Real aTol)
 {
   const gp_XYZ &aLoc   = aCyl.Location().XYZ();
   const gp_Ax1 &aAxis  = aCyl.Axis();
@@ -147,7 +151,7 @@ Standard_Boolean GEOMAlgo_SurfaceTools::IsCoaxial(const gp_Pnt& aP1,
   gp_XYZ        aDP2   = aP2.XYZ().Subtracted(aLoc);
   Standard_Real aDot1  = aDP1.Dot(aDAxis);
   Standard_Real aDot2  = aDP1.Dot(aDAxis);
-  Standard_Real aTol2  = aTol*aTol;
+  //Standard_Real aTol2  = aTol*aTol;
 
   // Project P1 and P2 onto a plane with location aLoc and Norm aDAxis.
   aDP1.Subtract(aDAxis.Multiplied(aDot1));
@@ -160,7 +164,7 @@ Standard_Boolean GEOMAlgo_SurfaceTools::IsCoaxial(const gp_Pnt& aP1,
   if (fabs(aRadius1 - aRadius2) <= aTol) {
     // Check the deflection of the middle point.
     gp_XYZ        aMidP       = 0.5*(aDP1 + aDP2);
-    Standard_Real aMidRadius1 = aMidP.Modulus();
+    //Standard_Real aMidRadius1 = aMidP.Modulus();
 
     if (fabs(aRadius1 - aRadius2) <= aTol) {
       isOn = Standard_True;
@@ -173,7 +177,8 @@ Standard_Boolean GEOMAlgo_SurfaceTools::IsCoaxial(const gp_Pnt& aP1,
 //function : IsAnalytic
 //purpose  :
 //=======================================================================
-Standard_Boolean GEOMAlgo_SurfaceTools::IsAnalytic(const Handle(Geom_Surface)& aSurf)
+Standard_Boolean GEOMAlgo_SurfaceTools::IsAnalytic
+  (const Handle(Geom_Surface)& aSurf)
 {
   Standard_Boolean bRet;
   GeomAbs_SurfaceType aType;
@@ -190,8 +195,9 @@ Standard_Boolean GEOMAlgo_SurfaceTools::IsAnalytic(const Handle(Geom_Surface)& a
 //function : IsConformState
 //purpose  :
 //=======================================================================
-Standard_Boolean GEOMAlgo_SurfaceTools::IsConformState(const TopAbs_State aST1,
-                                                       const GEOMAlgo_State aST2)
+Standard_Boolean GEOMAlgo_SurfaceTools::IsConformState
+  (const TopAbs_State aST1,
+   const GEOMAlgo_State aST2)
 {
   Standard_Boolean bRet=Standard_False;
   //

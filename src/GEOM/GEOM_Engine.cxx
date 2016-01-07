@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -88,6 +88,7 @@ static int MYDEBUG = 0;
 typedef std::map< TCollection_AsciiString, TCollection_AsciiString > TSting2StringMap;
 typedef std::map< TCollection_AsciiString, TObjectData >             TSting2ObjDataMap;
 typedef std::map< TCollection_AsciiString, TObjectData* >            TSting2ObjDataPtrMap;
+typedef std::map< int, std::list < int > >                           TIntToListIntMap;
 
 static GEOM_Engine* TheEngine = NULL;
 
@@ -123,6 +124,11 @@ bool ProcessFunction(Handle(GEOM_Function)&             theFunction,
                      std::set<TCollection_AsciiString>& theIgnoreObjs,
                      bool&                              theIsDumpCollected);
 
+static int GetTag(const TCollection_AsciiString &theEntry);
+
+static void FillMapOfRef(const Handle(GEOM_Function) &theFunction,
+                               TIntToListIntMap      &theRefMap);
+
 void ReplaceVariables(TCollection_AsciiString& theCommand,
                       const TVariablesList&    theVariables);
 
@@ -147,6 +153,12 @@ void PublishObject (TObjectData&                              theObjectData,
                     Resource_DataMapOfAsciiStringAsciiString& theNameToEntry,
                     std::map< int, TCollection_AsciiString >& theEntryToCmdMap,
                     std::set<TCollection_AsciiString>&        theMapOfPublished);
+
+static TCollection_AsciiString GetPublishCommands
+                   (const int                                       theTag,
+                    const std::map< int, TCollection_AsciiString > &theEntryToCmdMap,
+                    const TIntToListIntMap                         &theMapRefs,
+                          std::set< int >                          &thePublished);
 
 //================================================================================
 /*!
@@ -674,6 +686,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   // Mantis issue 0020768
   Standard_Integer objectCounter = 0;
   Resource_DataMapOfAsciiStringAsciiString aNameToEntry;
+  TIntToListIntMap                         aRefMap;
 
   if (aDoc->Main().FindAttribute(GEOM_Function::GetFunctionTreeID(), aRoot)) {
     TDataStd_ChildNodeIterator Itr(aRoot);
@@ -702,6 +715,10 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
             continue; // aCurScript is already at the end of aFuncScript
         aFuncScript += aCurScript;
       }
+
+      // Fill the map of references.
+      FillMapOfRef(aFunction, aRefMap);
+
       if (isDumpCollected ) {
         // Replace entries by the names
         ReplaceEntriesByNames( aFuncScript, aEntry2ObjData, isPublished,
@@ -717,9 +734,16 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
                          aNameToEntry, anEntryToCmdMap, anIgnoreObjMap );
         }
         // add publishing commands to the script
+        std::set< int >                                    aPublished;
         std::map< int, TCollection_AsciiString >::iterator anEntryToCmd = anEntryToCmdMap.begin();
-        for ( ; anEntryToCmd != anEntryToCmdMap.end(); ++anEntryToCmd )
-          aFuncScript += anEntryToCmd->second;
+
+        for ( ; anEntryToCmd != anEntryToCmdMap.end(); ++anEntryToCmd ) {
+          const TCollection_AsciiString aPublishCmds =
+              GetPublishCommands(anEntryToCmd->first, anEntryToCmdMap,
+                                 aRefMap, aPublished);
+
+          aFuncScript += aPublishCmds;
+        }
 
         // PTv, 0020001 add result objects from RestoreGivenSubShapes into ignore list,
         //  because they will be published during command execution
@@ -772,9 +796,16 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
                      aNameToEntry, anEntryToCmdMap, anIgnoreObjMap );
     }
     // add publishing commands to the script
+    std::set< int >                                    aPublished;
     std::map< int, TCollection_AsciiString >::iterator anEntryToCmd = anEntryToCmdMap.begin();
-    for ( ; anEntryToCmd != anEntryToCmdMap.end(); ++anEntryToCmd )
-      aScript += anEntryToCmd->second;
+
+    for ( ; anEntryToCmd != anEntryToCmdMap.end(); ++anEntryToCmd ) {
+      const TCollection_AsciiString aPublishCmds =
+          GetPublishCommands(anEntryToCmd->first, anEntryToCmdMap,
+                             aRefMap, aPublished);
+
+      aScript += aPublishCmds;
+    }
   }
 
   //RNV: issue 16219: EDF PAL 469: "RemoveFromStudy" Function
@@ -1195,6 +1226,64 @@ bool ProcessFunction(Handle(GEOM_Function)&             theFunction,
     theScript += aDescr;
   }
   return true;
+}
+
+//=============================================================================
+/*!
+ *  GetTag: Returns the tag from entry
+ */
+//=============================================================================
+int GetTag(const TCollection_AsciiString &theEntry)
+{
+  const int aGeomObjDepth = 3;
+  const int aTag          = theEntry.Token(":", aGeomObjDepth).IntegerValue();
+
+  return aTag;
+}
+
+//=============================================================================
+/*!
+ *  FillMapOfRef: Fill the map of references
+ */
+//=============================================================================
+void FillMapOfRef(const Handle(GEOM_Function) &theFunction,
+                        TIntToListIntMap      &theRefMap)
+{
+  TDF_LabelSequence       aSeq;
+  TCollection_AsciiString anObjEntry;
+  int                     anObjTag;
+
+  TDF_Tool::Entry(theFunction->GetOwnerEntry(), anObjEntry);
+  anObjTag = GetTag(anObjEntry);
+  theFunction->GetDependency(aSeq);
+
+  const Standard_Integer aLen = aSeq.Length();
+  Standard_Integer       i;
+
+  for (i = 1; i <= aLen; i++) {
+    TDF_Label             aRefLabel = aSeq.Value(i);
+    Handle(TDF_Reference) aRef;
+
+    if (aRefLabel.FindAttribute(TDF_Reference::GetID(), aRef)) {
+      if (!aRef.IsNull() && !aRef->Get().IsNull()) {
+        Handle(TDataStd_TreeNode) aT;
+
+        if (TDataStd_TreeNode::Find(aRef->Get(), aT)) {
+          TDF_Label             aDepLabel = aT->Label();
+          Handle(GEOM_Function) aRefFunct = GEOM_Function::GetFunction(aDepLabel);
+
+          if (!aRefFunct.IsNull()) {
+            // Get entry of the referenced object.
+            TDF_Tool::Entry(aRefFunct->GetOwnerEntry(), anObjEntry);
+
+            const int aRefTag = GetTag(anObjEntry);
+
+            theRefMap[anObjTag].push_back(aRefTag);
+          }
+        }
+      }
+    }
+  }
 }
 
 //=============================================================================
@@ -1726,8 +1815,6 @@ void PublishObject (TObjectData&                              theObjectData,
   if ( stEntry2DataPtr != theStEntry2ObjDataPtr.end() )
     aFatherData = stEntry2DataPtr->second;
 
-  const int geomObjDepth = 3;
-
   // treat multiply published object
   if ( theObjectData._pyName.IsEmpty() )
   {
@@ -1741,7 +1828,7 @@ void PublishObject (TObjectData&                              theObjectData,
     aCreationCommand += theObjectData._pyName + " = " + data0._pyName;
 
     // store aCreationCommand before publishing commands
-    int tag = theObjectData._entry.Token( ":", geomObjDepth ).IntegerValue();
+    int tag = GetTag(theObjectData._entry);
     theEntryToCmdMap.insert( std::make_pair( tag + 2*theEntry2ObjData.size(), aCreationCommand ));
   }
 
@@ -1756,10 +1843,55 @@ void PublishObject (TObjectData&                              theObjectData,
   aCommand += theObjectData._pyName + ", '" + theObjectData._name + "' )";
 
   // bind a command to the study entry
-  int tag = theObjectData._entry.Token( ":", geomObjDepth ).IntegerValue();
+  int tag = GetTag(theObjectData._entry);
   theEntryToCmdMap.insert( std::make_pair( tag, aCommand ));
 
   theObjectData._studyEntry.Clear(); // not to publish any more
+}
+
+//================================================================================
+/*!
+ * \brief Returns the string of publishing commands. Take into account that
+ *  references should be published prior to the objects refer to them.
+ */
+//================================================================================
+TCollection_AsciiString GetPublishCommands
+                   (const int                                       theTag,
+                    const std::map< int, TCollection_AsciiString > &theEntryToCmdMap,
+                    const TIntToListIntMap                         &theMapRefs,
+                          std::set< int >                          &thePublished)
+{
+  TCollection_AsciiString aResult;
+
+  if (!thePublished.count(theTag)) {
+    // This object is not published yet.
+    std::map< int, TCollection_AsciiString >::const_iterator anIt =
+      theEntryToCmdMap.find(theTag);
+
+    if (anIt != theEntryToCmdMap.end()) {
+      // There is a pubish cmd.
+      TIntToListIntMap::const_iterator aRefIt = theMapRefs.find(theTag);
+
+      if (aRefIt != theMapRefs.end()) {
+        // Recursively publish all references.
+        std::list< int >::const_iterator aRefTagIt = aRefIt->second.begin();
+  
+        for(; aRefTagIt != aRefIt->second.end(); ++aRefTagIt) {
+          const TCollection_AsciiString aRefCmd = GetPublishCommands
+            (*aRefTagIt, theEntryToCmdMap, theMapRefs, thePublished);
+
+          aResult += aRefCmd;
+        }
+      }
+
+      // Add the object command.
+      aResult += anIt->second;
+    }
+
+    thePublished.insert(theTag);
+  }
+
+  return aResult;
 }
 
 //================================================================================

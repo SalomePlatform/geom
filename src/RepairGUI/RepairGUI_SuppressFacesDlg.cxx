@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -24,9 +24,10 @@
 
 #include "RepairGUI_SuppressFacesDlg.h"
 
-#include <DlgRef.h>
-#include <GeometryGUI.h>
-#include <GEOMBase.h>
+#include "DlgRef.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+#include "RepairGUI.h"
 
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
@@ -376,8 +377,11 @@ bool RepairGUI_SuppressFacesDlg::execute (ObjectList& objects)
 
   bool aResult = !anObj->_is_nil();
   if (aResult)
+  {
+    if ( !IsPreview() )
+      RepairGUI::ShowStatistics( anOper, this );
     objects.push_back(anObj._retn());
-
+  }
   return aResult;
 }
 
@@ -420,4 +424,16 @@ void RepairGUI_SuppressFacesDlg::restoreSubShapes (SALOMEDS::Study_ptr   theStud
                                         /*theInheritFirstArg=*/true,
                                         mainFrame()->CheckBoxAddPrefix->isChecked());
   }
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> RepairGUI_SuppressFacesDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::GeomObjPtr aGeomObjPtr(myObject);
+  res << aGeomObjPtr;
+  return res;
 }

@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='us-ascii' ?>
 <!--
-  Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+  Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 
   Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
   CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -33,6 +33,7 @@
   <!-- Geom data types  -->
   <type-list>
     <!-- From GEOM_Gen.idl -->
+    <objref name="CORBA/Object" id="" />
     <objref name="GEOM/GEOM_Gen" id="IDL:GEOM/GEOM_Gen:1.0" />
     <objref name="GEOM/GEOM_BaseObject" id="IDL:GEOM/GEOM_BaseObject:1.0" />
     <objref name="GEOM/GEOM_Object" id="IDL:GEOM/GEOM_Object:1.0">
@@ -135,7 +136,7 @@
       <member name="error" type="GEOM/ShapeErrorType" />
       <member name="incriminated" type="GEOM/ListOfLong" />
     </struct>
-    <sequence name="GEOM/ShapeError"  content="GEOM/ShapeErrors" />
+    <sequence name="GEOM/ShapeErrors"  content="GEOM/ShapeError" />
 
     <!-- From GEOM_Superv.idl -->
     <objref name="GEOM/GEOM_Superv"  id="IDL:GEOM/GEOM_Superv:1.0" />
@@ -875,7 +876,7 @@
               </inParameter>
               <inParameter>
                 <inParameter-name>theObject</inParameter-name>
-                <inParameter-type>Object</inParameter-type>
+                <inParameter-type>CORBA/Object</inParameter-type>
                 <inParameter-comment>unknown</inParameter-comment>
               </inParameter>
             </inParameter-list>
@@ -4284,6 +4285,28 @@
             <DataStream-list></DataStream-list>
           </component-service>
           <component-service>
+            <service-name>MakeFaceWithConstraints</service-name>
+            <service-author>SALOME team</service-author>
+            <service-version>@SALOMEGEOM_VERSION@</service-version>
+            <service-comment>unknown</service-comment>
+            <service-by-default>0</service-by-default>
+            <inParameter-list>
+              <inParameter>
+                <inParameter-name>theConstraints</inParameter-name>
+                <inParameter-type>GEOM/GEOM_List</inParameter-type>
+                <inParameter-comment>unknown</inParameter-comment>
+              </inParameter>
+            </inParameter-list>
+            <outParameter-list>
+              <outParameter>
+                <outParameter-name>return</outParameter-name>
+                <outParameter-type>GEOM/GEOM_Object</outParameter-type>
+                <outParameter-comment>unknown</outParameter-comment>
+              </outParameter>
+            </outParameter-list>
+            <DataStream-list></DataStream-list>
+          </component-service>
+          <component-service>
             <service-name>MakeSolidShell</service-name>
             <service-author>SALOME team</service-author>
             <service-version>@SALOMEGEOM_VERSION@</service-version>
@@ -4315,6 +4338,33 @@
               <inParameter>
                 <inParameter-name>theShells</inParameter-name>
                 <inParameter-type>GEOM/GEOM_List</inParameter-type>
+                <inParameter-comment>unknown</inParameter-comment>
+              </inParameter>
+            </inParameter-list>
+            <outParameter-list>
+              <outParameter>
+                <outParameter-name>return</outParameter-name>
+                <outParameter-type>GEOM/GEOM_Object</outParameter-type>
+                <outParameter-comment>unknown</outParameter-comment>
+              </outParameter>
+            </outParameter-list>
+            <DataStream-list></DataStream-list>
+          </component-service>
+          <component-service>
+            <service-name>MakeSolidFromConnectedFaces</service-name>
+            <service-author>SALOME team</service-author>
+            <service-version>@SALOMEGEOM_VERSION@</service-version>
+            <service-comment>unknown</service-comment>
+            <service-by-default>0</service-by-default>
+            <inParameter-list>
+              <inParameter>
+                <inParameter-name>theFacesOrShells</inParameter-name>
+                <inParameter-type>GEOM/GEOM_List</inParameter-type>
+                <inParameter-comment>unknown</inParameter-comment>
+              </inParameter>
+              <inParameter>
+                <inParameter-name>isIntersect</inParameter-name>
+                <inParameter-type>boolean</inParameter-type>
                 <inParameter-comment>unknown</inParameter-comment>
               </inParameter>
             </inParameter-list>

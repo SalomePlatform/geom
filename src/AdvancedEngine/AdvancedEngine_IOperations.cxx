@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -36,8 +36,9 @@
 #include "GEOM_Function.hxx"
 #include "GEOM_PythonDump.hxx"
 #include "GEOMUtils.hxx"
+#include "GEOMAlgo_ClsfSurf.hxx"
+#include "GEOMAlgo_FinderShapeOn2.hxx"
 #include "GEOMAlgo_Splitter.hxx"
-#include "GEOMAlgo_FinderShapeOn1.hxx"
 
 #include "GEOMImpl_Gen.hxx"
 #include "GEOMImpl_Types.hxx"
@@ -109,6 +110,10 @@
 
 #define FIND_GROUPS_BY_POINTS 1
 
+// Undefine below macro to enable workaround about fillet problem in MakePipeTShapeFillet
+// VSR 30/12/2014: macro enabled
+#define FILLET_FIX_TOLERANCE
+
 //=============================================================================
 /*!
  *  Constructor
@@ -154,9 +159,9 @@ AdvancedEngine_IOperations::~AdvancedEngine_IOperations()
  */
 //=============================================================================
 gp_Trsf AdvancedEngine_IOperations::GetPositionTrsf(double theL1, double theL2,
-						    Handle(GEOM_Object) theP1,
-						    Handle(GEOM_Object) theP2,
-						    Handle(GEOM_Object) theP3)
+                                                    Handle(GEOM_Object) theP1,
+                                                    Handle(GEOM_Object) theP2,
+                                                    Handle(GEOM_Object) theP3)
 {
   // Old Local Coordinates System oldLCS
   gp_Pnt P0(0, 0, 0);
@@ -195,10 +200,10 @@ gp_Trsf AdvancedEngine_IOperations::GetPositionTrsf(double theL1, double theL2,
  */
 //=============================================================================
 bool AdvancedEngine_IOperations::CheckCompatiblePosition(double& theL1, double& theL2,
-							 Handle(GEOM_Object) theP1,
-							 Handle(GEOM_Object) theP2,
-							 Handle(GEOM_Object) theP3,
-							 double theTolerance)
+                                                         Handle(GEOM_Object) theP1,
+                                                         Handle(GEOM_Object) theP2,
+                                                         Handle(GEOM_Object) theP3,
+                                                         double theTolerance)
 {
   SetErrorCode(KO);
   gp_Pnt P1 = BRep_Tool::Pnt(TopoDS::Vertex(theP1->GetValue()));
@@ -266,11 +271,11 @@ bool AdvancedEngine_IOperations::CheckCompatiblePosition(double& theL1, double& 
  */
 //=============================================================================
 bool AdvancedEngine_IOperations::MakeGroups(Handle(GEOM_Object) theShape, int shapeType,
-					    double theR1, double theW1, double theL1,
-					    double theR2, double theW2, double theL2,
-					    double theH, double theW, double theRF,
-					    Handle(TColStd_HSequenceOfTransient) theSeq,
-					    gp_Trsf aTrsf)
+                                            double theR1, double theW1, double theL1,
+                                            double theR2, double theW2, double theL2,
+                                            double theH, double theW, double theRF,
+                                            Handle(TColStd_HSequenceOfTransient) theSeq,
+                                            gp_Trsf aTrsf)
 {
   SetErrorCode(KO);
 
@@ -811,11 +816,13 @@ bool AdvancedEngine_IOperations::GetFacesOnSurf
                       const Standard_Real theTolerance,
                       TopTools_ListOfShape &theFaces)
 {
-  GEOMAlgo_FinderShapeOn1 aFinder;
+  GEOMAlgo_FinderShapeOn2   aFinder;
+  Handle(GEOMAlgo_ClsfSurf) aClsfSurf = new GEOMAlgo_ClsfSurf;
 
+  aClsfSurf->SetSurface(theSurface);
   aFinder.SetShape(theShape);
   aFinder.SetTolerance(theTolerance);
-  aFinder.SetSurface(theSurface);
+  aFinder.SetClsf(aClsfSurf);
   aFinder.SetShapeType(TopAbs_FACE);
   aFinder.SetState(GEOMAlgo_ST_ON);
 
@@ -832,7 +839,7 @@ bool AdvancedEngine_IOperations::GetFacesOnSurf
 
   // Interprete results
   Standard_Integer iErr = aFinder.ErrorStatus();
-  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn1.cxx
+  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn2.cxx
   if (iErr) {
     MESSAGE(" iErr : " << iErr);
     TCollection_AsciiString aMsg (" iErr : ");
@@ -841,7 +848,7 @@ bool AdvancedEngine_IOperations::GetFacesOnSurf
     return false;
   }
   Standard_Integer iWrn = aFinder.WarningStatus();
-  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn1.cxx
+  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn2.cxx
   if (iWrn) {
     MESSAGE(" *** iWrn : " << iWrn);
   }
@@ -1132,10 +1139,10 @@ bool AdvancedEngine_IOperations::MakeInternalGroup
 }
 
 bool AdvancedEngine_IOperations::MakePipeTShapePartition(Handle(GEOM_Object) theShape,
-							 double theR1, double theW1, double theL1,
-							 double theR2, double theW2, double theL2,
-							 double theH, double theW,
-							 double theRF, bool isNormal)
+                                                         double theR1, double theW1, double theL1,
+                                                         double theR2, double theW2, double theL2,
+                                                         double theH, double theW,
+                                                         double theRF, bool isNormal)
 {
   SetErrorCode(KO);
 
@@ -1203,12 +1210,12 @@ bool AdvancedEngine_IOperations::MakePipeTShapePartition(Handle(GEOM_Object) the
       if (Abs(aP.X()) <= Precision::Confusion()) {
         if (Abs(aP.Y()) < d1min) {
           vi1 = v;
-	  d1min = Abs(aP.Y());
-	}
+          d1min = Abs(aP.Y());
+        }
       } else if (Abs(aP.Y()) <= Precision::Confusion()) {
-	if (Abs(aP.X()) < d2min) {
-	  vi2 = v;
-	  d2min = Abs(aP.X());
+        if (Abs(aP.X()) < d2min) {
+          vi2 = v;
+          d2min = Abs(aP.X());
         }
       }
     }
@@ -1249,14 +1256,14 @@ bool AdvancedEngine_IOperations::MakePipeTShapePartition(Handle(GEOM_Object) the
         if (Abs(aP.X()) <= Precision::Confusion()) {
           if (Abs(aP.Y()) > d1max) {
             ve1 = v;
-	    vertex1 = aVertex;
-	    d1max = Abs(aP.Y());
+            vertex1 = aVertex;
+            d1max = Abs(aP.Y());
           }
         } else if (Abs(aP.Y()) <= Precision::Confusion()) {
           if (Abs(aP.X()) > d2max) {
             ve2 = v;
-	    vertex2 = aVertex;
-	    d2max = Abs(aP.X());
+            vertex2 = aVertex;
+            d2max = Abs(aP.X());
           }
         }
       }
@@ -1281,12 +1288,12 @@ bool AdvancedEngine_IOperations::MakePipeTShapePartition(Handle(GEOM_Object) the
       for (int i=1; i<=edges_e->Length();i++) {
         Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(edges_e->Value(i));
         anObj->GetLastFunction()->SetDescription("");
-	TopoDS_Edge anEdge = TopoDS::Edge(anObj->GetValue());
-	if ( !anEdge.IsNull() && 
-	     (sae.FirstVertex(anEdge).IsSame(vertex1) || sae.LastVertex(anEdge).IsSame(vertex1)) && 
-	     (sae.FirstVertex(anEdge).IsSame(vertex2) || sae.LastVertex(anEdge).IsSame(vertex2))) {
-	  arete_intersect_ext = anObj;
-	}
+        TopoDS_Edge anEdge = TopoDS::Edge(anObj->GetValue());
+        if ( !anEdge.IsNull() && 
+             (sae.FirstVertex(anEdge).IsSame(vertex1) || sae.LastVertex(anEdge).IsSame(vertex1)) && 
+             (sae.FirstVertex(anEdge).IsSame(vertex2) || sae.LastVertex(anEdge).IsSame(vertex2))) {
+          arete_intersect_ext = anObj;
+        }
       }
 
       edge_e1 = myBasicOperations->MakeLineTwoPnt(ve1, vi1);
@@ -1467,70 +1474,16 @@ bool AdvancedEngine_IOperations::MakePipeTShapePartition(Handle(GEOM_Object) the
       face_t->GetLastFunction()->SetDescription("");
       theShapes.push_back(face_t);
 
-      gp_Pnt aP2 = BRep_Tool::Pnt(TopoDS::Vertex(P2->GetValue()));
-      gp_Pnt aP5 = BRep_Tool::Pnt(TopoDS::Vertex(vi1->GetValue()));
-      double deltaZ = aP2.Z() - aP5.Z();
-      //         std::cerr << "Creating new point from vi1 with deltaZ = " << deltaZ << std::endl;
-      Handle(GEOM_Object) P5bis = myTransformOperations->TranslateDXDYDZCopy(vi1, 0, 0, deltaZ);
-      if (P5bis.IsNull()) {
-        SetErrorCode("Impossible to translate vertex");
+      // Create a prism from edge_chan_inc
+      Handle(GEOM_Object) aPrismDir = myBasicOperations->MakeVectorDXDYDZ(1., 1., 0.);
+
+      if (aPrismDir.IsNull()) {
+        SetErrorCode("Impossible to build Prism direction");
         return false;
       }
-      P5bis->GetLastFunction()->SetDescription("");
+      aPrismDir->GetLastFunction()->SetDescription("");
+      face_t2 = my3DPrimOperations->MakePrismVecH(edge_chan_inc, aPrismDir, theR2 + theW2);
 
-      gp_Pnt aP4 = BRep_Tool::Pnt(TopoDS::Vertex(P4->GetValue()));
-      gp_Pnt aP6 = BRep_Tool::Pnt(TopoDS::Vertex(vi2->GetValue()));
-      deltaZ = aP4.Z() - aP6.Z();
-      //         std::cerr << "Creating new point from vi2 with deltaZ = " << deltaZ << std::endl;
-      Handle(GEOM_Object) P6bis = myTransformOperations->TranslateDXDYDZCopy(vi2, 0, 0, deltaZ);
-      if (P6bis.IsNull()) {
-        SetErrorCode("Impossible to translate vertex");
-        return false;
-      }
-      P6bis->GetLastFunction()->SetDescription("");
-
-      //         std::cerr << "Creating new line 1 from 2 previous points" << std::endl;
-      Handle(GEOM_Object) Cote_3 = myBasicOperations->MakeLineTwoPnt(P5bis, P2);
-      if (Cote_3.IsNull()) {
-        SetErrorCode("Impossible to build edge in thickness");
-        return false;
-      }
-      Cote_3->GetLastFunction()->SetDescription("");
-
-      //         std::cerr << "Creating new line 2 from 2 previous points" << std::endl;
-      Handle(GEOM_Object) Cote_4 = myBasicOperations->MakeLineTwoPnt(P6bis, P4);
-      if (Cote_4.IsNull()) {
-        SetErrorCode("Impossible to build edge in thickness");
-        return false;
-      }
-      Cote_4->GetLastFunction()->SetDescription("");
-
-      //         std::cerr << "Creating new line 3 from 2 previous points" << std::endl;
-      Handle(GEOM_Object) Cote_5 = myBasicOperations->MakeLineTwoPnt(P5bis, P6bis);
-      if (Cote_4.IsNull()) {
-        SetErrorCode("Impossible to build edge in thickness");
-        return false;
-      }
-      Cote_5->GetLastFunction()->SetDescription("");
-
-      //std::list<Handle(GEOM_Object)> edgeList2;
-      //edgeList2.push_back(edge_chan_inc);
-      //edgeList2.push_back(Cote_3);
-      //edgeList2.push_back(Cote_5);
-      //edgeList2.push_back(Cote_4);
-      //         std::cerr << "Creating wire 2" << std::endl;
-      //wire_t2 = myShapesOperations->MakeWire(edgeList2, 1e-7);
-      //if (wire_t2.IsNull()) {
-      //  SetErrorCode("Impossible to build wire");
-      //  return false;
-      //}
-      //wire_t2->GetLastFunction()->SetDescription("");
-      //         std::cerr << "Creating face 2" << std::endl;
-      //face_t2 = myShapesOperations->MakeFace(wire_t2, false);
-
-      // Mantis issue 0021682
-      face_t2 = my3DPrimOperations->MakePrismVecH(edge_chan_inc, Cote_4, - (theR2 + theW2));
-      //face_t2 = my3DPrimOperations->MakePrismVecH(edge_chan_inc, Cote_4, - 2.0*theR2);
       if (face_t2.IsNull()) {
         SetErrorCode("Impossible to build face");
         return false;
@@ -1579,7 +1532,7 @@ bool AdvancedEngine_IOperations::MakePipeTShapePartition(Handle(GEOM_Object) the
 
     // Last verification: result should be a block
     std::list<GEOMImpl_IBlocksOperations::BCError> errList;
-    if (!myBlocksOperations->CheckCompoundOfBlocks(Te3,errList)) {
+    if (!myBlocksOperations->CheckCompoundOfBlocks(Te3, -1, errList)) {
       SetErrorCode("TShape is not a compound of block");
       return false;
     }
@@ -1614,8 +1567,8 @@ bool AdvancedEngine_IOperations::MakePipeTShapePartition(Handle(GEOM_Object) the
 
 // Mirror and glue faces
 bool AdvancedEngine_IOperations::MakePipeTShapeMirrorAndGlue(Handle(GEOM_Object) theShape,
-							     double theR1, double theW1, double theL1,
-							     double theR2, double theW2, double theL2)
+                                                             double theR1, double theW1, double theL1,
+                                                             double theR2, double theW2, double theL2)
 {
   SetErrorCode(KO);
 
@@ -1669,7 +1622,8 @@ bool AdvancedEngine_IOperations::MakePipeTShapeMirrorAndGlue(Handle(GEOM_Object)
   TColStd_IndexedDataMapOfTransientTransient aMapTShapes;
   TNaming_CopyShape::CopyTool(Te7->GetValue(), aMapTShapes, aShapeCopy);
 
-  Handle(GEOM_Object) Te8 = myShapesOperations->MakeGlueFaces(Te7, 1e-7, true);
+  std::list<Handle(GEOM_Object)> Te7list( 1, Te7 );
+  Handle(GEOM_Object) Te8 = myShapesOperations->MakeGlueFaces(Te7list, 1e-7, true);
   if (Te8.IsNull()) {
     SetErrorCode("Impossible to glue faces of TShape");
     return false;
@@ -1694,7 +1648,7 @@ bool AdvancedEngine_IOperations::MakePipeTShapeMirrorAndGlue(Handle(GEOM_Object)
 
     // Perform gluing
     Te7->GetLastFunction()->SetValue(aShapeCopy);
-    Te8 = myShapesOperations->MakeGlueFaces(Te7, aTolMax, true);
+    Te8 = myShapesOperations->MakeGlueFaces(Te7list, aTolMax, true);
 
     if (Te8.IsNull()) {
       SetErrorCode("Impossible to glue faces of TShape");
@@ -1845,10 +1799,10 @@ TopoDS_Shape AdvancedEngine_IOperations::MakePipeTShapeThicknessReduction
 //purpose  : Static method. Create one thickness reduction element.
 //=======================================================================
 TopoDS_Shape AdvancedEngine_IOperations::MakeThicknessReduction (gp_Ax2 theAxes,
-								 const double R, const double W,
-								 const double Rthin, const double Wthin,
-								 const double Ltrans, const double Lthin,
-								 bool fuse)
+                                                                 const double R, const double W,
+                                                                 const double Rthin, const double Wthin,
+                                                                 const double Ltrans, const double Lthin,
+                                                                 bool fuse)
 {
   double aTol = Precision::Confusion();
   if (Rthin < aTol || Wthin < aTol || Ltrans < aTol) {
@@ -1953,11 +1907,11 @@ TopoDS_Shape AdvancedEngine_IOperations::MakeThicknessReduction (gp_Ax2 theAxes,
 //=============================================================================
 Handle(TColStd_HSequenceOfTransient)
   AdvancedEngine_IOperations::MakePipeTShape(double theR1, double theW1, double theL1,
-					     double theR2, double theW2, double theL2,
-					     double theRL, double theWL, double theLtransL, double theLthinL,
-					     double theRR, double theWR, double theLtransR, double theLthinR,
-					     double theRI, double theWI, double theLtransI, double theLthinI,
-					     bool theHexMesh)
+                                             double theR2, double theW2, double theL2,
+                                             double theRL, double theWL, double theLtransL, double theLthinL,
+                                             double theRR, double theWR, double theLtransR, double theLthinR,
+                                             double theRI, double theWI, double theLtransI, double theLthinI,
+                                             bool theHexMesh)
 {
   MESSAGE("AdvancedEngine_IOperations::MakePipeTShape");
   SetErrorCode(KO);
@@ -2842,6 +2796,17 @@ AdvancedEngine_IOperations::MakePipeTShapeFillet
   aFillet->GetLastFunction()->SetDescription("");
 
   TopoDS_Shape aFilletShape = aFillet->GetValue();
+
+#ifdef FILLET_FIX_TOLERANCE
+  // VSR: 30/12/2014: temporary workaround about Fillet problem
+  if (theHexMesh) {
+    GEOMUtils::FixShapeTolerance(aFilletShape, TopAbs_FACE);
+  }
+  else {
+    GEOMUtils::FixShapeCurves(aFilletShape);
+  }
+#endif
+
   aFunction->SetValue(aFilletShape);
   // END of fillet
 
@@ -3087,6 +3052,17 @@ AdvancedEngine_IOperations::MakePipeTShapeFilletWithPosition
   aFillet->GetLastFunction()->SetDescription("");
 
   TopoDS_Shape aFilletShape = aFillet->GetValue();
+
+#ifdef FILLET_FIX_TOLERANCE
+  // VSR: 30/12/2014: temporary workaround about Fillet problem
+  if (theHexMesh) {
+    GEOMUtils::FixShapeTolerance(aFilletShape, TopAbs_FACE);
+  }
+  else {
+    GEOMUtils::FixShapeCurves(aFilletShape);
+  }
+#endif
+
   aFunction->SetValue(aFilletShape);
   // END of fillet
 
@@ -3215,7 +3191,7 @@ AdvancedEngine_IOperations::MakePipeTShapeFilletWithPosition
  */
 //=============================================================================
 Handle(GEOM_Object) AdvancedEngine_IOperations::MakeDividedDisk (double theR, double theRatio, 
-								 int theOrientation, int thePattern)
+                                                                 int theOrientation, int thePattern)
 {
   SetErrorCode(KO);
   
@@ -3287,10 +3263,10 @@ Handle(GEOM_Object) AdvancedEngine_IOperations::MakeDividedDisk (double theR, do
  */
 //=============================================================================
 Handle(GEOM_Object) AdvancedEngine_IOperations::MakeDividedDiskPntVecR (Handle(GEOM_Object) thePnt, 
-									Handle(GEOM_Object) theVec, 
-									double theR, 
-									double theRatio,
-									int    thePattern)
+                                                                        Handle(GEOM_Object) theVec, 
+                                                                        double theR, 
+                                                                        double theRatio,
+                                                                        int    thePattern)
 {
   SetErrorCode(KO);
 
@@ -3362,8 +3338,8 @@ Handle(GEOM_Object) AdvancedEngine_IOperations::MakeDividedDiskPntVecR (Handle(G
  */
 //=============================================================================
 Handle(GEOM_Object) AdvancedEngine_IOperations::MakeDividedCylinder (double theR, 
-								     double theH,
-								     int    thePattern)
+                                                                     double theH,
+                                                                     int    thePattern)
 {
   SetErrorCode(KO);
   
@@ -3409,9 +3385,9 @@ Handle(GEOM_Object) AdvancedEngine_IOperations::MakeDividedCylinder (double theR
  */
 //=============================================================================
 Handle(GEOM_Object) AdvancedEngine_IOperations::MakeSmoothingSurface (std::list<Handle(GEOM_Object)> thelPoints, 
-								      int                            theNbMax,
-								      int                            theDegMax,
-								      double                         theDMax)
+                                                                      int                            theNbMax,
+                                                                      int                            theDegMax,
+                                                                      double                         theDMax)
 {
   SetErrorCode(KO);
 

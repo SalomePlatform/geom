@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -38,16 +38,15 @@
 
 #include "utilities.h"
 
+#include <BRep_Builder.hxx>
+#include <ShapeFix_Shape.hxx>
 #include <TDataStd_IntegerArray.hxx>
-
 #include <TopExp.hxx>
-#include <TopoDS_Shape.hxx>
 #include <TopTools_DataMapIteratorOfDataMapOfShapeListOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
-#include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
-
-#include <ShapeFix_Shape.hxx>
+#include <TopTools_ListOfShape.hxx>
+#include <TopoDS_Shape.hxx>
 
 #include <Standard_NullObject.hxx>
 #include <Standard_Failure.hxx>
@@ -324,9 +323,11 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFacesByList (const TopoDS_Shape& theShape,
 //function : GlueFaces
 //purpose  :
 //=======================================================================
-TopoDS_Shape GEOMImpl_GlueDriver::GlueFaces (const TopoDS_Shape& theShape,
-                                             const Standard_Real theTolerance,
-                                             const Standard_Boolean doKeepNonSolids)
+TopoDS_Shape GEOMImpl_GlueDriver::GlueFaces
+          (const TopoDS_Shape                       &theShape,
+           const Standard_Real                       theTolerance,
+           const Standard_Boolean                    doKeepNonSolids,
+                 TopTools_DataMapOfShapeListOfShape *pMapModif)
 {
   TopoDS_Shape aRes;
 
@@ -409,6 +410,26 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFaces (const TopoDS_Shape& theShape,
 
   // 5. Result
   aRes = aGA.Shape();
+
+  if (pMapModif) {
+    // Fill the map of modified shapes.
+    TopTools_IndexedMapOfShape aMapSubShapes;
+
+    TopExp::MapShapes(theShape, aMapSubShapes);
+    pMapModif->Clear();
+
+    const Standard_Integer aNbShapes = aMapSubShapes.Extent();
+    Standard_Integer       i;
+
+    for (i = 1; i <= aNbShapes; ++i) {
+      const TopoDS_Shape         &aSubShape = aMapSubShapes.FindKey(i);
+      const TopTools_ListOfShape &aModif    = aGA.Modified(aSubShape);
+
+      if (!aModif.IsEmpty()) {
+        pMapModif->Bind(aSubShape, aModif);
+      }
+    }
+  }
 
   return aRes;
 }
@@ -729,8 +750,36 @@ Standard_Integer GEOMImpl_GlueDriver::Execute(TFunction_Logbook& log) const
   TopoDS_Shape aShape;
   TCollection_AsciiString aWrn;
 
-  Handle(GEOM_Function) aRefBase = aCI.GetBase();
-  TopoDS_Shape aShapeBase = aRefBase->GetValue();
+  TopoDS_Shape aShapeBase;
+  Handle(TColStd_HSequenceOfTransient) aRefBases = aCI.GetBase();
+  if ( aRefBases && !aRefBases->IsEmpty() )
+  {
+    if ( aRefBases->Length() == 1 )
+    {
+      Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast(aRefBases->Value(1));
+      if ( !aRefShape.IsNull() )
+        aShapeBase = aRefShape->GetValue();
+    }
+    else
+    {
+      TopoDS_Compound compound;
+      BRep_Builder builder;
+      builder.MakeCompound( compound );
+      int ind = 1;
+      for ( ; ind <= aRefBases->Length(); ind++)
+      {
+        Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast(aRefBases->Value(ind));
+        if ( aRefShape.IsNull() ) break;
+        TopoDS_Shape aShape = aRefShape->GetValue();
+        if (aShape.IsNull()) break;
+        builder.Add( compound, aShape );
+      }
+      if ( ind > aRefBases->Length() )
+        aShapeBase = compound;
+      else
+        aShapeBase.Nullify();
+    }
+  }
   if (aShapeBase.IsNull()) {
     Standard_NullObject::Raise("Shape for gluing is null");
   }
@@ -803,18 +852,18 @@ GetCreationInformation(std::string&             theOperationName,
   switch ( aType ) {
   case GLUE_FACES:
     theOperationName = "GLUE_FACES";
-    AddParam( theParams, "Selected shape", aCI.GetBase() );
+    AddParam( theParams, "Selected shapes", aCI.GetBase() );
     AddParam( theParams, "Tolerance", aCI.GetTolerance() );
     AddParam( theParams, "To keep non solids", aCI.GetKeepNonSolids() );
     break;
   case GLUE_EDGES:
     theOperationName = "GLUE_EDGES";
-    AddParam( theParams, "Selected shape", aCI.GetBase() );
+    AddParam( theParams, "Selected shapes", aCI.GetBase() );
     AddParam( theParams, "Tolerance", aCI.GetTolerance() );
     break;
   case GLUE_FACES_BY_LIST:
     theOperationName = "GLUE_FACES";
-    AddParam( theParams, "Selected shape", aCI.GetBase() );
+    AddParam( theParams, "Selected shapes", aCI.GetBase() );
     AddParam( theParams, "Tolerance", aCI.GetTolerance() );
     AddParam( theParams, "Faces", aCI.GetFaces() );
     AddParam( theParams, "To keep non solids", aCI.GetKeepNonSolids() );
@@ -822,7 +871,7 @@ GetCreationInformation(std::string&             theOperationName,
     break;
   case GLUE_EDGES_BY_LIST:
     theOperationName = "GLUE_EDGES";
-    AddParam( theParams, "Selected shape", aCI.GetBase() );
+    AddParam( theParams, "Selected shapes", aCI.GetBase() );
     AddParam( theParams, "Tolerance", aCI.GetTolerance() );
     AddParam( theParams, "Edges", aCI.GetFaces() );
     break;

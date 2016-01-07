@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -50,8 +50,12 @@
 #include "MeasureGUI_CheckCompoundOfBlocksDlg.h"  // Method CHECKCOMPOUND
 #include "MeasureGUI_GetNonBlocksDlg.h"           // Method GET NON BLOCKS
 #include "MeasureGUI_CheckSelfIntersectionsDlg.h" // Method CHECK SELF INTERSCTIONS
+#include "MeasureGUI_FastCheckIntersectionsDlg.h" // Method FAST CHECK INTERSCTIONS
 #include "MeasureGUI_PointDlg.h"                  // Method POINTCOORDINATES
 #include "MeasureGUI_ManageDimensionsDlg.h"       // Method MANAGEDIMENSIONS
+#ifndef DISABLE_PLOT2DVIEWER
+#include "MeasureGUI_ShapeStatisticsDlg.h"        // Method SHAPE STATISTICS
+#endif
 
 #include <QApplication>
 
@@ -125,6 +129,14 @@ bool MeasureGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case GEOMOp::OpCheckSelfInters:
     dlg = new MeasureGUI_CheckSelfIntersectionsDlg( getGeometryGUI(), parent );
     break; // CHECK SELF INTERSCTIONS
+  case GEOMOp::OpFastCheckInters:
+    dlg = new MeasureGUI_FastCheckIntersectionsDlg( getGeometryGUI(), parent );
+    break; // FAST CHECK INTERSCTIONS
+#ifndef DISABLE_PLOT2DVIEWER
+  case GEOMOp::OpShapeStatistics:
+    dlg = new MeasureGUI_ShapeStatisticsDlg( parent );
+    break; // SHAPE STATISTICS
+#endif
   case GEOMOp::OpPointCoordinates:
     dlg = new MeasureGUI_PointDlg( getGeometryGUI(), parent );
     break; // POINT COORDINATES
@@ -191,7 +203,7 @@ void MeasureGUI::ChangeDimensionsVisibility( const bool theIsVisible )
     return;
   }
 
-  SUIT_OverrideCursor();
+  SUIT_OverrideCursor wc;
 
   GEOMGUI_DimensionProperty aDimensions( anActiveStudy, anIObject->getEntry() );
 

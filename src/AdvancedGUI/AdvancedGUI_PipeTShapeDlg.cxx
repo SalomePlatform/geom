@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -642,7 +642,7 @@ void AdvancedGUI_PipeTShapeDlg::SetEditCurrentArgument()
   disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
   //globalSelection(GEOM_POINT);
   globalSelection(); // close local contexts, if any
-  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  localSelection( TopAbs_VERTEX );
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
 }
@@ -1250,6 +1250,18 @@ void AdvancedGUI_PipeTShapeDlg::processPreview()
     DisplayPreview();
   else
     erasePreview(true);
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> AdvancedGUI_PipeTShapeDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::GeomObjPtr aGeomObjPtr1(myPoint1), aGeomObjPtr2(myPoint2), aGeomObjPtr3(myPoint3);
+  res << aGeomObjPtr1 << aGeomObjPtr2 << aGeomObjPtr3;
+  return res;
 }
 
 //=================================================================================

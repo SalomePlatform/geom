@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -88,6 +88,7 @@
 #include <Bnd_Box.hxx>
 #include <GProp_GProps.hxx>
 
+#include <Geom_Curve.hxx>
 #include <Geom_Surface.hxx>
 #include <ShapeAnalysis_Surface.hxx>
 
@@ -102,6 +103,147 @@
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
+
+
+/**
+ * This function returns Standard_True if the face is quadrangular. It means
+ * that it has only 1 wire with 4 edges. If there are more then 4 edges in
+ * the wire and theToleranceC1 is not negative the new implementation is used.
+ * According to it the face is quadrangular if it is quadrangular according to
+ * an old implementation or if it has a single wire with more then 4 edges
+ * that form exactly 4 bounds of C1 continuity with the given tolerance.
+ *
+ * \param theFace the face to be checked
+ * \param theToleranceC1 if negative, it is not used; otherwise it is used
+ *        to check if two neighbor edges of face have C1 continuity.
+ * \return Standard_True if the face is quadrangular; Standard_False otherwise.
+ */
+static Standard_Boolean IsQuadrangle(const TopoDS_Face   &theFace,
+                                     const Standard_Real  theToleranceC1)
+{
+  TopExp_Explorer aFExp (theFace, TopAbs_WIRE);
+
+  if (!aFExp.More()) {
+    // no wire in the face
+    return Standard_False;
+  }
+
+  TopoDS_Shape aWire = aFExp.Current();
+
+  aFExp.Next();
+
+  if (aFExp.More()) {
+    // multiple wires in the face
+    return Standard_False;
+  }
+
+  // Check number of edges in the face
+  Standard_Integer    aNbEdges = 0;
+  TopTools_MapOfShape aMapEdges;
+  TopExp_Explorer     aWExp(aWire, TopAbs_EDGE);
+
+  for (; aWExp.More(); aWExp.Next()) {
+    if (aMapEdges.Add(aWExp.Current())) {
+      aNbEdges++;
+
+      if (aNbEdges > 4) {
+        break;
+      }
+    }
+  }
+
+  if (aNbEdges < 4) {
+    return Standard_False;
+  }
+
+  if (aNbEdges > 4) {
+    if (theToleranceC1 < 0.) {
+      return Standard_False;
+    }
+
+    // Check if a wire has 4 bounds of C1 continuity.
+    BRepTools_WireExplorer aWireExp(TopoDS::Wire(aWire), theFace);
+    TopTools_ListOfShape   anEdges;
+
+    for (aNbEdges = 0; aWireExp.More(); aWireExp.Next()) {
+      const TopoDS_Edge &anEdge = aWireExp.Current();
+
+      // Skip degenerated edges.
+      if (!BRep_Tool::Degenerated(anEdge)) {
+        anEdges.Append(anEdge);
+        ++aNbEdges;
+      }
+    }
+
+    if (aNbEdges < 4) {
+      return Standard_False;
+    }
+
+    // Compute number of sharp corners.
+    anEdges.Append(anEdges.First()); // To make a loop.
+
+    TopTools_ListIteratorOfListOfShape anIter(anEdges);
+    Standard_Real      aPar[2];
+    Standard_Integer   aNbCorners = 0;
+    TopoDS_Edge        anEdge1    = TopoDS::Edge(anEdges.First());
+    Handle(Geom_Curve) aCurve1    = BRep_Tool::Curve(anEdge1, aPar[0], aPar[1]);
+    Handle(Geom_Curve) aCurve2;
+    TopoDS_Edge        anEdge2;
+    TopoDS_Vertex      aCommonVtx;
+    gp_Pnt             aPnt;
+    gp_Vec             aVec1;
+    gp_Vec             aVec2;
+    Standard_Boolean   isReversed1 = (anEdge1.Orientation() == TopAbs_REVERSED);
+    Standard_Boolean   isReversed2;
+
+    for (anIter.Next(); anIter.More(); anIter.Next()) {
+      TopoDS_Edge anEdge2 = TopoDS::Edge(anIter.Value());
+
+      if (!TopExp::CommonVertex(anEdge1, anEdge2, aCommonVtx)) {
+        // NEVERREACHED
+        return Standard_False;
+      }
+
+      // Check the angle between tangent vectors of 2 curves at this point.
+      Standard_Real aParam1 = BRep_Tool::Parameter(aCommonVtx, anEdge1);
+      Standard_Real aParam2 = BRep_Tool::Parameter(aCommonVtx, anEdge2);
+
+      aCurve2     = BRep_Tool::Curve(anEdge2, aPar[0], aPar[1]);
+      isReversed2 = (anEdge2.Orientation() == TopAbs_REVERSED);
+      aCurve1->D1(aParam1, aPnt, aVec1);
+      aCurve2->D1(aParam2, aPnt, aVec2);
+
+      if (isReversed1) {
+        aVec1.Reverse();
+      }
+
+      if (isReversed2) {
+        aVec2.Reverse();
+      }
+      const Standard_Real anAngle = aVec1.Angle(aVec2);
+
+      if (anAngle > theToleranceC1) {
+        ++aNbCorners;
+
+        if (aNbCorners > 4) {
+          break;
+        }
+      }
+
+      // Go to the next couple of edges.
+      anEdge1     = anEdge2;
+      aCurve1     = aCurve2;
+      isReversed1 = isReversed2;
+    }
+
+    // Check the total number of corners.
+    if (aNbCorners != 4) {
+      return Standard_False;
+    }
+  }
+
+  return Standard_True;
+}
 
 //=============================================================================
 /*!
@@ -1647,7 +1789,8 @@ void GEOMImpl_IBlocksOperations::AddBlocksFrom (const TopoDS_Shape&   theShape,
                                                 TopTools_ListOfShape& BLO,
                                                 TopTools_ListOfShape& NOT,
                                                 TopTools_ListOfShape& EXT,
-                                                TopTools_ListOfShape& NOQ)
+                                                TopTools_ListOfShape& NOQ,
+                                                const Standard_Real   theToleranceC1)
 {
   TopAbs_ShapeEnum aType = theShape.ShapeType();
   switch (aType) {
@@ -1656,7 +1799,7 @@ void GEOMImpl_IBlocksOperations::AddBlocksFrom (const TopoDS_Shape&   theShape,
     {
       TopoDS_Iterator It (theShape);
       for (; It.More(); It.Next()) {
-        AddBlocksFrom(It.Value(), BLO, NOT, EXT, NOQ);
+        AddBlocksFrom(It.Value(), BLO, NOT, EXT, NOQ, theToleranceC1);
       }
     }
     break;
@@ -1665,6 +1808,7 @@ void GEOMImpl_IBlocksOperations::AddBlocksFrom (const TopoDS_Shape&   theShape,
       // Check, if there are seam or degenerated edges
       BlockFix_CheckTool aTool;
       aTool.SetShape(theShape);
+      aTool.SetAngTolerance(theToleranceC1);
       aTool.Perform();
       if (aTool.NbPossibleBlocks() > 0) {
         EXT.Append(theShape);
@@ -1676,41 +1820,12 @@ void GEOMImpl_IBlocksOperations::AddBlocksFrom (const TopoDS_Shape&   theShape,
         TopExp_Explorer expF (theShape, TopAbs_FACE);
 
         for (; expF.More(); expF.Next()) {
-          if (mapFaces.Add(expF.Current())) {
+          TopoDS_Face aF = TopoDS::Face(expF.Current());
+
+          if (mapFaces.Add(aF)) {
             nbFaces++;
-            //0021483//if (nbFaces > 6) break;
 
-            // get wire
-            TopoDS_Shape aF = expF.Current();
-            TopExp_Explorer wires (aF, TopAbs_WIRE);
-            if (!wires.More()) {
-              // no wire in the face
-              hasNonQuadr = Standard_True;
-              NOQ.Append(aF);//0021483
-              //0021483//break;
-              continue;
-            }
-            TopoDS_Shape aWire = wires.Current();
-            wires.Next();
-            if (wires.More()) {
-              // multiple wires in the face
-              hasNonQuadr = Standard_True;
-              NOQ.Append(aF);//0021483
-              //0021483//break;
-              continue;
-            }
-
-            // Check number of edges in the face
-            Standard_Integer nbEdges = 0;
-            TopTools_MapOfShape mapEdges;
-            TopExp_Explorer expW (aWire, TopAbs_EDGE);
-            for (; expW.More(); expW.Next()) {
-              if (mapEdges.Add(expW.Current())) {
-                nbEdges++;
-                if (nbEdges > 4) break;
-              }
-            }
-            if (nbEdges != 4) {
+            if (!IsQuadrangle(aF, theToleranceC1)) {
               hasNonQuadr = Standard_True;
               NOQ.Append(aF);//0021483
             }
@@ -1732,130 +1847,13 @@ void GEOMImpl_IBlocksOperations::AddBlocksFrom (const TopoDS_Shape&   theShape,
       TopTools_MapOfShape mapFaces;
       TopExp_Explorer expF (theShape, TopAbs_FACE);
       for (; expF.More(); expF.Next()) {
-        if (mapFaces.Add(expF.Current())) {
-          // get wire
-          TopoDS_Shape aF = expF.Current();
-          TopExp_Explorer wires (aF, TopAbs_WIRE);
-          if (!wires.More()) {
-            // no wire in the face
-            NOQ.Append(aF);//0021483
-            continue;
-          }
-          TopoDS_Shape aWire = wires.Current();
-          wires.Next();
-          if (wires.More()) {
-            // multiple wires in the face
-            NOQ.Append(aF);//0021483
-            continue;
-          }
+        TopoDS_Face aF = TopoDS::Face(expF.Current());
 
-          // Check number of edges in the face
-          Standard_Integer nbEdges = 0;
-          TopTools_MapOfShape mapEdges;
-          TopExp_Explorer expW (aWire, TopAbs_EDGE);
-          for (; expW.More(); expW.Next()) {
-            if (mapEdges.Add(expW.Current())) {
-              nbEdges++;
-              if (nbEdges > 4) break;
-            }
-          }
-          if (nbEdges != 4) {
+        if (mapFaces.Add(aF)) {
+          if (!IsQuadrangle(aF, theToleranceC1)) {
             NOQ.Append(aF);//0021483
           }
         }
-      }
-    }
-    break;
-  default:
-    NOT.Append(theShape);
-  }
-}
-
-void AddBlocksFromOld (const TopoDS_Shape&   theShape,
-                       TopTools_ListOfShape& BLO,
-                       TopTools_ListOfShape& NOT,
-                       TopTools_ListOfShape& DEG,
-                       TopTools_ListOfShape& SEA)
-{
-  TopAbs_ShapeEnum aType = theShape.ShapeType();
-  switch (aType) {
-  case TopAbs_COMPOUND:
-  case TopAbs_COMPSOLID:
-    {
-      TopoDS_Iterator It (theShape);
-      for (; It.More(); It.Next()) {
-        AddBlocksFromOld(It.Value(), BLO, NOT, DEG, SEA);
-      }
-    }
-    break;
-  case TopAbs_SOLID:
-    {
-      TopTools_MapOfShape mapFaces;
-      TopExp_Explorer expF (theShape, TopAbs_FACE);
-      Standard_Integer nbFaces = 0;
-      Standard_Boolean hasNonQuadr = Standard_False;
-      Standard_Boolean hasDegenerated = Standard_False;
-      Standard_Boolean hasSeam = Standard_False;
-      for (; expF.More(); expF.Next()) {
-        if (mapFaces.Add(expF.Current())) {
-          nbFaces++;
-          if (nbFaces > 6) break;
-
-          // Check number of edges in the face
-          Standard_Integer nbEdges = 0;
-          TopTools_MapOfShape mapEdges;
-
-          // get wire
-          TopoDS_Shape aF = expF.Current();
-          TopExp_Explorer wires (aF, TopAbs_WIRE);
-          if (!wires.More()) {
-            // no wire in the face
-            hasNonQuadr = Standard_True;
-            break;
-          }
-          TopoDS_Shape aWire = wires.Current();
-          wires.Next();
-          if (wires.More()) {
-            // multiple wires in the face
-            hasNonQuadr = Standard_True;
-            break;
-          }
-
-          // iterate on wire
-          BRepTools_WireExplorer aWE (TopoDS::Wire(aWire), TopoDS::Face(aF));
-          for (; aWE.More(); aWE.Next(), nbEdges++) {
-            if (BRep_Tool::Degenerated(aWE.Current())) {
-              // degenerated edge found
-              hasDegenerated = Standard_True;
-//              break;
-            }
-            if (mapEdges.Contains(aWE.Current())) {
-              // seam edge found
-              hasSeam = Standard_True;
-//              break;
-            }
-            mapEdges.Add(aWE.Current());
-          }
-          if (nbEdges != 4) {
-            hasNonQuadr = Standard_True;
-          }
-        }
-      }
-      if (nbFaces == 6) {
-        if (hasDegenerated || hasSeam) {
-          if (hasDegenerated) {
-            DEG.Append(theShape);
-          }
-          if (hasSeam) {
-            SEA.Append(theShape);
-          }
-        } else if (hasNonQuadr) {
-          NOT.Append(theShape);
-        } else {
-          BLO.Append(theShape);
-        }
-      } else {
-        NOT.Append(theShape);
       }
     }
     break;
@@ -2088,158 +2086,6 @@ Standard_Boolean HasAnyConnection (const Standard_Integer         theBlockIndex,
 
 //=============================================================================
 /*!
- *  CheckCompoundOfBlocksOld
- */
-//=============================================================================
-Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocksOld
-                                                (Handle(GEOM_Object) theCompound,
-                                                 std::list<BCError>&      theErrors)
-{
-  SetErrorCode(KO);
-
-  if (theCompound.IsNull()) return Standard_False;
-  TopoDS_Shape aBlockOrComp = theCompound->GetValue();
-
-  Standard_Boolean isCompOfBlocks = Standard_True;
-
-  // Map sub-shapes and their indices
-  TopTools_IndexedMapOfShape anIndices;
-  TopExp::MapShapes(aBlockOrComp, anIndices);
-
-  // 1. Report non-blocks
-  TopTools_ListOfShape NOT; // Not blocks
-  TopTools_ListOfShape DEG; // Hexahedral solids, having degenerated edges
-  TopTools_ListOfShape SEA; // Hexahedral solids, having seam edges
-  TopTools_ListOfShape BLO; // All blocks from the given compound
-  AddBlocksFromOld(aBlockOrComp, BLO, NOT, DEG, SEA);
-
-  if (NOT.Extent() > 0) {
-    isCompOfBlocks = Standard_False;
-    BCError anErr;
-    anErr.error = NOT_BLOCK;
-    TopTools_ListIteratorOfListOfShape it (NOT);
-    for (; it.More(); it.Next()) {
-      anErr.incriminated.push_back(anIndices.FindIndex(it.Value()));
-    }
-    theErrors.push_back(anErr);
-  }
-
-  if (DEG.Extent() > 0 || SEA.Extent() > 0) {
-    isCompOfBlocks = Standard_False;
-    BCError anErr;
-    anErr.error = EXTRA_EDGE;
-
-    TopTools_ListIteratorOfListOfShape itDEG (DEG);
-    for (; itDEG.More(); itDEG.Next()) {
-      anErr.incriminated.push_back(anIndices.FindIndex(itDEG.Value()));
-    }
-
-    TopTools_ListIteratorOfListOfShape itSEA (SEA);
-    for (; itSEA.More(); itSEA.Next()) {
-      anErr.incriminated.push_back(anIndices.FindIndex(itSEA.Value()));
-    }
-
-    theErrors.push_back(anErr);
-  }
-
-  Standard_Integer nbBlocks = BLO.Extent();
-  if (nbBlocks == 0) {
-    isCompOfBlocks = Standard_False;
-    SetErrorCode(OK);
-    return isCompOfBlocks;
-  }
-  if (nbBlocks == 1) {
-    SetErrorCode(OK);
-    return isCompOfBlocks;
-  }
-
-  // Convert list of blocks into array for easy and fast access
-  Standard_Integer ibl = 1;
-  TopTools_Array1OfShape aBlocks (1, nbBlocks);
-  TopTools_ListIteratorOfListOfShape BLOit (BLO);
-  for (; BLOit.More(); BLOit.Next(), ibl++) {
-    aBlocks.SetValue(ibl, BLOit.Value());
-  }
-
-  // 2. Find relations between all blocks,
-  //    report connection errors (NOT_GLUED and INVALID_CONNECTION)
-  TColStd_Array2OfInteger aRelations (1, nbBlocks, 1, nbBlocks);
-  aRelations.Init(REL_NOT_CONNECTED);
-
-  Standard_Integer row = 1;
-  for (row = 1; row <= nbBlocks; row++) {
-    TopoDS_Shape aBlock = aBlocks.Value(row);
-
-    Standard_Integer col = row + 1;
-    for (; col <= nbBlocks; col++) {
-      Standard_Integer aRel = BlocksRelation(aBlock, aBlocks.Value(col));
-      if (aRel != REL_NOT_CONNECTED) {
-        aRelations.SetValue(row, col, aRel);
-        aRelations.SetValue(col, row, aRel);
-        if (aRel == REL_NOT_GLUED) {
-          // report connection error
-          isCompOfBlocks = Standard_False;
-          BCError anErr;
-          anErr.error = NOT_GLUED;
-          anErr.incriminated.push_back(anIndices.FindIndex(aBlocks.Value(row)));
-          anErr.incriminated.push_back(anIndices.FindIndex(aBlocks.Value(col)));
-          theErrors.push_back(anErr);
-        } else if (aRel == REL_COLLISION_VV ||
-                   aRel == REL_COLLISION_FF ||
-                   aRel == REL_COLLISION_EE ||
-                   aRel == REL_UNKNOWN) {
-          // report connection error
-          isCompOfBlocks = Standard_False;
-          BCError anErr;
-          anErr.error = INVALID_CONNECTION;
-          anErr.incriminated.push_back(anIndices.FindIndex(aBlocks.Value(row)));
-          anErr.incriminated.push_back(anIndices.FindIndex(aBlocks.Value(col)));
-          theErrors.push_back(anErr);
-        } else {
-        }
-      }
-    }
-  }
-
-  // 3. Find largest set of connected (good connection or not glued) blocks
-  TColStd_MapOfInteger aProcessedMap;
-  TColStd_MapOfInteger aLargestSet;
-  TColStd_MapOfInteger aCurrentSet;
-  for (ibl = 1; ibl <= nbBlocks; ibl++) {
-    if (!aProcessedMap.Contains(ibl)) {
-      aCurrentSet.Clear();
-      FindConnected(ibl, aRelations, aProcessedMap, aCurrentSet);
-      if (aCurrentSet.Extent() > aLargestSet.Extent()) {
-        aLargestSet = aCurrentSet;
-      }
-    }
-  }
-
-  // 4. Report all blocks, isolated from <aLargestSet>
-  BCError anErr;
-  anErr.error = NOT_CONNECTED;
-  Standard_Boolean hasIsolated = Standard_False;
-  for (ibl = 1; ibl <= nbBlocks; ibl++) {
-    if (!aLargestSet.Contains(ibl)) {
-      aProcessedMap.Clear();
-      if (!HasAnyConnection(ibl, aLargestSet, aRelations, aProcessedMap)) {
-        // report connection absence
-        hasIsolated = Standard_True;
-        anErr.incriminated.push_back(anIndices.FindIndex(aBlocks.Value(ibl)));
-      }
-    }
-  }
-  if (hasIsolated) {
-    isCompOfBlocks = Standard_False;
-    theErrors.push_back(anErr);
-  }
-
-  SetErrorCode(OK);
-  return isCompOfBlocks;
-}
-
-//=============================================================================
-/*!
  *  PrintBCErrors
  */
 //=============================================================================
@@ -2294,6 +2140,7 @@ TCollection_AsciiString GEOMImpl_IBlocksOperations::PrintBCErrors
 //=============================================================================
 Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocks
                                               (Handle(GEOM_Object) theCompound,
+                                               const Standard_Real theToleranceC1,
                                                std::list<BCError>& theErrors)
 {
   SetErrorCode(KO);
@@ -2312,7 +2159,7 @@ Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocks
   TopTools_ListOfShape EXT; // Hexahedral solids, having degenerated and/or seam edges
   TopTools_ListOfShape BLO; // All blocks from the given compound
   TopTools_ListOfShape NOQ; // All non-quadrangular faces
-  AddBlocksFrom(aBlockOrComp, BLO, NOT, EXT, NOQ);
+  AddBlocksFrom(aBlockOrComp, BLO, NOT, EXT, NOQ, theToleranceC1);
 
   // Report non-blocks
   if (NOT.Extent() > 0) {
@@ -2478,7 +2325,8 @@ Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocks
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetNonBlocks
-                                     (Handle(GEOM_Object) theShape,
+                                     (Handle(GEOM_Object)  theShape,
+                                      const Standard_Real  theToleranceC1,
                                       Handle(GEOM_Object)& theNonQuads)
 {
   SetErrorCode(KO);
@@ -2491,7 +2339,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetNonBlocks
   TopTools_ListOfShape NOT; // Not blocks
   TopTools_ListOfShape EXT; // Hexahedral solids, having degenerated and/or seam edges
   TopTools_ListOfShape NOQ; // All non-quadrangular faces
-  AddBlocksFrom(aShape, BLO, NOT, EXT, NOQ);
+  AddBlocksFrom(aShape, BLO, NOT, EXT, NOQ, theToleranceC1);
 
   if (NOT.IsEmpty() && EXT.IsEmpty() && NOQ.IsEmpty()) {
     SetErrorCode("NOT_FOUND_ANY");

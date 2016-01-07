@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -44,11 +44,11 @@ namespace GEOM
   {
     if (--myCounter == 0) {
       TCollection_AsciiString aDescr;
-      if ( myAppend ) {
+      if ( myAppend )
         aDescr = myFunction->GetDescription();
-        if ( !aDescr.IsEmpty() ) aDescr += "\n\t";
-      }
       std::string aString = myStream.str();
+      if ( !aDescr.IsEmpty() && !aString.empty())
+        aDescr += "\n\t";
       aDescr += (char *)aString.c_str();
       myFunction->SetDescription( aDescr );
     }
@@ -140,6 +140,23 @@ namespace GEOM
     }
     return *this;
   }
+  Standard_EXPORT TPythonDump&
+  TPythonDump::operator<< (const std::list<Handle(GEOM_Object)>& theObjects)
+  {
+    Standard_Integer aLength = theObjects.size();
+    if ( aLength != 1 ) {
+      myStream << "[";
+    }
+    std::list<Handle(GEOM_Object)>::const_iterator obj = theObjects.begin();
+    for ( Standard_Integer i = 1; i <= aLength; i++, ++obj ) {
+      *this << *obj;
+      if ( i < aLength ) myStream << ", ";
+    }
+    if ( aLength != 1 ) {
+      myStream << "]";
+    }
+    return *this;
+  }
 
   TPythonDump& TPythonDump::operator<< (const GEOM_BaseObject* theObject)
   {
@@ -184,6 +201,11 @@ namespace GEOM
 
     for (i = 1; i <= aLen; i++) {
       anObject = Handle(GEOM_Object)::DownCast(theObjects->Value(i));
+      if ( anObject.IsNull() ) {
+        Handle(GEOM_Function) fun = Handle(GEOM_Function)::DownCast(theObjects->Value(i));
+        if ( !fun.IsNull() )
+          anObject = GEOM_Object::GetObject( fun->GetOwnerEntry() );
+      }
       aLatest = GetCreatedLast(aLatest, anObject);
     }
     return aLatest;

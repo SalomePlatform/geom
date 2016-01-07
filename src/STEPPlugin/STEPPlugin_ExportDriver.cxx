@@ -1,4 +1,4 @@
-// Copyright (C) 2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2014-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,7 @@
 // internal includes
 #include "STEPPlugin_ExportDriver.hxx"
 #include "STEPPlugin_IExport.hxx"
+#include "STEPPlugin_IOperations.hxx"
 
 // KERNEL includes
 #include <utilities.h>
@@ -74,6 +75,43 @@ Standard_Integer STEPPlugin_ExportDriver::Execute( TFunction_Logbook& log ) cons
   aFunction->SetValue( aShape );
 
   TCollection_AsciiString aFileName = aData.GetFileName();
+  Standard_Integer        anUnit    = aData.GetUnit();
+  TCollection_AsciiString aWriteUnit;
+
+  switch (anUnit) {
+  case STEPPlugin_IOperations::LengthUnit_Inch:
+    aWriteUnit = "INCH";
+    break;
+  case STEPPlugin_IOperations::LengthUnit_Millimeter:
+    aWriteUnit = "MM";
+    break;
+  case STEPPlugin_IOperations::LengthUnit_Foot:
+    aWriteUnit = "FT";
+    break;
+  case STEPPlugin_IOperations::LengthUnit_Mile:
+    aWriteUnit = "MI";
+    break;
+  case STEPPlugin_IOperations::LengthUnit_Meter:
+    aWriteUnit = "M";
+    break;
+  case STEPPlugin_IOperations::LengthUnit_Kilometer:
+    aWriteUnit = "KM";
+    break;
+  case STEPPlugin_IOperations::LengthUnit_Milliinch:
+    aWriteUnit = "MIL";
+    break;
+  case STEPPlugin_IOperations::LengthUnit_Micrometer:
+    aWriteUnit = "UM";
+    break;
+  case STEPPlugin_IOperations::LengthUnit_Centimeter:
+    aWriteUnit = "CM";
+    break;
+  case STEPPlugin_IOperations::LengthUnit_Microinch:
+    aWriteUnit = "UIN";
+    break;
+  default:
+    return 0;
+  }
 
   MESSAGE("Export STEP into file " << aFileName.ToCString());
 
@@ -86,7 +124,7 @@ Standard_Integer STEPPlugin_ExportDriver::Execute( TFunction_Logbook& log ) cons
     //VRV: OCC 4.0 migration
     STEPControl_Writer aWriter;
     Interface_Static::SetCVal("xstep.cascade.unit","M");
-    Interface_Static::SetCVal("write.step.unit", "M");
+    Interface_Static::SetCVal("write.step.unit", aWriteUnit.ToCString());
     Interface_Static::SetIVal("write.step.nonmanifold", 1);
     status = aWriter.Transfer( aShape, STEPControl_AsIs );
     //VRV: OCC 4.0 migration

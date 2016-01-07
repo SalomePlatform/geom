@@ -1,9 +1,9 @@
-// Copyright (C) 2013  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2013-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -88,7 +88,7 @@ std::string CurveCreator_Curve::getUniqSectionName() const
         std::string aName(aBuffer);
         int j;
         for( j = 0 ; j < mySections.size() ; j++ ){
-            aSection = getSection( j );
+            aSection = (CurveCreator_Section*)getSection( j );
             if ( aSection && aSection->myName == aName )
               break;
         }
@@ -263,7 +263,7 @@ bool CurveCreator_Curve::moveSectionInternal(const int theISection,
   int aMovedSectionId = theISection >= 0 ? theISection : mySections.size()-1;
 
   if (aMovedSectionId != theNewIndex) {
-    CurveCreator_Section* aSection = getSection( aMovedSectionId );
+    CurveCreator_Section* aSection = (CurveCreator_Section*)getSection( aMovedSectionId );
 
     // Remove section
     CurveCreator::Sections::iterator anIter = mySections.begin() + aMovedSectionId;
@@ -362,7 +362,7 @@ bool CurveCreator_Curve::clearInternal()
 
   CurveCreator_Section* aSection;
   for (; i < aNbSections; i++) {
-    aSection = getSection( i );
+    aSection = (CurveCreator_Section*)getSection( i );
     if ( aSection )
       delete aSection;
   }
@@ -397,7 +397,8 @@ bool CurveCreator_Curve::joinInternal( const std::list<int>& theSections )
     return res;
 
   int anISectionMain = theSections.front();
-  CurveCreator_Section* aSectionMain = getSection( anISectionMain );
+  CurveCreator_Section* aSectionMain =
+    (CurveCreator_Section*)getSection( anISectionMain );
 
   std::list <int> aSectionsToJoin = theSections;
   aSectionsToJoin.erase( aSectionsToJoin.begin() ); // skip the main section
@@ -408,7 +409,7 @@ bool CurveCreator_Curve::joinInternal( const std::list<int>& theSections )
   std::list<int>::const_iterator anIt = aSectionsToJoin.begin(), aLast = aSectionsToJoin.end();
   CurveCreator_Section* aSection;
   for (; anIt != aLast; anIt++) {
-    aSection = getSection( *anIt );
+    aSection = (CurveCreator_Section*)getSection( *anIt );
     aSectionMain->myPoints.insert(aSectionMain->myPoints.end(), aSection->myPoints.begin(),
                                   aSection->myPoints.end());
     res = removeSectionInternal(*anIt);
@@ -552,12 +553,12 @@ int CurveCreator_Curve::getNbPoints( const int theISection ) const
     const int aNbSections = getNbSections();
 
     for (; i < aNbSections; i++) {
-      aSection = getSection( i );
+      aSection = (CurveCreator_Section*)getSection( i );
       if ( aSection )
         aNbCoords += aSection->myPoints.size();
     }
   } else {
-    aSection = getSection( theISection );
+    aSection = (CurveCreator_Section*)getSection( theISection );
     if ( aSection )
       aNbCoords = aSection->myPoints.size();
   }
@@ -592,7 +593,8 @@ void CurveCreator_Curve::saveCoordDiff( const SectionToPointCoordsList &theOldCo
 //! Get "closed" flag of the specified section
 bool CurveCreator_Curve::isClosed( const int theISection ) const
 {
-  CurveCreator_Section* aSection = getSection( theISection );
+  const CurveCreator_Section* aSection =
+    (CurveCreator_Section*)getSection( theISection );
   return aSection ? aSection->myIsClosed : false;
 }
 
@@ -606,14 +608,14 @@ bool CurveCreator_Curve::setClosedInternal( const int theISection,
     int i;
 
     for (i = 0; i < aSize; i++) {
-      aSection = getSection( i );
+      aSection = (CurveCreator_Section*)getSection( i );
       if( aSection ) {
         aSection->myIsClosed = theIsClosed;
         redisplayCurve();
       }
     }
   } else {
-    aSection = getSection( theISection );
+    aSection = (CurveCreator_Section*)getSection( theISection );
     if ( aSection ) {
       aSection->myIsClosed = theIsClosed;
       redisplayCurve();
@@ -644,7 +646,7 @@ bool CurveCreator_Curve::setClosed( const int theISection,
 //! Returns specified section name
 std::string CurveCreator_Curve::getSectionName( const int theISection ) const
 {
-  CurveCreator_Section* aSection = getSection( theISection );
+  CurveCreator_Section* aSection = (CurveCreator_Section*)getSection( theISection );
   return aSection ? aSection->myName : "";
 }
 
@@ -653,7 +655,7 @@ bool CurveCreator_Curve::setSectionNameInternal( const int theISection,
                                                  const std::string& theName )
 {
   bool res = false;
-  CurveCreator_Section* aSection = getSection( theISection );
+  CurveCreator_Section* aSection = (CurveCreator_Section*)getSection( theISection );
   if( aSection ) {
     aSection->myName = theName;
     res = true;
@@ -681,7 +683,7 @@ bool CurveCreator_Curve::setSectionName( const int theISection,
 CurveCreator::SectionType CurveCreator_Curve::getSectionType
   ( const int theISection ) const
 {
-  CurveCreator_Section* aSection = getSection( theISection );
+  CurveCreator_Section* aSection = (CurveCreator_Section*)getSection( theISection );
   return aSection ? aSection->myType : CurveCreator::Polyline;
 }
 
@@ -695,13 +697,13 @@ bool CurveCreator_Curve::setSectionTypeInternal( const int theISection,
     const int aNbSections = getNbSections();
 
     for (; i < aNbSections; i++) {
-      aSection = getSection( i );
+      aSection = (CurveCreator_Section*)getSection( i );
       if ( aSection )
         aSection->myType = theType;
     }
     redisplayCurve();
   } else {
-    aSection = getSection( theISection );
+    aSection = (CurveCreator_Section*)getSection( theISection );
     if ( aSection && aSection->myType != theType ){
       aSection->myType = theType;
       redisplayCurve();
@@ -744,7 +746,7 @@ bool CurveCreator_Curve::addPointsInternal( const CurveCreator::SectionsMap &the
   CurveCreator_Section *aSection = 0;
   for ( ; anIt != theSectionsMap.end(); anIt++ ) {
     int anISection = anIt->first;
-    aSection = getSection( anISection );
+    aSection = (CurveCreator_Section*)getSection( anISection );
     if( aSection ) {
       CurveCreator::PosPointsList aSectionPoints = anIt->second;
       CurveCreator::PosPointsList::const_iterator aPntIt = aSectionPoints.begin();
@@ -808,7 +810,7 @@ bool CurveCreator_Curve::setPointInternal( const CurveCreator::SectionsMap &theS
   CurveCreator_Section *aSection = 0;
   for ( ; anIt != theSectionsMap.end(); anIt++ ) {
     int anISection = anIt->first;
-    aSection = getSection( anISection );
+    aSection = (CurveCreator_Section*)getSection( anISection );
     if( aSection ) { 
       CurveCreator::PosPointsList aSectionPoints = anIt->second;
       CurveCreator::PosPointsList::const_iterator aPntIt = aSectionPoints.begin();
@@ -948,7 +950,7 @@ bool CurveCreator_Curve::removeSeveralPoints( const SectionToPointList &theSecti
 CurveCreator::Coordinates CurveCreator_Curve::getPoint( const int theISection,
                                                         const int theIPnt) const
 {
-  CurveCreator_Section* aSection = getSection( theISection );
+  CurveCreator_Section* aSection = (CurveCreator_Section*)getSection( theISection );
   CurveCreator::Coordinates::const_iterator
     anIter = aSection->myPoints.begin() + toICoord(theIPnt);
   CurveCreator::Coordinates aResult(anIter, anIter + myDimension);
@@ -962,7 +964,7 @@ CurveCreator::Coordinates CurveCreator_Curve::getPoint( const int theISection,
 //=======================================================================
 CurveCreator::Coordinates CurveCreator_Curve::getPoints( const int theISection ) const
 {
-  CurveCreator_Section* aSection = getSection( theISection );
+  CurveCreator_Section* aSection = (CurveCreator_Section*)getSection( theISection );
   return aSection ? aSection->myPoints : CurveCreator::Coordinates();
 }
 
@@ -972,15 +974,6 @@ void CurveCreator_Curve::constructAISObject()
   CurveCreator_Utils::constructShape( this, aShape );
 
   myAISShape = new AIS_Shape( aShape );
-}
-
-CurveCreator_Section* CurveCreator_Curve::getSection( const int theSectionId ) const
-{
-  CurveCreator_Section *aSection = 0;
-  if ( theSectionId >= 0 && theSectionId < mySections.size() )
-    aSection = mySections.at( theSectionId );
-
-  return aSection;
 }
 
 Handle(AIS_InteractiveObject) CurveCreator_Curve::getAISObject( const bool theNeedToBuild ) const
@@ -997,7 +990,7 @@ bool CurveCreator_Curve::removeSectionPoints( const int theSectionId,
 {
   bool aRes = false;
 
-  CurveCreator_Section* aSection = getSection( theSectionId );
+  CurveCreator_Section* aSection = (CurveCreator_Section*)getSection( theSectionId );
   if ( !aSection )
     return aRes;
 

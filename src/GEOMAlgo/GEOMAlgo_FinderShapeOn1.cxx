@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -309,6 +309,9 @@ void GEOMAlgo_FinderShapeOn1::ProcessEdges()
   aType1=myGAS.GetType();
   //
   TopExp::MapShapes(myShape, TopAbs_EDGE, aM);
+  //
+  bIsConformState=Standard_False;
+  //
   aNb=aM.Extent();
   for (i=1; i<=aNb; ++i) {
     GEOMAlgo_ListOfPnt aLP;
@@ -427,6 +430,8 @@ void GEOMAlgo_FinderShapeOn1::ProcessFaces()
       }
     }
     //
+    bIsConformState=Standard_False;
+    //
     aExp.Init(aF, TopAbs_EDGE);
     for (; aExp.More(); aExp.Next()) {
       const TopoDS_Shape& aE=aExp.Current();
@@ -500,6 +505,9 @@ void GEOMAlgo_FinderShapeOn1::ProcessSolids()
     const TopoDS_Shape& aSd=aM(i);
     aMF.Clear();
     TopExp::MapShapes(aSd, TopAbs_FACE, aMF);
+    //
+    bIsConformState=Standard_False;
+    //
     aNbF=aMF.Extent();
     for (j=1; j<=aNbF; ++j) {
       const TopoDS_Shape& aF=aMF(j);
@@ -660,7 +668,6 @@ void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Face& aF,
     }// if (aType==GeomAbs_Plane || aType==GeomAbs_Cylinder)
   }// if (!aNb && myNbPntsMin) {
 }
-//modified by NIZNHY-PKV Thu Jan 26 09:56:20 2012f
 //=======================================================================
 //function : InnerPoints
 //purpose  :
@@ -676,7 +683,6 @@ void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Edge& aE,
   aLP.Clear();
   InnerPoints(aE, aNbPntsMin, aLP);
 }
-//modified by NIZNHY-PKV Thu Jan 26 09:56:32 2012t
 //=======================================================================
 //function : InnerPoints
 //purpose  :
@@ -702,16 +708,6 @@ void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Edge& aE,
     return;
   }
   //
-  //modified by NIZNHY-PKV Thu Jan 26 09:51:20 2012f
-  /*
-  aNbT=myNbPntsMin+1;
-  dT=(aT2-aT1)/aNbT;
-  for (j=1; j<=aNbPntsMin; ++j) {
-    aT=aT1+j*dT;
-    aC3D->D0(aT, aP);
-    aLP.Append(aP);
-  }
-  */
   aNbT=aNbPntsMin+1;
   dT=(aT2-aT1)/aNbT;
   for (j=1; j<aNbT; ++j) {
@@ -719,7 +715,6 @@ void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Edge& aE,
     aC3D->D0(aT, aP);
     aLP.Append(aP);
   }
-  //modified by NIZNHY-PKV Thu Jan 26 09:51:24 2012t
 }
 
 //=======================================================================

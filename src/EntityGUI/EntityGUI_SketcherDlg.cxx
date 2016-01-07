@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -47,6 +47,7 @@
 #include <SalomeApp_Application.h>
 #include <LightApp_Application.h>
 #include <LightApp_SelectionMgr.h>
+#include "utilities.h"
 
 #include <DlgRef.h>
 
@@ -64,6 +65,7 @@
 
 #include <SalomeApp_Study.h>
 #include <SalomeApp_Tools.h>
+#include "utilities.h"
 
 #include <gp_Pln.hxx>
 
@@ -539,7 +541,7 @@ void EntityGUI_SketcherDlg::InitClick()
   Group4Spin->hide();
   GroupRect->hide();
   globalSelection(); // close local selection to clear it
-  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  localSelection( TopAbs_VERTEX );
 }
 
 
@@ -630,15 +632,14 @@ void EntityGUI_SketcherDlg::RectClicked()
        SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   
   GroupRect->show();
-  
+ 
   myX1=0;
-  myX2=10;
-  myY1=0;
-  myY2=10;
-
   GroupRect->SpinBox_DX1->setValue(myX1); 
+  myY1=0;
   GroupRect->SpinBox_DY1->setValue(myY1);
+  myX2=10;
   GroupRect->SpinBox_DX2->setValue(myX2);
+  myY2=10;
   GroupRect->SpinBox_DY2->setValue(myY2);
   
   resize( minimumSizeHint() );
@@ -1570,7 +1571,7 @@ void EntityGUI_SketcherDlg::SetEditCurrentArgument()
     selButton->setDown(true);
   }
   globalSelection(); // close local selection to clear it
-  localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
+  localSelection( myNeedType );
 }
 
 
@@ -2258,7 +2259,7 @@ QString EntityGUI_SketcherDlg::GetNewCommand( QString& theParameters )
                                   + ":TT " + QString::number( myX2, Format, DigNum) + " " + QString::number( myY1, Format, DigNum)
                                   + ":WW";
                           
-      theParameters = myX1Str + ":" + myY1Str + ":" + myX2Str + ":" + myY2Str ;
+      theParameters = myX1Str + ":" + myY1Str + ":" + myX1Str + ":" + myY2Str + ":" + myX2Str + ":" + myY2Str + ":" + myX2Str + ":" + myY1Str;
     }
   return myNewCommand;
 }

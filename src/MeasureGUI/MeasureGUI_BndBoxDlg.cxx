@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -124,7 +124,7 @@ void MeasureGUI_BndBoxDlg::Init()
           this, SLOT(SelectionIntoArgument()));
 
   initName(tr("GEOM_BNDBOX"));
-  globalSelection();
+  activateSelection();
   SelectionIntoArgument();
 }
 
@@ -148,6 +148,7 @@ bool MeasureGUI_BndBoxDlg::ClickOnApply()
     return false;
 
   initName();
+  activateSelection();
   return true;
 }
 
@@ -162,7 +163,7 @@ void MeasureGUI_BndBoxDlg::ActivateThisDialog()
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
 
-  globalSelection();
+  activateSelection();
   redisplayPreview();
 }
 
@@ -216,11 +217,11 @@ bool MeasureGUI_BndBoxDlg::getParameters (double& theXmin, double& theXmax,
                                           double& theYmin, double& theYmax,
                                           double& theZmin, double& theZmax)
 {
-  if (myObj->_is_nil())
+  if (!myObj)
     return false;
 
   GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow(getOperation());
-  anOper->GetBoundingBox(myObj, true, theXmin, theXmax, theYmin, theYmax, theZmin, theZmax);
+  anOper->GetBoundingBox(myObj.get(), true, theXmin, theXmax, theYmin, theYmax, theZmin, theZmax);
 
   return anOper->IsDone();
 }
@@ -249,28 +250,19 @@ SALOME_Prs* MeasureGUI_BndBoxDlg::buildPrs()
 void MeasureGUI_BndBoxDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText("");
-  myObj = GEOM::GEOM_Object::_nil();
+  myObj.nullify();
 
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
+  QList<TopAbs_ShapeEnum> aTypes;
+  aTypes << TopAbs_VERTEX << TopAbs_EDGE << TopAbs_WIRE << TopAbs_FACE << TopAbs_SHELL << TopAbs_SOLID << TopAbs_COMPSOLID << TopAbs_COMPOUND << TopAbs_SHAPE;
+  myObj = getSelected( aTypes );
 
-  if (aSelList.Extent() != 1) {
+  if ( !myObj ) {
     processObject();
     erasePreview();
     return;
   }
 
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First());
-
-  if (aSelectedObject->_is_nil()) {
-    processObject();
-    erasePreview();
-    return;
-  }
-
-  myObj = aSelectedObject;
-  myEditCurrentArgument->setText(GEOMBase::GetName(myObj));
+  myEditCurrentArgument->setText(GEOMBase::GetName(myObj.get()));
   processObject();
   redisplayPreview();
 }
@@ -290,7 +282,7 @@ GEOM::GEOM_IOperations_ptr MeasureGUI_BndBoxDlg::createOperation()
 //=================================================================================
 bool MeasureGUI_BndBoxDlg::isValid (QString&)
 {
-  return !myObj->_is_nil();
+  return myObj;
 }
 
 //=================================================================================
@@ -300,12 +292,22 @@ bool MeasureGUI_BndBoxDlg::isValid (QString&)
 bool MeasureGUI_BndBoxDlg::execute (ObjectList& objects)
 {
   GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow(getOperation());
-  GEOM::GEOM_Object_var anObj = anOper->MakeBoundingBox(myObj, true);
+  GEOM::GEOM_Object_var anObj = anOper->MakeBoundingBox(myObj.get(), true);
 
   if (!anObj->_is_nil())
     objects.push_back(anObj._retn());
 
   return true;
+}
+
+//=================================================================================
+// function : activateSelection()
+// purpose  :
+//=================================================================================
+void MeasureGUI_BndBoxDlg::activateSelection()
+{
+  globalSelection( GEOM_ALLSHAPES );
+  localSelection( TopAbs_SHAPE );
 }
 
 //=================================================================================
@@ -323,7 +325,7 @@ void MeasureGUI_BndBoxDlg::redisplayPreview()
   erasePreview(false);
 
   try {
-    SUIT_OverrideCursor();
+    SUIT_OverrideCursor wc;
 
     getDisplayer()->SetColor(Quantity_NOC_VIOLET);
     getDisplayer()->SetToActivate(false);
@@ -336,4 +338,24 @@ void MeasureGUI_BndBoxDlg::redisplayPreview()
   }
   catch (...) {
   }
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void MeasureGUI_BndBoxDlg::addSubshapesToStudy()
+{
+  GEOMBase::PublishSubObject( myObj.get() );
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> MeasureGUI_BndBoxDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myObj;
+  return res;
 }

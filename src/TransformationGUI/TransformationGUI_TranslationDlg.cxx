@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -385,9 +385,9 @@ void TransformationGUI_TranslationDlg::SetEditCurrentArgument()
     GroupPoints->LineEdit3->setEnabled(false);
 
     if (getConstructorId() == 1)
-      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+      localSelection(TopAbs_VERTEX);
     else
-      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+      localSelection(TopAbs_EDGE);
   }
   else if (send == GroupPoints->PushButton3) {
     myEditCurrentArgument = GroupPoints->LineEdit3;
@@ -397,7 +397,7 @@ void TransformationGUI_TranslationDlg::SetEditCurrentArgument()
     GroupPoints->LineEdit1->setEnabled(false);
     GroupPoints->LineEdit2->setEnabled(false);
 
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+    localSelection(TopAbs_VERTEX);
   }
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
@@ -686,4 +686,18 @@ void TransformationGUI_TranslationDlg::createPathPreview ( GEOM::GEOM_Object_ptr
       aPrs->AddObject(anIO);
     GEOMBase_Helper::displayPreview( aPrs, false, true );
   }
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> TransformationGUI_TranslationDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  if ( GroupPoints->CheckBox2->isChecked() ) {
+    res.append(myObjects);
+    res << myVector << myPoint1 << myPoint2;
+  }
+  return res;
 }

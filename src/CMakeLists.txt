@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2012-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -42,11 +42,14 @@ ENDIF()
 IF(SALOME_BUILD_GUI)
   SET(SUBDIRS_GUI
     OBJECT DlgRef GEOMFiltersSelection Material GEOMGUI
-    GEOMBase DependencyTree GEOMToolsGUI DisplayGUI BasicGUI PrimitiveGUI GenerationGUI
-    CurveCreator EntityGUI BuildGUI BooleanGUI TransformationGUI OperationGUI
-    RepairGUI MeasureGUI GroupGUI BlocksGUI AdvancedGUI
+    GEOMBase GEOMToolsGUI DisplayGUI BasicGUI PrimitiveGUI GenerationGUI
+    CurveCreator MeasureGUI EntityGUI BuildGUI BooleanGUI TransformationGUI OperationGUI
+    RepairGUI GroupGUI BlocksGUI AdvancedGUI
     GEOM_SWIG_WITHIHM
     )
+  IF(SALOME_USE_GRAPHICSVIEW)
+    LIST(APPEND SUBDIRS_GUI DependencyTree)
+  ENDIF()
 ENDIF()
 
 SET(SUBDIRS

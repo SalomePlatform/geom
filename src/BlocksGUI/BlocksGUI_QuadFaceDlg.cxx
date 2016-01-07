@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -466,11 +466,11 @@ void BlocksGUI_QuadFaceDlg::activateSelection()
       myEditCurrentArgument == mySelName[Vertex3] ||
       myEditCurrentArgument == mySelName[Vertex4])
   {
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX); //Select Vertices on All Shapes
+    localSelection(TopAbs_VERTEX); //Select Vertices on All Shapes
   }
   else
   {
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE); //Select Edges on All Shapes
+    localSelection(TopAbs_EDGE); //Select Edges on All Shapes
   }
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
@@ -569,4 +569,15 @@ void BlocksGUI_QuadFaceDlg::addSubshapesToStudy()
   default:
     break;
   }
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BlocksGUI_QuadFaceDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myShape1 << myShape2 << myShape3 << myShape4;
+  return res;
 }

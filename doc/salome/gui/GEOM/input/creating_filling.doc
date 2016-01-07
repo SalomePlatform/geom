@@ -6,19 +6,18 @@ To generate a \b Filling in the <b>Main Menu</b> select <b>New Entity - > Genera
 
 To create a curvilinear face from several edges you need to define the
 following parameters:
-\n <b>Input Compound</b> - the list of edges/wires used for creation
-of the surface. To prepare for the filling each wire of the compound
-is converted to an edge created on a BSpline curve built using curves
-from all edges of the wire.
+\n <b>Input Contours</b> - the list of edges/wires to use for creation
+of the surface. You can select either several edges/wires or a
+compound of them. To prepare for the filling, each input wire
+is converted into a single BSpline curve by concatenating its edges.
 \n \b Minimum and <b>Maximum Degree</b> of equation of the resulting
-BSpline or Besier curves describing the surface; 
+BSpline or Besier curves describing the surface.
 \n \b Tolerance for \b 2D and for \b 3D - minimum distance between the
-created surface and the reference edge; 
+created surface and the input contours.
 \n <b>Number of Iterations</b> - defines the maximum number of iterations. The
 iterations are repeated until the required tolerance is reached. So, a
 greater number of iterations allows producing a better surface. 
 \n <b>Method</b> - Kind of method to perform filling operation
-
 <ol>
 <li>Default - the standard behaviour.</li>
 <li>Use edges orientation - the edges orientation is used: if an edge is
@@ -28,7 +27,7 @@ algorithm.</li>
 minimize the sum of distances between ends points of edges.</li>
 </ol>
 
-\n <b>Approximation</b> - if checked, BSpline curves are generated in
+<b>Approximation</b> - if checked, BSpline curves are generated in
 the process of surface construction (using
 GeomAPI_PointsToBSplineSurface functionality). By default the surface
 is created using Besier curves. The usage of <b>Approximation</b>
@@ -36,13 +35,21 @@ slows the algorithm, but allows building the surface for complex cases.
 
 \n The \b Result of the operation will be a GEOM_Object (face).
 
-\n <b>TUI Command:</b> <em>geompy.MakeFilling(Edges, MinDegree, MaxDegree, Tol2D, Tol3D, NbIter)</em>
-\n <b>Arguments:</b> Name + 1 List of edges + 7 Parameters
-(Min. degree, Max. degree, Number of iterations, 2D tolerance, 3D
-tolerance, Number of iterations, Method, Approximation).
-\n <b>Advanced options</b> \ref preview_anchor "Preview"
+\n <b>TUI Command:</b> <em>geompy.MakeFilling(Contours, MinDegree, MaxDegree, Tol2D, Tol3D, NbIter)</em><br>
+<b>Arguments:</b> List/compound of edges/wires + 7 Parameters
+(Min. degree, Max. degree, 2D tolerance, 3D tolerance, Number of
+iterations, Method, Approximation).
+\n <b>Advanced options:</b> \ref preview_anchor "Preview"
 
 \image html filling.png
+
+\note This dialog supports navigation through the selectable objects (in OCC 3D viewer only):
+- Scroll mouse wheel with pressed \em Ctrl key or press \em "S", \em "P" keys when input focus is
+in the viewer to navigate between selectable objects.
+- Press left mouse button to select an appropriate object to the dialog box.
+.
+For more details, please refer to the \em "Functionality common for OCC and VTK viewers" chapter
+of the GUI module's documentation.
 
 <b>Example:</b>
 
@@ -50,7 +57,7 @@ tolerance, Number of iterations, Method, Approximation).
 
 \image html fillingsn.png "Resulting surface"
 
-Our <b>TUI Scripts</b> provide you with useful examples of creation of
+Sample <b>TUI Scripts</b> provide you with useful examples of creation of
 \ref tui_creation_filling "Complex Geometric Objects".
 
 */

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -121,7 +121,7 @@ void BuildGUI_WireDlg::Init()
   
   myEdgesAndWires.clear();
 
-  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+  localSelection( TopAbs_EDGE );
 
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
@@ -177,12 +177,12 @@ void BuildGUI_WireDlg::TypeButtonClicked()
 {
   if ( GroupType->RadioButton1->isChecked() ) {
     globalSelection(); // close local contexts, if any
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+    localSelection( TopAbs_EDGE );
     GroupArgs->TextLabel1->setText( tr( "GEOM_EDGE" ) );
   }
   else if ( GroupType->RadioButton2->isChecked() ) {
     globalSelection(); // close local contexts, if any
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_WIRE );
+    localSelection( TopAbs_WIRE );
     GroupArgs->TextLabel1->setText( tr( "GEOM_WIRE" ) );
   }
   SelectionIntoArgument();
@@ -304,4 +304,13 @@ void BuildGUI_WireDlg::addSubshapesToStudy()
 {
   for ( int i = 0; i < myEdgesAndWires.count(); i++ )
     GEOMBase::PublishSubObject( myEdgesAndWires[i].get() );
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BuildGUI_WireDlg::getSourceObjects()
+{
+  return myEdgesAndWires;
 }

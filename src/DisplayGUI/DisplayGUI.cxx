@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -141,6 +141,12 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
       ( GetVerticesMode() ? tr("MEN_VERTICES_MODE_ON") : tr( "MEN_VERTICES_MODE_OFF" ) );
     getGeometryGUI()->menuMgr()->update();
     break;
+  case GEOMOp::OpSwitchName:  // MENU VIEW - DISPLAY MODE - SHOW/HIDE NAME
+    SetNameMode(!GetNameMode());
+    getGeometryGUI()->action( GEOMOp::OpSwitchName )->setText
+      ( GetNameMode() ? tr("MEN_NAME_MODE_ON") : tr( "MEN_NAME_MODE_OFF" ) );
+    getGeometryGUI()->menuMgr()->update();
+    break;
   case GEOMOp::OpWireframe:      // POPUP MENU - DISPLAY MODE - WIREFRAME
     ChangeDisplayMode( 0 );
     break;
@@ -153,11 +159,14 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   case GEOMOp::OpTexture:        // POPUP MENU - DISPLAY MODE - TEXTURE
     ChangeDisplayMode( 3 );
     break;
-    case GEOMOp::OpVectors:        // POPUP MENU - DISPLAY MODE - SHOW EDGE DIRECTION
+  case GEOMOp::OpVectors:        // POPUP MENU - DISPLAY MODE - SHOW EDGE DIRECTION
     ChangeDisplayMode( 4 );
     break;
-    case GEOMOp::OpVertices:       // POPUP MENU - DISPLAY MODE - SHOW VERTICES
+  case GEOMOp::OpVertices:       // POPUP MENU - DISPLAY MODE - SHOW VERTICES
     ChangeDisplayMode( 5 );
+    break;
+  case GEOMOp::OpShowName:       // POPUP MENU - DISPLAY MODE - SHOW NAME
+    ChangeDisplayMode( 6 );
     break;
   default:
     app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
@@ -189,7 +198,7 @@ void DisplayGUI::DisplayAll()
   _PTR(ChildIterator) anIter ( aStudy->NewChildIterator( SC ) );
   anIter->InitEx( true );
 
-  SUIT_OverrideCursor();
+  SUIT_OverrideCursor wc;
 
   while( anIter->More() ) {
     _PTR(SObject) valSO ( anIter->Value() );
@@ -210,7 +219,7 @@ void DisplayGUI::DisplayAll()
 //=====================================================================================
 void DisplayGUI::EraseAll()
 {
-  SUIT_OverrideCursor();
+  SUIT_OverrideCursor wc;
 
   SUIT_Application* app = getGeometryGUI()->getApp();
   if ( app ) {
@@ -261,7 +270,7 @@ void DisplayGUI::DisplayOnlyChildren()
   aSelMgr->selectedObjects(aList, "ObjectBrowser", false);
   SALOME_ListIteratorOfListIO It (aList);
 
-  SUIT_OverrideCursor();
+  SUIT_OverrideCursor wc;
 
   for (; It.More(); It.Next()) {
     Handle(SALOME_InteractiveObject) anIObject = It.Value();
@@ -314,7 +323,7 @@ void DisplayGUI::Display()
   aSelMgr->selectedObjects( aList );
   SALOME_ListIteratorOfListIO It( aList );
 
-  SUIT_OverrideCursor();
+  SUIT_OverrideCursor wc;
 
   for( ;It.More();It.Next() ) {
     Handle(SALOME_InteractiveObject) anIObject = It.Value();
@@ -372,7 +381,7 @@ void DisplayGUI::Erase()
   aSelMgr->selectedObjects( aList );
   SALOME_ListIteratorOfListIO It( aList );
 
-  SUIT_OverrideCursor();
+  SUIT_OverrideCursor wc;
 
   for( ; It.More(); It.Next() ) {
     Handle(SALOME_InteractiveObject) anIObject = It.Value();
@@ -420,7 +429,7 @@ void DisplayGUI::Erase()
 //=====================================================================================
 void DisplayGUI::SetDisplayMode( const int mode, SUIT_ViewWindow* viewWindow )
 {
-  SUIT_OverrideCursor();
+  SUIT_OverrideCursor wc;
 
   SalomeApp_Application* app = getGeometryGUI()->getApp();
   if ( !app ) return;
@@ -435,8 +444,11 @@ void DisplayGUI::SetDisplayMode( const int mode, SUIT_ViewWindow* viewWindow )
 
   int mgrId = viewWindow->getViewManager()->getGlobalId();
 
+  SALOME_View* window = displayer.GetActiveView();
+  if ( !window ) return;
+
   SALOME_ListIO anIOlst;
-  displayer.GetActiveView()->GetVisible( anIOlst );
+  window->GetVisible( anIOlst );
 
   for ( SALOME_ListIteratorOfListIO It( anIOlst ); It.More(); It.Next() ) {
     Handle( SALOME_InteractiveObject ) io = It.Value();
@@ -453,7 +465,7 @@ void DisplayGUI::SetDisplayMode( const int mode, SUIT_ViewWindow* viewWindow )
 //=====================================================================================
 void DisplayGUI::SetVectorMode( const bool mode, SUIT_ViewWindow* viewWindow )
 {
-  SUIT_OverrideCursor();
+  SUIT_OverrideCursor wc;
 
   SalomeApp_Application* app = getGeometryGUI()->getApp();
   if ( !app ) return;
@@ -470,8 +482,11 @@ void DisplayGUI::SetVectorMode( const bool mode, SUIT_ViewWindow* viewWindow )
 
   int aMgrId = viewWindow->getViewManager()->getGlobalId();
 
+  SALOME_View* window = displayer.GetActiveView();
+  if ( !window ) return;
+
   SALOME_ListIO anIOlst;
-  displayer.GetActiveView()->GetVisible( anIOlst );
+  window->GetVisible( anIOlst );
 
   for ( SALOME_ListIteratorOfListIO It( anIOlst ); It.More(); It.Next() ) {
     Handle( SALOME_InteractiveObject ) io = It.Value();
@@ -499,7 +514,7 @@ int DisplayGUI::GetVectorMode( SUIT_ViewWindow* viewWindow )
 //=====================================================================================
 void DisplayGUI::SetVerticesMode( const bool mode, SUIT_ViewWindow* viewWindow )
 {
-  SUIT_OverrideCursor();
+  SUIT_OverrideCursor wc;
 
   SalomeApp_Application* app = getGeometryGUI()->getApp();
   if ( !app ) return;
@@ -516,8 +531,11 @@ void DisplayGUI::SetVerticesMode( const bool mode, SUIT_ViewWindow* viewWindow )
 
   int aMgrId = viewWindow->getViewManager()->getGlobalId();
 
+  SALOME_View* window = displayer.GetActiveView();
+  if ( !window ) return;
+
   SALOME_ListIO anIOlst;
-  displayer.GetActiveView()->GetVisible( anIOlst );
+  window->GetVisible( anIOlst );
 
   for ( SALOME_ListIteratorOfListIO It( anIOlst ); It.More(); It.Next() ) {
     Handle( SALOME_InteractiveObject ) io = It.Value();
@@ -540,6 +558,55 @@ int DisplayGUI::GetVerticesMode( SUIT_ViewWindow* viewWindow )
 }
 
 //=====================================================================================
+// function : DisplayGUI::SetNameMode()
+// purpose  : Set name mode for the viewer
+//=====================================================================================
+void DisplayGUI::SetNameMode( const bool mode, SUIT_ViewWindow* viewWindow )
+{
+  SUIT_OverrideCursor();
+
+  SalomeApp_Application* app = getGeometryGUI()->getApp();
+  if ( !app ) return;
+
+  SalomeApp_Study* aStudy = dynamic_cast< SalomeApp_Study* >( app->activeStudy() );
+  if ( !aStudy ) return;
+
+  if ( !viewWindow )
+    viewWindow = app->desktop()->activeWindow();
+
+  viewWindow->setProperty( "NameMode", mode );
+
+  GEOM_Displayer displayer( aStudy );
+
+  int aMgrId = viewWindow->getViewManager()->getGlobalId();
+
+  SALOME_View* window = displayer.GetActiveView();
+  if ( !window ) return;
+
+  SALOME_ListIO anIOlst;
+  window->GetVisible( anIOlst );
+
+  for ( SALOME_ListIteratorOfListIO It( anIOlst ); It.More(); It.Next() ) {
+    Handle( SALOME_InteractiveObject ) io = It.Value();
+    aStudy->setObjectProperty( aMgrId, io->getEntry(), GEOM::propertyName( GEOM::ShowName ), mode );
+    displayer.Redisplay( io, false );
+  }
+  displayer.UpdateViewer();
+  GeometryGUI::Modified();
+}
+
+//=====================================================================================
+// function : DisplayGUI::GetNameMode()
+// purpose  : Get the "show name" mode of the viewer
+//=====================================================================================
+int DisplayGUI::GetNameMode( SUIT_ViewWindow* viewWindow )
+{
+  if ( !viewWindow )
+    viewWindow = getGeometryGUI()->getApp()->desktop()->activeWindow();
+  return viewWindow->property( "NameMode" ).toBool();
+}
+
+//=====================================================================================
 // function : DisplayGUI::ChangeDisplayMode()
 // purpose  : Set display mode for selected objects in the viewer given
 //            (current viewer if <viewWindow> = 0 )
@@ -558,7 +625,7 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
   SalomeApp_Study* aStudy = dynamic_cast< SalomeApp_Study* >( app->activeStudy() );
   if ( !aStudy ) return;
 
-  SUIT_OverrideCursor();
+  SUIT_OverrideCursor wc;
 
   SALOME_ListIO selected;
   aSelMgr->selectedObjects( selected );
@@ -572,6 +639,8 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
   bool vectorMode =  v.isValid() ? !v.toBool() : false;
   v = aStudy->getObjectProperty( mgrId, selected.First()->getEntry(), GEOM::propertyName( GEOM::Vertices ), QVariant() );
   bool verticesMode =  v.isValid() ? !v.toBool() : false;
+  v = aStudy->getObjectProperty( mgrId, selected.First()->getEntry(), GEOM::propertyName( GEOM::ShowName ), QVariant() );
+  bool nameMode =  v.isValid() ? !v.toBool() : false;
 
   for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
     Handle( SALOME_InteractiveObject ) io = It.Value();
@@ -583,6 +652,9 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
     }
     else if ( mode == 5 ) {
       aStudy->setObjectProperty( mgrId, io->getEntry(), GEOM::propertyName( GEOM::Vertices ), verticesMode );
+    }
+    else if ( mode == 6 ) {
+      aStudy->setObjectProperty( mgrId, io->getEntry(), GEOM::propertyName( GEOM::ShowName ), nameMode );
     }
     displayer.Redisplay( io, false );
   }

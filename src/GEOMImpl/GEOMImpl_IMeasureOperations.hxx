@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -80,9 +80,25 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
     SK_SEGMENT,      // segment
     SK_EDGE,         // other edge
     // VERTEX
-    SK_VERTEX,
+    SK_VERTEX,       // vertex
     // ADVANCED shapes
+    SK_LCS,          // local coordinate system
+    // (other advanced shapes)
     SK_ADVANCED,     // all advanced shapes (temporary implementation)
+  };
+
+  /**
+   * This enumeration represents the level of checking shape on
+   * self-interference. It defines which interferferences will be checked.
+   */
+  enum SICheckLevel
+  {
+    SI_V_V = 0, // only V/V interferences
+    SI_V_E,     // V/V and V/E interferences
+    SI_E_E,     // V/V, V/E and E/E interferences
+    SI_V_F,     // V/V, V/E, E/E and V/F interferences
+    SI_E_F,     // V/V, V/E, E/E, V/F and E/F interferences
+    SI_ALL      // all interferences
   };
 
   Standard_EXPORT ShapeKind KindOfShape (Handle(GEOM_Object) theShape,
@@ -141,7 +157,18 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
                                    const std::list<ShapeError> &theErrors);
 
   Standard_EXPORT bool CheckSelfIntersections (Handle(GEOM_Object) theShape,
+                                               const SICheckLevel  theCheckLevel,
                                                Handle(TColStd_HSequenceOfInteger)& theIntersections);
+  
+  Standard_EXPORT bool CheckSelfIntersectionsFast (Handle(GEOM_Object) theShape,
+						   float  deflection, 
+						   double tolerance,
+						   Handle(TColStd_HSequenceOfInteger)& theIntersections);
+  
+  Standard_EXPORT bool FastIntersect (Handle(GEOM_Object) theShape1, Handle(GEOM_Object) theShape2,
+                                      double tolerance, float deflection,
+                                      Handle(TColStd_HSequenceOfInteger)& theIntersections1,
+                                      Handle(TColStd_HSequenceOfInteger)& theIntersections2);
 
   Standard_EXPORT TCollection_AsciiString IsGoodForSolid (Handle(GEOM_Object) theShape);
 

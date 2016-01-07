@@ -1,0 +1,48 @@
+/*!
+
+\page create_thickness_page Thickness Construction
+
+To add \b Thickness to a shape in the <b>Main Menu</b> select <b>New Entity - > Generation  - > Thickness</b>.
+
+Switch between adding thickness to a Face (Shell) or a Solid using radio buttons.
+
+Firstly, \b Thickness can be applied to a Face or a Shell to create a Solid.
+
+\image html thickness.png
+
+It is necessary to define an \b Object (Face or Shell) and the value of \b Thickness.
+<b>Thicken towards the inside</b> check box allows changing the thickness direction.
+
+<b>Example:</b>
+
+\image html thickness_result.png "Thickness of Shell"
+
+Secondly, the \b Thickness can be applied to a Solid to create a hollowed Solid. 
+
+\image html thicksolid.png
+
+It is necessary to define a Solid \b Object \b Faces to be removed from the result and \b Thickness.
+<b>Thicken towards the inside</b> check box allows changing the thickness direction.
+
+<b>Example:</b>
+
+\image html thicksolid_result.png "Thickness of Solid"
+
+\n <b>TUI Commands:</b>
+\n
+<em>geompy.MakeThickSolid(theShape, theThickness, theFacesIDs=[])</em> -
+Makes a thick solid from a shape;
+\n
+<em>geompy.Thicken(theShape, theThickness, theFacesIDs=[])</em> -
+Modifies a shape to make it a thick solid.
+
+<b>Arguments:</b> Name + 1 shape (face, shell or solid) + thickness +
+the list of face IDs.
+\n If the shape is a face or a shell the list of face IDs is not used.
+The thickness can be positive or negative for thickening towards the inside.
+\n\n <b>Advanced options</b> \ref preview_anchor "Preview"
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of
+\ref tui_creation_thickness "Complex Geometric Objects".
+
+*/

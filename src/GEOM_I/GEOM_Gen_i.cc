@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -66,7 +66,6 @@
 
 #include <SALOMEDS_Tool.hxx>
 #include <SALOMEDS_wrap.hxx>
-#include <SALOME_DataContainer_i.hxx>
 #include <Basics_DirUtils.hxx>
 
 #include <set>
@@ -143,6 +142,9 @@ GEOM_Gen_i::GEOM_Gen_i(CORBA::ORB_ptr            orb,
 GEOM_Gen_i::~GEOM_Gen_i() {
   delete name_service;
   delete _impl;
+  std::map<std::string, GEOM_GenericOperationsCreator*>::const_iterator it;
+  for ( it = myOpCreatorMap.begin(); it != myOpCreatorMap.end(); ++it)
+    delete (*it).second;
 }
 
 
@@ -317,24 +319,25 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr   theStudy,
     aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_LCS");
     aNamePrefix = "LocalCS_";
   }  else if ( mytype >= USER_TYPE_EX ) {
-      char buf[20];
-      sprintf( buf, "%d", aBaseObj->GetType() );
-      GEOM::CreationInformation_var info = aBaseObj->GetCreationInformation();
-      std::string plgId;
-      for ( size_t i = 0; i < info->params.length(); ++i ) {
-	std::string param_name = info->params[i].name.in();
-	std::string param_value = info->params[i].value.in();	
-	if( param_name == PLUGIN_NAME) {
-	  plgId = param_value;
-	  break;
-	}
+    char buf[20];
+    sprintf( buf, "%d", aBaseObj->GetType() );
+    GEOM::CreationInformationSeq_var infoSeq = aBaseObj->GetCreationInformation();
+    std::string plgId;
+    for ( size_t j = 0; j < infoSeq->length(); ++j )
+      for ( size_t i = 0; i < infoSeq[j].params.length(); ++i ) {
+        std::string param_name  = infoSeq[j].params[i].name.in();
+        std::string param_value = infoSeq[j].params[i].value.in();
+        if( param_name == PLUGIN_NAME) {
+          plgId = param_value;
+          break;
+        }
       }
-      if(plgId.length() > 0 ) {
-	plgId += "::";
-      }
-      plgId +="ICON_OBJBROWSER_"; 
-      plgId += buf;
-      aResultSO->SetAttrString("AttributePixMap",plgId.c_str());
+    if(plgId.length() > 0 ) {
+      plgId += "::";
+    }
+    plgId +="ICON_OBJBROWSER_";
+    plgId += buf;
+    aResultSO->SetAttrString("AttributePixMap",plgId.c_str());
   } else if ( mytype > USER_TYPE ) {
     char buf[20];
     sprintf( buf, "%d", aBaseObj->GetType() );
@@ -680,8 +683,8 @@ CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
     useCaseBuilder->SetRootCurrent();
     useCaseBuilder->Append( theComponent ); // component object is added as the top level item
   }
-  
-  SALOMEDS::ChildIterator_wrap it = study->NewChildIterator( theComponent ); 
+
+  SALOMEDS::ChildIterator_wrap it = study->NewChildIterator( theComponent );
   for ( it->InitEx(true); it->More(); it->Next() ) {
     if ( !useCaseBuilder->IsUseCaseNode( it->Value() ) ) {
       useCaseBuilder->AppendTo( it->Value()->GetFather(), it->Value() );
@@ -2455,7 +2458,7 @@ GEOM::GEOM_IOperations_ptr GEOM_Gen_i::GetPluginOperations(CORBA::Long theStudyI
       aServant = myOpCreatorMap[aLibName]->Create(_poa, theStudyID, engine, _impl);
       // activate the CORBA servant
       if (aServant)
-	operations = aServant->_this();
+        operations = aServant->_this();
     }
   }
   catch (SALOME_Exception& S_ex) {
@@ -2480,7 +2483,7 @@ void GEOM_Gen_i::LoadPlugin(const std::string& theLibName)
   aPlatformLibName += theLibName;
   aPlatformLibName += ".so";
 #endif
-  
+
   // check, if corresponding operations are already created
   if (myOpCreatorMap.find(theLibName) == myOpCreatorMap.end()) {
     // load plugin library
@@ -2493,7 +2496,7 @@ void GEOM_Gen_i::LoadPlugin(const std::string& theLibName)
       throw(SALOME_Exception(LOCALIZED( "Can't load server geometry plugin library" )));
 #endif
     }
-    
+
     // get method, returning operations creator
     typedef GEOM_GenericOperationsCreator* (*GetOperationsCreator)();
     GetOperationsCreator procHandle =
@@ -2502,7 +2505,7 @@ void GEOM_Gen_i::LoadPlugin(const std::string& theLibName)
       UnLoadLib(libHandle);
       throw(SALOME_Exception(LOCALIZED("bad geometry plugin library")));
     }
-    
+
     // get operations creator
     GEOM_GenericOperationsCreator* aCreator = procHandle();
     if (aCreator) {
@@ -2804,8 +2807,8 @@ char* GEOM_Gen_i::getVersion()
 // function : CreateFolder()
 // purpose  : Creates and returns a new folder object
 //=================================================================================
-SALOMEDS::SObject_ptr GEOM_Gen_i::CreateFolder(const char* theName, 
-					       SALOMEDS::SObject_ptr theFather)
+SALOMEDS::SObject_ptr GEOM_Gen_i::CreateFolder(const char* theName,
+                                               SALOMEDS::SObject_ptr theFather)
 {
   SALOMEDS::SObject_var aFolderSO;
 
@@ -2857,8 +2860,8 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::CreateFolder(const char* theName,
 // function : MoveToFolder()
 // purpose  : Moves GEOM object to the specified folder
 //=================================================================================
-void GEOM_Gen_i::MoveToFolder(GEOM::GEOM_Object_ptr theObject, 
-			      SALOMEDS::SObject_ptr theFolder) {
+void GEOM_Gen_i::MoveToFolder(GEOM::GEOM_Object_ptr theObject,
+                              SALOMEDS::SObject_ptr theFolder) {
   GEOM::object_list_var objects = new GEOM::object_list();
   objects->length( 1 );
   SALOMEDS::SObject_var aSO = theFolder->GetStudy()->FindObjectID( theObject->GetStudyEntry() );
@@ -2870,8 +2873,8 @@ void GEOM_Gen_i::MoveToFolder(GEOM::GEOM_Object_ptr theObject,
 // function : MoveListToFolder()
 // purpose  : Moves list of GEOM objects to the specified folder
 //=================================================================================
-void GEOM_Gen_i::MoveListToFolder (const GEOM::ListOfGO& theListOfGO, 
-				   SALOMEDS::SObject_ptr theFolder) {
+void GEOM_Gen_i::MoveListToFolder (const GEOM::ListOfGO& theListOfGO,
+                                   SALOMEDS::SObject_ptr theFolder) {
   int aLen = theListOfGO.length();
   GEOM::object_list_var objects = new GEOM::object_list();
   objects->length( aLen );
@@ -2888,12 +2891,12 @@ void GEOM_Gen_i::MoveListToFolder (const GEOM::ListOfGO& theListOfGO,
 
 //=================================================================================
 // function : Move()
-// purpose  : Moves objects to the specified position. 
+// purpose  : Moves objects to the specified position.
 //            Is used in the drag-n-drop functionality.
 //=================================================================================
 void GEOM_Gen_i::Move( const GEOM::object_list& what,
-		       SALOMEDS::SObject_ptr where,
-		       CORBA::Long row )
+                       SALOMEDS::SObject_ptr where,
+                       CORBA::Long row )
 {
   if ( CORBA::is_nil( where ) ) return;
 
@@ -2903,7 +2906,7 @@ void GEOM_Gen_i::Move( const GEOM::object_list& what,
   SALOMEDS::SComponent_var father = where->GetFatherComponent();
   std::string dataType = father->ComponentDataType();
   if ( dataType != "GEOM" ) return; // not a GEOM component
-  
+
   SALOMEDS::SObject_var objAfter;
   if ( row >= 0 && useCaseBuilder->HasChildren( where ) ) {
     // insert at given row -> find insertion position
@@ -2914,7 +2917,7 @@ void GEOM_Gen_i::Move( const GEOM::object_list& what,
       objAfter = useCaseIt->Value();
     }
   }
-  
+
   for ( int i = 0; i < what.length(); i++ ) {
     SALOMEDS::SObject_var sobj = what[i];
     if ( CORBA::is_nil( sobj ) ) continue; // skip bad object
@@ -2926,155 +2929,12 @@ void GEOM_Gen_i::Move( const GEOM::object_list& what,
   }
 }
 
-//=================================================================================
-// function : importData
-// purpose  : imports geometrical data file into the GEOM internal data structure
-//=================================================================================
-Engines::ListOfIdentifiers* GEOM_Gen_i::importData(
-  CORBA::Long studyId, Engines::DataContainer_ptr data, const Engines::ListOfOptions& options)
-{
-  CORBA::Object_var aSMObject = name_service->Resolve( "/myStudyManager" );
-  SALOMEDS::StudyManager_var aStudyManager = SALOMEDS::StudyManager::_narrow( aSMObject );
-  SALOMEDS::Study_var aStudy = aStudyManager->GetStudyByID( studyId );
-
-  Engines::ListOfIdentifiers_var aResult = new Engines::ListOfIdentifiers;
-  GEOM::GEOM_IInsertOperations_var aInsOp = GetIInsertOperations(aStudy->StudyId());
-  if (aInsOp->_is_nil()) {
-    MESSAGE("No insert operations!");
-    return aResult._retn();
-  }
-
-  // Get a temporary directory to store a file
-  std::string aTmpDir = SALOMEDS_Tool::GetTmpDir();
-  std::string aFileName("file");
-  if (aFileName.rfind("/") != std::string::npos) { // remove folders from the name
-    aFileName = aFileName.substr(aFileName.rfind("/") + 1);
-  }
-
-  std::string anExtension(data->extension());
-  aFileName += "." + anExtension;
-  // convert extension to upper case
-  std::transform(anExtension.begin(), anExtension.end(), anExtension.begin(), ::toupper);
-  std::string aFullPath = aTmpDir + aFileName;
-
-  Engines::TMPFile* aFileStream = data->get();
-  const char *aBuffer = (const char*)aFileStream->NP_data();
-#ifdef WIN32
-  std::ofstream aFile(aFullPath.c_str(), std::ios::binary);
-#else
-  std::ofstream aFile(aFullPath.c_str());
-#endif
-  aFile.write(aBuffer, aFileStream->length());
-  aFile.close();
-
-  GEOM::ListOfGBO_var aObjects = aInsOp->ImportFile(aFullPath.c_str(), "XAO");
-
-  if ( aObjects->length() > 0 && aInsOp->IsDone() ) {
-    aResult->length(aObjects->length());
-    // publish main object (first in the list of returned geom objects)
-    CORBA::String_var aName = aObjects[0]->GetName();
-    SALOMEDS::SObject_var aSO = PublishInStudy(aStudy.in(), SALOMEDS::SObject::_nil(), aObjects[0].in(), aName.in());
-    aResult[0] = aSO->GetID();
-    // publish groups && fields
-    for (int i = 1; i < aObjects->length(); i++ ) {
-      aName = aObjects[i]->GetName();
-      aSO = AddInStudy(aStudy.in(), aObjects[0].in(), aName.in(), aObjects[0].in());
-      aResult[i] = aSO->GetID();
-    }
-  }
-  else {
-    if (aObjects->length() == 0)
-      MESSAGE("ImportXAO operation is failed for file "<<aFullPath.c_str());
-    if (!aInsOp->IsDone())
-      MESSAGE("Import operation is not done for file "<<aFullPath.c_str());
-    return aResult._retn();
-  }
-
-  // remove temporary file and directory
-  SALOMEDS::ListOfFileNames aTmpFiles;
-  aTmpFiles.length(1);
-  aTmpFiles[0] = aFileName.c_str();
-  SALOMEDS_Tool::RemoveTemporaryFiles(aTmpDir, aTmpFiles, true);
-
-  _impl->DocumentModified(studyId, false);
-  return aResult._retn();
-}
-
-//=================================================================================
-// function : getModifiedData
-// purpose  : exports all geometry of this GEOM module into one BRep file
-//=================================================================================
-Engines::ListOfData* GEOM_Gen_i::getModifiedData(CORBA::Long studyId)
-{
-  Engines::ListOfData_var aResult = new Engines::ListOfData;
-
-  if (!_impl->DocumentModified(studyId)) {
-    MESSAGE("Document is not modified")
-    return aResult._retn();
-  }
-
-  CORBA::Object_var aSMObject = name_service->Resolve("/myStudyManager");
-  SALOMEDS::StudyManager_var aStudyManager = SALOMEDS::StudyManager::_narrow( aSMObject );
-  if (CORBA::is_nil(aStudyManager))
-    return aResult._retn();
-  SALOMEDS::Study_var aStudy = aStudyManager->GetStudyByID( studyId );
-  if (CORBA::is_nil(aStudy))
-    return aResult._retn();
-  SALOMEDS::SComponent_var aComponent = aStudy->FindComponent("GEOM");
-  if (CORBA::is_nil(aComponent))
-    return aResult._retn();
-  SALOMEDS::ChildIterator_var anIter = aStudy->NewChildIterator(aComponent); // check only published shapes
-
-  GEOM::GEOM_IInsertOperations_var aInsOp    = GetIInsertOperations(aStudy->StudyId());
-  if (aInsOp->_is_nil()) {
-    MESSAGE("No insert operations!");
-    return aResult._retn();
-  }
-
-  GEOM::GEOM_Object_var shapeObj;
-  
-  for(; anIter->More(); anIter->Next()) {
-    SALOMEDS::SObject_var aSO = anIter->Value();
-    SALOMEDS::SObject_var aRefSO;
-    // export only not referenced objects, or referenced outside of GEOM
-    if (!aSO->ReferencedObject(aRefSO) || aRefSO->GetFatherComponent()->GetID() != aComponent->GetID()) {
-      CORBA::Object_var anObj = aSO->GetObject();
-      if (!CORBA::is_nil(anObj)) {
-        GEOM::GEOM_Object_var aCORBAMainShape = GEOM::GEOM_Object::_narrow(anObj);
-        if(!aCORBAMainShape->_is_nil()) {
-          CORBA::String_var entry = aCORBAMainShape->GetEntry();
-          Handle(GEOM_Object) aMainShape = Handle(GEOM_Object)::DownCast(_impl->GetObject(studyId, entry));
-
-          GEOM::shape_type aCORBAShapeType = aCORBAMainShape->GetShapeType();
-          if (!aMainShape.IsNull() && !(aCORBAShapeType == GEOM::VERTEX) && !(aCORBAShapeType == GEOM::EDGE)) {
-            shapeObj = aCORBAMainShape;
-            break;
-          }
-        }
-      }
-    }
-  }
-
-  if (!CORBA::is_nil(shapeObj)) { // Shape is correct, write it to the temporary file
-    std::string aPath = Kernel_Utils::GetTmpFileName() + ".xao";
-    aInsOp->Export(shapeObj.in(), aPath.c_str(), "XAO");
-    aResult->length(1);
-    Engines::DataContainer_var aData = (new Engines_DataContainer_i(
-                    aPath.c_str(), "", "", true))->_this();
-    aResult[0] = aData;
-  } else {
-    MESSAGE("No shapes to export");
-  }
-
-  return aResult._retn();
-}
-                                                               
 //=======================================================================
 // function : GetDependencyTree
 // purpose  : Collects dependencies of the given objects from other ones
 //=======================================================================
 SALOMEDS::TMPFile* GEOM_Gen_i::GetDependencyTree( SALOMEDS::Study_ptr theStudy,
-						  const GEOM::string_array& theObjectEntries ) {
+                                                  const GEOM::string_array& theObjectEntries ) {
   // fill in the tree structure
   GEOMUtils::TreeModel tree;
 
@@ -3098,7 +2958,7 @@ SALOMEDS::TMPFile* GEOM_Gen_i::GetDependencyTree( SALOMEDS::Study_ptr theStudy,
   // translation the tree into string
   std::string treeStr;
   GEOMUtils::ConvertTreeToString( tree, treeStr );
-  
+
   // put string into stream
   char* aBuffer = (char*)CORBA::string_dup(treeStr.c_str());
   int aBufferSize = strlen((char*)aBuffer);
@@ -3114,10 +2974,10 @@ SALOMEDS::TMPFile* GEOM_Gen_i::GetDependencyTree( SALOMEDS::Study_ptr theStudy,
 // function : getUpwardDependency
 // purpose  : Collects the entries of objects on that the given one depends
 //=======================================================================
-void GEOM_Gen_i::getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo, 
-				      GEOMUtils::LevelsList &upLevelList, 
-				      std::map< std::string, std::set<std::string> > &passedEntries,
-				      int level ) {
+void GEOM_Gen_i::getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo,
+                                      GEOMUtils::LevelsList &upLevelList,
+                                      std::map< std::string, std::set<std::string> > &passedEntries,
+                                      int level ) {
   std::string aGboEntry = gbo->GetEntry();
   GEOMUtils::NodeLinks anEntries;
   GEOMUtils::LevelInfo aLevelMap;
@@ -3129,7 +2989,7 @@ void GEOM_Gen_i::getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo,
       // get the existent map
       aLevelMap = upLevelList.at(level-1);
       if ( aLevelMap.count( aGboEntry ) > 0 ) {
-	anEntries = aLevelMap[ aGboEntry ];
+        anEntries = aLevelMap[ aGboEntry ];
       }
     }
   }
@@ -3140,7 +3000,7 @@ void GEOM_Gen_i::getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo,
     if ( depList[j]->_is_nil() )
       continue;
     aDepEntry = depList[j]->GetEntry();
-    if ( passedEntries.count( aGboEntry ) > 0 && 
+    if ( passedEntries.count( aGboEntry ) > 0 &&
          passedEntries[aGboEntry].count( aDepEntry ) > 0 ) {
       //avoid checking the passed objects
       continue;
@@ -3162,10 +3022,10 @@ void GEOM_Gen_i::getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo,
 // function : getDownwardDependency
 // purpose  : Collects the entries of objects that depends on the given one
 //=======================================================================
-void GEOM_Gen_i::getDownwardDependency( GEOM::GEOM_BaseObject_ptr gbo, 
-					GEOMUtils::LevelsList &downLevelList, 
-					std::map< std::string, std::set<std::string> > &passedEntries,
-					int level ) {
+void GEOM_Gen_i::getDownwardDependency( GEOM::GEOM_BaseObject_ptr gbo,
+                                        GEOMUtils::LevelsList &downLevelList,
+                                        std::map< std::string, std::set<std::string> > &passedEntries,
+                                        int level ) {
   std::string aGboEntry = gbo->GetEntry();
   Handle(TDocStd_Document) aDoc = GEOM_Engine::GetEngine()->GetDocument(gbo->GetStudyID());
   Handle(TDataStd_TreeNode) aNode, aRoot;
@@ -3197,7 +3057,7 @@ void GEOM_Gen_i::getDownwardDependency( GEOM::GEOM_BaseObject_ptr gbo,
           continue;
         if ( depList[i]->_is_equivalent( gbo ) ) {
           // yes, the current object depends on the given object
-          if ( passedEntries.count( aGoEntry ) > 0 && 
+          if ( passedEntries.count( aGoEntry ) > 0 &&
                passedEntries[aGoEntry].count( aGboEntry ) > 0 ) {
             //avoid checking the passed objects
             continue;
@@ -3230,10 +3090,10 @@ void GEOM_Gen_i::getDownwardDependency( GEOM::GEOM_BaseObject_ptr gbo,
 // purpose  : Fills 3 lists that is used to clean study of redundant objects
 //==============================================================================
 void GEOM_Gen_i::GetEntriesToReduceStudy(SALOMEDS::Study_ptr theStudy,
-					GEOM::string_array& theSelectedEntries,
-					GEOM::string_array& theParentEntries,
-					GEOM::string_array& theSubEntries,
-					GEOM::string_array& theOtherEntries)
+                                        GEOM::string_array& theSelectedEntries,
+                                        GEOM::string_array& theParentEntries,
+                                        GEOM::string_array& theSubEntries,
+                                        GEOM::string_array& theOtherEntries)
 {
   std::set<std::string> aSelected, aParents, aChildren, anOthers;
   for ( int i = 0; i < theSelectedEntries.length(); i++ ) {
@@ -3267,7 +3127,7 @@ void GEOM_Gen_i::GetEntriesToReduceStudy(SALOMEDS::Study_ptr theStudy,
       if ( aSelected.count( anEntry ) > 0 &&
            aParents.count( anEntry ) == 0 ) {
         includeParentDependencies( geomObj, aSelected, aParents, aChildren, anOthers );
-      } else if ( aParents.count( anEntry ) == 0 && 
+      } else if ( aParents.count( anEntry ) == 0 &&
                   aChildren.count( anEntry ) == 0 ) {
         anOthers.insert( geomObj->GetEntry() );
       }
@@ -3284,7 +3144,7 @@ void GEOM_Gen_i::GetEntriesToReduceStudy(SALOMEDS::Study_ptr theStudy,
     }
 
     // if some selected object is not a main shape,
-    // we move it's main shapes into 'selected' list, 
+    // we move it's main shapes into 'selected' list,
     // because they could not be modified anyhow.
     std::set<std::string> aToBeInSelected;
     for ( it = aSelected.begin(); it != aSelected.end(); ++it ) {
@@ -3337,13 +3197,13 @@ void GEOM_Gen_i::GetEntriesToReduceStudy(SALOMEDS::Study_ptr theStudy,
 
 //==============================================================================
 // function : includeParentDependencies
-// purpose  : 
+// purpose  :
 //==============================================================================
 void GEOM_Gen_i::includeParentDependencies(GEOM::GEOM_BaseObject_ptr geomObj,
-					   std::set<std::string>& aSelected,
-					   std::set<std::string>& aParents,
-					   std::set<std::string>& aChildren,
-					   std::set<std::string>& anOthers)
+                                           std::set<std::string>& aSelected,
+                                           std::set<std::string>& aParents,
+                                           std::set<std::string>& aChildren,
+                                           std::set<std::string>& anOthers)
 {
   std::string anEntry = geomObj->GetEntry();
   if ( aSelected.count( anEntry ) == 0 ) {
@@ -3365,10 +3225,10 @@ void GEOM_Gen_i::includeParentDependencies(GEOM::GEOM_BaseObject_ptr geomObj,
   for( int i = 0; i < depList->length(); i++ ) {
     aDepEntry = depList[i]->GetEntry();
     if ( depList[i]->_is_nil() ||
-	 aDepEntry == anEntry ||             // skip self-depending
-	 aSelected.count( aDepEntry ) > 0 || // skip selected objects
-	 aParents.count( aDepEntry ) > 0     // skip already processed objects
-	 )
+         aDepEntry == anEntry ||             // skip self-depending
+         aSelected.count( aDepEntry ) > 0 || // skip selected objects
+         aParents.count( aDepEntry ) > 0     // skip already processed objects
+         )
       continue;
     includeParentDependencies( depList[i], aSelected, aParents, aChildren, anOthers );
   }
@@ -3376,14 +3236,14 @@ void GEOM_Gen_i::includeParentDependencies(GEOM::GEOM_BaseObject_ptr geomObj,
 
 //==============================================================================
 // function : includeSubObjects
-// purpose  : 
+// purpose  :
 //==============================================================================
 void GEOM_Gen_i::includeSubObjects(SALOMEDS::Study_ptr theStudy,
-				   const std::string& aSelectedEntry,
-				   std::set<std::string>& aSelected,
-				   std::set<std::string>& aParents,
-				   std::set<std::string>& aChildren,
-				   std::set<std::string>& anOthers)
+                                   const std::string& aSelectedEntry,
+                                   std::set<std::string>& aSelected,
+                                   std::set<std::string>& aParents,
+                                   std::set<std::string>& aChildren,
+                                   std::set<std::string>& anOthers)
 {
   std::set<std::string>::iterator foundIt;
   Handle(GEOM_BaseObject) handle_object = _impl->GetObject( theStudy->StudyId(), aSelectedEntry.c_str(), false);
@@ -3408,10 +3268,10 @@ void GEOM_Gen_i::includeSubObjects(SALOMEDS::Study_ptr theStudy,
     if ( foundIt == aParents.end() ) { // add to sub-objects if it is not in parents list
       foundIt = aSelected.find( aSubEntryStr );
       if ( foundIt == aSelected.end() ) { // add to sub-objects if it is not in selected list
-	    aChildren.insert( aSubEntryStr );
-	    foundIt = anOthers.find( aSubEntryStr );
-	    if ( foundIt != anOthers.end() )
-	      anOthers.erase( foundIt );
+            aChildren.insert( aSubEntryStr );
+            foundIt = anOthers.find( aSubEntryStr );
+            if ( foundIt != anOthers.end() )
+              anOthers.erase( foundIt );
       }
     }
     includeSubObjects( theStudy, aSubEntryStr, aSelected, aParents, aChildren, anOthers );

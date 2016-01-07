@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -26,9 +26,9 @@
 #include "GEOM_Function.hxx"
 #include "GEOM_IOperations.hxx"
 #include "GEOMUtils.hxx"
-#include "GEOMAlgo_FinderShapeOn1.hxx"
 #include "GEOMAlgo_FinderShapeOn2.hxx"
 #include "GEOMAlgo_ClsfBox.hxx"
+#include "GEOMAlgo_ClsfSurf.hxx"
 #include "GEOMAlgo_Splitter.hxx"
 
 #include "Geom_CylindricalSurface.hxx"
@@ -62,6 +62,11 @@
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 
 #include <vector>
+
+// Undefine below macro to enable workaround about problem with wrong 
+// tolerances of intersection curves in MakePipeTShape and MakeQuarterPipeTShape
+// VSR 30/12/2014: macro enabled
+#define FIX_CURVES_TOLERANCES
 
 //=======================================================================
 //function : GetID
@@ -122,7 +127,7 @@ AdvancedEngine_PipeTShapeDriver::GetShapesOnBoxIDs(const TopoDS_Shape& aBox,
 
   // Interprete results
   Standard_Integer iErr = aFinder.ErrorStatus();
-  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn1.cxx
+  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn2.cxx
   if (iErr) {
     TCollection_AsciiString aMsg (" iErr : ");
     aMsg += TCollection_AsciiString(iErr);
@@ -180,12 +185,14 @@ Handle(TColStd_HSequenceOfInteger)
   }
 
   // Call algo
-  GEOMAlgo_FinderShapeOn1 aFinder;
-  Standard_Real aTol = 1e-6;
+  GEOMAlgo_FinderShapeOn2   aFinder;
+  Handle(GEOMAlgo_ClsfSurf) aClsfSurf = new GEOMAlgo_ClsfSurf;
+  Standard_Real             aTol      = 1e-6;
 
+  aClsfSurf->SetSurface(theSurface);
   aFinder.SetShape(theShape);
   aFinder.SetTolerance(aTol);
-  aFinder.SetSurface(theSurface);
+  aFinder.SetClsf(aClsfSurf);
   aFinder.SetShapeType(theShapeType);
   aFinder.SetState(theState);
 
@@ -203,7 +210,7 @@ Handle(TColStd_HSequenceOfInteger)
 
   // Interprete results
   Standard_Integer iErr = aFinder.ErrorStatus();
-  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn1.cxx
+  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn2.cxx
   if (iErr) {
 //    MESSAGE(" iErr : " << iErr);
     TCollection_AsciiString aMsg (" iErr : ");
@@ -212,7 +219,7 @@ Handle(TColStd_HSequenceOfInteger)
     return aSeqOfIDs;
   }
 //  Standard_Integer iWrn = aFinder.WarningStatus();
-  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn1.cxx
+  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn2.cxx
 //  if (iWrn) {
 //    MESSAGE(" *** iWrn : " << iWrn);
 //  }
@@ -299,7 +306,7 @@ void AdvancedEngine_PipeTShapeDriver::GetCommonShapesOnCylinders(const TopoDS_Sh
 //purpose  :
 //=======================================================================
 TopoDS_Shape AdvancedEngine_PipeTShapeDriver::MakePipeTShape (const double r1, const double w1, const double l1,
-                                                        const double r2, const double w2, const double l2) const
+                                                              const double r2, const double w2, const double l2) const
 {
   double r1Ext = r1 + w1;
   double r2Ext = r2 + w2;
@@ -341,7 +348,14 @@ TopoDS_Shape AdvancedEngine_PipeTShapeDriver::MakePipeTShape (const double r1, c
     StdFail_NotDone::Raise("Coudn't cut cylinders");
   }
 
-  return Te.Shape();
+  TopoDS_Shape aShape = Te.Shape();
+
+  // VSR: 30/12/2014: temporary workaround about intersection curves problem
+#ifdef FIX_CURVES_TOLERANCES
+  GEOMUtils::FixShapeCurves(aShape);
+#endif
+
+  return aShape;
 }
 
 //=======================================================================
@@ -349,7 +363,7 @@ TopoDS_Shape AdvancedEngine_PipeTShapeDriver::MakePipeTShape (const double r1, c
 //purpose  :
 //=======================================================================
 TopoDS_Shape AdvancedEngine_PipeTShapeDriver::MakeQuarterPipeTShape (const double r1, const double w1, const double l1,
-                                                               const double r2, const double w2, const double l2) const
+                                                                     const double r2, const double w2, const double l2) const
 {
   TopoDS_Shape Te = MakePipeTShape(r1, w1, l1, r2, w2, l2);
   if (Te.IsNull())
@@ -372,6 +386,13 @@ TopoDS_Shape AdvancedEngine_PipeTShapeDriver::MakeQuarterPipeTShape (const doubl
   if (!Te4.IsDone()) {
     StdFail_NotDone::Raise("Couldn't cut Pipe Tshape with box");
   }
+
+  TopoDS_Shape aShape = Te4.Shape();
+
+  // VSR: 30/12/2014: temporary workaround about intersection curves problem
+#ifdef FIX_CURVES_TOLERANCES
+  GEOMUtils::FixShapeCurves(aShape);
+#endif
 
   return Te4.Shape();
 }

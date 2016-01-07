@@ -14,9 +14,15 @@
 \until CheckShape
 
 \anchor swig_CheckShape
-\until MakeCompound
+\until Detect Self-intersections
 
 \anchor swig_CheckSelfIntersections
+\until Detect Self-intersections fast
+
+\anchor swig_CheckSelfIntersectionsFast
+\until Fast intersection
+
+\anchor swig_FastIntersection
 \until WhatIs
 
 \anchor swig_WhatIs

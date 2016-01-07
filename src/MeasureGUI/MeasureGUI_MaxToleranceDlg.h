@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -46,9 +46,11 @@ public:
 protected:
   // redefined from GEOMBase_Helper and MeasureGUI_Skeleton
   virtual void                        processObject();
+  virtual void                        SelectionIntoArgument();
 
 private:
   void                                Init();
+  void                                activateSelection();
   bool                                getParameters( double&, double&, double&, 
                                                      double&, double&, double& );
   

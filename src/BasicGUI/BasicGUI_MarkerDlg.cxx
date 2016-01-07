@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -228,7 +228,7 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
 {
   if ( myConstructorId == constructorId && myConstructorId == 0 ) {
     globalSelection(); // close local contexts, if any
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+    localSelection( TopAbs_VERTEX );
     activate( GEOM_MARKER );
     return;
   }
@@ -244,7 +244,7 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
       Group2->hide();
       aMainGrp->show();
       globalSelection(); // close local contexts, if any
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+      localSelection( TopAbs_VERTEX );
       activate( GEOM_MARKER );
       break;
     }
@@ -269,7 +269,7 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
       Group2->PushButton2->setDown( false );
       Group2->PushButton3->setDown( false );
       globalSelection(); // close local contexts, if any
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+      localSelection( TopAbs_VERTEX );
       myEditCurrentArgument = Group2->LineEdit1;
       Group2->LineEdit1->setText( "" );
       Group2->LineEdit2->setText( "" );
@@ -442,7 +442,7 @@ void BasicGUI_MarkerDlg::SetEditCurrentArgument()
   }
   else if ( send == Group2->PushButton1 ) {
     myEditCurrentArgument = Group2->LineEdit1;
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+    localSelection( TopAbs_VERTEX );
     Group2->PushButton2->setDown( false );
     Group2->PushButton3->setDown( false );
     Group2->LineEdit1->setEnabled( true );
@@ -451,7 +451,7 @@ void BasicGUI_MarkerDlg::SetEditCurrentArgument()
   }
   else if ( send == Group2->PushButton2 ) {
     myEditCurrentArgument = Group2->LineEdit2;
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+    localSelection( TopAbs_EDGE );
     Group2->PushButton1->setDown( false );
     Group2->PushButton3->setDown( false );
     Group2->LineEdit1->setEnabled( false );
@@ -460,7 +460,7 @@ void BasicGUI_MarkerDlg::SetEditCurrentArgument()
   }
   else if ( send == Group2->PushButton3 ) {
     myEditCurrentArgument = Group2->LineEdit3;
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+    localSelection( TopAbs_EDGE );
     Group2->PushButton1->setDown( false );
     Group2->PushButton2->setDown( false );
     Group2->LineEdit1->setEnabled( false );
@@ -609,7 +609,17 @@ void BasicGUI_MarkerDlg::addSubshapesToStudy()
   default:
     break;
   }
+}
 
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BasicGUI_MarkerDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myShape << myPoint << myVectorX << myVectorY;
+  return res;
 }
 
 //=================================================================================

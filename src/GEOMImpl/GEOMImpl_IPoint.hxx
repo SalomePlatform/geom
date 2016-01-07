@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -40,7 +40,7 @@
 
 #define ARG_LENGTH 11
 
-//#define ARG_FLAG 12
+#define ARG_USE_ORIENTATION 12
 
 class GEOMImpl_IPoint
 {
@@ -73,12 +73,13 @@ class GEOMImpl_IPoint
   void SetParameter(double theParam) { _func->SetReal(ARG_PARAM, theParam); }
   void SetParameter2(double theParam) { _func->SetReal(ARG_PARAM2, theParam); }
   void SetLength(double theLength) { _func->SetReal(ARG_LENGTH, theLength); }
-  //void SetReversed(bool theReversed)  { _func->SetInteger(ARG_FLAG, theReversed); }
+  void SetTakeOrientationIntoAccount(bool takeOrientationIntoAccount)
+        { _func->SetInteger(ARG_USE_ORIENTATION, takeOrientationIntoAccount); }
 
   double GetParameter() { return _func->GetReal(ARG_PARAM); }
   double GetParameter2() { return _func->GetReal(ARG_PARAM2); }
   double GetLength() { return _func->GetReal(ARG_LENGTH); }
-  //bool   GetReversed() { return _func->GetInteger(ARG_FLAG); }
+  bool   GetTakeOrientationIntoAccount() { return _func->GetInteger(ARG_USE_ORIENTATION); }
 
  private:
 

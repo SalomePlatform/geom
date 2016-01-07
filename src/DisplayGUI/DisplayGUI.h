@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -74,6 +74,12 @@ public:
   void SetVerticesMode( const bool, SUIT_ViewWindow* = 0 );
   // Get vertices mode of the viewer
   int  GetVerticesMode( SUIT_ViewWindow* = 0 );
+  
+  // NAME MODE methods
+  // Set name mode for the viewer
+  void SetNameMode( const bool, SUIT_ViewWindow* = 0 );
+  // Get name mode of the viewer
+  int  GetNameMode( SUIT_ViewWindow* = 0 );
   
   // Set display mode for selected objects in the viewer given
   // (current viewer if <viewWindow> = 0 )

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -249,6 +249,11 @@ Standard_Integer GEOMImpl_Fillet1dDriver::Execute(TFunction_Logbook& log) const
     // 3. Repeat the fillet algorithm
     isFinalPass = true;
     MakeFillet(aWireNew, aVertexListNew, rad, isFinalPass, aResult);
+  }
+
+  if (!GEOMUtils::CheckShape(aResult, true) &&
+      !GEOMUtils::FixShapeTolerance(aResult)) {
+    Standard_ConstructionError::Raise("Non valid shape result");
   }
 
   aFunction->SetValue(aResult);

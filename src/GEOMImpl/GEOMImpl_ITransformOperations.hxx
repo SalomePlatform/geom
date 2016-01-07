@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -190,6 +190,13 @@ class GEOMImpl_ITransformOperations : public GEOM_IOperations
 
   Standard_EXPORT Handle(GEOM_Object) TransformLikeOtherCopy (Handle(GEOM_Object) theObject,
                                                               Handle(GEOM_Object) theSample);
+
+  Standard_EXPORT Handle(GEOM_Object) MakeProjectionOnCylinder
+                             (const Handle(GEOM_Object) &theObject,
+                              const Standard_Real        theRadius,
+                              const Standard_Real        theStartAngle,
+                              const Standard_Real        theAngleLength,
+                              const Standard_Real        theAngleRotation);
 
 };
 

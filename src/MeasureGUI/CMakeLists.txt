@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2012-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -97,12 +97,14 @@ SET(MeasureGUI_HEADERS
   MeasureGUI_CheckCompoundOfBlocksDlg.h
   MeasureGUI_GetNonBlocksDlg.h
   MeasureGUI_CheckSelfIntersectionsDlg.h
+  MeasureGUI_FastCheckIntersectionsDlg.h
   MeasureGUI_PointDlg.h
   MeasureGUI_ManageDimensionsDlg.h
   MeasureGUI_CreateDimensionDlg.h
   MeasureGUI_DimensionCreateTool.h
   MeasureGUI_DimensionInteractor.h
   MeasureGUI_DimensionFilter.h
+  MeasureGUI_definitions.h
   )
 
 # header files / to be processed by moc
@@ -123,11 +125,18 @@ SET(_moc_HEADERS
   MeasureGUI_CheckCompoundOfBlocksDlg.h
   MeasureGUI_GetNonBlocksDlg.h
   MeasureGUI_CheckSelfIntersectionsDlg.h
+  MeasureGUI_FastCheckIntersectionsDlg.h
   MeasureGUI_PointDlg.h
   MeasureGUI_ManageDimensionsDlg.h
   MeasureGUI_CreateDimensionDlg.h
   MeasureGUI_DimensionInteractor.h
   )
+  
+IF(SALOME_USE_PLOT2DVIEWER)
+  LIST(APPEND _moc_HEADERS
+    MeasureGUI_ShapeStatisticsDlg.h
+    )
+ENDIF()
 
 # header files / uic wrappings
 QT4_WRAP_UI(_uic_HEADERS ${_uic_files})
@@ -154,6 +163,7 @@ SET(MeasureGUI_SOURCES
   MeasureGUI_CheckCompoundOfBlocksDlg.cxx
   MeasureGUI_GetNonBlocksDlg.cxx
   MeasureGUI_CheckSelfIntersectionsDlg.cxx
+  MeasureGUI_FastCheckIntersectionsDlg.cxx
   MeasureGUI_PointDlg.cxx
   MeasureGUI_ManageDimensionsDlg.cxx
   MeasureGUI_CreateDimensionDlg.cxx
@@ -163,6 +173,12 @@ SET(MeasureGUI_SOURCES
   ${_moc_SOURCES}
   ${_uic_files}
   )
+
+IF(SALOME_USE_PLOT2DVIEWER)
+  LIST(APPEND MeasureGUI_SOURCES
+    MeasureGUI_ShapeStatisticsDlg.cxx
+    )
+ENDIF()
 
 # --- rules ---
 

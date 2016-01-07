@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -79,7 +79,8 @@ protected:
                                 const bool   toRemoveFromEngine = true,
                                 const double lineWidth = -1,
                                 const int    displayMode = -1,
-                                const int    color  = -1 );
+                                const int    color  = -1,
+                                const bool   append = false );
   // This is the easiest way to show preview. It is based on execute() method.
   // It removes temporary GEOM::GEOM_Objects automatically.
 
@@ -95,8 +96,12 @@ protected:
                          const bool = true );
   void erasePreview    ( const bool = true );
 
+  void localSelection( const ObjectList&, const std::list<int> );
   void localSelection( const ObjectList&, const int );
+  void localSelection( GEOM::GEOM_Object_ptr, const std::list<int> );
   void localSelection( GEOM::GEOM_Object_ptr, const int );
+  void localSelection( const std::list<int> );
+  void localSelection( const int );
   void activate( const int );
   void globalSelection( const int = GEOM_ALLOBJECTS, const bool = false  );
   void globalSelection( const TColStd_MapOfInteger&, const bool = false );
@@ -168,6 +173,7 @@ protected:
   virtual QString getObjectName(GEOM::GEOM_Object_ptr object) const;
   virtual bool extractPrefix() const;
   virtual void addSubshapesToStudy();
+  virtual QList<GEOM::GeomObjPtr> getSourceObjects();
 
   GEOM::GEOM_Object_ptr findObjectInFather( GEOM::GEOM_Object_ptr theFather, const QString& theName );
   GEOM::GEOM_Object_ptr findObjectInFather( GEOM::GEOM_Object_ptr theFather, int theIndex );
@@ -178,6 +184,7 @@ protected:
   QList<GEOM::GeomObjPtr> getSelected( TopAbs_ShapeEnum type, int count, bool strict = true );
   QList<GEOM::GeomObjPtr> getSelected( const QList<TopAbs_ShapeEnum>& types, int count, bool strict = true );
 
+  void hideSourceObjects( QList<GEOM::GeomObjPtr> theObjectList );
   void SetIsPreview(const bool thePreview) {isPreview = thePreview;}
   bool IsPreview() {return isPreview;}
 

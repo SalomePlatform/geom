@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -313,4 +313,16 @@ void RepairGUI_RemoveExtraEdgesDlg::restoreSubShapes( SALOMEDS::Study_ptr   theS
                                          /*theInheritFirstArg=*/true,
                                          mainFrame()->CheckBoxAddPrefix->isChecked() );
   }
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> RepairGUI_RemoveExtraEdgesDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::GeomObjPtr aGeomObjPtr(myObject);
+  res << aGeomObjPtr;
+  return res;
 }

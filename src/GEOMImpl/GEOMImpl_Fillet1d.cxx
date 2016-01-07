@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -37,6 +37,52 @@
 #include <Precision.hxx>
 #include <TColStd_ListIteratorOfListOfReal.hxx>
 #include <IntRes2d_IntersectionSegment.hxx>
+#include <TopExp.hxx>
+
+
+/**
+ * This function returns Standard_True if it is possible to divide edge, i.e.
+ * if one parameter either start or end one is inside the edge. This function
+ * is used in the method GEOMImpl_Fillet1d::Result.
+ *
+ * \param theEdge the edge
+ * \param theStart the start parameter
+ * \param theEnd the end parameter
+ * \return Standard_True if it is possible to split edge;
+ *         Standard_False otherwise.
+ */
+static Standard_Boolean IsDivideEdge(const TopoDS_Edge   &theEdge,
+                                     const Standard_Real  theStart,
+                                     const Standard_Real  theEnd)
+{
+  Standard_Real      aFirst;
+  Standard_Real      aLast;
+  Handle(Geom_Curve) aCurve    = BRep_Tool::Curve(theEdge, aFirst, aLast);
+  gp_Pnt             aPStart   = aCurve->Value(theStart);
+  gp_Pnt             aPEnd     = aCurve->Value(theEnd);
+  TopoDS_Vertex      aVFirst   = TopExp::FirstVertex(theEdge);
+  TopoDS_Vertex      aVLast    = TopExp::FirstVertex(theEdge);
+  Standard_Real      aTolFirst = BRep_Tool::Tolerance(aVFirst);
+  Standard_Real      aTolLast  = BRep_Tool::Tolerance(aVLast);
+  Standard_Real      aTolConf  = Precision::Confusion();
+  gp_Pnt             aPFirst   = BRep_Tool::Pnt(aVFirst);
+  gp_Pnt             aPLast    = BRep_Tool::Pnt(aVLast);
+  Standard_Real      aDistSF   = aPStart.Distance(aPFirst);
+  Standard_Real      aDistSL   = aPStart.Distance(aPLast);
+  Standard_Real      aDistEF   = aPEnd.Distance(aPFirst);
+  Standard_Real      aDistEL   = aPEnd.Distance(aPLast);
+  Standard_Boolean   isSplit   = Standard_True;
+
+  if (aDistSF <= aTolFirst + aTolConf ||
+      aDistSL <= aTolLast  + aTolConf) {
+    if (aDistEF <= aTolFirst + aTolConf ||
+        aDistEL <= aTolLast  + aTolConf) {
+      isSplit   = Standard_False;
+    }
+  }
+
+  return isSplit;
+}
 
 /**
  * class GEOMImpl_Fillet1d
@@ -617,7 +663,7 @@ TopoDS_Edge GEOMImpl_Fillet1d::Result(const gp_Pnt& thePoint,
   else
     anEnd = aNearest->GetParam();
 
-  if (fabs(aStart - anEnd) > Precision::Confusion())
+  if (IsDivideEdge(myEdge1, aStart, anEnd))
   {
       //Divide edge
       BRepBuilderAPI_MakeEdge aDivider1(aCurve, aStart, anEnd);
@@ -636,7 +682,7 @@ TopoDS_Edge GEOMImpl_Fillet1d::Result(const gp_Pnt& thePoint,
   else
     anEnd = aNearest->GetParam2();
 
-  if (fabs(aStart - anEnd) > Precision::Confusion())
+  if (IsDivideEdge(myEdge2, aStart, anEnd))
   {
       BRepBuilderAPI_MakeEdge aDivider2(aCurve, aStart, anEnd);
       if (myEdgesExchnged)

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -20,19 +20,16 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <Standard_Stream.hxx>
-
 #include <GEOMImpl_ThruSectionsDriver.hxx>
 #include <GEOMImpl_IThruSections.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
+#include <GEOMUtils.hxx>
 
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <Precision.hxx>
-#include <BRepCheck_Analyzer.hxx>
 #include <BRepOffsetAPI_ThruSections.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
-#include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 
 #include <TopAbs.hxx>
@@ -41,12 +38,9 @@
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Shape.hxx>
 
-#include <Standard_NullObject.hxx>
 #include <Standard_TypeMismatch.hxx>
 #include <Standard_ConstructionError.hxx>
-#include <ShapeFix_Shape.hxx>
-#include <ShapeFix_ShapeTolerance.hxx>
-#include <Precision.hxx>
+
 //=======================================================================
 //function : GetID
 //purpose  :
@@ -132,20 +126,10 @@ Standard_Integer GEOMImpl_ThruSectionsDriver::Execute(TFunction_Logbook& log) co
     return 0;
   }
 
-  BRepCheck_Analyzer ana (aShape, Standard_False);
-  if (!ana.IsValid()) {
+  if ( !GEOMUtils::CheckShape(aShape) && !GEOMUtils::FixShapeTolerance(aShape) ) {
     //algoritm thru section creats on the arcs invalid shapes gka
-    ShapeFix_ShapeTolerance aSFT;
-    aSFT.LimitTolerance(aShape,Precision::Confusion(),Precision::Confusion());
-    Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape(aShape);
-    aSfs->SetPrecision(Precision::Confusion());
-    aSfs->Perform();
-    aShape = aSfs->Shape();
-    //ana.Init(aShape, Standard_False);
-    //if (!ana.IsValid()) 
     //  Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
   }
-
 
   aFunction->SetValue(aShape);
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -245,7 +245,7 @@ void GEOMAlgo_ShellSolid::Perform()
     const BOPDS_IndexRange& aRange=pDS->Range(iRank);
     aRange.Indices(iBeg, iEnd);
     const TopoDS_Solid& aSolid=(!iRank) ? *((TopoDS_Solid*)&aTool) : *((TopoDS_Solid*)&aObj);
-    BRepClass3d_SolidClassifier& aSC=aCtx->SolidClassifier(aSolid);
+    //BRepClass3d_SolidClassifier& aSC=aCtx->SolidClassifier(aSolid);
     //
     //------------------------------ShellSolidBuilder
     GEOMAlgo_ShellSolidBuilder aSSB;
@@ -264,50 +264,50 @@ void GEOMAlgo_ShellSolid::Perform()
       const TopoDS_Shape& aS=pDS->Shape(i);
       aType=aS.ShapeType();
       if (aType!=TopAbs_FACE) {
-	continue;
+        continue;
       }
       //
       aState=TopAbs_UNKNOWN;
       aF=*((TopoDS_Face*)&aS);
       //
       if (!aImages.IsBound(aS)) {
-	iErr=GEOMAlgo_AlgoTools::PntInFace(aF, aP, aP2D);
-	if (iErr) {
-	  myErrorStatus=16;
-	  return;
-	}
-	//
-	aState=BOPTools_AlgoTools::ComputeState(aP, aSolid, aTol, aCtx);
+        iErr=GEOMAlgo_AlgoTools::PntInFace(aF, aP, aP2D);
+        if (iErr) {
+          myErrorStatus=16;
+          return;
+        }
+        //
+        aState=BOPTools_AlgoTools::ComputeState(aP, aSolid, aTol, aCtx);
       }
       else {
-	const BOPCol_ListOfShape& aLSp=aImages.Find(aS);
-	aNbSp=aLSp.Extent();
-	if (aNbSp>0) {
-	  continue;
-	}
-	//
-	if (aNbSp==1) {
-	  aF=*((TopoDS_Face*)&aLSp.First());
-	}
-	//
-	iErr=GEOMAlgo_AlgoTools::PntInFace(aF, aP, aP2D);
-	if (iErr) {
-	  myErrorStatus=16;
-	  return;
-	}
-	//
-	aState=BOPTools_AlgoTools::ComputeState(aP, aSolid, aTol, aCtx);
+        const BOPCol_ListOfShape& aLSp=aImages.Find(aS);
+        aNbSp=aLSp.Extent();
+        if (aNbSp>0) {
+          continue;
+        }
+        //
+        if (aNbSp==1) {
+          aF=*((TopoDS_Face*)&aLSp.First());
+        }
+        //
+        iErr=GEOMAlgo_AlgoTools::PntInFace(aF, aP, aP2D);
+        if (iErr) {
+          myErrorStatus=16;
+          return;
+        }
+        //
+        aState=BOPTools_AlgoTools::ComputeState(aP, aSolid, aTol, aCtx);
       }
       //----------
       if (aState==TopAbs_ON) {
-	myLSON.Append(aF);
+        myLSON.Append(aF);
       }
       else if (aState==TopAbs_OUT) {
-	myLSOUT.Append(aF);
+        myLSOUT.Append(aF);
       }
       else if (aState==TopAbs_IN) {
-	myLSIN.Append(aF);
-      }	
+        myLSIN.Append(aF);
+      } 
       //----------
     }//for (i=iBeg; i<=iEnd; ++i) {
     

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -49,13 +49,16 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );    
+  virtual void                       addSubshapesToStudy();
+  virtual QList<GEOM::GeomObjPtr>    getSourceObjects();
 
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
+  void                               initSelection();
 
 private:
-  GEOM::GeomObjPtr                   myCompound; /* compound of curves */
+  QList<GEOM::GeomObjPtr>            myObjects;/* lit or compound of curves */
   DlgRef_1Sel5Spin1Check*            GroupPoints;
     
 private slots:

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -122,8 +122,30 @@ void MeasureGUI_PropertiesDlg::activateSelection()
   }
 
   globalSelection( aTypes );
+
+  std::list<int> needTypes;
+  needTypes.push_back( TopAbs_EDGE ), needTypes.push_back( TopAbs_WIRE ), needTypes.push_back( TopAbs_FACE ), needTypes.push_back( TopAbs_SHELL ), needTypes.push_back( TopAbs_SOLID ), needTypes.push_back( TopAbs_COMPOUND );
+  localSelection( needTypes );
 }
 
+void MeasureGUI_PropertiesDlg::SelectionIntoArgument()
+{
+  myObj.nullify();
+  QList<TopAbs_ShapeEnum> aTypes;
+  aTypes << TopAbs_EDGE << TopAbs_WIRE << TopAbs_FACE << TopAbs_SHELL << TopAbs_SOLID << TopAbs_COMPOUND;
+  myObj = getSelected( aTypes );
+ 
+  if (!myObj) {
+    mySelEdit->setText("");
+    processObject();
+    erasePreview();
+    return;
+  }
+
+  mySelEdit->setText(GEOMBase::GetName(myObj.get()));
+  processObject();
+  redisplayPreview();
+}
 //=================================================================================
 // function : processObject
 // purpose  :
@@ -155,12 +177,12 @@ bool MeasureGUI_PropertiesDlg::getParameters( double& theLength,
                                               double& theArea,
                                               double& theVolume )
 {
-  if ( myObj->_is_nil() )
+  if ( !myObj )
     return false;
   else {
     GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
     try {
-      anOper->GetBasicProperties( myObj, theLength, theArea, theVolume );
+      anOper->GetBasicProperties( myObj.get(), theLength, theArea, theVolume );
     }
     catch( const SALOME::SALOME_Exception& e ) {
       SalomeApp_Tools::QtCatchCorbaException( e );
@@ -180,8 +202,8 @@ SALOME_Prs* MeasureGUI_PropertiesDlg::buildPrs()
   SALOME_Prs* prs = 0;
   TopoDS_Shape shape;
 
-  if ( GEOMBase::GetShape( myObj, shape, TopAbs_EDGE ) &&
-       getDisplayer()->IsDisplayed( GEOMBase::GetEntry(myObj) ) ) {
+  if ( GEOMBase::GetShape( myObj.get(), shape, TopAbs_EDGE ) &&
+       getDisplayer()->IsDisplayed( GEOMBase::GetEntry(myObj.get()) ) ) {
     shape = GEOMBase::CreateArrowForLinearEdge( shape );
     if ( !shape.IsNull() )
       prs = getDisplayer()->BuildPrs( shape );

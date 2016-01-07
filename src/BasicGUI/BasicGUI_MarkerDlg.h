@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -46,47 +46,48 @@ private:
   typedef QMap< int, SalomeApp_DoubleSpinBox* > DataMap;
 
 public:
-                                BasicGUI_MarkerDlg( GeometryGUI*, QWidget* );
-  virtual                       ~BasicGUI_MarkerDlg();
-  void                          Init();
+                                  BasicGUI_MarkerDlg( GeometryGUI*, QWidget* );
+  virtual                         ~BasicGUI_MarkerDlg();
+  void                            Init();
 
 protected:
-  virtual                       GEOM::GEOM_IOperations_ptr createOperation();
-  virtual bool                  isValid( QString& );
-  virtual bool                  execute( ObjectList& );
-  virtual void                  displayPreview ( const bool   = false,
-                                                 const bool   = true,
-                                                 const bool   = true,
-                                                 const double = -1 );
-  virtual void                  addSubshapesToStudy();
+  virtual                         GEOM::GEOM_IOperations_ptr createOperation();
+  virtual bool                    isValid( QString& );
+  virtual bool                    execute( ObjectList& );
+  virtual void                    displayPreview ( const bool   = false,
+                                                   const bool   = true,
+                                                   const bool   = true,
+                                                   const double = -1 );
+  virtual void                    addSubshapesToStudy();
+  virtual QList<GEOM::GeomObjPtr> getSourceObjects();
 
 private:
-  void                          enterEvent( QEvent* );
-  void                          onSelectionDone0();
+  void                            enterEvent( QEvent* );
+  void                            onSelectionDone0();
 
-  GEOM::GeomObjPtr              myShape;
-  GEOM::GeomObjPtr              myPoint;
-  GEOM::GeomObjPtr              myVectorX;
-  GEOM::GeomObjPtr              myVectorY;
+  GEOM::GeomObjPtr                myShape;
+  GEOM::GeomObjPtr                myPoint;
+  GEOM::GeomObjPtr                myVectorX;
+  GEOM::GeomObjPtr                myVectorY;
 
 private slots:
-  void                          onOk();
-  bool                          onApply();
-  void                          onActivate();
-  void                          onDeactivate();
-  void                          onSelectionDone();
-  void                          onValueChanged( double );
-  void                          ConstructorsClicked( int );
-  void                          SetEditCurrentArgument();
+  void                            onOk();
+  bool                            onApply();
+  void                            onActivate();
+  void                            onDeactivate();
+  void                            onSelectionDone();
+  void                            onValueChanged( double );
+  void                            ConstructorsClicked( int );
+  void                            SetEditCurrentArgument();
 
 private:
-  DataMap                       myData;
-  int                           myConstructorId;
-  int                           myBlockPreview;
+  DataMap                         myData;
+  int                             myConstructorId;
+  int                             myBlockPreview;
 
-  QFrame*                       aMainGrp;
-  DlgRef_1Sel*                  Group1;
-  DlgRef_3Sel*                  Group2;
+  QFrame*                         aMainGrp;
+  DlgRef_1Sel*                    Group1;
+  DlgRef_3Sel*                    Group2;
 };
 
 #endif // BASICGUI_MARKERDLG_H

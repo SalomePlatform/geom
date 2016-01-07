@@ -16,9 +16,9 @@ open contour asnd miodifies the underlying face.</li>
 holes with free boundaries on a selected face.</li>
 <li>\subpage sewing_operation_page "Sewing" - sews faces or shells.</li>
 <li>\subpage glue_faces_operation_page "Glue faces" - unites
-coincident faces within the given tolerance.</li>
+faces coincident within the given tolerance.</li>
 <li>\subpage glue_edges_operation_page "Glue edges" - unites
-coincident edges within the given tolerance.</li>
+edges coincident within the given tolerance.</li>
 <li>\subpage limit_tolerance_operation_page "Limit Tolerance" - tries
 to set new tolerance value for the given shape.</li>
 <li>\subpage add_point_on_edge_operation_page "Add point on edge" -
@@ -26,7 +26,7 @@ splits an edge in two.</li>
 <li>\subpage change_orientation_operation_page "Change orientation" -
 reverses the normals of the selected faces.</li>
 <li>\subpage remove_webs_operation_page "Remove internal faces" -
-rebuilds the topology of a compound of solids by removing the faces
+rebuilds the topology of solids by removing the faces
 are shared by several solids.</li>
 <li>\subpage remove_extra_edges_operation_page "Remove extra edges" -
 removes seam and degenerated edges from the given shape.</li>

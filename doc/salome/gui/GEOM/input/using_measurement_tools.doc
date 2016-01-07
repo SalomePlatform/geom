@@ -18,6 +18,8 @@
 <li>\subpage tolerance_page "Tolerance"</li>
 <li>\subpage managing_dimensions_page "Dimensions"</li>
 <li>\subpage whatis_page "WhatIs"</li>
+<li>\subpage inspect_object_operation_page "Inspect Object"</li>
+<li>\subpage shape_statistics_operation_page "Shape Statistics"</li>
 </ul>
 
 \n To check their integrity:
@@ -29,6 +31,7 @@
 <li>\subpage check_compound_of_blocks_page "Check compound of blocks"</li>
 <li>\subpage get_non_blocks_page "Get non blocks"</li>
 <li>\subpage check_self_intersections_page "Detect Self-intersections"</li>
+<li>\subpage fast_intersection_page "Fast intersection"</li>
 </ul>
 
 \n Our <b>TUI Scripts</b> show how to use

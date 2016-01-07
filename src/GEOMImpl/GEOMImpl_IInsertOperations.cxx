@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -29,6 +29,7 @@
 #include <GEOMImpl_ImportDriver.hxx>
 #include <GEOMImpl_ICopy.hxx>
 #include <GEOMImpl_IImportExport.hxx>
+#include <GEOMImpl_ITransferData.hxx>
 #include <GEOMImpl_Types.hxx>
 #include "GEOMImpl_IShapesOperations.hxx"
 #include "GEOMImpl_IGroupOperations.hxx"
@@ -339,4 +340,108 @@ std::list<int> GEOMImpl_IInsertOperations::GetAllTextures()
   std::list<int> id_list = GetEngine()->getAllTextures(GetDocID());
   SetErrorCode(OK);
   return id_list;
+}
+
+//=============================================================================
+/*!
+ *  TransferData
+ */
+//=============================================================================
+bool GEOMImpl_IInsertOperations::TransferData
+                          (const Handle(GEOM_Object)      &theObjectFrom,
+                           const Handle(GEOM_Object)      &theObjectTo,
+                           const int                       theFindMethod,
+                                 std::list<TransferDatum> &theResult)
+{
+  SetErrorCode(KO);
+
+  if (theObjectFrom.IsNull() || theObjectTo.IsNull()) {
+    return false;
+  }
+
+  //Add a new Transfer Data object object
+  Handle(GEOM_Object) aTDObj =
+    GetEngine()->AddObject(GetDocID(), GEOM_TRANSFER_DATA);
+
+  //Add a Transfer Data function for created object
+  Handle(GEOM_Function) aFunction =
+    aTDObj->AddFunction(GEOMImpl_CopyDriver::GetID(), TRANSFER_DATA);
+
+  //Check if the function is set correctly
+  if(aFunction->GetDriverGUID() != GEOMImpl_CopyDriver::GetID()) {
+    return false;
+  }
+
+  Handle(GEOM_Function) aFunctionFrom = theObjectFrom->GetLastFunction();
+  Handle(GEOM_Function) aFunctionTo   = theObjectTo->GetLastFunction();
+
+  if (aFunctionFrom.IsNull() || aFunctionTo.IsNull()) {
+    return false;
+  }
+
+  GEOMImpl_ITransferData aTD(aFunction);
+
+  aTD.SetRef1(aFunctionFrom);
+  aTD.SetRef2(aFunctionTo);
+  aTD.SetFindMethod(theFindMethod);
+
+  // Transfer data
+  try {
+    OCC_CATCH_SIGNALS;
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Transfer data failed");
+      return false;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return false;
+  }
+
+  // Fill result list of data.
+  theResult.clear();
+
+  Handle(TColStd_HArray1OfExtendedString) aDatumName   = aTD.GetDatumName();
+  Handle(TColStd_HArray1OfInteger)        aDatumMaxVal = aTD.GetDatumMaxVal();
+  Handle(TColStd_HArray1OfInteger)        aDatumVal    = aTD.GetDatumVal();
+
+  if (!aDatumName.IsNull() && !aDatumMaxVal.IsNull() && !aDatumVal.IsNull()) {
+    Standard_Integer i;
+    Standard_Integer aNbDatum = aDatumName->Length();
+
+    for (i = 1; i <= aNbDatum; ++i) {
+      if (aDatumMaxVal->Value(i) > 0) {
+        TransferDatum aDatum;
+
+        aDatum.myName      = TCollection_AsciiString(aDatumName->Value(i));
+        aDatum.myNumber    = aDatumVal->Value(i);
+        aDatum.myMaxNumber = aDatumMaxVal->Value(i);
+        theResult.push_back(aDatum);
+      }
+    }
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+  pd << "geompy.TransferData(" << theObjectFrom << ", " << theObjectTo;
+  pd << ", GEOM.";
+
+  switch (theFindMethod) {
+  case TD_GET_IN_PLACE:
+    pd << "FSM_GetInPlace";
+    break;
+  case TD_GET_IN_PLACE_OLD:
+    pd << "FSM_GetInPlace_Old";
+    break;
+  case TD_GET_IN_PLACE_BY_HISTORY:
+  default:
+    pd << "FSM_GetInPlaceByHistory";
+    break;
+  }
+  pd << ")";
+
+  SetErrorCode(OK);
+
+  return true;
 }

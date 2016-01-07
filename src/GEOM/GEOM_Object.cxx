@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -46,7 +46,7 @@
  */
 //=============================================================================
 
-Handle(GEOM_Object) GEOM_Object::GetObject(TDF_Label& theLabel)
+Handle(GEOM_Object) GEOM_Object::GetObject(const TDF_Label& theLabel)
 {
   Handle(GEOM_BaseObject) base = GEOM_BaseObject::GetObject(theLabel);
   return Handle(GEOM_Object)::DownCast( base );
@@ -58,7 +58,7 @@ Handle(GEOM_Object) GEOM_Object::GetObject(TDF_Label& theLabel)
  */
 //=============================================================================
 
-Handle(GEOM_Object) GEOM_Object::GetReferencedObject(TDF_Label& theLabel)
+Handle(GEOM_Object) GEOM_Object::GetReferencedObject(const TDF_Label& theLabel)
 {
   Handle(GEOM_BaseObject) base = GEOM_BaseObject::GetReferencedObject(theLabel);
   return Handle(GEOM_Object)::DownCast( base );
@@ -275,5 +275,27 @@ bool GEOM_Object::IsMainShape()
   return false;
 }
 
+//================================================================================
+/*!
+ * \brief Returns GetLastFunction() of given objects
+ */
+//================================================================================
+
+Handle(TColStd_HSequenceOfTransient)
+GEOM_Object::GetLastFunctions( const std::list< Handle(GEOM_Object) >& theObjects )
+{
+  Handle(TColStd_HSequenceOfTransient) funs = new TColStd_HSequenceOfTransient;
+  std::list<Handle(GEOM_Object)>::const_iterator it = theObjects.begin();
+  for (; it != theObjects.end(); it++)
+  {
+    Handle(GEOM_Function) fun = (*it)->GetLastFunction();
+    if ( fun.IsNull())
+      return Handle(TColStd_HSequenceOfTransient)();
+    funs->Append( fun );
+  }
+  return funs;
+}
+
 IMPLEMENT_STANDARD_HANDLE (GEOM_Object, GEOM_BaseObject );
 IMPLEMENT_STANDARD_RTTIEXT(GEOM_Object, GEOM_BaseObject );
+

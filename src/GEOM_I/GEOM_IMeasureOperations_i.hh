@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -97,7 +97,20 @@ class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
               const GEOM::GEOM_IMeasureOperations::ShapeErrors &theErrors);
 
   CORBA::Boolean CheckSelfIntersections (GEOM::GEOM_Object_ptr theShape,
+                                         CORBA::Long           theCheckLevel,
                                          GEOM::ListOfLong_out  theIntersections);
+
+  CORBA::Boolean CheckSelfIntersectionsFast (GEOM::GEOM_Object_ptr theShape,
+					     CORBA::Float          theDeflection,
+					     CORBA::Double         theTolerance,
+					     GEOM::ListOfLong_out  theIntersections);
+
+  CORBA::Boolean FastIntersect (GEOM::GEOM_Object_ptr theShape1,
+                                GEOM::GEOM_Object_ptr theShape2,
+                                CORBA::Double         theTolerance,
+                                CORBA::Float         theDeflection,
+                                GEOM::ListOfLong_out  theIntersections1,
+                                GEOM::ListOfLong_out  theIntersections2);
 
   char* IsGoodForSolid (GEOM::GEOM_Object_ptr theShape);
 

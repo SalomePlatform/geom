@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -31,7 +31,7 @@
 #include "GEOM_GenericObjPtr.h"
 #include <QMap>
 
-class DlgRef_2Sel1Spin;
+class DlgRef_2Sel1Spin2Check;
 class DlgRef_3Spin;
 class DlgRef_2Sel;
 class DlgRef_1Sel3Spin;
@@ -67,6 +67,7 @@ protected:
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );
   virtual void                       addSubshapesToStudy();
+  virtual QList<GEOM::GeomObjPtr>    getSourceObjects();
 
 private:
   void                               Init();
@@ -87,7 +88,7 @@ private:
 
   DlgRef_3Spin*                      GroupXYZ;
   DlgRef_1Sel3Spin*                  GroupRefPoint;
-  DlgRef_2Sel1Spin*                  GroupOnCurve;
+  DlgRef_2Sel1Spin2Check*            GroupOnCurve;
   DlgRef_2Sel*                       GroupLineIntersection;
   DlgRef_1Sel2Spin*                  GroupOnSurface;
   
@@ -99,7 +100,6 @@ private:
   QGroupBox*                         myParamGroup;
   QButtonGroup*                      myParamCoord;
 
-  QMenu*                             myBtnPopup;
   QMap<QAction*, int>                myActions;
 
   TopAbs_ShapeEnum                   myNeedType;
@@ -115,8 +115,7 @@ private slots:
   void                               ValueChangedInSpinBox( double );
   void                               SetDoubleSpinBoxStep( double );
   void                               ClickParamCoord( int );
-  void                               CheckBoxClicked( int );
-  void                               onBtnPopup( QAction* );
+  void                               CheckBoxClicked();
   void                               updateSize();
 };
 

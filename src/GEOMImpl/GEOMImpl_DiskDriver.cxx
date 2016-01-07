@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -41,6 +41,7 @@
 
 #include <Standard_ConstructionError.hxx>
 #include <Precision.hxx>
+#include <gp_Pln.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Vec.hxx>
 #include <gp_Circ.hxx>
@@ -91,12 +92,15 @@ Standard_Integer GEOMImpl_DiskDriver::Execute(TFunction_Logbook& log) const
       TopExp::Vertices(anE, V1, V2, Standard_True);
       if (!V1.IsNull() && !V2.IsNull()) {
         gp_Vec aV (BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
-        gp_Ax2 anAxes (aP, -aV);
-        gp_Circ aCirc (anAxes, aCI.GetRadius());
+        gp_Ax2 anAxes (aP, aV);
+        gp_Ax3 anAxes3(anAxes);
+        gp_Pln aPln(anAxes3);
+        gp_Ax2 anAxes1(aP, -aV);
+        gp_Circ aCirc (anAxes1, aCI.GetRadius());
         TopoDS_Shape aCircle = BRepBuilderAPI_MakeEdge(aCirc).Edge();
         BRepBuilderAPI_MakeWire MW;
         MW.Add(TopoDS::Edge(aCircle));
-        BRepBuilderAPI_MakeFace MF (MW, Standard_False);
+        BRepBuilderAPI_MakeFace MF (aPln, MW);
         aShape = MF.Shape();
       }
     }
@@ -121,10 +125,14 @@ Standard_Integer GEOMImpl_DiskDriver::Execute(TFunction_Logbook& log) const
       if (gp_Vec(aP1, aP2).IsParallel(gp_Vec(aP1, aP3), Precision::Angular()))
         Standard_ConstructionError::Raise("Disk creation aborted: points lay on one line");
       Handle(Geom_Circle) aCirc = GC_MakeCircle(aP3, aP2, aP1).Value();
+      gp_Circ aGpCirc = aCirc->Circ();
+      gp_Ax2 anAxes = aGpCirc.Position();
+      gp_Ax3 anAxes3(anAxes.Location(), -anAxes.Direction());
+      gp_Pln aPln(anAxes3);
       TopoDS_Shape aCircle = BRepBuilderAPI_MakeEdge(aCirc).Edge();
       BRepBuilderAPI_MakeWire MW;
       MW.Add(TopoDS::Edge(aCircle));
-      BRepBuilderAPI_MakeFace MF (MW, Standard_False);
+      BRepBuilderAPI_MakeFace MF (aPln, MW);
       aShape = MF.Shape();
     }  
   }
@@ -139,12 +147,15 @@ Standard_Integer GEOMImpl_DiskDriver::Execute(TFunction_Logbook& log) const
     else if (anOrient == 3)
       aV = gp::DY();
 
-    gp_Ax2 anAxes (aP, -aV);
-    gp_Circ aCirc (anAxes, aCI.GetRadius());
+    gp_Ax2 anAxes (aP, aV);
+    gp_Ax2 anAxes1(aP, -aV);
+    gp_Ax3 anAxes3(anAxes);
+    gp_Pln aPln(anAxes3);
+    gp_Circ aCirc (anAxes1, aCI.GetRadius());
     TopoDS_Shape aCircle = BRepBuilderAPI_MakeEdge(aCirc).Edge();
     BRepBuilderAPI_MakeWire MW;
     MW.Add(TopoDS::Edge(aCircle));
-    BRepBuilderAPI_MakeFace MF (MW, Standard_False);
+    BRepBuilderAPI_MakeFace MF (aPln, MW);
     aShape = MF.Shape();
   }
    else {

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -20,27 +20,20 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <Standard_Stream.hxx>
-
 #include <GEOMImpl_ScaleDriver.hxx>
 #include <GEOMImpl_IScale.hxx>
 #include <GEOMImpl_Types.hxx>
+#include <GEOMUtils.hxx>
 #include <GEOM_Function.hxx>
-
-#include <ShapeFix_Shape.hxx>
-#include <ShapeFix_ShapeTolerance.hxx>
 
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepBuilderAPI_GTransform.hxx>
 #include <BRep_Tool.hxx>
-#include <BRepAlgo.hxx>
-#include <BRepCheck_Analyzer.hxx>
 
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
-#include <TopoDS_Vertex.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 
 #include <Precision.hxx>
@@ -175,19 +168,8 @@ Standard_Integer GEOMImpl_ScaleDriver::Execute(TFunction_Logbook& log) const
 
   if (aShape.IsNull()) return 0;
 
-  BRepCheck_Analyzer ana (aShape, Standard_False);
-  if (!ana.IsValid()) {
-    ShapeFix_ShapeTolerance aSFT;
-    aSFT.LimitTolerance(aShape,Precision::Confusion(),Precision::Confusion());
-    Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape(aShape);
-    aSfs->SetPrecision(Precision::Confusion());
-    aSfs->Perform();
-    aShape = aSfs->Shape();
-
-    ana.Init(aShape, Standard_False);
-    if (!ana.IsValid())
-      Standard_ConstructionError::Raise("Scaling aborted : algorithm has produced an invalid shape result");
-  }
+  if ( !GEOMUtils::CheckShape(aShape) && !GEOMUtils::FixShapeTolerance(aShape) )
+    Standard_ConstructionError::Raise("Scaling aborted : algorithm has produced an invalid shape result");
 
   aFunction->SetValue(aShape);
 

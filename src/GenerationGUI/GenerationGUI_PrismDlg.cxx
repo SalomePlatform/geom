@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -446,7 +446,7 @@ void GenerationGUI_PrismDlg::SetEditCurrentArgument()
     myEditCurrentArgument = GroupVecH->LineEdit2;
     GroupVecH->PushButton1->setDown(false);
     GroupVecH->LineEdit1->setEnabled(false);
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+    localSelection(TopAbs_EDGE);
   }
   else if (send == Group2Points->PushButton1) {
     myEditCurrentArgument = Group2Points->LineEdit1;
@@ -461,7 +461,7 @@ void GenerationGUI_PrismDlg::SetEditCurrentArgument()
     Group2Points->PushButton3->setDown(false);
     Group2Points->LineEdit1->setEnabled(false);
     Group2Points->LineEdit3->setEnabled(false);
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+    localSelection(TopAbs_VERTEX);
   }
   else if (send == Group2Points->PushButton3) {
     myEditCurrentArgument = Group2Points->LineEdit3;
@@ -469,7 +469,7 @@ void GenerationGUI_PrismDlg::SetEditCurrentArgument()
     Group2Points->PushButton2->setDown(false);
     Group2Points->LineEdit1->setEnabled(false);
     Group2Points->LineEdit2->setEnabled(false);
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+    localSelection(TopAbs_VERTEX);
   }
   else   if (send == GroupDXDYDZ->PushButton1) {
     myEditCurrentArgument = GroupDXDYDZ->LineEdit1;
@@ -717,12 +717,15 @@ bool GenerationGUI_PrismDlg::execute (ObjectList& objects)
     if(GroupThickening->checkButton1->isChecked())
     { 
       double aThickness = GroupThickening->SpinBox_DX->value();
-      if (GroupThickening->checkButton2->isChecked())
-      {
-        aThickness = -aThickness;  
-      }
-      
-      anObj = anotherOper->MakeThickening(anObj, aThickness, /*copy=*/false);    
+      bool isInside = GroupThickening->checkButton2->isChecked();
+
+      GEOM::ListOfLong_var anArray = new GEOM::ListOfLong;
+
+      anObj = anotherOper->MakeThickening
+        (anObj, anArray, aThickness, /*copy=*/false, isInside);
+
+      if (!anObj->_is_nil() && !IsPreview())
+        anObj->SetParameters(GroupThickening->SpinBox_DX->text().toUtf8().constData());
     }
     
     if (!anObj->_is_nil())
@@ -758,4 +761,15 @@ void GenerationGUI_PrismDlg::addSubshapesToStudy()
 bool GenerationGUI_PrismDlg::extractPrefix() const
 {
   return myBaseObjects.count() > 1;
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> GenerationGUI_PrismDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res(myBaseObjects);
+  res << myVec << myPoint1 << myPoint2 ;
+  return res;
 }
