@@ -17,7 +17,17 @@
    <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout">
      <item row="2" column="1">
-      <widget class="QDoubleSpinBox" name="doubleSpinBox_2"/>
+      <widget class="QDoubleSpinBox" name="dsb_smallRadius">
+       <property name="decimals">
+        <number>5</number>
+       </property>
+       <property name="maximum">
+        <double>100000.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>40.000000000000000</double>
+       </property>
+      </widget>
      </item>
      <item row="0" column="0">
       <widget class="QLabel" name="label">
@@ -27,13 +37,43 @@
       </widget>
      </item>
      <item row="3" column="1">
-      <widget class="QDoubleSpinBox" name="doubleSpinBox_3"/>
+      <widget class="QDoubleSpinBox" name="dsb_bigHeight">
+       <property name="decimals">
+        <number>5</number>
+       </property>
+       <property name="maximum">
+        <double>1000000.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>80.000000000000000</double>
+       </property>
+      </widget>
      </item>
      <item row="4" column="1">
-      <widget class="QDoubleSpinBox" name="doubleSpinBox_4"/>
+      <widget class="QDoubleSpinBox" name="dsb_smallHeight">
+       <property name="decimals">
+        <number>5</number>
+       </property>
+       <property name="maximum">
+        <double>1000000.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>80.000000000000000</double>
+       </property>
+      </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QDoubleSpinBox" name="doubleSpinBox"/>
+      <widget class="QDoubleSpinBox" name="dsb_bigRadius">
+       <property name="decimals">
+        <number>5</number>
+       </property>
+       <property name="maximum">
+        <double>100000.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>50.000000000000000</double>
+       </property>
+      </widget>
      </item>
      <item row="3" column="0">
       <widget class="QLabel" name="label_3">
@@ -61,7 +101,7 @@
    <item row="1" column="0">
     <layout class="QGridLayout" name="gridLayout_2">
      <item row="0" column="0">
-      <widget class="QCheckBox" name="checkBox">
+      <widget class="QCheckBox" name="cb_buildSolid">
        <property name="text">
         <string>Build solid part</string>
        </property>
@@ -75,7 +115,17 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QDoubleSpinBox" name="doubleSpinBox_5"/>
+      <widget class="QDoubleSpinBox" name="dsb_solidThickness">
+       <property name="decimals">
+        <number>5</number>
+       </property>
+       <property name="maximum">
+        <double>1000000.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>5.000000000000000</double>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -126,14 +176,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>checkBox</sender>
+   <sender>cb_buildSolid</sender>
    <signal>clicked(bool)</signal>
    <receiver>label_5</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>89</x>
-     <y>184</y>
+     <x>99</x>
+     <y>170</y>
     </hint>
     <hint type="destinationlabel">
      <x>107</x>
@@ -142,14 +192,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>checkBox</sender>
+   <sender>cb_buildSolid</sender>
    <signal>clicked(bool)</signal>
-   <receiver>doubleSpinBox_5</receiver>
+   <receiver>dsb_solidThickness</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>140</x>
-     <y>178</y>
+     <x>150</x>
+     <y>170</y>
     </hint>
     <hint type="destinationlabel">
      <x>277</x>

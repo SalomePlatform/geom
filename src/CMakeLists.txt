@@ -24,7 +24,7 @@ SET(SUBDIRS_COMMON
   ARCHIMEDE BlockFix GEOMAlgo SKETCHER GEOM ShHealOper GEOMUtils XAO XAO_Swig 
   GEOMImpl GEOM_I GEOMClient GEOM_I_Superv GEOM_SWIG GEOM_PY
   AdvancedEngine OCC2VTK
-  STLPlugin BREPPlugin STEPPlugin IGESPlugin XAOPlugin VTKPlugin
+  STLPlugin BREPPlugin STEPPlugin IGESPlugin XAOPlugin VTKPlugin Tools
   )
 
 ##

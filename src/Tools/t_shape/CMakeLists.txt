@@ -17,16 +17,28 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
+INCLUDE(UsePyQt4)
+
 # --- scripts ---
 
 # scripts / static
 SET(plugin_SCRIPTS
+  __init__.py
   t_shape_builder.py
   t_shape_dialog.py
   t_shape_dialog.ui
-  t_shape_dialog_ui.py
-  ) 
+  )
+
+# uic files / to be processed by pyuic
+SET(_pyuic_files
+  t_shape_dialog.ui
+)
+
+# scripts / pyuic wrappings
+PYQT4_WRAP_UIC(_pyuic_SCRIPTS ${_pyuic_files})
+
 
 # --- rules ---
 
-SALOME_INSTALL_SCRIPTS("${plugin_SCRIPTS}" ${SALOME_SMESH_INSTALL_PLUGINS}/t_shape)
+SALOME_INSTALL_SCRIPTS("${plugin_SCRIPTS}" ${SALOME_GEOM_INSTALL_PLUGINS}/t_shape)
+SALOME_INSTALL_SCRIPTS("${_pyuic_SCRIPTS}" ${SALOME_GEOM_INSTALL_PLUGINS}/t_shape)

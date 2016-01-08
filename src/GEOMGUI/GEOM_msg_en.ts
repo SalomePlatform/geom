@@ -5350,7 +5350,7 @@ shells and solids on the other hand.</translation>
     </message>
     <message>
         <source>GEOM_PLUGINS_OTHER</source>
-        <translation>Other</translation>
+        <translation>Python Plugins</translation>
     </message>
     <message>
         <source>SHOW_ONLY_SELECTED</source>

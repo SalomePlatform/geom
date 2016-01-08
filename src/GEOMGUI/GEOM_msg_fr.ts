@@ -5342,7 +5342,7 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>GEOM_PLUGINS_OTHER</source>
-        <translation>Autre</translation>
+        <translation>Plugins Python</translation>
     </message>
     <message>
         <source>SHOW_ONLY_SELECTED</source>

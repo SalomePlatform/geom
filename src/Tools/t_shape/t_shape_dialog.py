@@ -34,19 +34,23 @@ class TShapeDialog(QtGui.QDialog):
       self.ui.setupUi(self)
       self.show()
       self._wasOk = False
-      self.ui.doubleSpinBox_5.setEnabled(False)
+      self.ui.dsb_solidThickness.setEnabled(False)
       self.ui.label_5.setEnabled(False)
+      self.ui.dsb_bigRadius.setValue(50.0)
+      self.ui.dsb_smallRadius.setValue(40.0)
+      self.ui.dsb_bigHeight.setValue(80.0)
+      self.ui.dsb_smallHeight.setValue(80.0)
    
     def accept(self):
       self._wasOk = True
       QtGui.QDialog.accept(self)
       
     def getData(self):
-      r1 = self.ui.doubleSpinBox.value()
-      r2 = self.ui.doubleSpinBox_2.value()
-      h1 = self.ui.doubleSpinBox_3.value()
-      h2 = self.ui.doubleSpinBox_4.value()
-      thickness = self.ui.doubleSpinBox_5.value()
+      r1 = self.ui.dsb_bigRadius.value()
+      r2 = self.ui.dsb_smallRadius.value()
+      h1 = self.ui.dsb_bigHeight.value()
+      h2 = self.ui.dsb_smallHeight.value()
+      thickness = self.ui.dsb_solidThickness.value()
       
       return r1, r2, h1, h2, thickness
 
