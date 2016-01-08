@@ -8,13 +8,15 @@ from salome.geom import geomBuilder
 import math
 import SALOMEDS
 
+geompy = None
+
 def demidisk(study, r1, a1, roty=0, solid_thickness=0):
   if solid_thickness < 1e-7:
     with_solid = False
   else:
     with_solid = True
 
-  geompy = geomBuilder.New(study)
+  #geompy = geomBuilder.New(study)
   
   O = geompy.MakeVertex(0, 0, 0)
   OX = geompy.MakeVectorDXDYDZ(1, 0, 0) 
@@ -81,7 +83,7 @@ def demidisk(study, r1, a1, roty=0, solid_thickness=0):
     return v, l, arc1, part1
 
 def pointsProjetes(study, vref, face):
-  geompy = geomBuilder.New(study)
+  #geompy = geomBuilder.New(study)
   vface = geompy.ExtractShapes(face, geompy.ShapeType["VERTEX"], True)
   vord = range(len(vref))
   plan = geompy.MakePlaneThreePnt(vref[0], vref[1], vref[-1], 10000)
@@ -94,7 +96,7 @@ def pointsProjetes(study, vref, face):
   return vord
 
 def arcsProjetes(study, vf, face):
-  geompy = geomBuilder.New(study)
+  #geompy = geomBuilder.New(study)
   lface = geompy.ExtractShapes(face, geompy.ShapeType["EDGE"], True)
   lord = range(3)
   ends = [vf[1], vf[6], vf[7], vf[3]]
@@ -104,7 +106,7 @@ def arcsProjetes(study, vf, face):
       if (((geompy.MinDistance(pts[0], ends[i]) < 0.001) and (geompy.MinDistance(pts[1], ends[i+1]) < 0.001)) or
           ((geompy.MinDistance(pts[1], ends[i]) < 0.001) and (geompy.MinDistance(pts[0], ends[i+1]) < 0.001))):
         lord[i] = lf
-        print "arc_%d OK"%i
+        #print "arc_%d OK"%i
         break
     pass
   return lord
@@ -117,6 +119,7 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0):
   else:
     with_solid = True
   
+  global geompy
   geompy = geomBuilder.New(study)
   
   O = geompy.MakeVertex(0, 0, 0)
@@ -205,7 +208,7 @@ def jonction(study, r1, r2, h1, h2, a1):
   """ Builds the jonction faces and
   returns what is needed to build the whole pipe
   """
-  geompy = geomBuilder.New(study)
+  #geompy = geomBuilder.New(study)
   
   O = geompy.MakeVertex(0, 0, 0)
   OX = geompy.MakeVectorDXDYDZ(1, 0, 0) 
@@ -232,6 +235,7 @@ def jonction(study, r1, r2, h1, h2, a1):
 
   sect45 = geompy.MakeCommonList([demicyl1, planr], True)
   sect90 = geompy.MakeCommonList([demicyl2, arcextru], True)
+  #geompy.addToStudy(sect90, "sect90")
 
   # --- liste ordonnée des points projetés sur les deux sections
 
@@ -248,7 +252,7 @@ def jonction(study, r1, r2, h1, h2, a1):
   dz = -r2/2.0
   for i in (0, 2, 4, 5):
     vord90[i] = geompy.TranslateDXDYDZ(vord90[i], 0, 0, dz, True)
-    geompy.addToStudyInFather(sect90, vord90[i], 'vm%d'%i)
+    #geompy.addToStudyInFather(sect90, vord90[i], 'vm%d'%i)
     
   # --- création des deux arêtes curvilignes sur l'enveloppe cylindrique du cylindre principal, à la jonction
 
@@ -259,7 +263,7 @@ def jonction(study, r1, r2, h1, h2, a1):
 
   lipts = ((6, 6, 4), (7, 7, 5))
   for i, ipts in enumerate(lipts):
-    print i, ipts
+    #print i, ipts
     p0 = vord90[ipts[0]]
     p1 = vord45[ipts[1]]
     p2 = vord45[ipts[2]]
@@ -267,7 +271,7 @@ def jonction(study, r1, r2, h1, h2, a1):
     #geompy.addToStudy(plan, "plan%d"%i)
     section = geompy.MakeSection(plan, arcextru, True)
     secpart = geompy.MakePartition([section], [sect45, sect90], [], [], geompy.ShapeType["EDGE"], 0, [], 0, True)
-    geompy.addToStudy(secpart, "secpart%d"%i)
+    #geompy.addToStudy(secpart, "secpart%d"%i)
     lsec = geompy.ExtractShapes(secpart, geompy.ShapeType["EDGE"], True)
 
     for l in lsec:
@@ -275,7 +279,7 @@ def jonction(study, r1, r2, h1, h2, a1):
       if (((geompy.MinDistance(pts[0], p0) < 0.001) and (geompy.MinDistance(pts[1], p1) < 0.001)) or
           ((geompy.MinDistance(pts[1], p0) < 0.001) and (geompy.MinDistance(pts[0], p1) < 0.001))):
         curv[i+2] =l
-        print "curv_%d OK"%i
+        #print "curv_%d OK"%i
         break
     
   # --- creation des arêtes droites manquantes, des faces et volumes pour les quatre volumes de la jonction

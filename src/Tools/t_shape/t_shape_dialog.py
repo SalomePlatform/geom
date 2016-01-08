@@ -50,7 +50,9 @@ class TShapeDialog(QtGui.QDialog):
       r2 = self.ui.dsb_smallRadius.value()
       h1 = self.ui.dsb_bigHeight.value()
       h2 = self.ui.dsb_smallHeight.value()
-      thickness = self.ui.dsb_solidThickness.value()
+      thickness = 0.0
+      if self.ui.cb_buildSolid.isChecked():
+        thickness = self.ui.dsb_solidThickness.value()
       
       return r1, r2, h1, h2, thickness
 
