@@ -27,6 +27,7 @@ SET(plugin_SCRIPTS
   t_shape_builder.py
   t_shape_dialog.py
   t_shape_dialog.ui
+  t_shape_progress.py
   )
 
 # uic files / to be processed by pyuic

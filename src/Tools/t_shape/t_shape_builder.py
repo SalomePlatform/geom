@@ -111,7 +111,7 @@ def arcsProjetes(study, vf, face):
     pass
   return lord
  
-def build_shape(study, r1, r2, h1, h2, solid_thickness=0):
+def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
   """ Builds the final shape """
   
   if solid_thickness < 1e-7:
@@ -136,6 +136,9 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0):
   # --- Creation of the jonction faces
   [faci, sect45, arc1, l1, lord90, lord45, edges, arcextru] = jonction(study, r1, r2,\
                                                                        h1, h2, a1)
+  if progressBar is not None:
+    progressBar.addSteps(1)
+    
   if with_solid:
     # The same code is executed again with different external radiuses in order
     # to get the needed faces and edges to build the solid layer of the pipe
@@ -150,10 +153,16 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0):
     for i,l in enumerate(lord45):
       faces_jonction_ext.append(geompy.MakeQuad2Edges(lord45[i],lord45_ext[i]))
    
+  if progressBar is not None:
+    progressBar.addSteps(1)
+    
   # --- extrusion droite des faces de jonction, pour reconstituer les demi cylindres
   if with_solid:    
     sect45 = geompy.MakeCompound([sect45]+faces_jonction_ext[-3:])
     sect45 = geompy.MakeGlueEdges(sect45, 1e-7)
+    
+  if progressBar is not None:
+    progressBar.addSteps(1)
     
   extru1 = geompy.MakePrismVecH(sect45, OX, h1+10)
 
@@ -163,6 +172,9 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0):
   base2 = geompy.MakePartition(faces_coupe, [], [], [], geompy.ShapeType["FACE"], 0, [], 0, True)
   extru2 = geompy.MakePrismVecH(base2, OZ, h2)
 
+  if progressBar is not None:
+    progressBar.addSteps(1)
+    
   # --- partition et coupe
 
   if with_solid:
@@ -171,24 +183,36 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0):
      demiDisque = geompy.MakeFaceWires([arc1, l1[0]], 1)
   demiCylindre = geompy.MakePrismVecH(demiDisque, OX, h1)
 
+  if progressBar is not None:
+    progressBar.addSteps(1)
+    
   box = geompy.MakeBox(0, -2*(r1+h1), -2*(r1+h1), 2*(r1+h1), 2*(r1+h1), 2*(r1+h1))
   rot = geompy.MakeRotation(box, OY, 45*math.pi/180.0)
 
   # NOTE: The following Cut takes almost half of the total execution time
   garder = geompy.MakeCutList(demiCylindre, [extru2, rot], True)
   
+  if progressBar is not None:
+    progressBar.addSteps(10)
+    
   faces_coupe = faci[:5]
   if with_solid:
     faces_coupe.extend(faces_jonction_ext[-7:])
   raccord = geompy.MakePartition([garder], faces_coupe + [arcextru], [], [], geompy.ShapeType["SOLID"], 0, [], 0, True)
   assemblage = geompy.MakeCompound([raccord, extru1, extru2])
   assemblage = geompy.MakeGlueFaces(assemblage, 1e-7)
-  
+
+  if progressBar is not None:
+    progressBar.addSteps(2)
+
   box = geompy.MakeBox(-1, -(r1+r2+2*solid_thickness), -1, h1, r1+r2+2*solid_thickness, h2)
   
   # NOTE: This operation takes about 1/4 of the total execution time
   final = geompy.MakeCommonList([box, assemblage], True)
   
+  if progressBar is not None:
+    progressBar.addSteps(5)
+    
   # --- Partie inférieure
   
   v3, l3, arc3, part3 = demidisk(study, r1, a1, 180.0, solid_thickness)
@@ -200,7 +224,10 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0):
   plane = geompy.MakePlane(O,OX,2000)
   compound_mirrored = geompy.MakeMirrorByPlane(compound, plane)
   final = geompy.MakeCompound([compound, compound_mirrored])
-  
+
+  if progressBar is not None:
+    progressBar.addSteps(1)
+      
   return final
 
 

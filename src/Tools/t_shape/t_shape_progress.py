@@ -1,4 +1,5 @@
-# Copyright (C) 2012-2014  EDF R&D
+# -*- coding: utf-8 -*-
+# Copyright (C) 2010-2014  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -16,14 +17,23 @@
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
+# Author : Renaud Nédélec (OpenCascade S.A.S)
 
-ADD_SUBDIRECTORY(t_shape)
+from salome.geom.t_shape import t_shape_builder
+from PyQt4.QtGui import QProgressDialog
 
-# scripts / static
-SET(plugin_SCRIPTS
-  geom_plugins.py
-)
-
-# --- rules ---
-
-SALOME_INSTALL_SCRIPTS("${plugin_SCRIPTS}" ${SALOME_GEOM_INSTALL_PLUGINS})
+class t_shape_progress(QProgressDialog):
+    _totSteps = 0
+    _nmaxSteps = 20
+    
+    def __init__(self):
+      QProgressDialog.__init__(self, "t_shape fluid build", "stop", 0, self._nmaxSteps)      
+        
+    def run(self, activeStudy, r1, r2, h1, h2, thickness):
+      shape = t_shape_builder.build_shape(activeStudy, r1, r2, h1, h2, thickness, self)
+      self.setValue(self._nmaxSteps)
+      return shape
+      
+    def addSteps(self, nbSteps):
+      self._totSteps += nbSteps
+      self.setValue(self._totSteps)

@@ -22,8 +22,9 @@
 import salome_pluginsmanager
 
 def t_shape_fluid(context):
-    from salome.geom.t_shape import t_shape_builder
+    #from salome.geom.t_shape import t_shape_builder
     from salome.geom.t_shape import t_shape_dialog
+    from salome.geom.t_shape import t_shape_progress
     import xalome
     from PyQt4.QtGui import QMessageBox
     activeStudy = context.study
@@ -37,7 +38,9 @@ def t_shape_fluid(context):
     if dialog.wasOk():
       r1, r2, h1, h2, thickness = dialog.getData()
       #QMessageBox.about(None, "Building in progress", "building shape, please be patient")
-      shape = t_shape_builder.build_shape(activeStudy, r1, r2, h1, h2, thickness)
+      #shape = t_shape_builder.build_shape(activeStudy, r1, r2, h1, h2, thickness)
+      shapeBuilder = t_shape_progress.t_shape_progress()
+      shape = shapeBuilder.run(activeStudy, r1, r2, h1, h2, thickness)
       entry = xalome.addToStudy(activeStudy, shape, "T_shape_fluid" )
       xalome.displayShape(entry)
     #if dialog.wasOk():
