@@ -22,8 +22,8 @@
 import salome_pluginsmanager
 
 def t_shape_fluid(context):
-    from t_shape import t_shape_builder
-    from t_shape import t_shape_dialog
+    from salome.geom.t_shape import t_shape_builder
+    from salome.geom.t_shape import t_shape_dialog
     import xalome
     from PyQt4.QtGui import QMessageBox
     activeStudy = context.study

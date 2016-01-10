@@ -327,16 +327,23 @@ def jonction(study, r1, r2, h1, h2, a1):
  
   return faci, sect45, arc1, l1, lord90, lord45, edges, arcextru
 
-if __name__=="__main__":
+def test_t_shape_builder():
   """For testing purpose"""
   salome.salome_init()
   theStudy = salome.myStudy
   geompy = geomBuilder.New(theStudy)
-  for r1 in [1, 100, 10000]:
-    for r2 in [0.75*r1, 0.3*r1, 0.1*r1]:
-      for thickness in [(r1-r2)/10.0, (r1-r2) /2.0, 0.75*(r1-r2)]:
-        h1 = r1 * 1.5
+  for r1 in [1., 100.]:
+    for r2 in [0.9*r1, 0.5*r1, 0.1*r1, 0.05*r1]:
+      for thickness in [r1/100., r1/10., r1/2.]:
+        print r1, r2, thickness
+        h1 = r1 * 2.0
         h2 = h1
-        res = build_shape(theStudy, r1, r2, h1, h2, thickness)
-        geompy.addToStudy(res, "res_%f_%f_%f"%(r1,r2, thickness))
+        try:
+          res = build_shape(theStudy, r1, r2, h1, h2, thickness)
+          geompy.addToStudy(res, "res_%f_%f_%f"%(r1,r2, thickness))
+        except:
+          print "problem with res_%f_%f_%f"%(r1,r2, thickness)
   
+if __name__=="__main__":
+  """For testing purpose"""
+  test_t_shape_builder()
