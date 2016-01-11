@@ -21,13 +21,15 @@
 
 from salome.geom.t_shape import t_shape_builder
 from PyQt4.QtGui import QProgressDialog
+from PyQt4 import QtCore
 
 class t_shape_progress(QProgressDialog):
     _totSteps = 0
-    _nmaxSteps = 20
+    _nmaxSteps = 27
     
-    def __init__(self):
-      QProgressDialog.__init__(self, "t_shape fluid build", "stop", 0, self._nmaxSteps)      
+    def __init__(self, parent=None):
+      QProgressDialog.__init__(self, "t_shape fluid build", "stop", 0, self._nmaxSteps, parent, QtCore.Qt.Tool)
+      self.show()
         
     def run(self, activeStudy, r1, r2, h1, h2, thickness):
       shape = t_shape_builder.build_shape(activeStudy, r1, r2, h1, h2, thickness, self)

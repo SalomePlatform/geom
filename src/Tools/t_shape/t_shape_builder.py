@@ -7,6 +7,7 @@ import GEOM
 from salome.geom import geomBuilder
 import math
 import SALOMEDS
+import time
 
 geompy = None
 
@@ -113,7 +114,11 @@ def arcsProjetes(study, vf, face):
  
 def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
   """ Builds the final shape """
-  
+
+  if progressBar is not None:
+    time0 = time.time()
+    print time.time() -time0
+    
   if solid_thickness < 1e-7:
     with_solid = False
   else:
@@ -137,7 +142,8 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
   [faci, sect45, arc1, l1, lord90, lord45, edges, arcextru] = jonction(study, r1, r2,\
                                                                        h1, h2, a1)
   if progressBar is not None:
-    progressBar.addSteps(1)
+    progressBar.addSteps(2)
+    print time.time() -time0
     
   if with_solid:
     # The same code is executed again with different external radiuses in order
@@ -154,7 +160,8 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
       faces_jonction_ext.append(geompy.MakeQuad2Edges(lord45[i],lord45_ext[i]))
    
   if progressBar is not None:
-    progressBar.addSteps(1)
+    progressBar.addSteps(4)
+    print time.time() -time0
     
   # --- extrusion droite des faces de jonction, pour reconstituer les demi cylindres
   if with_solid:    
@@ -163,6 +170,7 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
     
   if progressBar is not None:
     progressBar.addSteps(1)
+    print time.time() -time0
     
   extru1 = geompy.MakePrismVecH(sect45, OX, h1+10)
 
@@ -174,6 +182,7 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
 
   if progressBar is not None:
     progressBar.addSteps(1)
+    print time.time() -time0
     
   # --- partition et coupe
 
@@ -185,6 +194,7 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
 
   if progressBar is not None:
     progressBar.addSteps(1)
+    print time.time() -time0
     
   box = geompy.MakeBox(0, -2*(r1+h1), -2*(r1+h1), 2*(r1+h1), 2*(r1+h1), 2*(r1+h1))
   rot = geompy.MakeRotation(box, OY, 45*math.pi/180.0)
@@ -193,8 +203,9 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
   garder = geompy.MakeCutList(demiCylindre, [extru2, rot], True)
   
   if progressBar is not None:
-    progressBar.addSteps(10)
-    
+    progressBar.addSteps(9)
+    print time.time() -time0
+
   faces_coupe = faci[:5]
   if with_solid:
     faces_coupe.extend(faces_jonction_ext[-7:])
@@ -203,7 +214,8 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
   assemblage = geompy.MakeGlueFaces(assemblage, 1e-7)
 
   if progressBar is not None:
-    progressBar.addSteps(2)
+    progressBar.addSteps(3)
+    print time.time() -time0
 
   box = geompy.MakeBox(-1, -(r1+r2+2*solid_thickness), -1, h1, r1+r2+2*solid_thickness, h2)
   
@@ -212,6 +224,7 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
   
   if progressBar is not None:
     progressBar.addSteps(5)
+    print time.time() -time0
     
   # --- Partie inférieure
   
@@ -227,6 +240,7 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
 
   if progressBar is not None:
     progressBar.addSteps(1)
+    print time.time() -time0
       
   return final
 
