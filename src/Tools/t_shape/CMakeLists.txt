@@ -17,7 +17,7 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 IF(SALOME_BUILD_GUI)
-  INCLUDE(UsePyQt4)
+  INCLUDE(UsePyQt)
 ENDIF()
 
 # --- scripts ---
@@ -42,7 +42,7 @@ IF(SALOME_BUILD_GUI)
     )
 
   # scripts / pyuic wrappings
-  PYQT4_WRAP_UIC(_pyuic_SCRIPTS ${_pyuic_files})
+  PYQT_WRAP_UIC(_pyuic_SCRIPTS ${_pyuic_files})
 ENDIF()
 
 # --- rules ---

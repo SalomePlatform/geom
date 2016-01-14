@@ -213,7 +213,9 @@ int CurveCreator_TreeViewModel::getPoint( const QModelIndex& theIndx ) const
 void CurveCreator_TreeViewModel::setCurve( CurveCreator_ICurve* theCurve )
 {
   myCurve = theCurve;
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
   reset();
+#endif
 }
 
 /*****************************************************************************************/
@@ -221,7 +223,11 @@ CurveCreator_TreeView::CurveCreator_TreeView( CurveCreator_ICurve* theCurve, QWi
   QTreeView(parent)
 {
   header()->hide();
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
   header()->setResizeMode(QHeaderView::ResizeToContents);
+#else
+  header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+#endif
   setUniformRowHeights(true);
   setContextMenuPolicy( Qt::CustomContextMenu );
   CurveCreator_TreeViewModel* aModel = new CurveCreator_TreeViewModel(theCurve, this);

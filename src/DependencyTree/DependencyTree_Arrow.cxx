@@ -39,7 +39,11 @@ const qreal arrowSize = 20;
 DependencyTree_Arrow::DependencyTree_Arrow( DependencyTree_Object* theStartItem,
                                             DependencyTree_Object* theEndItem,
                                             QGraphicsItem* parent, QGraphicsScene* scene )
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 :QGraphicsLineItem( parent, scene ),
+#else
+:QGraphicsLineItem( parent ),
+#endif
 myIsBiLink( false ),
 myStartItem( theStartItem ),
 myEndItem( theEndItem )

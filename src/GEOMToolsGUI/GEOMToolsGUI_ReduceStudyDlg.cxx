@@ -222,9 +222,15 @@ void GEOMToolsGUI_ReduceStudyDlg::createTreeWidget( QTreeWidget* theTreeWidget )
   QTreeWidgetItem * headerItem = new QTreeWidgetItem( columnNames );
   theTreeWidget->setHeaderItem ( headerItem );
   theTreeWidget->header()->moveSection( 1, 0 );
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
   theTreeWidget->header()->setClickable( true );
   theTreeWidget->header()->setMovable( false );
   theTreeWidget->header()->setResizeMode( 1, QHeaderView::ResizeToContents );
+#else
+  theTreeWidget->header()->setSectionsClickable( true );
+  theTreeWidget->header()->setSectionsMovable( false );
+  theTreeWidget->header()->setSectionResizeMode( 1, QHeaderView::ResizeToContents );
+#endif
   theTreeWidget->setSelectionMode( QAbstractItemView::ExtendedSelection );
 }
 

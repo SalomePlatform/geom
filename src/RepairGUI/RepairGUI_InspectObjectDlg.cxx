@@ -145,7 +145,7 @@ RepairGUI_InspectObjectDlg::TreeWidgetItem::TreeWidgetItem
   myShape( shape ),
   myTolerance (theTolerance)
 {
-  myIO = new SALOME_InteractiveObject( entry.toAscii(), "GEOM", "TEMP_IO" );
+  myIO = new SALOME_InteractiveObject( entry.toLatin1(), "GEOM", "TEMP_IO" );
   setFlags( flags() | Qt::ItemIsEditable );
 }
 
@@ -417,9 +417,15 @@ void RepairGUI_InspectObjectDlg::createTreeWidget(QTreeWidget *&theTreeObjects)
   headerItem->setIcon(1, myInvisible);
   theTreeObjects->setHeaderItem(headerItem);
   theTreeObjects->header()->moveSection(1, 0);
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
   theTreeObjects->header()->setClickable(true);
   theTreeObjects->header()->setMovable(false);
   theTreeObjects->header()->setResizeMode( 1, QHeaderView::ResizeToContents);
+#else
+  theTreeObjects->header()->setSectionsClickable(true);
+  theTreeObjects->header()->setSectionsMovable(false);
+  theTreeObjects->header()->setSectionResizeMode( 1, QHeaderView::ResizeToContents);
+#endif
   theTreeObjects->setSelectionMode(QAbstractItemView::ExtendedSelection);
   theTreeObjects->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
   // set custom item delegate

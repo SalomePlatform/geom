@@ -17,14 +17,12 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-#INCLUDE(UseQt4Ext)
-INCLUDE(${QT_USE_FILE})
+INCLUDE(UseQtExt)
 
 # --- options ---
 
 # additional include directories
 INCLUDE_DIRECTORIES(
-  ${QT_INCLUDE_DIRS}
   ${PTHREAD_INCLUDE_DIR}
   ${VTK_INCLUDE_DIRS}
   ${OMNIORB_INCLUDE_DIR}
@@ -95,12 +93,12 @@ SET(_moc_HEADERS
   )
 
 # header files / uic wrappings
-QT4_WRAP_UI(_uic_HEADERS ${_uic_files})
+QT_WRAP_UIC(_uic_HEADERS ${_uic_files})
 
 # --- sources ---
 
 # sources / moc wrappings
-QT4_WRAP_CPP(_moc_SOURCES ${_moc_HEADERS})
+QT_WRAP_MOC(_moc_SOURCES ${_moc_HEADERS})
 
 SET(TransformationGUI_SOURCES
   TransformationGUI.cxx

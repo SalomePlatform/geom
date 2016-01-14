@@ -99,7 +99,7 @@ QString VTKPlugin_ExportDlg::getFileName( const Handle(SALOME_InteractiveObject)
 
   VTKPlugin_ExportDlg fd( io, parent );
   fd.setFileMode( AnyFile );
-  fd.setFilters( fls );
+  fd.setNameFilters( fls );
   fd.setWindowTitle( caption );
   if ( !tmpfilename.isEmpty() )
     fd.processPath( tmpfilename );

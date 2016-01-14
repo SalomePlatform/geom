@@ -69,8 +69,8 @@ RepairGUI_FuseEdgesDlg::RepairGUI_FuseEdgesDlg (GeometryGUI* theGeometryGUI,
   GroupVertexes->LineEdit1->setReadOnly(true);
   GroupVertexes->LineEdit2->setReadOnly(true);
 
-  GroupVertexes->TextLabel3->setShown(false);
-  GroupVertexes->SpinBox_DX->setShown(false);
+  GroupVertexes->TextLabel3->setVisible(false);
+  GroupVertexes->SpinBox_DX->setVisible(false);
 
   QVBoxLayout* layout = new QVBoxLayout (centralWidget());
   layout->setMargin(0);

@@ -17,7 +17,6 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-INCLUDE(${QT_USE_FILE})
 INCLUDE(${VTK_USE_FILE})
 
 # --- options ---
@@ -26,7 +25,6 @@ INCLUDE(${VTK_USE_FILE})
 INCLUDE_DIRECTORIES(
   ${VTK_INCLUDE_DIRS}
   ${PTHREAD_INCLUDE_DIR}
-  ${QT_INCLUDE_DIRS}
   ${OMNIORB_INCLUDE_DIR}
   ${CAS_INCLUDE_DIRS}
   ${KERNEL_INCLUDE_DIRS}

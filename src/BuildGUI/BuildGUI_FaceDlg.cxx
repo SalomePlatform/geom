@@ -156,8 +156,13 @@ BuildGUI_FaceDlg::BuildGUI_FaceDlg( GeometryGUI* theGeometryGUI, QWidget* parent
   columnNames.append( tr( "GEOM_EDGE" ));
   columnNames.append( tr( "GEOM_FACE_CONSTRAINT" ) );
   myTreeConstraints->setHeaderLabels( columnNames );
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
   myTreeConstraints->header()->setMovable( false );
   myTreeConstraints->header()->setResizeMode( QHeaderView::ResizeToContents );
+#else
+  myTreeConstraints->header()->setSectionsMovable( false );
+  myTreeConstraints->header()->setSectionResizeMode( QHeaderView::ResizeToContents );
+#endif
   myTreeConstraints->setMinimumHeight( 140 );
 
   QHBoxLayout* l = new QHBoxLayout( myGroupWireConstraints->Box );

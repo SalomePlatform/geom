@@ -995,13 +995,13 @@ void BasicGUI_PointDlg::updateParamCoord(bool theIsUpdate)
     }
   }
   else if (id == GEOM_POINT_SURF) {
-    GroupOnSurface->TextLabel2->setShown(isParam);
-    GroupOnSurface->TextLabel3->setShown(isParam);
-    GroupOnSurface->SpinBox_DX->setShown(isParam);
-    GroupOnSurface->SpinBox_DY->setShown(isParam);
+    GroupOnSurface->TextLabel2->setVisible(isParam);
+    GroupOnSurface->TextLabel3->setVisible(isParam);
+    GroupOnSurface->SpinBox_DX->setVisible(isParam);
+    GroupOnSurface->SpinBox_DY->setVisible(isParam);
   }
 
-  GroupXYZ->setShown(!isParam && !isLength);
+  GroupXYZ->setVisible(!isParam && !isLength);
 
   if (theIsUpdate)
     QTimer::singleShot(50, this, SLOT(updateSize()));

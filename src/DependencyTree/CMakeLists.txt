@@ -17,7 +17,7 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-INCLUDE(UseQt4Ext)
+INCLUDE(UseQtExt)
 
 # --- options ---
 
@@ -73,7 +73,7 @@ SET(_moc_HEADERS
 # --- sources ---
 
 # sources / moc wrappings
-QT4_WRAP_CPP(_moc_SOURCES ${_moc_HEADERS})
+QT_WRAP_MOC(_moc_SOURCES ${_moc_HEADERS})
 
 SET(DependencyTree_SOURCES
   DependencyTree_Arrow.cxx
@@ -101,4 +101,4 @@ INSTALL(TARGETS DependencyTree EXPORT ${PROJECT_NAME}TargetGroup DESTINATION ${S
 
 INSTALL(FILES ${DependencyTree_HEADERS} DESTINATION ${SALOME_INSTALL_HEADERS})
 
-QT4_INSTALL_TS_RESOURCES("${_res_files}" "${SALOME_GEOM_INSTALL_RES_DATA}")
+QT_INSTALL_TS_RESOURCES("${_res_files}" "${SALOME_GEOM_INSTALL_RES_DATA}")
