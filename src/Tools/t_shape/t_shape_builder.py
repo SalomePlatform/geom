@@ -236,7 +236,8 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
   compound = geompy.MakeCompound([final, extru3])
   plane = geompy.MakePlane(O,OX,2000)
   compound_mirrored = geompy.MakeMirrorByPlane(compound, plane)
-  final = geompy.MakeCompound([compound, compound_mirrored])
+  compound_total = geompy.MakeCompound([compound, compound_mirrored])
+  final = geompy.MakeGlueFaces(compound_total, 1e-07)
 
   if progressBar is not None:
     progressBar.addSteps(1)
