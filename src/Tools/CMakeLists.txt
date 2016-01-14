@@ -19,11 +19,13 @@
 
 ADD_SUBDIRECTORY(t_shape)
 
-# scripts / static
-SET(plugin_SCRIPTS
-  geom_plugins.py
-)
 
-# --- rules ---
+IF(SALOME_BUILD_GUI)
+    # scripts / static
+    SET(plugin_SCRIPTS
+	geom_plugins.py
+    )
 
-SALOME_INSTALL_SCRIPTS("${plugin_SCRIPTS}" ${SALOME_GEOM_INSTALL_PLUGINS})
+    # --- rules ---
+    SALOME_INSTALL_SCRIPTS("${plugin_SCRIPTS}" ${SALOME_GEOM_INSTALL_PLUGINS})
+ENDIF()

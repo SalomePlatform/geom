@@ -16,30 +16,40 @@
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-
-INCLUDE(UsePyQt4)
+IF(SALOME_BUILD_GUI)
+  INCLUDE(UsePyQt4)
+ENDIF()
 
 # --- scripts ---
 
-# scripts / static
-SET(plugin_SCRIPTS
+# base scripts
+SET(base_SCRIPTS
   __init__.py
   t_shape_builder.py
-  t_shape_dialog.py
-  t_shape_dialog.ui
-  t_shape_progress.py
   )
 
-# uic files / to be processed by pyuic
-SET(_pyuic_files
-  t_shape_dialog.ui
-)
+IF(SALOME_BUILD_GUI)
+   # gui scripts 
+   SET(gui_SCRIPTS
+     t_shape_dialog.py
+     t_shape_dialog.ui
+     t_shape_progress.py
+     )
 
-# scripts / pyuic wrappings
-PYQT4_WRAP_UIC(_pyuic_SCRIPTS ${_pyuic_files})
+  # uic files / to be processed by pyuic
+  SET(_pyuic_files
+    t_shape_dialog.ui
+    )
 
+  # scripts / pyuic wrappings
+  PYQT4_WRAP_UIC(_pyuic_SCRIPTS ${_pyuic_files})
+ENDIF()
 
 # --- rules ---
 
-SALOME_INSTALL_SCRIPTS("${plugin_SCRIPTS}" ${SALOME_INSTALL_PYTHON}/salome/geom/t_shape)
-SALOME_INSTALL_SCRIPTS("${_pyuic_SCRIPTS}" ${SALOME_INSTALL_PYTHON}/salome/geom/t_shape)
+SALOME_INSTALL_SCRIPTS("${base_SCRIPTS}" ${SALOME_INSTALL_PYTHON}/salome/geom/t_shape)
+
+IF(SALOME_BUILD_GUI)
+  SALOME_INSTALL_SCRIPTS("${gui_SCRIPTS}" ${SALOME_INSTALL_PYTHON}/salome/geom/t_shape)
+  SALOME_INSTALL_SCRIPTS("${_pyuic_SCRIPTS}" ${SALOME_INSTALL_PYTHON}/salome/geom/t_shape)
+ENDIF()
