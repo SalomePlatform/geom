@@ -2654,7 +2654,8 @@ module GEOM
      *  coincident with \a theShapeWhat or could be a part of it.
      *  \param theShapeWhere Shape to find sub-shapes of.
      *  \param theShapeWhat Shape, specifying what to find.
-     *  \return Group of all found sub-shapes or a single found sub-shape.
+     *  \return Compound which includes all found sub-shapes if they have different types; 
+     *          or group of all found shapes of the equal type; or a single found sub-shape.
      */
     GEOM_Object GetInPlace (in GEOM_Object theShapeWhere,
                             in GEOM_Object theShapeWhat);
@@ -2677,7 +2678,8 @@ module GEOM
      *
      *  \param theShapeWhere Shape to find sub-shapes of.
      *  \param theShapeWhat Shape, specifying what to find.
-     *  \return Group of all found sub-shapes or a single found sub-shape.
+     *  \return Compound which includes all found sub-shapes if they have different types; 
+     *          or group of all found shapes of the equal type; or a single found sub-shape.
      */
     GEOM_Object GetInPlaceByHistory (in GEOM_Object theShapeWhere,
                                      in GEOM_Object theShapeWhat);

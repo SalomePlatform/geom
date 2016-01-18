@@ -5866,7 +5866,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return Group of all found sub-shapes or a single found sub-shape.
+        #  @return Compound which includes all found sub-shapes if they have different types; 
+        #          or group of all found shapes of the equal type; or a single found sub-shape.
         #
         #  @note This function has a restriction on argument shapes.
         #        If \a theShapeWhere has curved parts with significantly
@@ -5891,7 +5892,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         publication is switched on, default value is used for result name.
 
             Returns:
-                Group of all found sub-shapes or a single found sub-shape.
+                Compound which includes all found sub-shapes if they have different types; 
+                or group of all found shapes of the equal type; or a single found sub-shape.
 
 
             Note:
@@ -5927,7 +5929,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return Group of all found sub-shapes or a single found sub-shape.
+        #  @return Compound which includes all found sub-shapes if they have different types; 
+        #          or group of all found shapes of the equal type; or a single found sub-shape.
         #
         #  @ref swig_GetInPlace "Example"
         @ManageTransactions("ShapesOp")
@@ -5948,7 +5951,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         publication is switched on, default value is used for result name.
 
             Returns:
-                Group of all found sub-shapes or a single found sub-shape.
+                Compound which includes all found sub-shapes if they have different types; 
+                or group of all found shapes of the equal type; or a single found sub-shape.
             """
             # Example: see GEOM_TestOthers.py
             anObj = self.ShapesOp.GetInPlaceByHistory(theShapeWhere, theShapeWhat)
