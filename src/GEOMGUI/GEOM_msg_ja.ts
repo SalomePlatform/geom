@@ -4956,7 +4956,15 @@
       <translation>依存ツリーの表示</translation>
     </message>
     <message>
+      <source>STB_POP_SHOW_DEPENDENCY_TREE</source>
+      <translation>依存ツリーの表示</translation>
+    </message>
+    <message>
       <source>MEN_POP_REDUCE_STUDY</source>
+      <translation>スタディの削減</translation>
+    </message>
+    <message>
+      <source>STB_POP_REDUCE_STUDY</source>
       <translation>スタディの削減</translation>
     </message>
     <message>
