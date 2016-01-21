@@ -37,6 +37,11 @@
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Wire.hxx>
 
+#include <Prs3d_PointAspect.hxx>
+#include <Handle_Prs3d_PointAspect.hxx>
+#include <iostream>
+#define DEBTRACE(msg) {std::cerr<<std::flush<<__FILE__<<" ["<<__LINE__<<"] : "<<msg<<std::endl<<std::flush;}
+
 #include <stdio.h>
 
 //=======================================================================
@@ -247,6 +252,7 @@ void CurveCreator_Curve::getCoordinates( int theISection, int theIPoint, double&
 
 void CurveCreator_Curve::redisplayCurve()
 {
+  //DEBTRACE("redisplayCurve");
   if( myDisplayer ) {
     myDisplayer->eraseAll( false );
     myAISShape = NULL;
@@ -779,6 +785,7 @@ bool CurveCreator_Curve::addPoints( const CurveCreator::Coordinates& theCoords,
                                     const int theISection,
                                     const int theIPnt )
 {
+  //DEBTRACE("addPoints");
   bool res = false;
   CurveCreator::Coordinates aCoords = theCoords;
   // Set the difference.
@@ -834,6 +841,7 @@ bool CurveCreator_Curve::setPoint( const int theISection,
                                    const int theIPnt,
                                    const CurveCreator::Coordinates& theNewCoords )
 {
+  //DEBTRACE("setPoint");
   bool res = false;
   // Set the difference.
   startOperation();
@@ -862,6 +870,7 @@ bool CurveCreator_Curve::setPoint( const int theISection,
 bool CurveCreator_Curve::setSeveralPoints( const SectionToPointCoordsList &theSectionToPntCoords,
                                            const bool theIsToSaveDiff )
 {
+  //DEBTRACE("setSeveralPoints");
   bool res = false;
   // Set the difference.
   startOperation();
@@ -950,6 +959,7 @@ bool CurveCreator_Curve::removeSeveralPoints( const SectionToPointList &theSecti
 CurveCreator::Coordinates CurveCreator_Curve::getPoint( const int theISection,
                                                         const int theIPnt) const
 {
+  //DEBTRACE("getPoint");
   CurveCreator_Section* aSection = (CurveCreator_Section*)getSection( theISection );
   CurveCreator::Coordinates::const_iterator
     anIter = aSection->myPoints.begin() + toICoord(theIPnt);
@@ -964,20 +974,29 @@ CurveCreator::Coordinates CurveCreator_Curve::getPoint( const int theISection,
 //=======================================================================
 CurveCreator::Coordinates CurveCreator_Curve::getPoints( const int theISection ) const
 {
+  //DEBTRACE("getPoints");
   CurveCreator_Section* aSection = (CurveCreator_Section*)getSection( theISection );
   return aSection ? aSection->myPoints : CurveCreator::Coordinates();
 }
 
 void CurveCreator_Curve::constructAISObject()
 {
+  //DEBTRACE("constructAISObject");
   TopoDS_Shape aShape;
   CurveCreator_Utils::constructShape( this, aShape );
 
   myAISShape = new AIS_Shape( aShape );
+  Handle(Prs3d_PointAspect) anAspect = myAISShape->Attributes()->PointAspect();
+  anAspect->SetScale( 3.0 );
+  anAspect->SetTypeOfMarker(Aspect_TOM_O_POINT);
+  anAspect->SetColor(Quantity_NOC_ROYALBLUE4);
+  myAISShape->Attributes()->SetPointAspect( anAspect );
+
 }
 
 Handle(AIS_InteractiveObject) CurveCreator_Curve::getAISObject( const bool theNeedToBuild ) const
 {
+  //DEBTRACE("getAISObject");
   if ( !myAISShape && theNeedToBuild ) {
     CurveCreator_Curve* aCurve = (CurveCreator_Curve*)this;
     aCurve->constructAISObject();
