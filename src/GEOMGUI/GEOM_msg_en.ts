@@ -4961,7 +4961,15 @@ Please, select face, shell or solid and try again</translation>
         <translation>Show dependency tree</translation>
     </message>
     <message>
+        <source>STB_POP_SHOW_DEPENDENCY_TREE</source>
+        <translation>Show dependency tree</translation>
+    </message>
+    <message>
         <source>MEN_POP_REDUCE_STUDY</source>
+        <translation>Reduce study</translation>
+    </message>
+    <message>
+        <source>STB_POP_REDUCE_STUDY</source>
         <translation>Reduce study</translation>
     </message>
     <message>

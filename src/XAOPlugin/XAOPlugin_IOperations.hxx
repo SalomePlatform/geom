@@ -44,31 +44,31 @@ public:
   ~XAOPlugin_IOperations();
 
   bool ExportXAO( Handle(GEOM_Object) shape,
-		  std::list<Handle(GEOM_Object)> groupList,
-		  std::list<Handle(GEOM_Field)> fieldList,
-		  const char* author,
-		  const char* fileName );
+                  std::list<Handle(GEOM_Object)> groupList,
+                  std::list<Handle(GEOM_Field)> fieldList,
+                  const char* author,
+                  const char* fileName );
   
   bool ImportXAO( const char* fileName,
-		  Handle(GEOM_Object)& shape,
-		  Handle(TColStd_HSequenceOfTransient)& subShapes,
-		  Handle(TColStd_HSequenceOfTransient)& groups,
-		  Handle(TColStd_HSequenceOfTransient)& fields );
+                  Handle(GEOM_Object)& shape,
+                  Handle(TColStd_HSequenceOfTransient)& subShapes,
+                  Handle(TColStd_HSequenceOfTransient)& groups,
+                  Handle(TColStd_HSequenceOfTransient)& fields );
 
 private:
-  void            importSubShapes( XAO::Geometry* xaoGeometry,
-				   Handle(GEOM_Function) function,
-				   int shapeType,
-				   int dim,
-				   Handle(TColStd_HSequenceOfTransient)& subshapeList );
-  void            exportSubshapes( const Handle(GEOM_Object)& shape,
-				   XAO::BrepGeometry* geometry );
-  void            exportFields( std::list<Handle(GEOM_Field)> fieldList,
-				XAO::Xao* xaoObject,
-				XAO::BrepGeometry* geometry );
-  void            exportGroups( std::list<Handle(GEOM_Object)> groupList,
-				XAO::Xao* xaoObject,
-				XAO::BrepGeometry* geometry );
+  void importSubShapes( XAO::Geometry* xaoGeometry,
+                        Handle(GEOM_Function) function,
+                        int shapeType,
+                        int dim,
+                        Handle(TColStd_HSequenceOfTransient)& subshapeList );
+  void exportSubshapes( const Handle(GEOM_Object)& shape,
+                        XAO::BrepGeometry* geometry );
+  void exportFields( std::list<Handle(GEOM_Field)> fieldList,
+                     XAO::Xao* xaoObject,
+                     XAO::BrepGeometry* geometry );
+  bool exportGroups( std::list<Handle(GEOM_Object)> groupList,
+                     XAO::Xao* xaoObject,
+                     XAO::BrepGeometry* geometry );
 };
 
 #endif
