@@ -48,6 +48,7 @@
 #include <QApplication>
 #include <QTableWidget>
 #include <QTime>
+#include <QSplitter>
 
 //#define MEASURE_TIME
 
@@ -206,8 +207,14 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
   aSectLayout->setMargin( 5 );
   aSectLayout->setSpacing( 5 );
   aSectLayout->addWidget(aTB);
-  aSectLayout->addWidget(mySectionView);
-  aSectLayout->addWidget( myLocalPointView );
+
+  QSplitter* aSplitter = new QSplitter(aSectionGroup);
+  aSplitter->setOrientation(Qt::Vertical);
+
+  aSplitter->addWidget(mySectionView);
+  aSplitter->addWidget( myLocalPointView );
+
+  aSectLayout->addWidget(aSplitter);
   aSectionGroup->setLayout(aSectLayout);
   QVBoxLayout* aLay = new QVBoxLayout();
   aLay->setMargin( 0 );
