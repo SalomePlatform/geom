@@ -20,15 +20,14 @@
 # Author : Renaud Nédélec (OpenCascade S.A.S)
 
 import sys
-from PyQt4 import QtGui
-from PyQt4 import QtCore
+from qtsalome import *
 
 from t_shape_dialog_ui import Ui_Dialog
 
 
-class TShapeDialog(QtGui.QDialog):
+class TShapeDialog(QDialog):
     def __init__(self):
-      QtGui.QDialog.__init__(self, None, QtCore.Qt.Tool)
+      QDialog.__init__(self, None, Qt.Tool)
       # Set up the user interface from Designer.
       self.ui = Ui_Dialog()
       self.ui.setupUi(self)
@@ -43,7 +42,7 @@ class TShapeDialog(QtGui.QDialog):
    
     def accept(self):
       self._wasOk = True
-      QtGui.QDialog.accept(self)
+      QDialog.accept(self)
       
     def getData(self):
       r1 = self.ui.dsb_bigRadius.value()
@@ -58,7 +57,7 @@ class TShapeDialog(QtGui.QDialog):
 
     def reject(self):
         self._wasOk = False
-        QtGui.QDialog.reject(self)
+        QDialog.reject(self)
 
     def wasOk(self):
         return self._wasOk
@@ -70,7 +69,7 @@ class TShapeDialog(QtGui.QDialog):
 
 def main( args ):
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QApplication(sys.argv)
     Dialog = TShapeDialog()
     ui = Ui_Dialog()
     ui.setupUi(Dialog)
