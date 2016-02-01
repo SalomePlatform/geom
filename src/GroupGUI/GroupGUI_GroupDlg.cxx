@@ -31,6 +31,9 @@
 #include <GeometryGUI.h>
 #include <GEOM_Displayer.h>
 #include <GEOMUtils.hxx>
+#ifndef DISABLE_PLOT2DVIEWER
+#include <MeasureGUI_ShapeStatisticsDlg.h>
+#endif
 
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
@@ -200,6 +203,9 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg (Mode mode, GeometryGUI* theGeometryGUI, QW
   myLessFilterSpin = new SalomeApp_DoubleSpinBox(myFilterGrp);
   myGreaterFilterSpin = new SalomeApp_DoubleSpinBox(myFilterGrp);
   myApplyFilterButton = new QPushButton(tr("GEOM_BUT_APPLY"), myFilterGrp);
+#ifndef DISABLE_PLOT2DVIEWER
+  myPlotDistributionButton = new QPushButton(tr("GEOM_PLOT_DISTRIBUTION"), myFilterGrp);
+#endif
 
   QGridLayout* filterLayout = new QGridLayout(myFilterGrp);
   filterLayout->addWidget(myLessFilterCheck,    0, 0);
@@ -209,6 +215,9 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg (Mode mode, GeometryGUI* theGeometryGUI, QW
   filterLayout->addWidget(myGreaterFilterCombo, 1, 1);
   filterLayout->addWidget(myGreaterFilterSpin,  1, 2);
   filterLayout->addWidget(myApplyFilterButton,  0, 3);
+#ifndef DISABLE_PLOT2DVIEWER
+  filterLayout->addWidget(myPlotDistributionButton,  1, 3);
+#endif
 
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
@@ -326,6 +335,9 @@ void GroupGUI_GroupDlg::Init()
   connect(myIdList,        SIGNAL(itemSelectionChanged()), this, SLOT(selectionChanged()));
 
   connect(myApplyFilterButton, SIGNAL(clicked()),         this, SLOT(ClickOnOkFilter()));
+#ifndef DISABLE_PLOT2DVIEWER
+  connect(myPlotDistributionButton, SIGNAL(clicked()),    this, SLOT(ClickOnPlot()));
+#endif
   connect(myLessFilterCheck,   SIGNAL(stateChanged(int)), this, SLOT(MeasureToggled()));
   connect(myGreaterFilterCheck,   SIGNAL(stateChanged(int)), this, SLOT(MeasureToggled()));
 
@@ -434,7 +446,7 @@ void GroupGUI_GroupDlg::ActivateThisDialog()
 //=================================================================================
 void GroupGUI_GroupDlg::SetEditCurrentArgument()
 {
-  QPushButton* send = (QPushButton*)sender();
+  QPushButton* send = qobject_cast<QPushButton*>( sender() );
 
   if (send == mySelBtn) {
     myEditCurrentArgument = myMainName;
@@ -460,7 +472,8 @@ void GroupGUI_GroupDlg::SetEditCurrentArgument()
   //  activateSelection();
   if(myEditCurrentArgument) {
     myEditCurrentArgument->setFocus();
-    send->setDown(true);
+    if ( send )
+      send->setDown(true);
   }
 
   updateState();
@@ -1149,6 +1162,18 @@ void GroupGUI_GroupDlg::updateState (bool isAdd)
                           subSelectionWay() == ALL_SUBSHAPES &&
                           myIsShapeType &&
                           getShapeType() != TopAbs_VERTEX);
+  // manage of 'Plot' button access
+  GEOM::GEOM_IShapesOperations_var aShOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
+  GEOM::ListOfLong_var aSubShapes = aShOp->SubShapeAllIDs( myMainObj, getShapeType(), false );
+  bool hasCurrentEntities = aSubShapes->length() > 0;
+#ifndef DISABLE_PLOT2DVIEWER
+  myPlotDistributionButton->setEnabled( myFilterGrp->isEnabled() &&
+					myIsShapeType &&
+					( getShapeType() == TopAbs_EDGE || 
+					  getShapeType() == TopAbs_FACE ||
+					  getShapeType() == TopAbs_SOLID ) &&
+					hasCurrentEntities );
+#endif
   if (subSelectionWay() == ALL_SUBSHAPES)
     setInPlaceObj(GEOM::GEOM_Object::_nil());
 }
@@ -1436,6 +1461,21 @@ void GroupGUI_GroupDlg::ClickOnOkFilter()
   }
   updateState(true);
 }
+
+#ifndef DISABLE_PLOT2DVIEWER
+//=================================================================================
+// function : ClickOnPlot()
+// purpose  : opens "Shape Statistics" dialog box in order to plot sub-shapes distribution.
+//=================================================================================
+void GroupGUI_GroupDlg::ClickOnPlot()
+{
+  TopoDS_Shape aMainShape = GEOM_Client::get_client().GetShape(GeometryGUI::GetGeomGen(), myMainObj);
+  QDialog* dlg = new MeasureGUI_ShapeStatisticsDlg( this, aMainShape, getShapeType() );
+  if ( dlg ) {
+    dlg->show();
+  }
+}
+#endif
 
 void GroupGUI_GroupDlg::MeasureToggled()
 {

@@ -135,6 +135,7 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
                const Handle(GEOM_Object)                  &thePath,
                const bool                                  theWithContact,
                const bool                                  theWithCorrections,
+               const bool                                  IsBySteps,
                const bool                                  IsGenerateGroups);
 
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient) MakePipeWithShellSections

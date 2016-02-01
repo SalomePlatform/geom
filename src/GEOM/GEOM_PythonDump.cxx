@@ -144,7 +144,7 @@ namespace GEOM
   TPythonDump::operator<< (const std::list<Handle(GEOM_Object)>& theObjects)
   {
     Standard_Integer aLength = theObjects.size();
-    if ( aLength > 1 ) {
+    if ( aLength != 1 ) {
       myStream << "[";
     }
     std::list<Handle(GEOM_Object)>::const_iterator obj = theObjects.begin();
@@ -152,7 +152,7 @@ namespace GEOM
       *this << *obj;
       if ( i < aLength ) myStream << ", ";
     }
-    if ( aLength > 1 ) {
+    if ( aLength != 1 ) {
       myStream << "]";
     }
     return *this;

@@ -219,7 +219,6 @@ bool BlocksGUI_TrsfDlg::ClickOnApply()
 //=================================================================================
 void BlocksGUI_TrsfDlg::SelectionIntoArgument()
 {
-  erasePreview();
   myEditCurrentArgument->setText("");
 
   // Get index of current selection focus
@@ -273,7 +272,6 @@ void BlocksGUI_TrsfDlg::SelectionIntoArgument()
     }
     myEditCurrentArgument->setText(aName);
     myFaces[aCurrFocus] = anIndex;
-    processPreview();
   }
 
   switch (aCurrFocus) {
@@ -316,6 +314,8 @@ void BlocksGUI_TrsfDlg::SelectionIntoArgument()
   default:
     break;
   }
+
+  processPreview();
 }
 
 //=================================================================================
@@ -379,6 +379,8 @@ void BlocksGUI_TrsfDlg::SetEditCurrentArgument()
   aSender->setDown(true);
 
   activateSelection();
+
+  processPreview();
 }
 
 //=================================================================================

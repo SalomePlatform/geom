@@ -109,6 +109,8 @@ from salome.geom.geomtools import getGeompy
 from salome.geom.structelem import parts
 from salome.geom.structelem.parts import InvalidParameterError
 
+import GEOM
+
 ## This class manages the structural elements in the study. It is used to
 #  create a new structural element from a list of commands. The parameter
 #  \em studyId defines the ID of the study in which the manager will create

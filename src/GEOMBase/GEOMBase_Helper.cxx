@@ -529,6 +529,28 @@ void GEOMBase_Helper::localSelection( GEOM::GEOM_Object_ptr obj, const int mode 
 }
 
 //================================================================
+// Function : localSelection
+// Purpose  : Activate selection of sub-shapes in accordance with mode
+//            modes are from TopAbs_ShapeEnum
+//================================================================
+void GEOMBase_Helper::localSelection( const std::list<int> modes )
+{
+  localSelection( GEOM::GEOM_Object::_nil(), modes );
+}
+
+//================================================================
+// Function : localSelection
+// Purpose  : Activate selection of sub-shapes in accordance with mode
+//            mode is from TopAbs_ShapeEnum
+//================================================================
+void GEOMBase_Helper::localSelection( const int mode )
+{
+  std::list<int> modes;
+  modes.push_back( mode );
+  localSelection( modes );
+}
+
+//================================================================
 // Function : globalSelection
 // Purpose  : Activate selection of sub-shapes. Set selection filters
 //            in accordance with mode. theMode is from GEOMImpl_Types

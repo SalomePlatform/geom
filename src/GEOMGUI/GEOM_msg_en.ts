@@ -432,6 +432,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Fast intersection</translation>
     </message>
     <message>
+        <source>GEOM_SHAPE_STATISTICS</source>
+        <translation>Shape Statistics</translation>
+    </message>
+    <message>
         <source>GEOM_CIRCLE</source>
         <translation>Circle</translation>
     </message>
@@ -1349,6 +1353,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>By length</translation>
     </message>
     <message>
+        <source>GEOM_TAKE_ORIENTATION_INTO_ACCOUNT</source>
+        <translation>Take edge orientation into account</translation>
+    </message>
+    <message>
         <source>GEOM_PARTITION</source>
         <translation>Partition</translation>
     </message>
@@ -1419,6 +1427,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_GROUP_NAME_PREFIX</source>
         <translation>Group Names Prefix</translation>
+    </message>
+    <message>
+        <source>GEOM_STEP_BY_STEP</source>
+        <translation>Step-by-step generation</translation>
     </message>
     <message>
         <source>GEOM_PLANE</source>
@@ -2414,7 +2426,11 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_WRN_FACES_NOT_SHELL</source>
-        <translation>Unable to create a shell. Result is a compound of faces.</translation>
+        <translation>Unable to create single shell. Result is a compound of shells.</translation>
+    </message>
+    <message>
+        <source>GEOM_WRN_FACES_NOT_FACE</source>
+        <translation>Unable to create single face. Result is a compound of faces.</translation>
     </message>
     <message>
         <source>WRN_SHAPE_UNCLOSED</source>
@@ -2555,6 +2571,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>MEN_FAST_CHECK_INTERSECTIONS</source>
         <translation>Fast intersection</translation>
+    </message>
+    <message>
+        <source>MEN_SHAPE_STATISTICS</source>
+        <translation>Shape Statistics</translation>
     </message>
     <message>
         <source>MEN_CHECK_FREE_BNDS</source>
@@ -2838,7 +2858,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>MEN_MEASURES</source>
-        <translation>Measures</translation>
+        <translation>Inspection</translation>
     </message>
     <message>
         <source>MEN_MIN_DIST</source>
@@ -3445,8 +3465,8 @@ Please, select face, shell or solid and try again</translation>
         <translation>Line width</translation>
     </message>
     <message>
-        <source>PREF_DIMENSIONS_FONT_HEIGHT</source>
-        <translation>Font height</translation>
+        <source>PREF_DIMENSIONS_FONT</source>
+        <translation>Font</translation>
     </message>
     <message>
         <source>PREF_DIMENSIONS_ARROW_LENGTH</source>
@@ -3467,6 +3487,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>PREF_DIMENSIONS_SHOW_UNITS</source>
         <translation>Show units of measurement</translation>
+    </message>
+    <message>
+        <source>PREF_DIMENSIONS_USE_TEXT3D</source>
+        <translation>Use 3D text</translation>
     </message>
     <message>
         <source>PREF_HIDE_INPUT_OBJECT</source>
@@ -3591,8 +3615,12 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>STB_FAST_CHECK_INTERSECTIONS</source>
         <translation>Fast intersection</translation>
-    </message>
+   </message>
     <message>
+        <source>STB_SHAPE_STATISTICS</source>
+        <translation>Shape Statistics</translation>
+   </message>
+   <message>
         <source>STB_CHECK_FREE_BNDS</source>
         <translation>Check free boundaries</translation>
     </message>
@@ -4223,6 +4251,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_FAST_CHECK_INTERSECTIONS</source>
         <translation>Fast intersection</translation>
+    </message>
+    <message>
+        <source>TOP_SHAPE_STATISTICS</source>
+        <translation>Shape Statistics</translation>
     </message>
     <message>
         <source>TOP_CHECK_FREE_BNDS</source>
@@ -5117,6 +5149,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Z%1 :</translation>
     </message>
     <message>
+        <source>GEOM_A_I</source>
+        <translation>A%1 :</translation>
+    </message>
+    <message>
         <source>GEOM_SHAPES_ON_SHAPE_TITLE</source>
         <translation>Get shapes on shape</translation>
     </message>
@@ -5384,6 +5420,26 @@ shells and solids on the other hand.</translation>
         <source>GEOM_HEALING_STATS_COL_2</source>
         <translation>Modification</translation>
     </message>
+    <message>
+        <source>GEOM_PLOT_DISTRIBUTION</source>
+        <translation>Plot</translation>
+    </message>
+    <message>
+        <source>GEOM_X_AXIS</source>
+        <translation>X Axis</translation>
+    </message>
+    <message>
+        <source>GEOM_Y_AXIS</source>
+        <translation>Y Axis</translation>
+    </message>
+    <message>
+        <source>GEOM_Z_AXIS</source>
+        <translation>Z Axis</translation>
+    </message>
+    <message>
+        <source>GEOM_DIM_AXES</source>
+        <translation>Dimensions along local axes</translation>
+    </message>
 </context>
 <context>
     <name>GeometryGUI</name>
@@ -5433,7 +5489,7 @@ shells and solids on the other hand.</translation>
     </message>
     <message>
         <source>TOOL_MEASURES</source>
-        <translation>Measures</translation>
+        <translation>Inspection</translation>
     </message>
     <message>
         <source>TOOL_IMPORTEXPORT</source>
@@ -7219,6 +7275,17 @@ Do you want to create new material?</translation>
     </message>
 </context>
 <context>
+    <name>GEOMGUI_TextTreeWdg</name>
+    <message>
+        <source>TEXT_TREE_VIEW_TITLE</source>
+        <translation>Text</translation>
+    </message>
+    <message>
+        <source>TEXT_TREE_VIEW_NAME</source>
+        <translation>Name</translation>
+    </message>
+</context>
+<context>
     <name>EntityGUI_IsolineDlg</name>
     <message>
         <source>GEOM_ISOLINE_TITLE</source>
@@ -7239,6 +7306,10 @@ Do you want to create new material?</translation>
 </context>
 <context>
     <name>MeasureGUI_CheckSelfIntersectionsDlg</name>
+    <message>
+        <source>GEOM_CHECK_INTERSECT_TYPE</source>
+        <translation>Self-intersection Detection Type</translation>
+    </message>
     <message>
         <source>GEOM_CHECK_INTE_INTERSECTIONS</source>
         <translation>Self-intersections</translation>
@@ -7303,6 +7374,14 @@ Do you want to create new material?</translation>
         <source>GEOM_CHECK_INTE_ALL</source>
         <translation>Face to Face + all above</translation>
     </message>
+    <message>
+        <source>GEOM_CHECK_INT_DEFLECT</source>
+        <translation>Deflection coefficient</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INT_DETECT_GAPS</source>
+        <translation>Detect gaps with tolerance</translation>
+    </message>
 </context>
 <context>
     <name>MeasureGUI_FastCheckIntersectionsDlg</name>
@@ -7333,6 +7412,69 @@ Do you want to create new material?</translation>
     <message>
         <source>GEOM_FAST_CHECK_OBJ</source>
         <translation>Objects And Results</translation>
+    </message>
+</context>
+<context>
+    <name>MeasureGUI_ShapeStatisticsDlg</name>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_TYPE</source>
+        <translation>Type</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_LENGTH</source>
+        <translation>Edges length</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_AREA</source>
+        <translation>Faces area</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_VOLUME</source>
+        <translation>Solids volume</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_NB_INTERVALS</source>
+        <translation>Number of intervals</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_SCALAR_RANGE</source>
+        <translation>Scalar range</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_COMPUTE</source>
+        <translation>Compute</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MIN</source>
+        <translation>Min</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MAX</source>
+        <translation>Max</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_CREATE_GROUPS</source>
+        <translation>Create Groups</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_DISTRIBUTION_NB_ENT</source>
+        <translation>Number of entities</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MIN_ERROR</source>
+        <translation>Set minimal range value or switch-off Scalar range</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MAX_ERROR</source>
+        <translation>Set maximal range value or switch-off Scalar range</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MIN_MAX_ERROR</source>
+        <translation>Minimal range value can not be more than maximal</translation>
+    </message>
+    <message>
+        <source>GEOM_MSG_GROUPS_CREATED</source>
+        <translation>%1 groups created</translation>
     </message>
 </context>
 <context>
@@ -7461,6 +7603,10 @@ Do you want to create new material?</translation>
     <message>
         <source>GEOM_PROJ_ON_CYL_LENGTH_ANGLE</source>
         <translation>Length angle</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJ_ON_CYL_ROTATION_ANGLE</source>
+        <translation>Rotation angle</translation>
     </message>
 </context>
 </TS>

@@ -88,6 +88,37 @@
 
 #include "utilities.h"
 
+//=======================================================================
+//function : IsToMerge
+//purpose  : This method return Standard_True if two edges have common
+//           vertex. This vertex is returned by output parameter. The
+//           difference with the method TopExp::CommonVertex is only in
+//           the case if there are two common vertices. In this case
+//           this method returns the last vertex of theEdge1, not the first
+//           one that TopExp::CommonVertex does.
+//=======================================================================
+static Standard_Boolean GetCommonVertex(const TopoDS_Edge   &theEdge1,
+                                        const TopoDS_Edge   &theEdge2,
+                                              TopoDS_Vertex &theCommon)
+{
+  Standard_Boolean   isFound = Standard_True;
+  ShapeAnalysis_Edge aSae;
+  TopoDS_Vertex      aVF1 = aSae.FirstVertex(theEdge1);
+  TopoDS_Vertex      aVL1 = aSae.LastVertex(theEdge1);
+  TopoDS_Vertex      aVF2 = aSae.FirstVertex(theEdge2);
+  TopoDS_Vertex      aVL2 = aSae.LastVertex(theEdge2);
+
+  if (aVL1.IsSame(aVF2) || aVL1.IsSame(aVL2)) {
+    theCommon = aVL1;
+  } else if (aVF1.IsSame(aVL2) || aVF1.IsSame(aVF2)) {
+    theCommon = aVF1;
+  } else {
+    theCommon.Nullify();
+    isFound = Standard_False;
+  }
+
+  return isFound;
+}
 
 //=======================================================================
 //function : IsToMerge
@@ -148,7 +179,7 @@ static Standard_Boolean IsToMerge
                 // that are connected to the common vertex.
                 TopoDS_Vertex aVCommon;
 
-                if (TopExp::CommonVertex(theEdge1, theEdge2, aVCommon)) {
+                if (GetCommonVertex(theEdge1, theEdge2, aVCommon)) {
                   TopTools_IndexedDataMapOfShapeListOfShape aMapVE;
 
                   TopExp::MapShapesAndAncestors
@@ -328,7 +359,7 @@ static TopoDS_Edge GlueEdgesWithPCurves(const TopTools_SequenceOfShape& aChain,
     
     if (i > 1)
     {
-      TopExp::CommonVertex(PrevEdge, anEdge, CV);
+      GetCommonVertex(PrevEdge, anEdge, CV);
       Standard_Real Tol = BRep_Tool::Tolerance(CV);
       tabtolvertex(i-2) = Tol;
     }

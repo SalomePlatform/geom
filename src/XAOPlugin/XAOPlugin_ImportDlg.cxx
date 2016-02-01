@@ -280,13 +280,16 @@ bool XAOPlugin_ImportDlg::execute()
   {
     QStringList anEntryList;
     anEntryList << addInStudy(m_mainShape, m_mainShape->GetName());
+    m_mainShape->UnRegister();
     for (int i = 0; i < subShapes->length(); i++)
     {
       addInStudy(subShapes[i].in(), subShapes[i]->GetName());
+      subShapes[i]->UnRegister();
     }
     for (int i = 0; i < groups->length(); i++)
     {
       addInStudy(groups[i].in(), groups[i]->GetName());
+      groups[i]->UnRegister();
     }
     for (int i = 0; i < fields->length(); i++)
     {
@@ -316,6 +319,7 @@ QString XAOPlugin_ImportDlg::addFieldInStudy( GEOM::GEOM_Field_ptr theField, GEO
 
   SALOMEDS::SObject_var aSO =
     getGeomEngine()->AddInStudy(aStudyDS, theField, theField->GetName(), theFather);
+  theField->UnRegister();
 
   QString anEntry;
   if ( !aSO->_is_nil() ) {
@@ -331,6 +335,7 @@ QString XAOPlugin_ImportDlg::addFieldInStudy( GEOM::GEOM_Field_ptr theField, GEO
     QString stepName = (tr("XAOPLUGIN_STEP") + " %1 %2").arg( step->GetID() ).arg( step->GetStamp() );
     SALOMEDS::SObject_wrap aSOField =
       getGeomEngine()->AddInStudy( aStudyDS, step, stepName.toLatin1().constData(), theField );
+    step->UnRegister();
   }
 
   aSO->UnRegister();

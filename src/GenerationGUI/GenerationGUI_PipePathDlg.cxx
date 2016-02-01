@@ -148,7 +148,7 @@ void GenerationGUI_PipePathDlg::SelectionTypeButtonClicked()
 {
   globalSelection();
   if (GroupPoints->CheckButton1->isChecked()) {
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+    localSelection(TopAbs_EDGE);
   }
   else {
     TColStd_MapOfInteger aMap;
@@ -269,7 +269,7 @@ void GenerationGUI_PipePathDlg::SetEditCurrentArgument()
     myEditCurrentArgument = GroupPoints->LineEdit2;
 
     if (GroupPoints->CheckButton1->isChecked()) {
-      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+      localSelection(TopAbs_EDGE);
     }
     else {
       TColStd_MapOfInteger aMap;
@@ -284,7 +284,7 @@ void GenerationGUI_PipePathDlg::SetEditCurrentArgument()
     myEditCurrentArgument = GroupPoints->LineEdit3;
 
     if (GroupPoints->CheckButton1->isChecked()) {
-      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+      localSelection(TopAbs_EDGE);
     }
     else {
       TColStd_MapOfInteger aMap;

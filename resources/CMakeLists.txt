@@ -35,6 +35,7 @@ SET( _res_files
   GEOM.config
   GEOMDS_Resources
   ShHealing
+  Y14.5M-2009.ttf
   3dsketch.png
   isoline.png
   isoline_v.png
@@ -113,6 +114,7 @@ SET( _res_files
   fuse_collinear_edges.png
   geometry.png
   import_picture.png
+  import.png
   limit_tolerance.png
   line.png
   line2points.png

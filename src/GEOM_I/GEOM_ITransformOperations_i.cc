@@ -1402,7 +1402,8 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MakeProjectionOnCylinder
                                    (GEOM::GEOM_Object_ptr theObject,
                                     CORBA::Double         theRadius,
                                     CORBA::Double         theStartAngle,
-                                    CORBA::Double         theAngleLength)
+                                    CORBA::Double         theAngleLength,
+                                    CORBA::Double         theAngleRotation)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -1418,7 +1419,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MakeProjectionOnCylinder
 
   //Perform the transformation
   Handle(GEOM_Object) aResObject = GetOperations()->MakeProjectionOnCylinder
-    (anObject, theRadius, theStartAngle, theAngleLength);
+    (anObject, theRadius, theStartAngle, theAngleLength, theAngleRotation);
 
   if (!GetOperations()->IsDone() || aResObject.IsNull()) {
     return aGEOMObject._retn();

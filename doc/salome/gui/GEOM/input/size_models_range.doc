@@ -4,37 +4,33 @@
 
 \tableofcontents
 
-This document determines the range of numbers (tolerances, locations
-and sizes) that are to be taken into account for any 3D model design
-in Salome. Although it is not obligatory to create models within this range,
-algorithms can fail or return unexpected result in this case.
+In Salome and Open CASCADE Technology (OCCT), which is a modeling core
+of Salome %GEOM module, any model has its location in the 3D-space and size.
+ 
+This document defines the range of values (tolerances, locations
+and sizes) that should be taken into account for any 3D model design.
 
-This document refers mainly to Open CASCADE Technology (OCCT). However it
-concerns Salome as well as OCCT is a modeling core of Salome %GEOM module.
-
-Any model in 3D-space has its location and sizes. The last two things in Salome
-and OCCT are represented by the double precision floating point numbers.
-
-The goal of the document is to define the range of numbers that can be used in
-modeling algorithms provided by Salome and Open CASCADE Technology.
+It is not obligatory to create models within this range,
+however, algorithms can fail or return unexpected results if the 
+recommendations are not followed.
 
 \section sec1 Maximal Size of the Model
 
-The Maximal Size of the model is a number defined as the maximal diameter of
+The Maximal Size of the model corresponds to the maximal diameter of
 enclosed sphere built for the model. In OCCT any model has a location defined
-relative the absolute origin. Thus the maximal diameter above should be built
+relatively to the absolute origin. Thus the maximal diameter should be built
 taking into account the model itself and its location.
 
-In Open CASCADE there are two tolerances: Tolerance Confusion (TolC)
+In OCCT there are two tolerances: Tolerance Confusion (TolC)
 and Tolerance Angular (TolA) (see OCCT Precision package for more details).
-These values are used for geometric comparisons. They are not used inside
-low-level algorithms (intersection for e.g.), where more precise values are
+These values are used for geometric comparisons. However, they are not used inside
+low-level algorithms (e.g. intersection), where more precise values are
 used instead. The value TolC guarantees that the error associated with
-the computations for given geometric entity is not greater than TolC.
+the computations for a given geometric entity is not greater than TolC.
 
-- TolC - precision value when checking coincidence of two points
+- TolC - precision value used to check the coincidence of two points
   [by default 1.e-7];
-- TolA - precision value when checking the equality of two angles
+- TolA - precision value used to check the equality of two angles
   [by default 1.e-12].
 
 For more information on tolerance definition please see
@@ -43,8 +39,8 @@ that are due to modeling errors or inaccuracies of tolerance usage please
 refer to <a href="SALOME_BOA_PA.pdf">Chapter 9.2.2 of the same document</a>.
 
 To provide robust geometric modeling the computations should be consistent,
-i.e. the one tolerance value should be used for all computations. To provide
-consistent computations the values TolC and TolA should be consistent:
+i.e. the one tolerance value should be used for all computations. Thus, the
+TolC and TolA values should be consistent:
 
 <CENTER><B><PRE>Smax = TolC / TolA             (1)</PRE></B></CENTER>
 
@@ -56,16 +52,16 @@ In accordance with <B>(1)</B> the Maximal Size for the Model is [by default]:
 
 \section sec2 Minimal Size of the Model
 
-The Minimal Size of the Model is defined as maximal diameter of enclosed
+The Minimal Size of the Model is defined as the maximal diameter of enclosed
 sphere built for the smallest BRep entity of the Model.
 
-All models in Open CASCADE Technology are represented using double precision
+All models in OCCT are represented using double precision
 floating point numbers. This representation contains approximately 14-16
 significant digits.
 
-From the experience of using it is considered that the least four significant
+From the experience, it is considered that the last four significant
 digits contain rounding-off errors occurring during the computation. So
-(taking in account the worst cases), there are ten reliable significant digits
+(taking into account the worst cases), there are ten reliable significant digits
 for double precision floating point numbers. Having the estimation it is
 possible to compute the value of the Minimal size of the model:
 
@@ -78,7 +74,7 @@ In accordance with <B>(2)</B> for the default value it will be [by default]:
 \section sec3 Full Range of Sizes
 
 The values <B>Smax (2)</B>, <B>Smin (4)</B> are theoretical. Taking into
-account the practical purposes of improving the reliability the lower limit
+account the practical purposes of improving the reliability, the lower limit
 should be restricted by one order. Thus, the full Range of Sizes of the Models
 is:
 

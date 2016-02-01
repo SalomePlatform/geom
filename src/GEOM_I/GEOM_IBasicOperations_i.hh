@@ -52,8 +52,10 @@ class GEOM_I_EXPORT GEOM_IBasicOperations_i :
 						 CORBA::Double theY,
 						 CORBA::Double theZ);
 
-   GEOM::GEOM_Object_ptr MakePointOnCurve (GEOM::GEOM_Object_ptr theCurve,
-					   CORBA::Double theParameter);
+   GEOM::GEOM_Object_ptr MakePointOnCurve
+                      (GEOM::GEOM_Object_ptr theCurve,
+					   CORBA::Double         theParameter,
+                       CORBA::Boolean        takeOrientationIntoAccount);
 
    GEOM::GEOM_Object_ptr MakePointOnCurveByLength (GEOM::GEOM_Object_ptr theCurve,
 						   CORBA::Double         theLength,

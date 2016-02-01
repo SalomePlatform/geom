@@ -307,7 +307,7 @@ void PrimitiveGUI_BoxDlg::SetEditCurrentArgument()
 
   disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
   globalSelection(); // close local contexts, if any
-  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+  localSelection(TopAbs_VERTEX);
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
 
@@ -323,7 +323,7 @@ void PrimitiveGUI_BoxDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   if (getConstructorId() == 0) {
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+    localSelection(TopAbs_VERTEX);
     connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
             this, SLOT(SelectionIntoArgument()));
   }

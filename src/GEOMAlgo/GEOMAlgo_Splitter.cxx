@@ -301,7 +301,7 @@ void TreatCompound(const TopoDS_Shape& aC1,
   TopoDS_Iterator aItC;
   //
   aLC.Append (aC1);
-  while(1) {
+  for(;;) {
     aLC1.Clear();
     aIt.Initialize(aLC);
     for (; aIt.More(); aIt.Next()) {

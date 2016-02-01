@@ -220,7 +220,7 @@ void BasicGUI_LineDlg::ConstructorsClicked( int constructorId )
                                  myEditCurrentArgument == GroupFaces->LineEdit2 ) ?
     TopAbs_FACE : TopAbs_VERTEX;
   globalSelection(); // close local selection to clear it
-  localSelection( GEOM::GEOM_Object::_nil(), aNeedType );
+  localSelection( aNeedType );
 
   qApp->processEvents();
   updateGeometry();
@@ -318,7 +318,7 @@ void BasicGUI_LineDlg::SetEditCurrentArgument()
                                  myEditCurrentArgument == GroupFaces->LineEdit2 ) ?
     TopAbs_FACE : TopAbs_VERTEX;
   globalSelection(); // close local selection to clear it
-  localSelection( GEOM::GEOM_Object::_nil(), aNeedType );
+  localSelection( aNeedType );
 
   myEditCurrentArgument->setFocus();
   //  SelectionIntoArgument();

@@ -361,7 +361,8 @@ class Beam(StructuralElementPart):
         face2 = self.geom.MakeFace(wire2, True)
         shell = self.geom.MakePipeWithDifferentSections([wire1, wire2],
                                                         [point1, point2],
-                                                        path, False, False)
+                                                        path, False, False,
+                                                        False)
         closedShell = self.geom.MakeShell([face1, face2, shell])
         solid = self.geom.MakeSolid([closedShell])
         return solid

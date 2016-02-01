@@ -351,7 +351,8 @@ TopoDS_Shape GEOMImpl_PrismDriver::MakeScaledPrism (const TopoDS_Shape& theShape
   aLocs->Append(aShapeCDG_1);
   aLocs->Append(aShapeCDG_2);
 
-  aShape = GEOMImpl_PipeDriver::CreatePipeWithDifferentSections(aWirePath, aBases, aLocs, false, false);
+  aShape = GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
+              (aWirePath, aBases, aLocs, false, false, false);
 
   // 7. Make a solid, if possible
   if (theShapeBase.ShapeType() == TopAbs_FACE) {

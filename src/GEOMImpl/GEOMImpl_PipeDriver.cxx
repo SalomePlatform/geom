@@ -43,8 +43,10 @@
 #include <BRep_Builder.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
+#include <BRepBuilderAPI_MakeSolid.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_Sewing.hxx>
+#include <BRepClass3d_SolidClassifier.hxx>
 #include <BRepGProp.hxx>
 #include <GeomFill_Trihedron.hxx>
 #include <GeomFill_CorrectedFrenet.hxx>
@@ -687,6 +689,42 @@ static void FindFirstPairFaces(const TopoDS_Shape& S1, const TopoDS_Shape& S2,
 }
 
 //=======================================================================
+//function : RemoveFaces
+//purpose  : This function returns theShapeFrom without faces of the shape
+//           theFacesToRm. It returns a shell if theShapeFrom is a solid or
+//           a compound otherwise. Auxilary for CreatePipeWithDifferentSections
+//           method.
+//=======================================================================
+static TopoDS_Shape RemoveFaces(const TopoDS_Shape &theShapeFrom,
+                                const TopoDS_Shape &theFacesToRm)
+{
+  TopTools_IndexedMapOfShape aMapFaces;
+  TopExp_Explorer            anExp(theShapeFrom, TopAbs_FACE);
+  BRep_Builder               aBuilder;
+  TopoDS_Shape               aResult;
+
+  if (theShapeFrom.ShapeType() == TopAbs_SOLID) {
+    // Create shell
+    aBuilder.MakeShell(TopoDS::Shell(aResult));
+  } else {
+    // Create compound
+    aBuilder.MakeCompound(TopoDS::Compound(aResult));
+  }
+
+  TopExp::MapShapes(theFacesToRm, TopAbs_FACE, aMapFaces);
+
+  for (; anExp.More(); anExp.Next()) {
+    const TopoDS_Shape &aFace = anExp.Current();
+
+    if (!aMapFaces.Contains(aFace)) {
+      aBuilder.Add(aResult, aFace);
+    }
+  }
+
+  return aResult;
+}
+
+//=======================================================================
 //function : CreatePipeWithDifferentSections
 //purpose  :
 //=======================================================================
@@ -696,6 +734,7 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
                    const Handle(TopTools_HSequenceOfShape)  theHSeqLocs,
                    const Standard_Boolean                   theWithContact,
                    const Standard_Boolean                   theWithCorrect,
+                   const Standard_Boolean                   IsBySteps,
                          Handle(TColStd_HArray1OfInteger)  *theGroups)
 {
   TopoDS_Shape aShape;
@@ -883,49 +922,82 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
     }
   }
 
-  // check curvature of wire for condition that
-  // max summary angle between directions along
-  // wire path must be < 4*PI. If not - split wire
-  // and seguences of shapes, perform pipe for each
-  // and make sewing after that
-  double fp,lp;
-  gp_Pnt P1,P2;
-  gp_Vec Vec1,Vec2;
-  double SumAng = 0;
-  if ( Edges.Length() > 0 ) {
-    Handle(Geom_Curve) C = BRep_Tool::Curve(TopoDS::Edge(Edges.Value(1)),fp,lp);
-    C->D1(fp,P1,Vec1);
-    C->D1(lp,P2,Vec2);
-    SumAng = fabs(Vec1.Angle(Vec2));
-    Vec1 = Vec2;
-    P1 = P2;
-  }
   TColStd_SequenceOfInteger SplitEdgeNums,SplitLocNums;
-  int LastLoc = 1;
-  //cout<<"Edges.Length()="<<Edges.Length()<<endl;
-  for (i=2; i<=Edges.Length(); i++) {
-      TopoDS_Edge edge = TopoDS::Edge(Edges.Value(i));
-      double tol = BRep_Tool::Tolerance(edge);
-      Handle(Geom_Curve) C = BRep_Tool::Curve(edge,fp,lp);
-      C->D1(lp,P2,Vec2);
-      double ang = fabs(Vec1.Angle(Vec2));
-      SumAng += ang;
-      if (SumAng>4*M_PI) {
-        SumAng = ang;
-        SplitEdgeNums.Append(i-1);
-        int j;
-        for (j=LastLoc+1; j<=aSeqLocs.Length(); j++) {
-          TopoDS_Vertex aVert = TopoDS::Vertex(aSeqLocs.Value(j));
-          gp_Pnt P = BRep_Tool::Pnt(aVert);
-          if (P1.Distance(P) < tol) {
-            SplitLocNums.Append(j);
-            LastLoc = j;
-            break;
-          }
+
+  if (IsBySteps) {
+    // Fill SplitEdgeNums and SplitLocNums with intermediate location indices
+    // and corresponding edge indices.
+    Standard_Integer i = 1;
+    Standard_Integer j;
+    TopoDS_Vertex    aVert;
+    gp_Pnt           aP;
+
+    for (j = 2; j < aSeqLocs.Length(); j++) {
+      SplitLocNums.Append(j);
+      aVert = TopoDS::Vertex(aSeqLocs.Value(j));
+      aP    = BRep_Tool::Pnt(aVert);
+
+      while (i < Edges.Length()) {
+        Standard_Real      aFp;
+        Standard_Real      aLp;
+        TopoDS_Edge        anEdge = TopoDS::Edge(Edges.Value(i));
+        Standard_Real      aTol   = BRep_Tool::Tolerance(anEdge);
+        Handle(Geom_Curve) aC     = BRep_Tool::Curve(anEdge, aFp, aLp);
+        gp_Pnt             aPLast;
+
+        aC->D0(aLp, aPLast);
+        i++;
+
+        if (aP.Distance(aPLast) < aTol) {
+          SplitEdgeNums.Append(i - 1);
+          break;
         }
       }
+    }
+  } else {
+    // check curvature of wire for condition that
+    // max summary angle between directions along
+    // wire path must be < 4*PI. If not - split wire
+    // and seguences of shapes, perform pipe for each
+    // and make sewing after that
+    double fp,lp;
+    gp_Pnt P1,P2;
+    gp_Vec Vec1,Vec2;
+    double SumAng = 0;
+    if ( Edges.Length() > 0 ) {
+      Handle(Geom_Curve) C = BRep_Tool::Curve(TopoDS::Edge(Edges.Value(1)),fp,lp);
+      C->D1(fp,P1,Vec1);
+      C->D1(lp,P2,Vec2);
+      SumAng = fabs(Vec1.Angle(Vec2));
       Vec1 = Vec2;
       P1 = P2;
+    }
+    int LastLoc = 1;
+    //cout<<"Edges.Length()="<<Edges.Length()<<endl;
+    for (i=2; i<=Edges.Length(); i++) {
+        TopoDS_Edge edge = TopoDS::Edge(Edges.Value(i));
+        double tol = BRep_Tool::Tolerance(edge);
+        Handle(Geom_Curve) C = BRep_Tool::Curve(edge,fp,lp);
+        C->D1(lp,P2,Vec2);
+        double ang = fabs(Vec1.Angle(Vec2));
+        SumAng += ang;
+        if (SumAng>4*M_PI) {
+          SumAng = ang;
+          SplitEdgeNums.Append(i-1);
+          int j;
+          for (j=LastLoc+1; j<=aSeqLocs.Length(); j++) {
+            TopoDS_Vertex aVert = TopoDS::Vertex(aSeqLocs.Value(j));
+            gp_Pnt P = BRep_Tool::Pnt(aVert);
+            if (P1.Distance(P) < tol) {
+              SplitLocNums.Append(j);
+              LastLoc = j;
+              break;
+            }
+          }
+        }
+        Vec1 = Vec2;
+        P1 = P2;
+    }
   }
 
   bool isCreateGroups = (theGroups != NULL);
@@ -966,9 +1038,24 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
           Standard_ConstructionError::Raise("Invalid input data for building PIPE: bases are invalid");
         }
 
-        BuildPipeShell(aBuilder);
+        Standard_Boolean isDone = BuildPipeShell(aBuilder);
+
+        if (isDone && NeedCreateSolid && nn == 1) {
+          // Make solid for the first step.
+          isDone = aBuilder.MakeSolid();
+        }
+
+        if (!isDone) {
+          Standard_ConstructionError::Raise("Pipe construction failure");
+        }
 
         TopoDS_Shape resShape = aBuilder.Shape();
+
+        if (NeedCreateSolid && nn == 1) {
+          // Remove top lid from the result.
+          resShape = RemoveFaces(resShape, aBuilder.LastShape());
+        }
+
         aSeqRes.Append(resShape);
 
         // Create groups.
@@ -1014,9 +1101,23 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
         Standard_ConstructionError::Raise("Invalid input data for building PIPE: bases are invalid");
       }
 
-      BuildPipeShell(aBuilder);
+      Standard_Boolean isDone = BuildPipeShell(aBuilder);
+
+      if (isDone && NeedCreateSolid) {
+        isDone = aBuilder.MakeSolid();
+      }
+
+      if (!isDone) {
+        Standard_ConstructionError::Raise("Pipe construction failure");
+      }
 
       TopoDS_Shape resShape = aBuilder.Shape();
+
+      if (NeedCreateSolid) {
+        // Remove bottom lid from the result.
+        resShape = RemoveFaces(resShape, aBuilder.FirstShape());
+      }
+
       aSeqRes.Append(resShape);
 
       // Create groups.
@@ -1045,6 +1146,28 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
       }
       aSewing->Perform();
       aShape = aSewing->SewedShape();
+
+      if (NeedCreateSolid && aShape.ShapeType() == TopAbs_SHELL) {
+        // Build a solid.
+        BRepBuilderAPI_MakeSolid aMkSolid;
+
+        aMkSolid.Add(TopoDS::Shell(aShape));
+
+        if (!aMkSolid.IsDone()) {
+          Standard_ConstructionError::Raise("Can't create solid pipe");
+        }
+
+        TopoDS_Solid                aSolid = aMkSolid.Solid();
+        BRepClass3d_SolidClassifier aSC(aSolid);
+
+        aSC.PerformInfinitePoint(Precision::Confusion());
+
+        if (aSC.State() == TopAbs_IN) {
+          aShape = aSolid.Reversed();
+        } else {
+          aShape = aSolid;
+        }
+      }
 
       if (isCreateGroups) {
         // Replase Group shapes by modified ones.
@@ -3032,6 +3155,7 @@ Standard_Integer GEOMImpl_PipeDriver::Execute (TFunction_Logbook& log) const
     Handle(TColStd_HSequenceOfTransient) aLocObjs = aCIDS->GetLocations ();
     Standard_Boolean aWithContact = (aCIDS->GetWithContactMode());
     Standard_Boolean aWithCorrect = (aCIDS->GetWithCorrectionMode());
+    Standard_Boolean isBySteps = aCIDS->GetIsBySteps();
 
     if (aCI) {
       delete aCI;
@@ -3079,7 +3203,7 @@ Standard_Integer GEOMImpl_PipeDriver::Execute (TFunction_Logbook& log) const
 
     aShape = CreatePipeWithDifferentSections
               (aWirePath, aHSeqBases, aHSeqLocs,
-               aWithContact, aWithCorrect, pGroups);
+               aWithContact, aWithCorrect, isBySteps, pGroups);
 
     if (isGenerateGroups) {
       // Store created groups.
@@ -3265,8 +3389,13 @@ GetCreationInformation(std::string&             theOperationName,
     AddParam( theParams, "Bases", aCI.GetBases() );
     AddParam( theParams, "Locations", aCI.GetLocations() );
     AddParam( theParams, "Path", aCI.GetPath() );
-    AddParam( theParams, "With contact", aCI.GetWithContactMode() );
-    AddParam( theParams, "With correction", aCI.GetWithCorrectionMode() );
+
+    if (!aCI.GetIsBySteps()) {
+      AddParam( theParams, "With contact", aCI.GetWithContactMode() );
+      AddParam( theParams, "With correction", aCI.GetWithCorrectionMode() );
+    }
+
+    AddParam( theParams, "Step by step", aCI.GetIsBySteps() );
     break;
   }
   case PIPE_SHELL_SECTIONS:

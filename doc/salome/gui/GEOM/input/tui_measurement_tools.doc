@@ -19,6 +19,7 @@
 <li>\subpage tui_check_compound_of_blocks_page</li>
 <li>\subpage tui_get_non_blocks_page</li>
 <li>\subpage tui_check_self_intersections_page</li>
+<li>\subpage tui_check_self_intersections_fast_page</li>
 <li>\subpage tui_fast_intersection_page</li>
 </ul>
 

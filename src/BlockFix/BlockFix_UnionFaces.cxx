@@ -138,8 +138,9 @@ static Standard_Boolean AddOrdinaryEdges(TopTools_SequenceOfShape& edges,
 {
   //map of edges
   TopTools_MapOfShape aNewEdges;
+  TopExp_Explorer exp(aShape,TopAbs_EDGE);
   //add edges without seams
-  for(TopExp_Explorer exp(aShape,TopAbs_EDGE); exp.More(); exp.Next()) {
+  for(; exp.More(); exp.Next()) {
     TopoDS_Shape edge = exp.Current();
     if(aNewEdges.Contains(edge))
       aNewEdges.Remove(edge);
@@ -164,9 +165,14 @@ static Standard_Boolean AddOrdinaryEdges(TopTools_SequenceOfShape& edges,
     }
   }
 
-  //add edges to the sequemce
-  for(TopTools_MapIteratorOfMapOfShape anIter(aNewEdges); anIter.More(); anIter.Next())
-    edges.Append(anIter.Key());
+  //add edges to the sequence
+  for(exp.ReInit(); exp.More(); exp.Next()) {
+    const TopoDS_Shape &anEdge = exp.Current();
+
+    if (aNewEdges.Contains(anEdge)) {
+      edges.Append(anEdge);
+    }
+  }
 
   return isDropped;
 }

@@ -600,6 +600,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  - EDGE:                                                 [nb_vertices]
         #
         #  - VERTEX:       [x  y  z]
+        #
+        #  - LCS:          [x y z  xx xy xz  yx yy yz  zx zy zz]
         #  @ingroup l1_geomBuilder_auxiliary
         kind = GEOM.GEOM_IKindOfShape
 
@@ -1148,6 +1150,11 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## Create a point, corresponding to the given parameter on the given curve.
         #  @param theRefCurve The referenced curve.
         #  @param theParameter Value of parameter on the referenced curve.
+        #  @param takeOrientationIntoAccount flag that tells if it is necessary
+        #         to take the curve's orientation into account for the
+        #         operation. I.e. if this flag is set, the results for the same
+        #         parameters (except the value 0.5) is different for forward
+        #         and reversed curves. If it is not set the result is the same.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -1156,13 +1163,20 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_creation_point "Example"
         @ManageTransactions("BasicOp")
-        def MakeVertexOnCurve(self, theRefCurve, theParameter, theName=None):
+        def MakeVertexOnCurve(self, theRefCurve, theParameter,
+                              takeOrientationIntoAccount=False, theName=None):
             """
             Create a point, corresponding to the given parameter on the given curve.
 
             Parameters:
                 theRefCurve The referenced curve.
                 theParameter Value of parameter on the referenced curve.
+                takeOrientationIntoAccount flag that tells if it is necessary
+                        to take the curve's orientation into account for the
+                        operation. I.e. if this flag is set, the results for
+                        the same parameters (except the value 0.5) is different
+                        for forward and reversed curves. If it is not set
+                        the result is the same.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -1174,8 +1188,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 p_on_arc = geompy.MakeVertexOnCurve(Arc, 0.25)
             """
             # Example: see GEOM_TestAll.py
-            theParameter, Parameters = ParseParameters(theParameter)
-            anObj = self.BasicOp.MakePointOnCurve(theRefCurve, theParameter)
+            theParameter, takeOrientationIntoAccount, Parameters = ParseParameters(
+                theParameter, takeOrientationIntoAccount)
+            anObj = self.BasicOp.MakePointOnCurve(theRefCurve, theParameter,
+                                                  takeOrientationIntoAccount)
             RaiseIfFailed("MakePointOnCurve", self.BasicOp)
             anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "vertex")
@@ -4023,8 +4039,45 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             aList = self.PrimOp.MakePipeWithDifferentSections(theSeqBases,
                                                               theLocations, thePath,
                                                               theWithContact, theWithCorrection,
-                                                              IsGenerateGroups)
+                                                              False, IsGenerateGroups)
             RaiseIfFailed("MakePipeWithDifferentSections", self.PrimOp)
+
+            if IsGenerateGroups:
+              self._autoPublish(aList, theName, "pipe")
+              return aList
+
+            self._autoPublish(aList[0], theName, "pipe")
+            return aList[0]
+
+        ## Create a shape by extrusion of the profile shape along
+        #  the path shape. This function is a version of
+        #  MakePipeWithDifferentSections() with the same parameters, except
+        #  eliminated theWithContact and theWithCorrection. So it is
+        #  possible to find the description of all parameters is in this
+        #  method. The difference is that this method performs the operation
+        #  step by step, i.e. it creates pipes between each pair of neighbor
+        #  sections and fuses them into a single shape.
+        #
+        #  @ref tui_creation_pipe_with_diff_sec "Example"
+        @ManageTransactions("PrimOp")
+        def MakePipeWithDifferentSectionsBySteps(self, theSeqBases,
+                                                 theLocations, thePath,
+                                                 IsGenerateGroups=False, theName=None):
+            """
+            Create a shape by extrusion of the profile shape along
+            the path shape. This function is a version of
+            MakePipeWithDifferentSections() with the same parameters, except
+            eliminated theWithContact and theWithCorrection. So it is
+            possible to find the description of all parameters is in this
+            method. The difference is that this method performs the operation
+            step by step, i.e. it creates pipes between each pair of neighbor
+            sections and fuses them into a single shape.
+            """
+            aList = self.PrimOp.MakePipeWithDifferentSections(theSeqBases,
+                                                              theLocations, thePath,
+                                                              False, False,
+                                                              True, IsGenerateGroups)
+            RaiseIfFailed("MakePipeWithDifferentSectionsBySteps", self.PrimOp)
 
             if IsGenerateGroups:
               self._autoPublish(aList, theName, "pipe")
@@ -4626,7 +4679,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing the created face.
+        #  @return New GEOM.GEOM_Object, containing the created face (compound of faces).
         #
         #  @ref tui_creation_face "Example"
         @ManageTransactions("ShapesOp")
@@ -4646,7 +4699,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing the created face.
+                New GEOM.GEOM_Object, containing the created face (compound of faces).
             """
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeFace(theWire, isPlanarWanted)
@@ -4668,7 +4721,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing the created face.
+        #  @return New GEOM.GEOM_Object, containing the created face (compound of faces).
         #
         #  @ref tui_creation_face "Example"
         @ManageTransactions("ShapesOp")
@@ -4688,7 +4741,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing the created face.
+                New GEOM.GEOM_Object, containing the created face (compound of faces).
             """
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeFaceWires(ToList(theWires), isPlanarWanted)
@@ -4787,7 +4840,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing the created shell.
+        #  @return New GEOM.GEOM_Object, containing the created shell (compound of shells).
         #
         #  @ref tui_creation_shell "Example"
         @ManageTransactions("ShapesOp")
@@ -4802,7 +4855,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing the created shell.
+                New GEOM.GEOM_Object, containing the created shell (compound of shells).
             """
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeShell( ToList( theFacesAndShells ))
@@ -9581,6 +9634,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         The angle in which to project the total length of the wire.
         #         If it is negative the projection is not scaled and natural
         #         wire length is kept for the projection.
+        #  @param theAngleRotation The desired angle in radians between
+        #         the tangent vector to the first curve at the first point of
+        #         the theObject's projection in 2D space and U-direction of
+        #         cylinder's 2D space.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -9592,6 +9649,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @ref tui_projection "Example"
         def MakeProjectionOnCylinder (self, theObject, theRadius,
                                       theStartAngle=0.0, theAngleLength=-1.0,
+                                      theAngleRotation=0.0,
                                       theName=None):
             """
             Compute a wire or a face that represents a projection of the source
@@ -9608,6 +9666,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         to project the total length of the wire. If it is negative the
                         projection is not scaled and natural wire length is kept for
                         the projection.
+                theAngleRotation The desired angle in radians between
+                        the tangent vector to the first curve at the first
+                        point of the theObject's projection in 2D space and
+                        U-direction of cylinder's 2D space.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -9624,14 +9686,19 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             flagAngleLength = False
             if isinstance(theAngleLength,str):
                 flagAngleLength = True
-            theRadius, theStartAngle, theAngleLength, Parameters = ParseParameters(
-              theRadius, theStartAngle, theAngleLength)
+            flagAngleRotation = False
+            if isinstance(theAngleRotation,str):
+                flagAngleRotation = True
+            theRadius, theStartAngle, theAngleLength, theAngleRotation, Parameters = ParseParameters(
+              theRadius, theStartAngle, theAngleLength, theAngleRotation)
             if flagStartAngle:
                 theStartAngle = theStartAngle*math.pi/180.
             if flagAngleLength:
                 theAngleLength = theAngleLength*math.pi/180.
+            if flagAngleRotation:
+                theAngleRotation = theAngleRotation*math.pi/180.
             anObj = self.TrsfOp.MakeProjectionOnCylinder(theObject, theRadius,
-                theStartAngle, theAngleLength)
+                theStartAngle, theAngleLength, theAngleRotation)
             RaiseIfFailed("MakeProjectionOnCylinder", self.TrsfOp)
             anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "projection")
@@ -11255,6 +11322,37 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestMeasures.py
             (IsValid, Pairs) = self.MeasuOp.CheckSelfIntersections(theShape, EnumToLong(theCheckLevel))
             RaiseIfFailed("CheckSelfIntersections", self.MeasuOp)
+            return IsValid
+
+        ## Detect self-intersections of the given shape with algorithm based on mesh intersections.
+        #  @param theShape Shape to check.
+        #  @param theDeflection Linear deflection coefficient that specifies quality of tesselation:
+        #         - if \a theDeflection <= 0, default deflection 0.001 is used
+        #  @param theTolerance Specifies a distance between sub-shapes used for detecting gaps:
+        #         - if \a theTolerance <= 0, algorithm detects intersections (default behavior)
+        #         - if \a theTolerance > 0, algorithm detects gaps
+        #  @return TRUE, if the shape contains no self-intersections.
+        #
+        #  @ref tui_check_self_intersections_fast_page "Example"
+        @ManageTransactions("MeasuOp")
+        def CheckSelfIntersectionsFast(self, theShape, theDeflection = 0.001, theTolerance = 0.0):
+            """
+            Detect self-intersections of the given shape with algorithm based on mesh intersections.
+
+            Parameters:
+                theShape Shape to check.
+                theDeflection Linear deflection coefficient that specifies quality of tesselation:
+                    - if theDeflection <= 0, default deflection 0.001 is used
+                theTolerance Specifies a distance between shapes used for detecting gaps:
+                    - if theTolerance <= 0, algorithm detects intersections (default behavior)
+                    - if theTolerance > 0, algorithm detects gaps
+ 
+            Returns:
+                TRUE, if the shape contains no self-intersections.
+            """
+            # Example: see GEOM_TestMeasures.py
+            (IsValid, Pairs) = self.MeasuOp.CheckSelfIntersectionsFast(theShape, theDeflection, theTolerance)
+            RaiseIfFailed("CheckSelfIntersectionsFast", self.MeasuOp)
             return IsValid
 
         ## Detect intersections of the given shapes with algorithm based on mesh intersections.

@@ -129,9 +129,7 @@ void MeasureGUI_InertiaDlg::Init()
 void MeasureGUI_InertiaDlg::activateSelection()
 {
   MeasureGUI_Skeleton::activateSelection();
-  std::list<int> needTypes;
-  needTypes.push_back( TopAbs_VERTEX ), needTypes.push_back( TopAbs_EDGE ), needTypes.push_back( TopAbs_WIRE ), needTypes.push_back( TopAbs_FACE ), needTypes.push_back( TopAbs_SHELL ), needTypes.push_back( TopAbs_SOLID ), needTypes.push_back( TopAbs_COMPOUND );
-  localSelection(GEOM::GEOM_Object::_nil(), needTypes );
+  localSelection( TopAbs_SHAPE );
 }
 
 

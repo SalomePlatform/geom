@@ -330,7 +330,7 @@ void TransformationGUI_MultiRotationDlg::SetEditCurrentArgument()
   else if (send == GroupArgs->PushButton2) {
     myEditCurrentArgument = GroupArgs->LineEdit2;
 
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+    localSelection(TopAbs_EDGE);
 
     GroupArgs->PushButton1->setDown(false);
     GroupArgs->LineEdit1->setEnabled(false);

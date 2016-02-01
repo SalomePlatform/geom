@@ -186,6 +186,7 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
                                   GEOM::GEOM_Object_ptr  thePath,
                                   CORBA::Boolean         theWithContact,
                                   CORBA::Boolean         theWithCorrections,
+                                  CORBA::Boolean         IsBySteps,
                                   CORBA::Boolean         IsGenerateGroups);
 
   GEOM::ListOfGO* MakePipeWithShellSections

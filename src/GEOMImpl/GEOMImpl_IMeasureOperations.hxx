@@ -80,8 +80,10 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
     SK_SEGMENT,      // segment
     SK_EDGE,         // other edge
     // VERTEX
-    SK_VERTEX,
+    SK_VERTEX,       // vertex
     // ADVANCED shapes
+    SK_LCS,          // local coordinate system
+    // (other advanced shapes)
     SK_ADVANCED,     // all advanced shapes (temporary implementation)
   };
 
@@ -157,6 +159,11 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
   Standard_EXPORT bool CheckSelfIntersections (Handle(GEOM_Object) theShape,
                                                const SICheckLevel  theCheckLevel,
                                                Handle(TColStd_HSequenceOfInteger)& theIntersections);
+  
+  Standard_EXPORT bool CheckSelfIntersectionsFast (Handle(GEOM_Object) theShape,
+						   float  deflection, 
+						   double tolerance,
+						   Handle(TColStd_HSequenceOfInteger)& theIntersections);
   
   Standard_EXPORT bool FastIntersect (Handle(GEOM_Object) theShape1, Handle(GEOM_Object) theShape2,
                                       double tolerance, float deflection,

@@ -239,12 +239,12 @@ void TransformationGUI_ProjectionDlg::SetEditCurrentArgument()
       globalSelection( aMap );
       std::list<int> needTypes;
       needTypes.push_back( TopAbs_VERTEX ), needTypes.push_back( TopAbs_EDGE ), needTypes.push_back( TopAbs_WIRE );
-      localSelection(GEOM::GEOM_Object::_nil(), needTypes );
+      localSelection(needTypes);
       break;
     }
     case PROJ_ON_WIRE:
     case PROJ_ON_EDGE: {
-      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+      localSelection(TopAbs_VERTEX);
       break;
     }
     default:;
@@ -258,9 +258,9 @@ void TransformationGUI_ProjectionDlg::SetEditCurrentArgument()
     myGroup->LineEdit1->setEnabled(false);
 
     switch ( getConstructorId() ) {
-    case PROJ_ON_FACE: localSelection(GEOM::GEOM_Object::_nil(), TopAbs_FACE); break;
-    case PROJ_ON_WIRE: localSelection(GEOM::GEOM_Object::_nil(), TopAbs_WIRE); break;
-    case PROJ_ON_EDGE: localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE); break;
+    case PROJ_ON_FACE: localSelection(TopAbs_FACE); break;
+    case PROJ_ON_WIRE: localSelection(TopAbs_WIRE); break;
+    case PROJ_ON_EDGE: localSelection(TopAbs_EDGE); break;
     default:;
     }
   }

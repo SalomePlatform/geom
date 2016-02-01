@@ -125,13 +125,17 @@ BasicGUI_PointDlg::BasicGUI_PointDlg(GeometryGUI* theGeometryGUI, QWidget* paren
   GroupXYZ->TextLabel2->setText(tr("GEOM_Y"));
   GroupXYZ->TextLabel3->setText(tr("GEOM_Z"));
 
-  GroupOnCurve = new DlgRef_2Sel1Spin(centralWidget());
+  GroupOnCurve = new DlgRef_2Sel1Spin2Check(centralWidget());
   GroupOnCurve->GroupBox1->setTitle(tr("GEOM_POINT_ON_EDGE"));
   GroupOnCurve->TextLabel1->setText(tr("GEOM_EDGE"));
   GroupOnCurve->TextLabel2->setText(tr("GEOM_START_POINT"));
   GroupOnCurve->TextLabel3->setText(tr("GEOM_PARAMETER"));
   GroupOnCurve->PushButton1->setIcon(image2);
   GroupOnCurve->PushButton2->setIcon(image2);
+  GroupOnCurve->TextLabel3->setText(tr("GEOM_PARAMETER"));
+  GroupOnCurve->CheckButton1->setText(tr("GEOM_TAKE_ORIENTATION_INTO_ACCOUNT"));
+  GroupOnCurve->CheckButton2->setAttribute( Qt::WA_DeleteOnClose );
+  GroupOnCurve->CheckButton2->close();
 
   GroupOnSurface = new DlgRef_1Sel2Spin(centralWidget());
   GroupOnSurface->GroupBox1->setTitle(tr("GEOM_POINT_ON_FACE"));
@@ -258,6 +262,7 @@ void BasicGUI_PointDlg::Init()
 
   initSpinBox(GroupOnCurve->SpinBox_DX, 0., 1., step, "parametric_precision");
   GroupOnCurve->SpinBox_DX->setValue(0.5);
+  GroupOnCurve->CheckButton1->setChecked(true);
 
   initSpinBox(GroupOnSurface->SpinBox_DX, 0., 1., step, "parametric_precision");
   GroupOnSurface->SpinBox_DX->setValue(0.5);
@@ -274,6 +279,8 @@ void BasicGUI_PointDlg::Init()
   connect(this,           SIGNAL(constructorsClicked(int)), this, SLOT(ConstructorsClicked(int)));
 
   connect(myParamCoord,   SIGNAL(buttonClicked(int)), this, SLOT(ClickParamCoord(int)));
+
+  connect(GroupOnCurve->CheckButton1,         SIGNAL(toggled(bool)), this, SLOT(CheckBoxClicked()));
 
   connect(GroupOnCurve->PushButton1,          SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupOnCurve->PushButton2,          SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
@@ -328,7 +335,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
     {
       globalSelection(); // close local contexts, if any
       myNeedType = TopAbs_VERTEX;
-      localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
+      localSelection(myNeedType);
 
       GroupRefPoint->hide();
       GroupOnCurve->hide();
@@ -343,7 +350,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
     {
       globalSelection(); // close local contexts, if any
       myNeedType = TopAbs_VERTEX;
-      localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
+      localSelection(myNeedType);
 
       myEditCurrentArgument = GroupRefPoint->LineEdit1;
       myEditCurrentArgument->setText("");
@@ -362,7 +369,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
     {
       globalSelection(); // close local contexts, if any
       myNeedType = TopAbs_EDGE;
-      localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
+      localSelection(myNeedType);
 
       myEditCurrentArgument = GroupOnCurve->LineEdit1;
       myEditCurrentArgument->setText("");
@@ -385,7 +392,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
       globalSelection(); // close local contexts, if any
       std::list<int> needTypes;
       needTypes.push_back( TopAbs_EDGE ), needTypes.push_back( TopAbs_WIRE );
-      localSelection(GEOM::GEOM_Object::_nil(), needTypes );
+      localSelection(needTypes );
 
       myEditCurrentArgument = GroupLineIntersection->LineEdit1;
       GroupLineIntersection->LineEdit1->setText("");
@@ -409,7 +416,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
     {
       globalSelection(); // close local contexts, if any
       myNeedType = TopAbs_FACE;
-      localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
+      localSelection(myNeedType);
 
       myEditCurrentArgument = GroupOnSurface->LineEdit1;
       myEditCurrentArgument->setText("");
@@ -568,14 +575,14 @@ void BasicGUI_PointDlg::SetEditCurrentArgument()
     GroupRefPoint->LineEdit1->setFocus();
     myEditCurrentArgument = GroupRefPoint->LineEdit1;
     globalSelection(); // close local contexts, if any
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+    localSelection(TopAbs_VERTEX);
   }
   else if (send == GroupOnCurve->PushButton1) {
     GroupOnCurve->LineEdit1->setFocus();
     myEditCurrentArgument = GroupOnCurve->LineEdit1;
     globalSelection(); // close local contexts, if any
     myNeedType = TopAbs_EDGE;
-    localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
+    localSelection(myNeedType);
     GroupOnCurve->PushButton2->setDown(false);
     GroupOnCurve->LineEdit1->setEnabled(true);
     GroupOnCurve->LineEdit2->setEnabled(false);
@@ -585,7 +592,7 @@ void BasicGUI_PointDlg::SetEditCurrentArgument()
     myEditCurrentArgument = GroupOnCurve->LineEdit2;
     globalSelection(); // close local contexts, if any
     myNeedType = TopAbs_VERTEX;
-    localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
+    localSelection(myNeedType);
     GroupOnCurve->PushButton1->setDown(false);
     GroupOnCurve->LineEdit2->setEnabled(true);
     GroupOnCurve->LineEdit1->setEnabled(false);
@@ -595,7 +602,7 @@ void BasicGUI_PointDlg::SetEditCurrentArgument()
     GroupOnSurface->LineEdit1->setFocus();
     myEditCurrentArgument = GroupOnSurface->LineEdit1;
     globalSelection(); // close local contexts, if any
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_FACE);
+    localSelection(TopAbs_FACE);
   }
   else if (send == GroupLineIntersection->PushButton1) {
     GroupLineIntersection->LineEdit1->setFocus();
@@ -669,7 +676,7 @@ void BasicGUI_PointDlg::ValueChangedInSpinBox(double newValue)
 // function : CheckBoxClicked()
 // purpose  : Check Boxes Management
 //=================================================================================
-void BasicGUI_PointDlg::CheckBoxClicked(int  State)
+void BasicGUI_PointDlg::CheckBoxClicked()
 {
   displayPreview(true);
 }
@@ -821,7 +828,9 @@ bool BasicGUI_PointDlg::execute(ObjectList& objects)
   case GEOM_POINT_EDGE :
     {
       if (myParamCoord->checkedId() == PARAM_VALUE) {
-        anObj = anOper->MakePointOnCurve(myEdge.get(), getParameter());
+        bool isUseOrientation = GroupOnCurve->CheckButton1->isChecked();
+
+        anObj = anOper->MakePointOnCurve(myEdge.get(), getParameter(), isUseOrientation);
         aParameters<<GroupOnCurve->SpinBox_DX->text();
       }
       else if (myParamCoord->checkedId() == LENGTH_VALUE) {
@@ -973,6 +982,7 @@ void BasicGUI_PointDlg::updateParamCoord(bool theIsUpdate)
     GroupOnCurve->LineEdit2->setVisible(isLength);
     GroupOnCurve->TextLabel3->setVisible(isParam || isLength);
     GroupOnCurve->SpinBox_DX->setVisible(isParam || isLength);
+    GroupOnCurve->CheckButton1->setVisible(isParam);
     if (isParam){
       initSpinBox(GroupOnCurve->SpinBox_DX, 0., 1., 0.1, "parametric_precision");
       GroupOnCurve->SpinBox_DX->setValue(0.5);

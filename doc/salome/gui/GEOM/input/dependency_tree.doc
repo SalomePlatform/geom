@@ -28,13 +28,15 @@ It is also possible to select an object(s) directly in the "Dependency Tree" vie
 
 All necessary parameters of Dependency Tree Viewer can be edited in the \ref pref_dependency_tree "Preferences".
 
+\note This functionality is available only if GUI module is builded with Graphics view (set option SALOME_USE_GRAPHICSVIEW to ON when building GUI module).
+
 <hr>
 \anchor dependency_tree_nodes_anchor <h2>Nodes</h2>
 
 Tree nodes in the Dependency Viewer are named according to the study 
 names of the corresponding objects. 
 
-All nodes have fixed size, so long names are cut; the full object name can be seen in the tooltip 
+All nodes have fixed size, so long names are cut; the full object name can be seen in the tool-tip 
 when the cursor is hovered over the node.
 
 "Dependency Tree" view supports the following states of nodes:
@@ -61,11 +63,11 @@ Browser, OCC Viewer or Dependency Tree Viewer;</li></ul>
 Dependency Tree Viewer shows oriented links between nodes to 
 represent the dependency direction. The viewer supports the following states of links:
 
-<ul><li><b>Unidirectional link</b> - shows that object B depends on object A;</li></ul>
+<ul><li><b>Unidirectional link</b> - shows that object \b B depends on object \b A;</li></ul>
 \image html tree_unidir_link.png
 
-<ul><li><b>Bidirectional link</b> - shows that object B depends on 
-object A and, at the same time, object A depends on object B;</li></ul>
+<ul><li><b>Bidirectional link</b> - shows that object \b B depends on 
+object \b A and, at the same time, object \b A depends on object \b B;</li></ul>
 \image html tree_bidir_link.png
 
 <ul><li><b>Self-dependency link</b> - shows that an object depends on itself;</li></ul>

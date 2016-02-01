@@ -11,7 +11,7 @@ of the operation will be a GEOM_Object (FACE).
 \n Firstly, to create a \b Face you need to select input shape(s). The list of
 input shapes can include shapes of any type except vertices; if the shapes are
 neither wires nor edges, the algorithm extracts all edges from
-the input shapes and works on the obtaineed edges.
+the input shapes and works on the obtained edges.
 \n The edges and wires do not necessarily have to be closed, the
 algorithm automatically builds a wire of maximum length from all
 given edges and wires. If several closed wires are detected the algorithm tries
@@ -26,7 +26,7 @@ exceeds 1e-06, a warning will be shown, but the face will be created
 and published in the study in a normal way. Using such faces can lead to failures
 or unpredictable results in most operations.
 
-\n The \b Result will be a \b GEOM_Object (FACE).
+\n The \b Result will be a \b GEOM_Object. It can be either a single face or, in specific cases, a compound of faces.
 
 \n <b>TUI Command:</b> <em>geompy.MakeFaceWires([list of Shapes], isPlanarWanted)</em>
 \n <b>Arguments:</b> Name + 1 wire.
@@ -35,7 +35,7 @@ or unpredictable results in most operations.
 
 \n Secondly, it is possible to create a face based on another face's surface and bounded by a wire.
 
-\n The \b Result will be a \b GEOM_Object (FACE).
+\n The \b Result will be a \b GEOM_Object (face).
 
 \n <b>TUI Command:</b> <em>geompy.MakeFaceFromSurface(theFace, theWire)</em>
 \n <b>Arguments:</b> Name + 1 face + 1 wire.
@@ -50,7 +50,7 @@ and constraints:
 
 \note Please note, that the constraint face must be connected to a reference edge.
 
-\n The \b Result will be a \b GEOM_Object (FACE).
+\n The \b Result will be a \b GEOM_Object (face).
 
 \n <b>TUI Command:</b> <em>geompy.MakeFaceWithConstraints([List of constraints])</em>
 \n <b>Arguments:</b> Name + List of input edges and constraint faces. If a constraint

@@ -307,11 +307,7 @@ bool MeasureGUI_BndBoxDlg::execute (ObjectList& objects)
 void MeasureGUI_BndBoxDlg::activateSelection()
 {
   globalSelection( GEOM_ALLSHAPES );
-  std::list<int> needTypes;
-  needTypes.push_back( TopAbs_SHAPE ), needTypes.push_back( TopAbs_VERTEX ), needTypes.push_back( TopAbs_EDGE ); 
-  needTypes.push_back( TopAbs_WIRE ), needTypes.push_back( TopAbs_FACE ), needTypes.push_back( TopAbs_SHELL );
-  needTypes.push_back( TopAbs_SOLID ), needTypes.push_back( TopAbs_COMPSOLID ), needTypes.push_back( TopAbs_COMPOUND );
-  localSelection(GEOM::GEOM_Object::_nil(), needTypes );
+  localSelection( TopAbs_SHAPE );
 }
 
 //=================================================================================

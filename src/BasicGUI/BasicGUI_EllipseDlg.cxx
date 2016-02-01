@@ -155,7 +155,7 @@ void BasicGUI_EllipseDlg::Init()
   initName( tr( "GEOM_ELLIPSE" ) );
 
   globalSelection(); // close local contexts, if any
-  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  localSelection( TopAbs_VERTEX );
 
   resize( minimumSizeHint() );
   SelectionIntoArgument();
@@ -212,7 +212,7 @@ bool BasicGUI_EllipseDlg::ClickOnApply()
   myEditCurrentArgument = GroupPoints->LineEdit1;
 
   globalSelection(); // close local contexts, if any
-  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  localSelection( TopAbs_VERTEX );
   displayPreview(true);
   
   return true;
@@ -303,7 +303,7 @@ void BasicGUI_EllipseDlg::SetEditCurrentArgument()
                                  myEditCurrentArgument == GroupPoints->LineEdit3 ) ? 
     TopAbs_EDGE : TopAbs_VERTEX;
   globalSelection(); // close local contexts, if any
-  localSelection( GEOM::GEOM_Object::_nil(), aNeedType );
+  localSelection( aNeedType );
   
   myEditCurrentArgument->setFocus();
   //SelectionIntoArgument();
@@ -333,7 +333,7 @@ void BasicGUI_EllipseDlg::ActivateThisDialog()
   myDir.nullify();
   //globalSelection( GEOM_POINT );
   globalSelection(); // close local contexts, if any
-  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  localSelection( TopAbs_VERTEX );
 }
 
 //=================================================================================

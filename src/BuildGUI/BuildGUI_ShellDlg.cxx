@@ -262,10 +262,7 @@ bool BuildGUI_ShellDlg::execute( ObjectList& objects )
   GEOM::GEOM_Object_var anObj = anOper->MakeShell( objlist.in() );
 
   if ( !anObj->_is_nil() ) {
-    TopoDS_Shape aShell;
-    GEOMBase::GetShape(anObj, aShell, TopAbs_SHELL);
-
-    if (aShell.IsNull()) {
+    if (anObj->GetShapeType() == GEOM::COMPOUND) {
       SUIT_MessageBox::warning(this,
                                QObject::tr("GEOM_WRN_WARNING"),
                                QObject::tr("GEOM_WRN_FACES_NOT_SHELL"));

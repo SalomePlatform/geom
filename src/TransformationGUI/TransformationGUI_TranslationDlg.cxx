@@ -385,9 +385,9 @@ void TransformationGUI_TranslationDlg::SetEditCurrentArgument()
     GroupPoints->LineEdit3->setEnabled(false);
 
     if (getConstructorId() == 1)
-      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+      localSelection(TopAbs_VERTEX);
     else
-      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+      localSelection(TopAbs_EDGE);
   }
   else if (send == GroupPoints->PushButton3) {
     myEditCurrentArgument = GroupPoints->LineEdit3;
@@ -397,7 +397,7 @@ void TransformationGUI_TranslationDlg::SetEditCurrentArgument()
     GroupPoints->LineEdit1->setEnabled(false);
     GroupPoints->LineEdit2->setEnabled(false);
 
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+    localSelection(TopAbs_VERTEX);
   }
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));

@@ -81,6 +81,7 @@ private:
   QCheckBox                         *myGenGroupCheckGP;
   QLabel                            *myPrefixLblGP;
   QLineEdit                         *myPrefixEditGP;
+  QCheckBox                         *myStepByStepCheckGMP;
   QCheckBox                         *myGenGroupCheckGMP;
   QLabel                            *myPrefixLblGMP;
   QLineEdit                         *myPrefixEditGMP;
@@ -95,6 +96,7 @@ private slots:
   void                               ConstructorsClicked( int );
   void                               SelectionTypeButtonClicked();
   void                               GenGroupClicked(bool);
+  void                               StepByStepClicked(bool);
 };
 
 #endif // GENERATIONGUI_PIPEDLG_H

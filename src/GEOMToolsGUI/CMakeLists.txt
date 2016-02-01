@@ -58,8 +58,13 @@ SET(_link_LIBRARIES
   GEOM
   GEOMBase
   Material
-  DependencyTree
   )
+  
+IF(SALOME_USE_GRAPHICSVIEW)
+  LIST(APPEND _link_LIBRARIES
+    DependencyTree
+    )
+ENDIF()
 
 # --- headers ---
 

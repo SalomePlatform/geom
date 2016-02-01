@@ -804,25 +804,73 @@ void GEOMImpl_HealingDriver::FuseCollinearEdges (const TopoDS_Shape& theOriginal
   theWire = TopoDS::Wire(Fixer->Shape());
   */
 
-  TopoDS_Edge prevEdge;
-  TopTools_ListOfShape finalList, currChain;
+  // Get the ordered list of edges.
+  TopTools_ListOfShape   anEdges;
+  TopTools_ListOfShape   aCurVertices;
+  BRepTools_WireExplorer aWExp (theWire);
 
-  BRepTools_WireExplorer wexp (theWire);
-  if (wexp.More()) {
-    prevEdge = wexp.Current();
-    currChain.Append(prevEdge);
-    wexp.Next();
+  for (; aWExp.More(); aWExp.Next()) {
+    anEdges.Append(aWExp.Current());
+    aCurVertices.Append(aWExp.CurrentVertex());
   }
-  else {
+
+  if (anEdges.IsEmpty()) {
     Standard_NullObject::Raise("Empty wire given");
   }
 
-  for (; wexp.More(); wexp.Next()) {
-    TopoDS_Edge anEdge = wexp.Current();
-    TopoDS_Vertex CurVertex = wexp.CurrentVertex();
+  // Treat the case if the wire is closed and first and last edges are C1.
+  Standard_Boolean isShift = Standard_False;
+
+  if (BRep_Tool::IsClosed(theWire)) {
+    // Wire is closed. Check if there are more than 2 edges in the wire.
+    if (!anEdges.First().IsSame(anEdges.Last())) {
+      isShift = Standard_True;
+    }
+  }
+
+  if (isShift) {
+    // Put first edge to the end of the list while the chain break is reached.
+    TopoDS_Shape aFirstEdge = anEdges.First();
+
+    while (isShift) {
+      isShift = Standard_False;
+
+      // Check if the first vertex should be kept
+      if (aMapToRemove.Contains(aCurVertices.First()) || removeAll) {
+        // Check if first and last edges are C1.
+        TopoDS_Edge anEdge1 = TopoDS::Edge(anEdges.Last());
+        TopoDS_Edge anEdge2 = TopoDS::Edge(anEdges.First());
+
+        if (AreEdgesC1(anEdge1, anEdge2)) {
+          // Make the first edge last.
+          anEdges.Append(anEdge2);
+          anEdges.RemoveFirst();
+          aCurVertices.Append(aCurVertices.First());
+          aCurVertices.RemoveFirst();
+
+          // Check if we reached the first edge again.
+          // Break the loop in this case.
+          isShift = !aFirstEdge.IsSame(anEdges.First());
+        }
+      }
+    }
+  }
+
+  TopTools_ListOfShape finalList, currChain;
+  TopTools_ListIteratorOfListOfShape anEIter(anEdges);
+  TopTools_ListIteratorOfListOfShape aVIter(aCurVertices);
+  TopoDS_Edge                        prevEdge = TopoDS::Edge(anEIter.Value());
+
+  currChain.Append(prevEdge);
+  anEIter.Next();
+  aVIter.Next();
+
+  for (; anEIter.More(); anEIter.Next(), aVIter.Next()) {
+    TopoDS_Edge         anEdge     = TopoDS::Edge(anEIter.Value());
+    const TopoDS_Shape &aCurVertex = aVIter.Value();
 
     bool continueChain = false;
-    if (aMapToRemove.Contains(CurVertex) || removeAll) {
+    if (aMapToRemove.Contains(aCurVertex) || removeAll) {
       // if C1 -> continue chain
       if (AreEdgesC1(prevEdge, anEdge)) {
         continueChain = true;

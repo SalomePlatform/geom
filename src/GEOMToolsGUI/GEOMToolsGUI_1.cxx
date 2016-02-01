@@ -24,7 +24,9 @@
 //  File   : GEOMToolsGUI_1.cxx
 //  Author : Sergey ANIKIN, Open CASCADE S.A.S. (sergey.anikin@opencascade.com)
 
+#ifndef DISABLE_PYCONSOLE
 #include <PyConsole_Console.h>
+#endif
 
 #include "GEOMToolsGUI.h"
 #include "GEOMToolsGUI_TransparencyDlg.h"
@@ -47,9 +49,11 @@
 #include <GEOMBase.h>
 #include <GEOM_Actor.h>
 
+#ifndef DISABLE_GRAPHICSVIEW
 #include <DependencyTree_ViewModel.h>
 #include <DependencyTree_View.h>
 #include <DependencyTree_Selector.h>
+#endif
 
 #include <Basics_OCCTVersion.hxx>
 
@@ -126,6 +130,7 @@
 // on Show Dependencies operation
 #define LAYOUT_DEPVIEW
 
+#ifndef DISABLE_PYCONSOLE
 void GEOMToolsGUI::OnCheckGeometry()
 {
   SalomeApp_Application* app =
@@ -135,6 +140,7 @@ void GEOMToolsGUI::OnCheckGeometry()
   if (pyConsole)
     pyConsole->exec("from GEOM_usinggeom import *");
 }
+#endif
 
 void GEOMToolsGUI::OnAutoColor()
 {
@@ -882,6 +888,7 @@ void GEOMToolsGUI::OnSortChildren()
   app->updateObjectBrowser( true );
 }
 
+#ifndef DISABLE_GRAPHICSVIEW
 void GEOMToolsGUI::OnShowDependencyTree()
 {
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
@@ -932,6 +939,7 @@ void GEOMToolsGUI::OnShowDependencyTree()
 #endif
   depVw->setFocus();
 }
+#endif
 
 void GEOMToolsGUI::OnReduceStudy()
 {

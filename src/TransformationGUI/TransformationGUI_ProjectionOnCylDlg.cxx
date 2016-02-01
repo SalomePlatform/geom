@@ -60,7 +60,8 @@ TransformationGUI_ProjectionOnCylDlg::TransformationGUI_ProjectionOnCylDlg
     myRadiusSpin      (0),
     myStartAngleSpin  (0),
     myUseAngleLen     (0),
-    myAngleLenSpin    (0)
+    myAngleLenSpin    (0),
+    myAngleRotSpin    (0)
 {
   SUIT_ResourceMgr* aResMgr = myGeomGUI->getApp()->resourceMgr();
   QPixmap image0 (aResMgr->loadPixmap("GEOM", tr("ICO_DLG_PROJ_ON_CYL")));
@@ -85,6 +86,8 @@ TransformationGUI_ProjectionOnCylDlg::TransformationGUI_ProjectionOnCylDlg
     new QLabel(tr("GEOM_PROJ_ON_CYL_START_ANGLE"), aGrpParams);
   QLabel      *anAngleLenLbl  =
     new QLabel(tr("GEOM_PROJ_ON_CYL_LENGTH_ANGLE"), aGrpParams);
+  QLabel      *anAngleRotLbl  =
+    new QLabel(tr("GEOM_PROJ_ON_CYL_ROTATION_ANGLE"), aGrpParams);
 
   myObjectName     = new QLineEdit(aGrpParams);
   mySelButton      = new QPushButton(aGrpParams);
@@ -92,6 +95,7 @@ TransformationGUI_ProjectionOnCylDlg::TransformationGUI_ProjectionOnCylDlg
   myStartAngleSpin = new SalomeApp_DoubleSpinBox(aGrpParams);
   myUseAngleLen    = new QCheckBox(aGrpParams);
   myAngleLenSpin   = new SalomeApp_DoubleSpinBox(aGrpParams);
+  myAngleRotSpin   = new SalomeApp_DoubleSpinBox(aGrpParams);
 
   myObjectName->setReadOnly(true);
   mySelButton->setIcon(image1);
@@ -110,6 +114,8 @@ TransformationGUI_ProjectionOnCylDlg::TransformationGUI_ProjectionOnCylDlg
   aParamsLayout->addWidget(myUseAngleLen,    3, 0);
   aParamsLayout->addWidget(anAngleLenLbl,    3, 1);
   aParamsLayout->addWidget(myAngleLenSpin,   3, 2, 1, 2);
+  aParamsLayout->addWidget(anAngleRotLbl,    4, 1);
+  aParamsLayout->addWidget(myAngleRotSpin,   4, 2, 1, 2);
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
@@ -145,14 +151,17 @@ void TransformationGUI_ProjectionOnCylDlg::Init()
   double aRadius       = 100.0;
   double aStartAngle   = 0.;
   double anAngleLen    = 360.;
+  double aRotAngle     = 0.;
 
   initSpinBox(myRadiusSpin, 0.00001, COORD_MAX, aStep, "length_precision");
   initSpinBox(myStartAngleSpin, -180., 180., aSpecificStep, "angle_precision");
   initSpinBox(myAngleLenSpin, 0.00001, COORD_MAX, aSpecificStep, "angle_precision");
+  initSpinBox(myAngleRotSpin, -180., 180., aSpecificStep, "angle_precision");
 
   myRadiusSpin->setValue(aRadius);
   myStartAngleSpin->setValue(aStartAngle);
   myAngleLenSpin->setValue(anAngleLen);
+  myAngleRotSpin->setValue(aRotAngle);
 
   myObjectName->setText("");
   myUseAngleLen->setChecked(true);
@@ -165,6 +174,7 @@ void TransformationGUI_ProjectionOnCylDlg::Init()
   connect(myRadiusSpin,     SIGNAL(valueChanged(double)), this, SLOT(processPreview()));
   connect(myStartAngleSpin, SIGNAL(valueChanged(double)), this, SLOT(processPreview()));
   connect(myAngleLenSpin,   SIGNAL(valueChanged(double)), this, SLOT(processPreview()));
+  connect(myAngleRotSpin,   SIGNAL(valueChanged(double)), this, SLOT(processPreview()));
   connect(myUseAngleLen,    SIGNAL(clicked()),            this, SLOT(SetUseLengthAngle()));
 
   connect(myGeomGUI->getApp()->selectionMgr(),SIGNAL(currentSelectionChanged()),
@@ -319,7 +329,8 @@ bool TransformationGUI_ProjectionOnCylDlg::isValid (QString &msg)
 
   if (!myObj->_is_nil()                      &&
        myRadiusSpin->isValid(msg, !IsPreview()) &&
-       myStartAngleSpin->isValid(msg, !IsPreview())) {
+       myStartAngleSpin->isValid(msg, !IsPreview()) &&
+       myAngleRotSpin->isValid(msg, !IsPreview())) {
     if (myUseAngleLen->isChecked()) {
       // Check length angle spin.
       isOk =  myAngleLenSpin->isValid(msg, !IsPreview());
@@ -343,6 +354,7 @@ bool TransformationGUI_ProjectionOnCylDlg::execute (ObjectList& objects)
 
   double aRadius      = myRadiusSpin->value();
   double aStartAngle  = myStartAngleSpin->value()*M_PI/180.;
+  double aRotAngle    = myAngleRotSpin->value()*M_PI/180.;
   double aLengthAngle = -1.;
 
   if (myUseAngleLen->isChecked()) {
@@ -350,7 +362,7 @@ bool TransformationGUI_ProjectionOnCylDlg::execute (ObjectList& objects)
   }
 
   GEOM::GEOM_Object_var anObj = anOper->MakeProjectionOnCylinder
-    (myObj, aRadius, aStartAngle, aLengthAngle);
+    (myObj, aRadius, aStartAngle, aLengthAngle, aRotAngle);
 
   if (!anObj->_is_nil()) {
     if (!IsPreview()) {
@@ -359,6 +371,7 @@ bool TransformationGUI_ProjectionOnCylDlg::execute (ObjectList& objects)
       aParameters << myStartAngleSpin->text();
       if (myUseAngleLen->isChecked())
         aParameters << myAngleLenSpin->text();
+      aParameters << myAngleRotSpin->text();
       anObj->SetParameters(aParameters.join(":").toUtf8().constData());
     }
     objects.push_back(anObj._retn());

@@ -29,6 +29,7 @@
 #include "MeasureGUI_DimensionFilter.h"
 
 #include <GEOMGUI_DimensionProperty.h>
+#include <GEOMGUI_TextTreeWdg.h>
 #include <GEOMUtils.hxx>
 #include <GEOMGUI_OCCSelector.h>
 #include <GEOM_AISDimension.hxx>
@@ -771,6 +772,8 @@ bool MeasureGUI_ManageDimensionsDlg::ClickOnApply()
 
   mySavedPropertyState.SaveToAttribute( aStudy, myEditObject->GetStudyEntry() );
 
+  myGeomGUI->emitDimensionsUpdated( QString( myEditObject->GetStudyEntry() ) );
+
   return true;
 }
 
@@ -805,9 +808,12 @@ void MeasureGUI_ManageDimensionsDlg::OnFinish()
                              myEditObject->GetStudyEntry(),
                              GEOM::propertyName( GEOM::Dimensions ),
                              QVariant() );
+
   if ( myIsNeedRedisplay ) {
-    redisplay( myEditObject.get());
+    redisplay( myEditObject.get() );
   }
+  
+  myGeomGUI->emitDimensionsUpdated( QString( myEditObject->GetStudyEntry() ) );
 }
 
 //=================================================================================

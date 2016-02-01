@@ -1828,6 +1828,7 @@ Handle(TColStd_HSequenceOfTransient)
                const Handle(GEOM_Object)                  &thePath,
                const bool                                  theWithContact,
                const bool                                  theWithCorrections,
+               const bool                                  IsBySteps,
                const bool                                  IsGenerateGroups)
 {
   SetErrorCode(KO);
@@ -1897,8 +1898,13 @@ Handle(TColStd_HSequenceOfTransient)
   aCI.SetBases(aSeqBases);
   aCI.SetLocations(aSeqLocs);
   aCI.SetPath(aRefPath);
-  aCI.SetWithContactMode(theWithContact);
-  aCI.SetWithCorrectionMode(theWithCorrections);
+
+  if (!IsBySteps) {
+    aCI.SetWithContactMode(theWithContact);
+    aCI.SetWithCorrectionMode(theWithCorrections);
+  }
+
+  aCI.SetIsBySteps(IsBySteps);
   aCI.SetGenerateGroups(IsGenerateGroups);
 
   //Compute the Pipe value
@@ -1930,7 +1936,11 @@ Handle(TColStd_HSequenceOfTransient)
     pyDump << aPipeDS;
   }
 
-  pyDump << " = geompy.MakePipeWithDifferentSections([";
+  if (IsBySteps) {
+    pyDump << " = geompy.MakePipeWithDifferentSectionsBySteps([";
+  } else {
+    pyDump << " = geompy.MakePipeWithDifferentSections([";
+  }
 
   for(i =1 ; i <= nbBases; i++) {
 
@@ -1962,7 +1972,11 @@ Handle(TColStd_HSequenceOfTransient)
     }
   }
 
-  pyDump<< "], "<<thePath<<","<<theWithContact << "," << theWithCorrections;
+  pyDump<< "], "<<thePath;
+
+  if (!IsBySteps) {
+    pyDump<<","<<theWithContact << "," << theWithCorrections;
+  }
 
   if (IsGenerateGroups) {
     pyDump << ", True";

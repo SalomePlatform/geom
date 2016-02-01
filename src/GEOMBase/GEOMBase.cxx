@@ -859,7 +859,7 @@ QString GEOMBase::GetEntry( GEOM::GEOM_Object_ptr object )
 // Function : PublishSubObject
 // Purpose  : Publish sub-shape under the main object
 //================================================================
-void GEOMBase::PublishSubObject( GEOM::GEOM_Object_ptr object )
+void GEOMBase::PublishSubObject( GEOM::GEOM_Object_ptr object, const QString& name )
 {
   SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
   if ( study && !CORBA::is_nil( object ) ) {
@@ -868,9 +868,9 @@ void GEOMBase::PublishSubObject( GEOM::GEOM_Object_ptr object )
     GEOM::GEOM_Object_var father = object->GetMainShape();
     QString fatherEntry = GetEntry( father );
     if ( entry.isEmpty() && !CORBA::is_nil( father ) && !fatherEntry.isEmpty() ) {
-      QString name = GetName( object );
+      QString aName = !name.isEmpty() ? name : GetName( object );
       GeometryGUI::GetGeomGen()->AddInStudy( GeometryGUI::ClientStudyToStudy( studyDS ),
-                                             object, name.toLatin1().data(), father.in() );
+                                             object, aName.toLatin1().data(), father.in() );
     }
   }
 }

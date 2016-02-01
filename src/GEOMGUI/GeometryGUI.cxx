@@ -33,6 +33,7 @@
 #include "GEOMGUI_OCCSelector.h"
 #include "GEOMGUI_Selection.h"
 #include "GEOMGUI_CreationInfoWdg.h"
+#include "GEOMGUI_TextTreeWdg.h"
 #include "GEOMGUI_DimensionProperty.h"
 #include "GEOM_Constants.h"
 #include "GEOM_Displayer.h"
@@ -50,8 +51,6 @@
 #include <SUIT_Session.h>
 #include <SUIT_ViewManager.h>
 
-#include <PyInterp_Interp.h>
-
 #include <OCCViewer_ViewWindow.h>
 #include <OCCViewer_ViewPort3d.h>
 #include <OCCViewer_ViewModel.h>
@@ -65,7 +64,9 @@
 #include <SVTK_InteractorStyle.h>
 #include <SVTK_ViewModel.h>
 
+#ifndef DISABLE_GRAPHICSVIEW
 #include <GraphicsView_Viewer.h>
+#endif
 
 #include <SalomeApp_Application.h>
 #include <SalomeApp_DataObject.h>
@@ -86,6 +87,7 @@
 #include <SALOMEDS_SObject.hxx>
 
 #include <Basics_OCCTVersion.hxx>
+#include <QtxFontEdit.h>
 
 // External includes
 #include <QDir>
@@ -97,6 +99,7 @@
 #include <QString>
 #include <QPainter>
 #include <QSignalMapper>
+#include <QFontDatabase>
 
 #include <AIS_ListOfInteractive.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
@@ -107,6 +110,7 @@
 #include <NCollection_DataMap.hxx>
 
 #include <TColStd_HArray1OfByte.hxx>
+#include <TColStd_SequenceOfHAsciiString.hxx>
 
 #include <utilities.h>
 
@@ -115,6 +119,10 @@
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx>
+
+#include <Font_SystemFont.hxx>
+#include <Font_FontMgr.hxx>
+#include <TCollection_HAsciiString.hxx>
 
 #include "GEOM_version.h"
 #include "GEOMImpl_Types.hxx" // dangerous hxx (defines short-name macros) - include after all
@@ -218,6 +226,7 @@ GeometryGUI::GeometryGUI() :
   myLocalSelectionMode = GEOM_ALLOBJECTS;
 
   myCreationInfoWdg = 0;
+  myTextTreeWdg = 0;
 
   connect( Material_ResourceMgr::resourceMgr(), SIGNAL( changed() ), this, SLOT( updateMaterials() ) );
 
@@ -429,7 +438,11 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   SUIT_ViewWindow* window = desk->activeWindow();
   bool ViewOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
   bool ViewVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
+#ifndef DISABLE_GRAPHICSVIEW
   bool ViewDep = ( window && window->getViewManager()->getType() == GraphicsView_Viewer::Type() );
+#else
+  bool ViewDep = 0;
+#endif
   // if current viewframe is not of OCC and not of VTK type - return immediately
   // fix for IPAL8958 - allow some commands to execute even when NO viewer is active (rename for example)
   QList<int> NotViewerDependentCommands;
@@ -470,7 +483,9 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpSelectCompound:     // POPUP MENU - SELECT ONLY - COMPOUND
   case GEOMOp::OpSelectAll:          // POPUP MENU - SELECT ONLY - SELECT ALL
   case GEOMOp::OpDelete:             // MENU EDIT - DELETE
+#ifndef DISABLE_PYCONSOLE
   case GEOMOp::OpCheckGeom:          // MENU TOOLS - CHECK GEOMETRY
+#endif
   case GEOMOp::OpMaterialsLibrary:   // MENU TOOLS - MATERIALS LIBRARY
   case GEOMOp::OpDeflection:         // POPUP MENU - DEFLECTION COEFFICIENT
   case GEOMOp::OpColor:              // POPUP MENU - COLOR
@@ -497,7 +512,9 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpClsBringToFront:    //
   case GEOMOp::OpCreateFolder:       // POPUP MENU - CREATE FOLDER
   case GEOMOp::OpSortChildren:       // POPUP MENU - SORT CHILD ITEMS
+#ifndef DISABLE_GRAPHICSVIEW
   case GEOMOp::OpShowDependencyTree: // POPUP MENU - SHOW DEPENDENCY TREE
+#endif
   case GEOMOp::OpReduceStudy:        // POPUP MENU - REDUCE STUDY
     libName = "GEOMToolsGUI";
     break;
@@ -644,6 +661,9 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpCheckSelfInters:    // MENU MEASURE - CHECK SELF INTERSECTIONS
   case GEOMOp::OpFastCheckInters:    // MENU MEASURE - FAST CHECK INTERSECTIONS
   case GEOMOp::OpManageDimensions:   // MENU MEASURE - MANAGE DIMENSIONS
+#ifndef DISABLE_PLOT2DVIEWER
+  case GEOMOp::OpShapeStatistics:    // MENU MEASURE - SHAPE STATISTICS
+#endif
   case GEOMOp::OpShowAllDimensions:  // POPUP MENU - SHOW ALL DIMENSIONS
   case GEOMOp::OpHideAllDimensions:  // POPUP MENU - HIDE ALL DIMENSIONS
     libName = "MeasureGUI";
@@ -878,6 +898,11 @@ void GeometryGUI::createOriginAndBaseVectors()
         GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOX, "OX" );
         GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOY, "OY" );
         GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOZ, "OZ" );
+        anOrigin->UnRegister();
+        anOX->UnRegister();
+        anOY->UnRegister();
+        anOZ->UnRegister();
+        aBasicOperations->UnRegister();
 
         getApp()->updateObjectBrowser( true );
       }
@@ -1025,9 +1050,14 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpGetNonBlocks,     "GET_NON_BLOCKS" );
   createGeomAction( GEOMOp::OpCheckSelfInters,  "CHECK_SELF_INTERSECTIONS" );
   createGeomAction( GEOMOp::OpFastCheckInters,  "FAST_CHECK_INTERSECTIONS" );
+#ifndef DISABLE_PLOT2DVIEWER
+  createGeomAction( GEOMOp::OpShapeStatistics,  "SHAPE_STATISTICS" );
+#endif
 
+#ifndef DISABLE_PYCONSOLE
 #ifdef _DEBUG_ // PAL16821
   createGeomAction( GEOMOp::OpCheckGeom,        "CHECK_GEOMETRY" );
+#endif
 #endif
 
   createGeomAction( GEOMOp::OpMaterialsLibrary,   "MATERIALS_LIBRARY" );
@@ -1082,7 +1112,9 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpPredefMaterCustom,    "POP_PREDEF_MATER_CUSTOM" );
   createGeomAction( GEOMOp::OpCreateFolder, "POP_CREATE_FOLDER" );
   createGeomAction( GEOMOp::OpSortChildren, "POP_SORT_CHILD_ITEMS" );
+#ifndef DISABLE_GRAPHICSVIEW
   createGeomAction( GEOMOp::OpShowDependencyTree, "POP_SHOW_DEPENDENCY_TREE" );
+#endif
   createGeomAction( GEOMOp::OpReduceStudy,       "POP_REDUCE_STUDY" );
   createGeomAction( GEOMOp::OpShowAllDimensions, "POP_SHOW_ALL_DIMENSIONS" );
   createGeomAction( GEOMOp::OpHideAllDimensions, "POP_HIDE_ALL_DIMENSIONS" );
@@ -1288,11 +1320,16 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpCheckSelfInters, measurId, -1 );
   createMenu( GEOMOp::OpFastCheckInters, measurId, -1 );
   createMenu( GEOMOp::OpInspectObj,      measurId, -1 );
+#ifndef DISABLE_PLOT2DVIEWER
+  createMenu( GEOMOp::OpShapeStatistics, measurId, -1 );
+#endif
 
   int toolsId = createMenu( tr( "MEN_TOOLS" ), -1, -1, 50 );
+#ifndef DISABLE_PYCONSOLE
 #if defined(_DEBUG_) || defined(_DEBUG) // PAL16821
   createMenu( separator(),         toolsId, -1 );
   createMenu( GEOMOp::OpCheckGeom, toolsId, -1 );
+#endif
 #endif
 
   createMenu( separator(),         toolsId, -1 );
@@ -1621,9 +1658,11 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  GEOMOp::OpSortChildren ), -1, -1 ); // Sort child items
   mgr->setRule( action( GEOMOp::OpSortChildren ), QString("client='ObjectBrowser' and $component={'GEOM'} and nbChildren>1"), QtxPopupMgr::VisibleRule );
 
+#ifndef DISABLE_GRAPHICSVIEW
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpShowDependencyTree ), -1, -1 ); // Show dependency tree
   mgr->setRule( action( GEOMOp::OpShowDependencyTree ), clientOCCorVTKorOB + " and selcount>0 and ($component={'GEOM'}) and type='Shape'", QtxPopupMgr::VisibleRule );
+#endif
 
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpReduceStudy ), -1, -1 ); // Reduce Study
@@ -1744,17 +1783,18 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
 
   // import Python module that manages GEOM plugins (need to be here because SalomePyQt API uses active module)
   PyGILState_STATE gstate = PyGILState_Ensure();
-  PyObjWrapper pluginsmanager = PyImport_ImportModuleNoBlock((char*)"salome_pluginsmanager");
+  PyObject* pluginsmanager = PyImport_ImportModuleNoBlock((char*)"salome_pluginsmanager");
   if ( !pluginsmanager ) {
     PyErr_Print();
   }
   else {
-    PyObjWrapper result =
+    PyObject* result =
       PyObject_CallMethod(pluginsmanager, (char*)"initialize", (char*)"isss", 1, "geom",
                           tr("MEN_NEW_ENTITY").toUtf8().data(),
                           tr("GEOM_PLUGINS_OTHER").toUtf8().data());
     if ( !result )
       PyErr_Print();
+    Py_XDECREF(result);
   }
   PyGILState_Release(gstate);
   // end of GEOM plugins loading
@@ -1779,6 +1819,11 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
     myCreationInfoWdg = new GEOMGUI_CreationInfoWdg( getApp() );
   getApp()->insertDockWindow( myCreationInfoWdg->getWinID(), myCreationInfoWdg );
   getApp()->placeDockWindow( myCreationInfoWdg->getWinID(), Qt::LeftDockWidgetArea );
+
+  if ( !myTextTreeWdg )
+    myTextTreeWdg = new GEOMGUI_TextTreeWdg( getApp() );
+  getApp()->insertDockWindow( myTextTreeWdg->getWinID(), myTextTreeWdg );
+  getApp()->placeDockWindow( myTextTreeWdg->getWinID(), Qt::LeftDockWidgetArea );
 
   //NPAL 19674
   SALOME_ListIO selected;
@@ -1818,6 +1863,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
     }
   }
 
+  Py_XDECREF(pluginsmanager);
   return true;
 }
 
@@ -1841,8 +1887,15 @@ bool GeometryGUI::deactivateModule( SUIT_Study* study )
 
   disconnect( selMrg, SIGNAL( currentSelectionChanged() ), this, SLOT( updateCreationInfo() ));
   disconnect( selMrg, SIGNAL( currentSelectionChanged() ), this, SLOT( updateFieldColorScale() ));
-  getApp()->removeDockWindow( myCreationInfoWdg->getWinID() );
-  myCreationInfoWdg = 0;
+  if ( myCreationInfoWdg ) {
+    getApp()->removeDockWindow( myCreationInfoWdg->getWinID() );
+    myCreationInfoWdg = 0;
+  }
+  if ( myTextTreeWdg ) {
+    getApp()->removeDockWindow( myTextTreeWdg->getWinID() );
+    disconnect( application(), 0, myTextTreeWdg, 0 );
+    myTextTreeWdg = 0;
+  }
 
   EmitSignalCloseAllDialogs();
 
@@ -1897,9 +1950,13 @@ void GeometryGUI::windows( QMap<int, int>& mappa ) const
 {
   mappa.insert( SalomeApp_Application::WT_ObjectBrowser, Qt::LeftDockWidgetArea );
   mappa.insert( SalomeApp_Application::WT_NoteBook, Qt::LeftDockWidgetArea );
+#ifndef DISABLE_PYCONSOLE
   mappa.insert( SalomeApp_Application::WT_PyConsole, Qt::BottomDockWidgetArea );
+#endif
   if ( myCreationInfoWdg )
     mappa.insert( myCreationInfoWdg->getWinID(), Qt::LeftDockWidgetArea );
+  if ( myTextTreeWdg )
+    mappa.insert( myTextTreeWdg->getWinID(), Qt::LeftDockWidgetArea );
 }
 
 void GeometryGUI::viewManagers( QStringList& lst ) const
@@ -2211,6 +2268,8 @@ void GeometryGUI::OnSetMaterial(const QString& theName)
 
 void GeometryGUI::createPreferences()
 {
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+
   int tabId = addPreference( tr( "PREF_TAB_SETTINGS" ) );
 
   int genGroup = addPreference( tr( "PREF_GROUP_GENERAL" ), tabId );
@@ -2307,12 +2366,36 @@ void GeometryGUI::createPreferences()
   setPreferenceProperty( aDimLineWidthId, "min", 1 );
   setPreferenceProperty( aDimLineWidthId, "max", 5 );
 
-  int aDimFontHeightId = addPreference( tr( "PREF_DIMENSIONS_FONT_HEIGHT" ), aDimGroupId,
-                                        LightApp_Preferences::DblSpin, "Geometry", "dimensions_font_height" );
+  int aDimFontId = addPreference( tr( "PREF_DIMENSIONS_FONT" ), aDimGroupId, LightApp_Preferences::Font, "Geometry", "dimensions_font" );
 
-  setPreferenceProperty( aDimFontHeightId, "min", 1e-9 );
-  setPreferenceProperty( aDimFontHeightId, "max", 1e+9 );
-  setPreferenceProperty( aDimFontHeightId, "precision", 9 );
+  int f = QtxFontEdit::Family | QtxFontEdit::Size;
+  setPreferenceProperty( aDimFontId, "features", f );
+  setPreferenceProperty( aDimFontId, "mode", QtxFontEdit::Custom );
+
+  Handle(Font_FontMgr) fmgr = Font_FontMgr::GetInstance();
+  QString aFontFile = "";
+  resMgr->value("resources", "GEOM", aFontFile);
+  aFontFile = aFontFile + QDir::separator() + "Y14.5M-2009.ttf";
+  // add enginier font into combobox
+  int fontID = QFontDatabase::addApplicationFont( aFontFile );
+  Handle(Font_SystemFont) sf = new Font_SystemFont( 
+    new TCollection_HAsciiString("Y14.5M-2009"), 
+    Font_FA_Regular, 
+    new TCollection_HAsciiString(aFontFile.toLatin1().data()) );
+  // register font in OCC font manager
+  fmgr->RegisterFont( sf, Standard_False );
+
+  // get list of supported fonts by OCC
+  QStringList anOCCFonts;
+  TColStd_SequenceOfHAsciiString theFontsNames;
+  fmgr->GetAvailableFontsNames( theFontsNames );
+  for(Standard_Integer i=1; i<=theFontsNames.Length(); i++) {
+    Handle(TCollection_HAsciiString) str = theFontsNames(i);
+    anOCCFonts << str->ToCString();
+  }
+  anOCCFonts.removeDuplicates();
+  // set the supported fonts into combobox to use its only
+  setPreferenceProperty( aDimFontId, "fonts", anOCCFonts );
 
   int aDimArrLengthId = addPreference( tr( "PREF_DIMENSIONS_ARROW_LENGTH" ), aDimGroupId,
                                        LightApp_Preferences::DblSpin, "Geometry", "dimensions_arrow_length" );
@@ -2326,9 +2409,6 @@ void GeometryGUI::createPreferences()
 
   int anAngUnitsId = addPreference( tr( "PREF_DIMENSIONS_ANGLE_UNITS" ), aDimGroupId,
                                    LightApp_Preferences::Selector, "Geometry", "dimensions_angle_units" );
-
-  addPreference( tr( "PREF_DIMENSIONS_SHOW_UNITS" ), aDimGroupId,
-                 LightApp_Preferences::Bool, "Geometry", "dimensions_show_units" );
 
   QStringList aListOfLengthUnits;
   aListOfLengthUnits << "m";
@@ -2344,12 +2424,18 @@ void GeometryGUI::createPreferences()
   setPreferenceProperty( aLengthUnitsId, "strings", aListOfLengthUnits );
   setPreferenceProperty( anAngUnitsId,   "strings", aListOfAngUnits );
 
+  addPreference( tr( "PREF_DIMENSIONS_SHOW_UNITS" ), aDimGroupId,
+                 LightApp_Preferences::Bool, "Geometry", "dimensions_show_units" );
+
   int aDimDefFlyout = addPreference( tr( "PREF_DIMENSIONS_DEFAULT_FLYOUT" ), aDimGroupId,
                                      LightApp_Preferences::DblSpin, "Geometry", "dimensions_default_flyout" );
 
   setPreferenceProperty( aDimDefFlyout, "min", 1e-9 );
   setPreferenceProperty( aDimDefFlyout, "max", 1e+9 );
   setPreferenceProperty( aDimDefFlyout, "precision", 9 );
+
+  addPreference( tr( "PREF_DIMENSIONS_USE_TEXT3D" ), aDimGroupId,
+                 LightApp_Preferences::Bool, "Geometry", "dimensions_use_text3d" );
 
   int isoGroup = addPreference( tr( "PREF_ISOS" ), tabId );
   setPreferenceProperty( isoGroup, "columns", 2 );
@@ -2457,7 +2543,6 @@ void GeometryGUI::createPreferences()
   QList<QVariant> aMarkerTypeIndicesList;
   QList<QVariant> aMarkerTypeIconsList;
 
-  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   for ( int i = GEOM::MT_POINT; i < GEOM::MT_USER; i++ ) {
     QString icoFile = QString( "ICON_VERTEX_MARKER_%1" ).arg( i );
     QPixmap pixmap = resMgr->loadPixmap( "GEOM", tr( qPrintable( icoFile ) ) );
@@ -2619,11 +2704,12 @@ void GeometryGUI::preferencesChanged( const QString& section, const QString& par
     }
     else if ( param == QString("dimensions_color")        ||
               param == QString("dimensions_line_width")   ||
-              param == QString("dimensions_font_height")  ||
+              param == QString("dimensions_font")         ||
               param == QString("dimensions_arrow_length") ||
               param == QString("dimensions_show_units")   ||
               param == QString("dimensions_length_units") ||
               param == QString("dimensions_angle_units")  ||
+              param == QString("dimensions_use_text3d")  ||
               param == QString("label_color") )
     {
       SalomeApp_Application* anApp = getApp();
@@ -3441,4 +3527,9 @@ void GeometryGUI::dropObjects( const DataObjectList& what, SUIT_DataObject* wher
 
   // update Object browser
   getApp()->updateObjectBrowser( false );
+}
+
+void GeometryGUI::emitDimensionsUpdated( QString entry )
+{
+  emit DimensionsUpdated( entry );
 }

@@ -361,7 +361,7 @@ void RepairGUI_ShapeProcessDlg::init()
   //myOpList->setCurrentRow( myOpList->findItem( 0 );
   reset();
 
-  myStack->setCurrentIndex( 0 );
+  myOpList->setCurrentRow(0);
 
   initName( tr( "PROCESS_SHAPE_NEW_OBJ_NAME" ));
   selectionChanged();

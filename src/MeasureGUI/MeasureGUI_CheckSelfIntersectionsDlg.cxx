@@ -26,6 +26,7 @@
 #include "MeasureGUI_CheckSelfIntersectionsDlg.h"
 #include "MeasureGUI.h"
 
+#include <SUIT_MessageBox.h>
 #include <SUIT_OverrideCursor.h>
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
@@ -58,80 +59,144 @@
 //=================================================================================
 MeasureGUI_CheckSelfIntersectionsDlg::MeasureGUI_CheckSelfIntersectionsDlg (GeometryGUI* GUI, QWidget* parent)
   : GEOMBase_Skeleton (GUI, parent, false),
-    myTextView        (0),
-    mySelButton       (0),
-    myEditObjName     (0),
+    myTextView1       (0),
+    myTextView2       (0),
+    mySelButton1      (0),
+    mySelButton2      (0),
+    myEditObjName1    (0),
+    myEditObjName2    (0),
     myLevelBox        (0),
-    myComputeButton   (0),
-    myInteList        (0),
-    myShapeList       (0)
+    myComputeButton1  (0),
+    myComputeButton2  (0),
+    myInteList1       (0),
+    myShapeList1      (0),
+    myInteList2       (0),
+    myShapeList2      (0),
+    myCurrConstrId    (-1)
 {
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
   QPixmap image0 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_CHECK_SELF_INTERSECTIONS")));
   QPixmap image1 (aResMgr->loadPixmap("GEOM", tr("ICON_SELECT")));
+  QPixmap image2 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_FAST_CHECK_INTERSECTIONS")));
 
   setWindowTitle(tr("GEOM_CHECK_SELF_INTERSECTIONS"));
 
   /***************************************************************/
-  mainFrame()->GroupConstructors->setTitle(tr("GEOM_CHECK_SELF_INTERSECTIONS"));
+  mainFrame()->GroupConstructors->setTitle(tr("GEOM_CHECK_INTERSECT_TYPE"));
   mainFrame()->RadioButton1->setIcon(image0);
-  mainFrame()->RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
-  mainFrame()->RadioButton2->close();
+  mainFrame()->RadioButton2->setIcon(image2);;
   mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
   mainFrame()->RadioButton3->close();
 
-  QGroupBox *aGrp      = new QGroupBox(tr("GEOM_CHECK_INFOS"));
-  QLabel    *anObjLbl  = new QLabel(tr("GEOM_OBJECT"));
-  QLabel    *anInteLbl = new QLabel(tr("GEOM_CHECK_INTE_INTERSECTIONS"));
-  QLabel    *aShapeLbl = new QLabel(tr("GEOM_CHECK_INTE_SUBSHAPES"));
-  QLabel    *aLevelLbl = new QLabel(tr("GEOM_CHECK_INTE_CHECK_LEVEL"));
-  QLabel    *aSummaryLbl = new QLabel(tr("GEOM_CHECK_INTE_SUMMARY"));
+  /***************************************************************/
+  /* SIMPLE SELF-INTERSECTION constructor
+  /***************************************************************/
+  mySimpleGrp             = new QGroupBox(tr("GEOM_CHECK_INFOS"));
+  QLabel    *anObjLbl    = new QLabel(tr("GEOM_OBJECT"));
+  QLabel    *anInteLbl   = new QLabel(tr("GEOM_CHECK_INTE_INTERSECTIONS"));
+  QLabel    *aShapeLbl   = new QLabel(tr("GEOM_CHECK_INTE_SUBSHAPES"));
+  QLabel    *aLevelLbl   = new QLabel(tr("GEOM_CHECK_INTE_CHECK_LEVEL"));
+  QLabel    *aSummaryLbl1 = new QLabel(tr("GEOM_CHECK_INTE_SUMMARY"));
   QFont      aFont (TEXTEDIT_FONT_FAMILY, TEXTEDIT_FONT_SIZE);
 
   aFont.setStyleHint(QFont::TypeWriter, QFont::PreferAntialias);
-  myTextView = new QTextBrowser;
-  myTextView->setReadOnly(true);
-  myTextView->setFont(aFont);
+  myTextView1 = new QTextBrowser;
+  myTextView1->setReadOnly(true);
+  myTextView1->setFont(aFont);
 
-  mySelButton = new QPushButton;
-  mySelButton->setIcon(image1);
-  mySelButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+  mySelButton1 = new QPushButton;
+  mySelButton1->setIcon(image1);
+  mySelButton1->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-  myEditObjName = new QLineEdit;
-  myEditObjName->setReadOnly(true);
+  myEditObjName1 = new QLineEdit;
+  myEditObjName1->setReadOnly(true);
 
   myLevelBox = new QComboBox;
 
-  myComputeButton = new QPushButton(tr("GEOM_CHECK_INTE_COMPUTE"));
+  myComputeButton1 = new QPushButton(tr("GEOM_CHECK_INTE_COMPUTE"));
 
 
-  myInteList  = new QListWidget;
-  myInteList->setSelectionMode(QAbstractItemView::ExtendedSelection);
-  myShapeList = new QListWidget;
-  myShapeList->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  myInteList1  = new QListWidget;
+  myInteList1->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  myShapeList1 = new QListWidget;
+  myShapeList1->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-  QGridLayout *aGrpLayout = new QGridLayout(aGrp);
+  QGridLayout *aGrpLayout1 = new QGridLayout(mySimpleGrp);
 
-  aGrpLayout->setMargin(9);
-  aGrpLayout->setSpacing(6);
-  aGrpLayout->addWidget(anObjLbl,        0, 0);
-  aGrpLayout->addWidget(anInteLbl,       5, 0);
-  aGrpLayout->addWidget(aShapeLbl,       5, 2);
-  aGrpLayout->addWidget(aLevelLbl,       1, 0);
-  aGrpLayout->addWidget(myLevelBox,      1, 1, 1, 2);
-  aGrpLayout->addWidget(myComputeButton, 2, 0, 1, 3);
-  aGrpLayout->addWidget(aSummaryLbl,     3, 0);
-  aGrpLayout->addWidget(myTextView,      4, 0, 1, 3);
-  aGrpLayout->addWidget(mySelButton,     0, 1);
-  aGrpLayout->addWidget(myEditObjName,   0, 2);
-  aGrpLayout->addWidget(myInteList,      6, 0, 1, 2);
-  aGrpLayout->addWidget(myShapeList,     6, 2);
-
-  QVBoxLayout* layout = new QVBoxLayout (centralWidget());
-  layout->setMargin(0); layout->setSpacing(6);
-  layout->addWidget(aGrp);
+  aGrpLayout1->setMargin(9);
+  aGrpLayout1->setSpacing(6);
+  aGrpLayout1->addWidget(anObjLbl,         0, 0);
+  aGrpLayout1->addWidget(mySelButton1,     0, 1);
+  aGrpLayout1->addWidget(myEditObjName1,   0, 2);
+  aGrpLayout1->addWidget(aLevelLbl,        1, 0);
+  aGrpLayout1->addWidget(myLevelBox,       1, 1, 1, 2);
+  aGrpLayout1->addWidget(myComputeButton1, 2, 0, 1, 3);
+  aGrpLayout1->addWidget(aSummaryLbl1,     3, 0);
+  aGrpLayout1->addWidget(myTextView1,      4, 0, 1, 3);
+  aGrpLayout1->addWidget(anInteLbl,        5, 0);
+  aGrpLayout1->addWidget(aShapeLbl,        5, 2);
+  aGrpLayout1->addWidget(myInteList1,      6, 0, 1, 2);
+  aGrpLayout1->addWidget(myShapeList1,     6, 2);
 
   /***************************************************************/
+  /* FAST SELF-INTERSECTION constructor
+  /***************************************************************/
+  
+  myFastGrp               = new QGroupBox(tr("GEOM_CHECK_INFOS"), centralWidget());
+  QLabel    *anObjLbl2    = new QLabel(tr("GEOM_OBJECT"), myFastGrp);
+  QLabel    *aDeflectLbl  = new QLabel(tr("GEOM_CHECK_INT_DEFLECT"), myFastGrp);
+  QLabel    *aSummaryLbl2 = new QLabel(tr("GEOM_CHECK_INTE_SUMMARY"));
+  QLabel    *anInteLbl2   = new QLabel(tr("GEOM_CHECK_INTE_INTERSECTIONS"), myFastGrp);
+  QLabel    *aShapeLbl2   = new QLabel(tr("GEOM_CHECK_INTE_SUBSHAPES"), myFastGrp);
+
+  mySelButton2 = new QPushButton(myFastGrp);
+  mySelButton2->setIcon(image1);
+  mySelButton2->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+  myEditObjName2 = new QLineEdit(myFastGrp);
+  myEditObjName2->setReadOnly(true);
+
+  myDeflection = new SalomeApp_DoubleSpinBox(myFastGrp);
+  myDetGaps = new QCheckBox(tr( "GEOM_CHECK_INT_DETECT_GAPS" ));
+  myTolerance = new SalomeApp_DoubleSpinBox(myFastGrp);
+
+  myComputeButton2 = new QPushButton(tr("GEOM_CHECK_INTE_COMPUTE"));
+
+  myTextView2 = new QTextBrowser;
+  myTextView2->setReadOnly(true);
+  myTextView2->setFont(aFont);
+
+  myInteList2  = new QListWidget(myFastGrp);
+  myInteList2->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  myShapeList2 = new QListWidget(myFastGrp);
+  myShapeList2->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+  QGridLayout *aGrpLayout2 = new QGridLayout(myFastGrp);
+  aGrpLayout2->setMargin(9);
+  aGrpLayout2->setSpacing(6);
+  aGrpLayout2->addWidget(anObjLbl2,        0, 0);
+  aGrpLayout2->addWidget(mySelButton2,     0, 1);
+  aGrpLayout2->addWidget(myEditObjName2,   0, 2);
+  aGrpLayout2->addWidget(aDeflectLbl,      1, 0);
+  aGrpLayout2->addWidget(myDeflection,     1, 1, 1, 2);
+  aGrpLayout2->addWidget(myDetGaps,        2, 0);
+  aGrpLayout2->addWidget(myTolerance,      2, 1, 1, 2);
+  aGrpLayout2->addWidget(myComputeButton2, 3, 0, 1, 3);
+  aGrpLayout2->addWidget(aSummaryLbl2,     4, 0);
+  aGrpLayout2->addWidget(myTextView2,      5, 0, 1, 3);
+  aGrpLayout2->addWidget(anInteLbl2,       6, 0);
+  aGrpLayout2->addWidget(aShapeLbl2,       6, 1, 1, 2);
+  aGrpLayout2->addWidget(myInteList2,      7, 0);
+  aGrpLayout2->addWidget(myShapeList2,     7, 1, 1, 2);
+  
+  /***************************************************************/
+
+  QVBoxLayout* layout2 = new QVBoxLayout (centralWidget());
+  layout2->setMargin(0); layout2->setSpacing(6);
+  layout2->addWidget(mySimpleGrp);
+  layout2->addWidget(myFastGrp);
+
+ /***************************************************************/
 
   myHelpFileName = "check_self_intersections_page.html";
 
@@ -161,32 +226,65 @@ void MeasureGUI_CheckSelfIntersectionsDlg::Init()
   myLevelBox->insertItem(GEOM::SI_E_F, tr("GEOM_CHECK_INTE_E_F"));
   myLevelBox->insertItem(GEOM::SI_ALL, tr("GEOM_CHECK_INTE_ALL"));
   myLevelBox->setCurrentIndex(GEOM::SI_ALL);
+  myComputeButton1->setEnabled(false);
 
+  connect(mySelButton1,        SIGNAL(clicked()),
+          this,               SLOT(SetEditCurrentArgument()));
+  connect(myInteList1,         SIGNAL(itemSelectionChanged()),
+          SLOT(onInteListSelectionChanged()));
+  connect(myShapeList1,        SIGNAL(itemSelectionChanged()),
+          SLOT(onSubShapesListSelectionChanged()));
+  connect(myLevelBox,         SIGNAL(currentIndexChanged(int)),
+          this,               SLOT(clear()));
+  connect(myComputeButton1,    SIGNAL(clicked()), this, SLOT(onCompute()));
+
+  /***************************************************************/
+  myObj2.nullify();
+  myEditObjName2->setText("");
+  myEditObjName2->setEnabled(true);
+
+  myDetGaps->setChecked(false);
+  initSpinBox(myTolerance, 0, MAX_NUMBER, 1);
+  myTolerance->setValue(0);
+  myTolerance->setEnabled(false);
+  myComputeButton2->setEnabled(false);
+
+  // Obtain deflection from preferences
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  initSpinBox(myDeflection, 1e-3, 1.0, 1e-3);
+  myDeflection->setValue(qMax(1e-3, resMgr->doubleValue("Geometry", "deflection_coeff", 1e-3)));
+
+  connect( mySelButton2,       SIGNAL(clicked()),
+          this,               SLOT(SetEditCurrentArgument()));
+  connect( myDetGaps,          SIGNAL(toggled(bool)), this, SLOT(OnGaps(bool))); 
+  connect( myTolerance,       SIGNAL(valueChanged(double)), this, SLOT(clear()));
+  connect( myDeflection,      SIGNAL(valueChanged(double)), this, SLOT(clear()));
+  connect( myInteList2,         SIGNAL(itemSelectionChanged()),
+          SLOT(onInteListSelectionChanged()));
+  connect( myShapeList2,       SIGNAL(itemSelectionChanged()),
+          SLOT(onSubShapesListSelectionChanged()));
+  connect( myComputeButton2,    SIGNAL(clicked()), this, SLOT(onCompute()));
+
+  /***************************************************************/
+
+  connect(this,               SIGNAL(constructorsClicked(int)), 
+	  this,               SLOT(ConstructorsClicked(int)));
   connect(myGeomGUI,          SIGNAL(SignalDeactivateActiveDialog()),
           this,               SLOT(DeactivateActiveDialog()));
   connect(myGeomGUI,          SIGNAL(SignalCloseAllDialogs()),
           this,               SLOT(ClickOnCancel()));
   connect(buttonOk(),         SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply(),      SIGNAL(clicked()), this, SLOT(ClickOnApply()));
-  connect(mySelButton,        SIGNAL(clicked()),
-          this,               SLOT(SetEditCurrentArgument()));
-  connect(myInteList,         SIGNAL(itemSelectionChanged()),
-          SLOT(onInteListSelectionChanged()));
-  connect(myShapeList,        SIGNAL(itemSelectionChanged()),
-          SLOT(onSubShapesListSelectionChanged()));
-  connect(myLevelBox,         SIGNAL(currentIndexChanged(int)),
-          this,               SLOT(clear()));
-  connect(myComputeButton,    SIGNAL(clicked()), this, SLOT(onCompute()));
-
   LightApp_SelectionMgr* aSel = myGeomGUI->getApp()->selectionMgr();
-
   connect(aSel,               SIGNAL(currentSelectionChanged()),
           this,               SLOT(SelectionIntoArgument()));
 
   initName( tr( "GEOM_SELF_INTERSECTION_NAME") );
   buttonOk()->setEnabled(false);
   buttonApply()->setEnabled(false);
-  myComputeButton->setEnabled(false);
+
+  ConstructorsClicked(0);
+
   activateSelection();
   SelectionIntoArgument();
 }
@@ -197,20 +295,56 @@ void MeasureGUI_CheckSelfIntersectionsDlg::Init()
 //=================================================================================
 void MeasureGUI_CheckSelfIntersectionsDlg::clear()
 {
-  myTextView->setText("");
+  getTextView()->setText("");
+  getComputeButton()->setEnabled(true);
 
-  myInteList->blockSignals(true);
-  myShapeList->blockSignals(true);
-  myInteList->clear();
-  myShapeList->clear();
-  myInteList->blockSignals(false);
-  myShapeList->blockSignals(false);
+  getInteList()->blockSignals(true);
+  getShapeList()->blockSignals(true);
+  getInteList()->clear();
+  getShapeList()->clear();
+  getInteList()->blockSignals(false);
+  getShapeList()->blockSignals(false);
 
   erasePreview();
-
   buttonOk()->setEnabled(false);
   buttonApply()->setEnabled(false);
-  myComputeButton->setEnabled(true);
+}
+
+//=================================================================================
+// function : ConstructorsClicked()
+// purpose  : Radio button management
+//=================================================================================
+void MeasureGUI_CheckSelfIntersectionsDlg::ConstructorsClicked(int constructorId)
+{
+  if (myCurrConstrId == constructorId)
+    return;
+
+  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+
+  switch (constructorId) {
+  case 0:
+    mySimpleGrp->show();
+    myFastGrp->hide();
+    break;
+  case 1:
+    mySimpleGrp->hide();
+    myFastGrp->show();
+    break;
+  }
+
+  myCurrConstrId = constructorId;
+
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+           this, SLOT(SelectionIntoArgument()));
+
+  qApp->processEvents();
+  updateGeometry();
+  resize(minimumSizeHint());
+
+  processPreview();
+  //updateButtonState();
+  activateSelection();
+  SelectionIntoArgument();
 }
 
 //=================================================================================
@@ -223,7 +357,7 @@ void MeasureGUI_CheckSelfIntersectionsDlg::onCompute()
   QString anErrMsg("");
 
   if (!findSelfIntersections(hasSelfInte, anErrMsg)) {
-    myTextView->setText(anErrMsg);
+    getTextView()->setText(anErrMsg);
     return;
   }
 
@@ -243,12 +377,12 @@ void MeasureGUI_CheckSelfIntersectionsDlg::onCompute()
     aMsg += anErrMsg;
   }
 
-  myTextView->setText(aMsg);
+  getTextView()->setText(aMsg);
 
   // Pairs
   QStringList anInteList;
   QString anInteStr ("");
-  int nbPairs = myInters->length()/2;
+  int nbPairs = getInters()->length()/2;
 
   for (int i = 1; i <= nbPairs; i++) {
     anInteStr = "Intersection # ";
@@ -256,8 +390,8 @@ void MeasureGUI_CheckSelfIntersectionsDlg::onCompute()
     anInteList.append(anInteStr);
   }
 
-  myInteList->addItems(anInteList);
-  myComputeButton->setEnabled(false);
+  getInteList()->addItems(anInteList);
+  getComputeButton()->setEnabled(false);
 }
 
 //=================================================================================
@@ -291,7 +425,23 @@ void MeasureGUI_CheckSelfIntersectionsDlg::DeactivateActiveDialog()
 //=================================================================================
 void MeasureGUI_CheckSelfIntersectionsDlg::activateSelection()
 {
-  globalSelection(GEOM_ALLSHAPES);
+  switch (getConstructorId()) {
+  case 0:
+    globalSelection(GEOM_ALLSHAPES);
+    break;
+  case 1:
+    TColStd_MapOfInteger aTypes;
+    aTypes.Add(GEOM_COMPOUND );
+    aTypes.Add(GEOM_SOLID );
+    aTypes.Add(GEOM_SHELL);
+    aTypes.Add(GEOM_FACE);
+    globalSelection(aTypes);
+
+    std::list<int> needTypes;
+    needTypes.push_back( TopAbs_FACE ), needTypes.push_back( TopAbs_SHELL ), needTypes.push_back( TopAbs_SOLID ), needTypes.push_back( TopAbs_COMPOUND );
+    localSelection( needTypes );
+    break;
+  }
 }
 
 //=================================================================================
@@ -313,7 +463,11 @@ bool MeasureGUI_CheckSelfIntersectionsDlg::ClickOnApply()
   if ( !onAccept() )
     return false;
 
+  clear();
   initName();
+
+  ConstructorsClicked(getConstructorId());
+
   return true;
 }
 
@@ -341,7 +495,7 @@ GEOM::GEOM_IOperations_ptr MeasureGUI_CheckSelfIntersectionsDlg::createOperation
 //=================================================================================
 bool MeasureGUI_CheckSelfIntersectionsDlg::isValid( QString& )
 {
-  return !myObj->_is_nil();
+  return !getObj().isNull();
 }
 
 //=================================================================================
@@ -350,37 +504,51 @@ bool MeasureGUI_CheckSelfIntersectionsDlg::isValid( QString& )
 //=================================================================================
 void MeasureGUI_CheckSelfIntersectionsDlg::SetEditCurrentArgument()
 {
-  myEditObjName->setFocus();
+  getEditObjName()->setFocus();
   SelectionIntoArgument();
 }
 
+//=================================================================================
+// function : OnGaps()
+// purpose  :
+//=================================================================================
+void MeasureGUI_CheckSelfIntersectionsDlg::OnGaps(bool checked)
+{
+  clear();
+  myTolerance->setEnabled(checked);
+}
 //=================================================================================
 // function : SelectionIntoArgument
 // purpose  :
 //=================================================================================
 void MeasureGUI_CheckSelfIntersectionsDlg::SelectionIntoArgument()
 {
+  QList<TopAbs_ShapeEnum> typesLst;
+
+  if ( getConstructorId() == 0 ) {
+    typesLst << TopAbs_COMPOUND
+	     << TopAbs_COMPSOLID
+	     << TopAbs_SOLID
+	     << TopAbs_SHELL
+	     << TopAbs_FACE
+	     << TopAbs_WIRE
+	     << TopAbs_EDGE
+	     << TopAbs_VERTEX
+	     << TopAbs_SHAPE;
+  } else {
+    typesLst << TopAbs_FACE
+	     << TopAbs_SHELL
+	     << TopAbs_SOLID
+	     << TopAbs_COMPOUND;
+  }
+
   // Clear the dialog.
   clear();
-  myObj = GEOM::GEOM_Object::_nil();
 
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
+  GEOM::GeomObjPtr aSelectedObject = getSelected( typesLst );
 
-  GEOM::GEOM_Object_var aSelectedObject = GEOM::GEOM_Object::_nil();
-
-  if (aSelList.Extent() > 0) {
-    aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-  }
-
-  if (aSelectedObject->_is_nil()) {
-    myEditObjName->setText("");
-    return;
-  }
-
-  myObj = aSelectedObject;
-  myEditObjName->setText(GEOMBase::GetName(myObj));
+  (getConstructorId() == 0 ? myObj1 :myObj2) = aSelectedObject;
+  getEditObjName()->setText(getObj() ? GEOMBase::GetName(getObj().get()) : "");
 }
 
 //=================================================================================
@@ -400,7 +568,7 @@ void MeasureGUI_CheckSelfIntersectionsDlg::enterEvent(QEvent *)
 bool MeasureGUI_CheckSelfIntersectionsDlg::findSelfIntersections
         (bool &HasSelfInte, QString &theErrMsg)
 {
-  if (myObj->_is_nil()) {
+  if (getObj()->_is_nil()) {
     return false;
   }
 
@@ -413,10 +581,14 @@ bool MeasureGUI_CheckSelfIntersectionsDlg::findSelfIntersections
   SUIT_OverrideCursor wc;
 
   try {
-    HasSelfInte = !anOper->CheckSelfIntersections(myObj, aLevel, myInters);
-    nbPairs = myInters->length()/2;
+    if ( getConstructorId() == 0 ) {
+      HasSelfInte = !anOper->CheckSelfIntersections(myObj1.get(), aLevel, myInters1);
+    } else {
+      HasSelfInte = !anOper->CheckSelfIntersectionsFast(myObj2.get(), getDeflection(), getTolerance(), myInters2);
+    }
+    nbPairs = getInters()->length()/2;
 
-    if (nbPairs*2 != myInters->length()) {
+    if (nbPairs*2 != getInters()->length()) {
       isOK = false;
     }
   }
@@ -426,7 +598,7 @@ bool MeasureGUI_CheckSelfIntersectionsDlg::findSelfIntersections
   }
 
   if (!anOper->IsDone()) {
-    if (myInters->length() == 0) {
+    if (getInters()->length() == 0) {
       theErrMsg = tr(anOper->GetErrorCode());
       isOK = false;
     } else {
@@ -447,24 +619,24 @@ bool MeasureGUI_CheckSelfIntersectionsDlg::findSelfIntersections
 void MeasureGUI_CheckSelfIntersectionsDlg::onInteListSelectionChanged()
 {
   erasePreview();
-  myShapeList->clear();
+  getShapeList()->clear();
 
   TopoDS_Shape aSelShape;
-  if (!myObj->_is_nil() && GEOMBase::GetShape(myObj, aSelShape)) {
+  if (!getObj()->_is_nil() && GEOMBase::GetShape(getObj().get(), aSelShape)) {
     TopTools_IndexedMapOfShape anIndices;
     TopExp::MapShapes(aSelShape, anIndices);
 
-    int nbSelected = myInteList->selectedItems().size();
+    int nbSelected = getInteList()->selectedItems().size();
 
-    for (int i = 0; i < myInteList->count(); i++) {
-      if ( myInteList->item(i)->isSelected() ) {
+    for (int i = 0; i < getInteList()->count(); i++) {
+      if ( getInteList()->item(i)->isSelected() ) {
         if ( nbSelected > 1 )
-          myShapeList->addItem(QString("--- #%1 ---").arg(i+1));
+          getShapeList()->addItem(QString("--- #%1 ---").arg(i+1));
         for (int j = 0; j < 2; j++) {
-          TopoDS_Shape aSubShape = anIndices.FindKey(myInters[i*2+j]);
+          TopoDS_Shape aSubShape = anIndices.FindKey(getInters()[i*2+j]);
           QString aType = GEOMBase::GetShapeTypeString(aSubShape);
-          myShapeList->addItem(QString("%1_%2").arg(aType).arg(myInters[i*2+j]));
-          myShapeList->item(myShapeList->count()-1)->setData(Qt::UserRole, myInters[i*2+j]);
+          getShapeList()->addItem(QString("%1_%2").arg(aType).arg(getInters()[i*2+j]));
+          getShapeList()->item(getShapeList()->count()-1)->setData(Qt::UserRole, getInters()[i*2+j]);
         }
       }
     }
@@ -480,7 +652,7 @@ void MeasureGUI_CheckSelfIntersectionsDlg::onSubShapesListSelectionChanged()
   erasePreview();
 
   // Selected IDs
-  QList<QListWidgetItem*> selected = myShapeList->selectedItems();
+  QList<QListWidgetItem*> selected = getShapeList()->selectedItems();
   QList<int> aIds;
   foreach(QListWidgetItem* item, selected) {
     int idx = item->data(Qt::UserRole).toInt();
@@ -492,7 +664,7 @@ void MeasureGUI_CheckSelfIntersectionsDlg::onSubShapesListSelectionChanged()
   TopoDS_Shape aSelShape;
   TopoDS_Shape aSubShape;
   TopTools_IndexedMapOfShape anIndices;
-  if (!myObj->_is_nil() && GEOMBase::GetShape(myObj, aSelShape)) {
+  if (!getObj()->_is_nil() && GEOMBase::GetShape(getObj().get(), aSelShape)) {
     TopExp::MapShapes(aSelShape, anIndices);
     getDisplayer()->SetColor(Quantity_NOC_RED);
     getDisplayer()->SetWidth(3);
@@ -500,11 +672,11 @@ void MeasureGUI_CheckSelfIntersectionsDlg::onSubShapesListSelectionChanged()
     foreach(int idx, aIds) {
       aSubShape = anIndices.FindKey(idx);
       try {
-        SALOME_Prs* aPrs = !aSubShape.IsNull() ? getDisplayer()->BuildPrs(aSubShape) : 0;
-        if (aPrs) displayPreview(aPrs, true);
+	SALOME_Prs* aPrs = !aSubShape.IsNull() ? getDisplayer()->BuildPrs(aSubShape) : 0;
+	if (aPrs) displayPreview(aPrs, true);
       }
       catch (const SALOME::SALOME_Exception& e) {
-        SalomeApp_Tools::QtCatchCorbaException(e);
+	SalomeApp_Tools::QtCatchCorbaException(e);
       }
     }
   }
@@ -526,15 +698,15 @@ bool MeasureGUI_CheckSelfIntersectionsDlg::execute(ObjectList& objects)
   TColStd_IndexedMapOfInteger aMapIndex;
   QList<int> pairs;
 
-  int nbSelected = myInteList->selectedItems().size();
+  int nbSelected = getInteList()->selectedItems().size();
 
   // Collect the map of indices
-  for (int i = 0; i < myInteList->count(); i++) {
-    if ( nbSelected < 1 || myInteList->item(i)->isSelected() ) {
-      aMapIndex.Add(myInters[i*2]);
-      aMapIndex.Add(myInters[i*2 + 1]);
-      pairs << myInters[i*2];
-      pairs << myInters[i*2 + 1];
+  for (int i = 0; i < getInteList()->count(); i++) {
+    if ( nbSelected < 1 || getInteList()->item(i)->isSelected() ) {
+      aMapIndex.Add(getInters()[i*2]);
+      aMapIndex.Add(getInters()[i*2 + 1]);
+      pairs << getInters()[i*2];
+      pairs << getInters()[i*2 + 1];
     }
   }
 
@@ -547,7 +719,7 @@ bool MeasureGUI_CheckSelfIntersectionsDlg::execute(ObjectList& objects)
   for (int i = 1; i <= aMapIndex.Extent(); i++)
     anArray[i-1] = aMapIndex.FindKey(i);
 
-  GEOM::ListOfGO_var aList = shapesOper->MakeSubShapes(myObj, anArray);
+  GEOM::ListOfGO_var aList = shapesOper->MakeSubShapes(getObj().get(), anArray);
 
   // Make compounds
   for (int i = 0; i < pairs.count()/2; i++) {
@@ -562,6 +734,27 @@ bool MeasureGUI_CheckSelfIntersectionsDlg::execute(ObjectList& objects)
   return true;
 }
 
+//=================================================================================
+// function : getDeflection
+// purpose  :
+//=================================================================================
+float MeasureGUI_CheckSelfIntersectionsDlg::getDeflection()
+{
+  return (float)myDeflection->value();
+}
+
+//=================================================================================
+// function : getTolerance
+// purpose  :
+//=================================================================================
+double MeasureGUI_CheckSelfIntersectionsDlg::getTolerance()
+{
+  double aVal = myTolerance->value();
+  if (!myDetGaps->isChecked() || aVal < 0.0)
+    return 0.0;
+  return aVal;
+}
+
 //================================================================
 // Function : getFather
 // Purpose  : Get father object for object to be added in study
@@ -570,5 +763,54 @@ bool MeasureGUI_CheckSelfIntersectionsDlg::execute(ObjectList& objects)
 GEOM::GEOM_Object_ptr MeasureGUI_CheckSelfIntersectionsDlg::getFather
                   (GEOM::GEOM_Object_ptr)
 {
-  return myObj;
+  return getObj().get();
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> MeasureGUI_CheckSelfIntersectionsDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << getObj();
+  return res;
+}
+
+//=================================================================================
+// GETTERS
+//=================================================================================
+QTextBrowser* MeasureGUI_CheckSelfIntersectionsDlg::getTextView()
+{
+  return ( getConstructorId() == 0 ? myTextView1 : myTextView2 );
+}
+
+QListWidget* MeasureGUI_CheckSelfIntersectionsDlg::getInteList()
+{
+  return ( getConstructorId() == 0 ? myInteList1 : myInteList2 );
+}
+
+QListWidget* MeasureGUI_CheckSelfIntersectionsDlg::getShapeList()
+{
+  return ( getConstructorId() == 0 ? myShapeList1 : myShapeList2 );
+}
+
+QPushButton* MeasureGUI_CheckSelfIntersectionsDlg::getComputeButton()
+{
+  return ( getConstructorId() == 0 ? myComputeButton1 : myComputeButton2 );
+}
+
+QLineEdit* MeasureGUI_CheckSelfIntersectionsDlg::getEditObjName()
+{
+  return ( getConstructorId() == 0 ? myEditObjName1 : myEditObjName2 );
+}
+
+GEOM::GeomObjPtr MeasureGUI_CheckSelfIntersectionsDlg::getObj()
+{
+  return ( getConstructorId() == 0 ? myObj1 : myObj2 );
+}
+
+GEOM::ListOfLong_var MeasureGUI_CheckSelfIntersectionsDlg::getInters()
+{
+  return ( getConstructorId() == 0 ? myInters1 : myInters2 );
 }

@@ -767,6 +767,49 @@ CORBA::Boolean GEOM_IMeasureOperations_i::CheckSelfIntersections (GEOM::GEOM_Obj
 
 //=============================================================================
 /*!
+ *  CheckSelfIntersectionsFast
+ */
+//=============================================================================
+CORBA::Boolean GEOM_IMeasureOperations_i::CheckSelfIntersectionsFast 
+  (GEOM::GEOM_Object_ptr theShape,
+   CORBA::Float          theDeflection,
+   CORBA::Double         theTolerance,
+   GEOM::ListOfLong_out  theIntersections)
+{
+  // Set a not done flag
+  GetOperations()->SetNotDone();
+
+  bool isGood = false;
+
+  // Allocate the CORBA arrays
+  GEOM::ListOfLong_var anIntegersArray = new GEOM::ListOfLong();
+
+  // Get the reference shape
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+
+  if (!aShape.IsNull()) {
+    Handle(TColStd_HSequenceOfInteger) anIntegers = new TColStd_HSequenceOfInteger;
+
+    // Detect self-intersections
+    isGood = GetOperations()->CheckSelfIntersectionsFast
+      (aShape, theDeflection, theTolerance, anIntegers);
+
+    int nbInts = anIntegers->Length();
+
+    anIntegersArray->length(nbInts);
+
+    for (int ii = 0; ii < nbInts; ii++) {
+      anIntegersArray[ii] = anIntegers->Value(ii + 1);
+    }
+  }
+
+  // Initialize out-parameters with local arrays
+  theIntersections = anIntegersArray._retn();
+  return isGood;
+}
+
+//=============================================================================
+/*!
  *  FastIntersect
  */
 //=============================================================================

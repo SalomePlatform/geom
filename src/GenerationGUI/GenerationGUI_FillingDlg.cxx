@@ -209,7 +209,7 @@ void GenerationGUI_FillingDlg::initSelection()
   needTypes.push_back( TopAbs_COMPOUND );
 
   globalSelection( aTypes );
-  localSelection(GEOM::GEOM_Object::_nil(), needTypes );
+  localSelection( needTypes );
 }
 
 //=================================================================================

@@ -201,7 +201,8 @@ class GEOM_I_EXPORT GEOM_ITransformOperations_i :
                                    (GEOM::GEOM_Object_ptr theObject,
                                     CORBA::Double         theRadius,
                                     CORBA::Double         theStartAngle,
-                                    CORBA::Double         theAngleLength);
+                                    CORBA::Double         theAngleLength,
+                                    CORBA::Double         theAngleRotation);
 
   ::GEOMImpl_ITransformOperations* GetOperations() { return (::GEOMImpl_ITransformOperations*)GetImpl(); }
 };

@@ -432,6 +432,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Intersection rapide</translation>
     </message>
     <message>
+        <source>GEOM_SHAPE_STATISTICS</source>
+        <translation>Statistiques sur l&apos;objet</translation>
+    </message>
+    <message>
         <source>GEOM_CIRCLE</source>
         <translation>Cercle</translation>
     </message>
@@ -685,7 +689,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_TOWARDS_INSIDE</source>
-        <translation>Epaissit vers l'intérieur</translation>
+        <translation>Epaissit vers l&apos;intérieur</translation>
     </message>
     <message>
         <source>GEOM_SCALE_PRISM</source>
@@ -2414,7 +2418,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_WRN_FACES_NOT_SHELL</source>
-        <translation>Impossible de créer une coque. Le résultat est un assemblage de faces.</translation>
+        <translation>Impossible de créer une coque. Le résultat est un assemblage de coques.</translation>
+    </message>
+    <message>
+        <source>GEOM_WRN_FACES_NOT_FACE</source>
+        <translation>Impossible de créer une face. Le résultat est un assemblage de faces.</translation>
     </message>
     <message>
         <source>WRN_SHAPE_UNCLOSED</source>
@@ -2555,6 +2563,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>MEN_FAST_CHECK_INTERSECTIONS</source>
         <translation>Intersection rapide</translation>
+    </message>
+    <message>
+        <source>MEN_SHAPE_STATISTICS</source>
+        <translation>Statistiques sur l&apos;objet</translation>
     </message>
     <message>
         <source>MEN_CHECK_FREE_BNDS</source>
@@ -2838,7 +2850,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_MEASURES</source>
-        <translation>Mesures</translation>
+        <translation>Inspection</translation>
     </message>
     <message>
         <source>MEN_MIN_DIST</source>
@@ -3445,8 +3457,8 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Epaisseur de la ligne</translation>
     </message>
     <message>
-        <source>PREF_DIMENSIONS_FONT_HEIGHT</source>
-        <translation>Taille de police</translation>
+        <source>PREF_DIMENSIONS_FONT</source>
+        <translation>Police</translation>
     </message>
     <message>
         <source>PREF_DIMENSIONS_ARROW_LENGTH</source>
@@ -3467,6 +3479,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>PREF_DIMENSIONS_SHOW_UNITS</source>
         <translation>Afficher les unités</translation>
+    </message>
+    <message>
+        <source>PREF_DIMENSIONS_USE_TEXT3D</source>
+        <translation>Utiliser du texte 3D</translation>
     </message>
     <message>
         <source>PREF_HIDE_INPUT_OBJECT</source>
@@ -3591,6 +3607,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>STB_FAST_CHECK_INTERSECTIONS</source>
         <translation>Intersection rapide</translation>
+    </message>
+    <message>
+        <source>STB_SHAPE_STATISTICS</source>
+        <translation>Statistique de l&apos;objet</translation>
     </message>
     <message>
         <source>STB_CHECK_FREE_BNDS</source>
@@ -3862,7 +3882,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_THICKNESS</source>
-        <translation>Crée un solide par ajout d'épaisseur</translation>
+        <translation>Crée un solide par ajout d&apos;épaisseur</translation>
     </message>
     <message>
         <source>STB_PLANE</source>
@@ -4223,6 +4243,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>TOP_FAST_CHECK_INTERSECTIONS</source>
         <translation>Intersection rapide</translation>
+    </message>
+    <message>
+        <source>TOP_SHAPE_STATISTICS</source>
+        <translation>Statistique de l&apos;objet</translation>
     </message>
     <message>
         <source>TOP_CHECK_FREE_BNDS</source>
@@ -5117,6 +5141,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Z%1 :</translation>
     </message>
     <message>
+        <source>GEOM_A_I</source>
+        <translation>A%1 :</translation>
+    </message>
+    <message>
         <source>GEOM_SHAPES_ON_SHAPE_TITLE</source>
         <translation>Trouver les éléments d&apos;un objet</translation>
     </message>
@@ -5384,6 +5412,26 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
         <source>GEOM_HEALING_STATS_COL_2</source>
         <translation>Modification</translation>
     </message>
+    <message>
+        <source>GEOM_PLOT_DISTRIBUTION</source>
+        <translation>Graphe</translation>
+    </message>
+    <message>
+        <source>GEOM_X_AXIS</source>
+        <translation>Axe X</translation>
+    </message>
+    <message>
+        <source>GEOM_Y_AXIS</source>
+        <translation>Axe Y</translation>
+    </message>
+    <message>
+        <source>GEOM_Z_AXIS</source>
+        <translation>Axe Z</translation>
+    </message>
+    <message>
+        <source>GEOM_DIM_AXES</source>
+        <translation>Dimensions sur les axes locaux</translation>
+    </message>
 </context>
 <context>
     <name>GeometryGUI</name>
@@ -5433,7 +5481,7 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>TOOL_MEASURES</source>
-        <translation>Informations</translation>
+        <translation>Inspection</translation>
     </message>
     <message>
         <source>TOOL_IMPORTEXPORT</source>
@@ -7219,6 +7267,17 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
 </context>
 <context>
+    <name>GEOMGUI_TextTreeWdg</name>
+    <message>
+        <source>TEXT_TREE_VIEW_TITLE</source>
+        <translation>Texte</translation>
+    </message>
+    <message>
+        <source>TEXT_TREE_VIEW_NAME</source>
+        <translation>Nom</translation>
+    </message>
+</context>
+<context>
     <name>EntityGUI_IsolineDlg</name>
     <message>
         <source>GEOM_ISOLINE_TITLE</source>
@@ -7239,6 +7298,10 @@ Voulez-vous en créer un nouveau ?</translation>
 </context>
 <context>
     <name>MeasureGUI_CheckSelfIntersectionsDlg</name>
+    <message>
+        <source>GEOM_CHECK_INTERSECT_TYPE</source>
+        <translation>Détection du type d&apos;auto-intersection</translation>
+    </message>
     <message>
         <source>GEOM_CHECK_INTE_INTERSECTIONS</source>
         <translation>Auto-intersections</translation>
@@ -7303,6 +7366,14 @@ Voulez-vous en créer un nouveau ?</translation>
         <source>GEOM_CHECK_INTE_ALL</source>
         <translation>Face à Face + tout au-delà</translation>
     </message>
+    <message>
+        <source>GEOM_CHECK_INT_DEFLECT</source>
+        <translation>Coefficient de déflexion</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INT_DETECT_GAPS</source>
+        <translation>Détection des écarts avec tolérance</translation>
+    </message>
 </context>
 <context>
     <name>MeasureGUI_FastCheckIntersectionsDlg</name>
@@ -7333,6 +7404,69 @@ Voulez-vous en créer un nouveau ?</translation>
     <message>
         <source>GEOM_FAST_CHECK_OBJ</source>
         <translation>Objets et résultats</translation>
+    </message>
+</context>
+<context>
+    <name>MeasureGUI_ShapeStatisticsDlg</name>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_TYPE</source>
+        <translation>Type</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_LENGTH</source>
+        <translation>Longueur des arêtes</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_AREA</source>
+        <translation>Aire des faces</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_VOLUME</source>
+        <translation>Volume des solides</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_NB_INTERVALS</source>
+        <translation>Nombre d&apos;intervalles</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_SCALAR_RANGE</source>
+        <translation>Echelle de dimension</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_COMPUTE</source>
+        <translation>Calculer</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MIN</source>
+        <translation>Min</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MAX</source>
+        <translation>Max</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_CREATE_GROUPS</source>
+        <translation>Créer des groupes</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_DISTRIBUTION_NB_ENT</source>
+        <translation>Nombre d&apos;entités</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MIN_ERROR</source>
+        <translation>Spécifier une valeur minimale ou ignorer l&apos;échelle de dimension</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MAX_ERROR</source>
+        <translation>Spécifier une valeur maximale ou ignorer l&apos;échelle de dimension</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MIN_MAX_ERROR</source>
+        <translation>La valeur minimal ne peut pas être plus grande que la maximale</translation>
+    </message>
+    <message>
+        <source>GEOM_MSG_GROUPS_CREATED</source>
+        <translation>%1 groupes créés</translation>
     </message>
 </context>
 <context>
@@ -7460,7 +7594,7 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
     <message>
         <source>GEOM_PROJ_ON_CYL_LENGTH_ANGLE</source>
-        <translation>Longueur de l'angle</translation>
+        <translation>Longueur de l&apos;angle</translation>
     </message>
 </context>
 </TS>

@@ -234,7 +234,7 @@ void GenerationGUI_RevolDlg::SetEditCurrentArgument()
     myEditCurrentArgument = GroupPoints->LineEdit2;
     GroupPoints->PushButton1->setDown(false);
     GroupPoints->LineEdit1->setEnabled(false);
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+    localSelection(TopAbs_EDGE);
   }
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));

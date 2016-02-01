@@ -39,6 +39,7 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/src/GEOMImpl
   ${PROJECT_SOURCE_DIR}/src/GEOMGUI
   ${PROJECT_SOURCE_DIR}/src/GEOMBase
+  ${PROJECT_SOURCE_DIR}/src/MeasureGUI
   ${PROJECT_SOURCE_DIR}/src/SKETCHER
   ${PROJECT_SOURCE_DIR}/src/CurveCreator
   ${PROJECT_SOURCE_DIR}/src/ShapeRecognition
@@ -67,6 +68,7 @@ SET(_link_LIBRARIES
   DlgRef
   GEOMSketcher
   CurveCreator
+  MeasureGUI
   )
 
 # optional sources

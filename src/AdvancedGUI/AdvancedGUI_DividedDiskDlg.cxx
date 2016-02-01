@@ -335,11 +335,11 @@ void AdvancedGUI_DividedDiskDlg::SetEditCurrentArgument()
   disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
   if (myEditCurrentArgument == GroupPntVecR->LineEdit2) {
     globalSelection(); // close local contexts, if any
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+    localSelection(TopAbs_EDGE);
   }
   else {
     globalSelection(); // close local contexts, if any
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+    localSelection(TopAbs_VERTEX);
   }
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));

@@ -72,6 +72,7 @@ private:
   SalomeApp_DoubleSpinBox           *myStartAngleSpin;
   QCheckBox                         *myUseAngleLen;
   SalomeApp_DoubleSpinBox           *myAngleLenSpin;
+  SalomeApp_DoubleSpinBox           *myAngleRotSpin;
 
 };
 

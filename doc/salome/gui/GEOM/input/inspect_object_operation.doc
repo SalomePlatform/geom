@@ -12,11 +12,11 @@ In this dialog:
 - Click on the "selection" button and select an object to inspect in the Object Browser or in the viewer.
 - Show/hide sub-shape(s) in the 3D viewer, by pressing “eye” icon in the first column of the tree view.
 - Show/hide all sub-shapes in the 3D viewer, by pressing “eye” icon in the first column of the tree view header.
-- Rename selected sub-shape by double-clicking on the item or pressing <F2> key.
-- Show selected sub-shape(s) in the 3D viewer by pressing <b>Show Selected</b> button.
-- Show selected sub-shape(s) in the 3D viewer and erase all currently shown objects by pressing <b>Show Only Selected</b> button.
-- Hide selected sub-shape(s) from the 3D viewer by pressing <b>Hide Selected</b> button.
-- Publish selected sub-shapes in the study, by pressing <b>Publish Selected</b> button.
+- Rename the selected sub-shape by double-clicking on the item or pressing <F2> key.
+- Show the selected sub-shape(s) in the 3D viewer by pressing <b>Show Selected</b> button.
+- Show the selected sub-shape(s) in the 3D viewer and erase all currently shown objects by pressing <b>Show Only Selected</b> button.
+- Hide the selected sub-shape(s) from the 3D viewer by pressing <b>Hide Selected</b> button.
+- Publish the selected sub-shapes in the study, by pressing <b>Publish Selected</b> button.
 - Close dialog box, by pressing <b>Close</b> button.
 
 */

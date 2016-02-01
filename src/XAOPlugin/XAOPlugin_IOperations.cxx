@@ -470,6 +470,8 @@ bool XAOPlugin_IOperations::ImportXAO( const char* fileName,
   if (function.IsNull()) return false;
   if (function->GetDriverGUID() != XAOPlugin_Driver::GetID()) return false;
 
+  function->SetString( XAOPlugin_Driver::GetFileNameTag(), fileName );
+
   // set the geometry
   if (xaoGeometry->getFormat() == XAO::BREP)
   {

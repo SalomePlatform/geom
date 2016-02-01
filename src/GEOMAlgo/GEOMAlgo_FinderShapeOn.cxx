@@ -62,7 +62,6 @@
 #include <BRepLib_MakeFace.hxx>
 #include <BRepLib_FaceError.hxx>
 
-//#include <BOPTools_DSFiller.hxx>
 
 #include <GEOMAlgo_WireSolid.hxx>
 #include <GEOMAlgo_ShellSolid.hxx>
@@ -300,7 +299,6 @@ void GEOMAlgo_FinderShapeOn::Find(const TopoDS_Shape& aS)
 {
   myErrorStatus=0;
   //
-  Standard_Boolean bIsDone;
   Standard_Integer i, iErr;
   TopAbs_State aSts[]={TopAbs_IN, TopAbs_OUT, TopAbs_ON};
   TopTools_ListIteratorOfListOfShape aIt;

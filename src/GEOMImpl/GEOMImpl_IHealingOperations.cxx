@@ -1116,7 +1116,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientationCopy (Handle(G
     return NULL; //There is no function which creates an object to be processed
 
   // Add a new object
-  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   if (theObject->GetType() == GEOM_VECTOR) { // Mantis issue 21066
     //Add the function

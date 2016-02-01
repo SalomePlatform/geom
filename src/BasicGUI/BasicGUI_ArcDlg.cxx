@@ -330,7 +330,7 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
 void BasicGUI_ArcDlg::SetEditCurrentArgument()
 {
   globalSelection(); // close local selection to clear it
-  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  localSelection( TopAbs_VERTEX );
 
   QPushButton* send = (QPushButton*)sender();
   switch ( getConstructorId() ) {
@@ -580,7 +580,7 @@ void BasicGUI_ArcDlg::ConstructorsClicked( int constructorId )
   }
 
   globalSelection(); // close local contexts, if any
-  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX ); //Select Vertex on All Shapes
+  localSelection( TopAbs_VERTEX ); //Select Vertex on All Shapes
   
   qApp->processEvents();
   updateGeometry();

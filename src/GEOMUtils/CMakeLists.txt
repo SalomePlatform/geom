@@ -53,6 +53,7 @@ SET(GEOMUtils_HEADERS
   GEOMUtils.hxx
   GEOMUtils_Hatcher.hxx
   GEOMUtils_HTrsfCurve2d.hxx
+  GEOMUtils_ShapeStatistics.hxx
   GEOMUtils_Trsf2d.hxx
   GEOMUtils_TrsfCurve2d.hxx
   GEOMUtils_XmlHandler.hxx
@@ -63,6 +64,7 @@ SET(GEOMUtils_SOURCES
   GEOMUtils.cxx
   GEOMUtils_Hatcher.cxx
   GEOMUtils_HTrsfCurve2d.cxx
+  GEOMUtils_ShapeStatistics.cxx
   GEOMUtils_Trsf2d.cxx
   GEOMUtils_TrsfCurve2d.cxx
   GEOMUtils_XmlHandler.cxx

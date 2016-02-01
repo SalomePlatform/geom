@@ -428,6 +428,10 @@
       <translation>クイック交点</translation>
     </message>
     <message>
+      <source>GEOM_SHAPE_STATISTICS</source>
+      <translation>形状の統計</translation>
+    </message>
+    <message>
       <source>GEOM_CIRCLE</source>
       <translation>Circle</translation>
     </message>
@@ -1344,6 +1348,10 @@
       <translation>長さで</translation>
     </message>
     <message>
+      <source>GEOM_TAKE_ORIENTATION_INTO_ACCOUNT</source>
+      <translation>エッジの方向に注意</translation>
+    </message>
+    <message>
       <source>GEOM_PARTITION</source>
       <translation>Partition</translation>
     </message>
@@ -1414,6 +1422,10 @@
     <message>
       <source>GEOM_GROUP_NAME_PREFIX</source>
       <translation>グループ名Prefix</translation>
+    </message>
+    <message>
+      <source>GEOM_STEP_BY_STEP</source>
+      <translation>ステップ生成</translation>
     </message>
     <message>
       <source>GEOM_PLANE</source>
@@ -2412,6 +2424,10 @@
       <translation>シェルを作成できません。面の結合です。</translation>
     </message>
     <message>
+      <source>GEOM_WRN_FACES_NOT_FACE</source>
+      <translation>たった1つの面を作成することはできません。結果は複合面になります。</translation>
+    </message>
+    <message>
       <source>WRN_SHAPE_UNCLOSED</source>
       <translation>閉じていないオブジェクト %1 からソリッドを作成できません</translation>
     </message>
@@ -2550,6 +2566,10 @@
     <message>
       <source>MEN_FAST_CHECK_INTERSECTIONS</source>
       <translation>クイック交点</translation>
+    </message>
+    <message>
+      <source>MEN_SHAPE_STATISTICS</source>
+      <translation>形状の統計</translation>
     </message>
     <message>
       <source>MEN_CHECK_FREE_BNDS</source>
@@ -3440,8 +3460,8 @@
       <translation>線幅</translation>
     </message>
     <message>
-      <source>PREF_DIMENSIONS_FONT_HEIGHT</source>
-      <translation>フォント高さ</translation>
+      <source>PREF_DIMENSIONS_FONT</source>
+      <translation>フォント</translation>
     </message>
     <message>
       <source>PREF_DIMENSIONS_ARROW_LENGTH</source>
@@ -3462,6 +3482,10 @@
     <message>
       <source>PREF_DIMENSIONS_SHOW_UNITS</source>
       <translation>測定単位の表示</translation>
+    </message>
+    <message>
+      <source>PREF_DIMENSIONS_USE_TEXT3D</source>
+      <translation>3Dテキストの使用</translation>
     </message>
     <message>
       <source>PREF_HIDE_INPUT_OBJECT</source>
@@ -3586,6 +3610,10 @@
     <message>
       <source>STB_FAST_CHECK_INTERSECTIONS</source>
       <translation>クイック交点</translation>
+    </message>
+    <message>
+      <source>STB_SHAPE_STATISTICS</source>
+      <translation>形状の統計</translation>
     </message>
     <message>
       <source>STB_CHECK_FREE_BNDS</source>
@@ -4218,6 +4246,10 @@
     <message>
       <source>TOP_FAST_CHECK_INTERSECTIONS</source>
       <translation>クイック交点</translation>
+    </message>
+    <message>
+      <source>TOP_SHAPE_STATISTICS</source>
+      <translation>形状の統計</translation>
     </message>
     <message>
       <source>TOP_CHECK_FREE_BNDS</source>
@@ -5112,6 +5144,10 @@
       <translation>Z%1 :</translation>
     </message>
     <message>
+      <source>GEOM_A_I</source>
+      <translation>A%1 :</translation>
+    </message>
+    <message>
       <source>GEOM_SHAPES_ON_SHAPE_TITLE</source>
       <translation>オブジェクトの要素を見つける</translation>
     </message>
@@ -5329,11 +5365,11 @@
     </message>
     <message>
       <source>CC_PNT_ITEM_X_Y</source>
-      <translation type="unfinished">X=%1, Y=%2</translation>
+      <translation>X=%1, Y=%2</translation>
     </message>
     <message>
       <source>CC_PNT_ITEM_X_Y_Z</source>
-      <translation type="unfinished">X=%1, Y=%2, Z=%3</translation>
+      <translation>X=%1, Y=%2, Z=%3</translation>
     </message>
     <message>
       <source>GEOM_FILTER</source>
@@ -5374,6 +5410,26 @@
     <message>
       <source>GEOM_HEALING_STATS_COL_2</source>
       <translation>修正</translation>
+    </message>
+    <message>
+      <source>GEOM_PLOT_DISTRIBUTION</source>
+      <translation>Plot</translation>
+    </message>
+    <message>
+      <source>GEOM_X_AXIS</source>
+      <translation>X軸</translation>
+    </message>
+    <message>
+      <source>GEOM_Y_AXIS</source>
+      <translation>Y軸</translation>
+    </message>
+    <message>
+      <source>GEOM_Z_AXIS</source>
+      <translation>Z軸</translation>
+    </message>
+    <message>
+      <source>GEOM_DIM_AXES</source>
+      <translation>局所座標軸に沿った次元</translation>
     </message>
   </context>
   <context>
@@ -5737,11 +5793,11 @@
     </message>
     <message>
       <source>TABLE_X</source>
-      <translation type="unfinished">X</translation>
+      <translation>X</translation>
     </message>
     <message>
       <source>TABLE_Y</source>
-      <translation type="unfinished">Y</translation>
+      <translation>Y</translation>
     </message>
   </context>
   <context>
@@ -6415,7 +6471,7 @@
     </message>
     <message>
       <source>Z</source>
-      <translation type="unfinished">Z</translation>
+      <translation>Z</translation>
     </message>
   </context>
   <context>
@@ -6731,7 +6787,7 @@
     <name>OperationGUI_ChamferDlg</name>
     <message>
       <source>D</source>
-      <translation type="unfinished">D</translation>
+      <translation>D</translation>
     </message>
     <message>
       <source>FACE_1</source>
@@ -7200,6 +7256,17 @@
     </message>
   </context>
   <context>
+    <name>GEOMGUI_TextTreeWdg</name>
+    <message>
+      <source>TEXT_TREE_VIEW_TITLE</source>
+      <translation>テキスト</translation>
+    </message>
+    <message>
+      <source>TEXT_TREE_VIEW_NAME</source>
+      <translation>名前</translation>
+    </message>
+  </context>
+  <context>
     <name>EntityGUI_IsolineDlg</name>
     <message>
       <source>GEOM_ISOLINE_TITLE</source>
@@ -7220,6 +7287,10 @@
   </context>
   <context>
     <name>MeasureGUI_CheckSelfIntersectionsDlg</name>
+    <message>
+      <source>GEOM_CHECK_INTERSECT_TYPE</source>
+      <translation>自己交差検出型</translation>
+    </message>
     <message>
       <source>GEOM_CHECK_INTE_INTERSECTIONS</source>
       <translation>自己交差</translation>
@@ -7284,6 +7355,14 @@
       <source>GEOM_CHECK_INTE_ALL</source>
       <translation>面から面と上記すべて</translation>
     </message>
+    <message>
+      <source>GEOM_CHECK_INT_DEFLECT</source>
+      <translation>偏向係数</translation>
+    </message>
+    <message>
+      <source>GEOM_CHECK_INT_DETECT_GAPS</source>
+      <translation>トレランスとのギャップ検出</translation>
+    </message>
   </context>
   <context>
     <name>MeasureGUI_FastCheckIntersectionsDlg</name>
@@ -7314,6 +7393,69 @@
     <message>
       <source>GEOM_FAST_CHECK_OBJ</source>
       <translation>オブジェクトと結果</translation>
+    </message>
+  </context>
+  <context>
+    <name>MeasureGUI_ShapeStatisticsDlg</name>
+    <message>
+      <source>GEOM_SHAPE_STATISTICS_TYPE</source>
+      <translation>タイプ</translation>
+    </message>
+    <message>
+      <source>GEOM_SHAPE_STATISTICS_LENGTH</source>
+      <translation>エッジ長さ</translation>
+    </message>
+    <message>
+      <source>GEOM_SHAPE_STATISTICS_AREA</source>
+      <translation>面の面積</translation>
+    </message>
+    <message>
+      <source>GEOM_SHAPE_STATISTICS_VOLUME</source>
+      <translation>ソリッドの体積</translation>
+    </message>
+    <message>
+      <source>GEOM_SHAPE_STATISTICS_NB_INTERVALS</source>
+      <translation>間隔数</translation>
+    </message>
+    <message>
+      <source>GEOM_SHAPE_STATISTICS_SCALAR_RANGE</source>
+      <translation>スカラ範囲</translation>
+    </message>
+    <message>
+      <source>GEOM_SHAPE_STATISTICS_COMPUTE</source>
+      <translation>計算</translation>
+    </message>
+    <message>
+      <source>GEOM_SHAPE_STATISTICS_MIN</source>
+      <translation>Min</translation>
+    </message>
+    <message>
+      <source>GEOM_SHAPE_STATISTICS_MAX</source>
+      <translation>Max</translation>
+    </message>
+    <message>
+      <source>GEOM_SHAPE_STATISTICS_CREATE_GROUPS</source>
+      <translation>グループの作成</translation>
+    </message>
+    <message>
+      <source>GEOM_SHAPE_STATISTICS_DISTRIBUTION_NB_ENT</source>
+      <translation>エンティティ数</translation>
+    </message>
+    <message>
+      <source>GEOM_SHAPE_STATISTICS_MIN_ERROR</source>
+      <translation>範囲内最小の値をセットするかスカラ範囲のスイッチをOFFにしてください。</translation>
+    </message>
+    <message>
+      <source>GEOM_SHAPE_STATISTICS_MAX_ERROR</source>
+      <translation>範囲内最大の値をセットするかスカラ範囲のスイッチをOFFにしてください。</translation>
+    </message>
+    <message>
+      <source>GEOM_SHAPE_STATISTICS_MIN_MAX_ERROR</source>
+      <translation>範囲内最小値が最大値より大きくすることはできません</translation>
+    </message>
+    <message>
+      <source>GEOM_MSG_GROUPS_CREATED</source>
+      <translation>%1 グループを作成しました。</translation>
     </message>
   </context>
   <context>
@@ -7442,6 +7584,10 @@
     <message>
       <source>GEOM_PROJ_ON_CYL_LENGTH_ANGLE</source>
       <translation>Length angle</translation>
+    </message>
+    <message>
+      <source>GEOM_PROJ_ON_CYL_ROTATION_ANGLE</source>
+      <translation>回転角度</translation>
     </message>
   </context>
 </TS>

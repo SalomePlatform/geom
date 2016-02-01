@@ -59,7 +59,10 @@ SET(GEOMAlgo_HEADERS
   GEOMAlgo_DataMapOfPassKeyInteger.hxx
   GEOMAlgo_DataMapOfShapeMapOfShape.hxx
   GEOMAlgo_DataMapOfShapePnt.hxx
+  GEOMAlgo_FinderShapeOn.hxx
+  GEOMAlgo_FinderShapeOn1.hxx
   GEOMAlgo_FinderShapeOn2.hxx
+  GEOMAlgo_FinderShapeOnQuad.hxx
   GEOMAlgo_GetInPlace.hxx
   GEOMAlgo_GetInPlaceAPI.hxx
   GEOMAlgo_GlueAnalyser.hxx
@@ -77,6 +80,7 @@ SET(GEOMAlgo_HEADERS
   GEOMAlgo_IndexedDataMapOfShapeState.hxx
   GEOMAlgo_KindOfBounds.hxx
   GEOMAlgo_KindOfClosed.hxx
+  GEOMAlgo_KindOfDef.hxx
   GEOMAlgo_KindOfName.hxx
   GEOMAlgo_KindOfShape.hxx
   GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx

@@ -33,6 +33,8 @@
 #include <GEOMUtils_HTrsfCurve2d.hxx>
 
 #include <Approx_Curve2d.hxx>
+#include <Bnd_Box2d.hxx>
+#include <BndLib_Add2dCurve.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_Curve2d.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
@@ -428,10 +430,11 @@ Standard_Integer GEOMImpl_ProjectionDriver::Execute(TFunction_Logbook& log) cons
     }
 
     // Get the face.
-    const TopAbs_ShapeEnum aType        = aShape.ShapeType();
-    const Standard_Real    aRadius      = aProj.GetRadius();
-    const Standard_Real    aStartAngle  = aProj.GetStartAngle();
-    const Standard_Real    aLengthAngle = aProj.GetAngleLength();
+    const TopAbs_ShapeEnum aType          = aShape.ShapeType();
+    const Standard_Real    aRadius        = aProj.GetRadius();
+    const Standard_Real    aStartAngle    = aProj.GetStartAngle();
+    const Standard_Real    aLengthAngle   = aProj.GetAngleLength();
+    const Standard_Real    aRotationAngle = aProj.GetAngleRotation();
 
     if (aType != TopAbs_WIRE && aType != TopAbs_FACE) {
       return 0;
@@ -441,8 +444,8 @@ Standard_Integer GEOMImpl_ProjectionDriver::Execute(TFunction_Logbook& log) cons
       return 0;
     }
 
-    TopoDS_Shape aProjShape =
-      projectOnCylinder(aShape, aRadius, aStartAngle, aLengthAngle);
+    TopoDS_Shape aProjShape = projectOnCylinder
+      (aShape, aRadius, aStartAngle, aLengthAngle, aRotationAngle);
 
     if (aProjShape.IsNull()) {
       return 0;
@@ -504,6 +507,8 @@ GetCreationInformation(std::string&             theOperationName,
       AddParam(theParams, "Length angle", aLengthAngle);
     }
 
+    AddParam(theParams, "Rotation angle", aProj.GetAngleRotation());
+
     break;
   }
   default:
@@ -523,7 +528,8 @@ TopoDS_Shape GEOMImpl_ProjectionDriver::projectOnCylinder
                                 (const TopoDS_Shape  &theShape,
                                  const Standard_Real  theRadius,
                                  const Standard_Real  theStartAngle,
-                                 const Standard_Real  theAngleLength) const
+                                 const Standard_Real  theAngleLength,
+                                 const Standard_Real  theAngleRotation) const
 {
   TopoDS_Shape aResult;
 
@@ -596,8 +602,6 @@ TopoDS_Shape GEOMImpl_ProjectionDriver::projectOnCylinder
 
   // Compute 2d translation transformation.
   TopoDS_Wire            anOuterWire = BRepTools::OuterWire(aFace);
-  Standard_Real          aU[2];
-  Standard_Real          aV[2];
   BRepTools_WireExplorer aOWExp(anOuterWire, aFace);
 
   if (!aOWExp.More()) {
@@ -605,21 +609,63 @@ TopoDS_Shape GEOMImpl_ProjectionDriver::projectOnCylinder
     return aResult;
   }
 
-  // Compute anisotropic transformation from a face's 2d space
-  // to cylinder's 2d space.
-  BRepTools::UVBounds(aFace, anOuterWire, aU[0], aU[1], aV[0], aV[1]);
-
+  // Rotate 2D presentation of face.
   TopoDS_Vertex       aFirstVertex = aOWExp.CurrentVertex();
   TopoDS_Edge         aFirstEdge   = aOWExp.Current();
   gp_Pnt              aPnt         = BRep_Tool::Pnt(aFirstVertex);
   BRepAdaptor_Curve2d anAdaptorCurve(aFirstEdge, aFace);
   Standard_Real       aParam       =
     BRep_Tool::Parameter(aFirstVertex, aFirstEdge, aFace);
-  gp_Pnt2d            aPntUV       = anAdaptorCurve.Value(aParam);
+  gp_Pnt2d            aPntUV;
+  gp_Vec2d            aVecUV;
+  gp_Vec2d            aVecU0(1., 0);
 
+  anAdaptorCurve.D1(aParam, aPntUV, aVecUV);
+
+  if (aVecUV.Magnitude() <= gp::Resolution()) {
+    return aResult;
+  }
+
+  if (aFirstEdge.Orientation() == TopAbs_REVERSED) {
+    aVecUV.Reverse();
+  }
+
+  const Standard_Real    anAngle    = aVecUV.Angle(aVecU0) + theAngleRotation;
+  const Standard_Boolean isToRotate = Abs(anAngle) > Precision::Angular();
+  gp_Trsf2d              aRotTrsf;
+  Bnd_Box2d              aUVBox;
+  Standard_Real          aPar[2];
+
+  if (isToRotate) {
+    aRotTrsf.SetRotation(aPntUV, anAngle);
+  }
+
+  for (; aOWExp.More(); aOWExp.Next()) {
+    TopoDS_Edge                 anEdge   = aOWExp.Current();
+    Handle(Geom2d_Curve)        aCurve   =
+        BRep_Tool::CurveOnSurface(anEdge, aFace, aPar[0], aPar[1]);
+
+    if (aCurve.IsNull()) {
+      continue;
+    }
+
+    if (isToRotate) {
+      aCurve = Handle(Geom2d_Curve)::DownCast(aCurve->Transformed(aRotTrsf));
+    }
+
+    BndLib_Add2dCurve::Add(aCurve, aPar[0], aPar[1], 0., aUVBox);
+  }
+
+  Standard_Real aU[2];
+  Standard_Real aV[2];
+
+  aUVBox.Get(aU[0], aV[0], aU[1], aV[1]);
+
+  // Compute anisotropic transformation from a face's 2d space
+  // to cylinder's 2d space.
   GEOMUtils::Trsf2d aTrsf2d
             (1./theRadius, 0., theStartAngle - aU[0]/theRadius,
-             0.,           1., aPnt.Z() - 0.5*(aV[1] - aV[0]) - aPntUV.Y());
+             0.,           1., aPnt.Z() - aPntUV.Y());
 
   // Compute scaling trsf.
   const Standard_Boolean isToScale = theAngleLength >= Precision::Angular();
@@ -640,7 +686,6 @@ TopoDS_Shape GEOMImpl_ProjectionDriver::projectOnCylinder
     new Geom_CylindricalSurface(gp_Ax3(), theRadius);
   GeomAdaptor_Surface  aGACyl(aCylinder);
   TopExp_Explorer      anExp(aFace, TopAbs_WIRE);
-  Standard_Real        aPar[2];
   TopTools_ListOfShape aWires;
   Standard_Real        aUResol = aGACyl.UResolution(Precision::Confusion());
   Standard_Real        aVResol = aGACyl.VResolution(Precision::Confusion());
@@ -657,6 +702,10 @@ TopoDS_Shape GEOMImpl_ProjectionDriver::projectOnCylinder
 
       if (aCurve.IsNull()) {
         continue;
+      }
+
+      if (isToRotate) {
+        aCurve = Handle(Geom2d_Curve)::DownCast(aCurve->Transformed(aRotTrsf));
       }
 
       // Transform the curve to cylinder's parametric space.

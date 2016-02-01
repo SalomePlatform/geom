@@ -145,7 +145,14 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
     Standard_Real aFP, aLP, aP;
     Handle(Geom_Curve) aCurve = BRep_Tool::Curve(TopoDS::Edge(aRefShape), aFP, aLP);
     if ( !aCurve.IsNull() ) {
-      aP = aFP + (aLP - aFP) * aPI.GetParameter();
+      if (aPI.GetTakeOrientationIntoAccount() &&
+          aRefShape.Orientation() == TopAbs_REVERSED) {
+        aP = 1. - aPI.GetParameter();
+      } else {
+        aP = aPI.GetParameter();
+      }
+
+      aP = aFP + (aLP - aFP) * aP;
       aPnt = aCurve->Value(aP);
     }
     else {
@@ -393,6 +400,7 @@ GetCreationInformation(std::string&             theOperationName,
   case POINT_CURVE_PAR:
     AddParam( theParams, "Edge", aCI.GetCurve() );
     AddParam( theParams, "Parameter", aCI.GetParameter() );
+    AddParam( theParams, "Use Orientation", aCI.GetTakeOrientationIntoAccount() );
     break;
   case POINT_CURVE_COORD:
     AddParam( theParams, "X", aCI.GetX() );

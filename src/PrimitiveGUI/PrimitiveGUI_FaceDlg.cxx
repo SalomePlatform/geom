@@ -127,7 +127,7 @@ void PrimitiveGUI_FaceDlg::Init()
   myEdge.nullify();
   myFace.nullify();
   globalSelection(); // close local contexts, if any
-  //  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+  //  localSelection( TopAbs_EDGE );
 
   myOrientationType = 1;
 
@@ -224,12 +224,12 @@ void PrimitiveGUI_FaceDlg::TypeButtonClicked()
 {
   if ( GroupType->RadioButton1->isChecked() ) {
     globalSelection(); // close local contexts, if any
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+    localSelection( TopAbs_EDGE );
     GroupPlane->TextLabel1->setText( tr( "GEOM_EDGE" ) );
   }
   else if ( GroupType->RadioButton2->isChecked() ) {
     globalSelection(); // close local contexts, if any
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_FACE );
+    localSelection( TopAbs_FACE );
     GroupPlane->TextLabel1->setText( tr( "GEOM_FACE" ) );
   }
   myEditCurrentArgument = GroupPlane->LineEdit1;
@@ -288,7 +288,7 @@ void PrimitiveGUI_FaceDlg::ConstructorsClicked( int constructorId )
   case 1:
     {
       globalSelection(); // close local contexts, if any
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+      localSelection( TopAbs_EDGE );
       myEditCurrentArgument = GroupPlane->LineEdit1;
       myEditCurrentArgument->setText("");
       myEdge.nullify();
@@ -362,9 +362,9 @@ void PrimitiveGUI_FaceDlg::SetEditCurrentArgument()
   if ( send == GroupPlane->PushButton1 ) {
     myEditCurrentArgument = GroupPlane->LineEdit1;
     if (GroupType->RadioButton1->isChecked())
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+      localSelection( TopAbs_EDGE );
     else if (GroupType->RadioButton1->isChecked())
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_FACE );
+      localSelection( TopAbs_FACE );
   }
 
   myEditCurrentArgument->setFocus();

@@ -40,8 +40,10 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) MakePointWithReference (Handle(GEOM_Object) theReference,
                                               double theX, double theY, double theZ);
 
-  Standard_EXPORT Handle(GEOM_Object) MakePointOnCurve (Handle(GEOM_Object) theCurve,
-                                                        double theParameter);
+  Standard_EXPORT Handle(GEOM_Object) MakePointOnCurve
+                              (Handle(GEOM_Object) theCurve,
+                               double              theParameter,
+                               bool                takeOrientationIntoAccount);
 
   Standard_EXPORT Handle(GEOM_Object) MakePointOnCurveByLength (Handle(GEOM_Object) theCurve,
                                                                 double              theLength,
@@ -134,12 +136,14 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
     PointOn_Face
   };
 
-  Handle(GEOM_Object) makePointOnGeom (Handle(GEOM_Object) theGeomObj,
-                                       double theParam1,
-                                       double theParam2,
-                                       double theParam3,
-                                       const PointLocation theLocation,
-                                       Handle(GEOM_Object) theRefPoint = 0);
+  Handle(GEOM_Object) makePointOnGeom
+                     (Handle(GEOM_Object) theGeomObj,
+                      double              theParam1,
+                      double              theParam2,
+                      double              theParam3,
+                      const PointLocation theLocation,
+                      const bool          takeOrientationIntoAccount = false,
+                      Handle(GEOM_Object) theRefPoint = 0);
 };
 
 #endif

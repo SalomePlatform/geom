@@ -50,13 +50,14 @@
 //=================================================================================
 GenerationGUI_PipeDlg::GenerationGUI_PipeDlg (GeometryGUI* theGeometryGUI, QWidget* parent,
                                               bool modal, Qt::WindowFlags fl)
-  : GEOMBase_Skeleton  (theGeometryGUI, parent, modal, fl),
-    myGenGroupCheckGP  (0),
-    myPrefixLblGP      (0),
-    myPrefixEditGP     (0),
-    myGenGroupCheckGMP (0),
-    myPrefixLblGMP     (0),
-    myPrefixEditGMP    (0)
+  : GEOMBase_Skeleton    (theGeometryGUI, parent, modal, fl),
+    myGenGroupCheckGP    (0),
+    myPrefixLblGP        (0),
+    myPrefixEditGP       (0),
+    myStepByStepCheckGMP (0),
+    myGenGroupCheckGMP   (0),
+    myPrefixLblGMP       (0),
+    myPrefixEditGMP      (0)
 {
   QPixmap image0 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_PIPE")));
   QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
@@ -124,15 +125,18 @@ GenerationGUI_PipeDlg::GenerationGUI_PipeDlg (GeometryGUI* theGeometryGUI, QWidg
   // Add widgets for group generation
   QGridLayout *aLayoutGMP = (QGridLayout *)GroupMakePoints->GroupBox1->layout();
 
-  myGenGroupCheckGMP =
+  myStepByStepCheckGMP =
+    new QCheckBox(tr("GEOM_STEP_BY_STEP"), GroupMakePoints->GroupBox1);
+  myGenGroupCheckGMP   =
     new QCheckBox(tr("GEOM_GENERATE_GROUPS"), GroupMakePoints->GroupBox1);
-  myPrefixLblGMP     =
+  myPrefixLblGMP       =
     new QLabel (tr("GEOM_GROUP_NAME_PREFIX"), GroupMakePoints->GroupBox1);
-  myPrefixEditGMP    = new QLineEdit(GroupMakePoints->GroupBox1);
+  myPrefixEditGMP      = new QLineEdit(GroupMakePoints->GroupBox1);
 
-  aLayoutGMP->addWidget(myGenGroupCheckGMP, 8, 0, 1, 3);
-  aLayoutGMP->addWidget(myPrefixLblGMP,     9, 0, 1, 2);
-  aLayoutGMP->addWidget(myPrefixEditGMP,    9, 2);
+  aLayoutGMP->addWidget(myStepByStepCheckGMP, 8,  0, 1, 3);
+  aLayoutGMP->addWidget(myGenGroupCheckGMP,   9,  0, 1, 3);
+  aLayoutGMP->addWidget(myPrefixLblGMP,       10, 0, 1, 2);
+  aLayoutGMP->addWidget(myPrefixEditGMP,      10, 2);
 
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
@@ -201,8 +205,10 @@ void GenerationGUI_PipeDlg::Init()
   connect(GroupMakePoints->PushButton3, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupMakePoints->CheckBox1, SIGNAL(clicked()), this, SLOT(processPreview()));
   connect(GroupMakePoints->CheckBox2, SIGNAL(clicked()), this, SLOT(processPreview()));
-  connect(myGenGroupCheckGP,  SIGNAL(toggled(bool)), this, SLOT(GenGroupClicked(bool)));
-  connect(myGenGroupCheckGMP, SIGNAL(toggled(bool)), this, SLOT(GenGroupClicked(bool)));
+  connect(myStepByStepCheckGMP,       SIGNAL(clicked()), this, SLOT(processPreview()));
+  connect(myGenGroupCheckGP,    SIGNAL(toggled(bool)), this, SLOT(GenGroupClicked(bool)));
+  connect(myGenGroupCheckGMP,   SIGNAL(toggled(bool)), this, SLOT(GenGroupClicked(bool)));
+  connect(myStepByStepCheckGMP, SIGNAL(toggled(bool)), this, SLOT(StepByStepClicked(bool)));
 
   initName(tr("GEOM_PIPE"));
   resize(100,100);
@@ -250,6 +256,7 @@ void GenerationGUI_PipeDlg::ConstructorsClicked( int constructorId )
     GroupPoints->hide();
     GroupMakePoints->show();
     GroupMakePoints->PushButton1->click();
+    myStepByStepCheckGMP->setChecked(false);
     myGenGroupCheckGMP->setChecked(false);
     resetGenGroup(myGenGroupCheckGMP, false, true);
     break;
@@ -273,7 +280,7 @@ void GenerationGUI_PipeDlg::SelectionTypeButtonClicked()
 {
   globalSelection();
   if ( GroupPoints->CheckButton1->isChecked() ) {
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+    localSelection( TopAbs_EDGE );
   } else {
     TColStd_MapOfInteger aMap;
     aMap.Add(GEOM_COMPOUND);
@@ -375,7 +382,7 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
     }
   }
   else if ( myEditCurrentArgument == GroupMakePoints->LineEdit2 ) {
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+    localSelection( TopAbs_VERTEX );
     QList<GEOM::GeomObjPtr> objects = getSelected( TopAbs_VERTEX, -1 );
     GEOMBase::Synchronize( myLocations, objects );
     if ( !myLocations.isEmpty() ) {
@@ -421,7 +428,7 @@ void GenerationGUI_PipeDlg::SetEditCurrentArgument()
     myEditCurrentArgument = GroupPoints->LineEdit2;
 
     if ( GroupPoints->CheckButton1->isChecked() ) {
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+      localSelection( TopAbs_EDGE );
     } else {
       TColStd_MapOfInteger aMap;
       aMap.Add(GEOM_COMPOUND);
@@ -434,7 +441,7 @@ void GenerationGUI_PipeDlg::SetEditCurrentArgument()
   else if(send == GroupPoints->PushButton3) {
     myEditCurrentArgument = GroupPoints->LineEdit3;
     GroupPoints->CheckButton1->setEnabled(false);
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+    localSelection(TopAbs_EDGE);
   }
 
   GroupMakePoints->PushButton1->setDown(false);
@@ -583,10 +590,16 @@ bool GenerationGUI_PipeDlg::execute (ObjectList& objects)
                    myGenGroupCheckGMP->isChecked();
       }
 
+      bool isWithContact    = GroupMakePoints->CheckBox1->isEnabled() &&
+                              GroupMakePoints->CheckBox1->isChecked();
+      bool isWithCorrection = GroupMakePoints->CheckBox2->isEnabled() &&
+                              GroupMakePoints->CheckBox2->isChecked();
+
       aList = anOper->MakePipeWithDifferentSections
-                          (myBaseGO.in(), myLocationsGO.in(), myPath.get(), 
-                           GroupMakePoints->CheckBox1->isChecked(), 
-                           GroupMakePoints->CheckBox2->isChecked(), doGroups);
+                          (myBaseGO.in(), myLocationsGO.in(), myPath.get(),
+                           isWithContact, isWithCorrection,
+                           myStepByStepCheckGMP->isChecked(),
+                           doGroups);
 
       if (aList->length() > 0) {
         if (doGroups) {
@@ -704,6 +717,16 @@ QList<GEOM::GeomObjPtr> GenerationGUI_PipeDlg::getSourceObjects()
 void GenerationGUI_PipeDlg::GenGroupClicked(bool isChecked)
 {
   resetGenGroup((QCheckBox *)sender(), isChecked, false);
+}
+
+//=================================================================================
+// function : StepByStepClicked
+// purpose  : Slot to treat checking "Step-by-step generation" check box.
+//=================================================================================
+void GenerationGUI_PipeDlg::StepByStepClicked(bool isChecked)
+{
+  GroupMakePoints->CheckBox1->setEnabled(!isChecked);
+  GroupMakePoints->CheckBox2->setEnabled(!isChecked);
 }
 
 //=================================================================================

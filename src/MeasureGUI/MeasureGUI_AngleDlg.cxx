@@ -404,5 +404,5 @@ bool MeasureGUI_AngleDlg::isValid (QString& msg)
 void MeasureGUI_AngleDlg::activateSelection()
 {
   globalSelection(GEOM_LINE);
-  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+  localSelection( TopAbs_EDGE );
 }

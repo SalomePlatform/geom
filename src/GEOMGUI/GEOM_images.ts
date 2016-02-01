@@ -1388,6 +1388,10 @@
             <translation>transfer_data.png</translation>
         </message>
         <message>
+            <source>ICO_IMPORT_SHAPE</source>
+            <translation>import.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_POINT_FACE</source>
             <translation>pointonface.png</translation>
         </message>

@@ -26,7 +26,9 @@ namespace GEOMOp {
   enum {
     // ToolsGUI --------------------//--------------------------------
     OpDelete              = 1020,   // MENU EDIT  - DELETE
+#ifndef DISABLE_PYCONSOLE
     OpCheckGeom           = 1030,   // MENU TOOLS - CHECK GEOMETRY
+#endif
     OpMaterialsLibrary    = 1040,   // MENU TOOLS - MATERIALS LIBRARY
     OpSelectVertex        = 1100,   // POPUP MENU - SELECT ONLY - VERTEX
     OpSelectEdge          = 1101,   // POPUP MENU - SELECT ONLY - EDGE
@@ -59,7 +61,9 @@ namespace GEOMOp {
     OpIsosWidth           = 1261,   // POPUP MENU - LINE WIDTH - ISOS WIDTH
     OpCreateFolder        = 1262,   // POPUP MENU - CREATE FOLDER
     OpSortChildren        = 1263,   // POPUP MENU - SORT CHILD ITEMS
+#ifndef DISABLE_GRAPHICSVIEW
     OpShowDependencyTree  = 1264,   // POPUP MENU - SHOW DEPENDENCY TREE
+#endif
     OpReduceStudy         = 1265,   // POPUP MENU - REDUCE STUDY
     // DisplayGUI ------------------//--------------------------------
     OpSwitchVectors       = 2001,   // MENU VIEW  - DISPLAY MODE - SHOW/HIDE EDGE DIRECTION
@@ -199,7 +203,10 @@ namespace GEOMOp {
     OpShowAllDimensions   = 5015,   // POPUP MENU - SHOW ALL DIMENSIONS
     OpHideAllDimensions   = 5016,   // POPUP MENU - HIDE ALL DIMENSIONS
     OpFastCheckInters     = 5017,   // MENU MEASURES - FAST CHECK INTERSECTIONS
-    OpInspectObj	  = 5018,   // MENU MEASURES - INSPECT OBJECT
+    OpInspectObj	  = 5018,       // MENU MEASURES - INSPECT OBJECT
+#ifndef DISABLE_PLOT2DVIEWER
+    OpShapeStatistics	  = 5019,   // MENU MEASURES - SHAPE STATISTICS
+#endif
     // GroupGUI --------------------//--------------------------------
     OpGroupCreate         = 6000,   // MENU GROUP - CREATE
     OpGroupEdit           = 6001,   // MENU GROUP - EDIT

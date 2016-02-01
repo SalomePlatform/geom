@@ -446,7 +446,7 @@ void GenerationGUI_PrismDlg::SetEditCurrentArgument()
     myEditCurrentArgument = GroupVecH->LineEdit2;
     GroupVecH->PushButton1->setDown(false);
     GroupVecH->LineEdit1->setEnabled(false);
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+    localSelection(TopAbs_EDGE);
   }
   else if (send == Group2Points->PushButton1) {
     myEditCurrentArgument = Group2Points->LineEdit1;
@@ -461,7 +461,7 @@ void GenerationGUI_PrismDlg::SetEditCurrentArgument()
     Group2Points->PushButton3->setDown(false);
     Group2Points->LineEdit1->setEnabled(false);
     Group2Points->LineEdit3->setEnabled(false);
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+    localSelection(TopAbs_VERTEX);
   }
   else if (send == Group2Points->PushButton3) {
     myEditCurrentArgument = Group2Points->LineEdit3;
@@ -469,7 +469,7 @@ void GenerationGUI_PrismDlg::SetEditCurrentArgument()
     Group2Points->PushButton2->setDown(false);
     Group2Points->LineEdit1->setEnabled(false);
     Group2Points->LineEdit2->setEnabled(false);
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+    localSelection(TopAbs_VERTEX);
   }
   else   if (send == GroupDXDYDZ->PushButton1) {
     myEditCurrentArgument = GroupDXDYDZ->LineEdit1;

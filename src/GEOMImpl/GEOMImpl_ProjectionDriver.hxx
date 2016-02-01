@@ -87,7 +87,8 @@ private:
   TopoDS_Shape projectOnCylinder(const TopoDS_Shape  &theShape,
                                  const Standard_Real  theRadius,
                                  const Standard_Real  theStartAngle,
-                                 const Standard_Real  theAngleLength) const;
+                                 const Standard_Real  theAngleLength,
+                                 const Standard_Real  theAngleRotation) const;
 
 public:
 

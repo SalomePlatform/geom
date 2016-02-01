@@ -76,12 +76,14 @@ SET(GEOMGUI_HEADERS
   GEOMGUI_Selection.h
   GEOM_GEOMGUI.hxx
   GEOMGUI_CreationInfoWdg.h
+  GEOMGUI_TextTreeWdg.h
   GEOMGUI_DimensionProperty.h
   )
 
 # header files / to be processed by moc
 SET(_moc_HEADERS 
   GEOMGUI_CreationInfoWdg.h
+  GEOMGUI_TextTreeWdg.h
   GeometryGUI.h
   )
 
@@ -114,6 +116,7 @@ SET(GEOMGUI_SOURCES
   GEOMGUI_OCCSelector.cxx
   GEOMGUI_Selection.cxx
   GEOMGUI_CreationInfoWdg.cxx
+  GEOMGUI_TextTreeWdg.cxx
   GEOMGUI_DimensionProperty.cxx
   ${_moc_SOURCES}
   ${_rcc_SOURCES}

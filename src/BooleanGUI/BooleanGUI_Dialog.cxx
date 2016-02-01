@@ -198,10 +198,7 @@ void BooleanGUI_Dialog::Init()
   mainFrame()->RadioButton1->setFocus();
 
   globalSelection(GEOM_ALLSHAPES);
-
-  std::list<int> needTypes;
-  needTypes.push_back( TopAbs_VERTEX ), needTypes.push_back( TopAbs_EDGE ), needTypes.push_back( TopAbs_WIRE ), needTypes.push_back( TopAbs_FACE ), needTypes.push_back( TopAbs_SHELL ), needTypes.push_back( TopAbs_SOLID ), needTypes.push_back( TopAbs_COMPOUND );
-  localSelection(GEOM::GEOM_Object::_nil(), needTypes );
+  //localSelection(TopAbs_SHAPE); // VSR 24/09/2015: dectivate local selection in BOP (CoTech decision)
   
   myGroup->PushButton1->click();
   resize(100,100);
@@ -341,10 +338,7 @@ void BooleanGUI_Dialog::SetEditCurrentArgument()
   }
 
   globalSelection(GEOM_ALLSHAPES);
-
-  std::list<int> needTypes;
-  needTypes.push_back( TopAbs_VERTEX ), needTypes.push_back( TopAbs_EDGE ), needTypes.push_back( TopAbs_WIRE ), needTypes.push_back( TopAbs_FACE ), needTypes.push_back( TopAbs_SHELL ), needTypes.push_back( TopAbs_SOLID ), needTypes.push_back( TopAbs_COMPOUND );
-  localSelection(GEOM::GEOM_Object::_nil(), needTypes );
+  //localSelection(TopAbs_SHAPE); // VSR 24/09/2015: dectivate local selection in BOP (CoTech decision)
 
   // enable line edit
   myEditCurrentArgument->setEnabled(true);

@@ -28,6 +28,7 @@
 #define PROJCYL_ARG_RADIUS           2
 #define PROJCYL_ARG_START_ANGLE      3
 #define PROJCYL_ARG_ANGLE_LENGTH     4
+#define PROJCYL_ARG_ANGLE_ROTATION   5
 
 class GEOMImpl_IProjOnCyl
 {
@@ -36,14 +37,16 @@ public:
 
   GEOMImpl_IProjOnCyl(Handle(GEOM_Function) theFunction): _func(theFunction) {}
 
-  void SetShape       (const Handle(GEOM_Function) &theShape)
-          { _func->SetReference(PROJCYL_ARG_SHAPE,   theShape); }
-  void SetRadius      (const Standard_Real          theRadius)
-          { _func->SetReal(PROJCYL_ARG_RADIUS,       theRadius); }
-  void SetStartAngle  (const Standard_Real          theStartAngle)
-          { _func->SetReal(PROJCYL_ARG_START_ANGLE,  theStartAngle); }
-  void SetAngleLength (const Standard_Real          theAngleLength)
-          { _func->SetReal(PROJCYL_ARG_ANGLE_LENGTH, theAngleLength); }
+  void SetShape         (const Handle(GEOM_Function) &theShape)
+          { _func->SetReference(PROJCYL_ARG_SHAPE,     theShape); }
+  void SetRadius        (const Standard_Real          theRadius)
+          { _func->SetReal(PROJCYL_ARG_RADIUS,         theRadius); }
+  void SetStartAngle    (const Standard_Real          theStartAngle)
+          { _func->SetReal(PROJCYL_ARG_START_ANGLE,    theStartAngle); }
+  void SetAngleLength   (const Standard_Real          theAngleLength)
+          { _func->SetReal(PROJCYL_ARG_ANGLE_LENGTH,   theAngleLength); }
+  void SetAngleRotation (const Standard_Real          theAngleLength)
+          { _func->SetReal(PROJCYL_ARG_ANGLE_ROTATION, theAngleLength); }
 
   Handle(GEOM_Function) GetShape()
           { return _func->GetReference(PROJCYL_ARG_SHAPE); }
@@ -53,6 +56,8 @@ public:
           { return _func->GetReal(PROJCYL_ARG_START_ANGLE ); }
   Standard_Real         GetAngleLength()
           { return _func->GetReal(PROJCYL_ARG_ANGLE_LENGTH ); }
+  Standard_Real         GetAngleRotation()
+          { return _func->GetReal(PROJCYL_ARG_ANGLE_ROTATION ); }
 
  private:
 

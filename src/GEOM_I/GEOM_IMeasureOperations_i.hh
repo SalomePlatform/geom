@@ -100,6 +100,11 @@ class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
                                          CORBA::Long           theCheckLevel,
                                          GEOM::ListOfLong_out  theIntersections);
 
+  CORBA::Boolean CheckSelfIntersectionsFast (GEOM::GEOM_Object_ptr theShape,
+					     CORBA::Float          theDeflection,
+					     CORBA::Double         theTolerance,
+					     GEOM::ListOfLong_out  theIntersections);
+
   CORBA::Boolean FastIntersect (GEOM::GEOM_Object_ptr theShape1,
                                 GEOM::GEOM_Object_ptr theShape2,
                                 CORBA::Double         theTolerance,

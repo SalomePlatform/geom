@@ -35,9 +35,7 @@ GEOMAlgo_KS_PLANE,
 GEOMAlgo_KS_CIRCLE,
 GEOMAlgo_KS_LINE,
 GEOMAlgo_KS_DEGENERATED,
-//modified by NIZNHY-PKV Tue Jul 03 10:28:09 2012f
 GEOMAlgo_KS_BSPLINE
-//modified by NIZNHY-PKV Tue Jul 03 10:28:11 2012t
 };
 
 #ifndef _Standard_PrimitiveTypes_HeaderFile
