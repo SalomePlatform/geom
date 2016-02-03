@@ -4834,8 +4834,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "face")
             return anObj
 
-        ## Create a shell from the set of faces and shells.
-        #  @param theFacesAndShells List of faces and/or shells.
+        ## Create a shell from the set of faces, shells and/or compounds of faces.
+        #  @param theFacesAndShells List of faces, shells and/or compounds of faces.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
