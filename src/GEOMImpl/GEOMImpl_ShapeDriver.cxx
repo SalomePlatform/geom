@@ -165,9 +165,55 @@ namespace
   }
 
   /**
-   * This function constructs a shell or a compound of shells from a set of faces and/or shells.
+   * This function adds faces from the input shape into the list of faces. If
+   * the input shape is a face, it is added itself. If it is a shell, its
+   * sub-shapes (faces) are added. If it is a compound, its sub-shapes
+   * (faces or shells) are added in the list. For null shapes and for other
+   * types of shapes an exception is thrown.
    *
-   * @param theShapes is a set of faces and/or shells.
+   * @param theShape the shape to be added. Either face or shell or a compound
+   *        of faces and/or shells.
+   * @param theListFaces the list of faces that is modified on output.
+   * @param theMapFence the map that protects from adding the same faces in
+   *        the list.
+   */
+  void addFaces(const TopoDS_Shape         &theShape,
+                      TopTools_ListOfShape &theListFaces,
+                      TopTools_MapOfShape  &theMapFence)
+  {
+    if (theShape.IsNull()) {
+      Standard_NullObject::Raise("Face for shell construction is null");
+    }
+
+    // Append the shape is the mapFence
+    if (theMapFence.Add(theShape)) {
+      // Shape type
+      const TopAbs_ShapeEnum aType = theShape.ShapeType();
+
+      if (aType == TopAbs_FACE) {
+        theListFaces.Append(theShape);
+      } else if (aType == TopAbs_SHELL || aType == TopAbs_COMPOUND) {
+        TopoDS_Iterator anIter(theShape);
+
+        for (; anIter.More(); anIter.Next()) {
+          // Add sub-shapes: faces for shell or faces/shells for compound.
+          const TopoDS_Shape &aSubShape = anIter.Value();
+
+          addFaces(aSubShape, theListFaces, theMapFence);
+        }
+      } else {
+        Standard_TypeMismatch::Raise
+          ("Shape for shell construction is neither a shell nor a face");
+      }
+    }
+  }
+
+  /**
+   * This function constructs a shell or a compound of shells
+   * from a set of faces and/or shells.
+   *
+   * @param theShapes is a set of faces, shells and/or
+   *        compounds of faces/shells.
    * @return a shell or a compound of shells.
    */
   TopoDS_Shape makeShellFromFaces
@@ -192,33 +238,7 @@ namespace
       // Shape
       const TopoDS_Shape aShape = aRefShape->GetValue();
 
-      if (aShape.IsNull()) {
-        Standard_NullObject::Raise("Face for shell construction is null");
-      }
-
-      // Shape type
-      const TopAbs_ShapeEnum aType = aShape.ShapeType();
-
-      if (aType == TopAbs_SHELL) {
-        // Get faces.
-        TopExp_Explorer anExp(aShape, TopAbs_FACE);
-
-        for (; anExp.More(); anExp.Next()) {
-          const TopoDS_Shape &aFace = anExp.Current();
-
-          if (aMapFence.Add(aFace)) {
-            aListFaces.Append(aFace);
-          }
-        }
-      } else if (aType == TopAbs_FACE) {
-        // Append the face in the list
-        if (aMapFence.Add(aShape)) {
-          aListFaces.Append(aShape);
-        }
-      } else {
-        Standard_TypeMismatch::Raise
-            ("Shape for shell construction is neither a shell nor a face");
-      }
+      addFaces(aShape, aListFaces, aMapFence);
     }
 
     // Perform computation of shells.
