@@ -180,6 +180,8 @@ static GeomFill_Trihedron EvaluateBestSweepMode(const TopoDS_Shape& Spine)
 //=======================================================================
 static Standard_Boolean BuildPipeShell(BRepOffsetAPI_MakePipeShell &theBuilder)
 {
+  theBuilder.SetForceApproxC1(Standard_True);
+
   theBuilder.Build();
 
   Standard_Boolean isDone = theBuilder.IsDone();
@@ -3125,7 +3127,8 @@ Standard_Integer GEOMImpl_PipeDriver::Execute (TFunction_Logbook& log) const
     else
     {
       GeomFill_Trihedron theBestMode = EvaluateBestSweepMode(aWirePath);
-      BRepOffsetAPI_MakePipe aMkPipe(aWirePath, aShapeBase, theBestMode);
+      BRepOffsetAPI_MakePipe aMkPipe
+        (aWirePath, aShapeBase, theBestMode, Standard_True);
 
       if (aMkPipe.IsDone() && aMkPipe.ErrorOnSurface() <= TolPipeSurf) {
         aShape = aMkPipe.Shape();
@@ -3137,7 +3140,7 @@ Standard_Integer GEOMImpl_PipeDriver::Execute (TFunction_Logbook& log) const
       } else if (theBestMode != GeomFill_IsDiscreteTrihedron) {
         // Try to use Descrete Trihedron mode.
         BRepOffsetAPI_MakePipe aMkPipeDescrete
-          (aWirePath, aShapeBase, GeomFill_IsDiscreteTrihedron);
+          (aWirePath, aShapeBase, GeomFill_IsDiscreteTrihedron, Standard_True);
 
         if (aMkPipeDescrete.IsDone()) {
           aShape = aMkPipeDescrete.Shape();
