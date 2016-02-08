@@ -299,7 +299,9 @@ module GEOM
     long GetStudyID();
 
     /*!
-     *  \brief Get internal type of the object (POINT, BOX, CYLINDER, EXTRUSION...).
+     *  \brief Get internal type of operation created this object (POINT, BOX, CYLINDER, EXTRUSION...).
+     *  \note To get topological information on the object, use \ref GEOM_IMeasureOperations::WhatIs() "WhatIs()"
+     * or \ref GEOM_IMeasureOperations::KindOfShape() "KindOfShape()" operation.
      */
     long GetType();
 
