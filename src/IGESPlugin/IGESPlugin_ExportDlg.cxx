@@ -69,7 +69,7 @@ QString IGESPlugin_ExportDlg::getFileName( const QString& initial, const QString
 
   IGESPlugin_ExportDlg fd( parent );
   fd.setFileMode( AnyFile );
-  fd.setFilters( fls );
+  fd.setNameFilters( fls );
   fd.setWindowTitle( caption );
   if ( !tmpfilename.isEmpty() )
     fd.processPath( tmpfilename );

@@ -19,7 +19,6 @@
 
 IF(SALOME_BUILD_GUI)
   INCLUDE(UseQt4Ext)
-  INCLUDE(${QT_USE_FILE})
 ENDIF()
 
 # --- options ---

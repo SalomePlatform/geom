@@ -17,8 +17,6 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-INCLUDE(${QT_USE_FILE})
-
 # --- options ---
 
 # additional include directories

@@ -18,7 +18,6 @@
 #
 
 INCLUDE(${SWIG_USE_FILE})
-INCLUDE(${QT_USE_FILE})
 
 # --- options ---
 

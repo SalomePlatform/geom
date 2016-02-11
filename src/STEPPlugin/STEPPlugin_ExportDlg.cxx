@@ -89,7 +89,7 @@ QString STEPPlugin_ExportDlg::getFileName(const QString           &theInitial,
   STEPPlugin_ExportDlg aDlg(theParent);
 
   aDlg.setFileMode(AnyFile);
-  aDlg.setFilters(aFls);
+  aDlg.setNameFilters(aFls);
   aDlg.setWindowTitle(theCaption);
 
   if (!aTmpFileName.isEmpty()) {

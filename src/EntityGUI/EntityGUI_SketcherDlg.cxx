@@ -1143,7 +1143,7 @@ void EntityGUI_SketcherDlg::ClickOnEnd()
     }
 
     QString Command = myCommand.join( "" );
-    Sketcher_Profile aProfile = Sketcher_Profile( Command.toAscii() );
+    Sketcher_Profile aProfile = Sketcher_Profile( Command.toLatin1() );
     bool isDone = false;
     TopoDS_Shape myShape = aProfile.GetShape( &isDone );
     if ( isDone ) {
@@ -2341,12 +2341,12 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
 
     //Last Shape
     QString Command1 = myCommand.join( "" );
-    Sketcher_Profile aProfile1( Command1.toAscii() );
+    Sketcher_Profile aProfile1( Command1.toLatin1() );
     myShape1 = aProfile1.GetShape();
 
     //Current Shape
     QString Command2 = Command1 + GetNewCommand( aParameters );
-    Sketcher_Profile aProfile2( Command2.toAscii() );
+    Sketcher_Profile aProfile2( Command2.toLatin1() );
     myShape2 = aProfile2.GetShape( &isDone, &error );
 
     //Error Message

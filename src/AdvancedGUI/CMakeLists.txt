@@ -18,7 +18,6 @@
 #
 
 INCLUDE(UseQt4Ext)
-INCLUDE(${QT_USE_FILE})
 
 # --- options ---
 

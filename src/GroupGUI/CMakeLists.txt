@@ -17,8 +17,7 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-#INCLUDE(UseQt4Ext)
-INCLUDE(${QT_USE_FILE})
+INCLUDE(UseQt4Ext)
 
 # --- options ---
 
