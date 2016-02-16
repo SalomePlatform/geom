@@ -119,11 +119,16 @@ void STEPPlugin_IOperations_i::ExportSTEP(GEOM::GEOM_Object_ptr theOriginal,
  *  \param theIsIgnoreUnits If True, file length units will be ignored (set to 'meter')
  *                          and result model will be scaled, if its units are not meters.
  *                          If False (default), file length units will be taken into account.
+ *  \param IsCreateAssemblies If True, for each assembly compound is created
+ *                          in the result. If False Compounds that contain a
+ *                          single shape are eliminated from the result.
  *  \return List of GEOM_Objects, containing the created shape and propagation groups.
  */
 //=============================================================================
-GEOM::ListOfGO* STEPPlugin_IOperations_i::ImportSTEP( const char* theFileName,
-						      const bool  theIsIgnoreUnits = false )
+GEOM::ListOfGO* STEPPlugin_IOperations_i::ImportSTEP
+                          (const char *theFileName,
+                           const bool  theIsIgnoreUnits,
+                           const bool  IsCreateAssemblies)
 {
   GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 
@@ -131,7 +136,8 @@ GEOM::ListOfGO* STEPPlugin_IOperations_i::ImportSTEP( const char* theFileName,
   GetOperations()->SetNotDone();
 
   //Import the shape from the file
-  Handle(TColStd_HSequenceOfTransient) aHSeq = GetOperations()->ImportSTEP( theFileName, theIsIgnoreUnits );
+  Handle(TColStd_HSequenceOfTransient) aHSeq = GetOperations()->ImportSTEP
+    (theFileName, theIsIgnoreUnits, IsCreateAssemblies);
 
   if( !GetOperations()->IsDone() || aHSeq.IsNull() )
     return aSeq._retn();

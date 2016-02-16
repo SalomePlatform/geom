@@ -54,6 +54,9 @@ def ExportSTEP(self, theObject, theFileName, theUnit=GEOM.LU_METER):
 #  @param theIsIgnoreUnits If True, file length units will be ignored (set to 'meter')
 #         and result model will be scaled, if its units are not meters.
 #         If False (default), file length units will be taken into account.
+#  @param IsCreateAssemblies If True, for each assembly compound is created in
+#         the result. If False Compounds that contain a single shape
+#         are eliminated from the result.
 #  @param theName Object name; when specified, this parameter is used
 #         for result publication in the study. Otherwise, if automatic
 #         publication is switched on, default value is used for result name.
@@ -67,7 +70,8 @@ def ExportSTEP(self, theObject, theFileName, theUnit=GEOM.LU_METER):
 #
 #  @ref swig_Import_Export "Example"
 #  @ingroup l2_import_export
-def ImportSTEP(self, theFileName, theIsIgnoreUnits = False, theName=None):
+def ImportSTEP(self, theFileName, theIsIgnoreUnits = False,
+               IsCreateAssemblies = False, theName=None):
     """
     Import a shape from the STEP file with given name.
 
@@ -76,6 +80,9 @@ def ImportSTEP(self, theFileName, theIsIgnoreUnits = False, theName=None):
         ignoreUnits If True, file length units will be ignored (set to 'meter')
                     and result model will be scaled, if its units are not meters.
                     If False (default), file length units will be taken into account.
+        IsCreateAssemblies If True, for each assembly compound is created in
+                    the result. If False Compounds that contain a single shape
+                    are eliminated from the result.
         theName Object name; when specified, this parameter is used
                 for result publication in the study. Otherwise, if automatic
                 publication is switched on, default value is used for result name.
@@ -94,13 +101,18 @@ def ImportSTEP(self, theFileName, theIsIgnoreUnits = False, theName=None):
     anOp = GetSTEPPluginOperations(self)
     
     anIsIgnoreUnits = theIsIgnoreUnits
+    anIsCreateAssemblies = IsCreateAssemblies;
     aName = theName
     if isinstance( theIsIgnoreUnits, basestring ):
         anIsIgnoreUnits = False
         aName = theIsIgnoreUnits
         pass
+    elif isinstance( IsCreateAssemblies, basestring ):
+        anIsCreateAssemblies = False
+        aName = IsCreateAssemblies
+        pass
 
-    aListObj = anOp.ImportSTEP(theFileName,anIsIgnoreUnits)
+    aListObj = anOp.ImportSTEP(theFileName,anIsIgnoreUnits,anIsCreateAssemblies)
     RaiseIfFailed("ImportSTEP", anOp)
     aNbObj = len(aListObj)
     if aNbObj > 0:

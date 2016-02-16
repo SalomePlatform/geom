@@ -167,8 +167,9 @@ void STEPPlugin_IOperations::ExportSTEP
  */
 //=============================================================================
 Handle(TColStd_HSequenceOfTransient)
-STEPPlugin_IOperations::ImportSTEP( const TCollection_AsciiString& theFileName,
-				    const bool theIsIgnoreUnits )
+STEPPlugin_IOperations::ImportSTEP(const TCollection_AsciiString& theFileName,
+                                   const bool theIsIgnoreUnits,
+                                   const bool IsCreateAssemblies)
 {
   SetErrorCode(KO);
   if( theFileName.IsEmpty() ) return NULL;
@@ -188,6 +189,7 @@ STEPPlugin_IOperations::ImportSTEP( const TCollection_AsciiString& theFileName,
   STEPPlugin_IImport aCI( aFunction );
   aCI.SetFileName( theFileName );
   aCI.SetIsIgnoreUnits( theIsIgnoreUnits );
+  aCI.SetIsCreateAssemblies( IsCreateAssemblies );
 
   //Perform the Import
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
@@ -211,10 +213,10 @@ STEPPlugin_IOperations::ImportSTEP( const TCollection_AsciiString& theFileName,
 
   //Make a Python command
   GEOM::TPythonDump pd (aFunction);
-  if( theIsIgnoreUnits )
-    pd << aSeq << " = geompy.ImportSTEP(\"" << theFileName.ToCString() << "\", True)";
-  else
-    pd << aSeq << " = geompy.ImportSTEP(\"" << theFileName.ToCString() << "\")";
+  pd << aSeq << " = geompy.ImportSTEP(\"" << theFileName.ToCString() << "\", ";
+  pd << (theIsIgnoreUnits ? "True" : "False");
+  pd << ", " << (IsCreateAssemblies ? "True" : "False");
+  pd << ")";
   SetErrorCode(OK);
 
   return aSeq;

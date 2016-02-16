@@ -38,6 +38,7 @@
 #include "GEOM_Displayer.h"
 #include "GEOM_GenericObjPtr.h"
 #include "STEPPlugin_ExportDlg.h"
+#include "STEPPlugin_ImportDlg.h"
 
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(STEPPlugin)
@@ -118,10 +119,11 @@ bool STEPPlugin_GUI::importSTEP( SUIT_Desktop* parent )
   STEPOpPtr stepOp = GEOM::ISTEPOperations::_narrow( op );
   if ( stepOp.isNull() ) return false;
 
-  QStringList fileNames = app->getOpenFileNames( SUIT_FileDlg::getLastVisitedPath().isEmpty() ? QDir::currentPath() : QString(""),
-						 tr( "STEP_FILES" ),
-						 tr( "IMPORT_TITLE" ),
-						 parent );
+  bool        isCreateAssemblies = true;
+  QStringList fileNames          = STEPPlugin_ImportDlg::getOpenFileNames
+        (SUIT_FileDlg::getLastVisitedPath().isEmpty() ? QDir::currentPath() : QString(""),
+         tr("STEP_FILES"), tr("IMPORT_TITLE"), parent, isCreateAssemblies);
+
   if ( fileNames.count() > 0 )
   {
     QStringList entryList;
@@ -175,7 +177,8 @@ bool STEPPlugin_GUI::importSTEP( SUIT_Desktop* parent )
 	  }
 	}
 	
-	GEOM::ListOfGO_var result = stepOp->ImportSTEP( fileName.toUtf8().constData(), ignoreUnits );
+	GEOM::ListOfGO_var result = stepOp->ImportSTEP
+          (fileName.toUtf8().constData(), ignoreUnits, isCreateAssemblies);
 	if ( result->length() > 0 && stepOp->IsDone() )
 	{
 	  GEOM::GEOM_Object_var main = result[0];

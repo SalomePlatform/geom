@@ -45,7 +45,7 @@ public:
 
   void            ExportSTEP( GEOM::GEOM_Object_ptr, const char*,
                               GEOM::length_unit );
-  GEOM::ListOfGO* ImportSTEP( const char*, const bool );
+  GEOM::ListOfGO* ImportSTEP( const char*, const bool, const bool );
   char*           ReadValue( const char*, const char* );
 
   STEPPlugin_IOperations* GetOperations();

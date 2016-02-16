@@ -70,7 +70,7 @@ STEPPlugin_IECallBack::Import( int                            theDocId,
 {
   STEPPlugin_IOperations* aPluginOperations = STEPPlugin_OperationsCreator::get( GetEngine(), theDocId );
   bool anIsIgnoreUnits = ( theFormatName == "STEP_SCALE" ) ? true : false;
-  return aPluginOperations->ImportSTEP( theFileName, anIsIgnoreUnits );
+  return aPluginOperations->ImportSTEP( theFileName, anIsIgnoreUnits, false );
 }
 
 //=============================================================================

@@ -94,6 +94,7 @@ SET(STEPPluginEngine_HEADERS
   STEPPlugin_IExport.hxx 
   STEPPlugin_IImport.hxx
   STEPPlugin_ImportDriver.hxx 
+  STEPPlugin_ImportDlg.h
   STEPPlugin_ExportDlg.h
   STEPPlugin_ExportDriver.hxx
   STEPPlugin_IECallBack.hxx
@@ -104,6 +105,7 @@ IF(SALOME_BUILD_GUI)
   SET(_moc_HEADERS
     STEPPlugin_GUI.h
     STEPPlugin_ExportDlg.h
+    STEPPlugin_ImportDlg.h
     )
 ENDIF()
 
@@ -116,6 +118,7 @@ IF(SALOME_BUILD_GUI)
   SET(STEPPluginGUI_SOURCES
     STEPPlugin_GUI.cxx
     STEPPlugin_ExportDlg.cxx
+    STEPPlugin_ImportDlg.cxx
     ${_moc_SOURCES}
     )
 ENDIF()

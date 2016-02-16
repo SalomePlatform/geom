@@ -3579,7 +3579,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::ImportSTEP( const char* theFileName,
   beginService( " GEOM_Superv_i::ImportSTEP" );
   MESSAGE("GEOM_Superv_i::ImportSTEP");
   getSTEPPluginOp();
-  GEOM::ListOfGO* aSeq = mySTEPOp->ImportSTEP(theFileName, theIsIgnoreUnits );
+  GEOM::ListOfGO* aSeq = mySTEPOp->ImportSTEP(theFileName, theIsIgnoreUnits, false );
   GEOM::GEOM_Object_ptr anObj;
 
   if (aSeq->length() > 0) {

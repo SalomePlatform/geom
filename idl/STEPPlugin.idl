@@ -64,10 +64,14 @@ module GEOM
      *  \param theIsIgnoreUnits If True, file length units will be ignored (set to 'meter')
      *                          and result model will be scaled, if its units are not meters.
      *                          If False (default), file length units will be taken into account.
+     *  \param IsCreateAssemblies If True, for each assembly compound is created
+     *                          in the result. If False Compounds that contain a
+     *                          single shape are eliminated from the result.
      *  \return List of GEOM_Objects, containing the created shape and propagation groups.
      */              
     GEOM::ListOfGO ImportSTEP( in string  theFileName,
-                               in boolean theIsIgnoreUnits );
+                               in boolean theIsIgnoreUnits,
+                               in boolean IsCreateAssemblies);
                                
     /*!
      *  \brief Read a value of parameter from a file, containing a shape.

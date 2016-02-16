@@ -22,8 +22,9 @@
 
 #include "GEOM_Function.hxx"
 
-#define IMPORTSTEP_ARG_FILENAME     1
-#define IMPORTSTEP_ARG_IGNORE_UNITS 2
+#define IMPORTSTEP_ARG_FILENAME          1
+#define IMPORTSTEP_ARG_IGNORE_UNITS      2
+#define IMPORTSTEP_ARG_CREATE_ASSEMBLIES 3
 
 class STEPPlugin_IImport
 {
@@ -40,6 +41,12 @@ public:
     { _func->SetInteger( IMPORTSTEP_ARG_IGNORE_UNITS, int( theIsIgnoreUnits ) ); }
   bool GetIsIgnoreUnits()
     { return bool( _func->GetInteger( IMPORTSTEP_ARG_IGNORE_UNITS ) ); }
+
+  void SetIsCreateAssemblies( bool IsCreateAssemblies )
+  { _func->SetInteger
+        ( IMPORTSTEP_ARG_CREATE_ASSEMBLIES, IsCreateAssemblies ? 1 : 0 ); }
+  bool GetIsCreateAssemblies()
+    { return ( _func->GetInteger( IMPORTSTEP_ARG_CREATE_ASSEMBLIES ) != 0 ); }
 
 private:
   Handle(GEOM_Function) _func;

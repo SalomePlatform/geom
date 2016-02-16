@@ -95,4 +95,11 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
         <translation>microinch</translation>
     </message>
 </context>
+<context>
+    <name>STEPPlugin_ImportDlg</name>
+    <message>
+        <source>STEP_CREATE_ASSEMBLIES</source>
+        <translation>Create assemblies</translation>
+    </message>
+</context>
 </TS>

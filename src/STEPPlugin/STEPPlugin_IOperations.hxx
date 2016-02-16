@@ -57,8 +57,9 @@ public:
   void ExportSTEP( const Handle(GEOM_Object),
 		   const TCollection_AsciiString&, const LengthUnit );
   
-  Handle(TColStd_HSequenceOfTransient) ImportSTEP( const TCollection_AsciiString&,
-						   const bool );
+  Handle(TColStd_HSequenceOfTransient) ImportSTEP(const TCollection_AsciiString&,
+                                                  const bool,
+                                                  const bool);
   
   TCollection_AsciiString ReadValue( const TCollection_AsciiString&,
 				     const TCollection_AsciiString& );
