@@ -357,9 +357,9 @@ namespace
           continue;
         }
 
-        if (aPDR->HasDescription() && aPDR->Description()->Length() >0) {
+        if (aPDR->HasDescription() && aPDR->Description()->UsefullLength() >0) {
           aName = aPDR->Description();
-        } else if (!aPDR->Name().IsNull() && aPDR->Name()->Length() >0 ) {
+        } else if (!aPDR->Name().IsNull() && aPDR->Name()->UsefullLength() >0 ) {
           aName = aPDR->Name();
         } else if (!aPDR->Id().IsNull()) {
           aName = aPDR->Id();
