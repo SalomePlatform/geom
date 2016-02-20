@@ -702,6 +702,9 @@ Standard_Integer STEPPlugin_ImportDriver::Execute( TFunction_Logbook& log ) cons
               // Use the shape
               aListResShapes.Append(aShape);
             }
+          } else {
+            // Use the shape itself
+            aListResShapes.Append(aShape);
           }
         }
       }
