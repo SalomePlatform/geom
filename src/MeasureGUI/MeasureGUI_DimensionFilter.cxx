@@ -32,8 +32,7 @@
 // SALOME includes
 #include <SALOME_InteractiveObject.hxx>
 
-IMPLEMENT_STANDARD_HANDLE (MeasureGUI_DimensionFilter, SelectMgr_Filter)
-IMPLEMENT_STANDARD_RTTIEXT(MeasureGUI_DimensionFilter, SelectMgr_Filter)
+OCCT_IMPLEMENT_STANDARD_RTTIEXT(MeasureGUI_DimensionFilter, SelectMgr_Filter)
 
 //=======================================================================
 // function : Constructor

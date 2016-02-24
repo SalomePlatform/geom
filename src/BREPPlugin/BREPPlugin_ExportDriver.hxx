@@ -23,9 +23,6 @@
 // GEOM includes
 #include "GEOM_BaseDriver.hxx"
 
-// OCCT includes
-#include <TFunction_Logbook.hxx>
-
 DEFINE_STANDARD_HANDLE( BREPPlugin_ExportDriver, GEOM_BaseDriver );
 
 class BREPPlugin_ExportDriver : public GEOM_BaseDriver
@@ -35,14 +32,14 @@ public:
   ~BREPPlugin_ExportDriver() {};
 
   static const Standard_GUID& GetID();
-  virtual Standard_Integer    Execute( TFunction_Logbook& log ) const;
-  Standard_Boolean            MustExecute( const TFunction_Logbook& ) const;
-  virtual void                Validate( TFunction_Logbook& ) const {}
+  virtual Standard_Integer   Execute(LOGBOOK& log) const;
+  virtual void Validate(LOGBOOK&) const {}
+  Standard_Boolean MustExecute(const LOGBOOK&) const { return Standard_True; }
 
   virtual bool                 GetCreationInformation( std::string& theOperationName,
 						       std::vector<GEOM_Param>& params );
 
-DEFINE_STANDARD_RTTI( BREPPlugin_ExportDriver )
+  OCCT_DEFINE_STANDARD_RTTIEXT(BREPPlugin_ExportDriver,GEOM_BaseDriver)
 };
 
 #endif // _BREPPlugin_ExportDriver_HXX

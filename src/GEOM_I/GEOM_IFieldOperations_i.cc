@@ -76,8 +76,8 @@ GEOM_IFieldOperations_i::CreateField(GEOM::GEOM_Object_ptr     theShape,
     for ( size_t i = 0; i < theComponentNames.length(); ++i )
       compNames->SetValue( i+1, theComponentNames[ i ].in() );
   }
-  Handle(GEOM_Object) aShapeRef = GetObjectImpl( theShape );
-  Handle(GEOM_Field)  aFieldRef = GetOperations()->CreateField( aShapeRef,
+  HANDLE_NAMESPACE(GEOM_Object) aShapeRef = GetObjectImpl( theShape );
+  HANDLE_NAMESPACE(GEOM_Field)  aFieldRef = GetOperations()->CreateField( aShapeRef,
                                                                 theName,
                                                                 (int) theType,
                                                                 theDimension,
@@ -96,7 +96,7 @@ GEOM_IFieldOperations_i::CreateField(GEOM::GEOM_Object_ptr     theShape,
 
 CORBA::Long GEOM_IFieldOperations_i::CountFields( GEOM::GEOM_Object_ptr shape)
 {
-  Handle(GEOM_Object) go = GetObjectImpl( shape );
+  HANDLE_NAMESPACE(GEOM_Object) go = GetObjectImpl( shape );
 
   return ( CORBA::Long) GetOperations()->CountFields( go );
 }
@@ -111,7 +111,7 @@ GEOM::ListOfFields* GEOM_IFieldOperations_i::GetFields( GEOM::GEOM_Object_ptr sh
 {
   GEOM::ListOfFields_var fields = new GEOM::ListOfFields;
 
-  Handle(GEOM_Object) go = GetObjectImpl( shape );
+  HANDLE_NAMESPACE(GEOM_Object) go = GetObjectImpl( shape );
 
   Handle(TColStd_HSequenceOfTransient) seq = GetOperations()->GetFields( go );
   if ( !seq.IsNull() )
@@ -120,7 +120,7 @@ GEOM::ListOfFields* GEOM_IFieldOperations_i::GetFields( GEOM::GEOM_Object_ptr sh
     int nbF = 0;
     for ( int i = 1; i <= seq->Length(); ++i )
     {
-      Handle(GEOM_Field)      f = Handle(GEOM_Field)::DownCast( seq->Value( i ));
+      HANDLE_NAMESPACE(GEOM_Field)      f = HANDLE_NAMESPACE(GEOM_Field)::DownCast( seq->Value( i ));
       GEOM::GEOM_Field_var fvar = GEOM::GEOM_Field::_narrow( GetBaseObject( f ));
       if ( !fvar->_is_nil() )
         fields[ nbF++ ] = fvar._retn();
@@ -141,9 +141,9 @@ GEOM::GEOM_Field_ptr GEOM_IFieldOperations_i::GetField( GEOM::GEOM_Object_ptr sh
 {
   GEOM::GEOM_Field_var field;
 
-  Handle(GEOM_Object) go = GetObjectImpl( shape );
+  HANDLE_NAMESPACE(GEOM_Object) go = GetObjectImpl( shape );
 
-  Handle(GEOM_Field) f = GetOperations()->GetField( go, name );
+  HANDLE_NAMESPACE(GEOM_Field) f = GetOperations()->GetField( go, name );
   field = GEOM::GEOM_Field::_narrow( GetBaseObject( f ));
 
   return field._retn();
@@ -158,6 +158,6 @@ GEOM::GEOM_Field_ptr GEOM_IFieldOperations_i::GetField( GEOM::GEOM_Object_ptr sh
 ::CORBA::Long GEOM_IFieldOperations_i::GetNbSubShapes(::GEOM::GEOM_Object_ptr shape,
                                                       ::CORBA::Short          fieldDim)
 {
-  Handle(GEOM_Object) go = GetObjectImpl( shape );
+  HANDLE_NAMESPACE(GEOM_Object) go = GetObjectImpl( shape );
   return GEOM_Field::GetNbSubShapes( go, fieldDim );
 }

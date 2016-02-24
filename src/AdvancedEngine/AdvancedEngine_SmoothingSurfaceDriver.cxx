@@ -25,7 +25,6 @@
 
 #include "GEOM_Function.hxx"
 
-#include <TFunction_Logbook.hxx>
 #include <StdFail_NotDone.hxx>
 
 #include <TopoDS_Vertex.hxx>
@@ -98,7 +97,7 @@ AdvancedEngine_SmoothingSurfaceDriver::AdvancedEngine_SmoothingSurfaceDriver()
 //purpose  :
 //=======================================================================
 TopoDS_Shape AdvancedEngine_SmoothingSurfaceDriver::MakeSmoothingSurfaceUnClosed
-                          (const Handle_TColgp_HArray1OfPnt &theListOfPoints,
+                          (const Handle(TColgp_HArray1OfPnt) &theListOfPoints,
                            const Standard_Integer            theNbMax,
                            const Standard_Integer            theDegMax,
                            const Standard_Real               theDMax) const
@@ -165,7 +164,7 @@ TopoDS_Shape AdvancedEngine_SmoothingSurfaceDriver::MakeSmoothingSurfaceUnClosed
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer AdvancedEngine_SmoothingSurfaceDriver::Execute(TFunction_Logbook& log) const
+Standard_Integer AdvancedEngine_SmoothingSurfaceDriver::Execute(LOGBOOK& log) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
@@ -223,7 +222,11 @@ Standard_Integer AdvancedEngine_SmoothingSurfaceDriver::Execute(TFunction_Logboo
 
   aFunction->SetValue(aShape);
 
+#if OCC_VERSION_MAJOR < 7
   log.SetTouched(Label());
+#else
+  log->SetTouched(Label());
+#endif
 
   return 1;
 }
@@ -271,5 +274,4 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-IMPLEMENT_STANDARD_HANDLE (AdvancedEngine_SmoothingSurfaceDriver,GEOM_BaseDriver);
-IMPLEMENT_STANDARD_RTTIEXT (AdvancedEngine_SmoothingSurfaceDriver,GEOM_BaseDriver);
+OCCT_IMPLEMENT_STANDARD_RTTIEXT (AdvancedEngine_SmoothingSurfaceDriver,GEOM_BaseDriver);

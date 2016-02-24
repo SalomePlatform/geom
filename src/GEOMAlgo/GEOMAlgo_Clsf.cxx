@@ -27,8 +27,7 @@
 //
 #include <GEOMAlgo_Clsf.hxx>
 
-IMPLEMENT_STANDARD_HANDLE(GEOMAlgo_Clsf, GEOMAlgo_HAlgo);
-IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_Clsf, GEOMAlgo_HAlgo);
+OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_Clsf, GEOMAlgo_HAlgo);
 
 //=======================================================================
 //function :

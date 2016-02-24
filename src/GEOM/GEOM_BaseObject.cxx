@@ -36,7 +36,6 @@
 #include <TDataStd_UAttribute.hxx>
 #include <TDocStd_Document.hxx>
 #include <TDocStd_Owner.hxx>
-#include <TFunction_Driver.hxx>
 #include <TFunction_DriverTable.hxx>
 
 #include "utilities.h"
@@ -516,5 +515,4 @@ TDF_Label GEOM_BaseObject::GetFreeLabel()
   return _label.FindChild(FREE_LABEL);
 }
 
-IMPLEMENT_STANDARD_HANDLE (GEOM_BaseObject, Standard_Transient );
-IMPLEMENT_STANDARD_RTTIEXT(GEOM_BaseObject, Standard_Transient );
+OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOM_BaseObject, Standard_Transient );

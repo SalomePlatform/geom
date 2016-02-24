@@ -26,45 +26,11 @@
 #ifndef _GEOMImpl_PrismDriver_HeaderFile
 #define _GEOMImpl_PrismDriver_HeaderFile
 
-#ifndef _TColStd_SequenceOfExtendedString_HeaderFile
-#include <TColStd_SequenceOfExtendedString.hxx>
-#endif
-#ifndef _Standard_TypeMismatch_HeaderFile
-#include <Standard_TypeMismatch.hxx>
-#endif
-
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-
-#ifndef _Standard_Macro_HeaderFile
-#include <Standard_Macro.hxx>
-#endif
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-#ifndef _Standard_GUID_HeaderFile
-#include <Standard_GUID.hxx>
-#endif 
-
-#ifndef _TFunction_Driver_HeaderFile
-#include <TFunction_Driver.hxx>
-#endif
-#ifndef _TFunction_Logbook_HeaderFile
-#include <TFunction_Logbook.hxx>
-#endif
-#ifndef _Standard_CString_HeaderFile
-#include <Standard_CString.hxx>
-#endif
-
 #include <TopoDS_Shape.hxx>
 #include <gp_Vec.hxx>
 #include <Standard_Real.hxx>
 
-class TColStd_SequenceOfExtendedString;
-
-
-#include "GEOM_BaseDriver.hxx"
+#include <GEOM_BaseDriver.hxx>
 
 DEFINE_STANDARD_HANDLE( GEOMImpl_PrismDriver, GEOM_BaseDriver );
 
@@ -72,14 +38,13 @@ class GEOMImpl_PrismDriver : public GEOM_BaseDriver {
 
 public:
 
- // Methods PUBLIC
-
   Standard_EXPORT GEOMImpl_PrismDriver();
   Standard_EXPORT ~GEOMImpl_PrismDriver() {};
 
-  Standard_EXPORT virtual Standard_Integer Execute (TFunction_Logbook& log) const; 
-  Standard_EXPORT virtual void Validate (TFunction_Logbook&) const {}
-  Standard_EXPORT Standard_Boolean MustExecute (const TFunction_Logbook&) const { return Standard_True; }
+  Standard_EXPORT virtual Standard_Integer Execute(LOGBOOK& log) const;
+  Standard_EXPORT virtual void Validate (LOGBOOK&) const {}
+  Standard_EXPORT Standard_Boolean MustExecute (const LOGBOOK&) const { return Standard_True; }
+
   Standard_EXPORT static const Standard_GUID& GetID();
 
   Standard_EXPORT static TopoDS_Shape MakeScaledPrism (const TopoDS_Shape& theShapeBase,
@@ -100,11 +65,7 @@ public:
   bool GetCreationInformation(std::string&             theOperationName,
                               std::vector<GEOM_Param>& params);
 
-  // Type management
-
-DEFINE_STANDARD_RTTI( GEOMImpl_PrismDriver )
-
-
+  OCCT_DEFINE_STANDARD_RTTIEXT(GEOMImpl_PrismDriver,GEOM_BaseDriver)
 };
 
 #endif

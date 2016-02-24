@@ -32,7 +32,6 @@
 
 #include <TFunction_DriverTable.hxx>
 #include <TFunction_Driver.hxx>
-#include <TFunction_Logbook.hxx>
 #include <TDF_Tool.hxx>
 
 #include <GEOM_Function.hxx>
@@ -77,7 +76,6 @@
 
 #include <Precision.hxx>
 #include <TopExp.hxx>
-#include <TopTools_IndexedMapOfShape.hxx>
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC

@@ -26,7 +26,6 @@
 
 #include <GEOMAlgo_GetInPlaceAPI.hxx>
 #include <GEOMAlgo_GetInPlace.hxx>
-#include <GEOM_Function.hxx>
 #include <GEOM_Object.hxx>
 #include <GEOMUtils.hxx>
 
@@ -46,8 +45,6 @@
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Vertex.hxx>
-#include <TopTools_MapOfShape.hxx>
-
 
 //=======================================================================
 //function : GetInPlace

@@ -228,9 +228,9 @@ void MeasureGUI_ManageDimensionsDlg::StartSelection( const Selection theSelectio
     myDimensionInteractor->Enable();
 
     connect( myDimensionInteractor,
-             SIGNAL( InteractionFinished( Handle_AIS_InteractiveObject ) ),
+             SIGNAL( InteractionFinished( Handle(AIS_InteractiveObject) ) ),
              this,
-             SLOT( OnInteractionFinished( Handle_AIS_InteractiveObject ) ) );
+             SLOT( OnInteractionFinished( Handle(AIS_InteractiveObject) ) ) );
 
     anAISContext->UpdateCurrentViewer();
   }
@@ -290,9 +290,9 @@ void MeasureGUI_ManageDimensionsDlg::StopSelection()
     myDimensionInteractor->Disable();
 
     disconnect( myDimensionInteractor,
-                SIGNAL( InteractionFinished( Handle_AIS_InteractiveObject ) ),
+                SIGNAL( InteractionFinished( Handle(AIS_InteractiveObject) ) ),
                 this,
-                SLOT( OnInteractionFinished( Handle_AIS_InteractiveObject ) ) );
+                SLOT( OnInteractionFinished( Handle(AIS_InteractiveObject) ) ) );
   }
 
   myCurrentSelection = Selection_None;

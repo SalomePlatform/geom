@@ -31,7 +31,6 @@
 #include <Standard.hxx>
 #include <Standard_Macro.hxx>
 #include <Standard_Boolean.hxx>
-#include <Handle_Geom_Surface.hxx>
 #include <Standard_Real.hxx>
 #include <TopAbs_State.hxx>
 #include <GEOMAlgo_State.hxx>

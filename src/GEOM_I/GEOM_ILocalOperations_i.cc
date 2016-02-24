@@ -66,11 +66,11 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletAll
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Get the reference shape
-  Handle(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
   if (aShapeRef.IsNull()) return aGEOMObject._retn();
 
   //Create the Fillet
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeFilletAll(aShapeRef, theR);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -90,7 +90,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletEdges
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Get the reference shape
-  Handle(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
   if (aShapeRef.IsNull()) return aGEOMObject._retn();
 
   //Get the reference edges
@@ -102,7 +102,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletEdges
   }
 
   //Create the Fillet
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeFilletEdges(aShapeRef, theR, anEdges);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -122,7 +122,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletEdgesR1R2
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Get the reference shape
-  Handle(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
   if (aShapeRef.IsNull()) return aGEOMObject._retn();
 
   //Get the reference edges
@@ -134,7 +134,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletEdgesR1R2
   }
 
   //Create the Fillet
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeFilletEdgesR1R2(aShapeRef, theR1, theR2, anEdges);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -154,7 +154,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletFaces
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Get the reference shape
-  Handle(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
   if (aShapeRef.IsNull()) return aGEOMObject._retn();
 
   //Get the reference faces
@@ -166,7 +166,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletFaces
   }
 
   //Create the Fillet
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeFilletFaces(aShapeRef, theR, aFaces);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -186,7 +186,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletFacesR1R2
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Get the reference shape
-  Handle(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
   if (aShapeRef.IsNull()) return aGEOMObject._retn();
 
   //Get the reference faces
@@ -198,7 +198,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletFacesR1R2
   }
 
   //Create the Fillet
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeFilletFacesR1R2(aShapeRef, theR1, theR2, aFaces);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -218,7 +218,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFillet2D
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Get the reference shape
-  Handle(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
   if (aShapeRef.IsNull()) return aGEOMObject._retn();
 
   //Get the reference vertex
@@ -230,7 +230,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFillet2D
   }
 
   //Create the Fillet
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeFillet2D(aShapeRef, theR, aVertexes);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -251,7 +251,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFillet1D
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Get the reference shape (wire)
-  Handle(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
   if (aShapeRef.IsNull()) return aGEOMObject._retn();
 
   //Get the reference vertex
@@ -263,7 +263,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFillet1D
   }
 
   //Create the Fillet
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeFillet1D(aShapeRef, theR, aVertexes, doIgnoreSecantVertices);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -282,11 +282,11 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferAll
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Get the reference shape
-  Handle(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
   if (aShapeRef.IsNull()) return aGEOMObject._retn();
 
   //Create the Chamfer
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeChamferAll(aShapeRef, theD);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -307,11 +307,11 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferEdge
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Get the reference shape
-  Handle(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
   if (aShapeRef.IsNull()) return aGEOMObject._retn();
 
   //Create the Chamfer
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeChamferEdge(aShapeRef, theD1, theD2, theFace1, theFace2);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -331,11 +331,11 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferEdgeAD
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Get the reference shape
-  Handle(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
   if (aShapeRef.IsNull()) return aGEOMObject._retn();
 
   //Create the Chamfer
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeChamferEdgeAD(aShapeRef, theD, theAngle, theFace1, theFace2);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -356,7 +356,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferFaces
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Get the reference shape
-  Handle(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
   if (aShapeRef.IsNull()) return aGEOMObject._retn();
 
   //Get the reference faces
@@ -368,7 +368,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferFaces
   }
 
   //Create the Chamfer
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeChamferFaces(aShapeRef, theD1, theD2, aFaces);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -388,7 +388,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferFacesAD
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Get the reference shape
-  Handle(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
   if (aShapeRef.IsNull()) return aGEOMObject._retn();
 
   //Get the reference faces
@@ -400,7 +400,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferFacesAD
   }
 
   //Create the Chamfer
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeChamferFacesAD(aShapeRef, theD, theAngle, aFaces);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -421,7 +421,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferEdges
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Get the reference shape
-  Handle(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
   if (aShapeRef.IsNull()) return aGEOMObject._retn();
 
   //Get the reference edges
@@ -433,7 +433,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferEdges
   }
 
   //Create the Chamfer
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeChamferEdges(aShapeRef, theD1, theD2, aEdges);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -454,7 +454,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferEdgesAD
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Get the reference shape
-  Handle(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
   if (aShapeRef.IsNull()) return aGEOMObject._retn();
 
   //Get the reference edges
@@ -466,7 +466,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferEdgesAD
   }
 
   //Create the Chamfer
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeChamferEdgesAD(aShapeRef, theD, theAngle, aEdges);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -487,11 +487,11 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeArchimede (GEOM::GEOM_Object_
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Get the reference shape
-  Handle(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
   if (aShapeRef.IsNull()) return aGEOMObject._retn();
 
   //Create the Archimede
-  Handle(GEOM_Object) anObject = GetOperations()->MakeArchimede
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeArchimede
     (aShapeRef, theWeight, theWaterDensity, theMeshingDeflection);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -508,8 +508,8 @@ CORBA::Long GEOM_ILocalOperations_i::GetSubShapeIndex
   (GEOM::GEOM_Object_ptr theShape, GEOM::GEOM_Object_ptr theSubShape)
 {
   //Get the reference shapes
-  Handle(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
-  Handle(GEOM_Object) aSubShapeRef = GetObjectImpl(theSubShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aSubShapeRef = GetObjectImpl(theSubShape);
   if (aShapeRef.IsNull() || aSubShapeRef.IsNull()) return -1;
 
   //Get the unique ID of <theSubShape> inside <theShape>

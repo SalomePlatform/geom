@@ -35,7 +35,7 @@
 struct CurveCreator_Section;
 class CurveCreator_Displayer;
 class AIS_Shape;
-class Handle_AIS_InteractiveObject;
+class AIS_InteractiveObject;
 
 /**
  *  The CurveCreator_Curve object is represented as one or more sets of
@@ -292,7 +292,7 @@ public:
   /**
    *  Get the curve AIS object
    */
-  virtual Handle_AIS_InteractiveObject getAISObject( const bool theNeedToBuild = false ) const;
+  virtual Handle(AIS_InteractiveObject) getAISObject( const bool theNeedToBuild = false ) const;
 
 protected:
   /**

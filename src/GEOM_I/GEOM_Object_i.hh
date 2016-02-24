@@ -36,7 +36,7 @@
 class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public virtual GEOM_BaseObject_i
 {
  public:
-   GEOM_Object_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, Handle(GEOM_Object) theImpl);
+   GEOM_Object_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, HANDLE_NAMESPACE(GEOM_Object) theImpl);
    ~GEOM_Object_i();
 
   virtual GEOM::shape_type GetShapeType();
@@ -81,11 +81,11 @@ class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public
 
   virtual bool IsShape();
 
-  Handle(GEOM_Object) GetImpl() { return _impl; }
+  HANDLE_NAMESPACE(GEOM_Object) GetImpl() { return _impl; }
 
  private:
 
-  Handle(GEOM_Object) _impl;
+  HANDLE_NAMESPACE(GEOM_Object) _impl;
   TopoDS_Shape _geom;
 };
 

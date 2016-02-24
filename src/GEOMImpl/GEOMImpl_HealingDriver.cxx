@@ -98,7 +98,7 @@ GEOMImpl_HealingDriver::GEOMImpl_HealingDriver()
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer GEOMImpl_HealingDriver::Execute(TFunction_Logbook& log) const
+Standard_Integer GEOMImpl_HealingDriver::Execute(LOGBOOK& log) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
@@ -163,7 +163,11 @@ Standard_Integer GEOMImpl_HealingDriver::Execute(TFunction_Logbook& log) const
 
   aFunction->SetValue(aShape);
 
+#if OCC_VERSION_MAJOR < 7
   log.SetTouched(Label());
+#else
+  log->SetTouched(Label());
+#endif
   return 1;
 }
 
@@ -1157,6 +1161,4 @@ void GEOMImpl_HealingDriver::SaveStatistics( const ShHealOper_Tool& healer, bool
     *stats = healer.GetStatistics();
 }
 
-IMPLEMENT_STANDARD_HANDLE (GEOMImpl_HealingDriver,GEOM_BaseDriver);
-
-IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_HealingDriver,GEOM_BaseDriver);
+OCCT_IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_HealingDriver,GEOM_BaseDriver);

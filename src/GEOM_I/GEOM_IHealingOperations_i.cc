@@ -101,12 +101,12 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::ProcessShape (GEOM::GEOM_Object
   //  return aGEOMObject._retn();
 
   // Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull())
     return aGEOMObject._retn();
 
   // Perform
-  Handle(GEOM_Object) aNewObject = GetOperations()->ShapeProcess( anObject,
+  HANDLE_NAMESPACE(GEOM_Object) aNewObject = GetOperations()->ShapeProcess( anObject,
     ConvertStringArray( theOperations ), ConvertStringArray( theParams ),
     ConvertStringArray( theValues ) );
   if ( !GetOperations()->IsDone() || aNewObject.IsNull() )
@@ -211,14 +211,14 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::SuppressFaces (GEOM::GEOM_Objec
   GetOperations()->SetNotDone();
 
   // Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull())
     return aGEOMObject._retn();
 
   // if theFaces is empty - it's OK, it means that ALL faces must be removed
 
   // Perform
-  Handle(GEOM_Object) aNewObject =
+  HANDLE_NAMESPACE(GEOM_Object) aNewObject =
     GetOperations()->SuppressFaces( anObject, Convert( theFaces ) );
   if (!GetOperations()->IsDone() || aNewObject.IsNull())
     return aGEOMObject._retn();
@@ -241,12 +241,12 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::CloseContour (GEOM::GEOM_Object
   GetOperations()->SetNotDone();
 
   // Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull())
     return aGEOMObject._retn();
 
   // Perform
-  Handle(GEOM_Object) aNewObject =
+  HANDLE_NAMESPACE(GEOM_Object) aNewObject =
     GetOperations()->CloseContour( anObject, Convert( theWires ), isCommonVertex );
   if (!GetOperations()->IsDone() || aNewObject.IsNull())
     return aGEOMObject._retn();
@@ -268,14 +268,14 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::RemoveIntWires (GEOM::GEOM_Obje
   GetOperations()->SetNotDone();
 
   // Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull())
     return aGEOMObject._retn();
 
   // if theWires is empty - it's OK, it means that ALL wires should be removed
 
   // Perform
-  Handle(GEOM_Object) aNewObject =
+  HANDLE_NAMESPACE(GEOM_Object) aNewObject =
     GetOperations()->RemoveIntWires( anObject, Convert( theWires ) );
   if (!GetOperations()->IsDone() || aNewObject.IsNull())
     return aGEOMObject._retn();
@@ -297,14 +297,14 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::FillHoles (GEOM::GEOM_Object_pt
   GetOperations()->SetNotDone();
 
   // Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull())
     return aGEOMObject._retn();
 
   // if theWires is empty - it's OK, it means that ALL wires should be removed
 
   // Perform
-  Handle(GEOM_Object) aNewObject =
+  HANDLE_NAMESPACE(GEOM_Object) aNewObject =
     GetOperations()->FillHoles( anObject, Convert( theWires ) );
   if (!GetOperations()->IsDone() || aNewObject.IsNull())
     return aGEOMObject._retn();
@@ -330,12 +330,12 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::Sew (const GEOM::ListOfGO& theO
     return aGEOMObject._retn();
 
   //Get the shapes
-  std::list< Handle(GEOM_Object) > aShapes;
+  std::list< HANDLE_NAMESPACE(GEOM_Object) > aShapes;
   if (! GetListOfObjectsImpl( theObjects, aShapes ))
     return aGEOMObject._retn();
 
   // Perform
-  Handle(GEOM_Object) aNewObject = GetOperations()->Sew( aShapes, theTolerance, false );
+  HANDLE_NAMESPACE(GEOM_Object) aNewObject = GetOperations()->Sew( aShapes, theTolerance, false );
   if (!GetOperations()->IsDone() || aNewObject.IsNull())
     return aGEOMObject._retn();
 
@@ -361,12 +361,12 @@ GEOM_IHealingOperations_i::SewAllowNonManifold (const GEOM::ListOfGO& theObjects
     return aGEOMObject._retn();
 
   //Get the shapes
-  std::list< Handle(GEOM_Object) > aShapes;
+  std::list< HANDLE_NAMESPACE(GEOM_Object) > aShapes;
   if (! GetListOfObjectsImpl( theObjects, aShapes ))
     return aGEOMObject._retn();
 
   // Perform
-  Handle(GEOM_Object) aNewObject = GetOperations()->Sew( aShapes, theTolerance, true );
+  HANDLE_NAMESPACE(GEOM_Object) aNewObject = GetOperations()->Sew( aShapes, theTolerance, true );
   if (!GetOperations()->IsDone() || aNewObject.IsNull())
     return aGEOMObject._retn();
 
@@ -387,12 +387,12 @@ GEOM_IHealingOperations_i::RemoveInternalFaces (const GEOM::ListOfGO& theSolids)
   GetOperations()->SetNotDone();
 
   // Get the objects
-  std::list< Handle(GEOM_Object) > aShapes;
+  std::list< HANDLE_NAMESPACE(GEOM_Object) > aShapes;
   if (! GetListOfObjectsImpl( theSolids, aShapes ))
     return aGEOMObject._retn();
 
   // Perform
-  Handle(GEOM_Object) aNewObject = GetOperations()->RemoveInternalFaces(aShapes);
+  HANDLE_NAMESPACE(GEOM_Object) aNewObject = GetOperations()->RemoveInternalFaces(aShapes);
   if (!GetOperations()->IsDone() || aNewObject.IsNull())
     return aGEOMObject._retn();
 
@@ -419,12 +419,12 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::DivideEdge (GEOM::GEOM_Object_p
     return aGEOMObject._retn();
 
   // Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull())
     return aGEOMObject._retn();
 
   // Perform
-  Handle(GEOM_Object) aNewObject =
+  HANDLE_NAMESPACE(GEOM_Object) aNewObject =
     GetOperations()->DivideEdge( anObject, theIndex, theValue, isByParameter );
   if (!GetOperations()->IsDone() || aNewObject.IsNull())
     return aGEOMObject._retn();
@@ -448,17 +448,17 @@ GEOM_IHealingOperations_i::DivideEdgeByPoint (GEOM::GEOM_Object_ptr theObject,
   GetOperations()->SetNotDone();
 
   // Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull())
     return aGEOMObject._retn();
 
   // Get the points
-  std::list< Handle(GEOM_Object) > aPoints;
+  std::list< HANDLE_NAMESPACE(GEOM_Object) > aPoints;
   if (! GetListOfObjectsImpl( thePoints, aPoints ))
     return aGEOMObject._retn();
 
   // Perform
-  Handle(GEOM_Object) aNewObject =
+  HANDLE_NAMESPACE(GEOM_Object) aNewObject =
     GetOperations()->DivideEdgeByPoint( anObject, theIndex, aPoints );
   if (!GetOperations()->IsDone() || aNewObject.IsNull())
     return aGEOMObject._retn();
@@ -481,21 +481,21 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::FuseCollinearEdgesWithinWire
   GetOperations()->SetNotDone();
 
   //Get the reference objects
-  Handle(GEOM_Object) aWire = GetObjectImpl(theWire);
+  HANDLE_NAMESPACE(GEOM_Object) aWire = GetObjectImpl(theWire);
   if (aWire.IsNull()) return aGEOMObject._retn();
 
   int ind, aLen;
-  std::list<Handle(GEOM_Object)> aVerts;
+  std::list<HANDLE_NAMESPACE(GEOM_Object)> aVerts;
   //Get the shapes
   aLen = theVertices.length();
   for (ind = 0; ind < aLen; ind++) {
-    Handle(GEOM_Object) aSh = GetObjectImpl(theVertices[ind]);
+    HANDLE_NAMESPACE(GEOM_Object) aSh = GetObjectImpl(theVertices[ind]);
     if (aSh.IsNull()) return aGEOMObject._retn();
     aVerts.push_back(aSh);
   }
 
   //Perform operation
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->FuseCollinearEdgesWithinWire(aWire, aVerts);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -523,7 +523,7 @@ GEOM_IHealingOperations_i::GetFreeBoundary ( const GEOM::ListOfGO & theObjects,
   Handle(TColStd_HSequenceOfTransient) anObjects = new TColStd_HSequenceOfTransient();
   for ( size_t i = 0; i < theObjects.length(); ++i )
   {
-    Handle(GEOM_Object) anObject = GetObjectImpl(theObjects[i]);
+    HANDLE_NAMESPACE(GEOM_Object) anObject = GetObjectImpl(theObjects[i]);
     if (anObject.IsNull())
       return false;
     anObjects->Append( anObject );
@@ -539,12 +539,12 @@ GEOM_IHealingOperations_i::GetFreeBoundary ( const GEOM::ListOfGO & theObjects,
   int i, n = aClosed->Length();
   theClosedWires->length( n );
   for ( i = 1; i <= n; i++ )
-    (*theClosedWires)[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aClosed->Value(i)));
+    (*theClosedWires)[i-1] = GetObject(HANDLE_NAMESPACE(GEOM_Object)::DownCast(aClosed->Value(i)));
 
   n = anOpen->Length();
   theOpenWires->length( n );
   for ( i = 1, n = anOpen->Length(); i <= n; i++ )
-    (*theOpenWires)[i-1] = GetObject(Handle(GEOM_Object)::DownCast(anOpen->Value(i)));
+    (*theOpenWires)[i-1] = GetObject(HANDLE_NAMESPACE(GEOM_Object)::DownCast(anOpen->Value(i)));
 
   return true;
 }
@@ -569,12 +569,12 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::ChangeOrientation (GEOM::GEOM_O
   aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
 
   // Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull())
     return aGEOMObject._retn();
 
   // Perform
-//  Handle(GEOM_Object) aNewObject =
+//  HANDLE_NAMESPACE(GEOM_Object) aNewObject =
     GetOperations()->ChangeOrientation( anObject );
 //  if (!GetOperations()->IsDone() || aNewObject.IsNull())
 //    return aGEOMObject._retn();
@@ -597,12 +597,12 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::ChangeOrientationCopy (GEOM::GE
   GetOperations()->SetNotDone();
 
   // Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull())
     return aGEOMObject._retn();
 
   // Perform
-  Handle(GEOM_Object) aNewObject =
+  HANDLE_NAMESPACE(GEOM_Object) aNewObject =
     GetOperations()->ChangeOrientationCopy( anObject );
   if (!GetOperations()->IsDone() || aNewObject.IsNull())
     return aGEOMObject._retn();
@@ -624,12 +624,12 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::LimitTolerance (GEOM::GEOM_Obje
   GetOperations()->SetNotDone();
 
   // Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull())
     return aGEOMObject._retn();
 
   // Perform
-  Handle(GEOM_Object) aNewObject =
+  HANDLE_NAMESPACE(GEOM_Object) aNewObject =
     GetOperations()->LimitTolerance(anObject, theTolerance);
   if (!GetOperations()->IsDone() || aNewObject.IsNull())
     return aGEOMObject._retn();

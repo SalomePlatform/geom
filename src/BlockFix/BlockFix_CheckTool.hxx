@@ -27,10 +27,8 @@
 #include <Standard_Boolean.hxx>
 #include <Standard_Integer.hxx>
 #include <TopTools_SequenceOfShape.hxx>
+#include <TopTools_ListOfShape.hxx>
 #include <Standard_OStream.hxx>
-
-class TopoDS_Shape;
-class TopTools_ListOfShape;
 
 #include <Standard.hxx>
 #include <Standard_Macro.hxx>

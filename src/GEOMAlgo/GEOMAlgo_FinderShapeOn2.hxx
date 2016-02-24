@@ -62,7 +62,7 @@ class GEOMAlgo_FinderShapeOn2  : public GEOMAlgo_ShapeAlgo
     void SetClsf(const Handle(GEOMAlgo_Clsf)& aClsf) ;
 
   Standard_EXPORT
-    const Handle_GEOMAlgo_Clsf& Clsf() const;
+    const Handle(GEOMAlgo_Clsf)& Clsf() const;
 
   Standard_EXPORT
     void SetShapeType(const TopAbs_ShapeEnum aST) ;
@@ -134,7 +134,7 @@ protected:
   GEOMAlgo_State myState;
   Standard_Integer myNbPntsMin;
   Standard_Integer myNbPntsMax;
-  Handle_GEOMAlgo_Clsf myClsf;
+  Handle(GEOMAlgo_Clsf) myClsf;
   TopTools_ListOfShape myLS;
   GEOMAlgo_IndexedDataMapOfShapeState myMSS;
 };

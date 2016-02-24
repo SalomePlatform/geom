@@ -35,9 +35,9 @@
 #include <TopoDS_Shape.hxx>
 #include <Standard_Real.hxx>
 #if OCC_VERSION_LARGE > 0x06070100
-#include <Handle_IntTools_Context.hxx>
+  #include <IntTools_Context.hxx>
 #else
-#include <Handle_BOPInt_Context.hxx>
+  #include <BOPInt_Context.hxx>
 #endif
 #include <GEOMAlgo_Algo.hxx>
 
@@ -60,9 +60,9 @@ class GEOMAlgo_ShapeAlgo  : public GEOMAlgo_Algo
   //! Returns cashed geometrical tools <br>
   Standard_EXPORT
 #if OCC_VERSION_LARGE > 0x06070100
-    const Handle_IntTools_Context& Context() const;
+    const Handle(IntTools_Context)& Context() const;
 #else
-    const Handle_BOPInt_Context& Context() const;
+    const Handle(BOPInt_Context)& Context() const;
 #endif
 
   Standard_EXPORT
@@ -95,9 +95,9 @@ protected:
   Standard_Real myTolerance;
   TopoDS_Shape myResult;
 #if OCC_VERSION_LARGE > 0x06070100
-  Handle_IntTools_Context myContext;
+  Handle(IntTools_Context) myContext;
 #else
-  Handle_BOPInt_Context myContext;
+  Handle(BOPInt_Context) myContext;
 #endif
 };
 #endif

@@ -38,8 +38,8 @@ class SALOME_ListIO;
 class SalomeApp_Study;
 class SVTK_View;
 class QColor;
-class Handle_SALOME_InteractiveObject;
-class Handle_AIS_InteractiveContext;
+class SALOME_InteractiveObject;
+class AIS_InteractiveContext;
 
 #include <QList>
 

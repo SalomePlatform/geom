@@ -32,8 +32,7 @@
 
 #include <GEOMAlgo_SurfaceTools.hxx>
 
-IMPLEMENT_STANDARD_HANDLE(GEOMAlgo_ClsfSurf, GEOMAlgo_Clsf);
-IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfSurf, GEOMAlgo_Clsf);
+OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfSurf, GEOMAlgo_Clsf);
 
 //=======================================================================
 //function :

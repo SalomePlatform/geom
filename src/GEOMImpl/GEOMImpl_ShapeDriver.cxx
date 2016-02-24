@@ -408,7 +408,7 @@ GEOMImpl_ShapeDriver::GEOMImpl_ShapeDriver()
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
+Standard_Integer GEOMImpl_ShapeDriver::Execute(LOGBOOK& log) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
@@ -1075,7 +1075,11 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
 
   aFunction->SetValue(aShape);
 
+#if OCC_VERSION_MAJOR < 7
   log.SetTouched(Label());
+#else
+  log->SetTouched(Label());
+#endif
 
   if (!aWarning.IsEmpty())
     Standard_Failure::Raise(aWarning.ToCString());
@@ -1545,7 +1549,7 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
 
         if (closed_flag) {
           // Check if closed curve is reordered.
-          Handle(Geom_Curve) aCurve  = concatcurve->Value(concatcurve->Lower());
+          Handle(Geom_BSplineCurve) aCurve  = concatcurve->Value(concatcurve->Lower());
           Standard_Real      aFPar   = aCurve->FirstParameter();
           gp_Pnt             aPFirst;
           gp_Pnt             aPntVtx = BRep_Tool::Pnt(FirstVertex);
@@ -2022,8 +2026,7 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-IMPLEMENT_STANDARD_HANDLE (GEOMImpl_ShapeDriver,GEOM_BaseDriver);
-IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_ShapeDriver,GEOM_BaseDriver);
+OCCT_IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_ShapeDriver,GEOM_BaseDriver);
 
 //modified by NIZNHY-PKV Wed Dec 28 13:48:31 2011f
 #include <TopoDS_Iterator.hxx>

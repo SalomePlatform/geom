@@ -35,8 +35,6 @@
 #include <GeomAdaptor_Surface.hxx>
 #include <GEOMAlgo_Clsf.hxx>
 #include <Standard_Boolean.hxx>
-#include <Handle_Geom_Curve.hxx>
-#include <Handle_Geom_Surface.hxx>
 #include <Geom_Curve.hxx>
 #include <Geom_Surface.hxx>
 
@@ -73,7 +71,7 @@ class GEOMAlgo_ClsfBox : public GEOMAlgo_Clsf
   Standard_EXPORT
     virtual  Standard_Boolean CanBeON(const Handle(Geom_Surface)& aST) const;
 
-  DEFINE_STANDARD_RTTI(GEOMAlgo_ClsfBox)
+  OCCT_DEFINE_STANDARD_RTTIEXT(GEOMAlgo_ClsfBox,GEOMAlgo_Clsf)
 
  protected:
   TopoDS_Shape myBox;

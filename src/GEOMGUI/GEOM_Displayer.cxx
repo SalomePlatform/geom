@@ -38,7 +38,6 @@
 #include <GEOM_OCCFilter.h>
 
 #include <GEOM_Actor.h>
-#include <GEOM_AISShape.hxx>
 #include <GEOM_AISDimension.hxx>
 #include <GEOM_TopWireframeShape.hxx>
 #include <GEOM_AISVector.hxx>
@@ -87,7 +86,9 @@
 #include <AIS_AngleDimension.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 #include <Aspect_PolygonOffsetMode.hxx>
-#include <Aspect_ColorScale.hxx>
+#if OCC_VERSION_MAJOR < 7
+  #include <Aspect_ColorScale.hxx>
+#endif
 #include <Prs3d_IsoAspect.hxx>
 #include <Prs3d_PointAspect.hxx>
 #include <StdSelect_TypeOfEdge.hxx>
@@ -99,7 +100,6 @@
 #include <Geom_Axis2Placement.hxx>
 #include <Graphic3d_AspectFillArea3d.hxx>
 #include <gp_Pln.hxx>
-#include <TColStd_MapOfInteger.hxx>
 #include <TColStd_MapIteratorOfMapOfInteger.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <Graphic3d_AspectMarker3d.hxx>
@@ -506,6 +506,12 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
   }
 
   myViewFrame = 0;
+
+#if OCC_VERSION_MAJOR >= 7
+  myColorScale = new AIS_ColorScale;
+  myColorScale->SetZLayer (Graphic3d_ZLayerId_TopOSD);
+  myColorScale->SetTransformPersistence (Graphic3d_TMF_2d, gp_Pnt (-1,-1,0));
+#endif
 
   myFieldDataType = GEOM::FDT_Double;
   myFieldDimension = 0;
@@ -2922,7 +2928,7 @@ QList<QVariant> GEOM_Displayer::groupFieldData( const QList<QVariant>& theFieldS
   return aResultList;
 }
 
-// Note: the method is copied from Aspect_ColorScale class
+// Note: the method is copied from AIS_ColorScale class
 Standard_Integer GEOM_Displayer::HueFromValue( const Standard_Integer aValue,
                                                const Standard_Integer aMin,
                                                const Standard_Integer aMax )
@@ -2938,7 +2944,7 @@ Standard_Integer GEOM_Displayer::HueFromValue( const Standard_Integer aValue,
   return aHue;
 }
 
-// Note: the method is copied from Aspect_ColorScale class
+// Note: the method is copied from AIS_ColorScale class
 Standard_Boolean GEOM_Displayer::FindColor( const Standard_Real aValue, 
                                             const Standard_Real aMin,
                                             const Standard_Real aMax,
@@ -2976,6 +2982,7 @@ void GEOM_Displayer::UpdateColorScale( const bool theIsRedisplayFieldSteps, cons
   if( !aViewModel )
     return;
 
+#if OCC_VERSION_MAJOR < 7
   Handle(V3d_Viewer) aViewer = aViewModel->getViewer3d();
   if( aViewer.IsNull() )
     return;
@@ -2987,6 +2994,7 @@ void GEOM_Displayer::UpdateColorScale( const bool theIsRedisplayFieldSteps, cons
   Handle(V3d_View) aView = aViewer->ActiveView();
   if( aView.IsNull() )
     return;
+#endif
 
   Standard_Boolean anIsDisplayColorScale = Standard_False;
   TCollection_AsciiString aColorScaleTitle;
@@ -3038,38 +3046,49 @@ void GEOM_Displayer::UpdateColorScale( const bool theIsRedisplayFieldSteps, cons
 
   if( anIsDisplayColorScale )
   {
-    Handle(Aspect_ColorScale) aColorScale = aView->ColorScale();
-    if( !aColorScale.IsNull() )
+    SUIT_Session* session = SUIT_Session::session();
+    SUIT_ResourceMgr* resMgr = session->resourceMgr();
+
+    Standard_Real anXPos = resMgr->doubleValue( "Geometry", "scalar_bar_x_position", 0.05 );
+    Standard_Real anYPos = resMgr->doubleValue( "Geometry", "scalar_bar_y_position", 0.1 );
+    Standard_Real aWidth = resMgr->doubleValue( "Geometry", "scalar_bar_width", 0.2 );
+    Standard_Real aHeight = resMgr->doubleValue( "Geometry", "scalar_bar_height", 0.5 );
+    Standard_Integer aTextHeight = resMgr->integerValue( "Geometry", "scalar_bar_text_height", 14 );
+    Standard_Integer aNbIntervals = resMgr->integerValue( "Geometry", "scalar_bar_nb_intervals", 20 );
+
+#if OCC_VERSION_MAJOR < 7
+    Handle(Aspect_ColorScale) myColorScale = aView->ColorScale();
+    if( !myColorScale.IsNull() )
     {
-      SUIT_Session* session = SUIT_Session::session();
-      SUIT_ResourceMgr* resMgr = session->resourceMgr();
+#endif
 
-      Standard_Real anXPos = resMgr->doubleValue( "Geometry", "scalar_bar_x_position", 0.05 );
-      Standard_Real anYPos = resMgr->doubleValue( "Geometry", "scalar_bar_y_position", 0.1 );
-      Standard_Real aWidth = resMgr->doubleValue( "Geometry", "scalar_bar_width", 0.2 );
-      Standard_Real aHeight = resMgr->doubleValue( "Geometry", "scalar_bar_height", 0.5 );
-      Standard_Integer aTextHeight = resMgr->integerValue( "Geometry", "scalar_bar_text_height", 14 );
-      Standard_Integer aNbIntervals = resMgr->integerValue( "Geometry", "scalar_bar_nb_intervals", 20 );
- 
-      aColorScale->SetXPosition( anXPos );
-      aColorScale->SetYPosition( anYPos );
-      aColorScale->SetWidth( aWidth );
-      aColorScale->SetHeight( aHeight );
+    myColorScale->SetXPosition( anXPos );
+    myColorScale->SetYPosition( anYPos );
+    myColorScale->SetWidth( aWidth );
+    myColorScale->SetHeight( aHeight );
 
-      aColorScale->SetTextHeight( aTextHeight );
-      aColorScale->SetNumberOfIntervals( anIsBoolean ? 2 : aNbIntervals );
+    myColorScale->SetTextHeight( aTextHeight );
+    myColorScale->SetNumberOfIntervals( anIsBoolean ? 2 : aNbIntervals );
 
-      aColorScale->SetTitle( aColorScaleTitle );
-      aColorScale->SetRange( aColorScaleMin, aColorScaleMax );
+    myColorScale->SetTitle( aColorScaleTitle );
+    myColorScale->SetRange( aColorScaleMin, aColorScaleMax );
+
+#if OCC_VERSION_MAJOR < 7
     }
     if( !aView->ColorScaleIsDisplayed() )
       aView->ColorScaleDisplay();
   }
   else
-  {
     if( aView->ColorScaleIsDisplayed() )
       aView->ColorScaleErase();
+#else
+    if( !aViewModel->getAISContext()->IsDisplayed( myColorScale ) )
+      aViewModel->getAISContext()->Display( myColorScale );
   }
+  else
+    if( aViewModel->getAISContext()->IsDisplayed( myColorScale ) )
+      aViewModel->getAISContext()->Erase( myColorScale );
+#endif
 
   if( theIsRedisplayFieldSteps )
   {

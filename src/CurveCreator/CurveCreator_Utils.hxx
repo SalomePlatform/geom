@@ -205,7 +205,7 @@ protected:
    * \param IsBSpline BSpline flag. Output parameter.
    * \return the array of points. Null handle in case of failure.
    */
-  static Handle_TColgp_HArray1OfPnt getPoints
+  static Handle(TColgp_HArray1OfPnt) getPoints
                            (const TopoDS_Shape &theShape,
                                   bool         &IsClosed,
                                   bool         &IsBSpline);
@@ -226,7 +226,7 @@ protected:
    * \param thePlnStatus the current status on input. It can be modified on
    *        output.
    */
-  static void FindPlane(const Handle_TColgp_HArray1OfPnt &thePoints,
+  static void FindPlane(const Handle(TColgp_HArray1OfPnt) &thePoints,
                               gp_Pln                     &thePlane,
                               Standard_Integer           &thePlnStatus);
 

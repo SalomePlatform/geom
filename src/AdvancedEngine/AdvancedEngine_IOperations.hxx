@@ -28,6 +28,9 @@
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"
 
+#include <TopTools_ListOfShape.hxx>
+#include <Geom_Surface.hxx>
+
 #include <list>
 #include <gp_Ax2.hxx>
 
@@ -40,8 +43,6 @@ class GEOMImpl_I3DPrimOperations;
 class GEOMImpl_ILocalOperations;
 class GEOMImpl_IHealingOperations;
 class GEOMImpl_IGroupOperations;
-class Handle_Geom_Surface;
-class TopTools_ListOfShape;
 
 class ADVANCEDENGINE_EXPORT AdvancedEngine_IOperations: public GEOM_IOperations
 {
@@ -71,7 +72,7 @@ private:
                   gp_Trsf aTrsf);
 
   bool GetFacesOnSurf(const TopoDS_Shape &theShape,
-                      const Handle_Geom_Surface& theSurface,
+                      const Handle(Geom_Surface)& theSurface,
                       const Standard_Real theTolerance,
                       TopTools_ListOfShape &theFaces);
 

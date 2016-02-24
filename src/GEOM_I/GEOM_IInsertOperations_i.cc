@@ -79,11 +79,11 @@ GEOM::GEOM_Object_ptr GEOM_IInsertOperations_i::MakeCopy(GEOM::GEOM_Object_ptr t
   GetOperations()->SetNotDone();
 
   //Get the reference shape
-  Handle(GEOM_Object) anOriginal = GetObjectImpl(theOriginal);
+  HANDLE_NAMESPACE(GEOM_Object) anOriginal = GetObjectImpl(theOriginal);
   if (anOriginal.IsNull()) return aGEOMObject._retn();
 
   //Create the copy
-  Handle(GEOM_Object) anObject = GetOperations()->MakeCopy(anOriginal);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeCopy(anOriginal);
 
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
@@ -106,7 +106,7 @@ void GEOM_IInsertOperations_i::Export
   GetOperations()->SetNotDone();
 
   //Get the reference shape
-  Handle(GEOM_Object) anOriginal = GetObjectImpl(theOriginal);
+  HANDLE_NAMESPACE(GEOM_Object) anOriginal = GetObjectImpl(theOriginal);
   if (anOriginal.IsNull()) return;
 
   //Export the shape to the file
@@ -139,7 +139,7 @@ GEOM::ListOfGBO* GEOM_IInsertOperations_i::ImportFile
 
   aSeq->length(aLength);
   for (Standard_Integer i = 1; i <= aLength; i++)
-    aSeq[i-1] = GetBaseObject(Handle(GEOM_BaseObject)::DownCast(aHSeq->Value(i)));
+    aSeq[i-1] = GetBaseObject(HANDLE_NAMESPACE(GEOM_BaseObject)::DownCast(aHSeq->Value(i)));
 
   return aSeq._retn();
 }
@@ -180,7 +180,7 @@ GEOM::GEOM_Object_ptr GEOM_IInsertOperations_i::RestoreShape (const SALOMEDS::TM
   char* buf = (char*)theStream.NP_data();
   std::istringstream aStream (buf);
 
-  Handle(GEOM_Object) anObject = GetOperations()->RestoreShape(aStream);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->RestoreShape(aStream);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -280,8 +280,8 @@ CORBA::Boolean GEOM_IInsertOperations_i::TransferData
   }
 
   //Get the reference shape
-  Handle(GEOM_Object) aShapeFrom = GetObjectImpl(theObjectFrom);
-  Handle(GEOM_Object) aShapeTo   = GetObjectImpl(theObjectTo);
+  HANDLE_NAMESPACE(GEOM_Object) aShapeFrom = GetObjectImpl(theObjectFrom);
+  HANDLE_NAMESPACE(GEOM_Object) aShapeTo   = GetObjectImpl(theObjectTo);
 
   if (aShapeFrom.IsNull() || aShapeTo.IsNull())
   {

@@ -26,8 +26,9 @@
 #include <TDocStd_Application.hxx>
 #include <Standard.hxx>
 #include <Standard_DefineHandle.hxx>
+#include <TColStd_SequenceOfExtendedString.hxx>
 
-class TColStd_SequenceOfExtendedString;
+#include <Basics_OCCTVersion.hxx>
 
 class GEOM_Application : public TDocStd_Application
 {
@@ -39,7 +40,7 @@ public:
   Standard_EXPORT Standard_CString ResourcesName();
 
 public:
-  DEFINE_STANDARD_RTTI(GEOM_Application);
+  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_Application,TDocStd_Application)
 };
 
 DEFINE_STANDARD_HANDLE(GEOM_Application, TDocStd_Application)

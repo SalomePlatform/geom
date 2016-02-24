@@ -56,8 +56,7 @@
 #include <gp_Pnt.hxx>
 #include <gp_Sphere.hxx>
 
-IMPLEMENT_STANDARD_HANDLE(BlockFix_SphereSpaceModifier, BRepTools_Modification);
-IMPLEMENT_STANDARD_RTTIEXT(BlockFix_SphereSpaceModifier, BRepTools_Modification);
+OCCT_IMPLEMENT_STANDARD_RTTIEXT(BlockFix_SphereSpaceModifier, BRepTools_Modification);
 
 //=======================================================================
 //function : BlockFix_SphereSpaceModifier

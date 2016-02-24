@@ -26,18 +26,7 @@
 #ifndef _GEOM_SubShapeDriver_HeaderFile
 #define _GEOM_SubShapeDriver_HeaderFile
 
-#ifndef _Standard_GUID_HeaderFile
-#include <Standard_GUID.hxx>
-#endif 
-
-#ifndef _TFunction_Driver_HeaderFile
-#include <TFunction_Driver.hxx>
-#endif
-#ifndef _TFunction_Logbook_HeaderFile
-#include <TFunction_Logbook.hxx>
-#endif
-
-#include "GEOM_BaseDriver.hxx"
+#include <GEOM_BaseDriver.hxx>
 
 DEFINE_STANDARD_HANDLE( GEOM_SubShapeDriver, GEOM_BaseDriver );
 
@@ -45,22 +34,19 @@ class GEOM_SubShapeDriver : public GEOM_BaseDriver {
 
 public:
 
- // Methods PUBLIC
- // 
-Standard_EXPORT GEOM_SubShapeDriver();
-Standard_EXPORT virtual  Standard_Integer Execute(TFunction_Logbook& log) const; 
-Standard_EXPORT virtual void Validate(TFunction_Logbook&) const {}
-Standard_EXPORT Standard_Boolean MustExecute(const TFunction_Logbook&) const { return Standard_True; }
-Standard_EXPORT static const Standard_GUID& GetID();
-Standard_EXPORT ~GEOM_SubShapeDriver() {};
+  Standard_EXPORT GEOM_SubShapeDriver();
+  Standard_EXPORT virtual Standard_Integer Execute(LOGBOOK& log) const;
+  Standard_EXPORT virtual void Validate(LOGBOOK&) const {}
+  Standard_EXPORT Standard_Boolean MustExecute(const LOGBOOK&) const { return Standard_True; }
 
+  Standard_EXPORT static const Standard_GUID& GetID();
+  Standard_EXPORT ~GEOM_SubShapeDriver() {};
 
   Standard_EXPORT virtual
   bool GetCreationInformation(std::string&             theOperationName,
                               std::vector<GEOM_Param>& params);
 
-DEFINE_STANDARD_RTTI( GEOM_SubShapeDriver )
-
+  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_SubShapeDriver,GEOM_BaseDriver)
 };
 
 #endif

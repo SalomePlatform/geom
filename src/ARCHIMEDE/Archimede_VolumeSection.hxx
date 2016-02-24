@@ -33,7 +33,7 @@
 #include <TopoDS_Shape.hxx>
 #include <Geom_Plane.hxx>
 
-class Handle(Geom_RectangularTrimmedSurface);
+#include <Geom_RectangularTrimmedSurface.hxx>
 
 class VolumeSection{
 
@@ -41,7 +41,7 @@ public:
   // Constructeur effectuant le maillage de peau de la shape
   Standard_EXPORT VolumeSection(TopoDS_Shape , Standard_Real); 
 
-  //Methode qui affecte € un point,les coordonn‰es de centre de la boite englobante de la shape 
+  //Methode qui affecte ï¿½ un point,les coordonnï¿½es de centre de la boite englobante de la shape 
   Standard_EXPORT void CenterOfGravity();
 
   // Methode qui calcule le volume sous un plan Z = h
@@ -50,10 +50,10 @@ public:
   // Methode qui resout l'equation V(h)=constante
   Standard_EXPORT Standard_Real Archimede(Standard_Real , Standard_Real); 
 
-  // Methode permettant de "setter" un plan afin de l'utiliser € l'interieur de la classe
+  // Methode permettant de "setter" un plan afin de l'utiliser ï¿½ l'interieur de la classe
   Standard_EXPORT void SetPlane(Handle (Geom_Plane));
 
-  // Methode permettant de r‰cup‰rer la shape modifi‰e € l'ext‰rieur de la classe
+  // Methode permettant de rï¿½cupï¿½rer la shape modifiï¿½e ï¿½ l'extï¿½rieur de la classe
   Standard_EXPORT TopoDS_Shape GetShape();
 
   // Methode effectuant la rotation du plan et de la shape
@@ -62,10 +62,10 @@ public:
   // Methode effectuant la rotation inverse du plan et de la shape
   Standard_EXPORT Handle (Geom_RectangularTrimmedSurface) InvMakeRotation(gp_Dir,Handle(Geom_RectangularTrimmedSurface));
 
-  // Methode permettant de d‰couper le plan selon une projection de la Shape
+  // Methode permettant de dï¿½couper le plan selon une projection de la Shape
   Standard_EXPORT Handle (Geom_RectangularTrimmedSurface) TrimSurf();
 
-  // Methode permmettant de deplacer le plan jusqu'a la position donn‰e par Archimˆde
+  // Methode permmettant de deplacer le plan jusqu'a la position donnï¿½e par Archimï¿½de
   Standard_EXPORT Handle (Geom_RectangularTrimmedSurface) AjustePlan(Handle(Geom_RectangularTrimmedSurface),Standard_Real,gp_Pnt);
 
   Standard_EXPORT void getZ( double& min, double& max);

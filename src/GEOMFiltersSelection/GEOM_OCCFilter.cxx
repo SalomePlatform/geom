@@ -30,8 +30,7 @@
 #include <AIS_InteractiveObject.hxx>
 #include <SelectMgr_EntityOwner.hxx>
 
-IMPLEMENT_STANDARD_HANDLE(GEOM_OCCFilter, SelectMgr_Filter)
-IMPLEMENT_STANDARD_RTTIEXT(GEOM_OCCFilter, SelectMgr_Filter)
+OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOM_OCCFilter, SelectMgr_Filter)
 
 //=======================================================================
 // function : GEOM_OCCFilter

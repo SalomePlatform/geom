@@ -2400,7 +2400,7 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
             GeomAPI_Interpolate anInt(HAP,Standard_False,1.e-7);
             anInt.Load(aDir1,aDir2);
             anInt.Perform();
-            Handle(Geom_Curve) iso = anInt.Curve();
+            const Handle(Geom_BSplineCurve) iso = anInt.Curve();
             fp = iso->FirstParameter();
             lp = iso->LastParameter();
             step = (lp-fp)/(NbP-1);
@@ -2998,7 +2998,7 @@ static bool CreateGroups(const TopoDS_Shape     &theProfile,
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer GEOMImpl_PipeDriver::Execute (TFunction_Logbook& log) const
+Standard_Integer GEOMImpl_PipeDriver::Execute(LOGBOOK& log) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
@@ -3352,7 +3352,11 @@ Standard_Integer GEOMImpl_PipeDriver::Execute (TFunction_Logbook& log) const
   TopoDS_Shape aRes = GEOMUtils::CompsolidToCompound(aShape);
   aFunction->SetValue(aRes);
 
+#if OCC_VERSION_MAJOR < 7
   log.SetTouched(Label());
+#else
+  log->SetTouched(Label());
+#endif
   return 1;
 }
 
@@ -3431,5 +3435,4 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-IMPLEMENT_STANDARD_HANDLE (GEOMImpl_PipeDriver,GEOM_BaseDriver);
-IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_PipeDriver,GEOM_BaseDriver);
+OCCT_IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_PipeDriver,GEOM_BaseDriver);

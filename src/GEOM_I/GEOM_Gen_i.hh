@@ -54,6 +54,7 @@
 #include "GEOMUtils.hxx"
 
 #include <TopTools_IndexedMapOfShape.hxx>
+#include <TopTools_SequenceOfShape.hxx>
 
 #include <map>
 #include <set>
@@ -61,8 +62,6 @@
 #include <string>
 
 //#include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
-
-class TopTools_SequenceOfShape;
 
 //=====================================================================
 // Generic operations creator (for plugins mechanism)

@@ -35,12 +35,12 @@
 #include <AIS_ListOfInteractive.hxx>
 #include <AIS_InteractiveObject.hxx>
 #include <AIS_Dimension.hxx>
+#include <V3d_View.hxx>
 #include <gp_Pln.hxx>
 
 class OCCViewer_ViewManager;
 class OCCViewer_Viewer;
 class SUIT_ViewWindow;
-class Handle(V3d_View);
 
 //=================================================================================
 // class    : MeasureGUI_DimensionInteractor

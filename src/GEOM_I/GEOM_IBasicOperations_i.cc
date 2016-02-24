@@ -69,7 +69,7 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointXYZ
   GetOperations()->SetNotDone();
 
   //Create the point
-  Handle(GEOM_Object) anObject = GetOperations()->MakePointXYZ(theX, theY, theZ);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakePointXYZ(theX, theY, theZ);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -90,11 +90,11 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointWithReference
   GetOperations()->SetNotDone();
 
   //Get the reference point
-  Handle(GEOM_Object) aReference = GetObjectImpl(theReference);
+  HANDLE_NAMESPACE(GEOM_Object) aReference = GetObjectImpl(theReference);
   if (aReference.IsNull()) return aGEOMObject._retn();
 
   //Create the point
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakePointWithReference(aReference, theX, theY, theZ);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -116,12 +116,12 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnLinesIntersection
   GetOperations()->SetNotDone();
 
   //Get the reference Lines
-  Handle(GEOM_Object) aRef1 = GetObjectImpl(theLine1);
-  Handle(GEOM_Object) aRef2 = GetObjectImpl(theLine2);
+  HANDLE_NAMESPACE(GEOM_Object) aRef1 = GetObjectImpl(theLine1);
+  HANDLE_NAMESPACE(GEOM_Object) aRef2 = GetObjectImpl(theLine2);
   if (aRef1.IsNull() || aRef2.IsNull()) return aGEOMObject._retn();
 
   //Create the point
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakePointOnLinesIntersection(aRef1, aRef2);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -145,11 +145,11 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnCurve
   GetOperations()->SetNotDone();
 
   //Get the reference curve
-  Handle(GEOM_Object) aReference = GetObjectImpl(theCurve);
+  HANDLE_NAMESPACE(GEOM_Object) aReference = GetObjectImpl(theCurve);
   if (aReference.IsNull()) return aGEOMObject._retn();
 
   //Create the point
-  Handle(GEOM_Object) anObject = GetOperations()->MakePointOnCurve
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakePointOnCurve
         (aReference, theParameter, takeOrientationIntoAccount);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -173,17 +173,17 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnCurveByLength
   GetOperations()->SetNotDone();
 
   //Get the reference curve
-  Handle(GEOM_Object) aReference = GetObjectImpl(theCurve);
+  HANDLE_NAMESPACE(GEOM_Object) aReference = GetObjectImpl(theCurve);
   if (aReference.IsNull()) return aGEOMObject._retn();
 
   //Get the reference point (can be NULL)
-  Handle(GEOM_Object) aRefPoint;
+  HANDLE_NAMESPACE(GEOM_Object) aRefPoint;
   if (!CORBA::is_nil(theStartPoint)) {
     aRefPoint = GetObjectImpl(theStartPoint);
   }
 
   //Create the point
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakePointOnCurveByLength(aReference, theLength, aRefPoint);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -208,11 +208,11 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnCurveByCoord
   GetOperations()->SetNotDone();
 
   //Get the reference curve
-  Handle(GEOM_Object) aReference = GetObjectImpl(theCurve);
+  HANDLE_NAMESPACE(GEOM_Object) aReference = GetObjectImpl(theCurve);
   if (aReference.IsNull()) return aGEOMObject._retn();
 
   //Create the point
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakePointOnCurveByCoord(aReference, theXParameter,
                                              theYParameter, theZParameter);
   if (!GetOperations()->IsDone() || anObject.IsNull())
@@ -237,11 +237,11 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnSurface
   GetOperations()->SetNotDone();
 
   //Get the reference surface
-  Handle(GEOM_Object) aReference = GetObjectImpl(theSurface);
+  HANDLE_NAMESPACE(GEOM_Object) aReference = GetObjectImpl(theSurface);
   if (aReference.IsNull()) return aGEOMObject._retn();
 
   //Create the point
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakePointOnSurface(aReference, theUParameter, theVParameter);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -266,11 +266,11 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnSurfaceByCoord
   GetOperations()->SetNotDone();
 
   //Get the reference surface
-  Handle(GEOM_Object) aReference = GetObjectImpl(theSurface);
+  HANDLE_NAMESPACE(GEOM_Object) aReference = GetObjectImpl(theSurface);
   if (aReference.IsNull()) return aGEOMObject._retn();
 
   //Create the point
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakePointOnSurfaceByCoord(aReference, theXParameter,
                                                theYParameter, theZParameter);
   if (!GetOperations()->IsDone() || anObject.IsNull())
@@ -292,11 +292,11 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnFace (GEOM::GEOM_Objec
   GetOperations()->SetNotDone();
 
   //Get the reference face
-  Handle(GEOM_Object) aReference = GetObjectImpl(theFace);
+  HANDLE_NAMESPACE(GEOM_Object) aReference = GetObjectImpl(theFace);
   if (aReference.IsNull()) return aGEOMObject._retn();
 
   //Create the point
-  Handle(GEOM_Object) anObject = GetOperations()->MakePointOnFace(aReference);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakePointOnFace(aReference);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -317,11 +317,11 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakeTangentOnCurve
   GetOperations()->SetNotDone();
 
   //Get the reference curve
-  Handle(GEOM_Object) aReference = GetObjectImpl(theCurve);
+  HANDLE_NAMESPACE(GEOM_Object) aReference = GetObjectImpl(theCurve);
   if (aReference.IsNull()) return aGEOMObject._retn();
 
   //Create the vector
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeTangentOnCurve(aReference, theParameter);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -344,7 +344,7 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakeVectorDXDYDZ
 
   //Create the Vector
 
-  Handle(GEOM_Object) anObject = GetOperations()->MakeVectorDXDYDZ(theDX, theDY, theDZ);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeVectorDXDYDZ(theDX, theDY, theDZ);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -365,12 +365,12 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakeVectorTwoPnt
   GetOperations()->SetNotDone();
 
   //Get the reference points
-  Handle(GEOM_Object) aRef1 = GetObjectImpl(thePnt1);
-  Handle(GEOM_Object) aRef2 = GetObjectImpl(thePnt2);
+  HANDLE_NAMESPACE(GEOM_Object) aRef1 = GetObjectImpl(thePnt1);
+  HANDLE_NAMESPACE(GEOM_Object) aRef2 = GetObjectImpl(thePnt2);
   if (aRef1.IsNull() || aRef2.IsNull()) return aGEOMObject._retn();
 
   //Create the vector
-  Handle(GEOM_Object) anObject = GetOperations()->MakeVectorTwoPnt(aRef1, aRef2);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeVectorTwoPnt(aRef1, aRef2);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -392,12 +392,12 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakeLine
   GetOperations()->SetNotDone();
 
   //Get the reference objects
-  Handle(GEOM_Object) aRef1 = GetObjectImpl(thePnt);
-  Handle(GEOM_Object) aRef2 = GetObjectImpl(theDir);
+  HANDLE_NAMESPACE(GEOM_Object) aRef1 = GetObjectImpl(thePnt);
+  HANDLE_NAMESPACE(GEOM_Object) aRef2 = GetObjectImpl(theDir);
   if (aRef1.IsNull() || aRef2.IsNull()) return aGEOMObject._retn();
 
   //Create the Line
-  Handle(GEOM_Object) anObject = GetOperations()->MakeLine(aRef1, aRef2);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeLine(aRef1, aRef2);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -418,12 +418,12 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakeLineTwoPnt
   GetOperations()->SetNotDone();
 
   //Get the reference points
-  Handle(GEOM_Object) aRef1 = GetObjectImpl(thePnt1);
-  Handle(GEOM_Object) aRef2 = GetObjectImpl(thePnt2);
+  HANDLE_NAMESPACE(GEOM_Object) aRef1 = GetObjectImpl(thePnt1);
+  HANDLE_NAMESPACE(GEOM_Object) aRef2 = GetObjectImpl(thePnt2);
   if (aRef1.IsNull() || aRef2.IsNull()) return aGEOMObject._retn();
 
   //Create the Line
-  Handle(GEOM_Object) anObject = GetOperations()->MakeLineTwoPnt(aRef1, aRef2);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeLineTwoPnt(aRef1, aRef2);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -444,12 +444,12 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakeLineTwoFaces
   GetOperations()->SetNotDone();
 
   //Get the reference points
-  Handle(GEOM_Object) aRef1 = GetObjectImpl(theFace1);
-  Handle(GEOM_Object) aRef2 = GetObjectImpl(theFace2);
+  HANDLE_NAMESPACE(GEOM_Object) aRef1 = GetObjectImpl(theFace1);
+  HANDLE_NAMESPACE(GEOM_Object) aRef2 = GetObjectImpl(theFace2);
   if (aRef1.IsNull() || aRef2.IsNull()) return aGEOMObject._retn();
 
   //Create the Line
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeLineTwoFaces(aRef1, aRef2);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -473,12 +473,12 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePlanePntVec
   GetOperations()->SetNotDone();
 
   //Get the references
-  Handle(GEOM_Object) aRef1 = GetObjectImpl(thePnt);
-  Handle(GEOM_Object) aRef2 = GetObjectImpl(theVec);
+  HANDLE_NAMESPACE(GEOM_Object) aRef1 = GetObjectImpl(thePnt);
+  HANDLE_NAMESPACE(GEOM_Object) aRef2 = GetObjectImpl(theVec);
   if (aRef1.IsNull() || aRef2.IsNull()) return aGEOMObject._retn();
 
   //Create the plane
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakePlanePntVec(aRef1, aRef2, theTrimSize);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -501,14 +501,14 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePlaneThreePnt
   GetOperations()->SetNotDone();
 
   //Get the reference points
-  Handle(GEOM_Object) aRef1 = GetObjectImpl(thePnt1);
-  Handle(GEOM_Object) aRef2 = GetObjectImpl(thePnt2);
-  Handle(GEOM_Object) aRef3 = GetObjectImpl(thePnt3);
+  HANDLE_NAMESPACE(GEOM_Object) aRef1 = GetObjectImpl(thePnt1);
+  HANDLE_NAMESPACE(GEOM_Object) aRef2 = GetObjectImpl(thePnt2);
+  HANDLE_NAMESPACE(GEOM_Object) aRef3 = GetObjectImpl(thePnt3);
   if (aRef1.IsNull() || aRef2.IsNull() || aRef3.IsNull())
     return aGEOMObject._retn();
 
   //Create the plane
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakePlaneThreePnt(aRef1, aRef2, aRef3, theTrimSize);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -530,11 +530,11 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePlaneFace
   GetOperations()->SetNotDone();
 
   //Get the reference face
-  Handle(GEOM_Object) aRef = GetObjectImpl(theFace);
+  HANDLE_NAMESPACE(GEOM_Object) aRef = GetObjectImpl(theFace);
   if (aRef.IsNull()) return aGEOMObject._retn();
 
   //Create the plane
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakePlaneFace(aRef, theTrimSize);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -557,12 +557,12 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePlane2Vec
   GetOperations()->SetNotDone();
 
   //Get the references
-  Handle(GEOM_Object) aRef1 = GetObjectImpl(theVec1);
-  Handle(GEOM_Object) aRef2 = GetObjectImpl(theVec2);
+  HANDLE_NAMESPACE(GEOM_Object) aRef1 = GetObjectImpl(theVec1);
+  HANDLE_NAMESPACE(GEOM_Object) aRef2 = GetObjectImpl(theVec2);
   if (aRef1.IsNull() || aRef2.IsNull()) return aGEOMObject._retn();
 
   //Create the plane
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakePlane2Vec(aRef1, aRef2, theTrimSize);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -585,10 +585,10 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePlaneLCS
   GetOperations()->SetNotDone();
 
   //Get the references
-  Handle(GEOM_Object) aRef1 = GetObjectImpl(theLCS);
+  HANDLE_NAMESPACE(GEOM_Object) aRef1 = GetObjectImpl(theLCS);
 
   //Create the plane
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakePlaneLCS(aRef1, theTrimSize, theOrientation);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -612,7 +612,7 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakeMarker
   GetOperations()->SetNotDone();
 
   //Create the point
-  Handle(GEOM_Object) anObject = GetOperations()->MakeMarker(theOX , theOY , theOZ,
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeMarker(theOX , theOY , theOZ,
                                                              theXDX, theXDY, theXDZ,
                                                              theYDX, theYDY, theYDZ);
   if (!GetOperations()->IsDone() || anObject.IsNull())
@@ -635,11 +635,11 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakeMarkerFromShape
   GetOperations()->SetNotDone();
 
   //Get the referenced object
-  Handle(GEOM_Object) aRef = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aRef = GetObjectImpl(theShape);
   if (aRef.IsNull()) return aGEOMObject._retn();
 
   //Create the point
-  Handle(GEOM_Object) anObject = GetOperations()->MakeMarkerFromShape(aRef);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeMarkerFromShape(aRef);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -662,13 +662,13 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakeMarkerPntTwoVec
   GetOperations()->SetNotDone();
 
   //Get the referenced objects
-  Handle(GEOM_Object) aRef1 = GetObjectImpl(theOrigin);
-  Handle(GEOM_Object) aRef2 = GetObjectImpl(theXVec);
-  Handle(GEOM_Object) aRef3 = GetObjectImpl(theYVec);
+  HANDLE_NAMESPACE(GEOM_Object) aRef1 = GetObjectImpl(theOrigin);
+  HANDLE_NAMESPACE(GEOM_Object) aRef2 = GetObjectImpl(theXVec);
+  HANDLE_NAMESPACE(GEOM_Object) aRef3 = GetObjectImpl(theYVec);
   if (aRef1.IsNull() || aRef2.IsNull() || aRef3.IsNull()) return aGEOMObject._retn();
 
   //Create the point
-  Handle(GEOM_Object) anObject = GetOperations()->MakeMarkerPntTwoVec(aRef1,
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeMarkerPntTwoVec(aRef1,
                                                                       aRef2,
 								      aRef3);
   if (!GetOperations()->IsDone() || anObject.IsNull())
@@ -695,11 +695,11 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakeTangentPlaneOnFace
   GetOperations()->SetNotDone();
 
   //Get the reference face
-  Handle(GEOM_Object) aRef = GetObjectImpl(theFace);
+  HANDLE_NAMESPACE(GEOM_Object) aRef = GetObjectImpl(theFace);
   if (aRef.IsNull()) return aGEOMObject._retn();
 
   //Create the plane
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeTangentPlaneOnFace(aRef, theParameterU,theParameterV,theTrimSize);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();

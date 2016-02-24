@@ -56,15 +56,19 @@ bool GEOM_Solver::UpdateObject(Handle(GEOM_Object) theObject, TDF_LabelSequence&
 //=============================================================================  
 bool GEOM_Solver::ComputeFunction(Handle(GEOM_Function) theFunction)
 {
-  if(theFunction == NULL) return false;
+  if(theFunction.IsNull()) return false;
   Standard_GUID aGUID = theFunction->GetDriverGUID();
       
   Handle(TFunction_Driver) aDriver;
   if(!TFunction_DriverTable::Get()->FindDriver(aGUID, aDriver)) return false;
           
   aDriver->Init(theFunction->GetEntry());
-            
+
+#if OCC_VERSION_MAJOR < 7
   TFunction_Logbook aLog;
+#else
+  Handle(TFunction_Logbook) aLog = TFunction_Logbook::Set( aDriver->Label() );
+#endif
   if(aDriver->Execute(aLog) == 0) return false;
                 
   return true;     

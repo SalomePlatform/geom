@@ -22,10 +22,7 @@
 
 #include <GEOM_Application.hxx>
 
-#include <TColStd_SequenceOfExtendedString.hxx>
-
-IMPLEMENT_STANDARD_HANDLE (GEOM_Application, TDocStd_Application)
-IMPLEMENT_STANDARD_RTTIEXT(GEOM_Application, TDocStd_Application)
+OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOM_Application, TDocStd_Application)
 
 //=======================================================================
 //function : GEOM_Application
@@ -53,6 +50,9 @@ GEOM_Application::~GEOM_Application()
 void GEOM_Application::Formats(TColStd_SequenceOfExtendedString& Formats) 
 {  
   Formats.Append(TCollection_ExtendedString ("SALOME_GEOM"));
+#if OCC_VERSION_MAJOR > 6
+  Formats.Append(TCollection_ExtendedString ("BinOcaf"));
+#endif
 }
 
 

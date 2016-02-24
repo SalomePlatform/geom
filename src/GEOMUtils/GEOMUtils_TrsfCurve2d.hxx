@@ -20,8 +20,9 @@
 #ifndef _GEOMUtils_TrsfCurve2d_HXX_
 #define _GEOMUtils_TrsfCurve2d_HXX_
 
-
 #include <GEOMUtils_Trsf2d.hxx>
+
+#include <Basics_OCCTVersion.hxx>
 
 #include <Geom2dHatch_Hatcher.hxx>
 #include <GeomAbs_IsoType.hxx>

@@ -57,7 +57,7 @@ protected:
   virtual bool isShowVectors() {return true;}
 
 public:
-  DEFINE_STANDARD_RTTI (GEOM_AISVector)
+  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_AISVector,GEOM_AISShape)
 };
 
 DEFINE_STANDARD_HANDLE(GEOM_AISVector, GEOM_AISShape)

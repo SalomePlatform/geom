@@ -27,8 +27,7 @@
 //
 #include <GEOMAlgo_HAlgo.hxx>
 
-IMPLEMENT_STANDARD_HANDLE(GEOMAlgo_HAlgo, MMgt_TShared);
-IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_HAlgo, MMgt_TShared);
+OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_HAlgo, MMgt_TShared);
 
 //=======================================================================
 // function:

@@ -78,7 +78,7 @@ public:
   Standard_EXPORT
     virtual  Standard_Boolean CanBeON(const Handle(Geom_Surface)& aST) const;
 
-  DEFINE_STANDARD_RTTI(GEOMAlgo_ClsfQuad);
+  OCCT_DEFINE_STANDARD_RTTIEXT(GEOMAlgo_ClsfQuad,GEOMAlgo_Clsf)
 
 protected:
 

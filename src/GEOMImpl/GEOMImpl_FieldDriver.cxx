@@ -44,7 +44,7 @@ GEOMImpl_FieldDriver::GEOMImpl_FieldDriver()
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer GEOMImpl_FieldDriver::Execute(TFunction_Logbook& log) const
+Standard_Integer GEOMImpl_FieldDriver::Execute(LOGBOOK& log) const
 {
   return 0;
 }
@@ -105,5 +105,4 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-IMPLEMENT_STANDARD_HANDLE (GEOMImpl_FieldDriver,GEOM_BaseDriver);
-IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_FieldDriver,GEOM_BaseDriver);
+OCCT_IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_FieldDriver,GEOM_BaseDriver);

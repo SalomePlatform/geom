@@ -34,6 +34,8 @@
 #include <Standard_Integer.hxx>
 #include <MMgt_TShared.hxx>
 
+#include <Basics_OCCTVersion.hxx>
+
 DEFINE_STANDARD_HANDLE(GEOMAlgo_HAlgo, MMgt_TShared);
 
 //=======================================================================
@@ -58,7 +60,7 @@ class GEOMAlgo_HAlgo : public MMgt_TShared
   Standard_EXPORT
     Standard_Integer WarningStatus() const;
 
-  DEFINE_STANDARD_RTTI(GEOMAlgo_HAlgo);
+  OCCT_DEFINE_STANDARD_RTTIEXT(GEOMAlgo_HAlgo,MMgt_TShared)
 
  protected:
   Standard_EXPORT

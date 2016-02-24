@@ -37,14 +37,14 @@
 
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <TColStd_HSequenceOfInteger.hxx>
+#include <TColStd_HArray1OfInteger.hxx>
 
 #include <Geom_Surface.hxx>
 
 #include <list>
 
 class GEOM_Engine;
-class Handle(GEOM_Object);
-class Handle(TColStd_HArray1OfInteger);
+class GEOM_Object;
 class TopoDS_Shape;
 
 class GEOMImpl_IShapesOperations : public GEOM_IOperations

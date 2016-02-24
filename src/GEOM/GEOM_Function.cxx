@@ -56,10 +56,6 @@
 
 #include <TColStd_ListOfInteger.hxx>
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
-#include <TColStd_HArray1OfReal.hxx>
-#include <TColStd_HArray1OfInteger.hxx>
-#include <TColStd_HSequenceOfTransient.hxx>
-#include <TCollection_AsciiString.hxx>
 #include <TCollection_ExtendedString.hxx>
 
 #include <cstdlib>
@@ -993,5 +989,4 @@ void* GEOM_Function::GetCallBackData()
   return reinterpret_cast<void*> ( address );
 }
 
-IMPLEMENT_STANDARD_HANDLE (GEOM_Function, Standard_Transient);
-IMPLEMENT_STANDARD_RTTIEXT(GEOM_Function, Standard_Transient );
+OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOM_Function, Standard_Transient );

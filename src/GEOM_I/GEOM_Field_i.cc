@@ -39,7 +39,7 @@
 
 GEOM_Field_i::GEOM_Field_i (PortableServer::POA_ptr thePOA,
                             GEOM::GEOM_Gen_ptr      theEngine,
-                            Handle(GEOM_Field)      theImpl):
+                            HANDLE_NAMESPACE(GEOM_Field)      theImpl):
   SALOME::GenericObj_i( thePOA ),
   GEOM_BaseObject_i( thePOA, theEngine, theImpl ),
   _impl( theImpl )
@@ -66,7 +66,7 @@ GEOM_Field_i::~GEOM_Field_i()
 GEOM::GEOM_Object_ptr GEOM_Field_i::GetShape()
 {
   GEOM::GEOM_Object_var shapeVar;
-  Handle(GEOM_Object) shape = _impl->GetShape();
+  HANDLE_NAMESPACE(GEOM_Object) shape = _impl->GetShape();
   if ( !shape.IsNull() )
   {
     GEOM::GEOM_BaseObject_var obj = _engine->GetObject( shape->GetDocID(),
@@ -135,7 +135,7 @@ GEOM::string_array* GEOM_Field_i::GetComponents()
 GEOM::GEOM_FieldStep_ptr GEOM_Field_i::AddStep(::CORBA::Long stepID, ::CORBA::Long stamp)
 {
   GEOM::GEOM_FieldStep_var stepVar;
-  Handle(GEOM_FieldStep) step = _impl->AddStep( stepID, stamp );
+  HANDLE_NAMESPACE(GEOM_FieldStep) step = _impl->AddStep( stepID, stamp );
   if ( !step.IsNull() )
   {
     GEOM::GEOM_BaseObject_var obj = _engine->GetObject( step->GetDocID(),
@@ -175,8 +175,8 @@ CORBA::Long GEOM_Field_i::CountSteps()
 
 GEOM::ListOfLong* GEOM_Field_i::GetSteps()
 {
-  std::list< Handle(GEOM_FieldStep)> stepList = _impl->GetSteps();
-  std::list< Handle(GEOM_FieldStep)>::iterator stp = stepList.begin();
+  std::list< HANDLE_NAMESPACE(GEOM_FieldStep)> stepList = _impl->GetSteps();
+  std::list< HANDLE_NAMESPACE(GEOM_FieldStep)>::iterator stp = stepList.begin();
   
   GEOM::ListOfLong_var stepIds = new GEOM::ListOfLong();
   stepIds->length( stepList.size() );
@@ -198,7 +198,7 @@ GEOM::ListOfLong* GEOM_Field_i::GetSteps()
 GEOM::GEOM_FieldStep_ptr GEOM_Field_i::GetStep(CORBA::Long stepID)
 {
   GEOM::GEOM_FieldStep_var stepVar;
-  Handle(GEOM_FieldStep) step = _impl->GetStep(stepID);
+  HANDLE_NAMESPACE(GEOM_FieldStep) step = _impl->GetStep(stepID);
   if ( !step.IsNull() )
   {
     GEOM::GEOM_BaseObject_var obj = _engine->GetObject( step->GetDocID(),
@@ -229,7 +229,7 @@ CORBA::Long GEOM_Field_i::GetArraySize()
 
 GEOM_FieldStep_i::GEOM_FieldStep_i(PortableServer::POA_ptr  thePOA,
                                    GEOM::GEOM_Gen_ptr       theEngine,
-                                   Handle(GEOM_FieldStep)   theImpl):
+                                   HANDLE_NAMESPACE(GEOM_FieldStep)   theImpl):
   SALOME::GenericObj_i( thePOA ),
   GEOM_BaseObject_i( thePOA, theEngine, theImpl ),
   _impl( theImpl )
@@ -288,7 +288,7 @@ void GEOM_FieldStep_i::SetStamp(::CORBA::Long stamp)
 GEOM::GEOM_Field_ptr GEOM_FieldStep_i::GetField()
 {
   GEOM::GEOM_Field_var fieldVar;
-  Handle(GEOM_Field) field = _impl->GetField();
+  HANDLE_NAMESPACE(GEOM_Field) field = _impl->GetField();
   if ( !field.IsNull() )
   {
     GEOM::GEOM_BaseObject_var obj = _engine->GetObject( field->GetDocID(),
@@ -304,7 +304,7 @@ GEOM::GEOM_Field_ptr GEOM_FieldStep_i::GetField()
  */
 //================================================================================
 
-GEOM_BoolFieldStep_i::GEOM_BoolFieldStep_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, Handle(GEOM_FieldStep) theImpl):
+GEOM_BoolFieldStep_i::GEOM_BoolFieldStep_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, HANDLE_NAMESPACE(GEOM_FieldStep) theImpl):
   SALOME::GenericObj_i( thePOA ),
   GEOM_BaseObject_i( thePOA, theEngine, theImpl ),
   GEOM_FieldStep_i( thePOA, theEngine, theImpl )
@@ -355,7 +355,7 @@ GEOM::short_array* GEOM_BoolFieldStep_i::GetValues()
  */
 //================================================================================
 
-GEOM_IntFieldStep_i::GEOM_IntFieldStep_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, Handle(GEOM_FieldStep) theImpl):
+GEOM_IntFieldStep_i::GEOM_IntFieldStep_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, HANDLE_NAMESPACE(GEOM_FieldStep) theImpl):
   SALOME::GenericObj_i( thePOA ),
   GEOM_BaseObject_i( thePOA, theEngine, theImpl ),
   GEOM_FieldStep_i( thePOA, theEngine, theImpl )
@@ -406,7 +406,7 @@ GEOM::ListOfLong* GEOM_IntFieldStep_i::GetValues()
  */
 //================================================================================
 
-GEOM_DoubleFieldStep_i::GEOM_DoubleFieldStep_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, Handle(GEOM_FieldStep) theImpl):
+GEOM_DoubleFieldStep_i::GEOM_DoubleFieldStep_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, HANDLE_NAMESPACE(GEOM_FieldStep) theImpl):
   SALOME::GenericObj_i( thePOA ),
   GEOM_BaseObject_i( thePOA, theEngine, theImpl ),
   GEOM_FieldStep_i( thePOA, theEngine, theImpl )
@@ -457,7 +457,7 @@ GEOM::ListOfDouble* GEOM_DoubleFieldStep_i::GetValues()
  */
 //================================================================================
 
-GEOM_StringFieldStep_i::GEOM_StringFieldStep_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, Handle(GEOM_FieldStep) theImpl):
+GEOM_StringFieldStep_i::GEOM_StringFieldStep_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, HANDLE_NAMESPACE(GEOM_FieldStep) theImpl):
   SALOME::GenericObj_i( thePOA ),
   GEOM_BaseObject_i( thePOA, theEngine, theImpl ),
   GEOM_FieldStep_i( thePOA, theEngine, theImpl )

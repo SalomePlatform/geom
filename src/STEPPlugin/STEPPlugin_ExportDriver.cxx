@@ -58,7 +58,7 @@ STEPPlugin_ExportDriver::STEPPlugin_ExportDriver()
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer STEPPlugin_ExportDriver::Execute( TFunction_Logbook& log ) const
+Standard_Integer STEPPlugin_ExportDriver::Execute(LOGBOOK& log) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction( Label() );
@@ -142,15 +142,6 @@ Standard_Integer STEPPlugin_ExportDriver::Execute( TFunction_Logbook& log ) cons
   return 0;
 }
 
-//=======================================================================
-//function : MustExecute
-//purpose  :
-//=======================================================================
-Standard_Boolean STEPPlugin_ExportDriver::MustExecute( const TFunction_Logbook& ) const
-{
-  return Standard_True;
-}
-
 //================================================================================
 /*!
  * \brief Returns a name of creation operation and names and values of creation parameters
@@ -163,5 +154,4 @@ GetCreationInformation( std::string&             theOperationName,
   return false;
 }
 
-IMPLEMENT_STANDARD_HANDLE( STEPPlugin_ExportDriver,GEOM_BaseDriver );
-IMPLEMENT_STANDARD_RTTIEXT( STEPPlugin_ExportDriver,GEOM_BaseDriver );
+OCCT_IMPLEMENT_STANDARD_RTTIEXT( STEPPlugin_ExportDriver,GEOM_BaseDriver );

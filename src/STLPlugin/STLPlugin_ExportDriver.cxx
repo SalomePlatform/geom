@@ -63,7 +63,7 @@ STLPlugin_ExportDriver::STLPlugin_ExportDriver()
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer STLPlugin_ExportDriver::Execute( TFunction_Logbook& log ) const
+Standard_Integer STLPlugin_ExportDriver::Execute(LOGBOOK& log) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction( Label() );
@@ -117,7 +117,11 @@ Standard_Integer STLPlugin_ExportDriver::Execute( TFunction_Logbook& log ) const
       aWriter.SetDeflection( aDeflection );
 #endif
     aWriter.Write( aCopyShape, aFileName.ToCString() );
-    log.SetTouched( Label() );
+#if OCC_VERSION_MAJOR < 7
+    log.SetTouched(Label());
+#else
+    log->SetTouched(Label());
+#endif
     return 1;
   }
   catch( Standard_Failure )
@@ -125,15 +129,6 @@ Standard_Integer STLPlugin_ExportDriver::Execute( TFunction_Logbook& log ) const
     //THROW_SALOME_CORBA_EXCEPTION("Exception catched in ExportSTL", SALOME::BAD_PARAM);
   }
   return 0;
-}
-
-//=======================================================================
-//function : MustExecute
-//purpose  :
-//=======================================================================
-Standard_Boolean STLPlugin_ExportDriver::MustExecute( const TFunction_Logbook& ) const
-{
-  return Standard_True;
 }
 
 //================================================================================
@@ -148,5 +143,4 @@ GetCreationInformation( std::string&             theOperationName,
   return false;
 }
 
-IMPLEMENT_STANDARD_HANDLE( STLPlugin_ExportDriver,GEOM_BaseDriver );
-IMPLEMENT_STANDARD_RTTIEXT( STLPlugin_ExportDriver,GEOM_BaseDriver );
+OCCT_IMPLEMENT_STANDARD_RTTIEXT( STLPlugin_ExportDriver,GEOM_BaseDriver );

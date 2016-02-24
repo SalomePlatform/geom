@@ -29,11 +29,10 @@
 #include "GEOM_Object.hxx"
 #include <TDocStd_Document.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 
 class GEOMImpl_IGroupOperations;
 class GEOMImpl_IPipe;
-class TopTools_IndexedMapOfShape;
-
 
 class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
  public:

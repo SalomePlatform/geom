@@ -59,7 +59,7 @@ class ShHealOper_SplitCurve2d : public ShapeUpgrade_SplitCurve2d
 
  public:
 // Declaration of CASCADE RTTI
-DEFINE_STANDARD_RTTI (ShHealOper_SplitCurve2d)
+  OCCT_DEFINE_STANDARD_RTTIEXT(ShHealOper_SplitCurve2d,ShapeUpgrade_SplitCurve2d)
 };
 
 // Definition of HANDLE object using Standard_DefineHandle.hxx

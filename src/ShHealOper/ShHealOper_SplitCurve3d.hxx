@@ -27,6 +27,8 @@
 #ifndef ShHealOper_SplitCurve3d_HeaderFile
 #define ShHealOper_SplitCurve3d_HeaderFile
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <ShapeUpgrade_SplitCurve3d.hxx>
 #include <TColStd_HSequenceOfReal.hxx>
 #include <Standard_DefineHandle.hxx>
@@ -59,7 +61,7 @@ class ShHealOper_SplitCurve3d : public ShapeUpgrade_SplitCurve3d
 
  public:
 // Declaration of CASCADE RTTI
-DEFINE_STANDARD_RTTI (ShHealOper_SplitCurve3d)
+  OCCT_DEFINE_STANDARD_RTTIEXT(ShHealOper_SplitCurve3d,ShapeUpgrade_SplitCurve3d)
 };
 
 // Definition of HANDLE object using Standard_DefineHandle.hxx

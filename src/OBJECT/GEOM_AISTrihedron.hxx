@@ -34,7 +34,7 @@
 #include <Standard_DefineHandle.hxx>
 #include <TCollection_AsciiString.hxx>
 
-class Handle(Geom_Axis2Placement);
+class Geom_Axis2Placement;
 
 DEFINE_STANDARD_HANDLE(GEOM_AISTrihedron, AIS_Trihedron)
 
@@ -61,21 +61,7 @@ private:
   Handle(SALOME_InteractiveObject)                 myObject;
 
 public:
-  DEFINE_STANDARD_RTTI(GEOM_AISTrihedron)
+  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_AISTrihedron,AIS_Trihedron)
 };
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-

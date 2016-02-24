@@ -27,12 +27,12 @@
 
 #include <TopTools_ListOfShape.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
+#include <TColStd_HArray1OfInteger.hxx>
 
 #include <list>
 
 class GEOM_Engine;
-class Handle(GEOM_Object);
-class Handle(TColStd_HArray1OfInteger);
+class GEOM_Object;
 
 class GEOMImpl_IBlocksOperations : public GEOM_IOperations {
  public:

@@ -355,7 +355,7 @@ GEOM::GEOM_IKindOfShape::shape_kind GEOM_IMeasureOperations_i::KindOfShape
   GEOM::ListOfDouble_var aDoublesArray = new GEOM::ListOfDouble();
 
   //Get the reference shape
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
 
   if (!aShape.IsNull()) {
     Handle(TColStd_HSequenceOfInteger) anIntegers = new TColStd_HSequenceOfInteger;
@@ -403,7 +403,7 @@ void GEOM_IMeasureOperations_i::GetPosition
   Zz = Xx = 1.;
 
   //Get the reference shape
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
   if (aShape.IsNull()) return;
 
   // Get shape parameters
@@ -424,11 +424,11 @@ GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::GetCentreOfMass
   GetOperations()->SetNotDone();
 
   //Get the reference shape
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
   if (aShape.IsNull()) return aGEOMObject._retn();
 
   // Make Point - centre of mass of theShape
-  Handle(GEOM_Object) anObject = GetOperations()->GetCentreOfMass(aShape);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->GetCentreOfMass(aShape);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -449,11 +449,11 @@ GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::GetVertexByIndex
   GetOperations()->SetNotDone();
 
   //Get the reference shape
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
   if ( aShape.IsNull() ) return aGEOMObject._retn();
 
   // Get vertex by index
-  Handle(GEOM_Object) anObject = GetOperations()->GetVertexByIndex(aShape, theIndex);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->GetVertexByIndex(aShape, theIndex);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -475,14 +475,14 @@ GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::GetNormal
   GetOperations()->SetNotDone();
 
   //Get the reference shape
-  Handle(GEOM_Object) aFace = GetObjectImpl(theFace);
+  HANDLE_NAMESPACE(GEOM_Object) aFace = GetObjectImpl(theFace);
   if (aFace.IsNull()) return aGEOMObject._retn();
 
   // Get the OptionalPoint (can be not defined)
-  Handle(GEOM_Object) anOptionalPoint = GetObjectImpl(theOptionalPoint);
+  HANDLE_NAMESPACE(GEOM_Object) anOptionalPoint = GetObjectImpl(theOptionalPoint);
 
   // Make Vector - normal to theFace (in point theOptionalPoint if the face is not planar)
-  Handle(GEOM_Object) anObject = GetOperations()->GetNormal(aFace, anOptionalPoint);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->GetNormal(aFace, anOptionalPoint);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -503,7 +503,7 @@ void GEOM_IMeasureOperations_i::GetBasicProperties (GEOM::GEOM_Object_ptr theSha
   GetOperations()->SetNotDone();
 
   //Get the reference shape
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
   if (aShape.IsNull()) return;
 
   // Get shape parameters
@@ -526,7 +526,7 @@ void GEOM_IMeasureOperations_i::GetInertia
   GetOperations()->SetNotDone();
 
   //Get the reference shape
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
   if (aShape.IsNull()) return;
 
   // Get shape parameters
@@ -552,7 +552,7 @@ void GEOM_IMeasureOperations_i::GetBoundingBox (GEOM::GEOM_Object_ptr theShape,
   GetOperations()->SetNotDone();
 
   //Get the reference shape
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
   if (aShape.IsNull()) return;
 
   // Get shape parameters
@@ -575,11 +575,11 @@ GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::MakeBoundingBox
   GetOperations()->SetNotDone();
 
   //Get the reference shape
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
   if (aShape.IsNull()) return aGEOMObject._retn();
 
   // Make Box - bounding box of theShape
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->GetBoundingBox(aShape, precise);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -602,7 +602,7 @@ void GEOM_IMeasureOperations_i::GetTolerance
   GetOperations()->SetNotDone();
 
   //Get the reference shape
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
   if (aShape.IsNull()) return;
 
   // Get shape parameters
@@ -630,7 +630,7 @@ CORBA::Boolean GEOM_IMeasureOperations_i::CheckShape
   }
 
   //Get the reference shape
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
 
   if (aShape.IsNull())
   {
@@ -658,7 +658,7 @@ CORBA::Boolean GEOM_IMeasureOperations_i::CheckShapeWithGeometry
   }
 
   //Get the reference shape
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
 
   if (aShape.IsNull())
   {
@@ -683,7 +683,7 @@ char* GEOM_IMeasureOperations_i::PrintShapeErrors
               const GEOM::GEOM_IMeasureOperations::ShapeErrors &theErrors)
 {
   //Get the reference shape
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
 
   if (aShape.IsNull()) {
     return NULL;
@@ -718,7 +718,7 @@ CORBA::Boolean GEOM_IMeasureOperations_i::CheckSelfIntersections (GEOM::GEOM_Obj
   GEOM::ListOfLong_var anIntegersArray = new GEOM::ListOfLong();
 
   // Get the reference shape
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
 
   if (!aShape.IsNull()) {
     GEOMImpl_IMeasureOperations::SICheckLevel aCheckLevel;
@@ -785,7 +785,7 @@ CORBA::Boolean GEOM_IMeasureOperations_i::CheckSelfIntersectionsFast
   GEOM::ListOfLong_var anIntegersArray = new GEOM::ListOfLong();
 
   // Get the reference shape
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
 
   if (!aShape.IsNull()) {
     Handle(TColStd_HSequenceOfInteger) anIntegers = new TColStd_HSequenceOfInteger;
@@ -830,8 +830,8 @@ CORBA::Boolean GEOM_IMeasureOperations_i::FastIntersect (GEOM::GEOM_Object_ptr t
   GEOM::ListOfLong_var anIntegersArray2 = new GEOM::ListOfLong();
 
   // Get the reference shape
-  Handle(GEOM_Object) aShape1 = GetObjectImpl(theShape1);
-  Handle(GEOM_Object) aShape2 = GetObjectImpl(theShape2);
+  HANDLE_NAMESPACE(GEOM_Object) aShape1 = GetObjectImpl(theShape1);
+  HANDLE_NAMESPACE(GEOM_Object) aShape2 = GetObjectImpl(theShape2);
   
   if (!aShape1.IsNull() && !aShape2.IsNull()) {
     Handle(TColStd_HSequenceOfInteger) anIntegers1 = new TColStd_HSequenceOfInteger;
@@ -872,7 +872,7 @@ char* GEOM_IMeasureOperations_i::IsGoodForSolid (GEOM::GEOM_Object_ptr theShape)
   GetOperations()->SetNotDone();
 
   //Get the reference shape
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
   if (aShape.IsNull()) return CORBA::string_dup("WRN_NULL_OBJECT_OR_SHAPE");
 
   // Get shape parameters
@@ -891,7 +891,7 @@ char* GEOM_IMeasureOperations_i::WhatIs (GEOM::GEOM_Object_ptr theShape)
   GetOperations()->SetNotDone();
 
   //Get the reference shape
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
   if (aShape.IsNull()) return NULL;
 
   // Get shape parameters
@@ -916,7 +916,7 @@ GEOM::ListOfBool* GEOM_IMeasureOperations_i::AreCoordsInside (GEOM::GEOM_Object_
   GEOM::ListOfBool_var aResults = new GEOM::ListOfBool;
   aResults->length(nb_points);
   
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
   
   std::vector<double> tmp(3*nb_points);
   for (int i = 0; i < 3*nb_points; i++)
@@ -941,8 +941,8 @@ CORBA::Double GEOM_IMeasureOperations_i::GetMinDistance
   GetOperations()->SetNotDone();
 
   //Get the reference shape
-  Handle(GEOM_Object) aShape1 = GetObjectImpl(theShape1);
-  Handle(GEOM_Object) aShape2 = GetObjectImpl(theShape2);
+  HANDLE_NAMESPACE(GEOM_Object) aShape1 = GetObjectImpl(theShape1);
+  HANDLE_NAMESPACE(GEOM_Object) aShape2 = GetObjectImpl(theShape2);
   if (aShape1.IsNull() || aShape2.IsNull()) return -1.0;
 
   // Get shape parameters
@@ -966,8 +966,8 @@ CORBA::Long GEOM_IMeasureOperations_i::ClosestPoints
   GEOM::ListOfDouble_var aDoublesArray = new GEOM::ListOfDouble();
 
   //Get the reference shape
-  Handle(GEOM_Object) aShape1 = GetObjectImpl(theShape1);
-  Handle(GEOM_Object) aShape2 = GetObjectImpl(theShape2);
+  HANDLE_NAMESPACE(GEOM_Object) aShape1 = GetObjectImpl(theShape1);
+  HANDLE_NAMESPACE(GEOM_Object) aShape2 = GetObjectImpl(theShape2);
 
   if (!aShape1.IsNull() && !aShape2.IsNull()) {
     Handle(TColStd_HSequenceOfReal) aDoubles = new TColStd_HSequenceOfReal;
@@ -997,7 +997,7 @@ void GEOM_IMeasureOperations_i::PointCoordinates (GEOM::GEOM_Object_ptr theShape
   GetOperations()->SetNotDone();
 
   //Get the reference shape
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
   if (aShape.IsNull())
     return;
 
@@ -1017,8 +1017,8 @@ CORBA::Double GEOM_IMeasureOperations_i::GetAngle (GEOM::GEOM_Object_ptr theShap
   GetOperations()->SetNotDone();
 
   //Get the reference shapes
-  Handle(GEOM_Object) aShape1 = GetObjectImpl(theShape1);
-  Handle(GEOM_Object) aShape2 = GetObjectImpl(theShape2);
+  HANDLE_NAMESPACE(GEOM_Object) aShape1 = GetObjectImpl(theShape1);
+  HANDLE_NAMESPACE(GEOM_Object) aShape2 = GetObjectImpl(theShape2);
   if (aShape1.IsNull() || aShape2.IsNull()) return -1.0;
 
   // Get the angle
@@ -1037,8 +1037,8 @@ CORBA::Double GEOM_IMeasureOperations_i::GetAngleBtwVectors (GEOM::GEOM_Object_p
   GetOperations()->SetNotDone();
 
   //Get the reference shapes
-  Handle(GEOM_Object) aShape1 = GetObjectImpl(theShape1);
-  Handle(GEOM_Object) aShape2 = GetObjectImpl(theShape2);
+  HANDLE_NAMESPACE(GEOM_Object) aShape1 = GetObjectImpl(theShape1);
+  HANDLE_NAMESPACE(GEOM_Object) aShape2 = GetObjectImpl(theShape2);
   if (aShape1.IsNull() || aShape2.IsNull()) return -1.0;
 
   // Get the angle
@@ -1058,7 +1058,7 @@ CORBA::Double GEOM_IMeasureOperations_i::CurveCurvatureByParam
   GetOperations()->SetNotDone();
 
   //Get the reference shape
-  Handle(GEOM_Object) aShape = GetObjectImpl(theCurve);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theCurve);
   if(aShape.IsNull()) return -1.0;
 
   return GetOperations()->CurveCurvatureByParam(aShape,theParam);
@@ -1076,8 +1076,8 @@ CORBA::Double GEOM_IMeasureOperations_i::CurveCurvatureByPoint
   GetOperations()->SetNotDone();
 
   //Get the reference shape
-  Handle(GEOM_Object) aShape = GetObjectImpl(theCurve);
-  Handle(GEOM_Object) aPoint = GetObjectImpl(thePoint);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theCurve);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint = GetObjectImpl(thePoint);
   if( aShape.IsNull() || aPoint.IsNull() ) return -1.0;
 
   return GetOperations()->CurveCurvatureByPoint(aShape,aPoint);
@@ -1098,7 +1098,7 @@ CORBA::Double GEOM_IMeasureOperations_i::MaxSurfaceCurvatureByParam
   GetOperations()->SetNotDone();
 
   //Get the reference shape
-  Handle(GEOM_Object) aShape = GetObjectImpl(theSurf);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theSurf);
   if(aShape.IsNull()) return -1.0;
 
   return GetOperations()->MaxSurfaceCurvatureByParam(aShape,theUParam,theVParam);
@@ -1116,8 +1116,8 @@ CORBA::Double GEOM_IMeasureOperations_i::MaxSurfaceCurvatureByPoint
   GetOperations()->SetNotDone();
 
   //Get the reference shape
-  Handle(GEOM_Object) aShape = GetObjectImpl(theSurf);
-  Handle(GEOM_Object) aPoint = GetObjectImpl(thePoint);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theSurf);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint = GetObjectImpl(thePoint);
   if( aShape.IsNull() || aPoint.IsNull() ) return -1.0;
 
   return GetOperations()->MaxSurfaceCurvatureByPoint(aShape,aPoint);
@@ -1137,7 +1137,7 @@ CORBA::Double GEOM_IMeasureOperations_i::MinSurfaceCurvatureByParam
   GetOperations()->SetNotDone();
 
   //Get the reference shape
-  Handle(GEOM_Object) aShape = GetObjectImpl(theSurf);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theSurf);
   if (aShape.IsNull()) return -1.0;
 
   return GetOperations()->MinSurfaceCurvatureByParam(aShape,theUParam,theVParam);
@@ -1155,8 +1155,8 @@ CORBA::Double GEOM_IMeasureOperations_i::MinSurfaceCurvatureByPoint
   GetOperations()->SetNotDone();
 
   //Get the reference shape
-  Handle(GEOM_Object) aShape = GetObjectImpl(theSurf);
-  Handle(GEOM_Object) aPoint = GetObjectImpl(thePoint);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theSurf);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint = GetObjectImpl(thePoint);
   if (aShape.IsNull() || aPoint.IsNull()) return -1.0;
 
   return GetOperations()->MinSurfaceCurvatureByPoint(aShape,aPoint);

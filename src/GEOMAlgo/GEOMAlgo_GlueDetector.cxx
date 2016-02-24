@@ -546,7 +546,7 @@ Standard_Integer CheckAncesstors
    const TopTools_IndexedDataMapOfShapeListOfShape& aMEV,
    TopTools_IndexedDataMapOfShapeListOfShape& aMEVZ)
 {
-  Standard_Address pLE, pLV, pLVZ;
+  TopTools_ListOfShape *pLE, *pLV, *pLVZ;
   Standard_Integer iRet, aNbVX;
   TopTools_ListIteratorOfListOfShape aItLE, aItLV;
   TopTools_MapOfShape aMFence;
@@ -554,24 +554,28 @@ Standard_Integer CheckAncesstors
   //
   iRet=0;
   //
-  pLE=aMVE.FindFromKey1(aVSD);
+#if OCC_VERSION_MAJOR < 7
+  pLE=const_cast<TopTools_ListOfShape*>(&aMVE.FindFromKey(aVSD));
+#else
+  pLE=const_cast<TopTools_IndexedDataMapOfShapeListOfShape&>(aMVE).ChangeSeek(aVSD);
+#endif
   if (!pLE) {
     return iRet;
   }
-  //
-  const TopTools_ListOfShape& aLE=*((TopTools_ListOfShape*)pLE);
-  aItLE.Initialize(aLE);
+  aItLE.Initialize(*pLE);
   for (; aItLE.More(); aItLE.Next()) {
     const TopoDS_Shape& aE=aItLE.Value();
     //
-    pLV=aMEV.FindFromKey1(aE);
+#if OCC_VERSION_MAJOR < 7
+    pLV=const_cast<TopTools_ListOfShape*>(&aMEV.FindFromKey(aE));
+#else
+    pLV=const_cast<TopTools_IndexedDataMapOfShapeListOfShape&>(aMEV).ChangeSeek(aE);
+#endif
     if (!pLV) {
       continue; // it should be not so
     }
-    //
     aLVX.Clear();
-    const TopTools_ListOfShape& aLV=*((TopTools_ListOfShape*)pLV);
-    aItLV.Initialize(aLV);
+    aItLV.Initialize(*pLV);
     for (; aItLV.More(); aItLV.Next()) {
       const TopoDS_Shape& aV=aItLV.Value();
       if (!aV.IsSame(aVSD)) {
@@ -590,12 +594,16 @@ Standard_Integer CheckAncesstors
     //
     iRet=1;
     //
-    pLVZ=aMEVZ.FindFromKey1(aE);
+#if OCC_VERSION_MAJOR < 7
+    pLVZ=const_cast<TopTools_ListOfShape*>(&aMEVZ.FindFromKey(aE));
+#else
+    pLVZ=aMEVZ.ChangeSeek(aE);
+#endif
     if (!pLVZ) {
       aMEVZ.Add(aE, aLVX);
     }
     else {
-      TopTools_ListOfShape& aLVZ=*((TopTools_ListOfShape*)pLVZ);
+      TopTools_ListOfShape& aLVZ=*pLVZ;
       aLVZ.Append(aLVX);
     }
   }

@@ -73,8 +73,7 @@ namespace GEOMUtils
 
   public:
 
-    DEFINE_STANDARD_RTTI(HTrsfCurve2d);
-
+  OCCT_DEFINE_STANDARD_RTTIEXT(HTrsfCurve2d,Adaptor2d_HCurve2d)
   };
 }
 

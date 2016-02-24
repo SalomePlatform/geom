@@ -28,8 +28,7 @@
 #include "GEOM_AISTrihedron.hxx"
 #include <Geom_Axis2Placement.hxx>
 
-IMPLEMENT_STANDARD_HANDLE(GEOM_AISTrihedron, AIS_Trihedron)
-IMPLEMENT_STANDARD_RTTIEXT(GEOM_AISTrihedron, AIS_Trihedron)
+OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOM_AISTrihedron, AIS_Trihedron)
 
 /*
   Class       : GEOM_AISTrihedron
@@ -63,10 +62,3 @@ void GEOM_AISTrihedron::setIO( const Handle(SALOME_InteractiveObject)& theIO )
 {
   myObject = theIO;
 }
-
-
-
-
-
-
-  

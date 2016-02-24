@@ -80,7 +80,7 @@ GEOMImpl_PlaneDriver::GEOMImpl_PlaneDriver()
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer GEOMImpl_PlaneDriver::Execute(TFunction_Logbook& log) const
+Standard_Integer GEOMImpl_PlaneDriver::Execute(LOGBOOK& log) const
 {
   if (Label().IsNull())  return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
@@ -127,7 +127,8 @@ Standard_Integer GEOMImpl_PlaneDriver::Execute(TFunction_Logbook& log) const
     if (gp_Vec(aP1, aP2).IsParallel(gp_Vec(aP1, aP3), Precision::Angular()))
       Standard_ConstructionError::Raise("Plane creation aborted: points lay on one line");
     GC_MakePlane aMakePlane (aP1, aP2, aP3);
-    aShape = BRepBuilderAPI_MakeFace(aMakePlane, -aSize, +aSize, -aSize, +aSize,
+    aShape = BRepBuilderAPI_MakeFace(aMakePlane.Value(),
+                                     -aSize, +aSize, -aSize, +aSize,
                                      Precision::Confusion()).Shape();
   } else if (aType == PLANE_FACE) {
     Handle(GEOM_Function) aRef = aPI.GetFace();
@@ -237,7 +238,11 @@ Standard_Integer GEOMImpl_PlaneDriver::Execute(TFunction_Logbook& log) const
 
   aFunction->SetValue(aShape);
 
+#if OCC_VERSION_MAJOR < 7
   log.SetTouched(Label());
+#else
+  log->SetTouched(Label());
+#endif
 
   return 1;
 }
@@ -300,5 +305,4 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-IMPLEMENT_STANDARD_HANDLE (GEOMImpl_PlaneDriver,GEOM_BaseDriver);
-IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_PlaneDriver,GEOM_BaseDriver);
+OCCT_IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_PlaneDriver,GEOM_BaseDriver);

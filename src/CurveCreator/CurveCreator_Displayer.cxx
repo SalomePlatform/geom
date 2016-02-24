@@ -19,7 +19,7 @@
 
 #include "CurveCreator_Displayer.hxx"
 
-CurveCreator_Displayer::CurveCreator_Displayer( Handle_AIS_InteractiveContext theContext,
+CurveCreator_Displayer::CurveCreator_Displayer( Handle(AIS_InteractiveContext) theContext,
                                                 const int theZLayer ) :
   myContext( theContext ), myZLayer( theZLayer )
 {

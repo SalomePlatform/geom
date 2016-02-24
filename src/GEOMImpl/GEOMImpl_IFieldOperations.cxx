@@ -24,13 +24,11 @@
 
 #include "GEOMImpl_Types.hxx"
 
-#include "GEOM_Field.hxx"
 #include "GEOM_Function.hxx"
 #include "GEOM_IField.hxx"
 #include "GEOM_Object.hxx"
 #include "GEOM_PythonDump.hxx"
 
-#include <TColStd_HArray1OfExtendedString.hxx>
 #include <TDataStd_ListIteratorOfListOfExtendedString.hxx>
 
 #include <utilities.h>

@@ -65,10 +65,10 @@ public:
    */
   GEOMImpl_PolylineDumper
             (const std::list <std::list <double> >        &theCoords,
-             const Handle_TColStd_HArray1OfExtendedString &theNames,
-             const Handle_TColStd_HArray1OfByte           &theTypes,
-             const Handle_TColStd_HArray1OfByte           &theCloseds,
-             const Handle_TColStd_HArray1OfReal           &thePlnCoords);
+             const Handle(TColStd_HArray1OfExtendedString) &theNames,
+             const Handle(TColStd_HArray1OfByte)           &theTypes,
+             const Handle(TColStd_HArray1OfByte)           &theCloseds,
+             const Handle(TColStd_HArray1OfReal)           &thePlnCoords);
 
   /**
    * This construcor initializes the object with 2D polyline creation
@@ -86,10 +86,10 @@ public:
    */
   GEOMImpl_PolylineDumper
             (const std::list <std::list <double> >        &theCoords,
-             const Handle_TColStd_HArray1OfExtendedString &theNames,
-             const Handle_TColStd_HArray1OfByte           &theTypes,
-             const Handle_TColStd_HArray1OfByte           &theCloseds,
-             const Handle_GEOM_Object                     &theWorkingPlane);
+             const Handle(TColStd_HArray1OfExtendedString) &theNames,
+             const Handle(TColStd_HArray1OfByte)           &theTypes,
+             const Handle(TColStd_HArray1OfByte)           &theCloseds,
+             const Handle(GEOM_Object)                     &theWorkingPlane);
 
   /**
    * This method returns Standard_True if the dump description is created
@@ -106,7 +106,7 @@ public:
    * \param theObject the newly created object.
    * \return Standard_True in case of success; Standard_False otherwise.
    */
-  Standard_Boolean Dump(const Handle_GEOM_Object &theObject);
+  Standard_Boolean Dump(const Handle(GEOM_Object) &theObject);
 
 protected:
 
@@ -119,11 +119,11 @@ protected:
 private:
 
   const std::list <std::list <double> >  &myCoords;
-  Handle_TColStd_HArray1OfExtendedString  myNames;
-  Handle_TColStd_HArray1OfByte            myTypes;
-  Handle_TColStd_HArray1OfByte            myCloseds;
-  Handle_TColStd_HArray1OfReal            myPlnCoords;
-  Handle_GEOM_Object                      myWorkingPlane;
+  Handle(TColStd_HArray1OfExtendedString)  myNames;
+  Handle(TColStd_HArray1OfByte)            myTypes;
+  Handle(TColStd_HArray1OfByte)            myCloseds;
+  Handle(TColStd_HArray1OfReal)            myPlnCoords;
+  Handle(GEOM_Object)                      myWorkingPlane;
   Standard_Boolean                        myIsDone;
   TCollection_ExtendedString              myDescr;
 

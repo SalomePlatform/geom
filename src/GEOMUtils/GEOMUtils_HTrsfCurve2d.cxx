@@ -21,8 +21,7 @@
 #include <GEOMUtils_HTrsfCurve2d.hxx>
 
 namespace GEOMUtils {
-  IMPLEMENT_STANDARD_HANDLE (HTrsfCurve2d, Adaptor2d_HCurve2d);
-  IMPLEMENT_STANDARD_RTTIEXT(HTrsfCurve2d, Adaptor2d_HCurve2d);
+  OCCT_IMPLEMENT_STANDARD_RTTIEXT(HTrsfCurve2d, Adaptor2d_HCurve2d);
 }
 
 //=======================================================================

@@ -26,16 +26,18 @@
 #include <Standard_Transient.hxx>
 #include <Standard_GUID.hxx>
 #include <TColStd_HArray1OfExtendedString.hxx>
+#include <TColStd_HArray1OfByte.hxx>
+#include <TColStd_HArray1OfReal.hxx>
+#include <TColStd_HArray1OfInteger.hxx>
+#include <TColStd_HSequenceOfTransient.hxx>
 #include <TCollection_AsciiString.hxx>
 #include <TDF_Label.hxx>
 #include <TDF_LabelSequence.hxx>
 #include <TDataStd_ListOfExtendedString.hxx>
 #include <TopoDS_Shape.hxx>
 
-class Handle_TColStd_HArray1OfByte;
-class Handle_TColStd_HArray1OfReal;
-class Handle_TColStd_HArray1OfInteger;
-class Handle_TColStd_HSequenceOfTransient;
+#include <Basics_OCCTVersion.hxx>
+
 class GEOM_Function;
 DEFINE_STANDARD_HANDLE (GEOM_Function, Standard_Transient);
 
@@ -195,7 +197,7 @@ public:
   //Returns top label of this function's naming tree
   Standard_EXPORT TDF_Label GetNamingEntry (const Standard_Boolean create = Standard_True);
 
-  DEFINE_STANDARD_RTTI (GEOM_Function);
+  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_Function,Standard_Transient)
 
   private:
 

@@ -41,12 +41,9 @@ public:
  // Methods PUBLIC
   // 
   AdvancedEngine_DividedDiskDriver();
-  virtual  Standard_Integer Execute(TFunction_Logbook& log) const; 
-  virtual void Validate(TFunction_Logbook&) const {}
-  Standard_Boolean MustExecute(const TFunction_Logbook&) const
-  {
-    return Standard_True;
-  }
+  virtual Standard_Integer Execute(LOGBOOK& log) const;
+  virtual void Validate(LOGBOOK&) const {}
+  Standard_Boolean MustExecute(const LOGBOOK&) const { return Standard_True; }
   static const Standard_GUID& GetID();
   ~AdvancedEngine_DividedDiskDriver() {};
  
@@ -59,7 +56,7 @@ private:
   TopoDS_Shell MakeDiskHexagon (double R, double Ratio) const;
   TopoDS_Shape MakeDiskSquare  (double R, double Ratio) const;
 
-  DEFINE_STANDARD_RTTI( AdvancedEngine_DividedDiskDriver )
+  OCCT_DEFINE_STANDARD_RTTIEXT(AdvancedEngine_DividedDiskDriver,GEOM_BaseDriver)
 };
 
 #endif // _AdvancedEngine_DividedDiskDriver_HXX

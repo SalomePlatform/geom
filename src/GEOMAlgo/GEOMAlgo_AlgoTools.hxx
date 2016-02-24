@@ -32,10 +32,8 @@
 #include <Standard_Macro.hxx>
 #include <Standard_Boolean.hxx>
 #if OCC_VERSION_LARGE > 0x06070100
-#include <Handle_IntTools_Context.hxx>
 #include <IntTools_Context.hxx>
 #else
-#include <Handle_BOPInt_Context.hxx>
 #include <BOPInt_Context.hxx>
 #endif
 #include <Standard_Integer.hxx>

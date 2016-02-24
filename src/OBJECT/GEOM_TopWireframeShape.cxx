@@ -42,8 +42,7 @@
 #include <TopoDS_Shape.hxx>
 #include <Prs3d_IsoAspect.hxx>
 
-IMPLEMENT_STANDARD_HANDLE(GEOM_TopWireframeShape, SALOME_AISShape)
-IMPLEMENT_STANDARD_RTTIEXT(GEOM_TopWireframeShape, SALOME_AISShape)
+OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOM_TopWireframeShape, SALOME_AISShape)
 
 GEOM_TopWireframeShape::GEOM_TopWireframeShape( const TopoDS_Shape& shape )
   :SALOME_AISShape(shape)

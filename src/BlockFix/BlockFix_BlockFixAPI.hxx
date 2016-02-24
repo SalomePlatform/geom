@@ -26,10 +26,12 @@
 #include <Standard.hxx>
 #include <Standard_DefineHandle.hxx>
 
-#include <Handle_ShapeBuild_ReShape.hxx>
+#include <ShapeBuild_ReShape.hxx>
 #include <TopoDS_Shape.hxx>
 #include <Standard_Real.hxx>
 #include <MMgt_TShared.hxx>
+
+#include <Basics_OCCTVersion.hxx>
 
 DEFINE_STANDARD_HANDLE(BlockFix_BlockFixAPI, MMgt_TShared);
 
@@ -41,15 +43,15 @@ public:
 
   void SetShape(const TopoDS_Shape& Shape);
   TopoDS_Shape Shape() const;
-  Handle_ShapeBuild_ReShape& Context();
+  Handle(ShapeBuild_ReShape)& Context();
   Standard_Real& Tolerance();
   Standard_Integer& OptimumNbFaces();
   Standard_EXPORT void Perform();
 
-  DEFINE_STANDARD_RTTI(BlockFix_BlockFixAPI);
+  OCCT_DEFINE_STANDARD_RTTIEXT(BlockFix_BlockFixAPI,MMgt_TShared)
 
 private:
-  Handle_ShapeBuild_ReShape myContext;
+  Handle(ShapeBuild_ReShape) myContext;
   TopoDS_Shape myShape;
   Standard_Real myTolerance;
   Standard_Integer myOptimumNbFaces;

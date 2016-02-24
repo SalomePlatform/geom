@@ -22,7 +22,6 @@
 
 #include "GEOM_BaseDriver.hxx"
 
-#include <TFunction_Logbook.hxx>
 #include <TColgp_HArray1OfPnt.hxx>
 #include <TopoDS_Shape.hxx>
 
@@ -34,12 +33,10 @@ public:
  // Methods PUBLIC
   // 
   AdvancedEngine_SmoothingSurfaceDriver();
-  virtual  Standard_Integer Execute(TFunction_Logbook& log) const; 
-  virtual void Validate(TFunction_Logbook&) const {}
-  Standard_Boolean MustExecute(const TFunction_Logbook&) const
-  {
-    return Standard_True;
-  }
+  virtual Standard_Integer Execute(LOGBOOK& log) const;
+  virtual void Validate(LOGBOOK&) const {}
+  Standard_Boolean MustExecute(const LOGBOOK&) const { return Standard_True; }
+
   static const Standard_GUID& GetID();
   ~AdvancedEngine_SmoothingSurfaceDriver() {};
   
@@ -47,11 +44,10 @@ public:
 				      std::vector<GEOM_Param>& params);
   // Type management
   //
-DEFINE_STANDARD_RTTI( AdvancedEngine_SmoothingSurfaceDriver )
-
+  OCCT_DEFINE_STANDARD_RTTIEXT(AdvancedEngine_SmoothingSurfaceDriver,GEOM_BaseDriver)
 private:
   TopoDS_Shape MakeSmoothingSurfaceUnClosed
-                    (const Handle_TColgp_HArray1OfPnt &theListOfPoints,
+                    (const Handle(TColgp_HArray1OfPnt) &theListOfPoints,
                      const Standard_Integer            theNbMax,
                      const Standard_Integer            theDegMax,
                      const Standard_Real               theDMax) const;

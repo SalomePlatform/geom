@@ -61,7 +61,7 @@ STLPlugin_ImportDriver::STLPlugin_ImportDriver()
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer STLPlugin_ImportDriver::Execute( TFunction_Logbook& log ) const
+Standard_Integer STLPlugin_ImportDriver::Execute(LOGBOOK& log) const
 {
   if( Label().IsNull() ) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction( Label() );
@@ -109,18 +109,13 @@ Standard_Integer STLPlugin_ImportDriver::Execute( TFunction_Logbook& log ) const
 
   aFunction->SetValue( aShape );
 
-  log.SetTouched( Label() );
+#if OCC_VERSION_MAJOR < 7
+  log.SetTouched(Label());
+#else
+  log->SetTouched(Label());
+#endif
 
   return 1;
-}
-
-//=======================================================================
-//function : MustExecute
-//purpose  :
-//=======================================================================
-Standard_Boolean STLPlugin_ImportDriver::MustExecute( const TFunction_Logbook& ) const
-{
-  return Standard_True;
 }
 
 //================================================================================
@@ -151,5 +146,4 @@ GetCreationInformation( std::string&             theOperationName,
   return true;
 }
 
-IMPLEMENT_STANDARD_HANDLE( STLPlugin_ImportDriver, GEOM_BaseDriver );
-IMPLEMENT_STANDARD_RTTIEXT( STLPlugin_ImportDriver, GEOM_BaseDriver );
+OCCT_IMPLEMENT_STANDARD_RTTIEXT( STLPlugin_ImportDriver, GEOM_BaseDriver );

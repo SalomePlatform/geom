@@ -37,7 +37,7 @@
 #include <Precision.hxx>
 
 class GEOM_Engine;
-class Handle(GEOM_Object);
+class GEOM_Object;
 
 class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
  public:

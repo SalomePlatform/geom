@@ -58,7 +58,7 @@ class GEOMAlgo_ClsfSolid : public GEOMAlgo_Clsf
   Standard_EXPORT
     virtual  void CheckData() ;
 
-  DEFINE_STANDARD_RTTI(GEOMAlgo_ClsfSolid)
+  OCCT_DEFINE_STANDARD_RTTIEXT(GEOMAlgo_ClsfSolid,GEOMAlgo_Clsf)
 
   protected:
     TopoDS_Shape myShape;

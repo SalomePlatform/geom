@@ -87,15 +87,15 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateTwoPoints
   aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
 
   //Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull()) return aGEOMObject._retn();
 
   //Get the first point of translation
-  Handle(GEOM_Object) aPoint1 = GetObjectImpl(thePoint1);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint1 = GetObjectImpl(thePoint1);
   if (aPoint1.IsNull()) return aGEOMObject._retn();
 
   //Get the second point of translation
-  Handle(GEOM_Object) aPoint2 = GetObjectImpl(thePoint2);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint2 = GetObjectImpl(thePoint2);
   if (aPoint2.IsNull()) return aGEOMObject._retn();
 
   //Perform the translation
@@ -123,19 +123,19 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateTwoPointsCopy
   GetOperations()->SetNotDone();
 
   //Get the object itself
-  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the first point of translation
-  Handle(GEOM_Object) aPoint1 = GetObjectImpl(thePoint1);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint1 = GetObjectImpl(thePoint1);
   if (aPoint1.IsNull()) return aGEOMObject._retn();
 
   //Get the second point of translation
-  Handle(GEOM_Object) aPoint2 = GetObjectImpl(thePoint2);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint2 = GetObjectImpl(thePoint2);
   if (aPoint2.IsNull()) return aGEOMObject._retn();
 
   //Create the translated shape
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->TranslateTwoPointsCopy(aBasicObject, aPoint1, aPoint2);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -167,7 +167,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateDXDYDZ
   aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
 
   //Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull()) return aGEOMObject._retn();
 
   //Perform the translation
@@ -194,11 +194,11 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateDXDYDZCopy
   GetOperations()->SetNotDone();
 
   //Get the object itself
-  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Create the translated shape
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->TranslateDXDYDZCopy(aBasicObject, theDX, theDY, theDZ);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -230,11 +230,11 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateVector
   aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
 
   //Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull()) return aGEOMObject._retn();
 
   //Get the vector of translation
-  Handle(GEOM_Object) aVector = GetObjectImpl(theVector);
+  HANDLE_NAMESPACE(GEOM_Object) aVector = GetObjectImpl(theVector);
   if (aVector.IsNull()) return aGEOMObject._retn();
 
   //Perform the translation
@@ -261,15 +261,15 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateVectorCopy
   GetOperations()->SetNotDone();
 
   //Get the object itself
-  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the vector of translation
-  Handle(GEOM_Object) aVector = GetObjectImpl(theVector);
+  HANDLE_NAMESPACE(GEOM_Object) aVector = GetObjectImpl(theVector);
   if (aVector.IsNull()) return aGEOMObject._retn();
 
   //Perform the translation
-  Handle(GEOM_Object) anObject = GetOperations()->TranslateVectorCopy(aBasicObject, aVector);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->TranslateVectorCopy(aBasicObject, aVector);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -302,16 +302,16 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateVectorDistance
     aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
 
   //Get the object itself
-  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the vector of translation
-  Handle(GEOM_Object) aVector = GetObjectImpl(theVector);
+  HANDLE_NAMESPACE(GEOM_Object) aVector = GetObjectImpl(theVector);
   if (aVector.IsNull()) return aGEOMObject._retn();
 
   //Perform the translation
   if (theCopy) {
-    Handle(GEOM_Object) anObject = GetOperations()->
+    HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->
       TranslateVectorDistance(aBasicObject, aVector, theDistance, theCopy);
     if (!GetOperations()->IsDone() || anObject.IsNull())
       return aGEOMObject._retn();
@@ -351,11 +351,11 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::Rotate (GEOM::GEOM_Object_ptr
   aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
 
   //Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull()) return aGEOMObject._retn();
 
   //Get the axis of revolution
-  Handle(GEOM_Object) anAxis = GetObjectImpl(theAxis);
+  HANDLE_NAMESPACE(GEOM_Object) anAxis = GetObjectImpl(theAxis);
   if (anAxis.IsNull()) return aGEOMObject._retn();
 
   //Perform the rotation
@@ -382,15 +382,15 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::RotateCopy (GEOM::GEOM_Object
   GetOperations()->SetNotDone();
 
   //Get the object itself
-  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the axis of rotation
-  Handle(GEOM_Object) anAxis = GetObjectImpl(theAxis);
+  HANDLE_NAMESPACE(GEOM_Object) anAxis = GetObjectImpl(theAxis);
   if (anAxis.IsNull()) return aGEOMObject._retn();
 
   //Perform the rotation
-  Handle(GEOM_Object) anObject = GetOperations()->RotateCopy(aBasicObject, anAxis, theAngle);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->RotateCopy(aBasicObject, anAxis, theAngle);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -420,11 +420,11 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorPlane
   }
 
   //Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull()) return aGEOMObject._retn();
 
   //Get the plane
-  Handle(GEOM_Object) aPlane = GetObjectImpl(thePlane);
+  HANDLE_NAMESPACE(GEOM_Object) aPlane = GetObjectImpl(thePlane);
   if (aPlane.IsNull()) return aGEOMObject._retn();
 
   //Perform the mirror
@@ -451,15 +451,15 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorPlaneCopy
   GetOperations()->SetNotDone();
 
   //Get the object itself
-  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the vector of translation
-  Handle(GEOM_Object) aPlane = GetObjectImpl(thePlane);
+  HANDLE_NAMESPACE(GEOM_Object) aPlane = GetObjectImpl(thePlane);
   if (aPlane.IsNull()) return aGEOMObject._retn();
 
   //Perform the mirror
-  Handle(GEOM_Object) anObject = GetOperations()->MirrorPlaneCopy(aBasicObject, aPlane);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MirrorPlaneCopy(aBasicObject, aPlane);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -489,11 +489,11 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorAxis
   }
 
   //Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull()) return aGEOMObject._retn();
 
   //Get the axis
-  Handle(GEOM_Object) aAxis = GetObjectImpl(theAxis);
+  HANDLE_NAMESPACE(GEOM_Object) aAxis = GetObjectImpl(theAxis);
   if (aAxis.IsNull()) return aGEOMObject._retn();
 
   //Perform the mirror
@@ -520,15 +520,15 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorAxisCopy
   GetOperations()->SetNotDone();
 
   //Get the object itself
-  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the vector of translation
-  Handle(GEOM_Object) aAxis = GetObjectImpl(theAxis);
+  HANDLE_NAMESPACE(GEOM_Object) aAxis = GetObjectImpl(theAxis);
   if (aAxis.IsNull()) return aGEOMObject._retn();
 
   //Perform the mirror
-  Handle(GEOM_Object) anObject = GetOperations()->MirrorAxisCopy(aBasicObject, aAxis);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MirrorAxisCopy(aBasicObject, aAxis);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -558,11 +558,11 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorPoint
   }
 
   //Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull()) return aGEOMObject._retn();
 
   //Get the point
-  Handle(GEOM_Object) aPoint = GetObjectImpl(thePoint);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint = GetObjectImpl(thePoint);
   if (aPoint.IsNull()) return aGEOMObject._retn();
 
   //Perform the mirror
@@ -589,15 +589,15 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorPointCopy
   GetOperations()->SetNotDone();
 
   //Get the object itself
-  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the vector of translation
-  Handle(GEOM_Object) aPoint = GetObjectImpl(thePoint);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint = GetObjectImpl(thePoint);
   if (aPoint.IsNull()) return aGEOMObject._retn();
 
   //Perform the mirror
-  Handle(GEOM_Object) anObject = GetOperations()->MirrorPointCopy(aBasicObject, aPoint);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MirrorPointCopy(aBasicObject, aPoint);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -627,7 +627,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::OffsetShape
   }
 
   //Get the basic object
-  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Create the offset shape
@@ -654,11 +654,11 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::OffsetShapeCopy
   GetOperations()->SetNotDone();
 
   //Get the basic object
-  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Create the offset shape
-  Handle(GEOM_Object) anObject = GetOperations()->OffsetShapeCopy(aBasicObject, theOffset);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->OffsetShapeCopy(aBasicObject, theOffset);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -680,12 +680,12 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::ProjectShapeCopy
   GetOperations()->SetNotDone();
 
   //Get the input objects
-  Handle(GEOM_Object) aSource = GetObjectImpl(theSource);
-  Handle(GEOM_Object) aTarget = GetObjectImpl(theTarget);
+  HANDLE_NAMESPACE(GEOM_Object) aSource = GetObjectImpl(theSource);
+  HANDLE_NAMESPACE(GEOM_Object) aTarget = GetObjectImpl(theTarget);
   if (aSource.IsNull() || aTarget.IsNull()) return aGEOMObject._retn();
 
   //Create the projection
-  Handle(GEOM_Object) anObject = GetOperations()->ProjectShapeCopy(aSource, aTarget);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->ProjectShapeCopy(aSource, aTarget);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -707,14 +707,14 @@ CORBA::Double GEOM_ITransformOperations_i::ProjectPointOnWire
   GetOperations()->SetNotDone();
 
   //Get the reference shape
-  Handle(GEOM_Object) aPoint = GetObjectImpl(thePoint);
-  Handle(GEOM_Object) aWire = GetObjectImpl(theWire);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint = GetObjectImpl(thePoint);
+  HANDLE_NAMESPACE(GEOM_Object) aWire = GetObjectImpl(theWire);
 
   if (aPoint.IsNull() || aWire.IsNull()) {
     return -1.0;
   }
 
-  Handle(GEOM_Object) aPointOnEdge;
+  HANDLE_NAMESPACE(GEOM_Object) aPointOnEdge;
   Standard_Integer anEdgeIndex;
   CORBA::Double aResult = GetOperations()->ProjectPointOnWire
     (aPoint, aWire, aPointOnEdge, anEdgeIndex);
@@ -751,11 +751,11 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::ScaleShape
   }
 
   //Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull()) return aGEOMObject._retn();
 
   //Get the point
-  Handle(GEOM_Object) aPoint;
+  HANDLE_NAMESPACE(GEOM_Object) aPoint;
   if (!thePoint->_is_nil()) {
     aPoint = GetObjectImpl(thePoint);
     if (aPoint.IsNull()) return aGEOMObject._retn();
@@ -786,18 +786,18 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::ScaleShapeCopy
   GetOperations()->SetNotDone();
 
   //Get the basic object
-  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the point
-  Handle(GEOM_Object) aPoint;
+  HANDLE_NAMESPACE(GEOM_Object) aPoint;
   if (!thePoint->_is_nil()) {
     aPoint = GetObjectImpl(thePoint);
     if (aPoint.IsNull()) return aGEOMObject._retn();
   }
 
   //Perform the scale
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->ScaleShapeCopy(aBasicObject, aPoint, theFactor);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -831,11 +831,11 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::ScaleShapeAlongAxes
   }
 
   //Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull()) return aGEOMObject._retn();
 
   //Get the point
-  Handle(GEOM_Object) aPoint;
+  HANDLE_NAMESPACE(GEOM_Object) aPoint;
   if (!thePoint->_is_nil()) {
     aPoint = GetObjectImpl(thePoint);
     if (aPoint.IsNull()) return aGEOMObject._retn();
@@ -869,18 +869,18 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::ScaleShapeAlongAxesCopy
   GetOperations()->SetNotDone();
 
   //Get the basic object
-  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the point
-  Handle(GEOM_Object) aPoint;
+  HANDLE_NAMESPACE(GEOM_Object) aPoint;
   if (!thePoint->_is_nil()) {
     aPoint = GetObjectImpl(thePoint);
     if (aPoint.IsNull()) return aGEOMObject._retn();
   }
 
   //Perform the scale
-  Handle(GEOM_Object) anObject = GetOperations()->ScaleShapeAlongAxes
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->ScaleShapeAlongAxes
     (aBasicObject, aPoint, theFactorX, theFactorY, theFactorZ, /*doCopy*/true);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -913,18 +913,18 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::PositionShape
   }
 
   //Get the basic object
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull()) return aGEOMObject._retn();
 
   //Get the Start LCS (may be NULL for positioning from global LCS)
-  Handle(GEOM_Object) aStartLCS;
+  HANDLE_NAMESPACE(GEOM_Object) aStartLCS;
   if (!CORBA::is_nil(theStartLCS)) {
     aStartLCS = GetObjectImpl(theStartLCS);
     if (aStartLCS.IsNull()) return aGEOMObject._retn();
   }
 
   //Get the End LCS
-  Handle(GEOM_Object) aEndLCS = GetObjectImpl(theEndLCS);
+  HANDLE_NAMESPACE(GEOM_Object) aEndLCS = GetObjectImpl(theEndLCS);
   if (aEndLCS.IsNull()) return aGEOMObject._retn();
 
   //Perform the Position
@@ -952,22 +952,22 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::PositionShapeCopy
   GetOperations()->SetNotDone();
 
   //Get the basic object
-  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the Start LCS (may be NULL for positioning from global LCS)
-  Handle(GEOM_Object) aStartLCS;
+  HANDLE_NAMESPACE(GEOM_Object) aStartLCS;
   if (!CORBA::is_nil(theStartLCS)) {
     aStartLCS = GetObjectImpl(theStartLCS);
     if (aStartLCS.IsNull()) return aGEOMObject._retn();
   }
 
   //Get the End LCS
-  Handle(GEOM_Object) aEndLCS = GetObjectImpl(theEndLCS);
+  HANDLE_NAMESPACE(GEOM_Object) aEndLCS = GetObjectImpl(theEndLCS);
   if (aEndLCS.IsNull()) return aGEOMObject._retn();
 
   //Perform the position
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->PositionShapeCopy(aBasicObject, aStartLCS, aEndLCS);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -993,15 +993,15 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::PositionAlongPath
   GetOperations()->SetNotDone();
 
   //Get the basic object
-  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the path object
-  Handle(GEOM_Object) aPathObject = GetObjectImpl(thePath);
+  HANDLE_NAMESPACE(GEOM_Object) aPathObject = GetObjectImpl(thePath);
   if (aPathObject.IsNull()) return aGEOMObject._retn();
 
   //Perform the position
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->PositionAlongPath(aBasicObject, aPathObject, theDistance, theCopy, theReverse);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -1030,15 +1030,15 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiTranslate1D
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Get the object itself
-  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the vector of translation
-  Handle(GEOM_Object) aVector = GetObjectImpl(theVector);
+  HANDLE_NAMESPACE(GEOM_Object) aVector = GetObjectImpl(theVector);
   //if (aVector.IsNull()) return aGEOMObject._retn(); // DX by default
 
   //Perform the translation
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->Translate1D(aBasicObject, aVector, theStep, theNbTimes);
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
@@ -1064,19 +1064,19 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiTranslate2D (GEOM::GEOM_
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Get the object itself
-  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the vector1 of translation
-  Handle(GEOM_Object) aVector1 = GetObjectImpl(theVector1);
+  HANDLE_NAMESPACE(GEOM_Object) aVector1 = GetObjectImpl(theVector1);
   //if (aVector1.IsNull()) return aGEOMObject._retn(); // DX by default
 
   //Get the vector2 of translation
-  Handle(GEOM_Object) aVector2 = GetObjectImpl(theVector2);
+  HANDLE_NAMESPACE(GEOM_Object) aVector2 = GetObjectImpl(theVector2);
   //if (aVector2.IsNull()) return aGEOMObject._retn(); // DY by default
 
   //Perform the translation
-  Handle(GEOM_Object) anObject = GetOperations()->Translate2D
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->Translate2D
     (aBasicObject, aVector1, theStep1, theNbTimes1, aVector2, theStep2, theNbTimes2);
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
@@ -1098,15 +1098,15 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiRotate1D (GEOM::GEOM_Obj
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Get the object itself
-  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the a directon of rotation
-  Handle(GEOM_Object) aVector = GetObjectImpl(theVector);
+  HANDLE_NAMESPACE(GEOM_Object) aVector = GetObjectImpl(theVector);
   //if (aVector.IsNull()) return aGEOMObject._retn(); // DZ by default
 
   //Perform the rotation
-  Handle(GEOM_Object) anObject = GetOperations()->Rotate1D(aBasicObject, aVector, theNbTimes);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->Rotate1D(aBasicObject, aVector, theNbTimes);
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
   return GetObject(anObject);
@@ -1128,15 +1128,15 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiRotate1DByStep (GEOM::GE
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Get the object itself
-  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the a directon of rotation
-  Handle(GEOM_Object) aVector = GetObjectImpl(theVector);
+  HANDLE_NAMESPACE(GEOM_Object) aVector = GetObjectImpl(theVector);
   //if (aVector.IsNull()) return aGEOMObject._retn(); // DZ by default
 
   //Perform the rotation
-  Handle(GEOM_Object) anObject = GetOperations()->Rotate1D(aBasicObject, aVector, theAngleStep, theNbSteps);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->Rotate1D(aBasicObject, aVector, theAngleStep, theNbSteps);
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
   return GetObject(anObject);
@@ -1159,15 +1159,15 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiRotate2DNbTimes (GEOM::G
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Get the object itself
-  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the a directon of rotation
-  Handle(GEOM_Object) aVector = GetObjectImpl(theVector);
+  HANDLE_NAMESPACE(GEOM_Object) aVector = GetObjectImpl(theVector);
   //if (aVector.IsNull()) return aGEOMObject._retn(); // DZ by default
 
   //Perform the rotation
-  Handle(GEOM_Object) anObject = GetOperations()->Rotate2D
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->Rotate2D
     (aBasicObject, aVector, theNbObjects, theRadialStep, theNbSteps);
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
@@ -1192,15 +1192,15 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiRotate2DByStep (GEOM::GE
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Get the object itself
-  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the a directon of rotation
-  Handle(GEOM_Object) aVector = GetObjectImpl(theVector);
+  HANDLE_NAMESPACE(GEOM_Object) aVector = GetObjectImpl(theVector);
   //if (aVector.IsNull()) return aGEOMObject._retn(); // DZ by default
 
   //Perform the rotation
-  Handle(GEOM_Object) anObject = GetOperations()->Rotate2D
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->Rotate2D
     (aBasicObject, aVector, theAngle, theNbTimes1, theStep, theNbTimes2);
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
@@ -1225,17 +1225,17 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiRotate2D (GEOM::GEOM_Obj
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Get the object itself
-  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the a directon of rotation
-  Handle(GEOM_Object) aVector = GetObjectImpl(theVector);
+  HANDLE_NAMESPACE(GEOM_Object) aVector = GetObjectImpl(theVector);
   //if (aVector.IsNull()) return aGEOMObject._retn(); // DZ by default
 
   double anAngle = M_PI * theAngle / 180.;
 
   //Perform the rotation
-  Handle(GEOM_Object) anObject = GetOperations()->Rotate2D
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->Rotate2D
     (aBasicObject, aVector, anAngle, theNbTimes1, theStep, theNbTimes2);
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
@@ -1269,19 +1269,19 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::RotateThreePoints
   aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
 
   //Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull()) return aGEOMObject._retn();
 
   //Get the central point of rotation
-  Handle(GEOM_Object) aCentPoint = GetObjectImpl(theCentPoint);
+  HANDLE_NAMESPACE(GEOM_Object) aCentPoint = GetObjectImpl(theCentPoint);
   if (aCentPoint.IsNull()) return aGEOMObject._retn();
 
   //Get the first point
-  Handle(GEOM_Object) aPoint1 = GetObjectImpl(thePoint1);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint1 = GetObjectImpl(thePoint1);
   if (aPoint1.IsNull()) return aGEOMObject._retn();
 
   //Get the second point
-  Handle(GEOM_Object) aPoint2 = GetObjectImpl(thePoint2);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint2 = GetObjectImpl(thePoint2);
   if (aPoint2.IsNull()) return aGEOMObject._retn();
 
   //Perform the translation
@@ -1310,23 +1310,23 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::RotateThreePointsCopy
   GetOperations()->SetNotDone();
 
   //Get the object itself
-  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the central point of rotation
-  Handle(GEOM_Object) aCentPoint = GetObjectImpl(theCentPoint);
+  HANDLE_NAMESPACE(GEOM_Object) aCentPoint = GetObjectImpl(theCentPoint);
   if (aCentPoint.IsNull()) return aGEOMObject._retn();
 
   //Get the first point
-  Handle(GEOM_Object) aPoint1 = GetObjectImpl(thePoint1);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint1 = GetObjectImpl(thePoint1);
   if (aPoint1.IsNull()) return aGEOMObject._retn();
 
   //Get the second point
-  Handle(GEOM_Object) aPoint2 = GetObjectImpl(thePoint2);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint2 = GetObjectImpl(thePoint2);
   if (aPoint2.IsNull()) return aGEOMObject._retn();
 
   //Perform the rotation
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->RotateThreePointsCopy(aBasicObject, aCentPoint, aPoint1, aPoint2);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -1349,15 +1349,15 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TransformLikeOtherCopy
   GetOperations()->SetNotDone();
 
   //Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull()) return aGEOMObject._retn();
 
   //Get the sample object
-  Handle(GEOM_Object) aSample = GetObjectImpl(theSample);
+  HANDLE_NAMESPACE(GEOM_Object) aSample = GetObjectImpl(theSample);
   if (aSample.IsNull()) return aGEOMObject._retn();
 
   //Perform the transformation
-  Handle(GEOM_Object) aResObject =
+  HANDLE_NAMESPACE(GEOM_Object) aResObject =
     GetOperations()->TransformLikeOtherCopy(anObject, aSample);
   if (!GetOperations()->IsDone() || aResObject.IsNull())
     return aGEOMObject._retn();
@@ -1382,11 +1382,11 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::RecomputeObject
   aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
 
   //Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull()) return aGEOMObject._retn();
 
   //Perform the recomputation
-  Handle(GEOM_Function) aLastFunction = anObject->GetLastFunction();
+  HANDLE_NAMESPACE(GEOM_Function) aLastFunction = anObject->GetLastFunction();
   if (aLastFunction.IsNull()) return aGEOMObject._retn();
   GetOperations()->GetSolver()->ComputeFunction(aLastFunction);
 
@@ -1411,14 +1411,14 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MakeProjectionOnCylinder
   GetOperations()->SetNotDone();
 
   //Get the object
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetObjectImpl(theObject);
 
   if (anObject.IsNull()) {
     return aGEOMObject._retn();
   }
 
   //Perform the transformation
-  Handle(GEOM_Object) aResObject = GetOperations()->MakeProjectionOnCylinder
+  HANDLE_NAMESPACE(GEOM_Object) aResObject = GetOperations()->MakeProjectionOnCylinder
     (anObject, theRadius, theStartAngle, theAngleLength, theAngleRotation);
 
   if (!GetOperations()->IsDone() || aResObject.IsNull()) {

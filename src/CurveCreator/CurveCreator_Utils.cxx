@@ -618,22 +618,22 @@ void CurveCreator_Utils::setSelectedPoints( Handle(AIS_InteractiveContext) theCo
   //ASL: we switch off automatic highlight to improve performance of selection
   theContext->SetAutomaticHilight( Standard_False );
 
-  Handle_SelectMgr_Selection aSelection = anAISShape->Selection( AIS_Shape::SelectionMode( TopAbs_VERTEX ) );
+  Handle(SelectMgr_Selection) aSelection = anAISShape->Selection( AIS_Shape::SelectionMode( TopAbs_VERTEX ) );
   for( aSelection->Init(); aSelection->More(); aSelection->Next() )
   {    
 #if OCC_VERSION_LARGE > 0x06080100
     const Handle(SelectMgr_SensitiveEntity) aHSenEntity = aSelection->Sensitive();
     if( aHSenEntity.IsNull() )
       continue;
-    Handle_SelectBasics_SensitiveEntity aSenEntity = aHSenEntity->BaseSensitive();
+    Handle(SelectBasics_SensitiveEntity) aSenEntity = aHSenEntity->BaseSensitive();
 #else
-    Handle_SelectBasics_SensitiveEntity aSenEntity = aSelection->Sensitive();
+    Handle(SelectBasics_SensitiveEntity) aSenEntity = aSelection->Sensitive();
 #endif
 
-    Handle_Select3D_SensitivePoint aSenPnt = Handle_Select3D_SensitivePoint::DownCast( aSenEntity );
+    Handle(Select3D_SensitivePoint) aSenPnt = Handle(Select3D_SensitivePoint)::DownCast( aSenEntity );
 
     gp_Pnt anOwnerPnt = aSenPnt->Point();
-    Handle_SelectMgr_EntityOwner anOwner = Handle_SelectMgr_EntityOwner::DownCast( aSenPnt->OwnerId() );
+    Handle(SelectMgr_EntityOwner) anOwner = Handle(SelectMgr_EntityOwner)::DownCast( aSenPnt->OwnerId() );
 
 
     CurveCreator_ICurve::SectionToPointList::const_iterator anIt = thePoints.begin(),
@@ -992,7 +992,7 @@ Handle(TColgp_HArray1OfPnt) CurveCreator_Utils::getPoints
 // purpose  : 
 //=======================================================================
 void CurveCreator_Utils::FindPlane
-                       (const Handle_TColgp_HArray1OfPnt &thePoints,
+                       (const Handle(TColgp_HArray1OfPnt) &thePoints,
                               gp_Pln                     &thePlane,
                               Standard_Integer           &thePlnStatus)
 {

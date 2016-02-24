@@ -39,7 +39,7 @@
 class GEOM_I_EXPORT GEOM_Field_i : public virtual POA_GEOM::GEOM_Field, public virtual GEOM_BaseObject_i
 {
  public:
-  GEOM_Field_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, Handle(GEOM_Field) theImpl);
+  GEOM_Field_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, HANDLE_NAMESPACE(GEOM_Field) theImpl);
   ~GEOM_Field_i();
 
   virtual GEOM::GEOM_Object_ptr GetShape();
@@ -56,7 +56,7 @@ class GEOM_I_EXPORT GEOM_Field_i : public virtual POA_GEOM::GEOM_Field, public v
 
  private:
 
-  Handle(GEOM_Field) _impl;
+  HANDLE_NAMESPACE(GEOM_Field) _impl;
 };
 
 //================================================================================
@@ -66,7 +66,7 @@ class GEOM_I_EXPORT GEOM_Field_i : public virtual POA_GEOM::GEOM_Field, public v
 class GEOM_I_EXPORT GEOM_FieldStep_i : public virtual POA_GEOM::GEOM_FieldStep, public virtual GEOM_BaseObject_i
 {
  public:
-  GEOM_FieldStep_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, Handle(GEOM_FieldStep) theImpl);
+  GEOM_FieldStep_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, HANDLE_NAMESPACE(GEOM_FieldStep) theImpl);
   ~GEOM_FieldStep_i();
 
   virtual void SetStamp(::CORBA::Long stamp);
@@ -77,7 +77,7 @@ class GEOM_I_EXPORT GEOM_FieldStep_i : public virtual POA_GEOM::GEOM_FieldStep, 
 
  protected:
 
-  Handle(GEOM_FieldStep) _impl;
+  HANDLE_NAMESPACE(GEOM_FieldStep) _impl;
 };
 
 //================================================================================
@@ -87,7 +87,7 @@ class GEOM_I_EXPORT GEOM_FieldStep_i : public virtual POA_GEOM::GEOM_FieldStep, 
 class GEOM_I_EXPORT GEOM_BoolFieldStep_i : public virtual POA_GEOM::GEOM_BoolFieldStep, public virtual GEOM_FieldStep_i
 {
  public:
-  GEOM_BoolFieldStep_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, Handle(GEOM_FieldStep) theImpl);
+  GEOM_BoolFieldStep_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, HANDLE_NAMESPACE(GEOM_FieldStep) theImpl);
 
   virtual ::CORBA::Boolean SetValues(const ::GEOM::short_array& boolValues);
   virtual GEOM::short_array* GetValues();
@@ -100,7 +100,7 @@ class GEOM_I_EXPORT GEOM_BoolFieldStep_i : public virtual POA_GEOM::GEOM_BoolFie
 class GEOM_I_EXPORT GEOM_IntFieldStep_i : public virtual POA_GEOM::GEOM_IntFieldStep, public virtual GEOM_FieldStep_i
 {
  public:
-  GEOM_IntFieldStep_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, Handle(GEOM_FieldStep) theImpl);
+  GEOM_IntFieldStep_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, HANDLE_NAMESPACE(GEOM_FieldStep) theImpl);
 
   virtual ::CORBA::Boolean SetValues(const ::GEOM::ListOfLong& intValues);
   virtual GEOM::ListOfLong* GetValues();
@@ -113,7 +113,7 @@ class GEOM_I_EXPORT GEOM_IntFieldStep_i : public virtual POA_GEOM::GEOM_IntField
 class GEOM_I_EXPORT GEOM_DoubleFieldStep_i : public virtual POA_GEOM::GEOM_DoubleFieldStep, public virtual GEOM_FieldStep_i
 {
  public:
-  GEOM_DoubleFieldStep_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, Handle(GEOM_FieldStep) theImpl);
+  GEOM_DoubleFieldStep_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, HANDLE_NAMESPACE(GEOM_FieldStep) theImpl);
 
   virtual ::CORBA::Boolean SetValues(const ::GEOM::ListOfDouble& doubleValues);
   virtual GEOM::ListOfDouble* GetValues();
@@ -126,7 +126,7 @@ class GEOM_I_EXPORT GEOM_DoubleFieldStep_i : public virtual POA_GEOM::GEOM_Doubl
 class GEOM_I_EXPORT GEOM_StringFieldStep_i : public virtual POA_GEOM::GEOM_StringFieldStep, public virtual GEOM_FieldStep_i
 {
  public:
-  GEOM_StringFieldStep_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, Handle(GEOM_FieldStep) theImpl);
+  GEOM_StringFieldStep_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, HANDLE_NAMESPACE(GEOM_FieldStep) theImpl);
 
   virtual ::CORBA::Boolean SetValues(const ::GEOM::string_array& strValues);
   virtual GEOM::string_array* GetValues();

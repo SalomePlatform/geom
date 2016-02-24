@@ -28,6 +28,9 @@
 #include <QPointer>
 #include <QIcon>
 
+// OCCT includes
+#include <TopTools_IndexedMapOfShape.hxx>
+
 class GeometryGUI;
 class SalomeApp_DoubleSpinBox;
 
@@ -40,8 +43,6 @@ class QPushButton;
 class QStackedLayout;
 class QTreeWidget;
 class QTreeWidgetItem;
-
-class TopTools_IndexedMapOfShape;
 
 class RepairGUI_InspectObjectDlg : public QDialog, public GEOMBase_Helper
 { 

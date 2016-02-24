@@ -34,7 +34,7 @@
 #include <list>
 
 class GEOM_Object;
-class Handle(TFunction_Driver);
+class TFunction_Driver;
 class GEOM_Engine;
 
 DEFINE_STANDARD_HANDLE( GEOM_Object, GEOM_BaseObject );
@@ -115,7 +115,7 @@ class GEOM_Object : public GEOM_BaseObject
     GetLastFunctions( const std::list< Handle(GEOM_Object) >& theObjects );
 
 public:
-  DEFINE_STANDARD_RTTI( GEOM_Object );
+  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_Object,GEOM_BaseObject)
 };
 
 #endif

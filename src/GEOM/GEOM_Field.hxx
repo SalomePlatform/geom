@@ -36,8 +36,6 @@ class GEOM_FieldStep;
 DEFINE_STANDARD_HANDLE( GEOM_Field, GEOM_BaseObject );
 DEFINE_STANDARD_HANDLE( GEOM_FieldStep, GEOM_BaseObject );
 
-
-
 class GEOM_Field : public GEOM_BaseObject
 {
   GEOM_Field(const TDF_Label& theLabel);
@@ -125,7 +123,7 @@ class GEOM_Field : public GEOM_BaseObject
   // Returns all steps
   Standard_EXPORT std::list< Handle(GEOM_FieldStep)> GetSteps();
 
-  DEFINE_STANDARD_RTTI( GEOM_Field );
+  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_Field,GEOM_BaseObject)
 
 private:
 
@@ -187,9 +185,7 @@ public:
   // Returns GUID of CAF data array
   const Standard_GUID& GetDataID();
 
-
-
-  DEFINE_STANDARD_RTTI( GEOM_FieldStep );
+  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_FieldStep,GEOM_BaseObject)
 
 private:
 

@@ -27,17 +27,26 @@
 #ifndef __GEOM_BaseDriver_HXX__
 #define __GEOM_BaseDriver_HXX__
 
+#include "GEOM_Function.hxx"
+
 #include <TFunction_Driver.hxx>
+#include <TFunction_Logbook.hxx>
 #include <TopAbs_ShapeEnum.hxx>
 #include <TopAbs_State.hxx>
+#include <TColStd_HSequenceOfTransient.hxx>
+#include <TColStd_HArray1OfInteger.hxx>
+
+#include <Basics_OCCTVersion.hxx>
 
 #include <string>
 #include <vector>
 #include <sstream>
 
-class Handle(GEOM_Function);
-class Handle(TColStd_HSequenceOfTransient);
-class Handle(TColStd_HArray1OfInteger);
+#if OCC_VERSION_MAJOR < 7
+  #define LOGBOOK TFunction_Logbook
+#else
+  #define LOGBOOK Handle(TFunction_Logbook)
+#endif
 
 struct GEOM_Param
 {
@@ -98,7 +107,7 @@ public:
     return params.back();
   }
 
-  DEFINE_STANDARD_RTTI (GEOM_BaseDriver)
+  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_BaseDriver,TFunction_Driver)
 };
 
 DEFINE_STANDARD_HANDLE (GEOM_BaseDriver,TFunction_Driver);

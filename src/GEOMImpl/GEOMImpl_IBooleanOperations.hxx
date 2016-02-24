@@ -25,11 +25,11 @@
 
 #include "GEOM_IOperations.hxx"
 
+#include <TColStd_HArray1OfInteger.hxx>
 #include "list"
 
 class GEOM_Engine;
-class Handle(GEOM_Object);
-class Handle(TColStd_HArray1OfInteger);
+class GEOM_Object;
 
 class GEOMImpl_IBooleanOperations : public GEOM_IOperations {
  public:

@@ -34,6 +34,7 @@
 #include <Resource_DataMapOfAsciiStringAsciiString.hxx>
 #include <TDocStd_Document.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
+#include <TColStd_HArray1OfByte.hxx>
 #include <TColStd_HSequenceOfAsciiString.hxx>
 #include <TColStd_MapOfInteger.hxx>
 #include <TDF_Label.hxx>
@@ -54,8 +55,6 @@ struct TObjectData
   TCollection_AsciiString _pyName;
   bool                    _unpublished;
 };
-  
-class Handle_TColStd_HArray1OfByte;
 
 struct TVariable{
   TCollection_AsciiString myVariable;

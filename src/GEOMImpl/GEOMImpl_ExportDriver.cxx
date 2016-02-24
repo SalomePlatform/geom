@@ -57,7 +57,7 @@ GEOMImpl_ExportDriver::GEOMImpl_ExportDriver()
 //function : Execute
 //purpose  :
 //======================================================================= 
-Standard_Integer GEOMImpl_ExportDriver::Execute(TFunction_Logbook& log) const
+Standard_Integer GEOMImpl_ExportDriver::Execute(LOGBOOK& log) const
 {
   if (Label().IsNull()) return 0;    
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
@@ -88,7 +88,11 @@ Standard_Integer GEOMImpl_ExportDriver::Execute(TFunction_Logbook& log) const
   if( !GEOMImpl_IECallBack::GetCallBack( aFormatName )->Export( GetDocID(), obj, aFileName, aFormatName ) );
     return 0;
 
+#if OCC_VERSION_MAJOR < 7
   log.SetTouched(Label());
+#else
+  log->SetTouched(Label());
+#endif
 
   return 1;
 }
@@ -106,5 +110,4 @@ GetCreationInformation(std::string&             theOperationName,
   return false;
 }
 
-IMPLEMENT_STANDARD_HANDLE (GEOMImpl_ExportDriver,GEOM_BaseDriver);
-IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_ExportDriver,GEOM_BaseDriver);
+OCCT_IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_ExportDriver,GEOM_BaseDriver);

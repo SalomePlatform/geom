@@ -62,7 +62,6 @@
 #include <TColStd_MapOfTransient.hxx>
 #include <TColStd_HSequenceOfInteger.hxx>
 
-#include <TColStd_HArray1OfByte.hxx>
 #include <TColStd_DataMapIteratorOfDataMapOfIntegerTransient.hxx>
 
 #include <Resource_DataMapIteratorOfDataMapOfAsciiStringAsciiString.hxx>
@@ -265,7 +264,11 @@ Handle(TDocStd_Document) GEOM_Engine::GetDocument(int theDocID, bool force)
     aDoc = Handle(TDocStd_Document)::DownCast(_mapIDDocument(theDocID));
   }
   else if (force) {
+#if OCC_VERSION_MAJOR > 6
+    _OCAFApp->NewDocument("BinOcaf", aDoc);
+#else
     _OCAFApp->NewDocument("SALOME_GEOM", aDoc);
+#endif
     aDoc->SetUndoLimit(_UndoLimit);
     _mapIDDocument.Bind(theDocID, aDoc);
     TDataStd_Integer::Set(aDoc->Main(), theDocID);
@@ -563,6 +566,13 @@ bool GEOM_Engine::Load(int theDocID, const char* theFileName)
   if (_OCAFApp->Open(theFileName, aDoc) != PCDM_RS_OK) {
     return false;
   }
+
+#if OCC_VERSION_MAJOR > 6
+  // Replace old document format by the new one.
+  if (aDoc->StorageFormat().IsEqual("SALOME_GEOM")) {
+    aDoc->ChangeStorageFormat("BinOcaf");
+  }
+#endif
 
   aDoc->SetUndoLimit(_UndoLimit);
 
@@ -1878,7 +1888,7 @@ TCollection_AsciiString GetPublishCommands
       if (aRefIt != theMapRefs.end()) {
         // Recursively publish all references.
         std::list< int >::const_iterator aRefTagIt = aRefIt->second.begin();
-  
+
         for(; aRefTagIt != aRefIt->second.end(); ++aRefTagIt) {
           const TCollection_AsciiString aRefCmd = GetPublishCommands
             (*aRefTagIt, theEntryToCmdMap, theMapRefs, thePublished);

@@ -54,7 +54,6 @@
 
 #include <TFunction_DriverTable.hxx>
 #include <TFunction_Driver.hxx>
-#include <TFunction_Logbook.hxx>
 #include <TDataStd_Integer.hxx>
 #include <TDF_Tool.hxx>
 

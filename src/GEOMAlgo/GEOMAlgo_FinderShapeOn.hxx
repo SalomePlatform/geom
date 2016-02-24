@@ -32,7 +32,6 @@
 #include <Standard_Macro.hxx>
 #include <Standard_Boolean.hxx>
 
-#include <Handle_Geom_Surface.hxx>
 #include <Geom_Surface.hxx>
 
 #include <TopAbs_ShapeEnum.hxx>
@@ -73,7 +72,7 @@ class GEOMAlgo_FinderShapeOn  : public GEOMAlgo_ShapeAlgo
     void SetState(const GEOMAlgo_State aSF) ;
 
   Standard_EXPORT
-    const Handle_Geom_Surface& Surface() const;
+    const Handle(Geom_Surface)& Surface() const;
 
   Standard_EXPORT
     TopAbs_ShapeEnum ShapeType() const;
@@ -113,7 +112,7 @@ protected:
     void FindVertices() ;
 
 
-  Handle_Geom_Surface mySurface;
+  Handle(Geom_Surface) mySurface;
   TopAbs_ShapeEnum myShapeType;
   GEOMAlgo_State myState;
   TopoDS_Shape myArg1;

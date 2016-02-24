@@ -105,8 +105,7 @@ DEFINE_STANDARD_HANDLE(AIS_Text, AIS_InteractiveObject)
 class AIS_Text:public AIS_InteractiveObject
 {
 public:
-  // CASCADE RTTI
-  DEFINE_STANDARD_RTTI(AIS_Text );
+  OCCT_DEFINE_STANDARD_RTTIEXT(AIS_Text,AIS_InteractiveObject)
 
   AIS_Text(){};
 
@@ -148,8 +147,7 @@ protected:
   Graphic3d_VerticalTextAlignment     aVJustification;
 };
 
-IMPLEMENT_STANDARD_HANDLE(AIS_Text, AIS_InteractiveObject)
-IMPLEMENT_STANDARD_RTTIEXT(AIS_Text, AIS_InteractiveObject)
+OCCT_IMPLEMENT_STANDARD_RTTIEXT(AIS_Text, AIS_InteractiveObject)
 
 AIS_Text::AIS_Text( const TCollection_ExtendedString& text, const gp_Pnt& position,
                           Quantity_Color    color       = Quantity_NOC_YELLOW,
@@ -180,7 +178,7 @@ void AIS_Text::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresentation
 
   aPresentation->Clear();
 
-  Handle_Prs3d_TextAspect asp = myDrawer->TextAspect();
+  Handle(Prs3d_TextAspect) asp = myDrawer->TextAspect();
 
   asp->SetFont(aFont);
   asp->SetColor(aColor);
@@ -1394,7 +1392,7 @@ void EntityGUI_3DSketcherDlg::displayTrihedron (int selMode)
   gp_Pnt P(getLastPoint().x,getLastPoint().y,getLastPoint().z);
   Handle(Geom_Axis2Placement) anAxis = new Geom_Axis2Placement(P,gp::DZ(),gp::DX());
   Handle(AIS_Trihedron) anIO = new AIS_Trihedron(anAxis);
-  anIO->SetSelectionMode(selMode);
+  anIO->GetContext()->Activate(anIO, selMode);
 
   SOCC_Prs* aSPrs = dynamic_cast<SOCC_Prs*>
     (((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
@@ -1536,7 +1534,7 @@ void EntityGUI_3DSketcherDlg::displayAngle (double theAngle,
                                                                  P0, 
                                                                  P1, 
                                                                  P2);
-  if (anAngleIO == NULL)
+  if (anAngleIO.IsNull())
     return;
   
   if (store)

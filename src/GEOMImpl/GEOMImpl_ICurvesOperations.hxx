@@ -30,7 +30,7 @@
 #include <list>
 
 class GEOM_Engine;
-class Handle(GEOM_Object);
+class GEOM_Object;
 
 class GEOMImpl_ICurvesOperations : public GEOM_IOperations {
 

@@ -19,8 +19,6 @@
 
 #include "CurveCreator_Widget.h"
 #include "CurveCreator_TreeView.h"
-#include "CurveCreator_ICurve.hxx"
-#include "CurveCreator.hxx"
 #include "CurveCreator_NewSectionDlg.h"
 #include "CurveCreator_Utils.hxx"
 #include "CurveCreator_UtilsICurve.hxx"

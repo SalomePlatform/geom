@@ -135,7 +135,7 @@ void GEOM_IOperations_i::AbortOperation()
  */
 //=============================================================================
 GEOM::GEOM_BaseObject_ptr
-GEOM_IOperations_i::GetBaseObject(Handle(GEOM_BaseObject) theObject)
+GEOM_IOperations_i::GetBaseObject(HANDLE_NAMESPACE(GEOM_BaseObject) theObject)
 {
   GEOM::GEOM_BaseObject_var GO;
   if (theObject.IsNull()) return GO._retn();
@@ -150,10 +150,10 @@ GEOM_IOperations_i::GetBaseObject(Handle(GEOM_BaseObject) theObject)
  *  GetObjectImpl
  */
 //=============================================================================
-Handle(GEOM_BaseObject)
+HANDLE_NAMESPACE(GEOM_BaseObject)
 GEOM_IOperations_i::GetBaseObjectImpl(GEOM::GEOM_BaseObject_ptr theObject)
 {
-  Handle(GEOM_BaseObject) anImpl;
+  HANDLE_NAMESPACE(GEOM_BaseObject) anImpl;
   if (!CORBA::is_nil(theObject)) {
     CORBA::String_var anEntry = theObject->GetEntry();
     anImpl = GetImpl()->GetEngine()->GetObject( theObject->GetStudyID(), anEntry );
@@ -166,7 +166,7 @@ GEOM_IOperations_i::GetBaseObjectImpl(GEOM::GEOM_BaseObject_ptr theObject)
  *  GetObject
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IOperations_i::GetObject(Handle(GEOM_Object) theObject)
+GEOM::GEOM_Object_ptr GEOM_IOperations_i::GetObject(HANDLE_NAMESPACE(GEOM_Object) theObject)
 {
   return GEOM::GEOM_Object::_narrow( GetBaseObject( theObject ));
 }
@@ -176,9 +176,9 @@ GEOM::GEOM_Object_ptr GEOM_IOperations_i::GetObject(Handle(GEOM_Object) theObjec
  *  GetObjectImpl
  */
 //=============================================================================
-Handle(GEOM_Object) GEOM_IOperations_i::GetObjectImpl(GEOM::GEOM_Object_ptr theObject)
+HANDLE_NAMESPACE(GEOM_Object) GEOM_IOperations_i::GetObjectImpl(GEOM::GEOM_Object_ptr theObject)
 {
-  return Handle(GEOM_Object)::DownCast( GetBaseObjectImpl( theObject ));
+  return HANDLE_NAMESPACE(GEOM_Object)::DownCast( GetBaseObjectImpl( theObject ));
 }
 
 //=============================================================================
@@ -196,7 +196,7 @@ Handle(TColStd_HSequenceOfTransient) GEOM_IOperations_i::GetListOfObjectsImpl
   int aNbObj = theObjects.length();
 
   for (i = 0; i < aNbObj; i++) {
-    Handle(GEOM_Object) anObj = GetObjectImpl(theObjects[i]);
+    HANDLE_NAMESPACE(GEOM_Object) anObj = GetObjectImpl(theObjects[i]);
 
     if (anObj.IsNull()) {
       aResult.Nullify();
@@ -215,13 +215,13 @@ Handle(TColStd_HSequenceOfTransient) GEOM_IOperations_i::GetListOfObjectsImpl
 //=======================================================================
 
 bool GEOM_IOperations_i::GetListOfObjectsImpl(const GEOM::ListOfGO&             theObjects,
-                                              std::list< Handle(GEOM_Object) >& theList)
+                                              std::list< HANDLE_NAMESPACE(GEOM_Object) >& theList)
 {
   int i;
   int aNbObj = theObjects.length();
 
   for (i = 0; i < aNbObj; i++) {
-    Handle(GEOM_Object) anObj = GetObjectImpl(theObjects[i]);
+    HANDLE_NAMESPACE(GEOM_Object) anObj = GetObjectImpl(theObjects[i]);
 
     if (anObj.IsNull())
       return false;

@@ -30,11 +30,9 @@
 
 #include <Standard.hxx>
 #include <Standard_DefineHandle.hxx>
-#include <Handle_Geom_Surface.hxx>
 #include <GeomAdaptor_Surface.hxx>
 #include <GEOMAlgo_Clsf.hxx>
 #include <Standard_Boolean.hxx>
-#include <Handle_Geom_Curve.hxx>
 #include <Geom_Surface.hxx>
 #include <Geom_Curve.hxx>
 
@@ -57,7 +55,7 @@ class GEOMAlgo_ClsfSurf : public GEOMAlgo_Clsf
     void SetSurface(const Handle(Geom_Surface)& aS) ;
 
   Standard_EXPORT
-    const Handle_Geom_Surface& Surface() const;
+    const Handle(Geom_Surface)& Surface() const;
 
   Standard_EXPORT
     virtual  void Perform() ;
@@ -71,10 +69,10 @@ class GEOMAlgo_ClsfSurf : public GEOMAlgo_Clsf
   Standard_EXPORT
     virtual  Standard_Boolean CanBeON(const Handle(Geom_Surface)& aST) const;
 
-  DEFINE_STANDARD_RTTI(GEOMAlgo_ClsfSurf);
+  OCCT_DEFINE_STANDARD_RTTIEXT(GEOMAlgo_ClsfSurf,GEOMAlgo_Clsf)
 
  protected:
-  Handle_Geom_Surface myS;
+  Handle(Geom_Surface) myS;
   GeomAdaptor_Surface myGAS;
 };
 #endif

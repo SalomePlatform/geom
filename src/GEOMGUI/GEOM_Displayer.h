@@ -28,6 +28,7 @@
 #define GEOM_DISPLAYER_H
 
 #include "GEOM_GEOMGUI.hxx"
+#include <GEOM_AISShape.hxx>
 
 #include <SALOME_InteractiveObject.hxx>
 
@@ -44,7 +45,11 @@ class SALOME_OCCViewType;
 #include <LightApp_Displayer.h>
 #include <LightApp_Study.h>
 #include <Aspect_TypeOfMarker.hxx>
+#if OCC_VERSION_MAJOR >= 7
+  #include <AIS_ColorScale.hxx>
+#endif
 #include <TCollection_AsciiString.hxx>
+#include <TColStd_MapOfInteger.hxx>
 #include <Basics_OCCTVersion.hxx>
 #include <QList>
 
@@ -60,14 +65,11 @@ class SALOME_OCCViewType;
 
 typedef std::list<GEOM::GEOM_Object_ptr> ObjectList;
 
-class TColStd_MapOfInteger;
 class LightApp_SelectionMgr;
 class SalomeApp_Study;
 class SalomeApp_Application;
 class SUIT_SelectionFilter;
-class Handle_GEOM_AISShape;
 class gp_Ax3;
-//class SALOME_Selection;
 
 class GEOMGUI_EXPORT GEOM_Displayer : public LightApp_Displayer
 {
@@ -298,6 +300,9 @@ protected:
   std::string                      myTexture;
   int                              myType;
   SALOME_View*                     myViewFrame;
+#if OCC_VERSION_MAJOR >= 7
+  Handle(AIS_ColorScale)           myColorScale;
+#endif
 
   // Attributes
   Quantity_Color                   myShadingColor;

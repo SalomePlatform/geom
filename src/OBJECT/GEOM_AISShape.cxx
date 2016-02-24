@@ -44,6 +44,7 @@
 #include <Graphic3d_AspectLine3d.hxx>
 #include <Graphic3d_AspectMarker3d.hxx>
 #include <Graphic3d_AspectText3d.hxx>
+#include <Graphic3d_ArrayOfPoints.hxx>
 
 #include <Prs3d_ShadingAspect.hxx>
 #include <Prs3d_Arrow.hxx>
@@ -59,7 +60,11 @@
 #include <SelectMgr_Selection.hxx>
 #include <StdSelect_DisplayMode.hxx>
 #include <StdPrs_ShadedShape.hxx>
-#include <StdPrs_WFDeflectionShape.hxx>
+#if OCC_VERSION_MAJOR < 7
+  #include <StdPrs_WFDeflectionShape.hxx>
+#else
+  #include <StdPrs_WFShape.hxx>
+#endif
 
 #include <TColStd_IndexedMapOfInteger.hxx>
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
@@ -82,8 +87,7 @@
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
 
-IMPLEMENT_STANDARD_HANDLE (GEOM_AISShape, SALOME_AISShape)
-IMPLEMENT_STANDARD_RTTIEXT(GEOM_AISShape, SALOME_AISShape)
+OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOM_AISShape, SALOME_AISShape)
 
 GEOM_AISShape::TopLevelDispMode GEOM_AISShape::myTopLevelDm = GEOM_AISShape::TopKeepCurrent;
 Quantity_Color GEOM_AISShape::myTopLevelColor;
@@ -251,7 +255,11 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
       if( !isTopLev && anIsColorField && myFieldDimension == 1 )
         drawField( aPrs, false, aMode == CustomHighlight );
       else
+#if OCC_VERSION_MAJOR < 7
         StdPrs_WFDeflectionShape::Add(aPrs,myshape,myDrawer);      
+#else
+        StdPrs_WFShape::Add(aPrs,myshape,myDrawer);
+#endif
       break;
     }
     case Shading:
@@ -612,7 +620,11 @@ void GEOM_AISShape::drawField( const Handle(Prs3d_Presentation)& thePrs,
             myDrawer->WireAspect()->SetWidth( myOwnWidth );
           else
             myDrawer->WireAspect()->SetWidth( myOwnWidth + 4 );
+#if OCC_VERSION_MAJOR < 7
           StdPrs_WFDeflectionShape::Add( thePrs, aSubShape, myDrawer );
+#else
+          StdPrs_WFShape::Add( thePrs, aSubShape, myDrawer );
+#endif
         }
         else if( myFieldDimension == 2 ||
                  myFieldDimension == 3 ||

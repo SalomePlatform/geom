@@ -26,14 +26,13 @@
 #ifndef _GEOMImpl_CopyDriver_HeaderFile
 #define _GEOMImpl_CopyDriver_HeaderFile
 
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
+#include <GEOM_BaseDriver.hxx>
+
 class TopoDS_Shape;
-class TopTools_IndexedDataMapOfShapeListOfShape;
-class TopTools_IndexedMapOfShape;
 class Standard_GUID;
-
-
-#include "GEOM_BaseDriver.hxx"
-
 
 DEFINE_STANDARD_HANDLE( GEOMImpl_CopyDriver, GEOM_BaseDriver );
 
@@ -41,24 +40,22 @@ class GEOMImpl_CopyDriver : public GEOM_BaseDriver {
 
 public:
 
- // Methods PUBLIC
- // 
-Standard_EXPORT GEOMImpl_CopyDriver();
-Standard_EXPORT virtual  Standard_Integer Execute(TFunction_Logbook& log) const; 
-Standard_EXPORT virtual void Validate(TFunction_Logbook&) const {}
-Standard_EXPORT Standard_Boolean MustExecute(const TFunction_Logbook&) const { return Standard_True; }
-Standard_EXPORT static const Standard_GUID& GetID();
-Standard_EXPORT ~GEOMImpl_CopyDriver() {};
+  Standard_EXPORT GEOMImpl_CopyDriver();
+  Standard_EXPORT virtual Standard_Integer Execute(LOGBOOK& log) const;
+  Standard_EXPORT virtual void Validate(LOGBOOK&) const {}
+  Standard_EXPORT Standard_Boolean MustExecute(const LOGBOOK&) const { return Standard_True; }
+  Standard_EXPORT static const Standard_GUID& GetID();
+  Standard_EXPORT ~GEOMImpl_CopyDriver() {};
 
   Standard_EXPORT virtual
   bool GetCreationInformation(std::string&             theOperationName,
                               std::vector<GEOM_Param>& params);
 
-DEFINE_STANDARD_RTTI( GEOMImpl_CopyDriver )
+  OCCT_DEFINE_STANDARD_RTTIEXT(GEOMImpl_CopyDriver,GEOM_BaseDriver)
 
 private:
 
-  Standard_Integer transferData(TFunction_Logbook& log) const;
+  Standard_Integer transferData(LOGBOOK& log) const;
 
   Standard_Boolean getInPlace
     (const TopoDS_Shape                              &theSourceShape,
@@ -78,7 +75,6 @@ private:
      const TopoDS_Shape                              &theDestinationShape,
      const Handle(GEOM_Function)                     &theDestinationRef,
            TopTools_IndexedDataMapOfShapeListOfShape &theMapSourceDest) const;
-
 };
 
 #endif

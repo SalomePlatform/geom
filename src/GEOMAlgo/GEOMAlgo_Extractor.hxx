@@ -34,8 +34,7 @@
 #include <TopTools_DataMapOfShapeListOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_MapOfShape.hxx>
-
-class TopTools_IndexedMapOfShape;
+#include <TopTools_IndexedMapOfShape.hxx>
 
 
 /**

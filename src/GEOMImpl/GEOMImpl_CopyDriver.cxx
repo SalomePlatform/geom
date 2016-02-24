@@ -33,9 +33,6 @@
 #include <TopExp.hxx>
 #include <TNaming_CopyShape.hxx>
 #include <TColStd_IndexedDataMapOfTransientTransient.hxx>
-#include <TFunction_Logbook.hxx>
-#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
-#include <TopTools_IndexedMapOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_MapIteratorOfMapOfShape.hxx>
@@ -69,7 +66,7 @@ GEOMImpl_CopyDriver::GEOMImpl_CopyDriver()
 //function : Execute
 //purpose  :
 //======================================================================= 
-Standard_Integer GEOMImpl_CopyDriver::Execute(TFunction_Logbook& log) const
+Standard_Integer GEOMImpl_CopyDriver::Execute(LOGBOOK& log) const
 {
   if (Label().IsNull()) return 0;    
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
@@ -101,7 +98,11 @@ Standard_Integer GEOMImpl_CopyDriver::Execute(TFunction_Logbook& log) const
 
   aFunction->SetValue(aCopy);
 
-  log.SetTouched(Label()); 
+#if OCC_VERSION_MAJOR < 7
+  log.SetTouched(Label());
+#else
+  log->SetTouched(Label());
+#endif
 
   return 1;    
 }
@@ -149,8 +150,7 @@ GetCreationInformation(std::string&             theOperationName,
  * \brief Performs Transfer Data operation.
  */
 //================================================================================
-
-Standard_Integer GEOMImpl_CopyDriver::transferData(TFunction_Logbook& log) const
+Standard_Integer GEOMImpl_CopyDriver::transferData(LOGBOOK& log) const
 {
   Handle(GEOM_Function)  aFunction = GEOM_Function::GetFunction(Label());
   GEOMImpl_ITransferData aTD (aFunction);
@@ -414,6 +414,4 @@ Standard_Boolean GEOMImpl_CopyDriver::getInPlaceByHistory
   return Standard_True;
 }
 
-IMPLEMENT_STANDARD_HANDLE (GEOMImpl_CopyDriver,GEOM_BaseDriver);
-
-IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_CopyDriver,GEOM_BaseDriver);
+OCCT_IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_CopyDriver,GEOM_BaseDriver);

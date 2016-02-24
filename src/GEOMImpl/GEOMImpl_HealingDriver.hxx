@@ -25,47 +25,15 @@
 #ifndef _GEOMImpl_HealingDriver_HeaderFile
 #define _GEOMImpl_HealingDriver_HeaderFile
 
-#ifndef _TColStd_SequenceOfExtendedString_HeaderFile
-#include <TColStd_SequenceOfExtendedString.hxx>
-#endif
-#ifndef _Standard_TypeMismatch_HeaderFile
-#include <Standard_TypeMismatch.hxx>
-#endif
-
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-
-#ifndef _Standard_Macro_HeaderFile
-#include <Standard_Macro.hxx>
-#endif
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-#ifndef _Standard_GUID_HeaderFile
-#include <Standard_GUID.hxx>
-#endif
-
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Edge.hxx>
+#include <TopTools_SequenceOfShape.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
 
-
-#ifndef _TFunction_Driver_HeaderFile
-#include <TFunction_Driver.hxx>
-#endif
-#ifndef _TFunction_Logbook_HeaderFile
-#include <TFunction_Logbook.hxx>
-#endif
-#ifndef _Standard_CString_HeaderFile
-#include <Standard_CString.hxx>
-#endif
-
-#include "GEOM_BaseDriver.hxx"
+#include <GEOM_BaseDriver.hxx>
 
 class GEOMImpl_IHealing;
 class ShHealOper_Tool;
-class TopTools_SequenceOfShape;
 
 
 DEFINE_STANDARD_HANDLE( GEOMImpl_HealingDriver, GEOM_BaseDriver );
@@ -74,16 +42,14 @@ class GEOMImpl_HealingDriver : public GEOM_BaseDriver {
 
 public:
 
- // Methods PUBLIC
-  //
   Standard_EXPORT GEOMImpl_HealingDriver();
   Standard_EXPORT ~GEOMImpl_HealingDriver() {};
 
   Standard_EXPORT static const Standard_GUID& GetID();
 
-  Standard_EXPORT virtual Standard_Integer Execute(TFunction_Logbook& log) const;
-  Standard_EXPORT virtual void Validate(TFunction_Logbook&) const {}
-  Standard_EXPORT Standard_Boolean MustExecute(const TFunction_Logbook&) const { return Standard_True; }
+  Standard_EXPORT virtual Standard_Integer Execute(LOGBOOK& log) const;
+  Standard_EXPORT virtual void Validate(LOGBOOK&) const {}
+  Standard_EXPORT Standard_Boolean MustExecute(const LOGBOOK&) const { return Standard_True; }
 
   Standard_EXPORT static Standard_Boolean AreEdgesC1 (const TopoDS_Edge& E1, const TopoDS_Edge& E2);
   Standard_EXPORT static void FuseCollinearEdges (const TopoDS_Shape&,
@@ -93,10 +59,7 @@ public:
   bool GetCreationInformation(std::string&             theOperationName,
                               std::vector<GEOM_Param>& params);
 
-  // Type management
-  //
-DEFINE_STANDARD_RTTI( GEOMImpl_HealingDriver )
-
+  OCCT_DEFINE_STANDARD_RTTIEXT(GEOMImpl_HealingDriver,GEOM_BaseDriver)
 
 private:
   Standard_Boolean ShapeProcess  ( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;

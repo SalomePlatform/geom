@@ -29,7 +29,6 @@
 #include <Standard.hxx>
 #include <Standard_DefineHandle.hxx>
 #include <PrsMgr_PresentationManager.hxx>
-#include <Handle_Prs3d_Presentation.hxx>
 #include <TCollection_AsciiString.hxx>
 #include <AIS_DisplayMode.hxx>
 
@@ -158,7 +157,7 @@ private:
   static Quantity_Color    myTopLevelColor;
 
 public:
-  DEFINE_STANDARD_RTTI(GEOM_AISShape);
+  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_AISShape,SALOME_AISShape)
 };
 
 DEFINE_STANDARD_HANDLE(GEOM_AISShape, SALOME_AISShape)

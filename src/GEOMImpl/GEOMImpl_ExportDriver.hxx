@@ -26,24 +26,7 @@
 #ifndef _GEOMImpl_ExportDriver_HeaderFile
 #define _GEOMImpl_ExportDriver_HeaderFile
 
-#ifndef _Standard_GUID_HeaderFile
-#include <Standard_GUID.hxx>
-#endif 
-
-#ifndef _TFunction_Driver_HeaderFile
-#include <TFunction_Driver.hxx>
-#endif
-#ifndef _TFunction_Logbook_HeaderFile
-#include <TFunction_Logbook.hxx>
-#endif
-#ifndef _Standard_CString_HeaderFile
-#include <Standard_CString.hxx>
-#endif
-
-class TColStd_SequenceOfExtendedString;
-
-
-#include "GEOM_BaseDriver.hxx"
+#include <GEOM_BaseDriver.hxx>
 
 DEFINE_STANDARD_HANDLE( GEOMImpl_ExportDriver, GEOM_BaseDriver );
 
@@ -51,20 +34,18 @@ class GEOMImpl_ExportDriver : public GEOM_BaseDriver {
 
 public:
 
- // Methods PUBLIC
- // 
-Standard_EXPORT GEOMImpl_ExportDriver();
-Standard_EXPORT virtual  Standard_Integer Execute(TFunction_Logbook& log) const; 
-Standard_EXPORT virtual void Validate(TFunction_Logbook&) const {}
-Standard_EXPORT Standard_Boolean MustExecute(const TFunction_Logbook&) const { return Standard_True; }
-Standard_EXPORT static const Standard_GUID& GetID();
-Standard_EXPORT ~GEOMImpl_ExportDriver() {};
+  Standard_EXPORT GEOMImpl_ExportDriver();
+  Standard_EXPORT virtual Standard_Integer Execute(LOGBOOK& log) const;
+  Standard_EXPORT virtual void Validate(LOGBOOK&) const {}
+  Standard_EXPORT Standard_Boolean MustExecute(const LOGBOOK&) const { return Standard_True; }
+  Standard_EXPORT static const Standard_GUID& GetID();
+  Standard_EXPORT ~GEOMImpl_ExportDriver() {};
 
   Standard_EXPORT virtual
   bool GetCreationInformation(std::string&             theOperationName,
                               std::vector<GEOM_Param>& params);
 
-DEFINE_STANDARD_RTTI( GEOMImpl_ExportDriver )
+  OCCT_DEFINE_STANDARD_RTTIEXT(GEOMImpl_ExportDriver,GEOM_BaseDriver)
 };
 
 #endif

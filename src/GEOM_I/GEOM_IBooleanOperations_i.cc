@@ -73,13 +73,13 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeBoolean
   GetOperations()->SetNotDone();
 
   //Get the reference shapes
-  Handle(GEOM_Object) aSh1 = GetObjectImpl(theShape1);
-  Handle(GEOM_Object) aSh2 = GetObjectImpl(theShape2);
+  HANDLE_NAMESPACE(GEOM_Object) aSh1 = GetObjectImpl(theShape1);
+  HANDLE_NAMESPACE(GEOM_Object) aSh2 = GetObjectImpl(theShape2);
 
   if (aSh1.IsNull() || aSh2.IsNull()) return aGEOMObject._retn();
 
   // Make Boolean
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeBoolean(aSh1, aSh2, theOp, IsCheckSelfInte);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -104,13 +104,13 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeFuse
   GetOperations()->SetNotDone();
 
   //Get the reference shapes
-  Handle(GEOM_Object) aSh1 = GetObjectImpl(theShape1);
-  Handle(GEOM_Object) aSh2 = GetObjectImpl(theShape2);
+  HANDLE_NAMESPACE(GEOM_Object) aSh1 = GetObjectImpl(theShape1);
+  HANDLE_NAMESPACE(GEOM_Object) aSh2 = GetObjectImpl(theShape2);
 
   if (aSh1.IsNull() || aSh2.IsNull()) return aGEOMObject._retn();
 
   // Make Boolean
-  Handle(GEOM_Object) anObject = GetOperations()->MakeFuse
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeFuse
     (aSh1, aSh2, IsCheckSelfInte, IsRmExtraEdges);
 
   if (!GetOperations()->IsDone() || anObject.IsNull())
@@ -142,7 +142,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeFuseList
   }
 
   // Make fusion
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeFuseList(aShapes, IsCheckSelfInte, IsRmExtraEdges);
 
   if (!GetOperations()->IsDone() || anObject.IsNull())
@@ -173,7 +173,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeCommonList
   }
 
   // Make fusion
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeCommonList(aShapes, IsCheckSelfInte);
 
   if (!GetOperations()->IsDone() || anObject.IsNull())
@@ -197,7 +197,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeCutList
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  Handle(GEOM_Object) aMainShape = GetObjectImpl(theMainShape);
+  HANDLE_NAMESPACE(GEOM_Object) aMainShape = GetObjectImpl(theMainShape);
 
   if (aMainShape.IsNull()) {
     return aGEOMObject._retn();
@@ -211,7 +211,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeCutList
   }
 
   // Make fusion
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeCutList(aMainShape, aShapes, IsCheckSelfInte);
 
   if (!GetOperations()->IsDone() || anObject.IsNull())
@@ -262,7 +262,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartition
   }
 
   // Make Partition
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakePartition(aShapes, aTools, aKeepIns, aRemIns,
                                    theLimit, theRemoveWebs, aMaterials,
                                    theKeepNonlimitShapes,
@@ -317,7 +317,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartitionNonSelfIntersected
   }
 
   // Make Partition
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakePartition(aShapes, aTools, aKeepIns, aRemIns,
                                    theLimit, theRemoveWebs, aMaterials,
                                    theKeepNonlimitShapes,
@@ -344,13 +344,13 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeHalfPartition
   GetOperations()->SetNotDone();
 
   //Get the reference shapes
-  Handle(GEOM_Object) aSh = GetObjectImpl(theShape);
-  Handle(GEOM_Object) aPl = GetObjectImpl(thePlane);
+  HANDLE_NAMESPACE(GEOM_Object) aSh = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aPl = GetObjectImpl(thePlane);
 
   if (aSh.IsNull() || aPl.IsNull()) return aGEOMObject._retn();
 
   // Make Half Partition
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeHalfPartition(aSh, aPl);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();

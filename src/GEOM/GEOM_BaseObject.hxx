@@ -30,11 +30,11 @@
 #include <TCollection_AsciiString.hxx>
 #include <TDF_Label.hxx>
 #include <TDataStd_TreeNode.hxx>
+#include <TFunction_Driver.hxx>
 
 #include <vector>
 
 class GEOM_BaseObject;
-class Handle(TFunction_Driver);
 class GEOM_Engine;
 
 DEFINE_STANDARD_HANDLE( GEOM_BaseObject, Standard_Transient );
@@ -166,7 +166,7 @@ public:
   int                       _docID;
 
 public:
-  DEFINE_STANDARD_RTTI( GEOM_BaseObject );
+  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_BaseObject,Standard_Transient)
 };
 
 #endif

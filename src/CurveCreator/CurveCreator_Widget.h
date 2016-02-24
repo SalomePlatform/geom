@@ -24,29 +24,28 @@
 #include "CurveCreator.hxx"
 #include "CurveCreator_ICurve.hxx"
 
-#include <QWidget>
-#include <QMap>
-
-#include <OCCViewer_ViewWindow.h>
 #include <SUIT_ViewWindow.h>
+#include <OCCViewer_ViewWindow.h>
+
 #include <AIS_InteractiveObject.hxx>
 #include <AIS_InteractiveContext.hxx>
-
+#include <AIS_ListOfInteractive.hxx>
 #include <Geom_Curve.hxx>
 #include <V3d_View.hxx>
 #include <gp_Pnt.hxx>
-#include <TopoDS_Vertex.hxx> // TODO - remove
+
+#include <QWidget>
+#include <QMap>
+
+class CurveCreator_TableView;
+class CurveCreator_TreeView;
+class CurveCreator_NewSectionDlg;
 
 class OCCViewer_Viewer;
 class OCCViewer_ViewPort3d;
 
-class AIS_ListOfInteractive;
-
 class QAction;
 class QPixmap;
-class CurveCreator_TableView;
-class CurveCreator_TreeView;
-class CurveCreator_NewSectionDlg;
 
 class CURVECREATOR_EXPORT CurveCreator_Widget : public QWidget
 {

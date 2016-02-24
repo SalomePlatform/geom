@@ -28,8 +28,7 @@
 #include <ShapeExtend_Status.hxx>
 #include <ShapeExtend.hxx>
 
-IMPLEMENT_STANDARD_HANDLE (ShHealOper_SplitCurve3d,ShapeUpgrade_SplitCurve3d)
-IMPLEMENT_STANDARD_RTTIEXT(ShHealOper_SplitCurve3d,ShapeUpgrade_SplitCurve3d)
+OCCT_IMPLEMENT_STANDARD_RTTIEXT(ShHealOper_SplitCurve3d,ShapeUpgrade_SplitCurve3d)
 
 //=======================================================================
 //function : Compute

@@ -27,6 +27,8 @@
 
 #include <Standard_DefineHandle.hxx>
 
+#include <Basics_OCCTVersion.hxx>
+
 class LightApp_SelectionMgr;
 
 class GEOM_OCCFilter : public SelectMgr_Filter
@@ -42,7 +44,7 @@ private:
 
 public:
   
-  DEFINE_STANDARD_RTTI(GEOM_OCCFilter);
+  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_OCCFilter,SelectMgr_Filter)
 
 };
 

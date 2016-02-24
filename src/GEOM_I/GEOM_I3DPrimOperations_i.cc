@@ -70,7 +70,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeBoxDXDYDZ (CORBA::Double the
   GetOperations()->SetNotDone();
 
   //Create the Box
-  Handle(GEOM_Object) anObject = GetOperations()->MakeBoxDXDYDZ(theDX, theDY, theDZ);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeBoxDXDYDZ(theDX, theDY, theDZ);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -90,13 +90,13 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeBoxTwoPnt
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  Handle(GEOM_Object) aPnt1 = GetObjectImpl(thePnt1);
-  Handle(GEOM_Object) aPnt2 = GetObjectImpl(thePnt2);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt1 = GetObjectImpl(thePnt1);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt2 = GetObjectImpl(thePnt2);
 
   if (aPnt1.IsNull() || aPnt2.IsNull()) return aGEOMObject._retn();
 
   //Create the Box
-  Handle(GEOM_Object) anObject = GetOperations()->MakeBoxTwoPnt(aPnt1, aPnt2);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeBoxTwoPnt(aPnt1, aPnt2);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -121,7 +121,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeFaceHW (CORBA::Double theH,
     return aGEOMObject._retn();
 
   //Create the Face
-  Handle(GEOM_Object) anObject = GetOperations()->MakeFaceHW(theH, theW, theOrientation);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeFaceHW(theH, theW, theOrientation);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -144,13 +144,13 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeFaceObjHW
   GetOperations()->SetNotDone();
 
   //Get the reference object
-  Handle(GEOM_Object) anObj = GetObjectImpl(theObj);
+  HANDLE_NAMESPACE(GEOM_Object) anObj = GetObjectImpl(theObj);
 
   if (anObj.IsNull())
     return aGEOMObject._retn();
 
   //Create the Face
-  Handle(GEOM_Object) anObject = GetOperations()->MakeFaceObjHW(anObj, theH, theW);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeFaceObjHW(anObj, theH, theW);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -172,13 +172,13 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeDiskPntVecR
   GetOperations()->SetNotDone();
 
   //Get the reference points
-  Handle(GEOM_Object) aPnt = GetObjectImpl(thePnt);
-  Handle(GEOM_Object) aVec = GetObjectImpl(theVec);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt = GetObjectImpl(thePnt);
+  HANDLE_NAMESPACE(GEOM_Object) aVec = GetObjectImpl(theVec);
 
   if (aPnt.IsNull() || aVec.IsNull()) return aGEOMObject._retn();
 
   // Make Disk
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeDiskPntVecR(aPnt, aVec, theR);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -201,14 +201,14 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeDiskThreePnt
   GetOperations()->SetNotDone();
 
   //Get the reference points
-  Handle(GEOM_Object) aPnt1 = GetObjectImpl(thePnt1);
-  Handle(GEOM_Object) aPnt2 = GetObjectImpl(thePnt2);
-  Handle(GEOM_Object) aPnt3 = GetObjectImpl(thePnt3);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt1 = GetObjectImpl(thePnt1);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt2 = GetObjectImpl(thePnt2);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt3 = GetObjectImpl(thePnt3);
 
   if (aPnt1.IsNull() || aPnt2.IsNull() || aPnt3.IsNull()) return aGEOMObject._retn();
 
   // Make Disk
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
       GetOperations()->MakeDiskThreePnt(aPnt1, aPnt2, aPnt3);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -233,7 +233,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeDiskR (CORBA::Double theR,
     return aGEOMObject._retn();
 
   //Create the Face
-  Handle(GEOM_Object) anObject = GetOperations()->MakeDiskR(theR, theOrientation);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeDiskR(theR, theOrientation);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -254,7 +254,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeCylinderRH (CORBA::Double th
   GetOperations()->SetNotDone();
 
   //Create the Cylinder
-  Handle(GEOM_Object) anObject = GetOperations()->MakeCylinderRH(theR, theH);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeCylinderRH(theR, theH);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -276,7 +276,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeCylinderRHA (CORBA::Double t
   GetOperations()->SetNotDone();
 
   //Create the Cylinder
-  Handle(GEOM_Object) anObject = GetOperations()->MakeCylinderRHA(theR, theH, theA);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeCylinderRHA(theR, theH, theA);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -298,13 +298,13 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeCylinderPntVecRH
   GetOperations()->SetNotDone();
 
   //Get the reference points
-  Handle(GEOM_Object) aPnt = GetObjectImpl(thePnt);
-  Handle(GEOM_Object) aVec = GetObjectImpl(theVec);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt = GetObjectImpl(thePnt);
+  HANDLE_NAMESPACE(GEOM_Object) aVec = GetObjectImpl(theVec);
 
   if (aPnt.IsNull() || aVec.IsNull()) return aGEOMObject._retn();
 
   //Create the Cylinder
-  Handle(GEOM_Object) anObject = GetOperations()->MakeCylinderPntVecRH(aPnt, aVec, theR, theH);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeCylinderPntVecRH(aPnt, aVec, theR, theH);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -326,13 +326,13 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeCylinderPntVecRHA
   GetOperations()->SetNotDone();
 
   //Get the reference points
-  Handle(GEOM_Object) aPnt = GetObjectImpl(thePnt);
-  Handle(GEOM_Object) aVec = GetObjectImpl(theVec);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt = GetObjectImpl(thePnt);
+  HANDLE_NAMESPACE(GEOM_Object) aVec = GetObjectImpl(theVec);
 
   if (aPnt.IsNull() || aVec.IsNull()) return aGEOMObject._retn();
 
   //Create the Cylinder
-  Handle(GEOM_Object) anObject = GetOperations()->MakeCylinderPntVecRHA(aPnt, aVec, theR, theH, theA);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeCylinderPntVecRHA(aPnt, aVec, theR, theH, theA);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -354,7 +354,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeConeR1R2H (CORBA::Double the
   GetOperations()->SetNotDone();
 
   //Create the Cone
-  Handle(GEOM_Object) anObject = GetOperations()->MakeConeR1R2H(theR1, theR2, theH);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeConeR1R2H(theR1, theR2, theH);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -376,13 +376,13 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeConePntVecR1R2H
   GetOperations()->SetNotDone();
 
   //Get the reference points
-  Handle(GEOM_Object) aPnt = GetObjectImpl(thePnt);
-  Handle(GEOM_Object) aVec = GetObjectImpl(theVec);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt = GetObjectImpl(thePnt);
+  HANDLE_NAMESPACE(GEOM_Object) aVec = GetObjectImpl(theVec);
 
   if (aPnt.IsNull() || aVec.IsNull()) return aGEOMObject._retn();
 
   //Create the Cone
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
       GetOperations()->MakeConePntVecR1R2H(aPnt, aVec, theR1, theR2, theH);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -403,7 +403,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeSphereR (CORBA::Double theR)
   GetOperations()->SetNotDone();
 
   //Create the Cone
-  Handle(GEOM_Object) anObject = GetOperations()->MakeSphereR(theR);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeSphereR(theR);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -424,12 +424,12 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeSpherePntR
   GetOperations()->SetNotDone();
 
   //Get the reference point
-  Handle(GEOM_Object) aPnt = GetObjectImpl(thePnt);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt = GetObjectImpl(thePnt);
 
   if (aPnt.IsNull()) return aGEOMObject._retn();
 
   //Create the Sphere
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeSpherePntR(aPnt, theR);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -451,7 +451,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeTorusRR
   GetOperations()->SetNotDone();
 
   // Make Torus
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeTorusRR(theRMajor, theRMinor);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -474,13 +474,13 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeTorusPntVecRR
   GetOperations()->SetNotDone();
 
   //Get the reference points
-  Handle(GEOM_Object) aPnt = GetObjectImpl(thePnt);
-  Handle(GEOM_Object) aVec = GetObjectImpl(theVec);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt = GetObjectImpl(thePnt);
+  HANDLE_NAMESPACE(GEOM_Object) aVec = GetObjectImpl(theVec);
 
   if (aPnt.IsNull() || aVec.IsNull()) return aGEOMObject._retn();
 
   // Make Torus
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeTorusPntVecRR(aPnt, aVec, theRMajor, theRMinor);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -503,13 +503,13 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismVecH
   GetOperations()->SetNotDone();
 
   //Get the reference objects
-  Handle(GEOM_Object) aBase = GetObjectImpl(theBase);
-  Handle(GEOM_Object) aVec = GetObjectImpl(theVec);
+  HANDLE_NAMESPACE(GEOM_Object) aBase = GetObjectImpl(theBase);
+  HANDLE_NAMESPACE(GEOM_Object) aVec = GetObjectImpl(theVec);
 
   if (aBase.IsNull() || aVec.IsNull()) return aGEOMObject._retn();
 
   //Create the Prism
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakePrismVecH(aBase, aVec, theH);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -532,13 +532,13 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismVecH2Ways
   GetOperations()->SetNotDone();
 
   //Get the reference objects
-  Handle(GEOM_Object) aBase = GetObjectImpl(theBase);
-  Handle(GEOM_Object) aVec = GetObjectImpl(theVec);
+  HANDLE_NAMESPACE(GEOM_Object) aBase = GetObjectImpl(theBase);
+  HANDLE_NAMESPACE(GEOM_Object) aVec = GetObjectImpl(theVec);
 
   if (aBase.IsNull() || aVec.IsNull()) return aGEOMObject._retn();
 
   //Create the Prism
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
       GetOperations()->MakePrismVecH2Ways(aBase, aVec, theH);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -561,13 +561,13 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismVecHWithScaling
   GetOperations()->SetNotDone();
 
   //Get the reference objects
-  Handle(GEOM_Object) aBase = GetObjectImpl(theBase);
-  Handle(GEOM_Object) aVec = GetObjectImpl(theVec);
+  HANDLE_NAMESPACE(GEOM_Object) aBase = GetObjectImpl(theBase);
+  HANDLE_NAMESPACE(GEOM_Object) aVec = GetObjectImpl(theVec);
 
   if (aBase.IsNull() || aVec.IsNull()) return aGEOMObject._retn();
 
   //Create the Prism
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakePrismVecH(aBase, aVec, theH, theScaleFactor);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -591,15 +591,15 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismTwoPnt
   GetOperations()->SetNotDone();
 
   //Get the reference objects
-  Handle(GEOM_Object) aBase = GetObjectImpl(theBase);
-  Handle(GEOM_Object) aPoint1 = GetObjectImpl(thePoint1);
-  Handle(GEOM_Object) aPoint2 = GetObjectImpl(thePoint2);
+  HANDLE_NAMESPACE(GEOM_Object) aBase = GetObjectImpl(theBase);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint1 = GetObjectImpl(thePoint1);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint2 = GetObjectImpl(thePoint2);
 
   if (aBase.IsNull() || aPoint1.IsNull() || aPoint2.IsNull())
     return aGEOMObject._retn();
 
   //Create the Prism
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakePrismTwoPnt(aBase, aPoint1, aPoint2);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -623,15 +623,15 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismTwoPnt2Ways
   GetOperations()->SetNotDone();
 
   //Get the reference objects
-  Handle(GEOM_Object) aBase = GetObjectImpl(theBase);
-  Handle(GEOM_Object) aPoint1 = GetObjectImpl(thePoint1);
-  Handle(GEOM_Object) aPoint2 = GetObjectImpl(thePoint2);
+  HANDLE_NAMESPACE(GEOM_Object) aBase = GetObjectImpl(theBase);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint1 = GetObjectImpl(thePoint1);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint2 = GetObjectImpl(thePoint2);
 
   if (aBase.IsNull() || aPoint1.IsNull() || aPoint2.IsNull())
     return aGEOMObject._retn();
 
   //Create the Prism
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakePrismTwoPnt2Ways(aBase, aPoint1, aPoint2);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -656,15 +656,15 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismTwoPntWithScaling
   GetOperations()->SetNotDone();
 
   //Get the reference objects
-  Handle(GEOM_Object) aBase = GetObjectImpl(theBase);
-  Handle(GEOM_Object) aPoint1 = GetObjectImpl(thePoint1);
-  Handle(GEOM_Object) aPoint2 = GetObjectImpl(thePoint2);
+  HANDLE_NAMESPACE(GEOM_Object) aBase = GetObjectImpl(theBase);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint1 = GetObjectImpl(thePoint1);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint2 = GetObjectImpl(thePoint2);
 
   if (aBase.IsNull() || aPoint1.IsNull() || aPoint2.IsNull())
     return aGEOMObject._retn();
 
   //Create the Prism
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakePrismTwoPnt(aBase, aPoint1, aPoint2, theScaleFactor);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -687,12 +687,12 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismDXDYDZ
   GetOperations()->SetNotDone();
 
   //Get the reference objects
-  Handle(GEOM_Object) aBase = GetObjectImpl(theBase);
+  HANDLE_NAMESPACE(GEOM_Object) aBase = GetObjectImpl(theBase);
 
   if (aBase.IsNull()) return aGEOMObject._retn();
 
   //Create the Prism
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
       GetOperations()->MakePrismDXDYDZ(aBase, theDX, theDY, theDZ);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -715,12 +715,12 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismDXDYDZ2Ways
   GetOperations()->SetNotDone();
 
   //Get the reference objects
-  Handle(GEOM_Object) aBase = GetObjectImpl(theBase);
+  HANDLE_NAMESPACE(GEOM_Object) aBase = GetObjectImpl(theBase);
 
   if (aBase.IsNull()) return aGEOMObject._retn();
 
   //Create the Prism
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
       GetOperations()->MakePrismDXDYDZ2Ways(aBase, theDX, theDY, theDZ);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -744,12 +744,12 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismDXDYDZWithScaling
   GetOperations()->SetNotDone();
 
   //Get the reference objects
-  Handle(GEOM_Object) aBase = GetObjectImpl(theBase);
+  HANDLE_NAMESPACE(GEOM_Object) aBase = GetObjectImpl(theBase);
 
   if (aBase.IsNull()) return aGEOMObject._retn();
 
   //Create the Prism
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakePrismDXDYDZ(aBase, theDX, theDY, theDZ, theScaleFactor);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -775,13 +775,13 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeDraftPrism
   GetOperations()->SetNotDone();
 
   //Get the reference objects
-  Handle(GEOM_Object) aInit   = GetObjectImpl(theInitShape);
-  Handle(GEOM_Object) aBase   = GetObjectImpl(theBase);
+  HANDLE_NAMESPACE(GEOM_Object) aInit   = GetObjectImpl(theInitShape);
+  HANDLE_NAMESPACE(GEOM_Object) aBase   = GetObjectImpl(theBase);
 
   if (aBase.IsNull() || aInit.IsNull()) return aGEOMObject._retn();
 
   //Create the Prism
-  Handle(GEOM_Object) anObject = GetOperations()->MakeDraftPrism(aInit, aBase, theHeight, theAngle, theFuse, theInvert);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeDraftPrism(aInit, aBase, theHeight, theAngle, theFuse, theInvert);
  
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -805,8 +805,8 @@ GEOM::ListOfGO *GEOM_I3DPrimOperations_i::MakePipe
   GetOperations()->SetNotDone();
 
   //Get the reference objects
-  Handle(GEOM_Object) aBase = GetObjectImpl(theBase);
-  Handle(GEOM_Object) aPath = GetObjectImpl(thePath);
+  HANDLE_NAMESPACE(GEOM_Object) aBase = GetObjectImpl(theBase);
+  HANDLE_NAMESPACE(GEOM_Object) aPath = GetObjectImpl(thePath);
 
   if (aBase.IsNull() || aPath.IsNull()) return aSeq._retn();
 
@@ -819,7 +819,7 @@ GEOM::ListOfGO *GEOM_I3DPrimOperations_i::MakePipe
   Standard_Integer aLength = aHSeq->Length();
   aSeq->length(aLength);
   for (Standard_Integer i = 1; i <= aLength; i++)
-    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+    aSeq[i-1] = GetObject(HANDLE_NAMESPACE(GEOM_Object)::DownCast(aHSeq->Value(i)));
 
   return aSeq._retn();
 }
@@ -839,13 +839,13 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeRevolutionAxisAngle
   GetOperations()->SetNotDone();
 
   //Get the reference objects
-  Handle(GEOM_Object) aBase = GetObjectImpl(theBase);
-  Handle(GEOM_Object) anAxis = GetObjectImpl(theAxis);
+  HANDLE_NAMESPACE(GEOM_Object) aBase = GetObjectImpl(theBase);
+  HANDLE_NAMESPACE(GEOM_Object) anAxis = GetObjectImpl(theAxis);
 
   if (aBase.IsNull() || anAxis.IsNull()) return aGEOMObject._retn();
 
   //Create the Revolution
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
       GetOperations()->MakeRevolutionAxisAngle(aBase, anAxis, theAngle);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -868,13 +868,13 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeRevolutionAxisAngle2Ways
   GetOperations()->SetNotDone();
 
   //Get the reference objects
-  Handle(GEOM_Object) aBase = GetObjectImpl(theBase);
-  Handle(GEOM_Object) anAxis = GetObjectImpl(theAxis);
+  HANDLE_NAMESPACE(GEOM_Object) aBase = GetObjectImpl(theBase);
+  HANDLE_NAMESPACE(GEOM_Object) anAxis = GetObjectImpl(theAxis);
 
   if (aBase.IsNull() || anAxis.IsNull()) return aGEOMObject._retn();
 
   //Create the Revolution
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
       GetOperations()->MakeRevolutionAxisAngle2Ways(aBase, anAxis, theAngle);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -903,7 +903,7 @@ GEOM_I3DPrimOperations_i::MakeFilling(const GEOM::ListOfGO&     theContours,
   GetOperations()->SetNotDone();
 
   //Get the reference objects
-  std::list< Handle(GEOM_Object) > aShapes;
+  std::list< HANDLE_NAMESPACE(GEOM_Object) > aShapes;
   if (! GetListOfObjectsImpl( theContours, aShapes ))
     return aGEOMObject._retn();
 
@@ -932,7 +932,7 @@ GEOM_I3DPrimOperations_i::MakeFilling(const GEOM::ListOfGO&     theContours,
   }
 
   //Create the Solid
-  Handle(GEOM_Object) anObject = GetOperations()->MakeFilling
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeFilling
     (aShapes, theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter, aMethod, theApprox);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -960,7 +960,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeThruSections(const GEOM::Lis
   //Get the shapes
   aLen = theSeqSections.length();
   for (ind = 0; ind < aLen; ind++) {
-    Handle(GEOM_Object) aSh = GetObjectImpl(theSeqSections[ind]);
+    HANDLE_NAMESPACE(GEOM_Object) aSh = GetObjectImpl(theSeqSections[ind]);
     if (!aSh.IsNull())
       aSeqSections->Append(aSh);
   }
@@ -968,7 +968,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeThruSections(const GEOM::Lis
     return aGEOMObject._retn();
 
   // Make shell or solid
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeThruSections(aSeqSections,theModeSolid,thePreci,theRuled);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -1005,17 +1005,17 @@ GEOM::ListOfGO *GEOM_I3DPrimOperations_i::MakePipeWithDifferentSections
   if (aNbLocs && aNbBases != aNbLocs)
     return aSeq._retn();
 
-  Handle(GEOM_Object) aPath = GetObjectImpl(thePath);
+  HANDLE_NAMESPACE(GEOM_Object) aPath = GetObjectImpl(thePath);
   if (aPath.IsNull())
     return aSeq._retn();
 
   for (ind = 0; ind < aNbBases; ind++) {
-    Handle(GEOM_Object) aBase = GetObjectImpl(theBases[ind]);
+    HANDLE_NAMESPACE(GEOM_Object) aBase = GetObjectImpl(theBases[ind]);
     if (aBase.IsNull())
       continue;
     if (aNbLocs)
     {
-      Handle(GEOM_Object) aLoc = GetObjectImpl(theLocations[ind]);
+      HANDLE_NAMESPACE(GEOM_Object) aLoc = GetObjectImpl(theLocations[ind]);
       if (aLoc.IsNull())
         continue;
       aSeqLocations->Append(aLoc);
@@ -1037,7 +1037,7 @@ GEOM::ListOfGO *GEOM_I3DPrimOperations_i::MakePipeWithDifferentSections
   Standard_Integer aLength = aHSeq->Length();
   aSeq->length(aLength);
   for (Standard_Integer i = 1; i <= aLength; i++)
-    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+    aSeq[i-1] = GetObject(HANDLE_NAMESPACE(GEOM_Object)::DownCast(aHSeq->Value(i)));
 
   return aSeq._retn();
 }
@@ -1074,16 +1074,16 @@ GEOM::ListOfGO *GEOM_I3DPrimOperations_i::MakePipeWithShellSections
   if (aNbLocs && aNbBases != aNbLocs)
     return aSeq._retn();
 
-  Handle(GEOM_Object) aPath = GetObjectImpl(thePath);
+  HANDLE_NAMESPACE(GEOM_Object) aPath = GetObjectImpl(thePath);
   if (aPath.IsNull())
     return aSeq._retn();
 
   for (ind = 0; ind < aNbBases; ind++) {
-    Handle(GEOM_Object) aBase = GetObjectImpl(theBases[ind]);
+    HANDLE_NAMESPACE(GEOM_Object) aBase = GetObjectImpl(theBases[ind]);
     if (aBase.IsNull())
       continue;
     if (aNbLocs) {
-      Handle(GEOM_Object) aLoc = GetObjectImpl(theLocations[ind]);
+      HANDLE_NAMESPACE(GEOM_Object) aLoc = GetObjectImpl(theLocations[ind]);
       if (aLoc.IsNull())
         continue;
       aSeqLocations->Append(aLoc);
@@ -1091,7 +1091,7 @@ GEOM::ListOfGO *GEOM_I3DPrimOperations_i::MakePipeWithShellSections
     aSeqBases->Append(aBase);
 
     if (aNbSubBases >= aNbBases) {
-      Handle(GEOM_Object) aSubBase = GetObjectImpl(theSubBases[ind]);
+      HANDLE_NAMESPACE(GEOM_Object) aSubBase = GetObjectImpl(theSubBases[ind]);
       if (aSubBase.IsNull()) {
         aSeqSubBases->Clear();
         aNbSubBases = 0;
@@ -1115,7 +1115,7 @@ GEOM::ListOfGO *GEOM_I3DPrimOperations_i::MakePipeWithShellSections
   Standard_Integer aLength = aHSeq->Length();
   aSeq->length(aLength);
   for (Standard_Integer i = 1; i <= aLength; i++)
-    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+    aSeq[i-1] = GetObject(HANDLE_NAMESPACE(GEOM_Object)::DownCast(aHSeq->Value(i)));
 
   return aSeq._retn();
 }
@@ -1147,11 +1147,11 @@ GEOM::ListOfGO *GEOM_I3DPrimOperations_i::MakePipeShellsWithoutPath
     return aSeq._retn();
 
   for (ind = 0; ind < aNbBases; ind++) {
-    Handle(GEOM_Object) aBase = GetObjectImpl(theBases[ind]);
+    HANDLE_NAMESPACE(GEOM_Object) aBase = GetObjectImpl(theBases[ind]);
     if (aBase.IsNull())
       continue;
     if (aNbLocs) {
-      Handle(GEOM_Object) aLoc = GetObjectImpl(theLocations[ind]);
+      HANDLE_NAMESPACE(GEOM_Object) aLoc = GetObjectImpl(theLocations[ind]);
       if (aLoc.IsNull())
         continue;
       aSeqLocations->Append(aLoc);
@@ -1173,7 +1173,7 @@ GEOM::ListOfGO *GEOM_I3DPrimOperations_i::MakePipeShellsWithoutPath
   Standard_Integer aLength = aHSeq->Length();
   aSeq->length(aLength);
   for (Standard_Integer i = 1; i <= aLength; i++)
-    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+    aSeq[i-1] = GetObject(HANDLE_NAMESPACE(GEOM_Object)::DownCast(aHSeq->Value(i)));
 
   return aSeq._retn();
 }
@@ -1195,9 +1195,9 @@ GEOM::ListOfGO *GEOM_I3DPrimOperations_i::MakePipeBiNormalAlongVector
   GetOperations()->SetNotDone();
 
   //Get the reference objects
-  Handle(GEOM_Object) aBase = GetObjectImpl(theBase);
-  Handle(GEOM_Object) aPath = GetObjectImpl(thePath);
-  Handle(GEOM_Object) aVec = GetObjectImpl(theVec);
+  HANDLE_NAMESPACE(GEOM_Object) aBase = GetObjectImpl(theBase);
+  HANDLE_NAMESPACE(GEOM_Object) aPath = GetObjectImpl(thePath);
+  HANDLE_NAMESPACE(GEOM_Object) aVec = GetObjectImpl(theVec);
 
   if (aBase.IsNull() || aPath.IsNull() || aVec.IsNull()) return aSeq._retn();
 
@@ -1211,7 +1211,7 @@ GEOM::ListOfGO *GEOM_I3DPrimOperations_i::MakePipeBiNormalAlongVector
   Standard_Integer aLength = aHSeq->Length();
   aSeq->length(aLength);
   for (Standard_Integer i = 1; i <= aLength; i++)
-    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+    aSeq[i-1] = GetObject(HANDLE_NAMESPACE(GEOM_Object)::DownCast(aHSeq->Value(i)));
 
   return aSeq._retn();
 }
@@ -1244,7 +1244,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeThickening
     aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
 
   //Get the basic object
-  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  HANDLE_NAMESPACE(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   // Get faces IDs.
@@ -1263,7 +1263,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeThickening
   //Create the thickened shape
   if (doCopy)
   {
-    Handle(GEOM_Object) anObject = GetOperations()->MakeThickening(
+    HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeThickening(
       aBasicObject, aFaceIDs, theOffset, doCopy, theInside);
     if (!GetOperations()->IsDone() || anObject.IsNull())
       return aGEOMObject._retn();
@@ -1297,14 +1297,14 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::RestorePath
   GetOperations()->SetNotDone();
 
   // Get the reference objects
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
-  Handle(GEOM_Object) aBase1 = GetObjectImpl(theBase1);
-  Handle(GEOM_Object) aBase2 = GetObjectImpl(theBase2);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aBase1 = GetObjectImpl(theBase1);
+  HANDLE_NAMESPACE(GEOM_Object) aBase2 = GetObjectImpl(theBase2);
 
   if (aShape.IsNull() || aBase1.IsNull() || aBase2.IsNull()) return aGEOMObject._retn();
 
   // Create the Path
-  Handle(GEOM_Object) anObject = GetOperations()->RestorePath(aShape, aBase1, aBase2);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->RestorePath(aShape, aBase1, aBase2);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -1327,7 +1327,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::RestorePathEdges
   GetOperations()->SetNotDone();
 
   // Get the reference objects
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
   if (aShape.IsNull()) return aGEOMObject._retn();
 
   Handle(TColStd_HSequenceOfTransient) aSeqBases1 = new TColStd_HSequenceOfTransient;
@@ -1338,12 +1338,12 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::RestorePathEdges
   int aNbBases2 = theBase2.length();
 
   for (ind = 0; ind < aNbBases1; ind++) {
-    Handle(GEOM_Object) aBase = GetObjectImpl(theBase1[ind]);
+    HANDLE_NAMESPACE(GEOM_Object) aBase = GetObjectImpl(theBase1[ind]);
     if (!aBase.IsNull())
       aSeqBases1->Append(aBase);
   }
   for (ind = 0; ind < aNbBases2; ind++) {
-    Handle(GEOM_Object) aBase = GetObjectImpl(theBase2[ind]);
+    HANDLE_NAMESPACE(GEOM_Object) aBase = GetObjectImpl(theBase2[ind]);
     if (!aBase.IsNull())
       aSeqBases2->Append(aBase);
   }
@@ -1352,7 +1352,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::RestorePathEdges
     return aGEOMObject._retn();
 
   // Create the Path
-  Handle(GEOM_Object) anObject = GetOperations()->RestorePath(aShape, aSeqBases1, aSeqBases2);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->RestorePath(aShape, aSeqBases1, aSeqBases2);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

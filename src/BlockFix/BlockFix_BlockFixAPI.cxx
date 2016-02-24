@@ -36,8 +36,7 @@
 
 #include <Precision.hxx>
 
-IMPLEMENT_STANDARD_HANDLE(BlockFix_BlockFixAPI, MMgt_TShared);
-IMPLEMENT_STANDARD_RTTIEXT(BlockFix_BlockFixAPI, MMgt_TShared);
+OCCT_IMPLEMENT_STANDARD_RTTIEXT(BlockFix_BlockFixAPI, MMgt_TShared);
 
 //=======================================================================
 //function : BlockFix_BlockFixAPI

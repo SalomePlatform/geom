@@ -34,6 +34,7 @@
 
 #include <TDocStd_Document.hxx>
 #include <TColStd_HSequenceOfAsciiString.hxx>
+#include <TColStd_HArray1OfByte.hxx>
 #include <TCollection_HAsciiString.hxx>
 #include <NCollection_DataMap.hxx>
 #include <NCollection_List.hxx>
@@ -44,8 +45,6 @@
 class GEOMImpl_IShapesOperations;
 class GEOMImpl_IGroupOperations;
 class GEOMImpl_IFieldOperations;
-
-class Handle_TColStd_HArray1OfByte;
 
 class GEOMImpl_IInsertOperations : public GEOM_IOperations {
  public:

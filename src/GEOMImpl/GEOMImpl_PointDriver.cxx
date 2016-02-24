@@ -110,7 +110,7 @@ static Standard_Boolean getExtremaSolution
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
+Standard_Integer GEOMImpl_PointDriver::Execute(LOGBOOK& log) const
 {
   if (Label().IsNull())  return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
@@ -362,7 +362,11 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
   //aShape.Infinite(Standard_True); // VSR: 05/04/2010: Fix 20668 (Fit All for points & lines)
   aFunction->SetValue(aShape);
 
+#if OCC_VERSION_MAJOR < 7
   log.SetTouched(Label());
+#else
+  log->SetTouched(Label());
+#endif
 
   return 1;
 }
@@ -438,5 +442,4 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-IMPLEMENT_STANDARD_HANDLE (GEOMImpl_PointDriver,GEOM_BaseDriver);
-IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_PointDriver,GEOM_BaseDriver);
+OCCT_IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_PointDriver,GEOM_BaseDriver);

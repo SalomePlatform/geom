@@ -61,7 +61,7 @@
 //=============================================================================
 
 GEOM_Object_i::GEOM_Object_i (PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine,
-			      Handle(GEOM_Object) theImpl) :
+			      HANDLE_NAMESPACE(GEOM_Object) theImpl) :
   SALOME::GenericObj_i( thePOA ),
   GEOM_BaseObject_i( thePOA, theEngine, theImpl ),
   _impl( theImpl )
@@ -169,7 +169,7 @@ char* GEOM_Object_i::GetSubShapeName(CORBA::Long subID)
 {
   CORBA::String_var name("");
 
-  Handle(GEOM_Function) aMainFun = _impl->GetLastFunction();
+  HANDLE_NAMESPACE(GEOM_Function) aMainFun = _impl->GetLastFunction();
   if ( aMainFun.IsNull() ) return name._retn();
 
   const TDataStd_ListOfExtendedString& aListEntries = aMainFun->GetSubShapeReferences();
@@ -177,14 +177,14 @@ char* GEOM_Object_i::GetSubShapeName(CORBA::Long subID)
   for (; anIt.More(); anIt.Next())
   {
     TCollection_AsciiString anEntry = anIt.Value();
-    Handle(GEOM_BaseObject) anObj =
+    HANDLE_NAMESPACE(GEOM_BaseObject) anObj =
       GEOM_Engine::GetEngine()->GetObject( _impl->GetDocID(), anEntry.ToCString(), false );
     if ( anObj.IsNull() ) continue;
 
     TCollection_AsciiString aSubName = anObj->GetName();
     if ( aSubName.IsEmpty() ) continue;
 
-    Handle(GEOM_Function) aFun = anObj->GetLastFunction();
+    HANDLE_NAMESPACE(GEOM_Function) aFun = anObj->GetLastFunction();
     if ( aFun.IsNull() ) continue;
   
     GEOM_ISubShape ISS( aFun );
@@ -359,7 +359,7 @@ GEOM::ListOfLong* GEOM_Object_i::GetSubShapeIndices()
   GEOM::ListOfLong_var anIndices = new GEOM::ListOfLong;
 
   if(!_impl->IsMainShape()) {
-    Handle(GEOM_Function) aFunction = _impl->GetLastFunction(); //Get Sub-shape function (always the first (and last)  one)
+    HANDLE_NAMESPACE(GEOM_Function) aFunction = _impl->GetLastFunction(); //Get Sub-shape function (always the first (and last)  one)
     if(aFunction.IsNull()) return anIndices._retn();
     GEOM_ISubShape ISS(aFunction);
     Handle(TColStd_HArray1OfInteger) anArray = ISS.GetIndices();
@@ -384,7 +384,7 @@ GEOM::GEOM_Object_ptr GEOM_Object_i::GetMainShape()
 {
   GEOM::GEOM_Object_var obj;
   if(!_impl->IsMainShape()) {
-    Handle(GEOM_Function) aFunction = _impl->GetFunction(1); //Get Sub-shape function (always the first (and last)  one)
+    HANDLE_NAMESPACE(GEOM_Function) aFunction = _impl->GetFunction(1); //Get Sub-shape function (always the first (and last)  one)
     if(aFunction.IsNull()) return obj._retn();
     GEOM_ISubShape ISS(aFunction);
 
@@ -413,7 +413,7 @@ bool GEOM_Object_i::IsSame(GEOM::GEOM_BaseObject_ptr other)
   GEOM::GEOM_Object_var shapePtr = GEOM::GEOM_Object::_narrow( other );
   if ( !CORBA::is_nil( shapePtr ) ) {
     CORBA::String_var entry = shapePtr->GetEntry();
-    Handle(GEOM_Object) otherObject = Handle(GEOM_Object)::DownCast
+    HANDLE_NAMESPACE(GEOM_Object) otherObject = HANDLE_NAMESPACE(GEOM_Object)::DownCast
       ( GEOM_Engine::GetEngine()->GetObject( shapePtr->GetStudyID(), entry, false ));
     if ( !otherObject.IsNull() ) {
       TopoDS_Shape thisShape  = _impl->GetValue();

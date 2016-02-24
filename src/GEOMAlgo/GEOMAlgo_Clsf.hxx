@@ -36,8 +36,6 @@
 #include <Standard_Real.hxx>
 #include <GEOMAlgo_HAlgo.hxx>
 #include <Standard_Boolean.hxx>
-#include <Handle_Geom_Curve.hxx>
-#include <Handle_Geom_Surface.hxx>
 #include <Geom_Curve.hxx>
 #include <Geom_Surface.hxx>
 
@@ -71,7 +69,7 @@ class GEOMAlgo_Clsf : public GEOMAlgo_HAlgo
   Standard_EXPORT
     virtual  Standard_Boolean CanBeON(const Handle(Geom_Surface)& aST) const;
 
-  DEFINE_STANDARD_RTTI(GEOMAlgo_Clsf);
+  OCCT_DEFINE_STANDARD_RTTIEXT(GEOMAlgo_Clsf,GEOMAlgo_HAlgo)
 
  protected:
   Standard_EXPORT

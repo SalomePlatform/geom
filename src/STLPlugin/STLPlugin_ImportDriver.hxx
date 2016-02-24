@@ -23,9 +23,6 @@
 // GEOM includes
 #include "GEOM_BaseDriver.hxx"
 
-// OCCT includes
-#include <TFunction_Logbook.hxx>
-
 DEFINE_STANDARD_HANDLE( STLPlugin_ImportDriver, GEOM_BaseDriver );
 
 class STLPlugin_ImportDriver : public GEOM_BaseDriver
@@ -35,14 +32,14 @@ public:
   ~STLPlugin_ImportDriver() {};
 
   static const Standard_GUID& GetID();
-  virtual Standard_Integer    Execute( TFunction_Logbook& log ) const;
-  Standard_Boolean            MustExecute( const TFunction_Logbook& ) const;
-  virtual void                Validate( TFunction_Logbook& ) const {}
+  virtual Standard_Integer    Execute(LOGBOOK& log) const;
+  Standard_Boolean            MustExecute( const LOGBOOK& ) const { return Standard_True; }
+  virtual void                Validate( LOGBOOK& ) const {}
  
-  virtual bool                GetCreationInformation( std::string&             theOperationName,
-						      std::vector<GEOM_Param>& params );
+  virtual bool                GetCreationInformation( std::string& theOperationName,
+                                                      std::vector<GEOM_Param>& params );
   
-DEFINE_STANDARD_RTTI( STLPlugin_ImportDriver )
+  OCCT_DEFINE_STANDARD_RTTIEXT(STLPlugin_ImportDriver,GEOM_BaseDriver)
 };
 
 #endif // _STLPlugin_ImportDriver_HXX

@@ -69,7 +69,7 @@ VTKPlugin_ExportDriver::VTKPlugin_ExportDriver()
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer VTKPlugin_ExportDriver::Execute( TFunction_Logbook& log ) const
+Standard_Integer VTKPlugin_ExportDriver::Execute(LOGBOOK& log) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction( Label() );
@@ -111,15 +111,6 @@ Standard_Integer VTKPlugin_ExportDriver::Execute( TFunction_Logbook& log ) const
   return 0;
 }
 
-//=======================================================================
-//function : MustExecute
-//purpose  :
-//=======================================================================
-Standard_Boolean VTKPlugin_ExportDriver::MustExecute( const TFunction_Logbook& ) const
-{
-  return Standard_True;
-}
-
 //================================================================================
 /*!
  * \brief Returns a name of creation operation and names and values of creation parameters
@@ -132,5 +123,4 @@ GetCreationInformation( std::string&             theOperationName,
   return false;
 }
 
-IMPLEMENT_STANDARD_HANDLE( VTKPlugin_ExportDriver,GEOM_BaseDriver );
-IMPLEMENT_STANDARD_RTTIEXT( VTKPlugin_ExportDriver,GEOM_BaseDriver );
+OCCT_IMPLEMENT_STANDARD_RTTIEXT( VTKPlugin_ExportDriver,GEOM_BaseDriver );

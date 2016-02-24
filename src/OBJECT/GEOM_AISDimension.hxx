@@ -31,6 +31,8 @@
 #include <AIS_DiameterDimension.hxx>
 #include <AIS_AngleDimension.hxx>
 
+#include <Basics_OCCTVersion.hxx>
+
 DEFINE_STANDARD_HANDLE(GEOM_AISLength,   AIS_LengthDimension)
 DEFINE_STANDARD_HANDLE(GEOM_AISDiameter, AIS_DiameterDimension)
 DEFINE_STANDARD_HANDLE(GEOM_AISAngle,    AIS_AngleDimension)
@@ -42,7 +44,8 @@ DEFINE_STANDARD_HANDLE(GEOM_AISAngle,    AIS_AngleDimension)
 class GEOM_AISLength : public AIS_LengthDimension
 {
 public:
-  DEFINE_STANDARD_RTTI(GEOM_AISLength)
+
+  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_AISLength,AIS_LengthDimension)
 
 public:
   Standard_EXPORT                    GEOM_AISLength( const Standard_Integer theId );
@@ -60,7 +63,8 @@ private:
 class GEOM_AISDiameter : public AIS_DiameterDimension
 {
 public:
-  DEFINE_STANDARD_RTTI(GEOM_AISDiameter)
+
+  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_AISDiameter,AIS_DiameterDimension)
 
 public:
   Standard_EXPORT                     GEOM_AISDiameter( const Standard_Integer theId );
@@ -78,7 +82,8 @@ private:
 class GEOM_AISAngle : public AIS_AngleDimension
 {
 public:
-  DEFINE_STANDARD_RTTI(GEOM_AISAngle)
+
+  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_AISAngle,AIS_AngleDimension)
 
 public:
   Standard_EXPORT                     GEOM_AISAngle( const Standard_Integer theId );

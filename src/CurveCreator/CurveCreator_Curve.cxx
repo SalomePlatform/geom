@@ -38,7 +38,6 @@
 #include <TopoDS_Wire.hxx>
 
 #include <Prs3d_PointAspect.hxx>
-#include <Handle_Prs3d_PointAspect.hxx>
 #include <iostream>
 #define DEBTRACE(msg) {std::cerr<<std::flush<<__FILE__<<" ["<<__LINE__<<"] : "<<msg<<std::endl<<std::flush;}
 

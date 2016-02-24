@@ -26,17 +26,16 @@
 #ifndef _GEOMAlgo_GetInPlaceAPI_HeaderFile
 #define _GEOMAlgo_GetInPlaceAPI_HeaderFile
 
+#include <GEOM_Function.hxx>
 
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopTools_ListOfShape.hxx>
 #include <gp_Vec.hxx>
 
 class GEOMAlgo_GetInPlace;
-class Handle_GEOM_Function;
 class BRepExtrema_DistShapeShape;
 class TopoDS_Face;
 class TopoDS_Shape;
-class TopTools_IndexedMapOfShape;
-class TopTools_ListOfShape;
-
 
 /**
  * This is an API class for all GetInPlace algorithm.
@@ -83,7 +82,7 @@ public:
    *  list is not cleared at first.
    */
   Standard_EXPORT static Standard_Boolean GetInPlaceByHistory
-                      (const Handle_GEOM_Function       &theWhereFunction,
+                      (const Handle(GEOM_Function)       &theWhereFunction,
                        const TopTools_IndexedMapOfShape &theWhereIndices,
                        const TopoDS_Shape               &theWhat,
                              TopTools_ListOfShape       &theShapesInPlace);

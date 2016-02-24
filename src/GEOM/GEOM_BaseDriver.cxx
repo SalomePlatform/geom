@@ -30,12 +30,10 @@
 #include "GEOM_Object.hxx"
 #include "GEOM_Engine.hxx"
 
-#include <TColStd_HArray1OfInteger.hxx>
 #include <TDataStd_Name.hxx>
 #include <TDocStd_Owner.hxx>
 
-IMPLEMENT_STANDARD_HANDLE (GEOM_BaseDriver,TFunction_Driver);
-IMPLEMENT_STANDARD_RTTIEXT(GEOM_BaseDriver,TFunction_Driver);
+OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOM_BaseDriver,TFunction_Driver);
 
 //================================================================================
 /*!

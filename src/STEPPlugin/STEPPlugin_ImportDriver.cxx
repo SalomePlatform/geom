@@ -597,7 +597,7 @@ STEPPlugin_ImportDriver::STEPPlugin_ImportDriver()
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer STEPPlugin_ImportDriver::Execute( TFunction_Logbook& log ) const
+Standard_Integer STEPPlugin_ImportDriver::Execute(LOGBOOK& log) const
 {
   if( Label().IsNull() ) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction( Label() );
@@ -800,18 +800,13 @@ Standard_Integer STEPPlugin_ImportDriver::Execute( TFunction_Logbook& log ) cons
 
   aFunction->SetValue( aResShape );
 
-  log.SetTouched( Label() );
+#if OCC_VERSION_MAJOR < 7
+  log.SetTouched(Label());
+#else
+  log->SetTouched(Label());
+#endif
 
   return 1;
-}
-
-//=======================================================================
-//function : MustExecute
-//purpose  :
-//=======================================================================
-Standard_Boolean STEPPlugin_ImportDriver::MustExecute( const TFunction_Logbook& ) const
-{
-  return Standard_True;
 }
 
 //================================================================================
@@ -888,6 +883,4 @@ STEPPlugin_ImportDriver::GetValue( const TCollection_AsciiString& theFileName,
   return aValue;
 }
 
-
-IMPLEMENT_STANDARD_HANDLE( STEPPlugin_ImportDriver, GEOM_BaseDriver );
-IMPLEMENT_STANDARD_RTTIEXT( STEPPlugin_ImportDriver, GEOM_BaseDriver );
+OCCT_IMPLEMENT_STANDARD_RTTIEXT( STEPPlugin_ImportDriver, GEOM_BaseDriver );

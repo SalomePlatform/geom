@@ -27,13 +27,12 @@
 #include "CurveCreator_Macro.hxx"
 
 #include <TColgp_HArray1OfPnt.hxx>
+#include <AIS_InteractiveObject.hxx>
 
 #include <deque>
 #include <vector>
 #include <string>
 #include <list>
-
-class Handle_AIS_InteractiveObject;
 
 namespace CurveCreator
 {
@@ -221,7 +220,7 @@ public:
   /***       Presentation methods              ***/
   /***********************************************/
 
-  virtual Handle_AIS_InteractiveObject getAISObject( const bool theNeedToBuild = false ) const = 0;
+  virtual Handle(AIS_InteractiveObject) getAISObject( const bool theNeedToBuild = false ) const = 0;
 
 protected:
   virtual void constructAISObject() = 0;

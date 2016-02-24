@@ -73,16 +73,16 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::MakeQuad
   GetOperations()->SetNotDone();
 
   //Get the reference edges
-  Handle(GEOM_Object) anEdge1 = GetObjectImpl(theEdge1);
-  Handle(GEOM_Object) anEdge2 = GetObjectImpl(theEdge2);
-  Handle(GEOM_Object) anEdge3 = GetObjectImpl(theEdge3);
-  Handle(GEOM_Object) anEdge4 = GetObjectImpl(theEdge4);
+  HANDLE_NAMESPACE(GEOM_Object) anEdge1 = GetObjectImpl(theEdge1);
+  HANDLE_NAMESPACE(GEOM_Object) anEdge2 = GetObjectImpl(theEdge2);
+  HANDLE_NAMESPACE(GEOM_Object) anEdge3 = GetObjectImpl(theEdge3);
+  HANDLE_NAMESPACE(GEOM_Object) anEdge4 = GetObjectImpl(theEdge4);
 
   if (anEdge1.IsNull() || anEdge2.IsNull() ||
       anEdge3.IsNull() || anEdge4.IsNull()) return aGEOMObject._retn();
 
   //Create the Face
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeQuad(anEdge1, anEdge2, anEdge3, anEdge4);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -104,13 +104,13 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::MakeQuad2Edges
   GetOperations()->SetNotDone();
 
   //Get the reference edges
-  Handle(GEOM_Object) anEdge1 = GetObjectImpl(theEdge1);
-  Handle(GEOM_Object) anEdge2 = GetObjectImpl(theEdge2);
+  HANDLE_NAMESPACE(GEOM_Object) anEdge1 = GetObjectImpl(theEdge1);
+  HANDLE_NAMESPACE(GEOM_Object) anEdge2 = GetObjectImpl(theEdge2);
 
   if (anEdge1.IsNull() || anEdge2.IsNull()) return aGEOMObject._retn();
 
   //Create the Face
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeQuad2Edges(anEdge1, anEdge2);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -133,16 +133,16 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::MakeQuad4Vertices
   GetOperations()->SetNotDone();
 
   //Get the reference points
-  Handle(GEOM_Object) aPnt1 = GetObjectImpl(thePnt1);
-  Handle(GEOM_Object) aPnt2 = GetObjectImpl(thePnt2);
-  Handle(GEOM_Object) aPnt3 = GetObjectImpl(thePnt3);
-  Handle(GEOM_Object) aPnt4 = GetObjectImpl(thePnt4);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt1 = GetObjectImpl(thePnt1);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt2 = GetObjectImpl(thePnt2);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt3 = GetObjectImpl(thePnt3);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt4 = GetObjectImpl(thePnt4);
 
   if (aPnt1.IsNull() || aPnt2.IsNull() ||
       aPnt3.IsNull() || aPnt4.IsNull()) return aGEOMObject._retn();
 
   //Create the Face
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeQuad4Vertices(aPnt1, aPnt2, aPnt3, aPnt4);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -166,19 +166,19 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::MakeHexa
   GetOperations()->SetNotDone();
 
   //Get the reference Faces
-  Handle(GEOM_Object) anFace1 = GetObjectImpl(theFace1);
-  Handle(GEOM_Object) anFace2 = GetObjectImpl(theFace2);
-  Handle(GEOM_Object) anFace3 = GetObjectImpl(theFace3);
-  Handle(GEOM_Object) anFace4 = GetObjectImpl(theFace4);
-  Handle(GEOM_Object) anFace5 = GetObjectImpl(theFace5);
-  Handle(GEOM_Object) anFace6 = GetObjectImpl(theFace6);
+  HANDLE_NAMESPACE(GEOM_Object) anFace1 = GetObjectImpl(theFace1);
+  HANDLE_NAMESPACE(GEOM_Object) anFace2 = GetObjectImpl(theFace2);
+  HANDLE_NAMESPACE(GEOM_Object) anFace3 = GetObjectImpl(theFace3);
+  HANDLE_NAMESPACE(GEOM_Object) anFace4 = GetObjectImpl(theFace4);
+  HANDLE_NAMESPACE(GEOM_Object) anFace5 = GetObjectImpl(theFace5);
+  HANDLE_NAMESPACE(GEOM_Object) anFace6 = GetObjectImpl(theFace6);
 
   if (anFace1.IsNull() || anFace2.IsNull() ||
       anFace3.IsNull() || anFace4.IsNull() ||
       anFace5.IsNull() || anFace6.IsNull()) return aGEOMObject._retn();
 
   //Create the Face
-  Handle(GEOM_Object) anObject = GetOperations()->MakeHexa
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeHexa
     (anFace1, anFace2, anFace3, anFace4, anFace5, anFace6);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -200,13 +200,13 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::MakeHexa2Faces
   GetOperations()->SetNotDone();
 
   //Get the reference Faces
-  Handle(GEOM_Object) anFace1 = GetObjectImpl(theFace1);
-  Handle(GEOM_Object) anFace2 = GetObjectImpl(theFace2);
+  HANDLE_NAMESPACE(GEOM_Object) anFace1 = GetObjectImpl(theFace1);
+  HANDLE_NAMESPACE(GEOM_Object) anFace2 = GetObjectImpl(theFace2);
 
   if (anFace1.IsNull() || anFace2.IsNull()) return aGEOMObject._retn();
 
   //Create the Face
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeHexa2Faces(anFace1, anFace2);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -228,11 +228,11 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::MakeBlockCompound
   GetOperations()->SetNotDone();
 
   //Get the reference Compound
-  Handle(GEOM_Object) aCompound = GetObjectImpl(theCompound);
+  HANDLE_NAMESPACE(GEOM_Object) aCompound = GetObjectImpl(theCompound);
   if (aCompound.IsNull()) return aGEOMObject._retn();
 
   //Create the Blocks Compound
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeBlockCompound(aCompound);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -257,11 +257,11 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetPoint (GEOM::GEOM_Object_ptr 
   GetOperations()->SetNotDone();
 
   //Get the reference Objects
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
   if (aShape.IsNull()) return aGEOMObject._retn();
 
   //Create the Point
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->GetPoint(aShape, theX, theY, theZ, theEpsilon);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -284,12 +284,12 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetVertexNearPoint
   GetOperations()->SetNotDone();
 
   // Get the reference Objects
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
-  Handle(GEOM_Object) aPoint = GetObjectImpl(thePoint);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint = GetObjectImpl(thePoint);
   if (aShape.IsNull() || aPoint.IsNull()) return aGEOMObject._retn();
 
   // Create the Point
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->GetVertexNearPoint(aShape, aPoint);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -312,15 +312,15 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetEdge (GEOM::GEOM_Object_ptr t
   GetOperations()->SetNotDone();
 
   //Get the reference Objects
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
-  Handle(GEOM_Object) aPoint1 = GetObjectImpl(thePoint1);
-  Handle(GEOM_Object) aPoint2 = GetObjectImpl(thePoint2);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint1 = GetObjectImpl(thePoint1);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint2 = GetObjectImpl(thePoint2);
 
   if (aShape.IsNull() ||
       aPoint1.IsNull() || aPoint2.IsNull()) return aGEOMObject._retn();
 
   //Create the Point
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->GetEdge(aShape, aPoint1, aPoint2);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -342,13 +342,13 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetEdgeNearPoint (GEOM::GEOM_Obj
   GetOperations()->SetNotDone();
 
   //Get the reference Objects
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
-  Handle(GEOM_Object) aPoint = GetObjectImpl(thePoint);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint = GetObjectImpl(thePoint);
 
   if (aShape.IsNull() || aPoint.IsNull()) return aGEOMObject._retn();
 
   //Create the Edge
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->GetEdgeNearPoint(aShape, aPoint);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -374,18 +374,18 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetFaceByPoints
   GetOperations()->SetNotDone();
 
   //Get the reference Objects
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
-  Handle(GEOM_Object) aPoint1 = GetObjectImpl(thePoint1);
-  Handle(GEOM_Object) aPoint2 = GetObjectImpl(thePoint2);
-  Handle(GEOM_Object) aPoint3 = GetObjectImpl(thePoint3);
-  Handle(GEOM_Object) aPoint4 = GetObjectImpl(thePoint4);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint1 = GetObjectImpl(thePoint1);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint2 = GetObjectImpl(thePoint2);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint3 = GetObjectImpl(thePoint3);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint4 = GetObjectImpl(thePoint4);
 
   if (aShape.IsNull() ||
       aPoint1.IsNull() || aPoint2.IsNull() ||
       aPoint3.IsNull() || aPoint4.IsNull()) return aGEOMObject._retn();
 
   //Create the Face
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->GetFaceByPoints(aShape, aPoint1, aPoint2, aPoint3, aPoint4);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -409,15 +409,15 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetFaceByEdges
   GetOperations()->SetNotDone();
 
   //Get the reference Objects
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
-  Handle(GEOM_Object) anEdge1 = GetObjectImpl(theEdge1);
-  Handle(GEOM_Object) anEdge2 = GetObjectImpl(theEdge2);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) anEdge1 = GetObjectImpl(theEdge1);
+  HANDLE_NAMESPACE(GEOM_Object) anEdge2 = GetObjectImpl(theEdge2);
 
   if (aShape.IsNull() ||
       anEdge1.IsNull() || anEdge2.IsNull()) return aGEOMObject._retn();
 
   //Create the Face
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->GetFaceByEdges(aShape, anEdge1, anEdge2);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -439,13 +439,13 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetOppositeFace (GEOM::GEOM_Obje
   GetOperations()->SetNotDone();
 
   //Get the reference Objects
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
-  Handle(GEOM_Object) aFace = GetObjectImpl(theFace);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aFace = GetObjectImpl(theFace);
 
   if (aShape.IsNull() || aFace.IsNull()) return aGEOMObject._retn();
 
   //Create the Face
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->GetOppositeFace(aShape, aFace);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -467,13 +467,13 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetFaceNearPoint (GEOM::GEOM_Obj
   GetOperations()->SetNotDone();
 
   //Get the reference Objects
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
-  Handle(GEOM_Object) aPoint = GetObjectImpl(thePoint);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint = GetObjectImpl(thePoint);
 
   if (aShape.IsNull() || aPoint.IsNull()) return aGEOMObject._retn();
 
   //Create the Face
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->GetFaceNearPoint(aShape, aPoint);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -495,13 +495,13 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetFaceByNormale (GEOM::GEOM_Obj
   GetOperations()->SetNotDone();
 
   //Get the reference Objects
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
-  Handle(GEOM_Object) aVector = GetObjectImpl(theVector);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aVector = GetObjectImpl(theVector);
 
   if (aShape.IsNull() || aVector.IsNull()) return aGEOMObject._retn();
 
   //Create the Face
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->GetFaceByNormale(aShape, aVector);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -526,13 +526,13 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetShapesNearPoint
   GetOperations()->SetNotDone();
 
   // Get the reference Objects
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
-  Handle(GEOM_Object) aPoint = GetObjectImpl(thePoint);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint = GetObjectImpl(thePoint);
 
   if (aShape.IsNull() || aPoint.IsNull()) return aGEOMObject._retn();
 
   // Create the Shape
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->GetShapesNearPoint(aShape, aPoint, theShapeType, theTolerance);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -556,7 +556,7 @@ GEOM::ListOfGO* GEOM_IBlocksOperations_i::ExplodeCompoundOfBlocks
   GetOperations()->SetNotDone();
 
   //Get the reference Compound
-  Handle(GEOM_Object) aCompound = GetObjectImpl(theCompound);
+  HANDLE_NAMESPACE(GEOM_Object) aCompound = GetObjectImpl(theCompound);
   if (aCompound.IsNull()) return aSeq._retn();
 
   //Explode
@@ -568,7 +568,7 @@ GEOM::ListOfGO* GEOM_IBlocksOperations_i::ExplodeCompoundOfBlocks
   Standard_Integer aLength = aHSeq->Length();
   aSeq->length(aLength);
   for (Standard_Integer i = 1; i <= aLength; i++)
-    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+    aSeq[i-1] = GetObject(HANDLE_NAMESPACE(GEOM_Object)::DownCast(aHSeq->Value(i)));
 
   return aSeq._retn();
 }
@@ -591,7 +591,7 @@ CORBA::Boolean GEOM_IBlocksOperations_i::IsCompoundOfBlocks
   GetOperations()->SetNotDone();
 
   //Get the reference Compound
-  Handle(GEOM_Object) aCompound = GetObjectImpl(theCompound);
+  HANDLE_NAMESPACE(GEOM_Object) aCompound = GetObjectImpl(theCompound);
   if (aCompound.IsNull()) return isComp;
 
   //Check
@@ -623,7 +623,7 @@ CORBA::Boolean GEOM_IBlocksOperations_i::CheckCompoundOfBlocks
   GetOperations()->SetNotDone();
 
   //Get the reference Compound
-  Handle(GEOM_Object) aCompound = GetObjectImpl(theCompound);
+  HANDLE_NAMESPACE(GEOM_Object) aCompound = GetObjectImpl(theCompound);
   if (aCompound.IsNull()) return isComp;
 
   //Check
@@ -698,7 +698,7 @@ char* GEOM_IBlocksOperations_i::PrintBCErrors
                        const GEOM::GEOM_IBlocksOperations::BCErrors& theErrors)
 {
   //Get the reference Compound
-  Handle(GEOM_Object) aCompound = GetObjectImpl(theCompound);
+  HANDLE_NAMESPACE(GEOM_Object) aCompound = GetObjectImpl(theCompound);
   if (aCompound.IsNull()) return NULL;
 
   // Convert the errors sequence
@@ -763,12 +763,12 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetNonBlocks
   GetOperations()->SetNotDone();
 
   //Get the reference Objects
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
   if (aShape.IsNull()) return aGEOMObject._retn();
 
   //Get the result
-  Handle(GEOM_Object) aFaces;
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) aFaces;
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->GetNonBlocks(aShape, theToleranceC1, aFaces);
   if (!GetOperations()->IsDone())
     return aGEOMObject._retn();
@@ -797,11 +797,11 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::RemoveExtraEdges
   GetOperations()->SetNotDone();
 
   //Get the reference Objects
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
   if (aShape.IsNull()) return aGEOMObject._retn();
 
   //Get the result
-  Handle(GEOM_Object) anObject = GetOperations()->RemoveExtraEdges(aShape, theOptimumNbFaces);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->RemoveExtraEdges(aShape, theOptimumNbFaces);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -822,11 +822,11 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::UnionFaces
   GetOperations()->SetNotDone();
 
   //Get the reference Objects
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
   if (aShape.IsNull()) return aGEOMObject._retn();
 
   //Get the result
-  Handle(GEOM_Object) anObject = GetOperations()->UnionFaces(aShape);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->UnionFaces(aShape);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -846,11 +846,11 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::CheckAndImprove (GEOM::GEOM_Obje
   GetOperations()->SetNotDone();
 
   //Get the reference Objects
-  Handle(GEOM_Object) aCompound = GetObjectImpl(theCompound);
+  HANDLE_NAMESPACE(GEOM_Object) aCompound = GetObjectImpl(theCompound);
   if (aCompound.IsNull()) return aGEOMObject._retn();
 
   //Get the result
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->CheckAndImprove(aCompound);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -872,13 +872,13 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetBlockNearPoint (GEOM::GEOM_Ob
   GetOperations()->SetNotDone();
 
   //Get the reference Objects
-  Handle(GEOM_Object) aCompound = GetObjectImpl(theCompound);
-  Handle(GEOM_Object) aPoint = GetObjectImpl(thePoint);
+  HANDLE_NAMESPACE(GEOM_Object) aCompound = GetObjectImpl(theCompound);
+  HANDLE_NAMESPACE(GEOM_Object) aPoint = GetObjectImpl(thePoint);
 
   if (aCompound.IsNull() || aPoint.IsNull()) return aGEOMObject._retn();
 
   //Get the block
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->GetBlockNearPoint(aCompound, aPoint);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -900,7 +900,7 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetBlockByParts (GEOM::GEOM_Obje
   GetOperations()->SetNotDone();
 
   //Get the reference Compound
-  Handle(GEOM_Object) aCompound = GetObjectImpl(theCompound);
+  HANDLE_NAMESPACE(GEOM_Object) aCompound = GetObjectImpl(theCompound);
   if (aCompound.IsNull()) return aGEOMObject._retn();
 
   //Get the parts
@@ -909,13 +909,13 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetBlockByParts (GEOM::GEOM_Obje
 
   aLen = theParts.length();
   for (ind = 0; ind < aLen; ind++) {
-    Handle(GEOM_Object) aSh = GetObjectImpl(theParts[ind]);
+    HANDLE_NAMESPACE(GEOM_Object) aSh = GetObjectImpl(theParts[ind]);
     if (aSh.IsNull()) return aGEOMObject._retn();
     aParts->Append(aSh);
   }
 
   //Get the Block
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->GetBlockByParts(aCompound, aParts);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -937,7 +937,7 @@ GEOM::ListOfGO* GEOM_IBlocksOperations_i::GetBlocksByParts (GEOM::GEOM_Object_pt
   GetOperations()->SetNotDone();
 
   //Get the reference Compound
-  Handle(GEOM_Object) aCompound = GetObjectImpl(theCompound);
+  HANDLE_NAMESPACE(GEOM_Object) aCompound = GetObjectImpl(theCompound);
   if (aCompound.IsNull()) return aSeq._retn();
 
   //Get the parts
@@ -946,7 +946,7 @@ GEOM::ListOfGO* GEOM_IBlocksOperations_i::GetBlocksByParts (GEOM::GEOM_Object_pt
 
   aLen = theParts.length();
   for (ind = 0; ind < aLen; ind++) {
-    Handle(GEOM_Object) aSh = GetObjectImpl(theParts[ind]);
+    HANDLE_NAMESPACE(GEOM_Object) aSh = GetObjectImpl(theParts[ind]);
     if (aSh.IsNull()) return aSeq._retn();
     aParts->Append(aSh);
   }
@@ -960,7 +960,7 @@ GEOM::ListOfGO* GEOM_IBlocksOperations_i::GetBlocksByParts (GEOM::GEOM_Object_pt
   Standard_Integer aLength = aHSeq->Length();
   aSeq->length(aLength);
   for (Standard_Integer i = 1; i <= aLength; i++)
-    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+    aSeq[i-1] = GetObject(HANDLE_NAMESPACE(GEOM_Object)::DownCast(aHSeq->Value(i)));
 
   return aSeq._retn();
 }
@@ -982,11 +982,11 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::MakeMultiTransformation1D
   GetOperations()->SetNotDone();
 
   //Get the object itself and the vector of translation
-  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theBlock);
+  HANDLE_NAMESPACE(GEOM_Object) aBasicObject = GetObjectImpl(theBlock);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Perform the transformation
-  Handle(GEOM_Object) anObject = GetOperations()->MakeMultiTransformation1D
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeMultiTransformation1D
     (aBasicObject, theDirFace1, theDirFace2, theNbTimes);
   if (!GetOperations()->IsDone() || anObject.IsNull())  return aGEOMObject._retn();
 
@@ -1013,11 +1013,11 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::MakeMultiTransformation2D
   GetOperations()->SetNotDone();
 
   //Get the object itself
-  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theBlock);
+  HANDLE_NAMESPACE(GEOM_Object) aBasicObject = GetObjectImpl(theBlock);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Perform the transformation
-  Handle(GEOM_Object) anObject = GetOperations()->MakeMultiTransformation2D
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeMultiTransformation2D
     (aBasicObject,
      theDirFace1U, theDirFace2U, theNbTimesU,
      theDirFace1V, theDirFace2V, theNbTimesV);
@@ -1039,7 +1039,7 @@ GEOM::ListOfGO* GEOM_IBlocksOperations_i::Propagate (GEOM::GEOM_Object_ptr theSh
   GetOperations()->SetNotDone();
 
   //Get the reference Shape
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
   if (aShape.IsNull()) return aSeq._retn();
 
   //Get the Propagation chains
@@ -1051,7 +1051,7 @@ GEOM::ListOfGO* GEOM_IBlocksOperations_i::Propagate (GEOM::GEOM_Object_ptr theSh
   Standard_Integer aLength = aHSeq->Length();
   aSeq->length(aLength);
   for (Standard_Integer i = 1; i <= aLength; i++)
-    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+    aSeq[i-1] = GetObject(HANDLE_NAMESPACE(GEOM_Object)::DownCast(aHSeq->Value(i)));
 
   return aSeq._retn();
 }

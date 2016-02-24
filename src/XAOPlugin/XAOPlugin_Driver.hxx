@@ -34,16 +34,16 @@ public:
   ~XAOPlugin_Driver();
 
   static const Standard_GUID& GetID();
-  virtual Standard_Integer Execute(TFunction_Logbook& log) const;
-  Standard_Boolean MustExecute(const TFunction_Logbook&) const;
-  virtual void Validate(TFunction_Logbook&) const {}
+  virtual Standard_Integer Execute(LOGBOOK& log) const;
+  Standard_Boolean         MustExecute(const LOGBOOK&) const { return Standard_True; }
+  virtual void             Validate(LOGBOOK&) const {}
 
-  virtual bool GetCreationInformation(std::string&             theOperationName,
-				      std::vector<GEOM_Param>& theParams);
+  virtual bool             GetCreationInformation(std::string& theOperationName,
+                                                  std::vector<GEOM_Param>& theParams);
 
-  static int GetFileNameTag() { return 1; } // where to store file name in GEOM_Function
+  static int               GetFileNameTag() { return 1; } // where to store file name in GEOM_Function
 
-  DEFINE_STANDARD_RTTI(XAOPlugin_Driver)
+  OCCT_DEFINE_STANDARD_RTTIEXT(XAOPlugin_Driver,GEOM_BaseDriver)
 };
 
 #endif // _XAOPlugin_Driver_HXX

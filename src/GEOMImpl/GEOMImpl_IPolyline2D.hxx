@@ -52,34 +52,34 @@ class GEOMIMPL_EXPORT GEOMImpl_IPolyline2D
 
   GEOMImpl_IPolyline2D(Handle(GEOM_Function) theFunction): _func(theFunction) {}
 
-  void SetNames(const Handle_TColStd_HArray1OfExtendedString &theValue)
+  void SetNames(const Handle(TColStd_HArray1OfExtendedString) &theValue)
               { _func->SetStringArray(POLY_ARG_NAMES, theValue); }
 
-  Handle_TColStd_HArray1OfExtendedString GetNames()
+  Handle(TColStd_HArray1OfExtendedString) GetNames()
               { return _func->GetStringArray(POLY_ARG_NAMES); }
 
-  void SetTypes(const Handle_TColStd_HArray1OfByte &theValue)
+  void SetTypes(const Handle(TColStd_HArray1OfByte) &theValue)
               { _func->SetByteArray(POLY_ARG_TYPES, theValue); }
 
-  Handle_TColStd_HArray1OfByte GetTypes()
+  Handle(TColStd_HArray1OfByte) GetTypes()
               { return _func->GetByteArray(POLY_ARG_TYPES); }
 
-  void SetClosedFlags(const Handle_TColStd_HArray1OfByte &theValue)
+  void SetClosedFlags(const Handle(TColStd_HArray1OfByte) &theValue)
               { _func->SetBooleanArray(POLY_ARG_CLOSEDS, theValue); }
 
-  Handle_TColStd_HArray1OfByte GetClosedFlags()
+  Handle(TColStd_HArray1OfByte) GetClosedFlags()
               { return _func->GetBooleanArray(POLY_ARG_CLOSEDS); }
 
-  void SetWorkingPlaneDbls(const Handle_TColStd_HArray1OfReal &thePlane)
+  void SetWorkingPlaneDbls(const Handle(TColStd_HArray1OfReal) &thePlane)
               { _func->SetRealArray(POLY_ARG_WPLANE_DBLS, thePlane); }
 
-  Handle_TColStd_HArray1OfReal GetWorkingPlaneDbls()
+  Handle(TColStd_HArray1OfReal) GetWorkingPlaneDbls()
               { return _func->GetRealArray(POLY_ARG_WPLANE_DBLS); }
 
-  void SetWorkingPlane(const Handle_GEOM_Function &thePlane)
+  void SetWorkingPlane(const Handle(GEOM_Function) &thePlane)
               { _func->SetReference(POLY_ARG_WPLANE_OBJ, thePlane); }
 
-  Handle_GEOM_Function GetWorkingPlane()
+  Handle(GEOM_Function) GetWorkingPlane()
               { return _func->GetReference(POLY_ARG_WPLANE_OBJ); }
 
   void SetCoords(const std::list <std::list <double> > &theValue);

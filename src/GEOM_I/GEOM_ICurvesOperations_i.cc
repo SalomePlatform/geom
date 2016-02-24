@@ -76,7 +76,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCirclePntVecR
   //if (thePnt == NULL || theVec == NULL) return aGEOMObject._retn();
 
   //Get the arguments
-  Handle(GEOM_Object) aPnt, aVec;
+  HANDLE_NAMESPACE(GEOM_Object) aPnt, aVec;
   if (!CORBA::is_nil(thePnt)) {
     aPnt = GetObjectImpl(thePnt);
     if (aPnt.IsNull()) return aGEOMObject._retn();
@@ -87,7 +87,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCirclePntVecR
   }
 
   // Make Circle
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeCirclePntVecR(aPnt, aVec, theR);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -110,14 +110,14 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCircleThreePnt
   GetOperations()->SetNotDone();
 
   //Get the reference points
-  Handle(GEOM_Object) aPnt1 = GetObjectImpl(thePnt1);
-  Handle(GEOM_Object) aPnt2 = GetObjectImpl(thePnt2);
-  Handle(GEOM_Object) aPnt3 = GetObjectImpl(thePnt3);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt1 = GetObjectImpl(thePnt1);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt2 = GetObjectImpl(thePnt2);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt3 = GetObjectImpl(thePnt3);
 
   if (aPnt1.IsNull() || aPnt2.IsNull() || aPnt3.IsNull()) return aGEOMObject._retn();
 
   // Make Circle
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
       GetOperations()->MakeCircleThreePnt(aPnt1, aPnt2, aPnt3);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -140,14 +140,14 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCircleCenter2Pnt
   GetOperations()->SetNotDone();
 
   //Get the reference points
-  Handle(GEOM_Object) aPnt1 = GetObjectImpl(thePnt1);
-  Handle(GEOM_Object) aPnt2 = GetObjectImpl(thePnt2);
-  Handle(GEOM_Object) aPnt3 = GetObjectImpl(thePnt3);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt1 = GetObjectImpl(thePnt1);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt2 = GetObjectImpl(thePnt2);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt3 = GetObjectImpl(thePnt3);
 
   if (aPnt1.IsNull() || aPnt2.IsNull() || aPnt3.IsNull()) return aGEOMObject._retn();
 
   // Make Circle
-  Handle(GEOM_Object) anObject = GetOperations()->MakeCircleCenter2Pnt(aPnt1, aPnt2, aPnt3);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeCircleCenter2Pnt(aPnt1, aPnt2, aPnt3);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -173,7 +173,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeEllipse
   //if (thePnt == NULL || theVec == NULL) return aGEOMObject._retn();
 
   //Get the arguments
-  Handle(GEOM_Object) aPnt, aVec, aVecMaj;
+  HANDLE_NAMESPACE(GEOM_Object) aPnt, aVec, aVecMaj;
   if (!CORBA::is_nil(thePnt)) {
     aPnt = GetObjectImpl(thePnt);
     if (aPnt.IsNull()) return aGEOMObject._retn();
@@ -184,7 +184,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeEllipse
   }
 
   // Make Ellipse
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeEllipse(aPnt, aVec, theRMajor, theRMinor, aVecMaj);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -213,7 +213,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeEllipseVec
   //if (thePnt == NULL || theVec == NULL || theVecMaj == NULL) return aGEOMObject._retn();
 
   //Get the arguments
-  Handle(GEOM_Object) aPnt, aVec, aVecMaj;
+  HANDLE_NAMESPACE(GEOM_Object) aPnt, aVec, aVecMaj;
   if (!CORBA::is_nil(thePnt)) {
     aPnt = GetObjectImpl(thePnt);
     if (aPnt.IsNull()) return aGEOMObject._retn();
@@ -228,7 +228,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeEllipseVec
   }
 
   // Make Ellipse
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeEllipse(aPnt, aVec, theRMajor, theRMinor, aVecMaj);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -252,14 +252,14 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeArc
   GetOperations()->SetNotDone();
 
   //Get the reference points
-  Handle(GEOM_Object) aPnt1 = GetObjectImpl(thePnt1);
-  Handle(GEOM_Object) aPnt2 = GetObjectImpl(thePnt2);
-  Handle(GEOM_Object) aPnt3 = GetObjectImpl(thePnt3);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt1 = GetObjectImpl(thePnt1);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt2 = GetObjectImpl(thePnt2);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt3 = GetObjectImpl(thePnt3);
 
   if (aPnt1.IsNull() || aPnt2.IsNull() || aPnt3.IsNull()) return aGEOMObject._retn();
 
   // Make Arc
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeArc(aPnt1, aPnt2, aPnt3);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -285,14 +285,14 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeArcCenter
   GetOperations()->SetNotDone();
 
   //Get the reference points
-  Handle(GEOM_Object) aPnt1 = GetObjectImpl(thePnt1);
-  Handle(GEOM_Object) aPnt2 = GetObjectImpl(thePnt2);
-  Handle(GEOM_Object) aPnt3 = GetObjectImpl(thePnt3);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt1 = GetObjectImpl(thePnt1);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt2 = GetObjectImpl(thePnt2);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt3 = GetObjectImpl(thePnt3);
 
   if (aPnt1.IsNull() || aPnt2.IsNull() || aPnt3.IsNull()) return aGEOMObject._retn();
 
   // Make ArcCenter
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
       GetOperations()->MakeArcCenter(aPnt1, aPnt2, aPnt3,theSense);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -316,14 +316,14 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeArcOfEllipse
   GetOperations()->SetNotDone();
 
   //Get the reference points
-  Handle(GEOM_Object) aPnt1 = GetObjectImpl(thePnt1);
-  Handle(GEOM_Object) aPnt2 = GetObjectImpl(thePnt2);
-  Handle(GEOM_Object) aPnt3 = GetObjectImpl(thePnt3);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt1 = GetObjectImpl(thePnt1);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt2 = GetObjectImpl(thePnt2);
+  HANDLE_NAMESPACE(GEOM_Object) aPnt3 = GetObjectImpl(thePnt3);
 
   if (aPnt1.IsNull() || aPnt2.IsNull() || aPnt3.IsNull()) return aGEOMObject._retn();
 
   // Make Arc
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeArcOfEllipse(aPnt1, aPnt2, aPnt3);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -348,15 +348,15 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakePolyline
   //Get the reference point
   int ind = 0;
   int aLen = thePoints.length();
-  std::list<Handle(GEOM_Object)> aPoints;
+  std::list<HANDLE_NAMESPACE(GEOM_Object)> aPoints;
   for (; ind < aLen; ind++) {
-    Handle(GEOM_Object) aPnt = GetObjectImpl(thePoints[ind]);
+    HANDLE_NAMESPACE(GEOM_Object) aPnt = GetObjectImpl(thePoints[ind]);
     if (aPnt.IsNull()) return aGEOMObject._retn();
     aPoints.push_back(aPnt);
   }
 
   // Make Polyline
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakePolyline(aPoints, theIsClosed);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -381,15 +381,15 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSplineBezier
   //Get the reference point
   int ind = 0;
   int aLen = thePoints.length();
-  std::list<Handle(GEOM_Object)> aPoints;
+  std::list<HANDLE_NAMESPACE(GEOM_Object)> aPoints;
   for (; ind < aLen; ind++) {
-    Handle(GEOM_Object) aPnt = GetObjectImpl(thePoints[ind]);
+    HANDLE_NAMESPACE(GEOM_Object) aPnt = GetObjectImpl(thePoints[ind]);
     if (aPnt.IsNull()) return aGEOMObject._retn();
     aPoints.push_back(aPnt);
   }
 
   // Make Bezier curve
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
       GetOperations()->MakeSplineBezier(aPoints, theIsClosed);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -415,15 +415,15 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSplineInterpolation
   //Get the reference point
   int ind = 0;
   int aLen = thePoints.length();
-  std::list<Handle(GEOM_Object)> aPoints;
+  std::list<HANDLE_NAMESPACE(GEOM_Object)> aPoints;
   for (; ind < aLen; ind++) {
-    Handle(GEOM_Object) aPnt = GetObjectImpl(thePoints[ind]);
+    HANDLE_NAMESPACE(GEOM_Object) aPnt = GetObjectImpl(thePoints[ind]);
     if (aPnt.IsNull()) return aGEOMObject._retn();
     aPoints.push_back(aPnt);
   }
 
   // Make Polyline
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeSplineInterpolation(aPoints, theIsClosed, theDoReordering);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -449,21 +449,21 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSplineInterpolWithTangents
   //Get the reference points
   int ind = 0;
   int aLen = thePoints.length();
-  std::list<Handle(GEOM_Object)> aPoints;
+  std::list<HANDLE_NAMESPACE(GEOM_Object)> aPoints;
   for (; ind < aLen; ind++) {
-    Handle(GEOM_Object) aPnt = GetObjectImpl(thePoints[ind]);
+    HANDLE_NAMESPACE(GEOM_Object) aPnt = GetObjectImpl(thePoints[ind]);
     if (aPnt.IsNull()) return aGEOMObject._retn();
     aPoints.push_back(aPnt);
   }
 
   //Get the reference vectors
-  Handle(GEOM_Object) aVec1 = GetObjectImpl(theFirstVec);
-  Handle(GEOM_Object) aVec2 = GetObjectImpl(theLastVec);
+  HANDLE_NAMESPACE(GEOM_Object) aVec1 = GetObjectImpl(theFirstVec);
+  HANDLE_NAMESPACE(GEOM_Object) aVec2 = GetObjectImpl(theLastVec);
 
   if (aVec1.IsNull() || aVec2.IsNull()) return aGEOMObject._retn();
 
   // Make Polyline
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeSplineInterpolWithTangents(aPoints, aVec1, aVec2);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -501,7 +501,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCurveParametric
   }
 
   // Make Polyline
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeCurveParametric(thexExpr, theyExpr, thezExpr,
                                          theParamMin, theParamMax,
                                          theParamStep, aType);
@@ -542,7 +542,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCurveParametricNew
   }
 
   // Make Polyline
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeCurveParametric(thexExpr, theyExpr, thezExpr,
                        theParamMin, theParamMax,
                        0.0, aType, theParamNbStep, true);
@@ -568,10 +568,10 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeIsoline
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  Handle(GEOM_Object) aFace = GetObjectImpl(theFace);
+  HANDLE_NAMESPACE(GEOM_Object) aFace = GetObjectImpl(theFace);
 
   // Make isoline
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeIsoline(aFace, IsUIsoline, theParameter);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -597,7 +597,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcher
     aWorkingPlane.push_back(theWorkingPlane[ind]);
 
   // Make Sketcher
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->MakeSketcher(theCommand, aWorkingPlane);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return GEOM::GEOM_Object::_nil();
@@ -616,10 +616,10 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcherOnPlane
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  Handle(GEOM_Object) aWorkingPlane = GetObjectImpl(theWorkingPlane);
+  HANDLE_NAMESPACE(GEOM_Object) aWorkingPlane = GetObjectImpl(theWorkingPlane);
 
   // Make Sketcher
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
       GetOperations()->MakeSketcherOnPlane(theCommand, aWorkingPlane);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return GEOM::GEOM_Object::_nil();
@@ -638,7 +638,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::Make3DSketcherCommand (const cha
   GetOperations()->SetNotDone();
 
   // Make 3D Sketcher
-  Handle(GEOM_Object) anObject = GetOperations()->Make3DSketcherCommand(theCommand);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->Make3DSketcherCommand(theCommand);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return GEOM::GEOM_Object::_nil();
 
@@ -663,7 +663,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::Make3DSketcher
     aCoords.push_back(theCoordinates[ind]);
 
   // Make Sketcher
-  Handle(GEOM_Object) anObject =
+  HANDLE_NAMESPACE(GEOM_Object) anObject =
     GetOperations()->Make3DSketcher(aCoords);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return GEOM::GEOM_Object::_nil();
@@ -710,7 +710,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakePolyline2D
   }
 
   // Make Polyline
-  Handle(GEOM_Object) anObject = GetOperations()->MakePolyline2D
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakePolyline2D
             (aCoords, aNames, aTypes, aCloseds, aWorkingPlane);
 
   if (!GetOperations()->IsDone() || anObject.IsNull()) {
@@ -743,13 +743,13 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakePolyline2DOnPlane
   Handle(TColStd_HArray1OfByte)           aCloseds      =
     ConvertBoolArray(theClosedList);
   std::list <std::list <double> >         aCoords;
-  Handle(GEOM_Object)                     aWorkingPlane =
+  HANDLE_NAMESPACE(GEOM_Object)                     aWorkingPlane =
     GetObjectImpl(theWorkingPlane);
 
   ConvertListListDouble(theCoordsList, aCoords);
 
   // Make Polyline
-  Handle(GEOM_Object) anObject = GetOperations()->MakePolyline2DOnPlane
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakePolyline2DOnPlane
             (aCoords, aNames, aTypes, aCloseds, aWorkingPlane);
 
   if (!GetOperations()->IsDone() || anObject.IsNull()) {

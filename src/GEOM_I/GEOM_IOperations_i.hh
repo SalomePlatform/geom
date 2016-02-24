@@ -47,10 +47,10 @@ class GEOM_I_EXPORT GEOM_IOperations_i : public virtual POA_GEOM::GEOM_IOperatio
 
   virtual CORBA::Long GetStudyID();    
 
-  virtual GEOM::GEOM_BaseObject_ptr GetBaseObject(Handle(GEOM_BaseObject) theObject);
-  virtual Handle(GEOM_BaseObject) GetBaseObjectImpl(GEOM::GEOM_BaseObject_ptr theObject);
-  virtual GEOM::GEOM_Object_ptr GetObject(Handle(GEOM_Object) theObject);
-  virtual Handle(GEOM_Object) GetObjectImpl(GEOM::GEOM_Object_ptr theObject);
+  virtual GEOM::GEOM_BaseObject_ptr GetBaseObject(HANDLE_NAMESPACE(GEOM_BaseObject) theObject);
+  virtual HANDLE_NAMESPACE(GEOM_BaseObject) GetBaseObjectImpl(GEOM::GEOM_BaseObject_ptr theObject);
+  virtual GEOM::GEOM_Object_ptr GetObject(HANDLE_NAMESPACE(GEOM_Object) theObject);
+  virtual HANDLE_NAMESPACE(GEOM_Object) GetObjectImpl(GEOM::GEOM_Object_ptr theObject);
 
   virtual void StartOperation();
 
@@ -68,7 +68,7 @@ protected:
   Handle(TColStd_HSequenceOfTransient)
                GetListOfObjectsImpl(const GEOM::ListOfGO& theObjects);
   bool GetListOfObjectsImpl(const GEOM::ListOfGO& theObjects,
-                            std::list< Handle(GEOM_Object) >& theList);
+                            std::list< HANDLE_NAMESPACE(GEOM_Object) >& theList);
 
   Handle(TColStd_HArray1OfExtendedString)
                ConvertStringArray(const GEOM::string_array &theInArray);

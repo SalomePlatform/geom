@@ -139,7 +139,11 @@ Handle(Adaptor2d_HCurve2d) GEOMUtils::TrsfCurve2d::Trim
                const Standard_Real /*Tol*/) const
 {
   Handle(Geom2d_Curve)            aCurve = myCurve.Curve();
+#if OCC_VERSION_MAJOR < 7
   GEOMUtils::Handle(HTrsfCurve2d) aAHCurve =
+#else
+  Handle(GEOMUtils::HTrsfCurve2d) aAHCurve =
+#endif
     new GEOMUtils::HTrsfCurve2d(aCurve, First, Last, myTrsf);
 
   return aAHCurve;

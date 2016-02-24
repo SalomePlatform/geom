@@ -51,7 +51,7 @@ private:
   std::string myFatherIOR;
 
 public:
-  DEFINE_STANDARD_RTTI(GEOM_InteractiveObject);
+  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_InteractiveObject,SALOME_InteractiveObject)
 };
 
 DEFINE_STANDARD_HANDLE(GEOM_InteractiveObject, SALOME_InteractiveObject)

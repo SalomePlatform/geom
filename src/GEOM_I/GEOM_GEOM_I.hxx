@@ -37,4 +37,11 @@
    #define GEOM_I_EXPORT
 #endif
 
+#include <Basics_OCCTVersion.hxx>
+#if OCC_VERSION_MAJOR < 7
+  #define HANDLE_NAMESPACE(CLS) Handle(CLS)
+#else
+  #define HANDLE_NAMESPACE(CLS) Handle(::CLS)
+#endif
+
 #endif //_GEOM_GEOM_I_HXX_

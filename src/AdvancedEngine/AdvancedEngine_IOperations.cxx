@@ -33,31 +33,30 @@
 #include <OpUtil.hxx>
 #include <Utils_ExceptHandlers.hxx>
 
-#include "GEOM_Function.hxx"
-#include "GEOM_PythonDump.hxx"
-#include "GEOMUtils.hxx"
-#include "GEOMAlgo_ClsfSurf.hxx"
-#include "GEOMAlgo_FinderShapeOn2.hxx"
-#include "GEOMAlgo_Splitter.hxx"
+#include <GEOM_Function.hxx>
+#include <GEOM_PythonDump.hxx>
+#include <GEOMUtils.hxx>
+#include <GEOMAlgo_ClsfSurf.hxx>
+#include <GEOMAlgo_FinderShapeOn2.hxx>
+#include <GEOMAlgo_Splitter.hxx>
 
-#include "GEOMImpl_Gen.hxx"
-#include "GEOMImpl_Types.hxx"
+#include <GEOMImpl_Gen.hxx>
+#include <GEOMImpl_Types.hxx>
 
-#include "GEOMImpl_IBasicOperations.hxx"
-#include "GEOMImpl_IBooleanOperations.hxx"
-#include "GEOMImpl_IShapesOperations.hxx"
-#include "GEOMImpl_ITransformOperations.hxx"
-#include "GEOMImpl_IBlocksOperations.hxx"
-#include "GEOMImpl_I3DPrimOperations.hxx"
-#include "GEOMImpl_ILocalOperations.hxx"
-#include "GEOMImpl_IHealingOperations.hxx"
-#include "GEOMImpl_IGroupOperations.hxx"
-#include "GEOMImpl_GlueDriver.hxx"
+#include <GEOMImpl_IBasicOperations.hxx>
+#include <GEOMImpl_IBooleanOperations.hxx>
+#include <GEOMImpl_IShapesOperations.hxx>
+#include <GEOMImpl_ITransformOperations.hxx>
+#include <GEOMImpl_IBlocksOperations.hxx>
+#include <GEOMImpl_I3DPrimOperations.hxx>
+#include <GEOMImpl_ILocalOperations.hxx>
+#include <GEOMImpl_IHealingOperations.hxx>
+#include <GEOMImpl_IGroupOperations.hxx>
+#include <GEOMImpl_GlueDriver.hxx>
 
 #include <TDF_Tool.hxx>
 #include <TFunction_DriverTable.hxx>
 #include <TFunction_Driver.hxx>
-#include <TFunction_Logbook.hxx>
 #include <TNaming_CopyShape.hxx>
 
 #include <TopExp.hxx>
@@ -812,7 +811,7 @@ bool AdvancedEngine_IOperations::MakeGroups(Handle(GEOM_Object) theShape, int sh
 //=============================================================================
 bool AdvancedEngine_IOperations::GetFacesOnSurf
                      (const TopoDS_Shape &theShape,
-                      const Handle_Geom_Surface& theSurface,
+                      const Handle(Geom_Surface)& theSurface,
                       const Standard_Real theTolerance,
                       TopTools_ListOfShape &theFaces)
 {

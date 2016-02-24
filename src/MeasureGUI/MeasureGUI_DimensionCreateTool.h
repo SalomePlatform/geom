@@ -40,6 +40,7 @@
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TColgp_SequenceOfDir.hxx>
+#include <V3d_View.hxx>
 
 //=================================================================================
 // class    : MeasureGUI_DimensionCreateTool

@@ -318,8 +318,8 @@ Handle(TColStd_HArray1OfExtendedString) GEOM_Field::GetComponents()
 //function : getFunctionToSetValues
 //purpose  : dump any HArray into a string
 //=======================================================================
-template< class Handle_HARRAY1 >
-TCollection_AsciiString arrayToSting( const Handle_HARRAY1& ar,
+template< class HandleArray1 >
+TCollection_AsciiString arrayToSting( const HandleArray1& ar,
                                       const char*            quote="")
 {
   TCollection_AsciiString s;
@@ -756,7 +756,5 @@ const Standard_GUID& GEOM_FieldStep::GetDataID()
   return TDataStd_ExtStringArray::GetID();
 }
 
-IMPLEMENT_STANDARD_HANDLE (GEOM_Field, GEOM_BaseObject );
-IMPLEMENT_STANDARD_RTTIEXT(GEOM_Field, GEOM_BaseObject );
-IMPLEMENT_STANDARD_HANDLE (GEOM_FieldStep, GEOM_BaseObject );
-IMPLEMENT_STANDARD_RTTIEXT(GEOM_FieldStep, GEOM_BaseObject );
+OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOM_Field, GEOM_BaseObject );
+OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOM_FieldStep, GEOM_BaseObject );

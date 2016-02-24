@@ -39,7 +39,6 @@
 #include <TopTools_ListOfShape.hxx>
 
 #include <Geom_Surface.hxx>
-#include <Handle_Geom_Surface.hxx>
 #include <GeomAdaptor_Surface.hxx>
 
 #include <gp_Pnt.hxx>
@@ -83,7 +82,7 @@ class GEOMAlgo_FinderShapeOn1  : public GEOMAlgo_ShapeAlgo
     Standard_Integer NbPntsMax() const;
 
   Standard_EXPORT
-    const Handle_Geom_Surface& Surface() const;
+    const Handle(Geom_Surface)& Surface() const;
 
   Standard_EXPORT
     TopAbs_ShapeEnum ShapeType() const;
@@ -133,7 +132,7 @@ class GEOMAlgo_FinderShapeOn1  : public GEOMAlgo_ShapeAlgo
     virtual  TopAbs_State GetPointState(const gp_Pnt& aP) ;
 
 
-  Handle_Geom_Surface mySurface;
+  Handle(Geom_Surface) mySurface;
   TopAbs_ShapeEnum myShapeType;
   GEOMAlgo_State myState;
   Standard_Integer myNbPntsMin;

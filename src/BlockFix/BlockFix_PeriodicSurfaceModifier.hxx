@@ -33,19 +33,18 @@
 #include <TColStd_IndexedMapOfTransient.hxx>
 #include <BRepTools_Modification.hxx>
 #include <Standard_Boolean.hxx>
-#include <Handle_Geom_Surface.hxx>
-#include <Handle_Geom_Curve.hxx>
-#include <Handle_Geom2d_Curve.hxx>
 #include <GeomAbs_Shape.hxx>
 
-class TopoDS_Face;
-class Geom_Surface;
-class TopLoc_Location;
-class TopoDS_Edge;
-class Geom_Curve;
+#include <Basics_OCCTVersion.hxx>
+
 class TopoDS_Vertex;
-class gp_Pnt;
+class TopoDS_Edge;
+class TopoDS_Face;
+class TopLoc_Location;
+class Geom_Surface;
+class Geom_Curve;
 class Geom2d_Curve;
+class gp_Pnt;
 
 DEFINE_STANDARD_HANDLE(BlockFix_PeriodicSurfaceModifier, BRepTools_Modification);
 
@@ -84,7 +83,7 @@ public:
                                             const TopoDS_Face& NewF1,
                                             const TopoDS_Face& NewF2);
 
-  DEFINE_STANDARD_RTTI(BlockFix_PeriodicSurfaceModifier);
+  OCCT_DEFINE_STANDARD_RTTIEXT(BlockFix_PeriodicSurfaceModifier,BRepTools_Modification)
 
 private:
   Standard_Real myTolerance;

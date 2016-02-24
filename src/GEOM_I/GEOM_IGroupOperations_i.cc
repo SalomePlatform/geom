@@ -74,11 +74,11 @@ GEOM::GEOM_Object_ptr GEOM_IGroupOperations_i::CreateGroup(GEOM::GEOM_Object_ptr
   if (theShapeType < 0) return aGEOMObject._retn();
 
   //Get the reference shape
-  Handle(GEOM_Object) aShapeRef = GetObjectImpl(theMainShape);
+  HANDLE_NAMESPACE(GEOM_Object) aShapeRef = GetObjectImpl(theMainShape);
   if (aShapeRef.IsNull()) return aGEOMObject._retn();
 
   //Create the Fillet
-  Handle(GEOM_Object) anObject = GetOperations()->CreateGroup(aShapeRef, (TopAbs_ShapeEnum)theShapeType);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->CreateGroup(aShapeRef, (TopAbs_ShapeEnum)theShapeType);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -96,7 +96,7 @@ void GEOM_IGroupOperations_i::AddObject(GEOM::GEOM_Object_ptr theGroup, CORBA::L
   GetOperations()->SetNotDone();
 
   //Get the reference group
-  Handle(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
+  HANDLE_NAMESPACE(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
   if (aGroupRef.IsNull()) return;
 
   GetOperations()->AddObject(aGroupRef, theSubShapeId);
@@ -116,7 +116,7 @@ void GEOM_IGroupOperations_i::RemoveObject(GEOM::GEOM_Object_ptr theGroup, CORBA
   GetOperations()->SetNotDone();
 
   //Get the reference group
-  Handle(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
+  HANDLE_NAMESPACE(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
   if (aGroupRef.IsNull()) return;
 
   GetOperations()->RemoveObject(aGroupRef, theSubShapeId);
@@ -137,7 +137,7 @@ void GEOM_IGroupOperations_i::UnionList (GEOM::GEOM_Object_ptr theGroup,
   GetOperations()->SetNotDone();
 
   //Get the reference group
-  Handle(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
+  HANDLE_NAMESPACE(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
   if (aGroupRef.IsNull()) return;
 
   //Get sub-shape to add
@@ -145,7 +145,7 @@ void GEOM_IGroupOperations_i::UnionList (GEOM::GEOM_Object_ptr theGroup,
 
   int ind, aLen = theSubShapes.length();
   for (ind = 0; ind < aLen; ind++) {
-    Handle(GEOM_Object) aSh = GetObjectImpl(theSubShapes[ind]);
+    HANDLE_NAMESPACE(GEOM_Object) aSh = GetObjectImpl(theSubShapes[ind]);
     if (aSh.IsNull()) return;
     aSubShapes->Append(aSh);
   }
@@ -166,7 +166,7 @@ void GEOM_IGroupOperations_i::DifferenceList (GEOM::GEOM_Object_ptr theGroup,
   GetOperations()->SetNotDone();
 
   //Get the reference group
-  Handle(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
+  HANDLE_NAMESPACE(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
   if (aGroupRef.IsNull()) return;
 
   //Get sub-shape to remove
@@ -174,7 +174,7 @@ void GEOM_IGroupOperations_i::DifferenceList (GEOM::GEOM_Object_ptr theGroup,
 
   int ind, aLen = theSubShapes.length();
   for (ind = 0; ind < aLen; ind++) {
-    Handle(GEOM_Object) aSh = GetObjectImpl(theSubShapes[ind]);
+    HANDLE_NAMESPACE(GEOM_Object) aSh = GetObjectImpl(theSubShapes[ind]);
     if (aSh.IsNull()) return;
     aSubShapes->Append(aSh);
   }
@@ -195,7 +195,7 @@ void GEOM_IGroupOperations_i::UnionIDs (GEOM::GEOM_Object_ptr   theGroup,
   GetOperations()->SetNotDone();
 
   //Get the reference group
-  Handle(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
+  HANDLE_NAMESPACE(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
   if (aGroupRef.IsNull()) return;
 
   //Get sub-shape to add
@@ -222,7 +222,7 @@ void GEOM_IGroupOperations_i::DifferenceIDs (GEOM::GEOM_Object_ptr   theGroup,
   GetOperations()->SetNotDone();
 
   //Get the reference group
-  Handle(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
+  HANDLE_NAMESPACE(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
   if (aGroupRef.IsNull()) return;
 
   //Get sub-shape to remove
@@ -251,12 +251,12 @@ GEOM::GEOM_Object_ptr GEOM_IGroupOperations_i::UnionGroups (GEOM::GEOM_Object_pt
   GetOperations()->SetNotDone();
 
   //Get the reference groups
-  Handle(GEOM_Object) aGroupRef1 = GetObjectImpl(theGroup1);
-  Handle(GEOM_Object) aGroupRef2 = GetObjectImpl(theGroup2);
+  HANDLE_NAMESPACE(GEOM_Object) aGroupRef1 = GetObjectImpl(theGroup1);
+  HANDLE_NAMESPACE(GEOM_Object) aGroupRef2 = GetObjectImpl(theGroup2);
   if (aGroupRef1.IsNull() || aGroupRef2.IsNull()) return aGEOMObject._retn();
 
   //Perform the operation
-  Handle(GEOM_Object) anObject = GetOperations()->UnionGroups(aGroupRef1, aGroupRef2);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->UnionGroups(aGroupRef1, aGroupRef2);
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
   return GetObject(anObject);
@@ -276,12 +276,12 @@ GEOM::GEOM_Object_ptr GEOM_IGroupOperations_i::IntersectGroups (GEOM::GEOM_Objec
   GetOperations()->SetNotDone();
 
   //Get the reference groups
-  Handle(GEOM_Object) aGroupRef1 = GetObjectImpl(theGroup1);
-  Handle(GEOM_Object) aGroupRef2 = GetObjectImpl(theGroup2);
+  HANDLE_NAMESPACE(GEOM_Object) aGroupRef1 = GetObjectImpl(theGroup1);
+  HANDLE_NAMESPACE(GEOM_Object) aGroupRef2 = GetObjectImpl(theGroup2);
   if (aGroupRef1.IsNull() || aGroupRef2.IsNull()) return aGEOMObject._retn();
 
   //Perform the operation
-  Handle(GEOM_Object) anObject = GetOperations()->IntersectGroups(aGroupRef1, aGroupRef2);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->IntersectGroups(aGroupRef1, aGroupRef2);
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
   return GetObject(anObject);
@@ -301,12 +301,12 @@ GEOM::GEOM_Object_ptr GEOM_IGroupOperations_i::CutGroups (GEOM::GEOM_Object_ptr 
   GetOperations()->SetNotDone();
 
   //Get the reference groups
-  Handle(GEOM_Object) aGroupRef1 = GetObjectImpl(theGroup1);
-  Handle(GEOM_Object) aGroupRef2 = GetObjectImpl(theGroup2);
+  HANDLE_NAMESPACE(GEOM_Object) aGroupRef1 = GetObjectImpl(theGroup1);
+  HANDLE_NAMESPACE(GEOM_Object) aGroupRef2 = GetObjectImpl(theGroup2);
   if (aGroupRef1.IsNull() || aGroupRef2.IsNull()) return aGEOMObject._retn();
 
   //Perform the operation
-  Handle(GEOM_Object) anObject = GetOperations()->CutGroups(aGroupRef1, aGroupRef2);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->CutGroups(aGroupRef1, aGroupRef2);
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
   return GetObject(anObject);
@@ -329,13 +329,13 @@ GEOM::GEOM_Object_ptr GEOM_IGroupOperations_i::UnionListOfGroups (const GEOM::Li
 
   int ind, aLen = theGList.length();
   for (ind = 0; ind < aLen; ind++) {
-    Handle(GEOM_Object) aGr = GetObjectImpl(theGList[ind]);
+    HANDLE_NAMESPACE(GEOM_Object) aGr = GetObjectImpl(theGList[ind]);
     if (aGr.IsNull()) return aGEOMObject._retn();
     aGroups->Append(aGr);
   }
 
   //Perform the operation
-  Handle(GEOM_Object) anObject = GetOperations()->UnionListOfGroups(aGroups);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->UnionListOfGroups(aGroups);
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
   return GetObject(anObject);
@@ -358,13 +358,13 @@ GEOM::GEOM_Object_ptr GEOM_IGroupOperations_i::IntersectListOfGroups (const GEOM
 
   int ind, aLen = theGList.length();
   for (ind = 0; ind < aLen; ind++) {
-    Handle(GEOM_Object) aGr = GetObjectImpl(theGList[ind]);
+    HANDLE_NAMESPACE(GEOM_Object) aGr = GetObjectImpl(theGList[ind]);
     if (aGr.IsNull()) return aGEOMObject._retn();
     aGroups->Append(aGr);
   }
 
   //Perform the operation
-  Handle(GEOM_Object) anObject = GetOperations()->IntersectListOfGroups(aGroups);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->IntersectListOfGroups(aGroups);
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
   return GetObject(anObject);
@@ -389,19 +389,19 @@ GEOM::GEOM_Object_ptr GEOM_IGroupOperations_i::CutListOfGroups (const GEOM::List
 
   int ind, aLen = theGList1.length();
   for (ind = 0; ind < aLen; ind++) {
-    Handle(GEOM_Object) aGr = GetObjectImpl(theGList1[ind]);
+    HANDLE_NAMESPACE(GEOM_Object) aGr = GetObjectImpl(theGList1[ind]);
     if (aGr.IsNull()) return aGEOMObject._retn();
     aGroups1->Append(aGr);
   }
   aLen = theGList2.length();
   for (ind = 0; ind < aLen; ind++) {
-    Handle(GEOM_Object) aGr = GetObjectImpl(theGList2[ind]);
+    HANDLE_NAMESPACE(GEOM_Object) aGr = GetObjectImpl(theGList2[ind]);
     if (aGr.IsNull()) return aGEOMObject._retn();
     aGroups2->Append(aGr);
   }
 
   //Perform the operation
-  Handle(GEOM_Object) anObject = GetOperations()->CutListOfGroups(aGroups1, aGroups2);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->CutListOfGroups(aGroups1, aGroups2);
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
   return GetObject(anObject);
@@ -418,7 +418,7 @@ CORBA::Long GEOM_IGroupOperations_i::GetType(GEOM::GEOM_Object_ptr theGroup)
   GetOperations()->SetNotDone();
 
   //Get the reference group
-  Handle(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
+  HANDLE_NAMESPACE(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
   if (aGroupRef.IsNull()) return -1;
 
   return GetOperations()->GetType(aGroupRef);
@@ -437,10 +437,10 @@ GEOM::GEOM_Object_ptr GEOM_IGroupOperations_i::GetMainShape(GEOM::GEOM_Object_pt
   GetOperations()->SetNotDone();
 
   //Get the reference group
-  Handle(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
+  HANDLE_NAMESPACE(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
   if (aGroupRef.IsNull()) return aGEOMObject._retn();
 
-  Handle(GEOM_Object) anObject = GetOperations()->GetMainShape(aGroupRef);
+  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->GetMainShape(aGroupRef);
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
   return GetObject(anObject);
@@ -459,7 +459,7 @@ GEOM::ListOfLong* GEOM_IGroupOperations_i::GetObjects(GEOM::GEOM_Object_ptr theG
   GetOperations()->SetNotDone();
 
   //Get the reference group
-  Handle(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
+  HANDLE_NAMESPACE(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
   if (aGroupRef.IsNull()) return aList._retn();
 
   aList = new GEOM::ListOfLong;

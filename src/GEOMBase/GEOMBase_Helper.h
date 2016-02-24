@@ -35,6 +35,8 @@
 #include <SALOMEconfig.h>
 #include CORBA_CLIENT_HEADER(GEOM_Gen)
 
+#include <TColStd_MapOfInteger.hxx>
+
 #include <QString>
 #include <QMap>
 
@@ -47,7 +49,6 @@ class SUIT_Desktop;
 class SUIT_ViewWindow;
 class SALOME_Prs;
 class GEOM_Operation;
-class TColStd_MapOfInteger;
 
 //================================================================
 // Class       : GEOMBase_Helper

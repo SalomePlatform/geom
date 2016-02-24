@@ -41,7 +41,7 @@ public:
 
 private:
   Standard_Real myTolerance;
-  Handle_ShapeBuild_ReShape myContext;
+  Handle(ShapeBuild_ReShape) myContext;
 
 };
 

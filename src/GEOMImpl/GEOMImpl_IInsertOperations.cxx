@@ -48,7 +48,6 @@
 
 #include <TFunction_DriverTable.hxx>
 #include <TFunction_Driver.hxx>
-#include <TFunction_Logbook.hxx>
 #include <TDF_ChildIDIterator.hxx>
 #include <TDF_Tool.hxx>
 #include <TDataStd_Integer.hxx>
@@ -64,7 +63,6 @@
 #include <BRepTools.hxx>
 #include <gp_Pnt.hxx>
 
-#include <TColStd_HArray1OfByte.hxx>
 #include <TColStd_HArray1OfReal.hxx>
 
 #include <Standard_Failure.hxx>

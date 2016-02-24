@@ -25,11 +25,12 @@
 
 #include "GEOM_IOperations.hxx"
 
-#include <TColStd_HSequenceOfTransient.hxx>
+#include <GEOM_Field.hxx>
 
-class Handle(GEOM_Field);
-class Handle(GEOM_Object);
-class Handle(TColStd_HArray1OfExtendedString);
+#include <TColStd_HSequenceOfTransient.hxx>
+#include <TColStd_HArray1OfExtendedString.hxx>
+
+class GEOM_Object;
 
 class GEOMImpl_IFieldOperations : public GEOM_IOperations {
  public:

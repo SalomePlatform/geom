@@ -54,7 +54,6 @@
 #include <OCCViewer_ViewModel.h>
 #include <SVTK_ViewModel.h>
 
-#include <TColStd_MapOfInteger.hxx>
 #include <TCollection_AsciiString.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
 

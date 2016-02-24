@@ -27,12 +27,14 @@
 #include <Utils_SALOME_Exception.hxx>
 
 // GEOM includes
-#include "GEOM_PythonDump.hxx"
-#include "GEOMImpl_Types.hxx"
-#include "GEOMImpl_IGroupOperations.hxx"
-#include "GEOMImpl_IShapesOperations.hxx"
-#include "GEOMImpl_IFieldOperations.hxx"
-#include "GEOM_ISubShape.hxx"
+#include <GEOM_PythonDump.hxx>
+#include <GEOMImpl_Types.hxx>
+#include <GEOMImpl_IGroupOperations.hxx>
+#include <GEOMImpl_IShapesOperations.hxx>
+#include <GEOMImpl_IFieldOperations.hxx>
+#include <GEOM_ISubShape.hxx>
+#include <GEOM_Object.hxx>
+#include <GEOM_Field.hxx>
 
 #include <XAO_Geometry.hxx>
 #include <XAO_BrepGeometry.hxx>
