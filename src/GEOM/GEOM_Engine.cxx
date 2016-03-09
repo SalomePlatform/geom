@@ -1278,7 +1278,10 @@ void FillMapOfRef(const Handle(GEOM_Function) &theFunction,
 
             const int aRefTag = GetTag(anObjEntry);
 
-            theRefMap[anObjTag].push_back(aRefTag);
+            if (anObjTag != aRefTag) {
+              // Avoid making references for operations without copy.
+              theRefMap[anObjTag].push_back(aRefTag);
+            }
           }
         }
       }

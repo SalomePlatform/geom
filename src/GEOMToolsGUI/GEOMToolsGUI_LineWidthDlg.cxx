@@ -44,7 +44,7 @@
 // purpose  : Constructs a GEOMToolsGUI_LineWidthDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
-//            TRUE to construct a modal dialog.
+//            true to construct a modal dialog.
 //=================================================================================
 
 GEOMToolsGUI_LineWidthDlg::GEOMToolsGUI_LineWidthDlg (QWidget* parent, const QString& title)

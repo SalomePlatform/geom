@@ -73,6 +73,8 @@
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Iterator.hxx>
 
+#include <TopTools_ListIteratorOfListOfShape.hxx>
+#include <TopTools_ListOfShape.hxx>
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_HSequenceOfShape.hxx>
 
@@ -161,6 +163,185 @@ namespace
 
     return result;
   }
+
+  /**
+   * This function adds faces from the input shape into the list of faces. If
+   * the input shape is a face, it is added itself. If it is a shell, its
+   * sub-shapes (faces) are added. If it is a compound, its sub-shapes
+   * (faces or shells) are added in the list. For null shapes and for other
+   * types of shapes an exception is thrown.
+   *
+   * @param theShape the shape to be added. Either face or shell or a compound
+   *        of faces and/or shells.
+   * @param theListFaces the list of faces that is modified on output.
+   * @param theMapFence the map that protects from adding the same faces in
+   *        the list.
+   */
+  void addFaces(const TopoDS_Shape         &theShape,
+                      TopTools_ListOfShape &theListFaces,
+                      TopTools_MapOfShape  &theMapFence)
+  {
+    if (theShape.IsNull()) {
+      Standard_NullObject::Raise("Face for shell construction is null");
+    }
+
+    // Append the shape is the mapFence
+    if (theMapFence.Add(theShape)) {
+      // Shape type
+      const TopAbs_ShapeEnum aType = theShape.ShapeType();
+
+      if (aType == TopAbs_FACE) {
+        theListFaces.Append(theShape);
+      } else if (aType == TopAbs_SHELL || aType == TopAbs_COMPOUND) {
+        TopoDS_Iterator anIter(theShape);
+
+        for (; anIter.More(); anIter.Next()) {
+          // Add sub-shapes: faces for shell or faces/shells for compound.
+          const TopoDS_Shape &aSubShape = anIter.Value();
+
+          addFaces(aSubShape, theListFaces, theMapFence);
+        }
+      } else {
+        Standard_TypeMismatch::Raise
+          ("Shape for shell construction is neither a shell nor a face");
+      }
+    }
+  }
+
+  /**
+   * This function constructs a shell or a compound of shells
+   * from a set of faces and/or shells.
+   *
+   * @param theShapes is a set of faces, shells and/or
+   *        compounds of faces/shells.
+   * @return a shell or a compound of shells.
+   */
+  TopoDS_Shape makeShellFromFaces
+        (const Handle(TColStd_HSequenceOfTransient) &theShapes)
+  {
+    const Standard_Integer aNbShapes = theShapes->Length();
+    Standard_Integer       i;
+    TopTools_ListOfShape   aListFaces;
+    TopTools_MapOfShape    aMapFence;
+    BRep_Builder           aBuilder;
+
+    // Fill the list of unique faces
+    for (i = 1; i <= aNbShapes; ++i) {
+      // Function
+      const Handle(GEOM_Function) aRefShape =
+        Handle(GEOM_Function)::DownCast(theShapes->Value(i));
+
+      if (aRefShape.IsNull()) {
+        Standard_NullObject::Raise("Face for shell construction is null");
+      }
+
+      // Shape
+      const TopoDS_Shape aShape = aRefShape->GetValue();
+
+      addFaces(aShape, aListFaces, aMapFence);
+    }
+
+    // Perform computation of shells.
+    TopTools_ListOfShape               aListShells;
+    TopTools_ListIteratorOfListOfShape anIter;
+
+    while (!aListFaces.IsEmpty()) {
+      // Perform sewing
+      BRepBuilderAPI_Sewing aSewing(Precision::Confusion()*10.0);
+
+      for (anIter.Initialize(aListFaces); anIter.More(); anIter.Next()) {
+        aSewing.Add(anIter.Value());
+      }
+
+      aSewing.Perform();
+
+      // Fill list of shells.
+      const TopoDS_Shape &aSewed = aSewing.SewedShape();
+      TopExp_Explorer     anExp(aSewed, TopAbs_SHELL);
+      Standard_Boolean    isNewShells = Standard_False;
+
+      // Append shells
+      for (; anExp.More(); anExp.Next()) {
+        aListShells.Append(anExp.Current());
+        isNewShells = Standard_True;
+      }
+
+      // Append single faces.
+      anExp.Init(aSewed, TopAbs_FACE, TopAbs_SHELL);
+
+      for (; anExp.More(); anExp.Next()) {
+        TopoDS_Shell aShell;
+
+        aBuilder.MakeShell(aShell);
+        aBuilder.Add(aShell, anExp.Current());
+        aListShells.Append(aShell);
+        isNewShells = Standard_True;
+      }
+
+      if (!isNewShells) {
+        // There are no more shell can be obtained. Break the loop.
+        break;
+      }
+
+      // Remove faces that are in the result from the list.
+      TopTools_IndexedMapOfShape aMapFaces;
+
+      TopExp::MapShapes(aSewed, TopAbs_FACE, aMapFaces);
+
+      // Add deleted faces to the map
+      const Standard_Integer aNbDelFaces = aSewing.NbDeletedFaces();
+
+      for (i = 1; i <= aNbDelFaces; ++i) {
+        aMapFaces.Add(aSewing.DeletedFace(i));
+      }
+
+      for (anIter.Initialize(aListFaces); anIter.More();) {
+        const TopoDS_Shape &aFace      = anIter.Value();
+        Standard_Boolean    isFaceUsed = Standard_False;
+
+        if (aMapFaces.Contains(aFace) || aSewing.IsModified(aFace)) {
+          // Remove face from the list.
+          aListFaces.Remove(anIter);
+        } else {
+          // Go to the next face.
+          anIter.Next();
+        }
+      }
+    }
+
+    // If there are faces not used in shells create a shell for each face.
+    for (anIter.Initialize(aListFaces); anIter.More(); anIter.Next()) {
+      TopoDS_Shell aShell;
+
+      aBuilder.MakeShell(aShell);
+      aBuilder.Add(aShell, anIter.Value());
+      aListShells.Append(aShell);
+    }
+
+    // Construct the result that can be either a shell or a compound of shells
+    TopoDS_Shape aResult;
+
+    if (!aListShells.IsEmpty()) {
+      if (aListShells.Extent() == 1) {
+        aResult = aListShells.First();
+      } else {
+        // There are more then one shell.
+        TopoDS_Compound aCompound;
+
+        aBuilder.MakeCompound(aCompound);
+
+        for (anIter.Initialize(aListShells); anIter.More(); anIter.Next()) {
+          aBuilder.Add(aCompound, anIter.Value());
+        }
+
+        aResult = aCompound;
+      }
+    }
+
+    return aResult;
+  }
+
+  // End of namespace
 }
 
 //modified by NIZNHY-PKV Wed Dec 28 13:48:20 2011f
@@ -432,60 +613,13 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     allowCompound = true;
 
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
-    unsigned int ind, nbshapes = aShapes->Length();
 
-    // add faces
-    BRepBuilderAPI_Sewing aSewing (Precision::Confusion()*10.0);
-    for (ind = 1; ind <= nbshapes; ind++) {
-      Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast(aShapes->Value(ind));
-      TopoDS_Shape aShape_i = aRefShape->GetValue();
-      if (aShape_i.IsNull()) {
-        Standard_NullObject::Raise("Face for shell construction is null");
-      }
-      aSewing.Add(aShape_i);
+    if (aShapes.IsNull()) {
+      Standard_NullObject::Raise("Argument Shapes is null");
     }
 
-    aSewing.Perform();
-
-    TopoDS_Shape sh = aSewing.SewedShape();
-
-    if (sh.ShapeType()==TopAbs_FACE && nbshapes==1) {
-      // case for creation of shell from one face - PAL12722 (skl 26.06.2006)
-      TopoDS_Shell ss;
-      B.MakeShell(ss);
-      B.Add(ss,sh);
-      aShape = ss;
-    }
-    else {
-      //TopExp_Explorer exp (aSewing.SewedShape(), TopAbs_SHELL);
-      TopExp_Explorer exp (sh, TopAbs_SHELL);
-      Standard_Integer ish = 0;
-      for (; exp.More(); exp.Next()) {
-        aShape = exp.Current();
-        ish++;
-      }
-
-      if (ish != 1) {
-        // try the case of one face (Mantis issue 0021809)
-        TopExp_Explorer expF (sh, TopAbs_FACE);
-        Standard_Integer ifa = 0;
-        for (; expF.More(); expF.Next()) {
-          aShape = expF.Current();
-          ifa++;
-        }
-
-        if (ifa == 1) {
-          TopoDS_Shell ss;
-          B.MakeShell(ss);
-          B.Add(ss,aShape);
-          aShape = ss;
-        }
-        else {
-          aShape = aSewing.SewedShape();
-        }
-      }
-    }
-
+    // Compute a shell or a compound of shells.
+    aShape = makeShellFromFaces(aShapes);
   }
   else if (aType == SOLID_SHELLS) {
     // result may be only a solid or a compound of solids

@@ -113,15 +113,19 @@ XAOPlugin_IOperations::~XAOPlugin_IOperations()
   MESSAGE( "XAOPlugin_IOperations::~XAOPlugin_IOperations" );
 }
 
-void XAOPlugin_IOperations::exportGroups( std::list<Handle(GEOM_Object)> groupList,
-                                                  XAO::Xao* xaoObject,
-                                                  XAO::BrepGeometry* geometry )
+bool XAOPlugin_IOperations::exportGroups( std::list<Handle(GEOM_Object)> groupList,
+                                          XAO::Xao* xaoObject,
+                                          XAO::BrepGeometry* geometry )
 {
   // add the groups
   std::list<Handle(GEOM_Object)>::iterator groupIterator = groupList.begin();
   while (groupIterator != groupList.end())
   {
     Handle(GEOM_Object) currGroup = (*groupIterator++);
+    if (currGroup->GetType() != GEOM_GROUP) {
+      SetErrorCode("Error when export groups: you could perform this operation only with group.");
+      return false;
+    }
     Handle(TColStd_HArray1OfInteger) groupIds = myGroupOperations->GetObjects(currGroup);
 
     TopAbs_ShapeEnum shapeGroup = myGroupOperations->GetType(currGroup);
@@ -164,11 +168,12 @@ void XAOPlugin_IOperations::exportGroups( std::list<Handle(GEOM_Object)> groupLi
       break;
     }
   }
+  return true;
 }
 
 void XAOPlugin_IOperations::exportFields( std::list<Handle(GEOM_Field)> fieldList,
-                                                  XAO::Xao* xaoObject,
-                                                  XAO::BrepGeometry* geometry )
+                                          XAO::Xao* xaoObject,
+                                          XAO::BrepGeometry* geometry )
 {
   std::list<Handle(GEOM_Field)>::iterator fieldIterator = fieldList.begin();
   while (fieldIterator != fieldList.end())
@@ -301,10 +306,10 @@ void XAOPlugin_IOperations::exportSubshapes( const Handle(GEOM_Object)& shape, X
  */
 //=============================================================================
 bool XAOPlugin_IOperations::ExportXAO( Handle(GEOM_Object) shape,
-				       std::list<Handle(GEOM_Object)> groupList,
-				       std::list<Handle(GEOM_Field)> fieldList,
-				       const char* author,
-				       const char* fileName )
+                                       std::list<Handle(GEOM_Object)> groupList,
+                                       std::list<Handle(GEOM_Field)> fieldList,
+                                       const char* author,
+                                       const char* fileName )
 {
   SetErrorCode(KO);
 
@@ -337,7 +342,7 @@ bool XAOPlugin_IOperations::ExportXAO( Handle(GEOM_Object) shape,
   exportSubshapes(shape, geometry);
   xaoObject->setGeometry(geometry);
 
-  exportGroups(groupList, xaoObject, geometry);
+  if (!exportGroups(groupList, xaoObject, geometry)) return false;
   exportFields(fieldList, xaoObject, geometry);
 
   // export the XAO to the file
@@ -380,8 +385,8 @@ bool XAOPlugin_IOperations::ExportXAO( Handle(GEOM_Object) shape,
 }
 
 void XAOPlugin_IOperations::importSubShapes( XAO::Geometry* xaoGeometry,
-                                                     Handle(GEOM_Function) function, int shapeType, int dim,
-                                                     Handle(TColStd_HSequenceOfTransient)& subShapeList )
+                                             Handle(GEOM_Function) function, int shapeType, int dim,
+                                             Handle(TColStd_HSequenceOfTransient)& subShapeList )
 {
   Handle(GEOM_Object) subShape;
   Handle(GEOM_Function) aFunction;
@@ -433,10 +438,10 @@ void XAOPlugin_IOperations::importSubShapes( XAO::Geometry* xaoGeometry,
  */
 //=============================================================================
 bool XAOPlugin_IOperations::ImportXAO( const char* fileName,
-                                               Handle(GEOM_Object)& shape,
-                                               Handle(TColStd_HSequenceOfTransient)& subShapes,
-                                               Handle(TColStd_HSequenceOfTransient)& groups,
-                                               Handle(TColStd_HSequenceOfTransient)& fields )
+                                       Handle(GEOM_Object)& shape,
+                                       Handle(TColStd_HSequenceOfTransient)& subShapes,
+                                       Handle(TColStd_HSequenceOfTransient)& groups,
+                                       Handle(TColStd_HSequenceOfTransient)& fields )
 {
   SetErrorCode(KO);
 

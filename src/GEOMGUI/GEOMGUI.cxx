@@ -68,7 +68,7 @@ bool GEOMGUI::OnGUIEvent( int /*theCommandID*/, SUIT_Desktop* /*parent*/ )
 
 //=================================================================================
 // class    : GEOMGUI::OnMousePress
-// purpose  : Mouse press event processing. Should return FALSE to let the event 
+// purpose  : Mouse press event processing. Should return false to let the event 
 //            be processed further.
 //=================================================================================
 bool GEOMGUI::OnMousePress( QMouseEvent* /*pe*/, SUIT_Desktop* /*parent*/, SUIT_ViewWindow* /*studyFrame*/ )

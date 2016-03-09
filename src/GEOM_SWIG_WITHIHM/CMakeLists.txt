@@ -18,12 +18,12 @@
 #
 
 INCLUDE(${SWIG_USE_FILE})
-INCLUDE(UseQtExt)
 
 # --- options ---
 
 # additional include directories
 INCLUDE_DIRECTORIES(
+  ${QT_INCLUDE_DIRS}
   ${PTHREAD_INCLUDE_DIR}
   ${VTK_INCLUDE_DIRS}
   ${OMNIORB_INCLUDE_DIR}

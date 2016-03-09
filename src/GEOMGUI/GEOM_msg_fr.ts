@@ -4953,7 +4953,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Montrer l&apos;arbre des dépendances</translation>
     </message>
     <message>
+        <source>STB_POP_SHOW_DEPENDENCY_TREE</source>
+        <translation>Montrer l&apos;arbre des dépendances</translation>
+    </message>
+    <message>
         <source>MEN_POP_REDUCE_STUDY</source>
+        <translation>Etude réduite</translation>
+    </message>
+    <message>
+        <source>STB_POP_REDUCE_STUDY</source>
         <translation>Etude réduite</translation>
     </message>
     <message>
