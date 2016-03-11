@@ -6,38 +6,65 @@ import GEOM
 from salome.geom import geomBuilder
 geompy = geomBuilder.New(salome.myStudy)
 
-# Example of import from IGES using various formats
+import tempfile, os
 
-# get a path to SAMPLES_SRC
-import os
-thePath = os.getenv("DATA_DIR")
-# create filenames
-theFileName1 = thePath + "/Shapes/Iges/boite-3Dipsos_m.igs"
-theFileName2 = thePath + "/Shapes/Iges/boite-3Dipsos_mm.igs"
-#print "thePath = ", thePath
+# create a sphere
+sphere = geompy.MakeSphereR(100)
 
-# get units from files
-UnitName1 = geompy.GetIGESUnit(theFileName1)
-UnitName2 = geompy.GetIGESUnit(theFileName2)
-print "UnitName1 = ", UnitName1
-print "UnitName2 = ", UnitName2
+tmpdir = tempfile.mkdtemp()
 
-# import shapes
-Shape1 = geompy.ImportIGES(theFileName1)
-Shape2 = geompy.ImportIGES(theFileName2)
-Shape3 = geompy.ImportIGES(theFileName2, True)
-[Xmin1,Xmax1, Ymin1,Ymax1, Zmin1,Zmax1] = geompy.BoundingBox(Shape1)
-[Xmin2,Xmax2, Ymin2,Ymax2, Zmin2,Zmax2] = geompy.BoundingBox(Shape2)
-[Xmin3,Xmax3, Ymin3,Ymax3, Zmin3,Zmax3] = geompy.BoundingBox(Shape3)
-geompy.addToStudy(Shape1, "3Dipsos_m")
-geompy.addToStudy(Shape2, "3Dipsos_mm")
-geompy.addToStudy(Shape3, "3Dipsos_mm_scaled")
-d1 = (Xmax1-Xmin1)*(Xmax1-Xmin1) + (Ymax1-Ymin1)*(Ymax1-Ymin1) + (Zmax1-Zmin1)*(Zmax1-Zmin1)
-d2 = (Xmax2-Xmin2)*(Xmax2-Xmin2) + (Ymax2-Ymin2)*(Ymax2-Ymin2) + (Zmax2-Zmin2)*(Zmax2-Zmin2)
-d3 = (Xmax3-Xmin3)*(Xmax3-Xmin3) + (Ymax3-Ymin3)*(Ymax3-Ymin3) + (Zmax3-Zmin3)*(Zmax3-Zmin3)
-import math
-dd32 = math.sqrt(d3/d2)
-dd12 = math.sqrt(d1/d2)
-dd31 = math.sqrt(d3/d1)
-# values dd31, dd12 and dd31 can be using for checking
-print "dd32 = ",dd32,"  dd12 = ",dd12,"  dd31 = ",dd31
+# export sphere to the BREP file
+f_brep = os.path.join(tmpdir, "sphere.brep")
+geompy.ExportBREP(sphere, f_brep)
+
+# export sphere to the IGES v5.3 file
+f_iges = os.path.join(tmpdir, "sphere.iges")
+geompy.ExportIGES(sphere, f_iges, "5.3")
+
+# export sphere to the STEP file, using millimeters as length units
+f_step = os.path.join(tmpdir, "sphere.step")
+geompy.ExportSTEP(sphere, f_step, GEOM.LU_MILLIMETER)
+
+# export sphere to the binary STL file, with default deflection coefficient
+f_stl1 = os.path.join(tmpdir, "sphere1.stl")
+geompy.ExportSTL(sphere, f_stl1, False)
+
+# export sphere to the ASCII STL file, with custom deflection coefficient
+f_stl2 = os.path.join(tmpdir, "sphere2.stl")
+geompy.ExportSTL(sphere, f_stl2, True, 0.1)
+
+# export sphere to the VTK file, with default deflection coefficient
+f_vtk1 = os.path.join(tmpdir, "sphere1.vtk")
+geompy.ExportVTK(sphere, f_vtk1)
+
+# export sphere to the VTK file, with custom deflection coefficient
+f_vtk2 = os.path.join(tmpdir, "sphere2.vtk")
+geompy.ExportVTK(sphere, f_vtk2, 0.1)
+
+# export sphere to the XAO file
+f_xao = os.path.join(tmpdir, "sphere.xao")
+geompy.ExportXAO(sphere, [], [], "author", f_xao)
+
+# import BREP file
+sphere_brep = geompy.ImportBREP(f_brep)
+
+# import IGES file
+sphere_iges = geompy.ImportIGES(f_iges)
+
+# import STEP file, taking units into account
+sphere_step1 = geompy.ImportSTEP(f_step)
+
+# import STEP file, ignoring units (result is scaled)
+sphere_step2 = geompy.ImportSTEP(f_step, True)
+
+# import STL files
+sphere_stl1 = geompy.ImportSTL(f_stl1)
+sphere_stl2 = geompy.ImportSTL(f_stl2)
+
+# import XAO file
+ok, sphere_xao, sub_shapes, groups, fields = geompy.ImportXAO(f_xao)
+
+# clean up
+for f in f_brep, f_iges, f_step, f_stl1, f_stl2, f_vtk1, f_vtk2, f_xao:
+  os.remove(f)
+os.rmdir(tmpdir)

@@ -7,7 +7,8 @@ import GEOM
 from salome.geom import geomBuilder
 geompy = geomBuilder.New(salome.myStudy)
 
-texture = geompy.LoadTexture(os.getenv("DATA_DIR")+"/Textures/texture1.dat")
+texture_file = os.path.join(os.getenv("GEOM_ROOT_DIR"), "share", "salome", "resources", "geom", "textures", "texture1.dat")
+texture = geompy.LoadTexture(texture_file)
 
 v1 = geompy.MakeVertex(0, 0, 0)
 v2 = geompy.MakeVertex(100, 0, 0)
