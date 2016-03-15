@@ -35,7 +35,6 @@ ADD_DEFINITIONS(
 
 # libraries to link to
 SET(_link_LIBRARIES
-  vtkFiltersCore
   ${CAS_KERNEL} 
   ${CAS_TKMesh} ${CAS_TKTopAlgo}
   ${CAS_MODELER}
