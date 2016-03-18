@@ -25,7 +25,7 @@
 //  Author : Sergey ANIKIN, Open CASCADE S.A.S. (sergey.anikin@opencascade.com)
 
 #ifndef DISABLE_PYCONSOLE
-#include <SalomePyConsole_Console.h>
+#include <PyConsole_Console.h>
 #endif
 
 #include "GEOMToolsGUI.h"
@@ -135,7 +135,7 @@ void GEOMToolsGUI::OnCheckGeometry()
 {
   SalomeApp_Application* app =
     dynamic_cast< SalomeApp_Application* >(SUIT_Session::session()->activeApplication());
-  SalomePyConsole_Console* pyConsole = app->pythonConsole();
+  PyConsole_Console* pyConsole = app->pythonConsole();
 
   if (pyConsole)
     pyConsole->exec("from GEOM_usinggeom import *");
