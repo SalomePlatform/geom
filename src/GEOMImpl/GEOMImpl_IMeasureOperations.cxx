@@ -984,19 +984,20 @@ void GEOMImpl_IMeasureOperations::GetBasicProperties (Handle(GEOM_Object) theSha
 
   //Compute the parameters
   GProp_GProps LProps, SProps;
+  Standard_Real anEps = 1.e-6;
   try {
     OCC_CATCH_SIGNALS;
     BRepGProp::LinearProperties(aShape, LProps);
     theLength = LProps.Mass();
 
-    BRepGProp::SurfaceProperties(aShape, SProps);
+    BRepGProp::SurfaceProperties(aShape, SProps, anEps);
     theSurfArea = SProps.Mass();
 
     theVolume = 0.0;
     if (aShape.ShapeType() < TopAbs_SHELL) {
       for (TopExp_Explorer Exp (aShape, TopAbs_SOLID); Exp.More(); Exp.Next()) {
         GProp_GProps VProps;
-        BRepGProp::VolumeProperties(Exp.Current(), VProps);
+        BRepGProp::VolumeProperties(Exp.Current(), VProps, anEps);
         theVolume += VProps.Mass();
       }
     }
