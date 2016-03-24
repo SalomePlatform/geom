@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2012-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -94,6 +94,7 @@ SET( _res_files
   edgeextension.png
   erase.png
   eraseall.png
+  extract.png
   extruded_boss.png
   extruded_cut.png
   facetosurface.png
@@ -300,6 +301,13 @@ SET( _res_files
   ##@@ insert new functions before this line @@ do not remove this line @@##
   )
 INSTALL(FILES ${_res_files} DESTINATION ${SALOME_GEOM_INSTALL_RES_DATA})
+
+SET( _texture_files
+  texture1.dat
+  texture2.dat
+  texture3.dat
+)
+INSTALL(FILES ${_texture_files} DESTINATION ${SALOME_GEOM_INSTALL_RES_DATA}/textures)
 
 SALOME_CONFIGURE_FILE(GEOMCatalog.xml.in GEOMCatalog.xml INSTALL ${SALOME_GEOM_INSTALL_RES_DATA})
 SALOME_CONFIGURE_FILE(SalomeApp.xml.in SalomeApp.xml INSTALL ${SALOME_GEOM_INSTALL_RES_DATA})

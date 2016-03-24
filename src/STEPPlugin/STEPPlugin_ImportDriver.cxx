@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2014-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -47,6 +47,7 @@
 #include <StepGeom_GeometricRepresentationItem.hxx>
 #include <StepShape_TopologicalRepresentationItem.hxx>
 #include <StepRepr_DescriptiveRepresentationItem.hxx>
+#include <StepRepr_NextAssemblyUsageOccurrence.hxx>
 #include <StepRepr_ProductDefinitionShape.hxx>
 #include <StepRepr_PropertyDefinitionRepresentation.hxx>
 #include <StepRepr_Representation.hxx>
@@ -57,7 +58,11 @@
 #include <BRep_Builder.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
+#include <TopTools_DataMapOfShapeShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
+#include <TopTools_ListIteratorOfListOfShape.hxx>
+#include <TopTools_ListOfShape.hxx>
+#include <TopTools_MapOfShape.hxx>
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <TColStd_SequenceOfAsciiString.hxx>
@@ -141,20 +146,225 @@ namespace
 
   //=============================================================================
   /*!
+   *  GetAllParents()
+   */
+  //=============================================================================
+
+  Standard_Boolean GetAllParents(const TopoDS_Shape         &theShape,
+                                 const TopoDS_Shape         &theSubShape,
+                                       TopTools_ListOfShape &theParents)
+  {
+    const TopAbs_ShapeEnum aSubShType = theSubShape.ShapeType();
+    Standard_Boolean       aResult    = Standard_False;
+
+    if (theShape.ShapeType() >= aSubShType) {
+      return aResult; // NULL shape
+    }
+
+    TopoDS_Iterator     anIt(theShape);
+    TopTools_MapOfShape aMapFence;
+
+    for (; anIt.More(); anIt.Next()) {
+      const TopoDS_Shape &aSubShape = anIt.Value();
+
+      if (aMapFence.Add(aSubShape)) {
+        if (theSubShape.IsSame(aSubShape)) {
+          // The sub-shape is found. theShape is its parent.
+          theParents.Append(theShape);
+          aResult = Standard_True;
+          break;
+        }
+
+        if (aSubShape.ShapeType() < aSubShType) {
+          if (GetAllParents(aSubShape, theSubShape, theParents)) {
+            // The sub-shape is found.
+            theParents.Append(theShape);
+            aResult = Standard_True;
+            break;
+          }
+        }
+      }
+    }
+
+    return aResult;
+  }
+
+  //=============================================================================
+  /*!
+   *  BuildModifiedShape()
+   */
+  //=============================================================================
+
+  TopoDS_Shape BuildModifiedShape
+              (const TopoDS_Shape                 &theShape,
+                     TopTools_DataMapOfShapeShape &theMapModified)
+  {
+    // Check if the shape is modified.
+    TopoDS_Shape     aFwdShape  = theShape.Oriented(TopAbs_FORWARD);
+    TopoDS_Iterator  anIt(aFwdShape);
+    Standard_Boolean isModified = Standard_False;
+
+    for (; anIt.More(); anIt.Next()) {
+      if (theMapModified.IsBound(anIt.Value())) {
+        isModified = Standard_True;
+        break;
+      }
+    }
+
+    TopoDS_Shape aResult;
+
+    if (isModified) {
+      BRep_Builder aBuilder;
+
+      aResult = aFwdShape.EmptyCopied();
+
+      for (anIt.Initialize(aFwdShape); anIt.More(); anIt.Next()) {
+        const TopoDS_Shape &aSubShape = anIt.Value();
+
+        if (theMapModified.IsBound(aSubShape)) {
+          TopoDS_Shape aModifSubShape = theMapModified.Find(aSubShape);
+
+          if (aModifSubShape.IsNull()) {
+            // Recursively compute the sub-shape.
+            aModifSubShape = BuildModifiedShape(aSubShape, theMapModified);
+          }
+
+          aBuilder.Add(aResult, aModifSubShape);
+        } else {
+          aBuilder.Add(aResult, aSubShape);
+        }
+      }
+
+      // Set the result shape orienation.
+      aResult.Orientation(theShape.Orientation());
+      theMapModified.Bind(theShape, aResult);
+    } else {
+      aResult = theShape;
+    }
+
+    return aResult;
+  }
+
+  //=============================================================================
+  /*!
+   *  CreateAssemblies()
+   */
+  //=============================================================================
+
+  TopoDS_Shape CreateAssemblies
+              (const STEPControl_Reader           &theReader,
+               const TopoDS_Shape                 &theShape,
+                     TopTools_DataMapOfShapeShape &theMapShapeAssembly)
+  {
+    TopoDS_Shape                     aResult = theShape;
+    Handle(XSControl_TransferReader) aTR     = theReader.WS()->TransferReader();
+    TopTools_ListOfShape             aListAssemblies;
+
+    if (!aTR.IsNull()) {
+      Handle(Interface_InterfaceModel)  aModel      = theReader.WS()->Model();
+      Handle(Transfer_TransientProcess) aTP         = aTR->TransientProcess();
+      Standard_Integer                  aNbEntities = aModel->NbEntities();
+      Standard_Integer                  i;
+      Handle(Standard_Type)             aNAUOType   =
+              STANDARD_TYPE(StepRepr_NextAssemblyUsageOccurrence);
+
+      for (i = 1; i <= aNbEntities; i++) {
+        Handle(Standard_Transient) anEnti = aModel->Value(i);
+
+        if (anEnti->IsKind(aNAUOType)) {
+          // This is an assembly. Find target shape
+          TopoDS_Shape aShape = GetShape(anEnti, aTP);
+
+          if (aShape.IsNull()) {
+            continue;
+          }
+
+          if (aShape.ShapeType() != TopAbs_COMPOUND) {
+            aListAssemblies.Append(aShape);
+          }
+        }
+      }
+    }
+
+    // Create assemblies.
+    if (!aListAssemblies.IsEmpty()) {
+      TopTools_ListIteratorOfListOfShape anIter(aListAssemblies);
+      BRep_Builder                       aBuilder;
+
+      for (; anIter.More(); anIter.Next()) {
+        const TopoDS_Shape   &aShape  = anIter.Value();
+        TopTools_ListOfShape  aParents;
+
+        if (GetAllParents(theShape, aShape, aParents) &&
+            aParents.First().ShapeType() == TopAbs_COMPOUND) {
+          TopoDS_Compound                    aComp;
+          TopTools_ListIteratorOfListOfShape aParentIter(aParents);
+
+          // Fill theMapShapeAssembly.
+          for (; aParentIter.More(); aParentIter.Next()) {
+            theMapShapeAssembly.Bind(aParentIter.Value(), TopoDS_Shape());
+          }
+
+          aBuilder.MakeCompound(aComp);
+          aBuilder.Add(aComp, aShape);
+          theMapShapeAssembly.Bind(aShape, aComp);
+        }
+      }
+
+      // Build a new shape.
+      aResult = BuildModifiedShape(theShape, theMapShapeAssembly);
+    }
+
+    return aResult;
+  }
+
+  //=============================================================================
+  /*!
    *  StoreName()
    */
   //=============================================================================
   
-  void StoreName( const Handle(Standard_Transient)        &theEnti,
-                  const TopTools_IndexedMapOfShape        &theIndices,
-                  const Handle(Transfer_TransientProcess) &theTP,
-                  const TDF_Label                         &theShapeLabel)
+  void StoreName(const Handle(Standard_Transient)        &theEnti,
+                 const TopTools_IndexedMapOfShape        &theIndices,
+                 const Handle(XSControl_WorkSession)     &theWS,
+                 const Handle(Transfer_TransientProcess) &theTP,
+                 const TDF_Label                         &theShapeLabel,
+                       TopTools_DataMapOfShapeShape      &theMapShapeAssembly)
   {
     Handle(TCollection_HAsciiString) aName;
     
     if (theEnti->IsKind(STANDARD_TYPE(StepShape_TopologicalRepresentationItem)) ||
         theEnti->IsKind(STANDARD_TYPE(StepGeom_GeometricRepresentationItem))) {
       aName = Handle(StepRepr_RepresentationItem)::DownCast(theEnti)->Name();
+    } else if (theEnti->IsKind(STANDARD_TYPE(StepRepr_NextAssemblyUsageOccurrence))) {
+      Handle(StepRepr_NextAssemblyUsageOccurrence) aNAUO = 
+        Handle(StepRepr_NextAssemblyUsageOccurrence)::DownCast(theEnti);
+
+      Interface_EntityIterator aSubs = theWS->Graph().Sharings(aNAUO);
+
+      for (aSubs.Start(); aSubs.More(); aSubs.Next()) {
+        Handle(StepRepr_ProductDefinitionShape) aPDS = 
+          Handle(StepRepr_ProductDefinitionShape)::DownCast(aSubs.Value());
+
+        if(aPDS.IsNull()) {
+          continue;
+        }
+
+        Handle(StepBasic_ProductDefinitionRelationship) aPDR =
+          aPDS->Definition().ProductDefinitionRelationship();
+
+        if (aPDR.IsNull()) {
+          continue;
+        }
+
+        if (aPDR->HasDescription() && aPDR->Description()->UsefullLength() >0) {
+          aName = aPDR->Description();
+        } else if (!aPDR->Name().IsNull() && aPDR->Name()->UsefullLength() >0 ) {
+          aName = aPDR->Name();
+        } else if (!aPDR->Id().IsNull()) {
+          aName = aPDR->Id();
+        }
+      }
     } else {
       Handle(StepBasic_ProductDefinition) PD =
         Handle(StepBasic_ProductDefinition)::DownCast(theEnti);
@@ -197,6 +407,10 @@ namespace
 
       // find target shape
       TopoDS_Shape S = GetShape(theEnti, theTP);
+
+      if (theMapShapeAssembly.IsBound(S)) {
+        S = theMapShapeAssembly.Find(S);
+      }
 
       if (S.IsNull()) {
         return;
@@ -392,6 +606,7 @@ Standard_Integer STEPPlugin_ImportDriver::Execute( TFunction_Logbook& log ) cons
 
   TCollection_AsciiString aFileName = aData.GetFileName().ToCString();
   bool anIsIgnoreUnits = aData.GetIsIgnoreUnits();
+  bool isCreateAssemblies = aData.GetIsCreateAssemblies();
   TDF_Label aShapeLabel = aFunction->GetNamingEntry();
 
   MESSAGE("Import STEP from file " << aFileName.ToCString() );
@@ -439,47 +654,93 @@ Standard_Integer STEPPlugin_ImportDriver::Execute( TFunction_Logbook& log ) cons
       aReader.PrintCheckLoad(failsonly, IFSelect_ItemsByEntity);
 
       // Root transfers
-      Standard_Integer nbr = aReader.NbRootsForTransfer();
+      Standard_Integer aNbRoots = aReader.NbRootsForTransfer();
+      Standard_Integer i;
+
       aReader.PrintCheckTransfer(failsonly, IFSelect_ItemsByEntity);
 
-      for (Standard_Integer n = 1; n <= nbr; n++) {
-        Standard_Boolean ok = aReader.TransferRoot(n);
-        // Collecting resulting entities
-        Standard_Integer nbs = aReader.NbShapes();
-        if (!ok || nbs == 0)
-          continue; // skip empty root
+      for (i = 1; i <= aNbRoots; i++) {
+        aReader.TransferRoot(i);
+      }
 
-        // For a single entity
-        else if (nbr == 1 && nbs == 1) {
-          aResShape = aReader.Shape(1);
-          if (aResShape.ShapeType() == TopAbs_COMPOUND) {
-            int nbSub1 = 0;
-            TopoDS_Shape currShape;
-            TopoDS_Iterator It (aResShape, Standard_True, Standard_True);
-            for (; It.More(); It.Next()) {
-              nbSub1++;
-              currShape = It.Value();
-            }
-            if (nbSub1 == 1)
-              aResShape = currShape;
-          }
-          break;
-        }
+      // Create result shape
+      const Standard_Integer aNbShapes = aReader.NbShapes();
+      TopTools_ListOfShape   aListResShapes;
 
-        for (Standard_Integer i = 1; i <= nbs; i++) {
+      if (isCreateAssemblies) {
+        for (i = 1; i <= aNbShapes; i++) {
           TopoDS_Shape aShape = aReader.Shape(i);
-          if (aShape.IsNull())
+
+          if (aShape.IsNull()) {
             continue;
-          else
-            B.Add(compound, aShape);
+          }
+
+          aListResShapes.Append(aShape);
+        }
+      } else {
+        for (i = 1; i <= aNbShapes; i++) {
+          TopoDS_Shape aShape = aReader.Shape(i);
+
+          if (aShape.IsNull()) {
+            continue;
+          }
+
+          if (aShape.ShapeType() == TopAbs_COMPOUND) {
+            int             aNbSub = 0;
+            TopoDS_Shape    aSubShape;
+            TopoDS_Iterator anIt (aShape, Standard_True, Standard_True);
+
+            for (; anIt.More(); anIt.Next()) {
+              aNbSub++;
+              aSubShape = anIt.Value();
+            }
+
+            if (aNbSub == 1) {
+              // Use the single sub-shape
+              aListResShapes.Append(aSubShape);
+            } else if (aNbSub > 1) {
+              // Use the shape
+              aListResShapes.Append(aShape);
+            }
+          } else {
+            // Use the shape itself
+            aListResShapes.Append(aShape);
+          }
         }
       }
-      if( aResShape.IsNull() )
-        aResShape = compound;
+
+      // Construct result shape.
+      if (!aListResShapes.IsEmpty()) {
+        if (aListResShapes.Extent() == 1) {
+          // Use the single shape.
+          aResShape = aListResShapes.First();
+        } else {
+          // Make a compound of result shapes.
+          TopTools_ListIteratorOfListOfShape anIt(aListResShapes);
+
+          for (; anIt.More(); anIt.Next()) {
+            B.Add(compound, anIt.Value());
+          }
+
+          aResShape = compound;
+        }
+      }
+
+      if( aResShape.IsNull() ) {
+        StdFail_NotDone::Raise("Null result shape");
+        return 0;
+      }
 
       // Check if any BRep entity has been read, there must be at least a vertex
       if ( !TopExp_Explorer( aResShape, TopAbs_VERTEX ).More() )
         StdFail_NotDone::Raise( "No geometrical data in the imported file." );
+
+      // Create assemblies in the shape, if they are not created yet.
+      TopTools_DataMapOfShapeShape aMapShapeAssembly;
+
+      if (isCreateAssemblies) {
+        aResShape = CreateAssemblies(aReader, aResShape, aMapShapeAssembly);
+      }
 
       // BEGIN: Store names and materials of sub-shapes from file
       TopTools_IndexedMapOfShape anIndices;
@@ -496,7 +757,8 @@ Standard_Integer STEPPlugin_ImportDriver::Execute( TFunction_Logbook& log ) cons
           Handle(Standard_Transient) enti = Model->Value(ie);
 
           // Store names.
-          StoreName(enti, anIndices, TP, aShapeLabel);
+          StoreName(enti, anIndices, aReader.WS(),
+                    TP, aShapeLabel, aMapShapeAssembly);
 
           // Store materials.
           StoreMaterial(enti, anIndices, TP, aShapeLabel);
@@ -575,6 +837,7 @@ GetCreationInformation( std::string&             theOperationName,
     AddParam( theParams, "File name", aCI.GetFileName() );
     if( aCI.GetIsIgnoreUnits() )
       AddParam( theParams, "Format", "STEP_SCALE" );
+    AddParam( theParams, "Create Assemblies", aCI.GetIsCreateAssemblies() );
     break;
   default:
     return false;

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -25,7 +25,7 @@
 //  Author : Sergey ANIKIN, Open CASCADE S.A.S. (sergey.anikin@opencascade.com)
 
 #ifndef DISABLE_PYCONSOLE
-#include <SalomePyConsole_Console.h>
+#include <PyConsole_Console.h>
 #endif
 
 #include "GEOMToolsGUI.h"
@@ -135,7 +135,7 @@ void GEOMToolsGUI::OnCheckGeometry()
 {
   SalomeApp_Application* app =
     dynamic_cast< SalomeApp_Application* >(SUIT_Session::session()->activeApplication());
-  SalomePyConsole_Console* pyConsole = app->pythonConsole();
+  PyConsole_Console* pyConsole = app->pythonConsole();
 
   if (pyConsole)
     pyConsole->exec("from GEOM_usinggeom import *");

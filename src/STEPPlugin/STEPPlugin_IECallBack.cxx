@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2014-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -70,7 +70,7 @@ STEPPlugin_IECallBack::Import( int                            theDocId,
 {
   STEPPlugin_IOperations* aPluginOperations = STEPPlugin_OperationsCreator::get( GetEngine(), theDocId );
   bool anIsIgnoreUnits = ( theFormatName == "STEP_SCALE" ) ? true : false;
-  return aPluginOperations->ImportSTEP( theFileName, anIsIgnoreUnits );
+  return aPluginOperations->ImportSTEP( theFileName, anIsIgnoreUnits, false );
 }
 
 //=============================================================================

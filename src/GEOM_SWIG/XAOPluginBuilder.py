@@ -1,5 +1,5 @@
 #  -*- coding: iso-8859-1 -*-
-# Copyright (C) 2014-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2014-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -31,12 +31,25 @@ def GetXAOPluginOperations(self):
 #  @param shape The shape to export
 #  @param groups The list of groups to export
 #  @param fields The list of fields to export
-#  @param author The author of the export
+#  @param author The author of the file
 #  @param fileName The name of the file to export
-#  @return boolean
+#  @return True if operation is successful or False otherwise
 #
 #  @ingroup l2_import_export
 def ExportXAO(self, shape, groups, fields, author, fileName):
+    """
+    Export a shape to XAO format
+    
+    Parameters:
+        shape The shape to export
+        groups The list of groups to export
+        fields The list of fields to export
+        author The author of the file
+        fileName The name of the file to export
+
+    Returns:
+        True if operation is successful or False otherwise
+    """
     from salome.geom.geomBuilder import RaiseIfFailed
     anOp = GetXAOPluginOperations(self)
     res = anOp.ExportXAO(shape, groups, fields, author, fileName)
@@ -45,17 +58,39 @@ def ExportXAO(self, shape, groups, fields, author, fileName):
 
 ## Import a shape from XAO format
 #  @param fileName The name of the file to import
-#  @return tuple (res, shape, subShapes, groups, fields)
-#       res Flag indicating if the import was successful
-#       shape The imported shape
-#       subShapes The list of imported subShapes
-#       groups The list of imported groups
-#       fields The list of imported fields
+#  @param theName Object name; when specified, this parameter is used
+#         for result publication in the study. Otherwise, if automatic
+#         publication is switched on, default value is used for result name.
+# 
+#  @return tuple (\a res, \a shape, \a subShapes, \a groups, \a fields)
+#       \a res Flag indicating if the import was successful
+#       \a shape The imported shape
+#       \a subShapes The list of imported subShapes
+#       \a groups The list of imported groups
+#       \a fields The list of imported fields
 #
 #  @ingroup l2_import_export
-def ImportXAO(self, fileName):
+def ImportXAO(self, fileName, theName=None):
+    """
+    Import a shape from XAO format
+    
+    Parameters:
+        fileName The name of the file to import
+        theName Object name; when specified, this parameter is used
+                for result publication in the study. Otherwise, if automatic
+                publication is switched on, default value is used for result name.
+
+    Returns:
+        A tuple (res, shape, subShapes, groups, fields):
+        - res: Flag indicating if the import was successful
+        - shape: The imported shape
+        - subShapes: The list of imported subShapes
+        - groups: The list of imported groups
+        - fields: The list of imported fields
+    """
     from salome.geom.geomBuilder import RaiseIfFailed
     anOp = GetXAOPluginOperations(self)
     res = anOp.ImportXAO(fileName)
     RaiseIfFailed("ImportXAO", anOp)
+    self._autoPublish(res[1], theName, "imported")
     return res

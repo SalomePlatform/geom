@@ -472,6 +472,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Assemblage solide</translation>
     </message>
     <message>
+        <source>GEOM_COMPSOLIDS</source>
+        <translation type="unfinished">CompSolids</translation>
+    </message>
+    <message>
         <source>GEOM_COMPOUND_TITLE</source>
         <translation>Créer un assemblage</translation>
     </message>
@@ -606,6 +610,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_EDGE</source>
         <translation>Arête</translation>
+    </message>
+    <message>
+        <source>GEOM_EDGES</source>
+        <translation type="unfinished">Edges</translation>
     </message>
     <message>
         <source>GEOM_EDGE_TITLE</source>
@@ -2015,6 +2023,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_SOLID</source>
         <translation>Solide</translation>
+    </message>
+    <message>
+        <source>GEOM_SOLIDS</source>
+        <translation type="unfinished">Solids</translation>
     </message>
     <message>
         <source>GEOM_SOLID_TITLE</source>
@@ -5229,6 +5241,18 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Transfert de données</translation>
     </message>
     <message>
+        <source>TOP_EXTRACTION</source>
+        <translation type="unfinished">Extract and Rebuild</translation>
+    </message>
+    <message>
+        <source>MEN_EXTRACTION</source>
+        <translation type="unfinished">Extract and Rebuild</translation>
+    </message>
+    <message>
+        <source>STB_EXTRACTION</source>
+        <translation type="unfinished">Extract and Rebuild</translation>
+    </message>
+    <message>
         <source>TOP_EXTENSION</source>
         <translation>Extend Edge or Face</translation>
     </message>
@@ -7603,6 +7627,57 @@ Voulez-vous en créer un nouveau ?</translation>
     <message>
         <source>GEOM_PROJ_ON_CYL_LENGTH_ANGLE</source>
         <translation>Longueur de l&apos;angle</translation>
+    </message>
+</context>
+<context>
+    <name>OperationGUI_ExtractionDlg</name>
+    <message>
+        <source>GEOM_EXTRACT_TITLE</source>
+        <translation type="unfinished">Extract and Rebuild</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRACT_TYPE</source>
+        <translation type="unfinished">Extraction type</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRACT_INPUT_PARAMS</source>
+        <translation type="unfinished">Input parameters</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRACT_STATISTICS</source>
+        <translation type="unfinished">Statistics</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRACT_SUB_SHAPE_TYPE</source>
+        <translation type="unfinished">Sub-shape type</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRACT_FILTERED_SHAPES</source>
+        <translation type="unfinished">Filtered shapes</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRACT_SHAPES_TO_EXTRACT</source>
+        <translation type="unfinished">Shapes to extract</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRACT_REBUILD</source>
+        <translation type="unfinished">Rebuild</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRACT_REMOVED</source>
+        <translation type="unfinished">Removed</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRACT_MODIFIED</source>
+        <translation type="unfinished">Modified</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRACT_ADDED</source>
+        <translation type="unfinished">Added</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRACT_NAME</source>
+        <translation type="unfinished">Extraction</translation>
     </message>
 </context>
 </TS>

@@ -1,5 +1,5 @@
 #  -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2007-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -6660,6 +6660,35 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             IsOk = self.ShapesOp.IsSubShapeBelongsTo(aSubObject, aSubObjectIndex, anObject, anObjectIndex)
             RaiseIfFailed("IsSubShapeBelongsTo", self.ShapesOp)
             return IsOk
+
+        ## Perform extraction of sub-shapes from the main shape.
+        #
+        #  @param theShape the main shape
+        #  @param theListOfID the list of sub-shape IDs to be extracted from
+        #         the main shape.
+        #  @return New GEOM.GEOM_Object, containing the shape without
+        #          extracted sub-shapes.
+        #
+        #  @ref swig_MakeExtraction "Example"
+        @ManageTransactions("ShapesOp")
+        def MakeExtraction(self, theShape, theListOfID, theName=None):
+            """
+            Perform extraction of sub-shapes from the main shape.
+
+            Parameters:
+                theShape the main shape
+                theListOfID the list of sub-shape IDs to be extracted from
+                            the main shape.
+
+            Returns
+                New GEOM.GEOM_Object, containing the shape without
+                extracted sub-shapes.
+            """
+            # Example: see GEOM_TestAll.py
+            (anObj, aStat) = self.ShapesOp.MakeExtraction(theShape, theListOfID)
+            RaiseIfFailed("MakeExtraction", self.ShapesOp)
+            self._autoPublish(anObj, theName, "Extraction")
+            return anObj
 
         # end of l4_decompose
         ## @}

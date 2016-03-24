@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -3579,7 +3579,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::ImportSTEP( const char* theFileName,
   beginService( " GEOM_Superv_i::ImportSTEP" );
   MESSAGE("GEOM_Superv_i::ImportSTEP");
   getSTEPPluginOp();
-  GEOM::ListOfGO* aSeq = mySTEPOp->ImportSTEP(theFileName, theIsIgnoreUnits );
+  GEOM::ListOfGO* aSeq = mySTEPOp->ImportSTEP(theFileName, theIsIgnoreUnits, false );
   GEOM::GEOM_Object_ptr anObj;
 
   if (aSeq->length() > 0) {

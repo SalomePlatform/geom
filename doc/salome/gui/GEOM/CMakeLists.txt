@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2012-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -66,6 +66,7 @@ INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/GEOM DESTINATION ${SALOME_INSTALL_
 INSTALL(FILES images/head.png DESTINATION ${SALOME_INSTALL_DOC}/gui/GEOM)
 INSTALL(FILES images/head.png DESTINATION ${SALOME_INSTALL_DOC}/gui/GEOM/geompy_doc)
 INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/static/SALOME_BOA_PA.pdf DESTINATION ${SALOME_INSTALL_DOC}/gui/GEOM)
+INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/static/ExtractAndRebuild.pdf DESTINATION ${SALOME_INSTALL_DOC}/gui/GEOM)
 INSTALL(FILES input/geompy_migration.doc input/tui_auto_completion_documentation.doc input/tui_execution_distribution.doc DESTINATION ${SALOME_INSTALL_DOC}/gui/GEOM/input)
 
 FILE(GLOB tag_files ${CMAKE_CURRENT_BINARY_DIR}/*.tag)

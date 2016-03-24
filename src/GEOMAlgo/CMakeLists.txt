@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2012-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -59,6 +59,7 @@ SET(GEOMAlgo_HEADERS
   GEOMAlgo_DataMapOfPassKeyInteger.hxx
   GEOMAlgo_DataMapOfShapeMapOfShape.hxx
   GEOMAlgo_DataMapOfShapePnt.hxx
+  GEOMAlgo_Extractor.hxx
   GEOMAlgo_FinderShapeOn.hxx
   GEOMAlgo_FinderShapeOn1.hxx
   GEOMAlgo_FinderShapeOn2.hxx
@@ -123,6 +124,7 @@ SET(GEOMAlgo_SOURCES
   GEOMAlgo_ClsfSurf.cxx
   GEOMAlgo_CoupleOfShapes.cxx
   GEOMAlgo_FinderShapeOn2.cxx
+  GEOMAlgo_Extractor.cxx
   GEOMAlgo_GetInPlace.cxx
   GEOMAlgo_GetInPlace_1.cxx
   GEOMAlgo_GetInPlace_2.cxx

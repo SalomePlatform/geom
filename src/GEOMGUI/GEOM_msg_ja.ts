@@ -468,6 +468,10 @@
       <translation>固体のアセンブリ</translation>
     </message>
     <message>
+      <source>GEOM_COMPSOLIDS</source>
+      <translation type="unfinished">CompSolids</translation>
+    </message>
+    <message>
       <source>GEOM_COMPOUND_TITLE</source>
       <translation>コンパウンドの作成</translation>
     </message>
@@ -602,6 +606,10 @@
     <message>
       <source>GEOM_EDGE</source>
       <translation>Edge</translation>
+    </message>
+    <message>
+      <source>GEOM_EDGES</source>
+      <translation type="unfinished">Edges</translation>
     </message>
     <message>
       <source>GEOM_EDGE_TITLE</source>
@@ -2018,6 +2026,10 @@
     <message>
       <source>GEOM_SOLID</source>
       <translation>ソリッド</translation>
+    </message>
+    <message>
+      <source>GEOM_SOLIDS</source>
+      <translation type="unfinished">Solids</translation>
     </message>
     <message>
       <source>GEOM_SOLID_TITLE</source>
@@ -5232,6 +5244,18 @@
       <translation>データ転送</translation>
     </message>
     <message>
+      <source>TOP_EXTRACTION</source>
+      <translation type="unfinished">Extract and Rebuild</translation>
+    </message>
+    <message>
+      <source>MEN_EXTRACTION</source>
+      <translation type="unfinished">Extract and Rebuild</translation>
+    </message>
+    <message>
+      <source>STB_EXTRACTION</source>
+      <translation type="unfinished">Extract and Rebuild</translation>
+    </message>
+    <message>
       <source>TOP_EXTENSION</source>
       <translation>エッジまたは面の拡張</translation>
     </message>
@@ -7596,6 +7620,57 @@
     <message>
       <source>GEOM_PROJ_ON_CYL_ROTATION_ANGLE</source>
       <translation>回転角度</translation>
+    </message>
+  </context>
+  <context>
+    <name>OperationGUI_ExtractionDlg</name>
+    <message>
+      <source>GEOM_EXTRACT_TITLE</source>
+      <translation type="unfinished">Extract and Rebuild</translation>
+    </message>
+    <message>
+      <source>GEOM_EXTRACT_TYPE</source>
+      <translation type="unfinished">Extraction type</translation>
+    </message>
+    <message>
+      <source>GEOM_EXTRACT_INPUT_PARAMS</source>
+      <translation type="unfinished">Input parameters</translation>
+    </message>
+    <message>
+      <source>GEOM_EXTRACT_STATISTICS</source>
+      <translation type="unfinished">Statistics</translation>
+    </message>
+    <message>
+      <source>GEOM_EXTRACT_SUB_SHAPE_TYPE</source>
+      <translation type="unfinished">Sub-shape type</translation>
+    </message>
+    <message>
+      <source>GEOM_EXTRACT_FILTERED_SHAPES</source>
+      <translation type="unfinished">Filtered shapes</translation>
+    </message>
+    <message>
+      <source>GEOM_EXTRACT_SHAPES_TO_EXTRACT</source>
+      <translation type="unfinished">Shapes to extract</translation>
+    </message>
+    <message>
+      <source>GEOM_EXTRACT_REBUILD</source>
+      <translation type="unfinished">Rebuild</translation>
+    </message>
+    <message>
+      <source>GEOM_EXTRACT_REMOVED</source>
+      <translation type="unfinished">Removed</translation>
+    </message>
+    <message>
+      <source>GEOM_EXTRACT_MODIFIED</source>
+      <translation type="unfinished">Modified</translation>
+    </message>
+    <message>
+      <source>GEOM_EXTRACT_ADDED</source>
+      <translation type="unfinished">Added</translation>
+    </message>
+    <message>
+      <source>GEOM_EXTRACT_NAME</source>
+      <translation type="unfinished">Extraction</translation>
     </message>
   </context>
 </TS>

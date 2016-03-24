@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -118,6 +118,8 @@
 #define GEOM_POLYLINE2D 56
 
 #define GEOM_TRANSFER_DATA 57
+
+#define GEOM_EXTRACTION 58
 
 //GEOM_Function types
 
@@ -316,6 +318,7 @@
 #define FACE_UV             17
 #define SURFACE_FROM_FACE   18
 #define SOLID_FACES         19
+#define EXTRACTION          20
 
 #define ARCHIMEDE_TYPE 1
 

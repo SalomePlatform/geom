@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -2781,6 +2781,43 @@ module GEOM
                                        in short                theShapeType,
                                        in comparison_condition theCondition,
                                        in double               theTolerance);
+
+    /**
+     * This enumeration represents an extraction statistics type. It is used in
+     * the interface GEOM_IShapesOperations::MakeExtraction.
+     */
+    enum ExtractionStatType
+    {
+      EST_Removed,  ///< Removed sub-shapes
+      EST_Modified, ///< Modified sub-shapes
+      EST_Added     ///< Newly created sub-shapes
+    };
+
+    /*!
+     * This structure defines a format of extraction statistics. It is used in
+     * the interface GEOM_IShapesOperations::MakeExtraction.
+     */
+    struct ExtractionStat
+    {
+      ExtractionStatType type;    ///< Type of extraction statistics.
+      ListOfLong         indices; ///< Shape indices touched by this type of modification.
+    };
+
+    typedef sequence<ExtractionStat> ExtractionStats;
+
+    /*!
+     * \brief Return the shape that is constructed from theShape without
+     * extracted sub-shapes from the input list.
+     *
+     * \param theShape the original shape.
+     * \param theSubShapeIDs the list of sub-shape IDs to be extracted from
+     *        the original shape.
+     * \param theStats the operation statistics. Output parameter.
+     * \return the shape without extracted sub-shapes.
+     */
+    GEOM_Object MakeExtraction(in GEOM_Object      theShape,
+                               in ListOfLong       theSubShapeIDs,
+                               out ExtractionStats theStats);
 
   };
 

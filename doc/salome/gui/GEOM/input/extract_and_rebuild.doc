@@ -1,0 +1,82 @@
+/*!
+
+\page extract_and_rebuild_page Extract and Rebuild
+
+
+This operation allows extraction of sub-shapes from a given
+shape.
+
+To use this operation, select in the Main Menu <b>Operations -> Extract and Rebuild</b>.
+The following dialog box appears:
+
+\image html extract_rebuild.png "Extract and Rebuild Dialog"
+
+In this dialog:
+<ul>
+<li> \b Name is a result object name.</li>
+<li> <b>Main Object</b> is the main object selected for the operation. It is
+possible to select the object in the Object Browser or in the viewer using
+"selection" button.</li>
+<li> <b>Sub-shape type</b> is the type filter for sub-shapes to be chosen
+for the extraction.</li>
+<li> <b>Filtered shapes</b> is the list of filtered sub-shape IDs available
+for the extraction.</li>
+<li> <b>Shapes to extract</b> is the list of sub-shape IDs to be extracted
+grouped by shape types.</li>
+<li> \b >> is the button to copy object IDs from <b>Filtered shapes</b> to
+<b>Shapes to extract</b>.</li>
+<li> \b << is the button to copy object IDs from <b>Shapes to extract</b> to
+<b>Filtered shapes</b>.</li>
+<li> <b>Show Only Selected</b> is the button to show objects selected in the
+<b>Filtered shapes</b> list and hide all other objects.</li>
+<li> <b>Hide Selected</b> is the button to hide objects selected in the
+<b>Filtered shapes</b> list.</li>
+<li> <b>Show all sub-shapes</b> is the button to show all objects from the
+<b>Filtered shapes</b> list.</li>
+<li> \b Rebuild is the button to perform extraction and show the operation
+statistics.</li>
+<li> The block of \b Statistics shows how many shapes of a certain type
+are \b Removed, \b Modified and \b Added.</li>
+<li> \b Apply is the button to create the result.</li>
+<li> <b>Apply and Close</b> is the button to create the result and close
+the dialog.</li>
+<li> \b Close is the button to close this dialog.</li>
+<li> \b Help is the button to show this help page.</li>
+</ul>
+
+<b>TUI Command:</b> <em>geompy.MakeExtraction(theShape, theListOfID),</em> 
+<br> where \em theShape is the main shape, \em theListOfID is a list of
+sub-shape IDs to be extracted.
+
+Our <b>TUI Scripts</b> provide you with useful example of the use of
+\ref swig_MakeExtraction "Extract and Rebuild" functionality.
+
+<b>More details</b>
+
+If a sub-shape is extracted, all its ancestors should be modified. An ancestors
+of extracted sub-shapes can be either:
+- created anew without extracted sub-shapes, or
+- extracted if it is not possible to create a valid shape without extracted
+sub-shape.
+
+E.g. it is necessary to extract the vertex from the box:
+
+\image html extract_init.png "Extraction of the vertex from the box"
+
+In this case 3 ancestor edges are removed as they can't be valid without
+this vertex. 3 faces that contain these edges are also removed. It is because
+the wires without edges are not closed and it is not possible to create
+a valid face on not closed wire. These wires should contain two remaining
+edges, but they are removed as they are the part of the remaining shell.
+So these wires become empty that means that they should be removed as well.
+
+The shell is replaced by another one that contains 3 not modified faces. As
+It is not possible to construct a valid solid from not closed shell the solid
+is removed. So the result of the extraction is a shell that contains 3 faces:
+
+\image html extract_result.png "Result shape"
+
+Please, refer to <a href="ExtractAndRebuild.pdf">this document</a> for a detailed
+description of Extract and Rebuild operation.
+
+*/

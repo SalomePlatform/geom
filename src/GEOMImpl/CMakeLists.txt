@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2012-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -79,6 +79,7 @@ SET(GEOMImpl_HEADERS
   GEOMImpl_ICircle.hxx
   GEOMImpl_ISpline.hxx
   GEOMImpl_IEllipse.hxx
+  GEOMImpl_IExtract.hxx
   GEOMImpl_IFillet.hxx
   GEOMImpl_IFillet1d.hxx
   GEOMImpl_IFillet2d.hxx

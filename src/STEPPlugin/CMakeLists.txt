@@ -1,4 +1,4 @@
-# Copyright (C) 2014-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2014-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -93,6 +93,7 @@ SET(STEPPluginEngine_HEADERS
   STEPPlugin_IExport.hxx 
   STEPPlugin_IImport.hxx
   STEPPlugin_ImportDriver.hxx 
+  STEPPlugin_ImportDlg.h
   STEPPlugin_ExportDlg.h
   STEPPlugin_ExportDriver.hxx
   STEPPlugin_IECallBack.hxx
@@ -103,6 +104,7 @@ IF(SALOME_BUILD_GUI)
   SET(_moc_HEADERS
     STEPPlugin_GUI.h
     STEPPlugin_ExportDlg.h
+    STEPPlugin_ImportDlg.h
     )
 ENDIF()
 
@@ -115,6 +117,7 @@ IF(SALOME_BUILD_GUI)
   SET(STEPPluginGUI_SOURCES
     STEPPlugin_GUI.cxx
     STEPPlugin_ExportDlg.cxx
+    STEPPlugin_ImportDlg.cxx
     ${_moc_SOURCES}
     )
 ENDIF()

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -57,6 +57,25 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
     Fields    = 0x02,
     SubShapes = 0x04,
     All       = Groups | Fields | SubShapes,
+  };
+
+  /**
+   * This enumeration represents an extraction statistics type.
+   */
+  enum ExtractionStatType
+  {
+    EST_Removed,  ///< Removed sub-shapes
+    EST_Modified, ///< Modified sub-shapes
+    EST_Added     ///< Newly created sub-shapes
+  };
+
+  /*!
+   * This structure defines a format of extraction statistics.
+   */
+  struct ExtractionStat
+  {
+    ExtractionStatType          type;    ///< Type of extraction statistics.
+    std::list<Standard_Integer> indices; ///< Shape indices touched by this type of modification.
   };
 
   Standard_EXPORT GEOMImpl_IShapesOperations(GEOM_Engine* theEngine, int theDocID);
@@ -469,6 +488,21 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
                       const Standard_Integer                theShapeType,
                       const GEOMUtils::ComparisonCondition  theCondition,
                       const Standard_Real                   theTolerance);
+
+  /*!
+   * \brief Return the shape that is constructed from theShape without
+   * extracted sub-shapes from the input list.
+   *
+   * \param theShape the original shape.
+   * \param theSubShapeIDs the list of sub-shape IDs to be extracted from
+   *        the original shape.
+   * \param theStats the operation statistics. Output parameter.
+   * \return the shape without extracted sub-shapes.
+   */
+  Handle(GEOM_Object) MakeExtraction
+                     (const Handle(GEOM_Object)              &theShape,
+                      const Handle(TColStd_HArray1OfInteger) &theSubShapeIDs,
+                      std::list<ExtractionStat>              &theStats);
 
  private:
   Handle(GEOM_Object) MakeShape (std::list<Handle(GEOM_Object)>      theShapes,

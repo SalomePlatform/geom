@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -305,6 +305,11 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
                       CORBA::Short               theShapeType,
                       GEOM::comparison_condition theCondition,
                       CORBA::Double              theTolerance);
+
+  GEOM::GEOM_Object_ptr MakeExtraction
+         (GEOM::GEOM_Object_ptr                              theShape,
+          const GEOM::ListOfLong                            &theSubShapeIDs,
+          GEOM::GEOM_IShapesOperations::ExtractionStats_out  theStats);
 
   ::GEOMImpl_IShapesOperations* GetOperations()
   { return (::GEOMImpl_IShapesOperations*)GetImpl(); }
