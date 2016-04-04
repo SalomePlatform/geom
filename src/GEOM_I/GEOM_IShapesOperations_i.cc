@@ -2320,7 +2320,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeExtraction
 
     aResStat->indices = aResIDList;
 
-    theStats[i] = aResStat;
+    theStats[(_CORBA_ULong)i] = aResStat;
   }
 
   return GetObject(aResult);

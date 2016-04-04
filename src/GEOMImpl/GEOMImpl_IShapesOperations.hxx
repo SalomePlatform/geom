@@ -499,7 +499,7 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
    * \param theStats the operation statistics. Output parameter.
    * \return the shape without extracted sub-shapes.
    */
-  Handle(GEOM_Object) MakeExtraction
+  Standard_EXPORT Handle(GEOM_Object) MakeExtraction
                      (const Handle(GEOM_Object)              &theShape,
                       const Handle(TColStd_HArray1OfInteger) &theSubShapeIDs,
                       std::list<ExtractionStat>              &theStats);
