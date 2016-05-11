@@ -130,6 +130,7 @@ SET(GOOD_TESTS
   working_with_groups_ex04
   working_with_groups_ex05
   working_with_groups_ex06
+  GEOM_Field
 )
 # CAS_VERSION > "6.8.0"
 LIST(APPEND GOOD_TESTS fast_intersection)

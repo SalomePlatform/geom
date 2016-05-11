@@ -17,6 +17,7 @@
 - viewing information about geometrical objects using
   \subpage using_measurement_tools_page "measurement tools";
 - \subpage pictures_page "designing shapes from pictures";
+- \subpage geom_field_page "defining fields".
 
 It is possible to easily set parameters via the variables predefined in
   \subpage using_notebook_geom_page "SALOME notebook".
