@@ -43,6 +43,7 @@ provided by Geometry module.
     <li>\ref tui_blocks_operations_page</li>
     <li>\ref tui_repairing_operations_page</li>
   </ul>
+  <li>\subpage tui_geom_field_page</li>
   <li>\subpage tui_measurement_tools_page</li>
   <li>\subpage tui_notebook_geom_page</li>
   <li>\subpage tui_arranging_study_objects_page</li>

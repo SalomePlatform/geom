@@ -87,5 +87,7 @@ values         = field.getValues(stepID)
 field.setValues(step, values)
 </pre>
 
+Our <b>TUI Scripts</b> provide you with examples of
+\ref tui_geom_field_page "GEOM fields creation".
 
 */
