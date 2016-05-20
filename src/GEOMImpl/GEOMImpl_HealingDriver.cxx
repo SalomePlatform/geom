@@ -1048,7 +1048,7 @@ GetCreationInformation(std::string&             theOperationName,
       AddParam( theParams, "Operation", op );
       for ( int iP = aParams->Lower(), nbP = aParams->Upper(); iP <= nbP; ++iP )
       {
-        const TCollection_ExtendedString& par = aParams->Value(i);
+        const TCollection_ExtendedString& par = aParams->Value(iP);
         TCollection_AsciiString parAscii( par );
         if ( par.Search( op ) == 1 && parAscii.Value( op.Length() + 1 ) == '.' )
         {
