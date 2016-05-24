@@ -1,0 +1,93 @@
+/*!
+
+\page geom_field_page Working with Fields
+
+A field object allows assigning some values to geometrical
+entities. These values can be later transferred to mesh entities
+generated on the geometrical entities during export to MED file in
+Mesh module. Geometrical fields can be stored in/restored from
+\ref io_xao "XAO format" files.
+
+A field object assigns values to either
+- all vertices of a GEOM_Object or
+- all edges of a GEOM_Object or
+- all faces of a GEOM_Object or
+- all solids of a GEOM_Object or
+- the whole GEOM_Object.
+
+Values can be of one of the following types:
+- boolean,
+- integer,
+- double,
+- string.
+
+\note Only integer and double values can be exported into the MED file.
+
+The field can hold several named values (components) per a geometrical entity.
+
+The field can include several sets of data called \a steps, each
+ dedicated to a certain time moment. A step is described by
+ - an integer ID,
+ - a time stamp number,
+ - values.
+
+To create a field, in the <b>Main Menu</b> select <b>New Entity ->
+  Field -> Create Field</b>.
+
+\image html create_field_dlg.png "Create Field dialog"
+
+In this dialog you can:
+<ul>
+  <li>Set <b>Field Name</b> with which a field will appear in the Object
+    Browser.</li>
+  <li>Select a \b Shape to which the field values will be assigned.</li>
+  <li>Select a \b Type of field values.</li>
+  <li>Select a type of \b Sub-shapes to assign values to.</li>
+  <li>Specify <b>Nb. Components</b> per a shape/sub-shape.
+  <li>Specify names of components and the values in a table of \b
+    Values. (To change a component name, double-click a column header).</li>
+  <li>Push <b>Add Step</b> button to add a new time step. (Specify a
+    step ID in \b Step field before pushing this button).</li>
+  <li>Adjust a time stamp number in \b Stamp field.<li>
+  <li>Push <b>Previous Step</b> and <b>Next Step</b> buttons to
+    navigate through added steps or use a drop-down list to the right
+    of the \b Step field to select a step by its ID.</li>
+  <li>Push <b>Remove Step</b> to delete a current step.</li>
+  <li>Push \b Apply or <b>Apply and Close</b> button to commit
+    creation of the field.<li>
+</ul>
+
+Later you can modify the values and the time stamp number of a created
+field and to add/remove steps to it. To do it, choose <b>Edit
+  Field</b> in a contextual menu of a field or step in the Object Browser.
+
+
+<b>Python API</b> for field manipulations includes the following commands:
+
+<pre>
+field          = geompy.CreateField(shape, name, type, dimension, componentNames)
+geompy.RemoveField(field)
+shape          = field.getShape()
+name           = field.getName()
+field.setName(name)
+type           = field.getType()
+dim            = field.getDimension()
+componentNames = field.getComponents()
+nbFileds       = geompy.CountFields(shape)
+fields         = geompy.GetFields(shape)
+field          = geompy.GetField(shape, name)
+
+field.addStep(stepID, stamp, values)
+field.removeStep(stepID)
+nbSteps        = field.countSteps()
+stepIDs        = field.getSteps()
+stamp          = field.getStamp(stepID)
+field.setStamp(stepID, stamp)
+values         = field.getValues(stepID)
+field.setValues(step, values)
+</pre>
+
+Our <b>TUI Scripts</b> provide you with examples of
+\ref tui_geom_field_page "GEOM fields creation".
+
+*/

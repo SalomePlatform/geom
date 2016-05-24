@@ -131,6 +131,7 @@ SET(GOOD_TESTS
   working_with_groups_ex04.py
   working_with_groups_ex05.py
   working_with_groups_ex06.py
+  GEOM_Field.py
 )
 IF(CAS_VERSION_STR VERSION_GREATER "6.9.0")
   LIST(APPEND GOOD_TESTS
