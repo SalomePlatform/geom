@@ -165,9 +165,9 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
   anAct->setCheckable(true);
   connect(anAct, SIGNAL(triggered(bool)), this, SLOT(onDetectionMode(bool)) );
   connect(anAct, SIGNAL(toggled(bool)), this, SLOT(onModeChanged(bool)) );
-  if ( !(theActionFlags & DisableDetectionMode) ) {
-    aTB->addAction(anAct);
-  }
+//  if ( !(theActionFlags & DisableDetectionMode) ) {
+//    aTB->addAction(anAct);
+//  }
   
   anAct = createAction( CLOSE_SECTIONS_ID, tr("CLOSE_SECTIONS"), QPixmap(), tr("CLOSE_SECTIONS_TLT"), 
                         QKeySequence(Qt::ControlModifier|Qt::Key_W) );
