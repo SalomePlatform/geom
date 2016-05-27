@@ -5915,7 +5915,15 @@ shells and solids on the other hand.</translation>
         <source>JOIN_TLT</source>
         <translation>Join selected sections</translation>
     </message>
+     <message>
+        <source>BRING_TOGETHER</source>
+        <translation>Bring together</translation>
+    </message>
     <message>
+        <source>BRING_TOGETHER_TLT</source>
+        <translation>Bring together two points on the extremities of two sections</translation>
+    </message>
+   <message>
         <source>CLEAR_ALL</source>
         <translation>Clear all</translation>
     </message>

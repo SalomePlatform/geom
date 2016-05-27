@@ -28,6 +28,10 @@
             <translation>join2.png</translation>
         </message>
         <message>
+            <source>ICON_CC_BRING_TOGETHER</source>
+            <translation>bringTogether.png</translation>
+        </message>
+        <message>
             <source>ICON_CC_NEW_POINT</source>
             <translation>new_point.png</translation>
         </message>
