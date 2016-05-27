@@ -101,14 +101,15 @@ CurveCreator_TableView::CurveCreator_TableView( CurveCreator_ICurve* theCurve,
 {
   setItemDelegate( new CurveCreator_TableItemDelegate( this ) );
   setVisible( false );
-  setColumnCount( 4 );
+  setColumnCount( 5 );
   setColumnWidth( 0, SECTION_NAME_COLUMN_WIDTH );
   setColumnWidth( 1, POINT_INDEX_COLUMN_WIDTH );
   QStringList aLabels;
   QString aCoord1 = theCoordTitles.size() > 0 ? theCoordTitles[0] : tr( "TABLE_X" ); // tr( "X_POSITION_LBL" )
   QString aCoord2 = theCoordTitles.size() > 1 ? theCoordTitles[1] : tr( "TABLE_Y" ); // tr( "Y_POSITION_LBL" )
+  QString aDistance = theCoordTitles.size() > 2 ? theCoordTitles[2] : tr( "DISTANCE_PREV" );
   //aLabels << tr( "SECTION_LABEL" ) << tr( "IDENTIFIER_LABEL" ) << aCoord1 << aCoord2;
-  aLabels << tr( "TABLE_SECTION" ) << tr("TABLE_INDEX") << aCoord1 << aCoord2;
+  aLabels << tr( "TABLE_SECTION" ) << tr("TABLE_INDEX") << aCoord1 << aCoord2 << aDistance;
   setHorizontalHeaderLabels( aLabels );
 
   connect( horizontalHeader(), SIGNAL( sectionClicked( int ) ), this, SLOT( OnHeaderClick( int ) ) );
@@ -125,6 +126,8 @@ void CurveCreator_TableView::setLocalPointsToTable(
   setRowCount( thePoints.size() );
 
   int aRowId = 0;
+  double prevX=0;
+  double prevY=0;
   CurveCreator_ICurve::SectionToPointList::const_iterator anIt = thePoints.begin(),
                                                           aLast = thePoints.end();
   for ( ; anIt != aLast; anIt++ ) {
@@ -153,7 +156,7 @@ void CurveCreator_TableView::setLocalPointsToTable(
       setItem( aRowId, 2, anItem );
     }
     anItem->setData( Qt::UserRole, aPoint.X() );
-    anItem->setData( Qt::DisplayRole, QString::number( aPoint.X(), 'f', 2 ).toDouble() );
+    anItem->setData( Qt::DisplayRole, QString::number( aPoint.X(), 'f', 3 ).toDouble() );
 
     anItem = item( aRowId, 3 );
     if ( !anItem ) {
@@ -161,7 +164,20 @@ void CurveCreator_TableView::setLocalPointsToTable(
       setItem( aRowId, 3, anItem );
     }
     anItem->setData( Qt::UserRole, aPoint.Y() );
-    anItem->setData( Qt::DisplayRole, QString::number( aPoint.Y(), 'f', 2 ).toDouble() );
+    anItem->setData( Qt::DisplayRole, QString::number( aPoint.Y(), 'f', 3 ).toDouble() );
+
+    anItem = item( aRowId, 4 );
+    if ( !anItem ) {
+      anItem = new QTableWidgetItem();
+      setItem( aRowId, 4, anItem );
+    }
+    double d=0;
+    if (aRowId>0)
+      d=sqrt((aPoint.X()-prevX)* (aPoint.X()-prevX) + (aPoint.Y()-prevY)* (aPoint.Y()-prevY));
+    anItem->setData( Qt::UserRole, d );
+    anItem->setData( Qt::DisplayRole, QString::number( d, 'f', 6 ).toDouble() );
+    prevX = aPoint.X();
+    prevY = aPoint.Y();
 
     aRowId++;
   }

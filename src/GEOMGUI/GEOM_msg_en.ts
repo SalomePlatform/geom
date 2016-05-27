@@ -5808,6 +5808,10 @@ shells and solids on the other hand.</translation>
         <source>TABLE_Y</source>
         <translation>Y</translation>
     </message>
+    <message>
+        <source>DISTANCE_PREV</source>
+        <translation>Distance</translation>
+    </message>
 </context>
 <context>
     <name>CurveCreator_Widget</name>
