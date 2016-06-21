@@ -170,13 +170,13 @@ void GEOMToolsGUI_MarkerDlg::setStandardMarker( GEOM::marker_type type, GEOM::ma
   if ( type > GEOM::MT_NONE && type < GEOM::MT_USER ) {
     myTypeGroup->button( 0 )->setChecked( true );
     myWGStack->setCurrentIndex( 0 );
-    myStdTypeCombo->setCurrentIndex( (int)type - 1 );
+    myStdTypeCombo->setCurrentId( (int)type );
 #ifdef WIN32
     int asize = max( (int)GEOM::MS_10, min( (int)GEOM::MS_70, (int)size ) );
 #else
     int asize = std::max( (int)GEOM::MS_10, std::min( (int)GEOM::MS_70, (int)size ) );
 #endif
-    myStdScaleCombo->setCurrentIndex( asize-1 );
+    myStdScaleCombo->setCurrentId( asize );
   }
 }
 
@@ -192,17 +192,17 @@ void GEOMToolsGUI_MarkerDlg::setCustomMarker( int id )
 
 GEOM::marker_type GEOMToolsGUI_MarkerDlg::getMarkerType() const
 {
-  return myWGStack->currentIndex() == 0 ? (GEOM::marker_type)myStdTypeCombo->currentId() : GEOM::MT_USER;
+  return myWGStack->currentIndex() == 0 ? (GEOM::marker_type)myStdTypeCombo->currentId().toInt() : GEOM::MT_USER;
 }
 
 GEOM::marker_size GEOMToolsGUI_MarkerDlg::getStandardMarkerScale() const
 {
-  return myWGStack->currentIndex() == 0 ? (GEOM::marker_size)myStdScaleCombo->currentId() : GEOM::MS_NONE;
+  return myWGStack->currentIndex() == 0 ? (GEOM::marker_size)myStdScaleCombo->currentId().toInt() : GEOM::MS_NONE;
 }
 
 int GEOMToolsGUI_MarkerDlg::getCustomMarkerID() const
 {
-  return myWGStack->currentIndex() == 1 ? myCustomTypeCombo->currentId() : 0;
+  return myWGStack->currentIndex() == 1 ? myCustomTypeCombo->currentId().toInt() : 0;
 }
 
 void GEOMToolsGUI_MarkerDlg::accept()
