@@ -217,6 +217,7 @@ GEOM_Actor::~GEOM_Actor()
 #ifdef MYDEBUG
   MESSAGE (this<< " ~GEOM_Actor::GEOM_Actor");
 #endif
+  myTextActor->Delete();
   myHighlightProp->Delete();
   myPreHighlightProp->Delete();
   myShadingFaceProp->Delete();

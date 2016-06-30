@@ -225,7 +225,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr   theStudy,
 
   SALOMEDS::GenericAttribute_var anAttr;
   SALOMEDS::StudyBuilder_var     aStudyBuilder = theStudy->NewBuilder();
-  SALOMEDS::UseCaseBuilder_var   useCaseBuilder = theStudy->GetUseCaseBuilder();
+  SALOMEDS::UseCaseBuilder_wrap  useCaseBuilder = theStudy->GetUseCaseBuilder();
 
   SALOMEDS::SComponent_var       aFather = theStudy->FindComponent("GEOM");
   if (aFather->_is_nil()) {
@@ -2809,8 +2809,9 @@ char* GEOM_Gen_i::getObjectInfo(CORBA::Long studyId, const char* entry)
     }
   }
 
-  char* anInfo = new char[strlen("Module ") + strlen(ComponentDataType()) + strlen(", ") + strlen(aTypeInfo) + 3];
-  sprintf(anInfo, "Module %s, %s", ComponentDataType(), aTypeInfo);
+  CORBA::String_var compType = ComponentDataType();
+  char* anInfo = new char[strlen("Module ") + strlen(compType.in()) + strlen(", ") + strlen(aTypeInfo) + 3];
+  sprintf(anInfo, "Module %s, %s", compType.in(), aTypeInfo);
 
   char* ret = CORBA::string_dup(anInfo);
   delete [] anInfo;
