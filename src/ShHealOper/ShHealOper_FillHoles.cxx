@@ -288,10 +288,10 @@ Handle(Geom_Surface) ShHealOper_FillHoles::buildSurface(const TopoDS_Wire& theWi
         BRepAdaptor_Curve adC(ae);
         Handle(BRepAdaptor_HCurve) aHAD= new BRepAdaptor_HCurve(adC);
         Handle(BRepFill_CurveConstraint) aConst =
-            new BRepFill_CurveConstraint (aHAD, (Standard_Integer) GeomAbs_C0, myNbPtsOnCur, myTol3d);
+            new BRepFill_CurveConstraint (Handle(Adaptor3d_HCurve)::DownCast(aHAD), (Standard_Integer) GeomAbs_C0, myNbPtsOnCur, myTol3d);
         //Handle(GeomPlate_CurveConstraint) aConst =
          // new GeomPlate_CurveConstraint(aHAD, (Standard_Integer) GeomAbs_C0, myNbPtsOnCur, myTol3d);
-        aBuilder.Add (aConst);
+        aBuilder.Add (Handle(GeomPlate_CurveConstraint)::DownCast(aConst));
       }
       aBuilder.Perform();
       if(!aBuilder.IsDone())
