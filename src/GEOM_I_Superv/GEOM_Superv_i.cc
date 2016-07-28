@@ -22,6 +22,7 @@
 
 #include "GEOM_Superv_i.hh"
 #include "SALOME_LifeCycleCORBA.hxx"
+#include "Utils_CorbaException.hxx"
 
 #include CORBA_SERVER_HEADER(SALOME_Session)
 #include "SALOMEDSClient_ClientFactory.hxx"
@@ -483,6 +484,7 @@ void GEOM_Superv_i::getXAOPluginOp()
   }
 }
 
+#ifdef WITH_VTK
 //=============================================================================
 //  getVTKPluginOp:
 //=============================================================================
@@ -498,6 +500,7 @@ void GEOM_Superv_i::getVTKPluginOp()
     myVTKOp = GEOM::IVTKOperations::_narrow(myGeomEngine->GetPluginOperations(myStudyID, "VTKPluginEngine"));
   }
 }
+#endif
 
 //=============================================================================
 //  GetServant:
@@ -3652,6 +3655,7 @@ CORBA::Boolean GEOM_Superv_i::ImportXAO( const char* fileName,
   return false;
 }
 
+
 //=============================================================================
 //  Export VTK
 //=============================================================================
@@ -3659,11 +3663,16 @@ void GEOM_Superv_i::ExportVTK(  GEOM::GEOM_Object_ptr theObject,
 				const char*           theFileName,
 				CORBA::Double         theDeflection )
 {
+  #ifdef WITH_VTK
   beginService( " GEOM_Superv_i::ExportVTK" );
   MESSAGE("GEOM_Superv_i::ExportVTK");
   getVTKPluginOp();
   myVTKOp->ExportVTK( theObject, theFileName, theDeflection );
   endService( " GEOM_Superv_i::ExportVTK" );
+#else
+  std::string message("GEOM_Superv_i::ExportVTK functionality is unavailable");
+  THROW_SALOME_CORBA_EXCEPTION(message.c_str(), SALOME::INTERNAL_ERROR);
+#endif
 }
 
 //=============================== Advanced Operations =============================

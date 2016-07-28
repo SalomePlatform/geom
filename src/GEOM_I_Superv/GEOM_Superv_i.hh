@@ -34,7 +34,9 @@
 #include CORBA_CLIENT_HEADER(STEPPlugin)
 #include CORBA_CLIENT_HEADER(IGESPlugin)
 #include CORBA_CLIENT_HEADER(XAOPlugin)
+#ifdef WITH_VTK
 #include CORBA_CLIENT_HEADER(VTKPlugin)
+#endif
 #include CORBA_SERVER_HEADER(GEOM_Superv)
 
 #include "SALOME_Component_i.hxx"
@@ -73,8 +75,9 @@ public:
   void getSTEPPluginOp();
   void getIGESPluginOp();
   void getXAOPluginOp();
+#ifdef WITH_VTK
   void getVTKPluginOp();
-
+#endif
   PortableServer::ServantBase_var GetServant(CORBA::Object_ptr       theObject,
                                              PortableServer::POA_ptr thePOA);
 
@@ -807,7 +810,9 @@ private:
   GEOM::ISTEPOperations_var           mySTEPOp;
   GEOM::IIGESOperations_var           myIGESOp;
   GEOM::IXAOOperations_var            myXAOOp;
+#ifdef WITH_VTK
   GEOM::IVTKOperations_var            myVTKOp;
+#endif
 };
 
 #endif

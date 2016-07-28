@@ -27,7 +27,10 @@ SALOME_CONFIGURE_FILE(static/header_py.html.in ${CMAKE_CURRENT_BINARY_DIR}/stati
 
 # Generate a temporary python file, needed for the genaration of the documentation
 # of the built-in Geometry plugins.
-SET(DOC_GEOM_PluginsList AdvancedGEOM STLPlugin BREPPlugin STEPPlugin IGESPlugin XAOPlugin VTKPlugin)
+SET(DOC_GEOM_PluginsList AdvancedGEOM STLPlugin BREPPlugin STEPPlugin IGESPlugin XAOPlugin)
+IF(SALOME_GEOM_USE_VTK)
+  SET(DOC_GEOM_PluginsList ${DOC_GEOM_PluginsList} VTKPlugin)
+ENDIF()
 SALOME_ACCUMULATE_ENVIRONMENT(GEOM_PluginsList NOCHECK ${DOC_GEOM_PluginsList})
 SET(geom_file "${CMAKE_CURRENT_SOURCE_DIR}/collect_geom_methods.py")
 SET(plugins_cmd_options ${geom_file} -o tmp1/geomBuilder.py ${DOC_GEOM_PluginsList})

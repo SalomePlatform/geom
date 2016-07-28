@@ -23,8 +23,8 @@
 SET(SUBDIRS_COMMON
   ARCHIMEDE BlockFix GEOMAlgo SKETCHER GEOM ShHealOper GEOMUtils XAO XAO_Swig 
   GEOMImpl GEOM_I GEOMClient GEOM_I_Superv GEOM_SWIG GEOM_PY
-  AdvancedEngine OCC2VTK
-  STLPlugin BREPPlugin STEPPlugin IGESPlugin XAOPlugin VTKPlugin Tools
+  AdvancedEngine
+  STLPlugin BREPPlugin STEPPlugin IGESPlugin XAOPlugin Tools
   )
 
 ##
@@ -33,6 +33,16 @@ SET(SUBDIRS_COMMON
 IF(SALOME_GEOM_USE_OPENCV)
   SET(SUBDIRS_OPENCV 
     ShapeRecognition
+    )
+ENDIF()
+
+##
+# VTK
+##
+IF(SALOME_GEOM_USE_VTK)
+  SET(SUBDIRS_VTK 
+    OCC2VTK
+    VTKPlugin
     )
 ENDIF()
 
@@ -55,6 +65,7 @@ ENDIF()
 SET(SUBDIRS
   ${SUBDIRS_COMMON}
   ${SUBDIRS_OPENCV}
+  ${SUBDIRS_VTK}
   ${SUBDIRS_CC}
   ${SUBDIRS_GUI}
 )

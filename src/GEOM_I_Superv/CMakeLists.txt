@@ -43,7 +43,6 @@ SET(_link_LIBRARIES
   SalomeIDLIGESPlugin
   SalomeIDLSTEPPlugin
   SalomeIDLSTLPlugin
-  SalomeIDLVTKPlugin
   SalomeIDLXAOPlugin
   ${KERNEL_SALOMELocalTrace}
   ${KERNEL_SalomeDSClient}
@@ -52,6 +51,10 @@ SET(_link_LIBRARIES
   ${KERNEL_SalomeNS}
   )
 
+IF(SALOME_GEOM_USE_VTK)
+  SET(_link_LIBRARIES ${_link_LIBRARIES}
+    SalomeIDLVTKPlugin)
+ENDIF(SALOME_GEOM_USE_VTK)
 # --- headers ---
 
 SET(GEOM_SupervEngine_HEADERS

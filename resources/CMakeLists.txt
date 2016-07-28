@@ -29,7 +29,6 @@ SET( _res_files
   STEPPlugin.xml
   IGESPlugin.xml
   XAOPlugin.xml
-  VTKPlugin.xml
   GEOM_en.xml
   GEOM_fr.xml
   GEOM.config
@@ -300,6 +299,13 @@ SET( _res_files
   exportxao.png importxao.png
   ##@@ insert new functions before this line @@ do not remove this line @@##
   )
+IF(SALOME_GEOM_USE_VTK)
+  SET(_res_files
+    VTKPlugin.xml
+    ${_res_files}
+  )
+ENDIF(SALOME_GEOM_USE_VTK)
+
 INSTALL(FILES ${_res_files} DESTINATION ${SALOME_GEOM_INSTALL_RES_DATA})
 
 SET( _texture_files

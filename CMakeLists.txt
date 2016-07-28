@@ -70,7 +70,9 @@ OPTION(SALOME_BUILD_TESTS "Build SALOME tests" ON)
 OPTION(SALOME_BUILD_GUI "Enable GUI" ON)
 CMAKE_DEPENDENT_OPTION(SALOME_GEOM_USE_OPENCV "Enable shape recognition from picture" OFF
                        "SALOME_BUILD_GUI" OFF)
-MARK_AS_ADVANCED(SALOME_BUILD_GUI SALOME_GEOM_USE_OPENCV)
+CMAKE_DEPENDENT_OPTION(SALOME_GEOM_USE_VTK "Enable VTK-dependent functionality" ON
+                       "NOT SALOME_BUILD_GUI" ON)
+MARK_AS_ADVANCED(SALOME_BUILD_GUI SALOME_GEOM_USE_OPENCV SALOME_GEOM_USE_VTK)
 
 # Prerequisites
 # =============
@@ -146,7 +148,11 @@ ENDIF(SALOME_BUILD_GUI)
 ##
 
 FIND_PACKAGE(SalomeCAS REQUIRED)
-FIND_PACKAGE(SalomeVTK REQUIRED)
+
+IF(SALOME_GEOM_USE_VTK)
+  FIND_PACKAGE(SalomeVTK REQUIRED)
+  ADD_DEFINITIONS(-DWITH_VTK)
+ENDIF(SALOME_GEOM_USE_VTK)
 
 # OpenCV
 IF(SALOME_GEOM_USE_OPENCV)
@@ -231,9 +237,9 @@ INCLUDE(CMakePackageConfigHelpers)
 SET(_${PROJECT_NAME}_exposed_targets 
   GEOMArchimede BlockFix GEOMbasic GEOMAlgo GEOMClient GEOMImpl
   GEOMUtils GEOMEngine GEOM_SupervEngine GEOMSketcher
-  SalomeIDLGEOM SalomeIDLGEOMSuperv SalomeIDLAdvancedGEOM ShHealOper XAO AdvancedEngine OCC2VTK
-  SalomeIDLSTLPlugin SalomeIDLBREPPlugin SalomeIDLSTEPPlugin SalomeIDLIGESPlugin SalomeIDLXAOPlugin SalomeIDLVTKPlugin
-  STLPluginEngine BREPPluginEngine STEPPluginEngine IGESPluginEngine XAOPluginEngine VTKPluginEngine
+  SalomeIDLGEOM SalomeIDLGEOMSuperv SalomeIDLAdvancedGEOM ShHealOper XAO AdvancedEngine 
+  SalomeIDLSTLPlugin SalomeIDLBREPPlugin SalomeIDLSTEPPlugin SalomeIDLIGESPlugin SalomeIDLXAOPlugin
+  STLPluginEngine BREPPluginEngine STEPPluginEngine IGESPluginEngine XAOPluginEngine 
 )
 IF(SALOME_BUILD_GUI)
   LIST(APPEND _${PROJECT_NAME}_exposed_targets 
@@ -246,6 +252,14 @@ IF(SALOME_BUILD_GUI)
     LIST(APPEND _${PROJECT_NAME}_exposed_targets DependencyTree)
   ENDIF(SALOME_USE_GRAPHICSVIEW)
 ENDIF(SALOME_BUILD_GUI)
+
+IF(SALOME_GEOM_USE_VTK)
+  LIST(APPEND _${PROJECT_NAME}_exposed_targets 
+    OCC2VTK
+    VTKPluginEngine
+    SalomeIDLVTKPlugin
+    )
+ENDIF(SALOME_GEOM_USE_VTK)
 
 IF(SALOME_GEOM_USE_OPENCV)
   LIST(APPEND _${PROJECT_NAME}_exposed_targets 
