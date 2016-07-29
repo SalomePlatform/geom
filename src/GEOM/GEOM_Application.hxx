@@ -36,7 +36,9 @@ public:
   Standard_EXPORT GEOM_Application();
   Standard_EXPORT ~GEOM_Application();
 
+#if OCC_VERSION_LARGE <= 0x07000000
   Standard_EXPORT virtual void Formats(TColStd_SequenceOfExtendedString& Formats);
+#endif
   Standard_EXPORT Standard_CString ResourcesName();
 
 public:

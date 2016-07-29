@@ -66,6 +66,12 @@
 
 #include <Resource_DataMapIteratorOfDataMapOfAsciiStringAsciiString.hxx>
 
+#if OCC_VERSION_LARGE > 0x07000000
+#include <BinDrivers.hxx>
+#include <StdDrivers_DocumentRetrievalDriver.hxx>
+#include <PCDM_StorageDriver.hxx>
+#endif
+
 #include <set>
 
 #include <Standard_Failure.hxx>
@@ -225,6 +231,11 @@ GEOM_Engine::GEOM_Engine()
   TFunction_DriverTable::Get()->AddDriver(GEOM_Object::GetSubShapeID(), new GEOM_SubShapeDriver());
   
   _OCAFApp = new GEOM_Application();
+#if OCC_VERSION_LARGE > 0x07000000
+  _OCAFApp->DefineFormat("SALOME_GEOM", "GEOM Document Version 1.0", "sgd",
+                         new StdDrivers_DocumentRetrievalDriver, 0);
+  BinDrivers::DefineFormat(_OCAFApp);
+#endif
   _UndoLimit = 0;
 }
 

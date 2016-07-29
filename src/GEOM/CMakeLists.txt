@@ -44,6 +44,10 @@ SET(_link_LIBRARIES
   GEOMSketcher
   )
 
+IF(CAS_VERSION_STR VERSION_GREATER "7.0.0")
+  LIST(APPEND _link_LIBRARIES ${CAS_TKStd} ${CAS_TKBin})
+ENDIF()
+
 # --- headers ---
 
 SET(GEOM_HEADERS

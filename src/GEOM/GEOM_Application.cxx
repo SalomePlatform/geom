@@ -42,6 +42,7 @@ GEOM_Application::~GEOM_Application()
 {
 }
 
+#if OCC_VERSION_LARGE <= 0x07000000
 //=======================================================================
 //function : Formats
 //purpose  : 
@@ -54,6 +55,7 @@ void GEOM_Application::Formats(TColStd_SequenceOfExtendedString& Formats)
   Formats.Append(TCollection_ExtendedString ("BinOcaf"));
 #endif
 }
+#endif
 
 
 //=======================================================================
