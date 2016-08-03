@@ -1,0 +1,78 @@
+/*!
+
+\page sorting_shapes_page Sorting Shapes Algorithm
+
+Some algorithms of GEOM module return a list of shapes sorted in accordance
+with some criterion. The goal of this sorting is a possibility to obtain
+stable result regardless SALOME version being used.
+
+The algorithm that provides such a possibility consists of the following steps:
+
+<ol>
+  <li>For each shape a pair of point and number is associated. The point and
+      number depend on the shape type:
+    <table border="1" align="center" cellpadding="3" cellspacing="0" bgcolor="#EEEEEE">
+      <tr align=center bgcolor=#999999>
+        <td>Shape Type</td>
+        <td>Point</td>
+        <td>Number</td>
+      </tr><tr align=center>
+        <td>Vertex</td>
+        <td>Vertex isself</td>
+        <td>Orientation value converted to double</td>
+      </tr><tr align=center>
+        <td>Edge, Wire</td>
+        <td>Center of mass</td>
+        <td>Total length of edges</td>
+      </tr>
+      </tr><tr align=center>
+        <td>Face, Shell</td>
+        <td>Center of mass</td>
+        <td>Total area of faces</td>
+      </tr>
+      </tr><tr align=center>
+        <td>Other</td>
+        <td>Center of mass</td>
+        <td>Total volume of solids</td>
+      </tr>
+    </table>
+  </li> 
+  <li>Each point is converted to double using the following expression:
+      \code point.X() * 999.0 + point.Y() * 99.0 + point.Z() * 0.9 \endcode
+  </li> 
+  <li>The shapes are sorted in ascending order. The shape comparison criterion
+      is the following. Shape_1 is considered less then Shape_2 if:
+    <ul>
+      <li>Shape_1's double value obtained on the step 2 is less than
+          the corresponding value of Shape_2.<br>
+          \b Otherwise if they are equal with the confusion tolerance (1.e-7):
+      </li>
+      <li>Shape_1's number obtained on the step 1 is less than the
+          corresponding number of Shape_2.<br>
+          \b Otherwise if they are equal with the confusion tolerance (1.e-7)
+          and the shapes have either Face or more complex type:
+      </li>
+      <li>Shape_1's squared diagonal of bounding box is less than the one
+          of Shape_2.<br>
+          \b Otherwise if they are equal with the confusion tolerance (1.e-7):
+      </li>
+      <li>Get the minimal and maximal values of X, Y and Z coordinates
+          of bounding boxes for Shape_1 and Shape_2. Compute the following
+          values for Shape_1 and Shape_2:
+          \code (aXmin+aXmax) * 999.0 + (aYmin+aYmax) * 99.0 + (aZmin+aZmax) * 0.9 \endcode
+          Shape_1 is less than Shape_2 if this value for Shape_1 is less
+          than the value for Shape_2.
+      </li>
+    </ul>
+  </li>
+</ol>
+
+This algorithm is used in the following \ref geomBuilder.geomBuilder "geomBuilder" methods:
+- \ref SubShapeAllSortedCentres
+- \ref SubShapeAllSortedCentresIDs
+- \ref SubShapeSortedCentres
+- \ref ExtractShapes
+
+and as a part of some other algorithms where sorting is required.
+
+*/

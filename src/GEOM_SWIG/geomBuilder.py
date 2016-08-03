@@ -6383,7 +6383,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
         ## Explode a shape on sub-shapes of a given type.
         #  Sub-shapes will be sorted taking into account their gravity centers,
-        #  to provide stable order of sub-shapes.
+        #  to provide stable order of sub-shapes. Please see
+        #  @ref sorting_shapes_page "Description of Sorting Shapes Algorithm".
         #  If the shape itself matches the type, it is also returned.
         #  @param aShape Shape to be exploded.
         #  @param aType Type of sub-shapes to be retrieved (see ShapeType())
@@ -6420,7 +6421,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
         ## Explode a shape on sub-shapes of a given type.
         #  Sub-shapes will be sorted taking into account their gravity centers,
-        #  to provide stable order of sub-shapes.
+        #  to provide stable order of sub-shapes. Please see
+        #  @ref sorting_shapes_page "Description of Sorting Shapes Algorithm".
         #  @param aShape Shape to be exploded.
         #  @param aType Type of sub-shapes to be retrieved (see ShapeType())
         #  @return List of IDs of sub-shapes.
@@ -6446,6 +6448,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
         ## Obtain a compound of sub-shapes of <VAR>aShape</VAR>,
         #  selected by they indices in sorted list of all sub-shapes of type <VAR>aType</VAR>.
+        #  Please see @ref sorting_shapes_page "Description of Sorting Shapes Algorithm".
         #  Each index is in range [1, Nb_Sub-Shapes_Of_Given_Type]
         #  @param aShape Shape to get sub-shape of.
         #  @param ListOfInd List of sub-shapes indices.
@@ -6486,7 +6489,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## Extract shapes (excluding the main shape) of given type.
         #  @param aShape The shape.
         #  @param aType  The shape type (see ShapeType())
-        #  @param isSorted Boolean flag to switch sorting on/off.
+        #  @param isSorted Boolean flag to switch sorting on/off. Please see
+        #         @ref sorting_shapes_page "Description of Sorting Shapes Algorithm".
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
