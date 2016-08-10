@@ -20,17 +20,32 @@
 #ifndef GEOM_PAINTERPOLYDATAMAPPER_H 
 #define GEOM_PAINTERPOLYDATAMAPPER_H 
 
+#ifndef VTK_OPENGL2
 #include <vtkPainterPolyDataMapper.h>
+#else
+#include <vtkPolyDataMapper.h>
+#endif
 
 /*
  * This class can be used to prevent drawing of mappers' content (due to an
  * empty definition of GEOM_PainterPolyDataMapper::RenderPiece(...) method).
  * It is used as poly data mapper in GEOM_Actor class.
  */
-class GEOM_PainterPolyDataMapper: public vtkPainterPolyDataMapper
+class GEOM_PainterPolyDataMapper:
+#ifndef VTK_OPENGL2
+public vtkPainterPolyDataMapper
+#else
+public vtkPolyDataMapper
+#endif
 {
  public:
+#ifndef VTK_OPENGL2
   vtkTypeMacro(GEOM_PainterPolyDataMapper,vtkPainterPolyDataMapper);
+#else
+  vtkTypeMacro(GEOM_PainterPolyDataMapper,vtkPolyDataMapper);
+#endif
+
+
   static GEOM_PainterPolyDataMapper* New();
 
   virtual void RenderPiece(vtkRenderer *ren, vtkActor *act) {}
