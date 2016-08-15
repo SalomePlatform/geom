@@ -161,7 +161,6 @@ namespace GEOMOp {
     OpShapesOnShape       = 3704,   // MENU OPERATION - GET SHAPES ON SHAPE
     OpFillet2d            = 3705,   // MENU OPERATION - FILLET 2D
     OpFillet1d            = 3706,   // MENU OPERATION - FILLET 1D
-    OpClipping            = 3707,   // MENU OPERATION - CLIPPING RANGE
     OpSharedShapes        = 3708,   // MENU OPERATION - GET SHARED SHAPES
     OpExtrudedBoss        = 3709,   // MENU OPERATION - ETRUDED BOSS
     OpExtrudedCut         = 3710,   // MENU OPERATION - ETRUDED CUT

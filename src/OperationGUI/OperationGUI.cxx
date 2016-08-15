@@ -35,7 +35,6 @@
 #include "OperationGUI_FilletDlg.h"      // Method FILLET
 #include "OperationGUI_Fillet1d2dDlg.h"  // Method FILLET 2D and FILLET 1D
 #include "OperationGUI_ChamferDlg.h"     // Method CHAMFER
-#include "OperationGUI_ClippingDlg.h"    // Clipping dialog box
 #include "OperationGUI_GetShapesOnShapeDlg.h"
 #include "OperationGUI_GetSharedShapesDlg.h"
 #include "OperationGUI_ExtrudedFeatureDlg.h" // Methods EXTRUDED BOSS / CUT
@@ -76,7 +75,6 @@ bool OperationGUI::OnGUIEvent (int theCommandID, SUIT_Desktop* parent)
   case GEOMOp::OpArchimede:     (new OperationGUI_ArchimedeDlg       (getGeometryGUI(), parent))->show(); break;
   case GEOMOp::OpFillet3d:      (new OperationGUI_FilletDlg          (getGeometryGUI(), parent))->show(); break;
   case GEOMOp::OpChamfer:       (new OperationGUI_ChamferDlg         (getGeometryGUI(), parent))->show(); break;
-  case GEOMOp::OpClipping:      (new OperationGUI_ClippingDlg        (getGeometryGUI(), parent))->show(); break;
   case GEOMOp::OpShapesOnShape: (new OperationGUI_GetShapesOnShapeDlg(getGeometryGUI(), parent))->show(); break;
   case GEOMOp::OpSharedShapes:  (new OperationGUI_GetSharedShapesDlg (getGeometryGUI(), parent))->show(); break;
   case GEOMOp::OpExtrudedBoss:  (new OperationGUI_ExtrudedFeatureDlg (BOSS, getGeometryGUI(), parent))->show(); break;

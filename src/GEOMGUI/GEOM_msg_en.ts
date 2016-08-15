@@ -2605,10 +2605,6 @@ Please, select face, shell or solid and try again</translation>
         <translation>Circle</translation>
     </message>
     <message>
-        <source>MEN_CLIPPING</source>
-        <translation>Clipping Range</translation>
-    </message>
-    <message>
         <source>MEN_CLOSE_CONTOUR</source>
         <translation>Close Contour</translation>
     </message>
@@ -3649,10 +3645,6 @@ Please, select face, shell or solid and try again</translation>
         <translation>Create a circle</translation>
     </message>
     <message>
-        <source>STB_CLIPPING</source>
-        <translation>Clipping range</translation>
-    </message>
-    <message>
         <source>STB_CLOSE_CONTOUR</source>
         <translation>Perform close contour</translation>
     </message>
@@ -4283,10 +4275,6 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_CIRCLE</source>
         <translation>Create a circle</translation>
-    </message>
-    <message>
-        <source>TOP_CLIPPING</source>
-        <translation>Clipping range</translation>
     </message>
     <message>
         <source>TOP_CLOSE_CONTOUR</source>

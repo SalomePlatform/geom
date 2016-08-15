@@ -2600,10 +2600,6 @@
       <translation>円</translation>
     </message>
     <message>
-      <source>MEN_CLIPPING</source>
-      <translation>クリップの範囲</translation>
-    </message>
-    <message>
       <source>MEN_CLOSE_CONTOUR</source>
       <translation>輪郭を閉じる</translation>
     </message>
@@ -3644,10 +3640,6 @@
       <translation>円を作成</translation>
     </message>
     <message>
-      <source>STB_CLIPPING</source>
-      <translation>切り抜き範囲</translation>
-    </message>
-    <message>
       <source>STB_CLOSE_CONTOUR</source>
       <translation>スケッチを終了</translation>
     </message>
@@ -4278,10 +4270,6 @@
     <message>
       <source>TOP_CIRCLE</source>
       <translation>円を作成</translation>
-    </message>
-    <message>
-      <source>TOP_CLIPPING</source>
-      <translation>切り抜き範囲</translation>
     </message>
     <message>
       <source>TOP_CLOSE_CONTOUR</source>

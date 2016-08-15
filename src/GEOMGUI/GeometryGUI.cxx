@@ -615,7 +615,6 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpArchimede:          // MENU OPERATION - ARCHIMEDE
   case GEOMOp::OpFillet3d:           // MENU OPERATION - FILLET
   case GEOMOp::OpChamfer:            // MENU OPERATION - CHAMFER
-  case GEOMOp::OpClipping:           // MENU OPERATION - CLIPPING RANGE
   case GEOMOp::OpShapesOnShape:      // MENU OPERATION - GET SHAPES ON SHAPE
   case GEOMOp::OpFillet2d:           // MENU OPERATION - FILLET 2D
   case GEOMOp::OpFillet1d:           // MENU OPERATION - FILLET 1D
@@ -1002,7 +1001,6 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpArchimede,      "ARCHIMEDE" );
   createGeomAction( GEOMOp::OpFillet3d,       "FILLET" );
   createGeomAction( GEOMOp::OpChamfer,        "CHAMFER" );
-  //createGeomAction( GEOMOp::OpClipping,        "CLIPPING" );
   createGeomAction( GEOMOp::OpShapesOnShape,  "GET_SHAPES_ON_SHAPE" );
   createGeomAction( GEOMOp::OpSharedShapes,   "GET_SHARED_SHAPES" );
   createGeomAction( GEOMOp::OpTransferData,   "TRANSFER_DATA" );
@@ -1274,7 +1272,6 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpChamfer,       operId, -1 );
   createMenu( GEOMOp::OpExtrudedBoss,  operId, -1 );
   createMenu( GEOMOp::OpExtrudedCut,   operId, -1 );
-  //createMenu( GEOMOp::OpClipping,      operId, -1 );
 
   int repairId = createMenu( tr( "MEN_REPAIR" ), -1, -1, 10 );
   createMenu( GEOMOp::OpShapeProcess,    repairId, -1 );

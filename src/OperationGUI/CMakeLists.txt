@@ -74,7 +74,6 @@ SET(OperationGUI_HEADERS
   OperationGUI_GetSharedShapesDlg.h
   OperationGUI_ExtractionDlg.h
   OperationGUI_ExtrudedFeatureDlg.h
-  OperationGUI_ClippingDlg.h
   OperationGUI_TransferDataDlg.h
   )
 
@@ -89,7 +88,6 @@ SET(_moc_HEADERS
   OperationGUI_GetSharedShapesDlg.h
   OperationGUI_ExtractionDlg.h
   OperationGUI_ExtrudedFeatureDlg.h
-  OperationGUI_ClippingDlg.h
   OperationGUI_TransferDataDlg.h
   )
 
@@ -112,7 +110,6 @@ SET(OperationGUI_SOURCES
   OperationGUI_ChamferDlg.cxx
   OperationGUI_ExtractionDlg.cxx
   OperationGUI_ExtrudedFeatureDlg.cxx
-  OperationGUI_ClippingDlg.cxx
   OperationGUI_TransferDataDlg.cxx
   ${_moc_SOURCES}
   ${_uic_files}

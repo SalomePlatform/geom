@@ -2597,10 +2597,6 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Cercle</translation>
     </message>
     <message>
-        <source>MEN_CLIPPING</source>
-        <translation>Plage de découpe</translation>
-    </message>
-    <message>
         <source>MEN_CLOSE_CONTOUR</source>
         <translation>Fermer le contour</translation>
     </message>
@@ -3641,10 +3637,6 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Créer un cercle</translation>
     </message>
     <message>
-        <source>STB_CLIPPING</source>
-        <translation>Intervalle de découpe</translation>
-    </message>
-    <message>
         <source>STB_CLOSE_CONTOUR</source>
         <translation>Fermer le contour</translation>
     </message>
@@ -4275,10 +4267,6 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>TOP_CIRCLE</source>
         <translation>Créer un cercle</translation>
-    </message>
-    <message>
-        <source>TOP_CLIPPING</source>
-        <translation>Intervalle de découpe</translation>
     </message>
     <message>
         <source>TOP_CLOSE_CONTOUR</source>
