@@ -1388,19 +1388,26 @@ void EntityGUI_3DSketcherDlg::displayTrihedron (int selMode)
 {
   // Add trihedron to preview
   SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
-
+  
+  SOCC_Viewer* anOCCViewer = dynamic_cast<SOCC_Viewer*>( vw->getViewManager()->getViewModel() );
+  if( !anOCCViewer )
+    return;
+  
+  Handle(AIS_InteractiveContext) anAISContext = anOCCViewer->getAISContext();
+  if( !anAISContext )
+    return;
+  
   gp_Pnt P(getLastPoint().x,getLastPoint().y,getLastPoint().z);
   Handle(Geom_Axis2Placement) anAxis = new Geom_Axis2Placement(P,gp::DZ(),gp::DX());
   Handle(AIS_Trihedron) anIO = new AIS_Trihedron(anAxis);
-  anIO->GetContext()->Activate(anIO, selMode);
 
-  SOCC_Prs* aSPrs = dynamic_cast<SOCC_Prs*>
-    (((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
+  SOCC_Prs* aSPrs = dynamic_cast<SOCC_Prs*>( anOCCViewer->CreatePrs(0) );
 
   if (aSPrs) {
     aSPrs->PrependObject(anIO);
     GEOMBase_Helper::displayPreview(aSPrs, true, true);
   }
+  anAISContext->Activate(anIO, selMode);
 }
 
 //================================================================
