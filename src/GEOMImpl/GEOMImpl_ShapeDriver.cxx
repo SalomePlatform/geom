@@ -1015,6 +1015,10 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(LOGBOOK& log) const
 
     aShape = anExtractor.GetResult();
 
+    if (aShape.IsNull()) {
+      Standard_ConstructionError::Raise("Result of extraction is empty");
+    }
+
     // Get statistics.
     const TopTools_ListOfShape       &aRemoved    = anExtractor.GetRemoved();
     const TopTools_ListOfShape       &aModified   = anExtractor.GetModified();

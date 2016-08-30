@@ -1298,12 +1298,18 @@ void OperationGUI_ExtractionDlg::eraseSubShape(const int theId)
 void OperationGUI_ExtractionDlg::eraseAll()
 {
   TColStd_MapIteratorOfMapOfInteger anIter(myMapDisplayedIDs);
+  TColStd_ListOfInteger             aDisplayedIDs;
 
   for (; anIter.More(); anIter.Next()) {
-    eraseSubShape(anIter.Key());
+    aDisplayedIDs.Append(anIter.Key());
   }
 
-  myMapDisplayedIDs.Clear();
+  TColStd_ListIteratorOfListOfInteger aListIter(aDisplayedIDs);
+
+  for (; aListIter.More(); aListIter.Next()) {
+    eraseSubShape(aListIter.Value());
+  }
+
   getDisplayer()->UpdateViewer();
 }
 
