@@ -1006,11 +1006,11 @@ void CurveCreator_Widget::onBringTogether()
 
   CurveCreator_ICurve::SectionToPointList::const_iterator anIt = myLocalPoints.begin(),
                                                           aLast = myLocalPoints.end();
-  int sections[nbPoints];
-  int iPoints[nbPoints];
-  int nbPtsSection[nbPoints];
-  double x[nbPoints];
-  double y[nbPoints];
+  std::vector<int> sections(nbPoints);
+  std::vector<int> iPoints(nbPoints);
+  std::vector<int> nbPtsSection(nbPoints);
+  std::vector<double> x(nbPoints);
+  std::vector<double> y(nbPoints);
   int i = 0;
   for ( ; anIt != aLast; anIt++, i++ )
     {
@@ -1018,7 +1018,7 @@ void CurveCreator_Widget::onBringTogether()
       sections[i] = aSPoint.first;
       iPoints[i] = aSPoint.second;
       nbPtsSection[i] = myCurve->getNbPoints(sections[i]);
-      if ((iPoints[i] != 0) and (iPoints[i] != nbPtsSection[i]-1))
+      if ((iPoints[i] != 0) && (iPoints[i] != nbPtsSection[i]-1))
         {
           MESSAGE("a point is not on a section extremity, nothing done");
           return;
