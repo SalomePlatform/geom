@@ -32,6 +32,7 @@
 #include <SUIT_Session.h>
 
 #include <TColStd_MapIteratorOfMapOfInteger.hxx>
+#include <TColStd_ListIteratorOfListOfInteger.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS_Iterator.hxx>
