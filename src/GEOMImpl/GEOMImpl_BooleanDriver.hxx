@@ -52,6 +52,8 @@ private:
                                 const TopoDS_Shape theShape2,
                                 const Standard_Integer theType) const;
 
+  TopoDS_Shape makeCompoundShellFromFaces(const TopoDS_Shape theShape) const;
+
   OCCT_DEFINE_STANDARD_RTTIEXT(GEOMImpl_BooleanDriver,GEOM_BaseDriver)
 };
 
