@@ -38,6 +38,7 @@
 #include <BRepAlgoAPI_Section.hxx>
 #include <BOPAlgo_CheckerSI.hxx>
 #include <BOPDS_DS.hxx>
+#include <BOPTools_AlgoTools.hxx>
 
 #include <TopExp_Explorer.hxx>
 #include <TopoDS_Compound.hxx>
@@ -332,6 +333,47 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(LOGBOOK& log) const
 }
 
 //=======================================================================
+//function : makeCompoundShellFromFaces
+//purpose  :
+//=======================================================================
+TopoDS_Shape GEOMImpl_BooleanDriver::makeCompoundShellFromFaces
+                               (const TopoDS_Shape theShape)const
+{
+  if (theShape.ShapeType() != TopAbs_COMPOUND)
+    return theShape;
+
+  BOPCol_ListOfShape aListShapes;
+  BOPTools_AlgoTools::MakeConnexityBlocks(theShape, TopAbs_EDGE, TopAbs_FACE, aListShapes);
+
+  if (aListShapes.IsEmpty())
+    return theShape;
+
+  TopoDS_Compound aResult;
+  BRep_Builder B;
+  B.MakeCompound(aResult);
+  TopExp_Explorer aExp;
+  BOPCol_ListIteratorOfListOfShape anIter(aListShapes);
+
+  for (; anIter.More(); anIter.Next()) {
+    TopoDS_Shell aShell;
+    B.MakeShell(aShell);
+    TopoDS_Shape aShapeFromFaces = anIter.Value();
+    aExp.Init(aShapeFromFaces, TopAbs_FACE);
+    for (; aExp.More(); aExp.Next()) {
+      const TopoDS_Shape& aFace = aExp.Current();
+      B.Add(aShell, aFace);
+    }
+    if (!aShell.IsNull()) {
+      BOPTools_AlgoTools::OrientFacesOnShell(aShell);
+      B.Add(aResult, aShell);
+    }
+    else
+      B.Add(aResult, aShapeFromFaces);
+  }
+
+  return aResult;
+}
+//=======================================================================
 //function : performOperation
 //purpose  :
 //=======================================================================
@@ -373,6 +415,11 @@ TopoDS_Shape GEOMImpl_BooleanDriver::performOperation
           // This allows to avoid adding empty compounds,
           // resulting from COMMON on two non-intersecting shapes.
           if (aStepResult.ShapeType() == TopAbs_COMPOUND) {
+          #if OCC_VERSION_MAJOR >= 7
+            if (aValue1.ShapeType() == TopAbs_FACE && aValue2.ShapeType() == TopAbs_FACE) {
+              aStepResult = makeCompoundShellFromFaces(aStepResult);
+            }
+          #endif
             TopoDS_Iterator aCompIter (aStepResult);
             for (; aCompIter.More(); aCompIter.Next()) {
               // add shape in a result
@@ -430,6 +477,11 @@ TopoDS_Shape GEOMImpl_BooleanDriver::performOperation
         // This allows to avoid adding empty compounds,
         // resulting from CUT of parts
         if (aCut.ShapeType() == TopAbs_COMPOUND) {
+        #if OCC_VERSION_MAJOR >= 7
+          if (itSub1.Value().ShapeType() == TopAbs_FACE) {
+            aCut = makeCompoundShellFromFaces(aCut);
+          }
+        #endif
           TopoDS_Iterator aCompIter (aCut);
           for (; aCompIter.More(); aCompIter.Next()) {
             // add shape in a result
@@ -457,12 +509,35 @@ TopoDS_Shape GEOMImpl_BooleanDriver::performOperation
 
   // perform FUSE operation
   else if (theType == BOOLEAN_FUSE) {
+  #if OCC_VERSION_MAJOR >= 7
+    Standard_Boolean isFaces = Standard_False;
+    TopTools_ListOfShape listShape1, listShape2;
+    GEOMUtils::AddSimpleShapes(theShape1, listShape1);
+    GEOMUtils::AddSimpleShapes(theShape2, listShape2);
+
+    TopTools_ListIteratorOfListOfShape itSub1 (listShape1);
+    for (; itSub1.More(); itSub1.Next()) {
+      TopoDS_Shape aValue1 = itSub1.Value();
+      TopTools_ListIteratorOfListOfShape itSub2 (listShape2);
+      for (; itSub2.More(); itSub2.Next()) {
+        TopoDS_Shape aValue2 = itSub2.Value();
+        if (aValue1.ShapeType() == TopAbs_FACE && aValue2.ShapeType() == TopAbs_FACE) {
+          isFaces = Standard_True;
+        }
+      }
+    }
+#endif
+
     // Perform
     BRepAlgoAPI_Fuse BO (theShape1, theShape2);
     if (!BO.IsDone()) {
       StdFail_NotDone::Raise("Fuse operation can not be performed on the given shapes");
     }
     aShape = BO.Shape();
+  #if OCC_VERSION_MAJOR >= 7
+    if (isFaces)
+      aShape = makeCompoundShellFromFaces(aShape);
+  #endif
   }
 
   // perform SECTION operation
