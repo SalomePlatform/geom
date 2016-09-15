@@ -10,6 +10,7 @@ following parameters:
 of the surface. You can select either several edges/wires or a
 compound of them. To prepare for the filling, each input wire
 is converted into a single BSpline curve by concatenating its edges.
+List of edges/wires must contain more than one edge.
 \n \b Minimum and <b>Maximum Degree</b> of equation of the resulting
 BSpline or Besier curves describing the surface.
 \n \b Tolerance for \b 2D and for \b 3D - minimum distance between the
