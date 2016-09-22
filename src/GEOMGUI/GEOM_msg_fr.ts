@@ -473,7 +473,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_COMPSOLIDS</source>
-        <translation type="unfinished">CompSolids</translation>
+        <translation>Solides avec faces partagées</translation>
     </message>
     <message>
         <source>GEOM_COMPOUND_TITLE</source>
@@ -613,7 +613,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_EDGES</source>
-        <translation type="unfinished">Edges</translation>
+        <translation>Arêtes</translation>
     </message>
     <message>
         <source>GEOM_EDGE_TITLE</source>
@@ -2026,7 +2026,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SOLIDS</source>
-        <translation type="unfinished">Solids</translation>
+        <translation>Solides</translation>
     </message>
     <message>
         <source>GEOM_SOLID_TITLE</source>
@@ -5230,15 +5230,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_EXTRACTION</source>
-        <translation type="unfinished">Extract and Rebuild</translation>
+        <translation>Extraire et reconstruire</translation>
     </message>
     <message>
         <source>MEN_EXTRACTION</source>
-        <translation type="unfinished">Extract and Rebuild</translation>
+        <translation>Extraire et reconstruire</translation>
     </message>
     <message>
         <source>STB_EXTRACTION</source>
-        <translation type="unfinished">Extract and Rebuild</translation>
+        <translation>Extraire et reconstruire</translation>
     </message>
     <message>
         <source>TOP_EXTENSION</source>
@@ -7621,51 +7621,51 @@ Voulez-vous en créer un nouveau ?</translation>
     <name>OperationGUI_ExtractionDlg</name>
     <message>
         <source>GEOM_EXTRACT_TITLE</source>
-        <translation type="unfinished">Extract and Rebuild</translation>
+        <translation>Extraire et reconstruire</translation>
     </message>
     <message>
         <source>GEOM_EXTRACT_TYPE</source>
-        <translation type="unfinished">Extraction type</translation>
+        <translation>Type d'extraction</translation>
     </message>
     <message>
         <source>GEOM_EXTRACT_INPUT_PARAMS</source>
-        <translation type="unfinished">Input parameters</translation>
+        <translation>Paramètres d'entrée</translation>
     </message>
     <message>
         <source>GEOM_EXTRACT_STATISTICS</source>
-        <translation type="unfinished">Statistics</translation>
+        <translation>Statistiques</translation>
     </message>
     <message>
         <source>GEOM_EXTRACT_SUB_SHAPE_TYPE</source>
-        <translation type="unfinished">Sub-shape type</translation>
+        <translation>Type de sous-objets</translation>
     </message>
     <message>
         <source>GEOM_EXTRACT_FILTERED_SHAPES</source>
-        <translation type="unfinished">Filtered shapes</translation>
+        <translation>Filtered shapes</translation>
     </message>
     <message>
         <source>GEOM_EXTRACT_SHAPES_TO_EXTRACT</source>
-        <translation type="unfinished">Shapes to extract</translation>
+        <translation>Objets à extraire</translation>
     </message>
     <message>
         <source>GEOM_EXTRACT_REBUILD</source>
-        <translation type="unfinished">Rebuild</translation>
+        <translation>Reconstruire</translation>
     </message>
     <message>
         <source>GEOM_EXTRACT_REMOVED</source>
-        <translation type="unfinished">Removed</translation>
+        <translation>Supprimé</translation>
     </message>
     <message>
         <source>GEOM_EXTRACT_MODIFIED</source>
-        <translation type="unfinished">Modified</translation>
+        <translation>Modifié</translation>
     </message>
     <message>
         <source>GEOM_EXTRACT_ADDED</source>
-        <translation type="unfinished">Added</translation>
+        <translation>Ajouté</translation>
     </message>
     <message>
         <source>GEOM_EXTRACT_NAME</source>
-        <translation type="unfinished">Extraction</translation>
+        <translation>Extraction</translation>
     </message>
 </context>
 </TS>
