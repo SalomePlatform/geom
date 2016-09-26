@@ -23,8 +23,11 @@
 #include "GEOM_GEOMGUI.hxx"
 #include "GEOM_Displayer.h"
 
-#include <QTreeWidget>
 #include <QHash>
+#include <QMap>
+#include <QList>
+#include <QSharedPointer>
+#include <QTreeWidget>
 
 #include <SALOMEDSClient.hxx>
 
@@ -44,46 +47,97 @@ class GEOMGUI_EXPORT GEOMGUI_TextTreeWdg : public QTreeWidget
 {
   Q_OBJECT
 
- public:
+public:
+  enum BranchType { DimensionShape, AnnotationShape };
+
+public:
   GEOMGUI_TextTreeWdg( SalomeApp_Application* app );
   ~GEOMGUI_TextTreeWdg();
 
   int getWinID() { return myWindowID; }
 
-  void                          removeBranch( const QString& theEntry, 
-					      bool force = true );
+  void                          removeBranch( const BranchType& theBranchType, const QString& theEntry,
+                                              bool force = true );
   int                           idFromItem( QTreeWidgetItem* theItem );
-  QString                       entryFromItem( QTreeWidgetItem* theShapeItem );
-  QTreeWidgetItem*              itemFromEntry( QString theEntry );
-  void                          setShapeDimensionsVisibility( QString theEntry, bool theVisibility );
-  void                          setDimensionVisibility( QString theEntry, QTreeWidgetItem* theDimItem, bool theVisibility );
+  QString                       entryFromItem( QTreeWidgetItem* theShapeItem ) const;
+  QTreeWidgetItem*              itemFromEntry( const BranchType& theBranchType, QString theEntry );
+  void                          setAllShapeItemsVisibility( const BranchType& theBranchType,
+                                                            const QString& theEntry,
+                                                            const bool theVisibility );
+  void                          setShapeItemVisibility( const BranchType& theBranchType,
+                                                        const QString& theEntry,
+                                                        QTreeWidgetItem* theWidgetItem,
+                                                        const bool theVisibility );
+  void                          updateVisibility();
+
+  void                          getSelected( QMap<QString, QList<int> >& theAnnotations );
+  void                          setSelected( const QMap<QString, QList<int> >& theAnnotations );
+
+  QList<QString>                getAllEntries( const BranchType& theBranchType );
+
+  QString                       getSingleSelectedObject();
 
 protected:
   void                          createActions();
   void                          redisplay( QString theEntry );
 
- public slots:
+public slots:
   void                          updateTree();
-  void                          updateBranch( const QString& theEntry );
+  void                          updateBranches( const QString& theEntry );
+  void                          updateDimensionBranch( const QString& theEntry );
+  void                          updateAnnotationBranch( const QString& theEntry );
+  void                          updateObjectName( const QString& theEntry );
 
 private slots:
+  void                          onUpdateVisibilityColumn( QString theEntry, Qtx::VisibilityState theState );
   void                          onItemClicked(QTreeWidgetItem*, int );
-  void                          updateVisibilityColumn( QString theEntry, Qtx::VisibilityState theState );
-  void                          setVisibility( bool visibility );
+  void                          setVisibility( QTreeWidgetItem* theItem, bool visibility );
   void                          showContextMenu( const QPoint& pos );
 
- private:
+public:
 
-  int                           myWindowID;
+  /*!
+   * \brief Common interface for working with shape dimension and annotation properties
+   *        of object in a unified way irrespectively of the implementation.
+   */ 
+  class VisualProperty
+  {
+  public:
+    virtual int GetNumber() = 0;
+    virtual QString GetName( const int theIndex ) = 0;
+    virtual bool GetIsVisible( const int theIndex ) = 0;
+    virtual void SetIsVisible( const int theIndex, const bool theIsVisible ) = 0;
+    virtual void Save() = 0;
+  };
 
-  QIcon                         myVisibleIcon;
-  QIcon                         myInvisibleIcon;
-  QHash<QString, QTreeWidgetItem*> myObjects;
-  SalomeApp_Study*              myStudy;
-  QTreeWidgetItem*              myDimensionsItem;
-  GEOM_Displayer                myDisplayer;
+private:
+  bool                              setShapeItemVisibility( QSharedPointer<VisualProperty>& theProps,
+                                                            QTreeWidgetItem* theWidgetItem,
+                                                            const bool theVisibility );
+  QSharedPointer<VisualProperty>    getVisualProperty( const BranchType& theBranchType,
+                                                       SalomeApp_Study* theStudy,
+                                                       const std::string& theEntry );
+  void                              fillBranch( const BranchType& theBranchType,
+                                                const QString& theEntry );
+  void                              updateVisibilityColumn( const BranchType& theBranchType,
+                                                            QString theEntry,
+                                                            Qtx::VisibilityState theState );
+  QTreeWidgetItem*                  getPropertyRootItem( const BranchType& theBranchType );
+  QHash<QString, QTreeWidgetItem*>& getObjects( const BranchType& theBranchType );
+  BranchType                        branchTypeFromItem( QTreeWidgetItem* theItem );
 
-  QMap<int, QAction*>           myActions;   //!< menu actions list
+private:
 
+  int                              myWindowID;
+  QIcon                            myVisibleIcon;
+  QIcon                            myInvisibleIcon;
+  QHash<QString, QTreeWidgetItem*> myDimensionObjects;
+  QHash<QString, QTreeWidgetItem*> myAnnotationObjects;
+  SalomeApp_Study*                 myStudy;
+  QTreeWidgetItem*                 myDimensionsItem;
+  QTreeWidgetItem*                 myAnnotationsItem;
+  GEOM_Displayer                   myDisplayer;
+  QMap<int, QAction*>              myActions; //!< menu actions list
 };
+
 #endif

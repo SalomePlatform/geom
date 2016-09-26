@@ -76,6 +76,7 @@ SET(OBJECT_HEADERS
   GEOM_DeviceActor.h
   GEOM_Constants.h
   GEOM_AISDimension.hxx
+  GEOM_Annotation.hxx
   )
 # --- sources ---
 
@@ -93,6 +94,7 @@ SET(OBJECT_SOURCES
   GEOM_DeviceActor.cxx
   GEOM_Constants.cxx
   GEOM_AISDimension.cxx
+  GEOM_Annotation.cxx
   )
 
 # --- rules ---

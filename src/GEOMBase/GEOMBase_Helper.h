@@ -65,6 +65,8 @@ public:
   static SUIT_ViewWindow* getActiveView();
 
 protected:
+  typedef std::list<SALOME_Prs*> PrsList;
+
   static GEOM::GEOM_Gen_ptr getGeomEngine();
 
   void display         ( const ObjectList&, const bool = true );
@@ -96,6 +98,8 @@ protected:
                          const bool append = false,
                          const bool = true );
   void erasePreview    ( const bool = true );
+
+  const PrsList& getPreview() const { return myPreview; }
 
   void localSelection( const ObjectList&, const std::list<int> );
   void localSelection( const ObjectList&, const int );
@@ -210,7 +214,6 @@ private:
   void                        clearShapeBuffer( GEOM::GEOM_Object_ptr );
 
 private:
-  typedef std::list<SALOME_Prs*> PrsList;
 
   PrsList                     myPreview;
   GEOM_Displayer*             myDisplayer;

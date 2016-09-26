@@ -25,7 +25,6 @@
 // Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 
 #include "GEOM_Displayer.h"
-#include "GEOMGUI_DimensionProperty.h"
 #include "GeometryGUI.h"
 
 #include <GEOM_Constants.h>
@@ -39,11 +38,16 @@
 
 #include <GEOM_Actor.h>
 #include <GEOM_AISDimension.hxx>
+#include <GEOM_Annotation.hxx>
 #include <GEOM_TopWireframeShape.hxx>
 #include <GEOM_AISVector.hxx>
 #include <GEOM_AISTrihedron.hxx>
 #include <GEOM_VTKTrihedron.hxx>
 #include <GEOM_VTKPropertyMaterial.hxx>
+
+#include <GEOMGUI_DimensionProperty.h>
+#include <GEOMGUI_AnnotationAttrs.h>
+#include <GEOMGUI_AnnotationMgr.h>
 
 #include <GEOMUtils.hxx>
 
@@ -460,6 +464,7 @@ static std::string getName( GEOM::GEOM_BaseObject_ptr object )
  */
 //=================================================================
 GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
+: myIsRedisplayed( false )
 {
   if( st )
     myApp = dynamic_cast<SalomeApp_Application*>( st->application() );
@@ -510,7 +515,8 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
 #if OCC_VERSION_MAJOR >= 7
   myColorScale = new AIS_ColorScale;
   myColorScale->SetZLayer (Graphic3d_ZLayerId_TopOSD);
-  myColorScale->SetTransformPersistence (Graphic3d_TMF_2d, gp_Pnt (-1,-1,0));
+  myColorScale->SetTransformPersistence (
+    Graphic3d_TransformPers::FromDeprecatedParams(Graphic3d_TMF_2d, gp_Pnt (-1,-1,0)));
 #endif
 
   myFieldDataType = GEOM::FDT_Double;
@@ -636,6 +642,8 @@ void GEOM_Displayer::Redisplay( const Handle(SALOME_InteractiveObject)& theIO,
                                 const bool updateViewer,
                                 const bool checkActiveViewer )
 {
+  bool aRedisplayed = myIsRedisplayed;
+  myIsRedisplayed = true;
   // Remove the object permanently (<forced> == true)
   SUIT_Session* ses = SUIT_Session::session();
   SUIT_Application* app = ses->activeApplication();
@@ -665,6 +673,7 @@ void GEOM_Displayer::Redisplay( const Handle(SALOME_InteractiveObject)& theIO,
       }
     }
   }
+  myIsRedisplayed = aRedisplayed;
 }
 
 //=================================================================
@@ -684,8 +693,23 @@ void GEOM_Displayer::Redisplay( const Handle(SALOME_InteractiveObject)& theIO,
     return;
   }
 
+  bool aRedisplayed = myIsRedisplayed;
+  myIsRedisplayed = true;
   Erase( theIO, true, false, theViewFrame );
   Display( theIO, theUpdateViewer, theViewFrame );
+  myIsRedisplayed = aRedisplayed;
+  // hide annotations for erased presentation
+  SUIT_Session* session = SUIT_Session::session();
+  SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
+  GeometryGUI* aModule = dynamic_cast<GeometryGUI*>( anApp->activeModule() );
+  if ( aModule ) {
+    if ( !theViewFrame->isVisible( theIO ) ) {
+      aModule->GetAnnotationMgr()->EraseVisibleAnnotations(QString(theIO->getEntry()), dynamic_cast<SOCC_Viewer*>( theViewFrame ));
+    }
+    else {
+      aModule->GetAnnotationMgr()->DisplayVisibleAnnotations(QString(theIO->getEntry()), dynamic_cast<SOCC_Viewer*>( theViewFrame ));
+    }
+  }
 }
 
 //=================================================================
@@ -2052,6 +2076,18 @@ void GEOM_Displayer::BeforeDisplay( SALOME_View* v, const SALOME_OCCPrs* )
 void GEOM_Displayer::AfterDisplay( SALOME_View* v, const SALOME_OCCPrs* p )
 {
   UpdateColorScale(false,false);
+
+  // visualize annotations for displayed presentation
+  SUIT_Session* session = SUIT_Session::session();
+  SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
+  GeometryGUI* aModule = dynamic_cast<GeometryGUI*>( anApp->activeModule() );
+  if ( aModule ) {
+    if ( !myIsRedisplayed ) {
+      aModule->GetAnnotationMgr()->DisplayVisibleAnnotations(QString(p->GetEntry()), dynamic_cast<SOCC_Viewer*>( v ));
+    } else {
+      aModule->GetAnnotationMgr()->UpdateVisibleAnnotations(QString(p->GetEntry()), dynamic_cast<SOCC_Viewer*>( v ));
+    }
+  }
 }
 
 void GEOM_Displayer::BeforeErase( SALOME_View* v, const SALOME_OCCPrs* p )
@@ -2064,6 +2100,15 @@ void GEOM_Displayer::AfterErase( SALOME_View* v, const SALOME_OCCPrs* p )
 {
   LightApp_Displayer::AfterErase( v, p );
   UpdateColorScale(false,false);
+
+  if ( !myIsRedisplayed ) {
+    // hide annotations for erased presentation
+    SUIT_Session* session = SUIT_Session::session();
+    SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
+    GeometryGUI* aModule = dynamic_cast<GeometryGUI*>( anApp->activeModule() );
+    if ( aModule )
+      aModule->GetAnnotationMgr()->EraseVisibleAnnotations(QString(p->GetEntry()), dynamic_cast<SOCC_Viewer*>( v ));
+  }
 }
 
 //=================================================================

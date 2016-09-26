@@ -104,7 +104,9 @@ namespace GEOM
       // texture
       "Texture",         // -
       // dimensions
-      "Dimensions"       // -
+      "Dimensions",      // -
+      // shape annotations
+      "ShapeAnnotations" // -
     };
     return ( type >= GEOM::Visibility && type <= GEOM::LastProperty ) ? names[type] : QString();
   }

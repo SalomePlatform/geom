@@ -88,6 +88,8 @@ SET(MeasureGUI_HEADERS
   MeasureGUI_InertiaDlg.h
   MeasureGUI_BndBoxDlg.h
   MeasureGUI_DistanceDlg.h
+  MeasureGUI_AnnotationDlg.h
+  MeasureGUI_AnnotationInteractor.h
   MeasureGUI_AngleDlg.h
   MeasureGUI_MaxToleranceDlg.h
   MeasureGUI_WhatisDlg.h
@@ -116,6 +118,8 @@ SET(_moc_HEADERS
   MeasureGUI_InertiaDlg.h
   MeasureGUI_BndBoxDlg.h
   MeasureGUI_DistanceDlg.h
+  MeasureGUI_AnnotationDlg.h
+  MeasureGUI_AnnotationInteractor.h
   MeasureGUI_AngleDlg.h
   MeasureGUI_MaxToleranceDlg.h
   MeasureGUI_WhatisDlg.h
@@ -154,6 +158,8 @@ SET(MeasureGUI_SOURCES
   MeasureGUI_InertiaDlg.cxx
   MeasureGUI_BndBoxDlg.cxx
   MeasureGUI_DistanceDlg.cxx
+  MeasureGUI_AnnotationDlg.cxx
+  MeasureGUI_AnnotationInteractor.cxx
   MeasureGUI_AngleDlg.cxx
   MeasureGUI_MaxToleranceDlg.cxx
   MeasureGUI_WhatisDlg.cxx

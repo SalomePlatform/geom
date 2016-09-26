@@ -1216,6 +1216,10 @@
             <translation>managedimensions.png</translation>
         </message>
         <message>
+            <source>ICO_ANNOTATION</source>
+            <translation>annotation.png</translation>
+        </message>
+        <message>
             <source>ICO_POINT</source>
             <translation>point2.png</translation>
         </message>

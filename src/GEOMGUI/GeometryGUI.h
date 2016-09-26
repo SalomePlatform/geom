@@ -36,6 +36,7 @@
 #include <GEOM_Client.hxx>
 #include <SALOME_InteractiveObject.hxx>
 #include <SALOMEDSClient.hxx>
+#include <Qtx.h>
 
 #include "GEOMGUI.h"
 #include "GEOMPluginGUI.h"
@@ -65,6 +66,7 @@ class SUIT_ViewManager;
 class SalomeApp_Study;
 class GEOMGUI_CreationInfoWdg;
 class GEOMGUI_TextTreeWdg;
+class GEOMGUI_AnnotationMgr;
 
 //=================================================================================
 // class    : GeometryGUI
@@ -97,6 +99,10 @@ public:
   static void                 Modified( bool = true );
 
   GEOM_Client&                GetShapeReader()    { static SHAPE_READER(myShapeReader);return myShapeReader; }
+
+  GEOMGUI_AnnotationMgr*      GetAnnotationMgr();
+
+  GEOMGUI_TextTreeWdg*        GetTextTreeWdg() const;
 
   // Get active dialog box
   QDialog*                    GetActiveDialogBox(){ return myActiveDialogBox; }
@@ -150,6 +156,7 @@ public:
                                            const int row, Qt::DropAction action );
 
   void                        emitDimensionsUpdated( QString entry );
+  void                        emitAnnotationsUpdated( QString entry );
 
 public slots:
   virtual bool                deactivateModule( SUIT_Study* );
@@ -179,6 +186,8 @@ signals :
   void                        SignalDefaultStepValueChanged( double newVal );
   void                        SignalDependencyTreeParamChanged( const QString&, const QString& );
   void                        SignalDependencyTreeRenameObject( const QString& );
+  void                        SignalTextTreeRenameObject( const QString& );
+  void                        SignalAnnotationsUpdated( const QString& );
   void                        DimensionsUpdated( const QString& );
 
 protected:
@@ -228,7 +237,8 @@ private:
 
   GEOMGUI_CreationInfoWdg*    myCreationInfoWdg;
   
-  GEOMGUI_TextTreeWdg*       myTextTreeWdg;
+  GEOMGUI_TextTreeWdg*        myTextTreeWdg;
+  GEOMGUI_AnnotationMgr*      myAnnotationMgr;
   
   SALOME_ListIO               myTopLevelIOList;               
 

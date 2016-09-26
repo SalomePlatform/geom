@@ -576,6 +576,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Dimensions</translation>
     </message>
     <message>
+        <source>GEOM_ANNOTATIONS</source>
+        <translation>Annotations</translation>
+    </message>
+    <message>
         <source>GEOM_SKETCHER_DIST</source>
         <translation>Distance</translation>
     </message>
@@ -3501,6 +3505,50 @@ Please, select face, shell or solid and try again</translation>
         <translation>Use 3D text</translation>
     </message>
     <message>
+         <source>PREF_SHAPE_ANNOTATIONS</source>
+         <translation>Shape annotations</translation>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_FONT</source>
+        <translation>Font</translation>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_FONT_COLOR</source>
+        <translation>Font color</translation>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINE_COLOR</source>
+        <translation>Line color</translation>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINE_WIDTH</source>
+        <translation>Line width</translation>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINE_STYLE</source>
+        <translation>Line style</translation>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_AUTOHIDE</source>
+        <translation>Hide when attachment is invisible</translation>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_SOLID</source>
+        <translation>Solid</translation>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_DASH</source>
+        <translation>Dashed</translation>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_DOT</source>
+        <translation>Dotted</translation>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_DOTDASH</source>
+        <translation>Mixed</translation>
+    </message>
+    <message>
         <source>PREF_HIDE_INPUT_OBJECT</source>
         <translation>Hide input objects from the viewer</translation>
     </message>
@@ -4957,6 +5005,42 @@ Please, select face, shell or solid and try again</translation>
         <translation>Manage measurement dimensions of an object</translation>
     </message>
     <message>
+        <source>TOP_ANNOTATION</source>
+        <translation>Annotation</translation>
+    </message>
+    <message>
+        <source>MEN_ANNOTATION</source>
+        <translation>Annotation</translation>
+    </message>
+    <message>
+        <source>STB_ANNOTATION</source>
+        <translation>Annotation</translation>
+    </message>
+    <message>
+        <source>TOP_EDIT_ANNOTATION</source>
+        <translation>Edit Annotation</translation>
+    </message>
+    <message>
+        <source>MEN_EDIT_ANNOTATION</source>
+        <translation>Edit</translation>
+    </message>
+    <message>
+        <source>STB_EDIT_ANNOTATION</source>
+        <translation>Edit Annotation</translation>
+    </message>
+    <message>
+      <source>TOP_DELETE_ANNOTATION</source>
+      <translation>Delete Annotation</translation>
+    </message>
+    <message>
+      <source>MEN_DELETE_ANNOTATION</source>
+      <translation>Delete</translation>
+    </message>
+    <message>
+      <source>STB_DELETE_ANNOTATION</source>
+      <translation>Delete Annotation</translation>
+    </message>
+    <message>
         <source>MEN_POP_SHOW_DEPENDENCY_TREE</source>
         <translation>Show dependency tree</translation>
     </message>
@@ -4995,6 +5079,30 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_POP_HIDE_ALL_DIMENSIONS</source>
         <translation>Show all visible measures (dimension) created for the object</translation>
+    </message>
+    <message>
+      <source>MEN_POP_SHOW_ALL_ANNOTATIONS</source>
+      <translation>Show all annotations</translation>
+    </message>
+    <message>
+      <source>STB_POP_SHOW_ALL_ANNOTATIONS</source>
+      <translation>Show all shape annotations for the object</translation>
+    </message>
+    <message>
+      <source>TOP_POP_SHOW_ALL_ANNOTATIONS</source>
+      <translation>Show all shape annotations for the object</translation>
+    </message>
+    <message>
+      <source>MEN_POP_HIDE_ALL_ANNOTATIONS</source>
+      <translation>Hide all annotations</translation>
+    </message>
+    <message>
+      <source>STB_POP_HIDE_ALL_ANNOTATIONS</source>
+      <translation>Hide all shape annotations for the object</translation>
+    </message>
+    <message>
+      <source>TOP_POP_HIDE_ALL_ANNOTATIONS</source>
+      <translation>Hide all shape annotations for the object</translation>
     </message>
     <message>
         <source>TOP_POP_AUTO_COLOR</source>
@@ -6673,6 +6781,61 @@ Do you want to continue?</translation>
         <source>WARNING_MSG_INVALID_ARGUMENTS</source>
         <translation>The dimension can not be created for the specified arguments.
 Please specify suitable arguments.</translation>
+    </message>
+</context>
+<context>
+    <name>MeasureGUI_AnnotationDlg</name>
+    <message>
+        <source>CREATE_ANNOTATION_TITLE</source>
+        <translation>Create annotation</translation>
+    </message>
+    <message>
+        <source>EDIT_ANNOTATION_TITLE</source>
+        <translation>Edit annotation</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_PREFIX</source>
+        <translation>Annotation</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_NAME</source>
+        <translation>Annotation name</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_PROPERTIES</source>
+        <translation>Properties</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_TEXT</source>
+        <translation>Text</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_SHAPE</source>
+        <translation>Shape</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_TYPE</source>
+        <translation>Type</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_SUB_SHAPE</source>
+        <translation>Sub-shape type</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_IS_SCREEN_FIXED</source>
+        <translation>Fixed screen position</translation>
+    </message>
+    <message>
+        <source>WHOLE_SHAPE</source>
+        <translation>Whole shape</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_STYLE</source>
+        <translation>Style</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_FONT</source>
+        <translation>Font</translation>
     </message>
 </context>
 <context>

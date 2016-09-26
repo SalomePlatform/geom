@@ -39,6 +39,7 @@ SET( _res_files
   isoline.png
   isoline_v.png
   angle.png
+  annotation.png
   arc.png
   arccenter.png
   arcofellipse.png
