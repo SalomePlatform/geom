@@ -176,7 +176,7 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(LOGBOOK& log) const
       Standard_Integer aMethod = IF.GetMethod();
 
       GeomFill_SectionGenerator Section;
-      Standard_Integer i = 0;
+      Standard_Integer aNumSection = 0;
       Handle(Geom_Curve) aLastC;
       gp_Pnt PL1,PL2;
       for (Ex.Init(aShape, TopAbs_EDGE); Ex.More(); Ex.Next()) {
@@ -198,7 +198,7 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(LOGBOOK& log) const
           C->Reverse();
         }
         else if (aMethod == 2) {
-          if (i == 0) {
+          if (aNumSection == 0) {
             PL1 = P1;
             PL2 = P2;
           }
@@ -218,12 +218,17 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(LOGBOOK& log) const
         }
 
         Section.AddCurve(C);
-        i++;
+        aNumSection++;
       }
 
       /* a 'tolerance' is used to compare 2 knots : see GeomFill_Generator.cdl */
       Section.Perform(Precision::PConfusion());
-      Handle(GeomFill_Line) Line = new GeomFill_Line(i);
+      //imn: to fix the bug 23351: "Crash is filling has only one edge"
+      //after fix related occt bug 27875 must be removed
+      if (aNumSection < 2) {
+        Standard_ConstructionError::Raise("Input must contain more than one edge");
+      }
+      Handle(GeomFill_Line) Line = new GeomFill_Line(aNumSection);
 
       GeomFill_AppSurf App (mindeg, maxdeg, tol3d, tol2d, nbiter); /* user parameters */
       App.Perform(Line, Section);
