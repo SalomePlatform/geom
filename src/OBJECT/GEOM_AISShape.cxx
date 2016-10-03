@@ -34,54 +34,49 @@
 
 // Open CASCADE Includes
 #include <AIS_InteractiveContext.hxx>
+#include <BRepAdaptor_Surface.hxx>
 #include <BRep_Tool.hxx>
 #include <GCPnts_AbscissaPoint.hxx>
 #include <GeomAdaptor_Curve.hxx>
-#include <gp_Pnt.hxx>
-#include <gp_Dir.hxx>
-#include <gp_Vec.hxx>
+#include <Graphic3d_ArrayOfPoints.hxx>
 #include <Graphic3d_AspectFillArea3d.hxx>
 #include <Graphic3d_AspectLine3d.hxx>
 #include <Graphic3d_AspectMarker3d.hxx>
 #include <Graphic3d_AspectText3d.hxx>
-#include <Graphic3d_ArrayOfPoints.hxx>
-
-#include <Prs3d_ShadingAspect.hxx>
 #include <Prs3d_Arrow.hxx>
 #include <Prs3d_IsoAspect.hxx>
+#include <Prs3d_ShadingAspect.hxx>
+#include <SelectBasics_SensitiveEntity.hxx>
+#include <SelectMgr_EntityOwner.hxx>
+#include <SelectMgr_IndexedMapOfOwner.hxx>
+#include <SelectMgr_Selection.hxx>
+#include <StdPrs_ShadedShape.hxx>
+#include <StdSelect_BRepOwner.hxx>
+#include <StdSelect_DisplayMode.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TColStd_ListIteratorOfListOfInteger.hxx>
+#include <TColStd_ListOfInteger.hxx>
+#include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Vertex.hxx>
+#include <V3d_View.hxx>
+#include <gp_Dir.hxx>
+#include <gp_Pnt.hxx>
+#include <gp_Vec.hxx>
+
 #if OCC_VERSION_LARGE > 0x06070200
 #include <Prs3d_VertexDrawMode.hxx>
 #endif
 
-#include <SelectBasics_SensitiveEntity.hxx>
-#include <SelectMgr_EntityOwner.hxx>
-#include <StdSelect_BRepOwner.hxx>
-#include <SelectMgr_IndexedMapOfOwner.hxx>
-#include <SelectMgr_Selection.hxx>
-#include <StdSelect_DisplayMode.hxx>
-#include <StdPrs_ShadedShape.hxx>
 #if OCC_VERSION_MAJOR < 7
   #include <StdPrs_WFDeflectionShape.hxx>
 #else
   #include <StdPrs_WFShape.hxx>
 #endif
-
-#include <TColStd_IndexedMapOfInteger.hxx>
-#include <TColStd_ListIteratorOfListOfInteger.hxx>
-#include <TColStd_ListOfInteger.hxx>
-#include <TopExp.hxx>
-#include <TopoDS_Shape.hxx>
-#include <TopTools_IndexedMapOfShape.hxx>
-#include <TopExp.hxx>
-#include <TopExp_Explorer.hxx>
-#include <TopoDS.hxx>
-#include <TopoDS_Edge.hxx>
-#include <TopoDS_Shape.hxx>
-#include <TopoDS_Vertex.hxx>
-
-#include <TColStd_SequenceOfInteger.hxx>
-
-#include <V3d_View.hxx>
 
 #include <SalomeApp_Tools.h>
 #include <SUIT_Session.h>
@@ -280,9 +275,9 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
     case TexturedShape:
     {
 #ifdef USE_TEXTURED_SHAPE
-	AIS_TexturedShape::Compute(aPresentationManager, aPrs, aMode);
+        AIS_TexturedShape::Compute(aPresentationManager, aPrs, aMode);
 #else
-	AIS_Shape::Compute(aPresentationManager, aPrs, aMode);
+        AIS_Shape::Compute(aPresentationManager, aPrs, aMode);
 #endif
     }
   }
@@ -657,30 +652,46 @@ void GEOM_AISShape::drawName( const Handle(Prs3d_Presentation)& thePrs )
 }
 
 Standard_Boolean GEOM_AISShape::computeMassCenter( const TopoDS_Shape& theShape,
-                                                   gp_Pnt& theCenter )
+                                                   gp_Pnt&             theCenter )
 {
-  Standard_Real aX = 0, aY = 0, aZ = 0;
+  theCenter.SetCoord( 0,0,0 );
   Standard_Integer aNbPoints = 0;
 
-  TopExp_Explorer anExp;
-  for( anExp.Init( theShape, TopAbs_VERTEX ); anExp.More(); anExp.Next() )
+  if ( theShape.ShapeType() == TopAbs_EDGE )
   {
-    TopoDS_Vertex aVertex = TopoDS::Vertex( anExp.Current() );
-    if( !aVertex.IsNull() )
+    double f,l;
+    Handle(Geom_Curve) curve = BRep_Tool::Curve( TopoDS::Edge( theShape ), f, l );
+    if ( !curve.IsNull() )
     {
-      gp_Pnt aPnt = BRep_Tool::Pnt( aVertex );
-      aX += aPnt.X();
-      aY += aPnt.Y();
-      aZ += aPnt.Z();
-      aNbPoints++;
+      theCenter = curve->Value( 0.5 * ( f + l ));
+      aNbPoints = 1;
+    }
+  }
+  else if ( theShape.ShapeType() == TopAbs_FACE )
+  {
+    BRepAdaptor_Surface surface( TopoDS::Face( theShape ));
+    theCenter = surface.Value( 0.5 * ( surface.FirstUParameter() + surface.LastUParameter() ),
+                               0.5 * ( surface.FirstVParameter() + surface.LastVParameter() ));
+    aNbPoints = 1;
+  }
+
+  if ( aNbPoints == 0 )
+  {
+    TopExp_Explorer anExp;
+    for( anExp.Init( theShape, TopAbs_VERTEX ); anExp.More(); anExp.Next() )
+    {
+      TopoDS_Vertex aVertex = TopoDS::Vertex( anExp.Current() );
+      if( !aVertex.IsNull() )
+      {
+        gp_Pnt aPnt = BRep_Tool::Pnt( aVertex );
+        theCenter.ChangeCoord() += aPnt.XYZ();
+        aNbPoints++;
+      }
     }
   }
 
-  if( aNbPoints == 0 )
-    return Standard_False;
+  if ( aNbPoints > 0 )
+    theCenter.ChangeCoord() /= (Standard_Real) aNbPoints;
 
-  theCenter.SetCoord( aX / (Standard_Real)aNbPoints,
-                      aY / (Standard_Real)aNbPoints,
-                      aZ / (Standard_Real)aNbPoints );
-  return Standard_True;
+  return aNbPoints;
 }
