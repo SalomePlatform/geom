@@ -23,4 +23,4 @@ geompy.addToStudy(Partition_1, 'Partition_1')
 Joined_1 = geompy.RemoveInternalFaces(Partition_1)
 geompy.addToStudy(Joined_1, 'Joined_1')
 
-salome.sg.updateObjBrowser(1) 
+salome.sg.updateObjBrowser(True) 

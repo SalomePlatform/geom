@@ -159,7 +159,7 @@ weldId = geompy.addToStudy(weld,"weld")
 #
 assemblage = geompy.Partition([base ,weld ,trav])
 assemblageId = geompy.addToStudy(assemblage, "assemblage")
-salome.sg.updateObjBrowser(1)
+salome.sg.updateObjBrowser(True)
 #
 # Display
 #

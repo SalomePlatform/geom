@@ -91,5 +91,5 @@ geompy.addToStudy(theShapeForCut, "slot.brep_1")
 Cut_1 = geompy.MakeBoolean(Chamfer_2, theShapeForCut, 2)
 geompy.addToStudy(Cut_1, "Cut_1")
 
-salome.sg.updateObjBrowser(1)
+salome.sg.updateObjBrowser(True)
 

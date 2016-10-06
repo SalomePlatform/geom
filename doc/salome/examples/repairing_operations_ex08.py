@@ -30,4 +30,4 @@ geompy.addToStudy(glue1, "Glue all edges")
 geompy.addToStudy(glue2, "Glue two edges")
 
 if salome.sg.hasDesktop():
-  salome.sg.updateObjBrowser(1)
+  salome.sg.updateObjBrowser(True)

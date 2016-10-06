@@ -40,4 +40,4 @@ edge = geompy.GetEdgeNearPoint( box, p1, theName="edge to split")
 div  = geompy.DivideEdgeByPoint( box, edge, [p1, p2], theName="box (edge divided)")
 
 
-salome.sg.updateObjBrowser(1) 
+salome.sg.updateObjBrowser(True) 

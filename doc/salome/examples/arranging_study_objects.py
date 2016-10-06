@@ -22,4 +22,4 @@ geompy.PutListToFolder([Box_1, Cylinder_1], Primitives)
 
 
 if salome.sg.hasDesktop():
-  salome.sg.updateObjBrowser(1)
+  salome.sg.updateObjBrowser(True)

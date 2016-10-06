@@ -80,4 +80,4 @@ id_Face_4 = geompy.addToStudyInFather(Compound_1,Compound_1_faces[3], "Face_4")
 id_Compound_2 = geompy.addToStudy(Compound_2, "Compound_2")
 id_Solid_2 = geompy.addToStudyInFather(Compound_2,Compound_2_solids[1], "Solid_2")
 
-salome.sg.updateObjBrowser(1)
+salome.sg.updateObjBrowser(True)

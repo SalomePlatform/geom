@@ -20,4 +20,4 @@ for chain in listChains:
     ii = ii + 1
     pass
 
-salome.sg.updateObjBrowser(1) 
+salome.sg.updateObjBrowser(True) 

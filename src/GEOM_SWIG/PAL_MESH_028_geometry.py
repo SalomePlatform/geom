@@ -87,4 +87,4 @@ else:
     salome.myStudyManager.SaveAs(theFilenameToSave, salome.myStudy, 0)
     
 
-salome.sg.updateObjBrowser(1)
+salome.sg.updateObjBrowser(True)

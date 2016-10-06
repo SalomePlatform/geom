@@ -63,4 +63,4 @@ geompy.addToStudy(Edge_4, "Edge_4")
 Wire_1 = geompy.MakeWire([Edge_1, Edge_2, Edge_3, Edge_4])
 geompy.addToStudy(Wire_1, "Wire_1")
 
-salome.sg.updateObjBrowser(1)
+salome.sg.updateObjBrowser(True)

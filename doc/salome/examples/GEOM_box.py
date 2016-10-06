@@ -13,4 +13,4 @@ geompy.addToStudy( Box_1, 'Box_1' )
 
 # --- update the study object browser
 if salome.sg.hasDesktop():
-  salome.sg.updateObjBrowser(1)
+  salome.sg.updateObjBrowser(True)

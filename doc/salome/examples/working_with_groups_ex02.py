@@ -26,4 +26,4 @@ id_group1 = geompy.addToStudy(group, "Group1")
 
 # display the contents of the group
 gg.createAndDisplayGO(id_group1)
-salome.sg.updateObjBrowser(1) 
+salome.sg.updateObjBrowser(True) 

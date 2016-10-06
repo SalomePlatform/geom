@@ -48,7 +48,7 @@ geomgui = salome.ImportComponentGUI("GEOM")
 
 def addToStudy(shape, name):
     i = geompy.addToStudy(shape, name)
-    salome.sg.updateObjBrowser(0)
+    salome.sg.updateObjBrowser(False)
 #    geomgui.createAndDisplayGO(i)
     return i
 
