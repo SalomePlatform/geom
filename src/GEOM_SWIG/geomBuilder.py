@@ -10579,6 +10579,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## Get summarized length of all wires,
         #  area of surface and volume of the given shape.
         #  @param theShape Shape to define properties of.
+        #  @param theTolerance maximal relative error of area
+        #         and volume computation.
         #  @return [theLength, theSurfArea, theVolume]\n
         #  theLength:   Summarized length of all wires of the given shape.\n
         #  theSurfArea: Area of surface of the given shape.\n
@@ -10586,13 +10588,15 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_basic_properties_page "Example"
         @ManageTransactions("MeasuOp")
-        def BasicProperties(self,theShape):
+        def BasicProperties(self,theShape, theTolerance=1.e-6):
             """
             Get summarized length of all wires,
             area of surface and volume of the given shape.
 
             Parameters:
                 theShape Shape to define properties of.
+                theTolerance maximal relative error of area
+                             and volume computation.
 
             Returns:
                 [theLength, theSurfArea, theVolume]
@@ -10601,7 +10605,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                  theVolume:   Volume of the given shape.
             """
             # Example: see GEOM_TestMeasures.py
-            aTuple = self.MeasuOp.GetBasicProperties(theShape)
+            aTuple = self.MeasuOp.GetBasicProperties(theShape, theTolerance)
             RaiseIfFailed("GetBasicProperties", self.MeasuOp)
             return aTuple
 

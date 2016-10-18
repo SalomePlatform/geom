@@ -495,6 +495,7 @@ GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::GetNormal
  */
 //=============================================================================
 void GEOM_IMeasureOperations_i::GetBasicProperties (GEOM::GEOM_Object_ptr theShape,
+                                                    CORBA::Double  theTolerance,
                                                     CORBA::Double& theLength,
                                                     CORBA::Double& theSurfArea,
                                                     CORBA::Double& theVolume)
@@ -507,7 +508,8 @@ void GEOM_IMeasureOperations_i::GetBasicProperties (GEOM::GEOM_Object_ptr theSha
   if (aShape.IsNull()) return;
 
   // Get shape parameters
-  GetOperations()->GetBasicProperties(aShape, theLength, theSurfArea, theVolume);
+  GetOperations()->GetBasicProperties(aShape, theTolerance, theLength,
+                                      theSurfArea, theVolume);
 }
 
 //=============================================================================

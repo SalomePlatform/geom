@@ -52,6 +52,7 @@ class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
                     CORBA::Double& Xx, CORBA::Double& Xy, CORBA::Double& Xz);
 
   void GetBasicProperties (GEOM::GEOM_Object_ptr theShape,
+                           CORBA::Double  theTolerance,
                            CORBA::Double& theLength,
                            CORBA::Double& theSurfArea,
                            CORBA::Double& theVolume);

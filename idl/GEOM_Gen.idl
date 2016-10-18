@@ -4337,12 +4337,14 @@ module GEOM
      *  \brief Get summarized length of all wires,
      *  area of surface and volume of the given shape.
      *  \param theShape Shape to define properties of.
+     *  \param theTolerance maximal relative error of area and volume computation.
      *  \param theLength Output. Summarized length of all wires of the given shape.
      *  \param theSurfArea Output. Area of surface of the given shape.
      *  \param theVolume Output. Volume of the given shape.
      *  \return Returns shape properties through the last three arguments.
      */
     void GetBasicProperties (in GEOM_Object theShape,
+                             in double theTolerance,
                              out double theLength,
                              out double theSurfArea,
                              out double theVolume);

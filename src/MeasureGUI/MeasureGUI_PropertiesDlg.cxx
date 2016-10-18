@@ -37,6 +37,8 @@
 
 #include <TColStd_MapOfInteger.hxx>
 
+#define DEFAULT_TOLERANCE_VALUE 1.e-6
+
 //=================================================================================
 // class    : MeasureGUI_PropertiesDlg()
 // purpose  : Constructs a MeasureGUI_PropertiesDlg which is a child of 'parent', with the 
@@ -45,7 +47,11 @@
 //            true to construct a modal dialog.
 //=================================================================================
 MeasureGUI_PropertiesDlg::MeasureGUI_PropertiesDlg( GeometryGUI* GUI, QWidget* parent )
-  : MeasureGUI_Skeleton( GUI, parent )
+  : MeasureGUI_Skeleton(GUI, parent),
+    myTolerance(0),
+    myLength(0),
+    mySurface(0),
+    myVolume(0)
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap(
     "GEOM", tr( "ICON_DLG_BASICPROPERTIES" ) ) );
@@ -59,21 +65,45 @@ MeasureGUI_PropertiesDlg::MeasureGUI_PropertiesDlg( GeometryGUI* GUI, QWidget* p
   mainFrame()->GroupConstructors->setTitle( tr( "GEOM_PROPERTIES" ) );
   mainFrame()->RadioButton1->setIcon( image0 );
 
-  myGrp = new MeasureGUI_1Sel3LineEdit( centralWidget()  );
-  myGrp->GroupBox1->setTitle( tr( "GEOM_PROPERTIES_CONSTR" ) );
-  myGrp->TextLabel1->setText( tr( "GEOM_OBJECT" ) );
-  myGrp->TextLabel2->setText( tr( "GEOM_LENGTH" ) );
-  myGrp->TextLabel3->setText( tr( "GEOM_PROPERTIES_SURFACE" ) );
-  myGrp->TextLabel4->setText( tr( "GEOM_PROPERTIES_VOLUME" ) );
-  myGrp->LineEdit1->setReadOnly( true );
-  myGrp->PushButton1->setIcon( image1 );
-  myGrp->LineEdit2->setReadOnly( true );
-  myGrp->LineEdit3->setReadOnly( true );
-  myGrp->LineEdit4->setReadOnly( true );
+  QGroupBox *aGrpBox  =
+          new QGroupBox(tr("GEOM_PROPERTIES_CONSTR"), centralWidget());
+  QLabel    *anObjLbl = new QLabel(tr("GEOM_OBJECT"), aGrpBox);
+  QLabel    *aTolLbl  = new QLabel(tr("GEOM_TOLERANCE"), aGrpBox);
+  QLabel    *aLenLbl  = new QLabel(tr("GEOM_LENGTH"), aGrpBox);
+  QLabel    *aSurfLbl = new QLabel(tr("GEOM_PROPERTIES_SURFACE"), aGrpBox);
+  QLabel    *aVolLbl  = new QLabel(tr("GEOM_PROPERTIES_VOLUME"), aGrpBox);
 
-  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
-  layout->setMargin( 0 ); layout->setSpacing( 6 );
-  layout->addWidget( myGrp );
+  mySelBtn    = new QPushButton(aGrpBox);
+  mySelBtn->setIcon(image1);
+  mySelEdit   = new QLineEdit(aGrpBox);
+  mySelEdit->setReadOnly(true);
+  myTolerance = new SalomeApp_DoubleSpinBox(aGrpBox);
+  myLength    = new QLineEdit(aGrpBox);
+  mySurface   = new QLineEdit(aGrpBox);
+  myVolume    = new QLineEdit(aGrpBox);
+  myLength->setReadOnly(true);
+  mySurface->setReadOnly(true);
+  myVolume->setReadOnly(true);
+
+  QGridLayout* aLayout = new QGridLayout(aGrpBox);
+
+  aLayout->setMargin(9);
+  aLayout->setSpacing(6);
+  aLayout->addWidget(anObjLbl,    0, 0);
+  aLayout->addWidget(aTolLbl,     1, 0);
+  aLayout->addWidget(aLenLbl,     2, 0);
+  aLayout->addWidget(aSurfLbl,    3, 0);
+  aLayout->addWidget(aVolLbl,     4, 0);
+  aLayout->addWidget(mySelBtn,    0, 1);
+  aLayout->addWidget(mySelEdit,   0, 2);
+  aLayout->addWidget(myTolerance, 1, 1, 1, 2);
+  aLayout->addWidget(myLength,    2, 1, 1, 2);
+  aLayout->addWidget(mySurface,   3, 1, 1, 2);
+  aLayout->addWidget(myVolume,    4, 1, 1, 2);
+
+  QVBoxLayout* aDlgLayout = new QVBoxLayout( centralWidget() );
+  aDlgLayout->setMargin( 0 ); aDlgLayout->setSpacing( 6 );
+  aDlgLayout->addWidget(aGrpBox);
   
   /***************************************************************/
 
@@ -99,9 +129,24 @@ MeasureGUI_PropertiesDlg::~MeasureGUI_PropertiesDlg()
 //=================================================================================
 void MeasureGUI_PropertiesDlg::Init()
 {
-  mySelBtn = myGrp->PushButton1;
-  mySelEdit = myGrp->LineEdit1;
+  mySelEdit->setMinimumSize(100, 0);
+
+  // Obtain precision from preferences
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  int aPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
+
+  myTolerance->setPrecision(aPrecision);
+  // it's necessary to set decimals before the range setting,
+  // by default Qt rounds boundaries to 2 decimals at setRange
+  myTolerance->setDecimals(qAbs(aPrecision));
+  myTolerance->setRange(0., 1.);
+  myTolerance->setSingleStep(DEFAULT_TOLERANCE_VALUE);
+  myTolerance->setValue(DEFAULT_TOLERANCE_VALUE);
+
   MeasureGUI_Skeleton::Init();
+
+  connect(myTolerance, SIGNAL(valueChanged(double)),
+          this, SLOT(toleranceChanged(double)));
 }
 
 //=================================================================================
@@ -146,6 +191,16 @@ void MeasureGUI_PropertiesDlg::SelectionIntoArgument()
   processObject();
   redisplayPreview();
 }
+
+//=================================================================================
+// function : isValid
+// purpose  :
+//=================================================================================
+bool MeasureGUI_PropertiesDlg::isValid(QString& msg)
+{
+  return myTolerance->isValid(msg) && MeasureGUI_Skeleton::isValid(msg);
+}
+
 //=================================================================================
 // function : processObject
 // purpose  :
@@ -156,16 +211,16 @@ void MeasureGUI_PropertiesDlg::processObject()
   
   if ( !getParameters( aLength, anArea, aVolume ) ) {
     mySelEdit->setText( "" );
-    myGrp->LineEdit2->setText( "" );
-    myGrp->LineEdit3->setText( "" );
-    myGrp->LineEdit4->setText( "" );
+    myLength->setText( "" );
+    mySurface->setText( "" );
+    myVolume->setText( "" );
   }
   else {
     SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
     int aPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
-    myGrp->LineEdit2->setText( DlgRef::PrintDoubleValue( aLength, aPrecision ) );
-    myGrp->LineEdit3->setText( DlgRef::PrintDoubleValue( anArea,  aPrecision ) );
-    myGrp->LineEdit4->setText( DlgRef::PrintDoubleValue( aVolume, aPrecision ) );
+    myLength->setText( DlgRef::PrintDoubleValue( aLength, aPrecision ) );
+    mySurface->setText( DlgRef::PrintDoubleValue( anArea,  aPrecision ) );
+    myVolume->setText( DlgRef::PrintDoubleValue( aVolume, aPrecision ) );
   }
 }
 
@@ -182,7 +237,7 @@ bool MeasureGUI_PropertiesDlg::getParameters( double& theLength,
   else {
     GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
     try {
-      anOper->GetBasicProperties( myObj.get(), theLength, theArea, theVolume );
+      anOper->GetBasicProperties( myObj.get(), myTolerance->value(), theLength, theArea, theVolume );
     }
     catch( const SALOME::SALOME_Exception& e ) {
       SalomeApp_Tools::QtCatchCorbaException( e );
@@ -209,4 +264,13 @@ SALOME_Prs* MeasureGUI_PropertiesDlg::buildPrs()
       prs = getDisplayer()->BuildPrs( shape );
   }
   return prs;
+}
+
+//=================================================================================
+// function : toleranceChanged
+// purpose  :
+//=================================================================================
+void MeasureGUI_PropertiesDlg::toleranceChanged(double)
+{
+  processObject();
 }

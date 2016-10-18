@@ -965,6 +965,7 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetNormal
  */
 //=============================================================================
 void GEOMImpl_IMeasureOperations::GetBasicProperties (Handle(GEOM_Object) theShape,
+                                                      const Standard_Real theTolerance,
                                                       Standard_Real& theLength,
                                                       Standard_Real& theSurfArea,
                                                       Standard_Real& theVolume)
@@ -984,7 +985,7 @@ void GEOMImpl_IMeasureOperations::GetBasicProperties (Handle(GEOM_Object) theSha
 
   //Compute the parameters
   GProp_GProps LProps, SProps;
-  Standard_Real anEps = 1.e-6;
+  Standard_Real anEps = theTolerance >= 0 ? theTolerance : 1.e-6;
   try {
     OCC_CATCH_SIGNALS;
     BRepGProp::LinearProperties(aShape, LProps);

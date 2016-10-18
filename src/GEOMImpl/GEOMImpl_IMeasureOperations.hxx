@@ -119,6 +119,7 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
                                                  Handle(GEOM_Object) theOptionalPoint);
 
   Standard_EXPORT void GetBasicProperties (Handle(GEOM_Object) theShape,
+                                           const Standard_Real theTolerance,
                                            Standard_Real& theLength,
                                            Standard_Real& theSurfArea,
                                            Standard_Real& theVolume);

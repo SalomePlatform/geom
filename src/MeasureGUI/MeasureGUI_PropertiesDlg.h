@@ -29,7 +29,8 @@
 
 #include "MeasureGUI_Skeleton.h"
 
-class MeasureGUI_1Sel3LineEdit;
+class SalomeApp_DoubleSpinBox;
+class QLineEdit;
 
 //=================================================================================
 // class    : MeasureGUI_PropertiesDlg
@@ -46,6 +47,7 @@ public:
   
 protected:
   // redefined from GEOMBase_Helper and MeasureGUI_Skeleton
+  virtual bool                        isValid( QString& );
   virtual void                        processObject();
   virtual void                        activateSelection();
   virtual void                        SelectionIntoArgument();
@@ -57,8 +59,14 @@ private:
                                                      double&,
                                                      double& );
 
-private:    
-  MeasureGUI_1Sel3LineEdit*           myGrp;
+private:
+  SalomeApp_DoubleSpinBox *myTolerance;
+  QLineEdit               *myLength;
+  QLineEdit               *mySurface;
+  QLineEdit               *myVolume;
+
+private slots:
+  void                                toleranceChanged(double);
 };
 
 #endif // MEASUREGUI_PROPERTIESDLG_H
