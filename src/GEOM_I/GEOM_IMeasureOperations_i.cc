@@ -810,6 +810,29 @@ CORBA::Boolean GEOM_IMeasureOperations_i::CheckSelfIntersectionsFast
 
 //=============================================================================
 /*!
+ *  CheckBOPArguments
+ */
+//=============================================================================
+CORBA::Boolean GEOM_IMeasureOperations_i::CheckBOPArguments
+                                      (GEOM::GEOM_Object_ptr theShape)
+{
+  // Set a not done flag
+  GetOperations()->SetNotDone();
+
+  // Get the reference shape
+  HANDLE_NAMESPACE(GEOM_Object) aShape = GetObjectImpl(theShape);
+  bool isGood = false;
+
+  if (!aShape.IsNull()) {
+    // Check BOP agruments
+    isGood = GetOperations()->CheckBOPArguments(aShape);
+  }
+
+  return isGood;
+}
+
+//=============================================================================
+/*!
  *  FastIntersect
  */
 //=============================================================================

@@ -11443,6 +11443,24 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             RaiseIfFailed("CheckSelfIntersectionsFast", self.MeasuOp)
             return IsValid
 
+        ## Check boolean and partition operations agruments.
+        #  @param theShape the agrument of an operation to be checked
+        #  @return TRUE if the agrument is valid for a boolean or partition
+        #          operation; FALSE otherwise.
+        @ManageTransactions("MeasuOp")
+        def CheckBOPArguments(self, theShape):
+            """
+            Check boolean and partition operations agruments.
+
+            Parameters:
+                theShape the agrument of an operation to be checked
+
+            Returns:
+                TRUE if the agrument is valid for a boolean or partition
+                operation; FALSE otherwise.
+            """
+            return self.MeasuOp.CheckBOPArguments(theShape)
+
         ## Detect intersections of the given shapes with algorithm based on mesh intersections.
         #  @param theShape1 First source object
         #  @param theShape2 Second source object

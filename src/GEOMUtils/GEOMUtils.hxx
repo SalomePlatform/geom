@@ -252,6 +252,15 @@ namespace GEOMUtils
    * \return \c true if shape is valid or \c false otherwise
    */
   Standard_EXPORT bool CheckShape( TopoDS_Shape& shape, bool checkGeometry = false );
+
+  /*!
+   * \brief Check boolean and partition operations agruments
+   *
+   * \param theShape the agrument of an operation to be checked
+   * \return \c true if the agrument is valid for a boolean or partition
+   *         operation or \c false otherwise
+   */
+  Standard_EXPORT bool CheckBOPArguments(const TopoDS_Shape &theShape);
   
   /*!
    * \brief Limit shape tolerance to the given value

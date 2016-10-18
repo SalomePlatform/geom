@@ -4549,6 +4549,14 @@ module GEOM
 					out ListOfLong theIntersections);
 
     /*!
+     *  \brief Check boolean and partition operations agruments.
+     *  \param theShape the agrument of an operation to be checked.
+     *  \return TRUE if the agrument is valid for a boolean or partition
+     *          operation; FALSE otherwise.
+     */
+    boolean CheckBOPArguments (in GEOM_Object theShape);
+
+    /*!
      *  \brief Detect intersections of the given shapes with algorithm based on mesh intersections.
      *  \param theShape1 First source object
      *  \param theShape2 Second source object

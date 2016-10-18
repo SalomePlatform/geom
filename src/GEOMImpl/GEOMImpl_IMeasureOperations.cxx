@@ -1674,6 +1674,40 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersectionsFast
 
 //=============================================================================
 /*!
+ *  CheckBOPArguments
+ */
+//=============================================================================
+bool GEOMImpl_IMeasureOperations::CheckBOPArguments
+                                      (const Handle(GEOM_Object) &theShape)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull()) {
+    return false;
+  }
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+
+  if (aRefShape.IsNull()) {
+    return false;
+  }
+
+  TopoDS_Shape aShape = aRefShape->GetValue();
+
+  if (aShape.IsNull()) {
+    return false;
+  }
+
+  //Compute the parameters
+  bool isValid = GEOMUtils::CheckBOPArguments(aShape);
+
+  SetErrorCode(OK);
+
+  return isValid;
+}
+
+//=============================================================================
+/*!
  *  FastIntersect
  */
 //=============================================================================

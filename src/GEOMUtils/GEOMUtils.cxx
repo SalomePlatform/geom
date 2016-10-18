@@ -49,6 +49,7 @@
 
 #include <Bnd_Box.hxx>
 
+#include <BOPAlgo_ArgumentAnalyzer.hxx>
 #include <BOPTools_AlgoTools.hxx>
 
 #include <TopAbs.hxx>
@@ -1096,6 +1097,29 @@ bool GEOMUtils::CheckShape( TopoDS_Shape& shape,
 {
   BRepCheck_Analyzer analyzer( shape, checkGeometry );
   return analyzer.IsValid();
+}
+
+bool GEOMUtils::CheckBOPArguments(const TopoDS_Shape &theShape)
+{
+  BOPAlgo_ArgumentAnalyzer aChecker;
+
+  aChecker.SetShape1(theShape);
+
+  // Set default options
+  aChecker.ArgumentTypeMode()   = Standard_True;
+  aChecker.SelfInterMode()      = Standard_True;
+  aChecker.SmallEdgeMode()      = Standard_True;
+  aChecker.RebuildFaceMode()    = Standard_True;
+  aChecker.ContinuityMode()     = Standard_True;
+  aChecker.CurveOnSurfaceMode() = Standard_True;
+
+  aChecker.StopOnFirstFaulty() = Standard_True;
+  aChecker.Perform();
+
+  // process result of checking
+  const bool isValid = !aChecker.HasFaulty();
+
+  return isValid;
 }
 
 bool GEOMUtils::FixShapeTolerance( TopoDS_Shape& shape,

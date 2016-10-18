@@ -105,6 +105,8 @@ class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
 					     CORBA::Double         theTolerance,
 					     GEOM::ListOfLong_out  theIntersections);
 
+  CORBA::Boolean CheckBOPArguments (GEOM::GEOM_Object_ptr theShape);
+
   CORBA::Boolean FastIntersect (GEOM::GEOM_Object_ptr theShape1,
                                 GEOM::GEOM_Object_ptr theShape2,
                                 CORBA::Double         theTolerance,

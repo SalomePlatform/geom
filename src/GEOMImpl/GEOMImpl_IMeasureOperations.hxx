@@ -164,6 +164,8 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
 						   float  deflection, 
 						   double tolerance,
 						   Handle(TColStd_HSequenceOfInteger)& theIntersections);
+
+  Standard_EXPORT bool CheckBOPArguments (const Handle(GEOM_Object) &theShape);
   
   Standard_EXPORT bool FastIntersect (Handle(GEOM_Object) theShape1, Handle(GEOM_Object) theShape2,
                                       double tolerance, float deflection,
