@@ -114,6 +114,7 @@ protected slots:
   void     onModifySection();
   void     onCancelSection();
   void     onJoin();
+  void     onBringTogether();
   void     onRemove();
   void     onClearAll();
   void     onJoinAll();
@@ -157,7 +158,8 @@ protected:
                  CLEAR_ALL_ID, 
                  SEPARATOR_ID, 
                  MODIFICATION_MODE_ID, 
-                 DETECTION_MODE_ID 
+                 DETECTION_MODE_ID,
+                 BRING_TOGETHER_ID
   };
 
 private:

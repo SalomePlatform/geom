@@ -48,6 +48,8 @@
 #include <QTime>
 #include <QSplitter>
 
+#include <utilities.h>
+
 //#define MEASURE_TIME
 
 #ifdef MEASURE_TIME
@@ -118,6 +120,7 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
   QPixmap aSplinePixmap(aResMgr->loadPixmap("GEOM", tr("ICON_CC_SPLINE")));
   QPixmap aRemovePixmap(aResMgr->loadPixmap("GEOM", tr("ICON_CC_DELETE")));
   QPixmap aJoinPixmap(aResMgr->loadPixmap("GEOM", tr("ICON_CC_JOIN")));
+  QPixmap aBringTogetherPixmap(aResMgr->loadPixmap("GEOM", tr("ICON_CC_BRING_TOGETHER")));
   QPixmap aStepUpPixmap(aResMgr->loadPixmap("GEOM", tr("ICON_CC_ARROW_UP")));
   QPixmap aStepDownPixmap(aResMgr->loadPixmap("GEOM", tr("ICON_CC_ARROW_DOWN")));
 
@@ -160,9 +163,9 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
   anAct->setCheckable(true);
   connect(anAct, SIGNAL(triggered(bool)), this, SLOT(onDetectionMode(bool)) );
   connect(anAct, SIGNAL(toggled(bool)), this, SLOT(onModeChanged(bool)) );
-  if ( !(theActionFlags & DisableDetectionMode) ) {
-    aTB->addAction(anAct);
-  }
+//  if ( !(theActionFlags & DisableDetectionMode) ) {
+//    aTB->addAction(anAct);
+//  }
   
   anAct = createAction( CLOSE_SECTIONS_ID, tr("CLOSE_SECTIONS"), QPixmap(), tr("CLOSE_SECTIONS_TLT"), 
                         QKeySequence(Qt::ControlModifier|Qt::Key_W) );
@@ -181,16 +184,21 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
                         tr("SET_SECTIONS_SPLINE_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_R) );
   connect(anAct, SIGNAL(triggered()), this, SLOT(onSetSpline()) );
 
+  aTB->addSeparator();
+
   anAct = createAction( REMOVE_ID, tr("REMOVE"), aRemovePixmap, tr("REMOVE_TLT"), 
                         QKeySequence(Qt::ControlModifier|Qt::Key_Delete ) );
   connect(anAct, SIGNAL(triggered()), this, SLOT(onRemove()) );
   aTB->addAction(anAct);
   
-  aTB->addSeparator();
-
   anAct = createAction( JOIN_ID, tr("JOIN"), aJoinPixmap, tr("JOIN_TLT"), 
                         QKeySequence(Qt::ControlModifier|Qt::Key_Plus ) );
   connect( anAct, SIGNAL(triggered()), this, SLOT(onJoin()) );
+  aTB->addAction(anAct);
+
+  anAct = createAction( BRING_TOGETHER_ID, tr("BRING_TOGETHER"), aBringTogetherPixmap, tr("BRING_TOGETHER_TLT"),
+                        QKeySequence(Qt::ControlModifier|Qt::Key_Equal ) );
+  connect( anAct, SIGNAL(triggered()), this, SLOT(onBringTogether()) );
   aTB->addAction(anAct);
 
   anAct = createAction( CLEAR_ALL_ID, tr("CLEAR_ALL"), QPixmap(), tr("CLEAR_ALL_TLT"), 
@@ -383,7 +391,7 @@ void CurveCreator_Widget::updateActionsStates()
           if( aSectCnt > 1 )
             anEnabledAct << JOIN_ALL_ID;
           if( aSelSections.size() > 1 ){
-            anEnabledAct << JOIN_ID;
+            anEnabledAct << JOIN_ID << BRING_TOGETHER_ID;
           }
         }
         break;
@@ -972,6 +980,68 @@ void CurveCreator_Widget::addCoordsByClick( QMouseEvent* pe )
     }
     addNewPoint(aCoords);
   }
+}
+
+/**
+ * Set the same coordinates on two section extremities.
+ * Usage: build a closed contour with several sections.
+ * Works with two points selected, at the extremities of different sections.
+ * The second point gets the coordinates of the first.
+ */
+void CurveCreator_Widget::onBringTogether()
+{
+  MESSAGE("onBringTogether");
+  ActionMode aMode = getActionMode();
+  if ( aMode != ModificationMode )
+    return;
+  int nbPoints = myLocalPoints.size();
+  MESSAGE("number of selected points: " << nbPoints);
+  if (nbPoints != 2)
+    {
+      MESSAGE("works only with two points taken at the extremities of different sections, nothing done");
+      return;
+    }
+
+  CurveCreator_ICurve::SectionToPointList::const_iterator anIt = myLocalPoints.begin(),
+                                                          aLast = myLocalPoints.end();
+  std::vector<int> sections(nbPoints);
+  std::vector<int> iPoints(nbPoints);
+  std::vector<int> nbPtsSection(nbPoints);
+  std::vector<double> x(nbPoints);
+  std::vector<double> y(nbPoints);
+  int i = 0;
+  for ( ; anIt != aLast; anIt++, i++ )
+    {
+      CurveCreator_ICurve::SectionToPoint aSPoint = *anIt;
+      sections[i] = aSPoint.first;
+      iPoints[i] = aSPoint.second;
+      nbPtsSection[i] = myCurve->getNbPoints(sections[i]);
+      if ((iPoints[i] != 0) && (iPoints[i] != nbPtsSection[i]-1))
+        {
+          MESSAGE("a point is not on a section extremity, nothing done");
+          return;
+        }
+      gp_Pnt aPoint;
+      CurveCreator_UtilsICurve::getPoint( myCurve, sections[i], iPoints[i], aPoint );
+      x[i] = aPoint.X();
+      y[i] = aPoint.Y();
+      MESSAGE("point: " << sections[i] << " " << iPoints[i] << " " << x[i] << " " << y[i]);
+    }
+  if (sections[1] == sections[0])
+    {
+      MESSAGE("the two points must be at the extremities of different sections, nothing done");
+      return;
+    }
+
+  CurveCreator_ICurve::SectionToPointList aSelPoints;
+  startCurveModification( aSelPoints );
+
+  CurveCreator::Coordinates aChangedPos;
+  aChangedPos.push_back( x[0] ); // apply the first point coordinates to the second point.
+  aChangedPos.push_back( y[0] );
+  myCurve->setPoint( sections[1], iPoints[1], aChangedPos );
+
+  finishCurveModification( aSelPoints );
 }
 
 /**

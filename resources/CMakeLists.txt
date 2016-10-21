@@ -281,6 +281,7 @@ SET( _res_files
   closedspline.png
   edit_points.png
   join2.png
+  bringTogether.png
   new_point.png
   new_section.png
   # ADVANCED_RESOURCES:
