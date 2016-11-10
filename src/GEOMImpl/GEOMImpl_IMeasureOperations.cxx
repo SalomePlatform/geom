@@ -988,17 +988,17 @@ void GEOMImpl_IMeasureOperations::GetBasicProperties (Handle(GEOM_Object) theSha
   Standard_Real anEps = theTolerance >= 0 ? theTolerance : 1.e-6;
   try {
     OCC_CATCH_SIGNALS;
-    BRepGProp::LinearProperties(aShape, LProps);
+    BRepGProp::LinearProperties(aShape, LProps, Standard_True);
     theLength = LProps.Mass();
 
-    BRepGProp::SurfaceProperties(aShape, SProps, anEps);
+    BRepGProp::SurfaceProperties(aShape, SProps, anEps, Standard_True);
     theSurfArea = SProps.Mass();
 
     theVolume = 0.0;
     if (aShape.ShapeType() < TopAbs_SHELL) {
       for (TopExp_Explorer Exp (aShape, TopAbs_SOLID); Exp.More(); Exp.Next()) {
         GProp_GProps VProps;
-        BRepGProp::VolumeProperties(Exp.Current(), VProps, anEps);
+        BRepGProp::VolumeProperties(Exp.Current(), VProps, anEps, Standard_True);
         theVolume += VProps.Mass();
       }
     }
@@ -1045,12 +1045,12 @@ void GEOMImpl_IMeasureOperations::GetInertia
     if (aShape.ShapeType() == TopAbs_VERTEX ||
         aShape.ShapeType() == TopAbs_EDGE ||
         aShape.ShapeType() == TopAbs_WIRE) {
-      BRepGProp::LinearProperties(aShape, System);
+      BRepGProp::LinearProperties(aShape, System, Standard_True);
     } else if (aShape.ShapeType() == TopAbs_FACE ||
                aShape.ShapeType() == TopAbs_SHELL) {
-      BRepGProp::SurfaceProperties(aShape, System);
+      BRepGProp::SurfaceProperties(aShape, System, Standard_True);
     } else {
-      BRepGProp::VolumeProperties(aShape, System);
+      BRepGProp::VolumeProperties(aShape, System, Standard_True);
     }
     gp_Mat I = System.MatrixOfInertia();
 
