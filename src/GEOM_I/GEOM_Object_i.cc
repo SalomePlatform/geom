@@ -76,7 +76,7 @@ GEOM_Object_i::GEOM_Object_i (PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr
 
 GEOM_Object_i::~GEOM_Object_i()
 {
-  MESSAGE("GEOM_Object_i::~GEOM_Object_i");
+  //MESSAGE("GEOM_Object_i::~GEOM_Object_i");
 }
 
 //=============================================================================

@@ -210,7 +210,7 @@ GEOM_BaseObject::GEOM_BaseObject(const TDF_Label& theEntry, int theType)
 //=============================================================================
 GEOM_BaseObject::~GEOM_BaseObject()
 {
-  MESSAGE("GEOM_BaseObject::~GEOM_BaseObject()");
+  //MESSAGE("GEOM_BaseObject::~GEOM_BaseObject()");
 }
 
 //=============================================================================

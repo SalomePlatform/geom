@@ -64,7 +64,7 @@ GEOM_BaseObject_i::GEOM_BaseObject_i (PortableServer::POA_ptr thePOA,
 
 GEOM_BaseObject_i::~GEOM_BaseObject_i()
 {
-  MESSAGE("GEOM_BaseObject_i::~GEOM_BaseObject_i");
+  //MESSAGE("GEOM_BaseObject_i::~GEOM_BaseObject_i");
   GEOM_Engine::GetEngine()->RemoveObject(_impl);
 }
 
