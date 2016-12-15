@@ -98,10 +98,12 @@ In the \b File menu select <b>Export/XAO</b>.
 In this dialog:
 - Click the arrow button and select in the Object Browser or in the Viewer the <b>Shape</b> to be exported.
 - Input the <b>File name</b> to create a new file or click browse button to save in an existing file.
+- Input the <b>Author</b> if needed.
+- Tick <b>Export shape in a separate file</b> to write the shape in a separate BREP file, referenced in the XAO file. It will have the same name as the XAO file with the .brep extension appended.
 - Select the \b Groups of the chosen shape to be exported.
 - Select the \b Fields of the chosen shape to be exported.
 - Press "Apply" or "Apply & Close" button to get the result.
 
-It also possible to export a shape using the TUI Command: <em>geompy.ExportXAO(Shape, FileName, Groups, Fields)</em>
+It is also possible to export a shape using the TUI Command: <em>geompy.ExportXAO(Shape, Groups, Fields, Author, FileName, ShapeFileName)</em>
 
 */
