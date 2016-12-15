@@ -311,7 +311,8 @@ bool XAOPlugin_IOperations::ExportXAO( Handle(GEOM_Object) shape,
                                        std::list<Handle(GEOM_Object)> groupList,
                                        std::list<Handle(GEOM_Field)> fieldList,
                                        const char* author,
-                                       const char* fileName )
+                                       const char* fileName,
+                                       const char* shapeFileName )
 {
   SetErrorCode(KO);
 
@@ -348,7 +349,7 @@ bool XAOPlugin_IOperations::ExportXAO( Handle(GEOM_Object) shape,
   exportFields(fieldList, xaoObject, geometry);
 
   // export the XAO to the file
-  xaoObject->exportXAO(fileName);
+  xaoObject->exportXAO(fileName, shapeFileName);
 
   // make a Python command
   GEOM::TPythonDump pd(exportFunction);
@@ -378,7 +379,7 @@ bool XAOPlugin_IOperations::ExportXAO( Handle(GEOM_Object) shape,
     }
   }
   pd << "], ";
-  pd << "\"" << author << "\", \"" << fileName << "\")";
+  pd << "\"" << author << "\", \"" << fileName << "\", \"" << shapeFileName << "\")";
 
   SetErrorCode(OK);
   delete xaoObject;

@@ -54,6 +54,7 @@
 #include <QRadioButton>
 #include <QGridLayout>
 #include <QPushButton>
+#include <QCheckBox>
 #include <QMap>
 
 //=================================================================================
@@ -101,6 +102,7 @@ XAOPlugin_ExportDlg::XAOPlugin_ExportDlg(GeometryGUI* geometryGUI, QWidget* pare
   ledShape->setMinimumSize(QSize(100, 0));
 
   int line = 0, col = 0;
+  // adWidget(widget, fromRow, fromColumn, rowSpan, columnSpan)
   gridLayoutExport->addWidget(lblShape, line, col++, 1, 1);
   gridLayoutExport->addWidget(btnShapeSelect, line, col++, 1, 1);
   gridLayoutExport->addWidget(ledShape, line, col++, 1, 1);
@@ -121,9 +123,16 @@ XAOPlugin_ExportDlg::XAOPlugin_ExportDlg(GeometryGUI* geometryGUI, QWidget* pare
   ledAuthor = new QLineEdit(gbxExport);
 
   line++; col = 0;
-  gridLayoutExport->addWidget(lblAuthor, line, col++, 2, 1);
+  gridLayoutExport->addWidget(lblAuthor, line, col++, 1, 1);
   col++; // span
   gridLayoutExport->addWidget(ledAuthor, line, col++, 1, 1);
+
+  // Line 3
+  ckxUseSeparateFile = new QCheckBox(tr("XAOPLUGIN_EXPORT_SHAPEFILE"), gbxExport);
+
+  line++; col = 0;
+  gridLayoutExport->addWidget(ckxUseSeparateFile, line, col++, 1, 2);
+
 
   //****************************
   // Filter Group box
@@ -410,6 +419,12 @@ bool XAOPlugin_ExportDlg::execute()
 
   QString author = ledAuthor->text();
   QString fileName = ledFileName->text();
+  QString shapeFileName = QString("");//ledShapeFile->text();
+  if (ckxUseSeparateFile->isChecked())
+  {
+    shapeFileName = fileName;
+    shapeFileName.append(".brep");
+  }
 
   // get selected groups
   QList<QListWidgetItem*> selGroups;
@@ -451,6 +466,7 @@ bool XAOPlugin_ExportDlg::execute()
   GEOM::IXAOOperations_var aXAOOp = GEOM::IXAOOperations::_narrow( getOperation() );
   res = aXAOOp->ExportXAO(m_mainObj, groups, fields,
                           author.toUtf8().constData(),
-                          fileName.toUtf8().constData());
+                          fileName.toUtf8().constData(),
+                          shapeFileName.toStdString().c_str());
   return res;
 }

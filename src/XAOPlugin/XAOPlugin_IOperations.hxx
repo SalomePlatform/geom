@@ -47,7 +47,8 @@ public:
                   std::list<Handle(GEOM_Object)> groupList,
                   std::list<Handle(GEOM_Field)> fieldList,
                   const char* author,
-                  const char* fileName );
+                  const char* fileName,
+                  const char* shapeFileName );
   
   bool ImportXAO( const char* fileName,
                   Handle(GEOM_Object)& shape,

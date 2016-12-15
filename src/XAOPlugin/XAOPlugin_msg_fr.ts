@@ -63,6 +63,10 @@
         <translation>Auteur</translation>
     </message>
     <message>
+        <source>XAOPLUGIN_EXPORT_SHAPEFILE</source>
+        <translation>Exporter la forme dans un fichier séparé</translation>
+    </message>
+    <message>
         <source>XAOPLUGIN_EXPORT_LGROUPS</source>
         <translation>Groupes</translation>
     </message>

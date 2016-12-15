@@ -3633,12 +3633,14 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::ImportIGES( const char* theFileName,
 CORBA::Boolean GEOM_Superv_i::ExportXAO( GEOM::GEOM_Object_ptr shape,
                                          const GEOM::ListOfGO& groups,
                                          const GEOM::ListOfFields& fields,
-                                         const char* author, const char* fileName )
+                                         const char* author,
+                                         const char* fileName,
+                                         const char* shapeFileName )
 {
   beginService( " GEOM_Superv_i::ExportXAO" );
   MESSAGE("GEOM_Superv_i::ExportXAO");
   getXAOPluginOp();
-  CORBA::Boolean isGood = myXAOOp->ExportXAO( shape, groups, fields, author, fileName );
+  CORBA::Boolean isGood = myXAOOp->ExportXAO( shape, groups, fields, author, fileName, shapeFileName );
   endService( " GEOM_Superv_i::ExportXAO" );
   return isGood;
 }

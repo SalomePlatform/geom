@@ -36,13 +36,15 @@ module GEOM
      *  \param fields The list of fields to export
      *  \param author The author of the export
      *  \param fileName The name of the file to export
+     *  \param shapeFileName The name of the file to export the shape in an external file
      *  \return boolean indicating if export was successful.
      */
     boolean ExportXAO( in GEOM::GEOM_Object shape,
                        in GEOM::ListOfGO groups, 
                        in GEOM::ListOfFields fields,
                        in string author, 
-                       in string fileName );
+                       in string fileName,
+                       in string shapeFileName );
     
     /*!
      *  Import a shape from XAO format

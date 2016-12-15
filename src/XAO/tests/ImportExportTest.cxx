@@ -46,7 +46,7 @@ void ImportExportTest::testExportNoGeometry()
 {
     Xao xao("me", "1.0");
 
-    bool res = xao.exportXAO("empty.xao");
+    bool res = xao.exportXAO("empty.xao", "");
     CPPUNIT_ASSERT(res);
 }
 
@@ -103,7 +103,7 @@ void ImportExportTest::testExportGeometry()
         }
     }
 
-    bool res = xao.exportXAO("mygeom.xao");
+    bool res = xao.exportXAO("mygeom.xao", "");
     CPPUNIT_ASSERT(res);
 
     std::string xml = xao.getXML();

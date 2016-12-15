@@ -37,9 +37,10 @@ public:
   ~XAOPlugin_IECallBack();
   
   virtual bool Export( int                            theDocId,
-		       const Handle(GEOM_Object)      theOriginal,
-		       const TCollection_AsciiString& theFileName,
-		       const TCollection_AsciiString& theFormatName );
+                       const Handle(GEOM_Object)      theOriginal,
+                       const TCollection_AsciiString& theFileName,
+                       const TCollection_AsciiString& theFormatName,
+                       const TCollection_AsciiString& theshapeFileName );
 
   virtual
   Handle(TColStd_HSequenceOfTransient) Import( int                            theDocId,

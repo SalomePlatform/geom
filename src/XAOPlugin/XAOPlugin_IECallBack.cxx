@@ -48,9 +48,10 @@ XAOPlugin_IECallBack::~XAOPlugin_IECallBack()
 //=============================================================================
 bool
 XAOPlugin_IECallBack::Export( int                            theDocId,
-			      const Handle(GEOM_Object)      theOriginal,
-			      const TCollection_AsciiString& theFileName,
-			      const TCollection_AsciiString& theFormatName )
+                              const Handle(GEOM_Object)      theOriginal,
+                              const TCollection_AsciiString& theFileName,
+                              const TCollection_AsciiString& theFormatName,
+                              const TCollection_AsciiString& theShapeFileName )
 {
   XAOPlugin_IOperations* aPluginOperations = XAOPlugin_OperationsCreator::get( GetEngine(), theDocId );
   GEOMImpl_IShapesOperations* aShapesOperations = GetEngine()->GetIShapesOperations( theDocId );
@@ -63,7 +64,7 @@ XAOPlugin_IECallBack::Export( int                            theDocId,
     lgroups.push_back( Handle(GEOM_Object)::DownCast( groups->Value(i) ) );
   for (int i = 1; i <= fields->Length(); i++)
     lfields.push_back( Handle(GEOM_Field)::DownCast( fields->Value(i) ) );
-  aPluginOperations->ExportXAO( theOriginal, lgroups, lfields, "SIMAN Author", theFileName.ToCString() );
+  aPluginOperations->ExportXAO( theOriginal, lgroups, lfields, "SIMAN Author", theFileName.ToCString(), theShapeFileName.ToCString() );
   return true;
 }
 

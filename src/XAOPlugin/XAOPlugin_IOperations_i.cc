@@ -55,14 +55,16 @@ XAOPlugin_IOperations_i::~XAOPlugin_IOperations_i()
  *  \param fields The list of fields to export
  *  \param author The author of the export
  *  \param fileName The name of the exported file
+ *  \param shapeFileName If not empty, save to shape to this external file
  *  \return boolean indicating if export was succeful.
  */
 //=============================================================================
 CORBA::Boolean XAOPlugin_IOperations_i::ExportXAO( GEOM::GEOM_Object_ptr shape,
-						   const GEOM::ListOfGO& groups,
-						   const GEOM::ListOfFields& fields,
-						   const char* author,
-						   const char* fileName)
+                                                   const GEOM::ListOfGO& groups,
+                                                   const GEOM::ListOfFields& fields,
+                                                   const char* author,
+                                                   const char* fileName,
+                                                   const char* shapeFileName)
 {
   bool isGood = false;
   // Set a not done flag
@@ -94,7 +96,7 @@ CORBA::Boolean XAOPlugin_IOperations_i::ExportXAO( GEOM::GEOM_Object_ptr shape,
   if( !reference.IsNull() )
   {
     // Export XAO
-    isGood = GetOperations()->ExportXAO( reference, groupsObj, fieldsObj, author, fileName );
+    isGood = GetOperations()->ExportXAO( reference, groupsObj, fieldsObj, author, fileName, shapeFileName );
   }
 
   return isGood;

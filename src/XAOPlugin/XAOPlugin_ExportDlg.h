@@ -27,6 +27,7 @@ class QLineEdit;
 class QButtonGroup;
 class QListWidget;
 class QPushButton;
+class QCheckBox;
 
 //=================================================================================
 // class    : XAOPlugin_ExportDlg
@@ -58,6 +59,7 @@ private:
   QLineEdit* ledShape;
   QLineEdit* ledFileName;
   QLineEdit* ledAuthor;
+  QCheckBox* ckxUseSeparateFile;
   QListWidget* lstGroups;
   QListWidget* lstFields;
   QPushButton* btnShapeSelect;

@@ -668,7 +668,8 @@ module GEOM
                            in ListOfGO groups, 
                            in ListOfFields fields,
                            in string author, 
-                           in string fileName );
+                           in string fileName,
+                           in string shapeFileName );
     boolean     ImportXAO( in string fileName, 
                            out GEOM_Object shape,
                            out ListOfGO subShapes, 

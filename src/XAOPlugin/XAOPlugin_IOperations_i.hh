@@ -47,7 +47,8 @@ public:
                             const GEOM::ListOfGO& groups,
                             const GEOM::ListOfFields& fields,
                             const char* author,
-                            const char* fileName );
+                            const char* fileName,
+                            const char* shapeFileName );
 
   CORBA::Boolean ImportXAO( const char* fileName,
                             GEOM::GEOM_Object_out shape,

@@ -33,10 +33,11 @@ def GetXAOPluginOperations(self):
 #  @param fields The list of fields to export
 #  @param author The author of the file
 #  @param fileName The name of the file to export
+#  @param shapeFileName The name of the BRep file to export
 #  @return True if operation is successful or False otherwise
 #
 #  @ingroup l2_import_export
-def ExportXAO(self, shape, groups, fields, author, fileName):
+def ExportXAO(self, shape, groups, fields, author, fileName, shapeFileName = ""):
     """
     Export a shape to XAO format
     
@@ -52,7 +53,7 @@ def ExportXAO(self, shape, groups, fields, author, fileName):
     """
     from salome.geom.geomBuilder import RaiseIfFailed
     anOp = GetXAOPluginOperations(self)
-    res = anOp.ExportXAO(shape, groups, fields, author, fileName)
+    res = anOp.ExportXAO(shape, groups, fields, author, fileName, shapeFileName)
     RaiseIfFailed("ExportXAO", anOp)
     return res
 
