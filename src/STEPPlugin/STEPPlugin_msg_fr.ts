@@ -48,4 +48,58 @@
 Sinon le modèle sera mis à l&apos;échelle GEOM (unités interprétées comme des mètres).</translation>
     </message>
 </context>
+<context>
+    <name>STEPPlugin_ExportDlg</name>
+    <message>
+        <source>STEP_LENGTH_UNITS</source>
+        <translation>Unités de longueur</translation>
+    </message>
+    <message>
+        <source>STEP_UNITS_INCH</source>
+        <translation>pouce</translation>
+    </message>
+    <message>
+        <source>STEP_UNITS_MILLIMETER</source>
+        <translation>millimètre</translation>
+    </message>
+    <message>
+        <source>STEP_UNITS_FOOT</source>
+        <translation>pied</translation>
+    </message>
+    <message>
+        <source>STEP_UNITS_MILE</source>
+        <translation>mile</translation>
+    </message>
+    <message>
+        <source>STEP_UNITS_METER</source>
+        <translation>mètre</translation>
+    </message>
+    <message>
+        <source>STEP_UNITS_KILOMETER</source>
+        <translation>kilomètre</translation>
+    </message>
+    <message>
+        <source>STEP_UNITS_MILLIINCH</source>
+        <translation>millipouce</translation>
+    </message>
+    <message>
+        <source>STEP_UNITS_MICROMETER</source>
+        <translation>micromètre</translation>
+    </message>
+    <message>
+        <source>STEP_UNITS_CENTIMETER</source>
+        <translation>centimètre</translation>
+    </message>
+    <message>
+        <source>STEP_UNITS_MICROINCH</source>
+        <translation>micropouce</translation>
+    </message>
+</context>
+<context>
+    <name>STEPPlugin_ImportDlg</name>
+    <message>
+        <source>STEP_CREATE_ASSEMBLIES</source>
+        <translation>Crée les assemblages</translation>
+    </message>
+</context>
 </TS>

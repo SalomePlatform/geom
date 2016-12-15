@@ -5820,6 +5820,10 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
         <source>TABLE_Y</source>
         <translation>Y</translation>
     </message>
+    <message>
+        <source>DISTANCE_PREV</source>
+        <translation>Distance</translation>
+    </message>
 </context>
 <context>
     <name>CurveCreator_Widget</name>
@@ -5922,6 +5926,14 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     <message>
         <source>JOIN_TLT</source>
         <translation>Joindre les sections sélectionnées</translation>
+    </message>
+    <message>
+        <source>BRING_TOGETHER</source>
+        <translation>Assembler</translation>
+    </message>
+    <message>
+        <source>BRING_TOGETHER_TLT</source>
+        <translation>Assembler deux points aux extrémités de deux sections</translation>
     </message>
     <message>
         <source>CLEAR_ALL</source>
@@ -7241,6 +7253,18 @@ Voulez-vous en créer un nouveau ?</translation>
     <message>
         <source>GEOM_INSPECT_OBJECT_MAIN_SHAPE</source>
         <translation>Forme principale</translation>
+    </message>
+    <message>
+      <source>GEOM_INSPECT_TOLERANCE_FILTER</source>
+      <translation>Tolérance</translation>
+    </message>
+    <message>
+      <source>GEOM_INSPECT_RESET_MIN</source>
+      <translation>Valeur min</translation>
+    </message>
+    <message>
+      <source>GEOM_INSPECT_RESET_MAX</source>
+      <translation>Valeur max</translation>
     </message>
     <message>
         <source>GEOM_INSPECT_OBJECT_SHOW</source>

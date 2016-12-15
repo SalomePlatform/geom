@@ -469,7 +469,7 @@
     </message>
     <message>
       <source>GEOM_COMPSOLIDS</source>
-      <translation type="unfinished">CompSolids</translation>
+      <translation>複合ソリッド</translation>
     </message>
     <message>
       <source>GEOM_COMPOUND_TITLE</source>
@@ -609,7 +609,7 @@
     </message>
     <message>
       <source>GEOM_EDGES</source>
-      <translation type="unfinished">Edges</translation>
+      <translation>エッジ</translation>
     </message>
     <message>
       <source>GEOM_EDGE_TITLE</source>
@@ -2029,7 +2029,7 @@
     </message>
     <message>
       <source>GEOM_SOLIDS</source>
-      <translation type="unfinished">Solids</translation>
+      <translation>ソリッド</translation>
     </message>
     <message>
       <source>GEOM_SOLID_TITLE</source>
@@ -4965,7 +4965,7 @@
     </message>
     <message>
       <source>STB_POP_REDUCE_STUDY</source>
-      <translation>スタディの削減</translation>
+      <translation>スタディの縮小</translation>
     </message>
     <message>
       <source>MEN_POP_SHOW_ALL_DIMENSIONS</source>
@@ -5233,15 +5233,15 @@
     </message>
     <message>
       <source>TOP_EXTRACTION</source>
-      <translation type="unfinished">Extract and Rebuild</translation>
+      <translation>抽出と再構築</translation>
     </message>
     <message>
       <source>MEN_EXTRACTION</source>
-      <translation type="unfinished">Extract and Rebuild</translation>
+      <translation>抽出と再構築</translation>
     </message>
     <message>
       <source>STB_EXTRACTION</source>
-      <translation type="unfinished">Extract and Rebuild</translation>
+      <translation>抽出と再構築</translation>
     </message>
     <message>
       <source>TOP_EXTENSION</source>
@@ -5450,6 +5450,14 @@
     <message>
       <source>GEOM_DIM_AXES</source>
       <translation>局所座標軸に沿った次元</translation>
+    </message>
+    <message>
+      <source>SHOW_ALL_BTN</source>
+      <translation>全表示</translation>
+    </message>
+    <message>
+      <source>HIDE_ALL_BTN</source>
+      <translation>全非表示</translation>
     </message>
   </context>
   <context>
@@ -5819,6 +5827,10 @@
       <source>TABLE_Y</source>
       <translation>Y</translation>
     </message>
+    <message>
+      <source>DISTANCE_PREV</source>
+      <translation>距離</translation>
+    </message>
   </context>
   <context>
     <name>CurveCreator_Widget</name>
@@ -5921,6 +5933,14 @@
     <message>
       <source>JOIN_TLT</source>
       <translation>選択した断面を結合</translation>
+    </message>
+    <message>
+      <source>BRING_TOGETHER</source>
+      <translation>まとめる</translation>
+    </message>
+    <message>
+      <source>BRING_TOGETHER_TLT</source>
+      <translation>２個のセクション先端点をまとめる</translation>
     </message>
     <message>
       <source>CLEAR_ALL</source>
@@ -6515,14 +6535,6 @@
     <message>
       <source>REMOVE_BTN</source>
       <translation>削除</translation>
-    </message>
-    <message>
-      <source>SHOW_ALL_BTN</source>
-      <translation>全表示</translation>
-    </message>
-    <message>
-      <source>HIDE_ALL_BTN</source>
-      <translation>全非表示</translation>
     </message>
     <message>
       <source>DISTANCE_ITEM</source>
@@ -7232,6 +7244,18 @@
       <translation>主形状</translation>
     </message>
     <message>
+      <source>GEOM_INSPECT_TOLERANCE_FILTER</source>
+      <translation>トレランスフィルタ</translation>
+    </message>
+    <message>
+      <source>GEOM_INSPECT_RESET_MIN</source>
+      <translation>最小値</translation>
+    </message>
+    <message>
+      <source>GEOM_INSPECT_RESET_MAX</source>
+      <translation>最大値</translation>
+    </message>
+    <message>
       <source>GEOM_INSPECT_OBJECT_SHOW</source>
       <translation>選択を表示</translation>
     </message>
@@ -7614,51 +7638,51 @@
     <name>OperationGUI_ExtractionDlg</name>
     <message>
       <source>GEOM_EXTRACT_TITLE</source>
-      <translation type="unfinished">Extract and Rebuild</translation>
+      <translation>抽出と再構築</translation>
     </message>
     <message>
       <source>GEOM_EXTRACT_TYPE</source>
-      <translation type="unfinished">Extraction type</translation>
+      <translation>抽出タイプ</translation>
     </message>
     <message>
       <source>GEOM_EXTRACT_INPUT_PARAMS</source>
-      <translation type="unfinished">Input parameters</translation>
+      <translation>入力パラメータ</translation>
     </message>
     <message>
       <source>GEOM_EXTRACT_STATISTICS</source>
-      <translation type="unfinished">Statistics</translation>
+      <translation>統計</translation>
     </message>
     <message>
       <source>GEOM_EXTRACT_SUB_SHAPE_TYPE</source>
-      <translation type="unfinished">Sub-shape type</translation>
+      <translation>Sub-shape type</translation>
     </message>
     <message>
       <source>GEOM_EXTRACT_FILTERED_SHAPES</source>
-      <translation type="unfinished">Filtered shapes</translation>
+      <translation>フィルタされた形状</translation>
     </message>
     <message>
       <source>GEOM_EXTRACT_SHAPES_TO_EXTRACT</source>
-      <translation type="unfinished">Shapes to extract</translation>
+      <translation>形状の引き伸ばし</translation>
     </message>
     <message>
       <source>GEOM_EXTRACT_REBUILD</source>
-      <translation type="unfinished">Rebuild</translation>
+      <translation>再構築</translation>
     </message>
     <message>
       <source>GEOM_EXTRACT_REMOVED</source>
-      <translation type="unfinished">Removed</translation>
+      <translation>削除</translation>
     </message>
     <message>
       <source>GEOM_EXTRACT_MODIFIED</source>
-      <translation type="unfinished">Modified</translation>
+      <translation>修正</translation>
     </message>
     <message>
       <source>GEOM_EXTRACT_ADDED</source>
-      <translation type="unfinished">Added</translation>
+      <translation>追加</translation>
     </message>
     <message>
       <source>GEOM_EXTRACT_NAME</source>
-      <translation type="unfinished">Extraction</translation>
+      <translation>抽出</translation>
     </message>
   </context>
 </TS>
