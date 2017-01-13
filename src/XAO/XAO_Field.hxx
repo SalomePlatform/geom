@@ -57,7 +57,6 @@ namespace XAO
 
     public:
         /**
-        /**
          * Creates a Field of the given type.
          * @param type the type of the field to create.
          * @param dimension the dimension.

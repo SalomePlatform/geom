@@ -88,9 +88,9 @@ GEOM_AISShape::TopLevelDispMode GEOM_AISShape::myTopLevelDm = GEOM_AISShape::Top
 Quantity_Color GEOM_AISShape::myTopLevelColor;
 
 
-static void getEntityOwners( const Handle(AIS_InteractiveObject)& theObj,
+static void getEntityOwners( const Handle(AIS_InteractiveObject)&  theObj,
                              const Handle(AIS_InteractiveContext)& theIC,
-                             SelectMgr_IndexedMapOfOwner& theMap )
+                             SelectMgr_IndexedMapOfOwner&          theMap )
 {
   if ( theObj.IsNull() || theIC.IsNull() )
     return;
@@ -127,9 +127,9 @@ static void getEntityOwners( const Handle(AIS_InteractiveObject)& theObj,
 }
 
 static void indicesToOwners( const TColStd_IndexedMapOfInteger& aIndexMap,
-                             const TopoDS_Shape& aMainShape,
-                             const SelectMgr_IndexedMapOfOwner& anAllMap, 
-                             SelectMgr_IndexedMapOfOwner& aToHiliteMap )
+                             const TopoDS_Shape&                aMainShape,
+                             const SelectMgr_IndexedMapOfOwner& anAllMap,
+                             SelectMgr_IndexedMapOfOwner&       aToHiliteMap )
 {
   TopTools_IndexedMapOfShape aMapOfShapes;
   TopExp::MapShapes(aMainShape, aMapOfShapes);
@@ -143,13 +143,13 @@ static void indicesToOwners( const TColStd_IndexedMapOfInteger& aIndexMap,
     Standard_Integer aSubShapeId = aMapOfShapes.FindIndex( aSubShape );
     if ( !aSubShapeId || !aIndexMap.Contains( aSubShapeId ) )
       continue;
-    
+
     if ( !aToHiliteMap.Contains( anOwner ) )
       aToHiliteMap.Add( anOwner );
   }
 }
 
-GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape& shape,
+GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape&    shape,
                              const Standard_CString aName)
   : SALOME_AISShape(shape),
     myName(aName),
@@ -160,7 +160,7 @@ GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape& shape,
     myFieldStepRangeMin(0),
     myFieldStepRangeMax(0)
 {
-  //rnv: Commented to avoid bug with local selection 
+  //rnv: Commented to avoid bug with local selection
   //SetHilightMode( CustomHighlight ); // override setting the mode to 0 inside AIS_Shape constructor
 
   myShadingColor = Quantity_Color( Quantity_NOC_GOLDENROD );
@@ -171,14 +171,14 @@ GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape& shape,
   myTopLevel = Standard_False;
   Graphic3d_MaterialAspect aMatAspect;
   if ( !HasMaterial() ) {
-        aMatAspect.SetAmbient( 0.5 );
-        aMatAspect.SetDiffuse( 0.5 );
-        aMatAspect.SetEmissive( 0.5 );
-        aMatAspect.SetShininess(0.5 );
-        aMatAspect.SetSpecular( 0.5 );
-        
-        myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial(aMatAspect);
-        myDrawer->ShadingAspect()->Aspect()->SetBackMaterial(aMatAspect);
+    aMatAspect.SetAmbient( 0.5 );
+    aMatAspect.SetDiffuse( 0.5 );
+    aMatAspect.SetEmissive( 0.5 );
+    aMatAspect.SetShininess(0.5 );
+    aMatAspect.SetSpecular( 0.5 );
+
+    myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial(aMatAspect);
+    myDrawer->ShadingAspect()->Aspect()->SetBackMaterial(aMatAspect);
   }
 }
 
@@ -186,18 +186,21 @@ GEOM_AISShape::~GEOM_AISShape()
 {
 }
 
-void GEOM_AISShape::setIO(const Handle(SALOME_InteractiveObject)& io){
+void GEOM_AISShape::setIO(const Handle(SALOME_InteractiveObject)& io)
+{
   SetOwner( io );
 }
 
-Handle(SALOME_InteractiveObject) GEOM_AISShape::getIO(){
+Handle(SALOME_InteractiveObject) GEOM_AISShape::getIO()
+{
   Handle(SALOME_InteractiveObject) IO;
   if ( !GetOwner().IsNull() )
     IO = Handle(SALOME_InteractiveObject)::DownCast( GetOwner() );
   return IO;
 }
 
-Standard_Boolean GEOM_AISShape::hasIO(){
+Standard_Boolean GEOM_AISShape::hasIO()
+{
   return !getIO().IsNull();
 }
 
@@ -210,13 +213,14 @@ void GEOM_AISShape::setName(const Standard_CString aName)
     IO->setName(aName);
 }
 
-Standard_CString GEOM_AISShape::getName(){
+Standard_CString GEOM_AISShape::getName()
+{
   return myName.ToCString();
 }
 
 void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
-                            const Handle(Prs3d_Presentation)& aPrs,
-                            const Standard_Integer aMode)
+                            const Handle(Prs3d_Presentation)&           aPrs,
+                            const Standard_Integer                      aMode)
 {  
   if (IsInfinite()) aPrs->SetInfiniteState(Standard_True); //pas de prise en compte lors du FITALL
 
@@ -351,12 +355,13 @@ void GEOM_AISShape::SetEdgesInShadingColor(const Quantity_Color &aCol)
   myEdgesInShadingColor = aCol;
 }
 
-void GEOM_AISShape::SetLabelColor(const Quantity_Color &aCol) {
+void GEOM_AISShape::SetLabelColor(const Quantity_Color &aCol)
+{
   myLabelColor = aCol;
 }
 
 void GEOM_AISShape::highlightSubShapes(const TColStd_IndexedMapOfInteger& aIndexMap, 
-                                       const Standard_Boolean aHighlight )
+                                       const Standard_Boolean             aHighlight )
 {
   Handle(AIS_InteractiveObject) anObj = this;
   Handle(AIS_InteractiveContext) anIC = GetContext();
@@ -402,8 +407,8 @@ void GEOM_AISShape::SetDisplayName(bool isDisplayed)
 }
 
 void GEOM_AISShape::shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
-                                const Handle(Prs3d_Presentation)& aPrs,
-                                const Standard_Integer aMode)
+                                const Handle(Prs3d_Presentation)&           aPrs,
+                                const Standard_Integer                      aMode)
 {
   myDrawer->ShadingAspect()->Aspect()->SetDistinguishOn();
 
@@ -416,7 +421,7 @@ void GEOM_AISShape::shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPre
 
   if( isTopLevel() && switchTopLevel() )
     myDrawer->ShadingAspect()->SetColor( topLevelColor() );
-  else { 
+  else {
     if(myDrawer->ShadingAspect()->Aspect()->FrontMaterial().MaterialType( Graphic3d_MATERIAL_ASPECT ))
       myDrawer->ShadingAspect()->SetColor(myShadingColor);
     else
@@ -440,11 +445,13 @@ void GEOM_AISShape::shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPre
   }
 }
 
-Standard_Boolean GEOM_AISShape::isTopLevel() {
+Standard_Boolean GEOM_AISShape::isTopLevel()
+{
   return myTopLevel;
 }
 
-void GEOM_AISShape::setTopLevel(Standard_Boolean f) {
+void GEOM_AISShape::setTopLevel(Standard_Boolean f)
+{
   if(f) {
     if(f != myTopLevel)
       myPrevDisplayMode = DisplayMode();
@@ -463,66 +470,74 @@ void GEOM_AISShape::setTopLevel(Standard_Boolean f) {
   myTopLevel = f;
 }
 
-void GEOM_AISShape::setPrevDisplayMode(const Standard_Integer mode) {
+void GEOM_AISShape::setPrevDisplayMode(const Standard_Integer mode)
+{
   myPrevDisplayMode = mode;
 }
 
-Quantity_Color GEOM_AISShape::topLevelColor() {
+Quantity_Color GEOM_AISShape::topLevelColor()
+{
   return myTopLevelColor;
 }
 
-void GEOM_AISShape::setTopLevelColor(const Quantity_Color c) {
+void GEOM_AISShape::setTopLevelColor(const Quantity_Color c)
+{
   myTopLevelColor = c;
 }
 
-GEOM_AISShape::TopLevelDispMode GEOM_AISShape::topLevelDisplayMode() {
+GEOM_AISShape::TopLevelDispMode GEOM_AISShape::topLevelDisplayMode()
+{
   return myTopLevelDm;
 }
-void GEOM_AISShape::setTopLevelDisplayMode(const GEOM_AISShape::TopLevelDispMode dm) {
+
+void GEOM_AISShape::setTopLevelDisplayMode(const GEOM_AISShape::TopLevelDispMode dm)
+{
   myTopLevelDm = dm;
 }
 
-Standard_Boolean GEOM_AISShape::switchTopLevel() {
+Standard_Boolean GEOM_AISShape::switchTopLevel()
+{
   return myTopLevelDm != TopShowAdditionalWActor;
 }
 
-Standard_Boolean GEOM_AISShape::toActivate() {
+Standard_Boolean GEOM_AISShape::toActivate()
+{
   return ( myTopLevel && myTopLevelDm == TopShowAdditionalWActor ) ? false : true;
 }
 
-void GEOM_AISShape::setFieldStepInfo( const GEOM::field_data_type theFieldDataType,
-                                      const int theFieldDimension,
-                                      const QList<QVariant>& theFieldStepData,
+void GEOM_AISShape::setFieldStepInfo( const GEOM::field_data_type    theFieldDataType,
+                                      const int                      theFieldDimension,
+                                      const QList<QVariant>&         theFieldStepData,
                                       const TCollection_AsciiString& theFieldStepName,
-                                      const double theFieldStepRangeMin,
-                                      const double theFieldStepRangeMax )
+                                      const double                   theFieldStepRangeMin,
+                                      const double                   theFieldStepRangeMax )
 {
-  myFieldDataType = theFieldDataType;
-  myFieldDimension = theFieldDimension;
-  myFieldStepData = theFieldStepData;
-  myFieldStepName = theFieldStepName;
+  myFieldDataType     = theFieldDataType;
+  myFieldDimension    = theFieldDimension;
+  myFieldStepData     = theFieldStepData;
+  myFieldStepName     = theFieldStepName;
   myFieldStepRangeMin = theFieldStepRangeMin;
   myFieldStepRangeMax = theFieldStepRangeMax;
 }
 
-void GEOM_AISShape::getFieldStepInfo( GEOM::field_data_type& theFieldDataType,
-                                      int& theFieldDimension,
-                                      QList<QVariant>& theFieldStepData,
+void GEOM_AISShape::getFieldStepInfo( GEOM::field_data_type&   theFieldDataType,
+                                      int&                     theFieldDimension,
+                                      QList<QVariant>&         theFieldStepData,
                                       TCollection_AsciiString& theFieldStepName,
-                                      double& theFieldStepRangeMin,
-                                      double& theFieldStepRangeMax ) const
+                                      double&                  theFieldStepRangeMin,
+                                      double&                  theFieldStepRangeMax ) const
 {
-  theFieldDataType = myFieldDataType;
-  theFieldDimension = myFieldDimension;
-  theFieldStepData = myFieldStepData;
-  theFieldStepName = myFieldStepName;
+  theFieldDataType     = myFieldDataType;
+  theFieldDimension    = myFieldDimension;
+  theFieldStepData     = myFieldStepData;
+  theFieldStepName     = myFieldStepName;
   theFieldStepRangeMin = myFieldStepRangeMin;
   theFieldStepRangeMax = myFieldStepRangeMax;
 }
 
 void GEOM_AISShape::drawField( const Handle(Prs3d_Presentation)& thePrs,
-                               const bool theIsString,
-                               const bool theIsHighlight )
+                               const bool                        theIsString,
+                               const bool                        theIsHighlight )
 {
   if( myFieldStepData.isEmpty() )
     return;
@@ -532,10 +547,10 @@ void GEOM_AISShape::drawField( const Handle(Prs3d_Presentation)& thePrs,
   TopAbs_ShapeEnum aShapeType = TopAbs_SHAPE;
   switch( myFieldDimension )
   {
-    case 0: aShapeType = TopAbs_VERTEX; break;
-    case 1: aShapeType = TopAbs_EDGE; break;
-    case 2: aShapeType = TopAbs_FACE; break;
-    case 3: aShapeType = TopAbs_SOLID; break;
+    case 0:  aShapeType = TopAbs_VERTEX; break;
+    case 1:  aShapeType = TopAbs_EDGE; break;
+    case 2:  aShapeType = TopAbs_FACE; break;
+    case 3:  aShapeType = TopAbs_SOLID; break;
     case -1: aShapeType = TopAbs_VERTEX; break;
   }
 
@@ -669,9 +684,37 @@ Standard_Boolean GEOM_AISShape::computeMassCenter( const TopoDS_Shape& theShape,
   }
   else if ( theShape.ShapeType() == TopAbs_FACE )
   {
-    BRepAdaptor_Surface surface( TopoDS::Face( theShape ));
-    theCenter = surface.Value( 0.5 * ( surface.FirstUParameter() + surface.LastUParameter() ),
-                               0.5 * ( surface.FirstVParameter() + surface.LastVParameter() ));
+    const TopoDS_Face& F = TopoDS::Face( theShape );
+    BRepAdaptor_Surface surface( F );
+
+    TopLoc_Location L;
+    Handle(Poly_Triangulation) triangulation = BRep_Tool::Triangulation( F, L );
+    if ( !triangulation.IsNull() && triangulation->HasUVNodes() )
+    {
+      gp_XY C( 0, 0 );
+      double A = 0;
+      const TColgp_Array1OfPnt2d& uvArray = triangulation->UVNodes();
+      const Poly_Array1OfTriangle&  trias = triangulation->Triangles();
+      Standard_Integer n1,n2,n3;
+      for ( int iT = trias.Lower(); iT <= trias.Upper(); ++iT )
+      {
+        trias( iT ).Get( n1,n2,n3 );
+        const gp_Pnt2d& uv1 = uvArray( n1 );
+        const gp_Pnt2d& uv2 = uvArray( n2 );
+        const gp_Pnt2d& uv3 = uvArray( n3 );
+        double a = 0.5 * sqrt(( uv1.X() - uv3.X() ) * ( uv2.Y() - uv1.Y() ) -
+                              ( uv1.X() - uv2.X() ) * ( uv3.Y() - uv1.Y() ));
+        C += ( uv1.XY() + uv2.XY() + uv3.XY() ) / 3. * a;
+        A += a;
+      }
+      C /= A;
+      theCenter = surface.Value( C.X(), C.Y() );
+    }
+    else
+    {
+      theCenter = surface.Value( 0.5 * ( surface.FirstUParameter() + surface.LastUParameter() ),
+                                 0.5 * ( surface.FirstVParameter() + surface.LastVParameter() ));
+    }
     aNbPoints = 1;
   }
 
