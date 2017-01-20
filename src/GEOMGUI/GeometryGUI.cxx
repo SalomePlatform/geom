@@ -39,6 +39,8 @@
 #include "GEOM_Displayer.h"
 #include "GEOM_AISShape.hxx"
 #include "GEOMUtils_XmlHandler.hxx"
+#include "GEOMGUI_AnnotationMgr.h"
+#include "GEOMGUI_TextTreeSelector.h"
 
 #include "GEOM_Actor.h"
 
@@ -227,6 +229,7 @@ GeometryGUI::GeometryGUI() :
 
   myCreationInfoWdg = 0;
   myTextTreeWdg = 0;
+  myAnnotationMgr = 0;
 
   connect( Material_ResourceMgr::resourceMgr(), SIGNAL( changed() ), this, SLOT( updateMaterials() ) );
 
@@ -384,6 +387,26 @@ void GeometryGUI::ActiveWorkingPlane()
       vw->onFitAll();
     }
   }
+}
+
+//=======================================================================
+// function : GeometryGUI::SetActiveDialogBox()
+// purpose  : Set active dialog box
+//=======================================================================
+GEOMGUI_AnnotationMgr* GeometryGUI::GetAnnotationMgr()
+{
+  if ( !myAnnotationMgr )
+    myAnnotationMgr = new GEOMGUI_AnnotationMgr( getApp() );
+  return myAnnotationMgr;
+}
+
+//=======================================================================
+// function : GeometryGUI::SetActiveDialogBox()
+// purpose  : Set active dialog box
+//=======================================================================
+GEOMGUI_TextTreeWdg* GeometryGUI::GetTextTreeWdg() const
+{
+  return myTextTreeWdg;
 }
 
 //=======================================================================
@@ -674,11 +697,16 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpCheckSelfInters:    // MENU MEASURE - CHECK SELF INTERSECTIONS
   case GEOMOp::OpFastCheckInters:    // MENU MEASURE - FAST CHECK INTERSECTIONS
   case GEOMOp::OpManageDimensions:   // MENU MEASURE - MANAGE DIMENSIONS
+  case GEOMOp::OpAnnotation:         // MENU MEASURE - ANNOTATION
+  case GEOMOp::OpEditAnnotation:     // POPUP MENU - EDIT ANNOTATION
+  case GEOMOp::OpDeleteAnnotation:   // POPUP MENU - DELETE ANNOTATION
 #ifndef DISABLE_PLOT2DVIEWER
   case GEOMOp::OpShapeStatistics:    // MENU MEASURE - SHAPE STATISTICS
 #endif
   case GEOMOp::OpShowAllDimensions:  // POPUP MENU - SHOW ALL DIMENSIONS
   case GEOMOp::OpHideAllDimensions:  // POPUP MENU - HIDE ALL DIMENSIONS
+  case GEOMOp::OpShowAllAnnotations: // POPUP MENU - SHOW ALL ANNOTATIONS
+  case GEOMOp::OpHideAllAnnotations: // POPUP MENU - HIDE ALL ANNOTATIONS
     libName = "MeasureGUI";
     break;
   case GEOMOp::OpGroupCreate:        // MENU GROUP - CREATE
@@ -1059,6 +1087,9 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpMinDistance,      "MIN_DIST" );
   createGeomAction( GEOMOp::OpAngle,            "MEASURE_ANGLE" );
   createGeomAction( GEOMOp::OpManageDimensions, "MANAGE_DIMENSIONS" );
+  createGeomAction( GEOMOp::OpAnnotation,       "ANNOTATION" );
+  createGeomAction( GEOMOp::OpEditAnnotation,   "EDIT_ANNOTATION" );
+  createGeomAction( GEOMOp::OpDeleteAnnotation, "DELETE_ANNOTATION" );
 
   createGeomAction( GEOMOp::OpTolerance,        "TOLERANCE" );
   createGeomAction( GEOMOp::OpWhatIs,           "WHAT_IS" );
@@ -1132,9 +1163,11 @@ void GeometryGUI::initialize( CAM_Application* app )
 #ifndef DISABLE_GRAPHICSVIEW
   createGeomAction( GEOMOp::OpShowDependencyTree, "POP_SHOW_DEPENDENCY_TREE" );
 #endif
-  createGeomAction( GEOMOp::OpReduceStudy,       "POP_REDUCE_STUDY" );
-  createGeomAction( GEOMOp::OpShowAllDimensions, "POP_SHOW_ALL_DIMENSIONS" );
-  createGeomAction( GEOMOp::OpHideAllDimensions, "POP_HIDE_ALL_DIMENSIONS" );
+  createGeomAction( GEOMOp::OpReduceStudy,        "POP_REDUCE_STUDY" );
+  createGeomAction( GEOMOp::OpShowAllDimensions,  "POP_SHOW_ALL_DIMENSIONS" );
+  createGeomAction( GEOMOp::OpHideAllDimensions,  "POP_HIDE_ALL_DIMENSIONS" );
+  createGeomAction( GEOMOp::OpShowAllAnnotations, "POP_SHOW_ALL_ANNOTATIONS" );
+  createGeomAction( GEOMOp::OpHideAllAnnotations, "POP_HIDE_ALL_ANNOTATIONS" );
 
   // Create actions for increase/decrease transparency shortcuts
   createGeomAction( GEOMOp::OpIncrTransparency, "", "", 0, false,
@@ -1327,6 +1360,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpAngle,            dimId, -1 );
   createMenu( GEOMOp::OpManageDimensions, dimId, -1 );
 
+  createMenu( GEOMOp::OpAnnotation,       measurId, -1 );
+
   createMenu( separator(),               measurId, -1 );
   createMenu( GEOMOp::OpTolerance,       measurId, -1 );
   createMenu( separator(),               measurId, -1 );
@@ -1483,6 +1518,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpBoundingBox,      measureTbId );
   createTool( GEOMOp::OpMinDistance,      measureTbId );
   createTool( GEOMOp::OpAngle,            measureTbId );
+  createTool( GEOMOp::OpAnnotation,       measureTbId );
   createTool( GEOMOp::OpTolerance  ,      measureTbId );
   createTool( separator(),                measureTbId );
   createTool( GEOMOp::OpFreeBoundaries,   measureTbId );
@@ -1603,6 +1639,12 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule( action( GEOMOp::OpNoAutoColor ), autoColorPrefix + " and isAutoColor=true", QtxPopupMgr::VisibleRule );
   mgr->insert( separator(), -1, -1 );     // -----------
 
+  mgr->insert( action(  GEOMOp::OpEditAnnotation ), -1, -1 );  // edit annotation
+  mgr->setRule( action( GEOMOp::OpEditAnnotation ),  clientOCC + " and annotationsCount=1", QtxPopupMgr::VisibleRule );
+  mgr->insert( action(  GEOMOp::OpDeleteAnnotation ), -1, -1 );  // delete annotation
+  mgr->setRule( action( GEOMOp::OpDeleteAnnotation ),  clientOCC + " and annotationsCount>0", QtxPopupMgr::VisibleRule );
+  mgr->insert( separator(), -1, -1 );     // -----------
+
   QString canDisplay = "($component={'GEOM'}) and (selcount>0) and ({true} in $canBeDisplayed) ",
           onlyComponent = "((type='Component') and selcount=1)",
           rule = canDisplay + "and ((($type in {%1}) and( %2 )) or " + onlyComponent + ")",
@@ -1657,6 +1699,10 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule( action( GEOMOp::OpShowAllDimensions ), aDimensionRule.arg( "hasHiddenDimensions" ), QtxPopupMgr::VisibleRule );
   mgr->insert( action( GEOMOp::OpHideAllDimensions ), -1, -1 ); // hide all dimensions
   mgr->setRule( action( GEOMOp::OpHideAllDimensions ), aDimensionRule.arg( "hasVisibleDimensions" ), QtxPopupMgr::VisibleRule );
+  mgr->insert( action( GEOMOp::OpShowAllAnnotations ), -1, -1 ); // show all annotations
+  mgr->setRule( action( GEOMOp::OpShowAllAnnotations ), aDimensionRule.arg( "hasHiddenAnnotations" ), QtxPopupMgr::VisibleRule );
+  mgr->insert( action( GEOMOp::OpHideAllAnnotations ), -1, -1 ); // hide all annotations
+  mgr->setRule( action( GEOMOp::OpHideAllAnnotations ), aDimensionRule.arg( "hasVisibleAnnotations" ), QtxPopupMgr::VisibleRule );
 
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpUnpublishObject ), -1, -1 ); // Unpublish object
@@ -1838,8 +1884,11 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   getApp()->insertDockWindow( myCreationInfoWdg->getWinID(), myCreationInfoWdg );
   getApp()->placeDockWindow( myCreationInfoWdg->getWinID(), Qt::LeftDockWidgetArea );
 
-  if ( !myTextTreeWdg )
+  if ( !myTextTreeWdg ) {
     myTextTreeWdg = new GEOMGUI_TextTreeWdg( getApp() );
+    new GEOMGUI_TextTreeSelector( myTextTreeWdg, GetAnnotationMgr(), getApp()->selectionMgr() );
+  }
+
   getApp()->insertDockWindow( myTextTreeWdg->getWinID(), myTextTreeWdg );
   getApp()->placeDockWindow( myTextTreeWdg->getWinID(), Qt::LeftDockWidgetArea );
 
@@ -2044,6 +2093,10 @@ void GeometryGUI::onViewManagerRemoved( SUIT_ViewManager* vm )
           /*delete*/ myVTKSelectors.takeAt( myVTKSelectors.indexOf( sr ) );
           break;
         }
+  }
+  SOCC_Viewer* aSOCCView = dynamic_cast<SOCC_Viewer*>(viewer);
+  if ( aSOCCView ) {
+    GetAnnotationMgr()->RemoveView( aSOCCView );
   }
 }
 
@@ -2372,6 +2425,10 @@ void GeometryGUI::createPreferences()
   addPreference( tr( "PREF_AUTO_BRING_TO_FRONT" ), genGroup,
                  LightApp_Preferences::Bool, "Geometry", "auto_bring_to_front" );
 
+  // --------------------------------------------------------------------------
+  // Dimensions (Measurements) preferences
+  // --------------------------------------------------------------------------
+
   int aDimGroupId = addPreference( tr( "PREF_DIMENSIONS" ), tabId );
   setPreferenceProperty( aDimGroupId, "columns", 2 );
 
@@ -2454,6 +2511,53 @@ void GeometryGUI::createPreferences()
 
   addPreference( tr( "PREF_DIMENSIONS_USE_TEXT3D" ), aDimGroupId,
                  LightApp_Preferences::Bool, "Geometry", "dimensions_use_text3d" );
+
+  // --------------------------------------------------------------------------
+  // Shape annotation preferences
+  // --------------------------------------------------------------------------
+
+  const int aShapeAnnGroupId = addPreference( tr( "PREF_SHAPE_ANNOTATIONS" ), tabId );
+  setPreferenceProperty( aShapeAnnGroupId, "columns", 2 );
+
+  addPreference( tr( "PREF_SHAPE_ANNOTATIONS_FONT_COLOR" ), aShapeAnnGroupId, LightApp_Preferences::Color, "Geometry", "shape_annotation_font_color" );
+  addPreference( tr( "PREF_SHAPE_ANNOTATIONS_LINE_COLOR" ), aShapeAnnGroupId, LightApp_Preferences::Color, "Geometry", "shape_annotation_line_color" );
+  const int aShapeAnnFont = 
+    addPreference( tr( "PREF_SHAPE_ANNOTATIONS_FONT" ), aShapeAnnGroupId, LightApp_Preferences::Font, "Geometry", "shape_annotation_font" );
+
+  int aShapeAnnFontFeatures = QtxFontEdit::Family | QtxFontEdit::Size | QtxFontEdit::Bold | QtxFontEdit::Italic;
+  setPreferenceProperty( aShapeAnnFont, "features", aShapeAnnFontFeatures );
+  setPreferenceProperty( aShapeAnnFont, "mode", QtxFontEdit::Custom );
+  setPreferenceProperty( aShapeAnnFont, "fonts", anOCCFonts );
+
+  const int aShapeAnnLineWidth = 
+    addPreference( tr( "PREF_SHAPE_ANNOTATIONS_LINE_WIDTH" ), aShapeAnnGroupId, LightApp_Preferences::IntSpin, "Geometry", "shape_annotation_line_width" );
+
+  setPreferenceProperty( aShapeAnnLineWidth, "min", 1 );
+  setPreferenceProperty( aShapeAnnLineWidth, "max", 5 );
+
+  addPreference( tr( "PREF_SHAPE_ANNOTATIONS_AUTOHIDE" ), aShapeAnnGroupId, LightApp_Preferences::Bool, "Geometry", "shape_annotation_autohide" );
+
+  const int aShapeAnnLineStyle =
+    addPreference( tr( "PREF_SHAPE_ANNOTATIONS_LINE_STYLE" ), aShapeAnnGroupId, LightApp_Preferences::Selector, "Geometry", "shape_annotation_line_style" );
+
+  QStringList aLineStyleList;
+  aLineStyleList.append( tr("PREF_SHAPE_ANNOTATIONS_LINESTYLE_SOLID") );
+  aLineStyleList.append( tr("PREF_SHAPE_ANNOTATIONS_LINESTYLE_DASH") );
+  aLineStyleList.append( tr("PREF_SHAPE_ANNOTATIONS_LINESTYLE_DOT") );
+  aLineStyleList.append( tr("PREF_SHAPE_ANNOTATIONS_LINESTYLE_DOTDASH") );
+
+  QList<QVariant> aLineStyleIds;
+  aLineStyleIds.append(0);
+  aLineStyleIds.append(1);
+  aLineStyleIds.append(2);
+  aLineStyleIds.append(3);
+
+  setPreferenceProperty( aShapeAnnLineStyle, "strings", aLineStyleList );
+  setPreferenceProperty( aShapeAnnLineStyle, "indexes", aLineStyleIds );
+
+  // --------------------------------------------------------------------------
+  // Isoline drawing preferences
+  // --------------------------------------------------------------------------
 
   int isoGroup = addPreference( tr( "PREF_ISOS" ), tabId );
   setPreferenceProperty( isoGroup, "columns", 2 );
@@ -2720,14 +2824,21 @@ void GeometryGUI::preferencesChanged( const QString& section, const QString& par
         aDisplayer.UpdateColorScale( anIsRedisplayFieldSteps, true );
       }
     }
-    else if ( param == QString("dimensions_color")        ||
-              param == QString("dimensions_line_width")   ||
-              param == QString("dimensions_font")         ||
-              param == QString("dimensions_arrow_length") ||
-              param == QString("dimensions_show_units")   ||
-              param == QString("dimensions_length_units") ||
-              param == QString("dimensions_angle_units")  ||
-              param == QString("dimensions_use_text3d")  ||
+    else if ( param == QString("dimensions_color")            ||
+              param == QString("dimensions_line_width")       ||
+              param == QString("dimensions_font")             ||
+              param == QString("dimensions_arrow_length")     ||
+              param == QString("dimensions_show_units")       ||
+              param == QString("dimensions_length_units")     ||
+              param == QString("dimensions_angle_units")      ||
+              param == QString("dimensions_use_text3d")       ||
+              param == QString("shape_annotation_font_color") ||
+              param == QString("shape_annotation_line_color") ||
+              param == QString("shape_annotation_font")       ||
+              param == QString("shape_annotation_line_width") ||
+              param == QString("shape_annotation_autohide")   ||
+              param == QString("shape_annotation_line_style") ||
+              param == QString("shape_annotation_line_style") ||
               param == QString("label_color") )
     {
       SalomeApp_Application* anApp = getApp();
@@ -2757,6 +2868,20 @@ void GeometryGUI::preferencesChanged( const QString& section, const QString& par
 
         SALOME_ListIO aVisible;
         aViewer->GetVisible( aVisible );
+
+        GEOMGUI_AnnotationMgr* anAnnotationMgr = GetAnnotationMgr();
+        if ( anAnnotationMgr ) {
+          SALOME_ListIteratorOfListIO anIter( aVisible );
+          while ( anIter.More() ) {
+            if ( anAnnotationMgr->isAnnotationEntry( anIter.Value()->getEntry() ) ) {
+              aVisible.Remove( anIter );
+            }
+            else {
+              anIter.Next();
+            }
+          }
+        }
+
         aDisplayer.Redisplay( aVisible, false, aViewer );
       }
       if ( param == QString( "label_color" ) ) {
@@ -2813,6 +2938,7 @@ void GeometryGUI::storeVisualParameters (int savePoint)
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(application()->activeStudy());
   if ( !appStudy || !appStudy->studyDS() )
     return;
+
   _PTR(Study) studyDS = appStudy->studyDS();
 
   // componentName is used for encoding of entries when storing them in IParameters
@@ -2830,12 +2956,17 @@ void GeometryGUI::storeVisualParameters (int savePoint)
   QList<SUIT_ViewManager*> lst;
   QList<SUIT_ViewManager*>::Iterator it;
 
+  GEOMGUI_AnnotationMgr* aAnnotationMgr = GetAnnotationMgr();
+
   // main cycle to store parameters of displayed objects
   lst.clear();
   getApp()->viewManagers(lst);
   for (it = lst.begin(); it != lst.end(); it++) {
     SUIT_ViewManager* vman = *it;
     QString vType = vman->getType();
+    SUIT_ViewModel* vmodel = vman->getViewModel();
+    SALOME_View* aView = dynamic_cast<SALOME_View*>(vmodel);
+
     int aMgrId = vman->getGlobalId();
     // saving VTK actors properties
     QVector<SUIT_ViewWindow*> views = vman->getViews();
@@ -2957,28 +3088,41 @@ void GeometryGUI::storeVisualParameters (int savePoint)
           param = occParam + GEOM::propertyName( GEOM::IsosWidth );
           ip->setParameter(entry, param.toStdString(), aProps.value(GEOM::propertyName( GEOM::IsosWidth )).toString().toStdString());
         }
+
+        if ( vType == SOCC_Viewer::Type() && aAnnotationMgr ) {
+          std::string anAnnotationInfo = GetAnnotationMgr()->getDisplayedIndicesInfo(
+                                            o_it.key().toLatin1().data(), dynamic_cast<SOCC_Viewer*>(aView) ).toStdString();
+          if (!anAnnotationInfo.empty()) {
+            param = occParam + "ShapeAnnotationVisibleItems";
+            ip->setParameter(entry, param.toStdString(), anAnnotationInfo);
+          }
+        }
       } // object iterator
     } // for (views)
   } // for (viewManagers)
 
-  // store dimension attributes of objects:
+  // store shape annotation and dimension attributes of objects:
   // since the displayed object always persists in property map, we remember the object entries
   // on the passes when we store viewer related properties - to avoid extra iterations on GEOM component tree.
-  QString aDimensionParam = OCCViewer_Viewer::Type() + GEOM::sectionSeparator() + GEOM::propertyName( GEOM::Dimensions );
+  const QString aDimensionParam = OCCViewer_Viewer::Type() + GEOM::sectionSeparator() + GEOM::propertyName( GEOM::Dimensions );
+  const QString aAnnotationParam = OCCViewer_Viewer::Type() + GEOM::sectionSeparator() + GEOM::propertyName( GEOM::ShapeAnnotations );
   QSet<QString>::ConstIterator aEntryIt = anEntriesToStoreShared.constBegin();
   for ( ; aEntryIt != anEntriesToStoreShared.constEnd(); ++aEntryIt )
   {
     std::string aStudyEntry = (*aEntryIt).toLatin1().data();
-    std::string aStoreEntry = ip->encodeEntry( aStudyEntry, componentName);
+    std::string aStoreEntry = ip->encodeEntry( aStudyEntry, componentName );
 
+    // store dimension parameters
     GEOMGUI_DimensionProperty aDimensions( appStudy, aStudyEntry );
-
-    if ( aDimensions.GetNumber() == 0 )
-    {
-      continue;
+    if ( aDimensions.GetNumber() != 0 ) {
+      ip->setParameter( aStoreEntry, aDimensionParam.toStdString(), ((QString)aDimensions).toLatin1().data() );
     }
 
-    ip->setParameter( aStoreEntry, aDimensionParam.toStdString(), ((QString)aDimensions).toLatin1().data() );
+    _PTR(SObject) aObj( studyDS->FindObjectID( aStudyEntry ) );
+    const Handle(GEOMGUI_AnnotationAttrs) aShapeAnnAttr = GEOMGUI_AnnotationAttrs::FindAttributes( aObj );
+    if ( !aShapeAnnAttr.IsNull() ) {
+      ip->setParameter( aStoreEntry, aAnnotationParam.toStdString(), aShapeAnnAttr->ExportAsPropertyString().toLatin1().data() );
+    }
   }
 }
 
@@ -3061,6 +3205,13 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
           GEOMGUI_DimensionProperty aDimensionProp( aValuesStr );
           aDimensionProp.SaveToAttribute( appStudy, entry.toLatin1().data() );
         }
+        else if ( aParamNameStr == GEOM::propertyName( GEOM::ShapeAnnotations ) )
+        {
+          Handle(GEOMGUI_AnnotationAttrs) anAttr =
+            GEOMGUI_AnnotationAttrs::FindOrCreateAttributes( so, appStudy );
+
+          anAttr->ImportFromPropertyString( aValuesStr );
+        }
 
         continue;
       }
@@ -3116,7 +3267,10 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
         aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::LineWidth ), val.toInt());
       } else if (paramNameStr == GEOM::propertyName( GEOM::IsosWidth )) {
         aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::IsosWidth ), val.toInt());
+      } else if (paramNameStr == "ShapeAnnotationVisibleItems") {
+        aListOfMap[viewIndex].insert( "ShapeAnnotationVisibleItems", val);
       }
+
     } // for names/parameters iterator
 
     QList<SUIT_ViewManager*> lst = getApp()->viewManagers();
@@ -3128,7 +3282,16 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
       if (aListOfMap[index].value(GEOM::propertyName( GEOM::Visibility )) == 1) {
         SUIT_ViewManager* vman = lst.at(index);
         SUIT_ViewModel* vmodel = vman->getViewModel();
-        displayer()->Display(entry, true, dynamic_cast<SALOME_View*>(vmodel));
+        SALOME_View* aView = dynamic_cast<SALOME_View*>(vmodel);
+        displayer()->Display(entry, true, aView);
+
+        if ( vmodel->getType() == SOCC_Viewer::Type() ) {
+          PropMap& aProps = aListOfMap[index];
+          if ( aProps.contains( "ShapeAnnotationVisibleItems" ) ) {
+            SOCC_Viewer* aSOCCView = dynamic_cast<SOCC_Viewer*>( aView );
+            GetAnnotationMgr()->setDisplayedIndicesInfo( entry, aSOCCView, aProps["ShapeAnnotationVisibleItems"].toString() );
+          }
+        }
       }
     }
   } // for entries iterator
@@ -3151,6 +3314,10 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
       if (occVMod)
         occVMod->Repaint();
     }
+  }
+
+  if ( myTextTreeWdg ) {
+    myTextTreeWdg->updateTree();
   }
 }
 
@@ -3384,6 +3551,7 @@ bool GeometryGUI::renameObject( const QString& entry, const QString& name)
       if (!CORBA::is_nil(anObj)) {
         anObj->SetName( name.toLatin1().data() );  // Rename the corresponding GEOM_Object
         emit SignalDependencyTreeRenameObject( anObj->GetEntry() );
+        emit SignalTextTreeRenameObject( entry );
       }
       result = true;
     }
@@ -3550,4 +3718,9 @@ void GeometryGUI::dropObjects( const DataObjectList& what, SUIT_DataObject* wher
 void GeometryGUI::emitDimensionsUpdated( QString entry )
 {
   emit DimensionsUpdated( entry );
+}
+
+void GeometryGUI::emitAnnotationsUpdated( QString entry )
+{
+  emit SignalAnnotationsUpdated( entry );
 }

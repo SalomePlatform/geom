@@ -100,6 +100,14 @@
     <parameter name="dimensions_default_flyout" value="20" />
     <parameter name="dimensions_use_text3d"     value="0" />
 
+    <!-- Shape annotation presentation properties -->
+    <parameter name="shape_annotation_font_color" value="#00007f" />
+    <parameter name="shape_annotation_font"       value="Courier 10 Pitch,24" />
+    <parameter name="shape_annotation_line_color" value="#00007f" />
+    <parameter name="shape_annotation_line_width" value="1.0" />
+    <parameter name="shape_annotation_line_style" value="0" />
+    <parameter name="shape_annotation_autohide"   value="false" />
+
     <!-- Scalar bar for field step presentation -->
     <parameter name="scalar_bar_x_position"   value="0.05" />
     <parameter name="scalar_bar_y_position"   value="0.1" />

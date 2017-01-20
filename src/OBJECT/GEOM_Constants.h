@@ -58,7 +58,8 @@ namespace GEOM
     OutlineColor,
     Texture,
     Dimensions,
-    LastProperty = Dimensions,
+    ShapeAnnotations,
+    LastProperty = ShapeAnnotations,
   };
 
   GEOM_OBJECT_EXPORT double minDeflection();

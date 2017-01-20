@@ -24,6 +24,7 @@
 // Author : Alexander SOLOVYOV, Open CASCADE S.A.S. (alexander.solovyov@opencascade.com)
 //
 #include "GEOMGUI_OCCSelector.h"
+#include "GEOM_Annotation.hxx"
 
 #include <Basics_OCCTVersion.hxx>
 
@@ -300,8 +301,16 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
       {
         anOwner = Handle(StdSelect_BRepOwner)::DownCast(owners( i ));
 
-        if ( anOwner.IsNull() || !anOwner->HasShape() )
+        if ( anOwner.IsNull() || !anOwner->HasShape() ) {
+          if ( globalSelMap.contains( entryStr ) ) {
+            Handle(GEOM_Annotation::GEOM_AnnotationOwner) anAnnotationOwner =
+                               Handle(GEOM_Annotation::GEOM_AnnotationOwner)::DownCast(owners( i ));
+            if ( !anAnnotationOwner.IsNull() ) {
+              ownersmap.Add( anAnnotationOwner );
+            }
+          }
           continue;
+        }
 
         // GLOBAL selection
         if ( !anOwner->ComesFromDecomposition() && globalSelMap.contains( entryStr ) )

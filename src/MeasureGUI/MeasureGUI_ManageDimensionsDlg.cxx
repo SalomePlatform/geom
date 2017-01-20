@@ -228,9 +228,9 @@ void MeasureGUI_ManageDimensionsDlg::StartSelection( const Selection theSelectio
     myDimensionInteractor->Enable();
 
     connect( myDimensionInteractor,
-             SIGNAL( InteractionFinished( Handle(AIS_InteractiveObject) ) ),
+             SIGNAL( InteractionFinished( Handle_AIS_InteractiveObject ) ),
              this,
-             SLOT( OnInteractionFinished( Handle(AIS_InteractiveObject) ) ) );
+             SLOT( OnInteractionFinished( Handle_AIS_InteractiveObject ) ) );
 
     anAISContext->UpdateCurrentViewer();
   }
@@ -290,9 +290,9 @@ void MeasureGUI_ManageDimensionsDlg::StopSelection()
     myDimensionInteractor->Disable();
 
     disconnect( myDimensionInteractor,
-                SIGNAL( InteractionFinished( Handle(AIS_InteractiveObject) ) ),
+                SIGNAL( InteractionFinished( Handle_AIS_InteractiveObject ) ),
                 this,
-                SLOT( OnInteractionFinished( Handle(AIS_InteractiveObject) ) ) );
+                SLOT( OnInteractionFinished( Handle_AIS_InteractiveObject ) ) );
   }
 
   myCurrentSelection = Selection_None;
@@ -628,7 +628,7 @@ void MeasureGUI_ManageDimensionsDlg::OnHideAll()
 // function : OnInteractionFinished
 // purpose  :
 //=================================================================================
-void MeasureGUI_ManageDimensionsDlg::OnInteractionFinished( Handle(AIS_InteractiveObject) theIO )
+void MeasureGUI_ManageDimensionsDlg::OnInteractionFinished( Handle_AIS_InteractiveObject theIO )
 {
   // update property data
   SalomeApp_Application* anApp = myGeomGUI->getApp();

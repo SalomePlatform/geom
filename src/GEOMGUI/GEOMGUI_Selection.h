@@ -85,6 +85,12 @@ private:
   bool                  hasHiddenDimensions( const int ) const;
   bool                  hasVisibleDimensions( const int ) const;
 
+  int                   annotationsCount() const;
+
+  bool                  hasAnnotations( const int, bool&, bool& ) const;
+  bool                  hasHiddenAnnotations( const int ) const;
+  bool                  hasVisibleAnnotations( const int ) const;
+
   GEOM::GEOM_Object_ptr getObject( const int ) const;
   GEOM::GEOM_BaseObject_ptr getBaseObject( const int ) const;
 
@@ -98,6 +104,7 @@ private:
 
 private:
   GeomObjectVector      myObjects;
+  QStringList           myAnnotationEntries;
 };
 
 #endif

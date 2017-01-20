@@ -1,0 +1,57 @@
+/*! 
+
+\page annotation_page Shape annotation
+
+<b> Annotation </b> functionality allows showing in the viewer special user-defined text label connected to corresponding part of a CAD model with a line.
+Annotation text is always parallel to the screen and horizontal. It is is not zoomed or rotated when a 3D scene is zoomed or rotated by the user.
+The annotation text is defined using UTF-8 encoding and thus support any Unicode characters.
+
+There are several algorithms for the annotation position calculation during the scene manipulations (panning, zooming, rotation):
+<ul>
+  <li>Algorithm 1: an annotation has fixed position in 2D screen coordinates (fixed screen position mode). In this mode, the annotations are always visible (appear as topmost objects), never hidden by the (annotated) geometry.</li>
+  <li>Algorithm 2: an annotation has fixed position in 3D model space, this position is projected onto the screen just as normal point coordinates. In this mode, some annotations may be invisible depending on the camera (position, orientation, zoom).</li>
+</ul>
+
+\image html annotation_preview.png
+
+It can be accessed from the main menu via <b>Inspection -> Annotation </b>
+
+\image html annotation.png "Create Annotation dialog"
+
+In this dialog you can:
+<ul>
+  <li>Set <b>Text</b> text shown in View 3d and a name of annotation presented in the Text Browser.</li>
+  <li>Select a \b Shape to which the annotation will be assigned.</li>
+  <li>Set <b>Fixed screen position</b> to select alogithm for the annotation position caldulation.</li>
+  <li>Select a <b>Shape Type</b> to which the annotation will be assigned on the shape.
+  It contains "Whole shape", "Vertex", "Edge", "Face" and "Solid" choices.</li>
+  <li>Select a sub shape to assign annotation to. Text control contains information about local selection in the viewer.</li>
+  <li>Move annotation dragging it in 3D view to select an appropriate position.</li>
+  <li>Push \b Apply or <b>Apply and Close</b> button to commit creation of the field.</li>
+</ul>
+
+Annotations appear in an Annotations sub-tree in Text Browser.</li>
+The foolowing context menu commands are provided for annotation object in Text Browser:
+<ul>
+  <li><b>Edit</b> allows modifying the annotation text, the positioning algorithm and the annotation position.</li>
+  <li><b>Delete</b> deletes selected annotation.</li>
+  <li><b>Show</b>/<b>Hide</b> change visibility of annotation in the active view.</li>
+</ul>
+<b>Edit</b> and <b>Delete</b> actions are also available in View 3d for selected annotation object/s.
+
+All annotations may be shown/hidden in a 3D view. The corresponded popup menu is available in Text Browser.
+
+All annotations of a shape may be shown/hidden in a 3D view using corresponded popup menu on the shape item in Object Browser.
+
+Synchronization of selection between 3D view and Text browser is available. It means that selection of annotation in 3D view will select this annotation in Text browser and vice versa.
+
+Annotation is logically connected to the shape:
+<ul>
+  <li>Selection of an annotation will highlight corresponding shape/subshape in 3D view.</li>
+  <li>When the shape is deleted, the annotation will be also deleted.</li>
+</ul>
+
+The user is able to modify the font, the style, the color and the size of the annotation text and the color, the width and the style of the connection line applied to all annotations.
+It can be accessed from the main menu via <b>File -> Preferences</b>. The Shape annotations group on Geometry Settings pane contains controls for it.
+
+*/

@@ -3496,6 +3496,50 @@
       <translation>3Dテキストの使用</translation>
     </message>
     <message>
+      <source>PREF_SHAPE_ANNOTATIONS</source>
+      <translation type="unfinished">Shape annotations</translation>
+    </message>
+    <message>
+      <source>PREF_SHAPE_ANNOTATIONS_FONT</source>
+      <translation type="unfinished">Font</translation>
+    </message>
+    <message>
+      <source>PREF_SHAPE_ANNOTATIONS_FONT_COLOR</source>
+      <translation type="unfinished">Font color</translation>
+    </message>
+    <message>
+      <source>PREF_SHAPE_ANNOTATIONS_LINE_COLOR</source>
+      <translation type="unfinished">Line color</translation>
+    </message>
+    <message>
+      <source>PREF_SHAPE_ANNOTATIONS_LINE_WIDTH</source>
+      <translation type="unfinished">Line width</translation>
+    </message>
+    <message>
+      <source>PREF_SHAPE_ANNOTATIONS_LINE_STYLE</source>
+      <translation type="unfinished">Line style</translation>
+    </message>
+    <message>
+      <source>PREF_SHAPE_ANNOTATIONS_AUTOHIDE</source>
+      <translation type="unfinished">Hide when attachment is invisible</translation>
+    </message>
+    <message>
+      <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_SOLID</source>
+      <translation type="unfinished">Solid</translation>
+    </message>
+    <message>
+      <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_DASH</source>
+      <translation type="unfinished">Dashed</translation>
+    </message>
+    <message>
+      <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_DOT</source>
+      <translation type="unfinished">Dotted</translation>
+    </message>
+    <message>
+      <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_DOTDASH</source>
+      <translation type="unfinished">Mixed</translation>
+    </message>
+    <message>
       <source>PREF_HIDE_INPUT_OBJECT</source>
       <translation>ビューワから入力したオブジェクトの非表示</translation>
     </message>
@@ -4990,6 +5034,30 @@
     <message>
       <source>TOP_POP_HIDE_ALL_DIMENSIONS</source>
       <translation>オブジェクトのために作成されたすべての見える基準寸法を表示</translation>
+    </message>
+    <message>
+      <source>MEN_POP_SHOW_ALL_ANNOTATIONS</source>
+      <translation type="unfinished">Show all annotations</translation>
+    </message>
+    <message>
+      <source>STB_POP_SHOW_ALL_ANNOTATIONS</source>
+      <translation type="unfinished">Show all shape annotations for the object</translation>
+    </message>
+    <message>
+      <source>TOP_POP_SHOW_ALL_ANNOTATIONS</source>
+      <translation type="unfinished">Show all shape annotations for the object</translation>
+    </message>
+    <message>
+      <source>MEN_POP_HIDE_ALL_ANNOTATIONS</source>
+      <translation type="unfinished">Hide all annotations</translation>
+    </message>
+    <message>
+      <source>STB_POP_HIDE_ALL_ANNOTATIONS</source>
+      <translation type="unfinished">Hide all shape annotations for the object</translation>
+    </message>
+    <message>
+      <source>TOP_POP_HIDE_ALL_ANNOTATIONS</source>
+      <translation type="unfinished">Hide all shape annotations for the object</translation>
     </message>
     <message>
       <source>TOP_POP_AUTO_COLOR</source>

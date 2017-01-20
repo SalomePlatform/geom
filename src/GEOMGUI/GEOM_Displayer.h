@@ -263,6 +263,7 @@ protected:
   void           updateShapeProperties( const Handle(GEOM_AISShape)&, bool );
   void           updateActorProperties( GEOM_Actor*, bool );
   void           updateDimensions( const Handle(SALOME_InteractiveObject)&, SALOME_OCCPrs*, const gp_Ax3& );
+  void           updateShapeAnnotations( const Handle(SALOME_InteractiveObject)&, SALOME_OCCPrs*, const gp_Ax3& );
 
   PropMap getObjectProperties( SalomeApp_Study*, const QString&, SALOME_View* = 0 );
   PropMap getDefaultPropertyMap();
@@ -317,6 +318,7 @@ protected:
   Aspect_TypeOfMarker              myTypeOfMarker;
   double                           myScaleOfMarker;
   double                           myTransparency;
+  bool                             myIsRedisplayed;
 
 private:
   SalomeApp_Application* myApp;

@@ -42,6 +42,9 @@
 
 class SalomeApp_Study;
 
+class GEOMGUI_DimensionProperty;
+typedef QSharedPointer<GEOMGUI_DimensionProperty> DimensionPropertyPtr;
+
 /*!
  * \brief Utility class to unpack/pack dimension presentations as object property of study.
  *
