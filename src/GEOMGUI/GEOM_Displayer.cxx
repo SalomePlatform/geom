@@ -496,14 +496,14 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
   // This parameter is used for activisation/deactivisation (selection) of objects to be displayed
   myToActivate = true;
 
-  // Activate parallel vizualisation only for testing purpose
-  // and if the corresponding env variable is set to 1
-  char* parallel_visu = getenv("PARALLEL_VISU");
-  if (parallel_visu && atoi(parallel_visu))
-  {
-    MESSAGE("Parallel visualisation on");
-    BRepMesh_IncrementalMesh::SetParallelDefault(Standard_True);
-  }
+  // Activate parallel vizualisation by default.
+  // It can be switched OFF via the environment variable:
+  //     export PARALLEL_VISU=0
+  Standard_Boolean parallel_visu = Standard_True;
+  char* parallel_visu_env = getenv("PARALLEL_VISU");
+  if (parallel_visu_env && atoi(parallel_visu_env) == 0)
+    parallel_visu = Standard_False;
+  BRepMesh_IncrementalMesh::SetParallelDefault(parallel_visu);
 
   myViewFrame = 0;
 
