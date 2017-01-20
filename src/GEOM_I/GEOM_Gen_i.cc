@@ -2499,12 +2499,15 @@ GEOM::GEOM_IOperations_ptr GEOM_Gen_i::GetPluginOperations(CORBA::Long theStudyI
 void GEOM_Gen_i::LoadPlugin(const std::string& theLibName)
 {
   std::string aPlatformLibName;
-#ifdef WIN32
-  aPlatformLibName = theLibName;
-  aPlatformLibName += ".dll" ;
-#else
+#if !defined(WIN32)
   aPlatformLibName = "lib";
+#endif
   aPlatformLibName += theLibName;
+#if defined(WIN32)
+  aPlatformLibName += ".dll" ;
+#elif defined(__APPLE__)
+  aPlatformLibName += ".dylib";
+#else
   aPlatformLibName += ".so";
 #endif
 

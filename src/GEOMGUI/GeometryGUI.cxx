@@ -257,13 +257,19 @@ GEOMGUI* GeometryGUI::getLibrary( const QString& libraryName )
 {
   if ( !myGUIMap.contains( libraryName ) ) {
     // try to load library if it is not loaded yet
-#ifndef WIN32
-    QString dirs = getenv( "LD_LIBRARY_PATH" );
-    QString sep  = ":";
-#else
+#if defined(WIN32)
     QString dirs = getenv( "PATH" );
-    QString sep  = ";";
+#elif defined(__APPLE__)
+    QString dirs = getenv( "DYLD_LIBRARY_PATH" );
+#else
+    QString dirs = getenv( "LD_LIBRARY_PATH" );
 #endif
+#if defined(WIN32)
+    QString sep  = ";";
+#else
+    QString sep  = ":";
+#endif
+
     if ( !dirs.isEmpty() ) {
       QStringList dirList = dirs.split(sep, QString::SkipEmptyParts ); // skip empty entries
       QListIterator<QString> it( dirList ); it.toBack();
@@ -301,13 +307,20 @@ GEOMPluginGUI* GeometryGUI::getPluginLibrary( const QString& libraryName )
 {
   if ( !myGUIMap.contains( libraryName ) ) {
     // try to load library if it is not loaded yet
-#ifndef WIN32
-    QString dirs = getenv( "LD_LIBRARY_PATH" );
-    QString sep  = ":";
-#else
+
+#if defined(WIN32)
     QString dirs = getenv( "PATH" );
-    QString sep  = ";";
+#elif defined(__APPLE__)
+    QString dirs = getenv( "DYLD_LIBRARY_PATH" );
+#else
+    QString dirs = getenv( "LD_LIBRARY_PATH" );
 #endif
+#if defined(WIN32)
+    QString sep  = ";";
+#else
+    QString sep  = ":";
+#endif
+
     if ( !dirs.isEmpty() ) {
       QStringList dirList = dirs.split(sep, QString::SkipEmptyParts ); // skip empty entries
       QListIterator<QString> it( dirList ); it.toBack();
@@ -698,10 +711,12 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
 
       GEOMPluginGUI* library = 0;
       if ( !libName.isEmpty() ) {
-#ifndef WIN32
-        libName = QString( "lib" ) + libName + ".so";
-#else
+#if defined(WIN32)
         libName = libName + ".dll";
+#elif defined(__APPLE__)
+        libName = QString( "lib" ) + libName + ".dylib";
+#else
+        libName = QString( "lib" ) + libName + ".so";
 #endif
         library = getPluginLibrary( libName );
       }
@@ -727,10 +742,12 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
 
   GEOMGUI* library = 0;
   if ( !libName.isEmpty() ) {
-#ifndef WIN32
-    libName = QString( "lib" ) + libName + ".so";
-#else
+#if defined(WIN32)
     libName = libName + ".dll";
+#elif defined(__APPLE__)
+    libName = QString( "lib" ) + libName + ".dylib";
+#else
+    libName = QString( "lib" ) + libName + ".so";
 #endif
     library = getLibrary( libName );
   }
