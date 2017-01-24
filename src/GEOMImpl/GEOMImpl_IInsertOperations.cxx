@@ -235,8 +235,15 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::RestoreShape (std::istringstream
   //See correcponding code in GEOM_Engine.cxx (method ProcessFunction)
   //GEOM::TPythonDump(aFunction) << "#";
 
-  GEOM::TPythonDump(aFunction) << result
+  bool ignore = false;
+
+  if ( const char* env_var = getenv( "GEOM_IGNORE_RESTORE_SHAPE" ) )
+    ignore = atoi( env_var ) > 1;
+
+  if ( !ignore ) {
+    GEOM::TPythonDump(aFunction) << result
     << " = geompy.RestoreShape(\"\") # the shape string has not been dump for performance reason";
+  }
 
   SetErrorCode(OK);
 

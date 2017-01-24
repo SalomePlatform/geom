@@ -11684,8 +11684,14 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             return self.ImportFile(theFileName, theFormatName, theName)
 
         ## Read a shape from the binary stream, containing its bounding representation (BRep).
-        #  @note This method will not be dumped to the python script by DumpStudy functionality.
-        #  @note GEOM.GEOM_Object.GetShapeStream() method can be used to obtain the shape's BRep stream.
+        #
+        #  @note As the byte-stream representing the shape data can be quite large, this method
+        #  is not automatically dumped to the Python script with the DumpStudy functionality;
+        #  so please use this method carefully, only for strong reasons.
+        #  
+        #  @note GEOM.GEOM_Object.GetShapeStream() method can be used to obtain the shape's
+        #  data stream.
+        #
         #  @param theStream The BRep binary stream.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
@@ -11712,6 +11718,11 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 New GEOM_Object, containing the shape, read from theStream.
             """
             # Example: see GEOM_TestOthers.py
+            if not theStream:
+                # this is the workaround to ignore invalid case when data stream is empty
+                if int(os.getenv("GEOM_IGNORE_RESTORE_SHAPE", "0")) > 0:
+                    print "WARNING: Result of RestoreShape is a NULL shape!"
+                    return None
             anObj = self.InsertOp.RestoreShape(theStream)
             RaiseIfFailed("RestoreShape", self.InsertOp)
             self._autoPublish(anObj, theName, "restored")
