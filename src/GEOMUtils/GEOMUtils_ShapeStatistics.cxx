@@ -35,8 +35,8 @@ namespace GEOMUtils
 // purpose  : gets measures of the given type for list of shapes in the range
 //=================================================================================
   std::map<int,double> ComputeMeasures( std::list<TopoDS_Shape> shapes, 
-			      TopAbs_ShapeEnum entity, 
-			      Range &range)
+                              TopAbs_ShapeEnum entity, 
+                              Range &range)
 {
   bool hasRange = (range.min != -1.0); // -1.0 means that range must not be used
   if ( !hasRange )
@@ -60,23 +60,23 @@ namespace GEOMUtils
       //Get the measure: length, area or volume
       GProp_GProps LProps, SProps, VProps;
       if ( entity == TopAbs_EDGE ) {
-	BRepGProp::LinearProperties( aSubShape, LProps );
-	aMeasure = LProps.Mass();
+        BRepGProp::LinearProperties( aSubShape, LProps );
+        aMeasure = LProps.Mass();
       } else if ( entity == TopAbs_FACE ) {
-	BRepGProp::SurfaceProperties( aSubShape, SProps );
-	aMeasure = SProps.Mass();
+        BRepGProp::SurfaceProperties( aSubShape, SProps );
+        aMeasure = SProps.Mass();
       } else if ( entity == TopAbs_SOLID ) {
-	BRepGProp::VolumeProperties( aSubShape, VProps );
-	aMeasure = VProps.Mass();
+        BRepGProp::VolumeProperties( aSubShape, VProps );
+        aMeasure = VProps.Mass();
       }
       // Don't pass sub-shapes with out of range measure, if range is used
       if ( hasRange ) {
-	if ( aMeasure < range.min || aMeasure > range.max )
-	  continue;
+        if ( aMeasure < range.min || aMeasure > range.max )
+          continue;
       } else {
-	// get range min and max
-	if ( aMeasure < range.min ) range.min = aMeasure;
-	if ( aMeasure > range.max ) range.max = aMeasure;
+        // get range min and max
+        if ( aMeasure < range.min ) range.min = aMeasure;
+        if ( aMeasure > range.max ) range.max = aMeasure;
       }
       // get global index of sub-shape
       index = aSubShapesMap.FindIndex( aSubShape );
@@ -93,9 +93,9 @@ namespace GEOMUtils
 // purpose  : gets distribution data for single shape
 //=================================================================================
 Distribution ComputeDistribution( TopoDS_Shape shape, 
-				  TopAbs_ShapeEnum entity, 
-				  int intervals, 
-				  Range range)
+                                  TopAbs_ShapeEnum entity, 
+                                  int intervals, 
+                                  Range range)
 {
   std::list<TopoDS_Shape> aShapes;
   aShapes.push_back( shape );
@@ -107,9 +107,9 @@ Distribution ComputeDistribution( TopoDS_Shape shape,
 // purpose  : gets distribution data for list of shapes
 //=================================================================================
 Distribution ComputeDistribution( std::list<TopoDS_Shape> shapes, 
-				  TopAbs_ShapeEnum entity, 
-				  int nbIntervals, 
-				  Range range)
+                                  TopAbs_ShapeEnum entity, 
+                                  int nbIntervals, 
+                                  Range range)
 {
   // get list of measures and compute range (if it was not specified)
   std::map<int,double> measures = ComputeMeasures( shapes, entity, range );
@@ -129,15 +129,15 @@ Distribution ComputeDistribution( std::list<TopoDS_Shape> shapes,
     std::vector<int> indicesToErase;
     for ( dit = measures.begin(); dit != measures.end(); dit++ ) {
       if ( ( dit->second >= localRange.min && dit->second < localRange.max ) || 
-	   ( i == nbIntervals-1 && dit->second == localRange.max ) ) {
-	localRange.count++;
-	localRange.indices.push_back( dit->first );
-	// measure is in interval, so remove it from map of search
-	indicesToErase.push_back( dit->first );
+           ( i == nbIntervals-1 && dit->second == localRange.max ) ) {
+        localRange.count++;
+        localRange.indices.push_back( dit->first );
+        // measure is in interval, so remove it from map of search
+        indicesToErase.push_back( dit->first );
       }
     }
     aDistr.push_back( localRange );
-    for( int j=0; j < indicesToErase.size(); j++ )
+    for( size_t j=0; j < indicesToErase.size(); j++ )
       measures.erase( indicesToErase[j] );
   }
 

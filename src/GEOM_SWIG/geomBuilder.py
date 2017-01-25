@@ -3919,8 +3919,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         publication is switched on, default value is used for result name.
         #
         #  @return New GEOM.GEOM_Object, containing the created pipe if 
-        #          \a IsGenerateGroups is not set. Otherwise it returns new
-        #          GEOM.ListOfGO. Its first element is the created pipe, the
+        #          \a IsGenerateGroups is not set. Otherwise it returns a
+        #          list of GEOM.GEOM_Object. Its first element is the created pipe, the
         #          remaining ones are created groups.
         #
         #  @ref tui_creation_pipe "Example"
@@ -3959,8 +3959,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
             Returns:
                 New GEOM.GEOM_Object, containing the created pipe if 
-                IsGenerateGroups is not set. Otherwise it returns new
-                GEOM.ListOfGO. Its first element is the created pipe, the
+                IsGenerateGroups is not set. Otherwise it returns a
+                list of GEOM.GEOM_Object. Its first element is the created pipe, the
                 remaining ones are created groups.
             """
             # Example: see GEOM_TestAll.py

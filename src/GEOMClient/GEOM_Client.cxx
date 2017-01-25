@@ -258,8 +258,8 @@ TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_p
     BRep_Builder B;
     TopoDS_Compound aCompound;
     B.MakeCompound(aCompound);
-    for (int i = 0; i < list->length(); i++) {
-      if (0 < list[i] && list[i] <= _mySubShapes[mainIOR].size()) {
+    for (size_t i = 0; i < list->length(); i++) {
+      if (0 < list[i] && list[i] <= (CORBA::Long)_mySubShapes[mainIOR].size()) {
         TopoDS_Shape aSubShape = _mySubShapes[mainIOR][list[i]-1];
         B.Add(aCompound, aSubShape);
       }

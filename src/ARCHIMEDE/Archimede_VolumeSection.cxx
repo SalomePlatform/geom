@@ -124,7 +124,7 @@ void VolumeSection::CenterOfGravity()
 Standard_Real VolumeSection::CalculateVolume(Standard_Real Elevation)
 {
   Standard_Integer i,noeud[3],flag[3];
-  Standard_Integer nbNodes;
+  //Standard_Integer nbNodes;
   TopExp_Explorer ex;
   TopLoc_Location L;
   Standard_Real z[3];
@@ -144,7 +144,7 @@ Standard_Real VolumeSection::CalculateVolume(Standard_Real Elevation)
         MESSAGE("Error, null layer" )
       const Poly_Array1OfTriangle& triangles = Tr->Triangles();
       Standard_Integer nbTriangles = Tr->NbTriangles();
-      nbNodes = Tr->NbNodes();
+      //nbNodes = Tr->NbNodes();
       const TColgp_Array1OfPnt& Nodes = Tr->Nodes();
       
       // Calcul des volumes de chaque triangle, de chaque face 

@@ -137,6 +137,7 @@ namespace
     return xmlPaths;
   }
 
+#ifdef MYDEBUG
   void dumpinfo(const GEOMUtils::PluginInfo& info)
   {
     printf("DUMPING PLUGIN INFO\n");
@@ -160,6 +161,7 @@ namespace
       printf("-----\n");
     }
   }
+#endif
 }
 
 namespace GEOMUtils

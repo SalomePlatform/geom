@@ -707,10 +707,14 @@ Standard_Boolean GEOM_AISShape::computeMassCenter( const TopoDS_Shape& theShape,
         C += ( uv1.XY() + uv2.XY() + uv3.XY() ) / 3. * a;
         A += a;
       }
-      C /= A;
-      theCenter = surface.Value( C.X(), C.Y() );
+      if ( A > std::numeric_limits<double>::min() )
+      {
+        C /= A;
+        theCenter = surface.Value( C.X(), C.Y() );
+        aNbPoints = 1;
+      }
     }
-    else
+    if ( aNbPoints == 0 )
     {
       theCenter = surface.Value( 0.5 * ( surface.FirstUParameter() + surface.LastUParameter() ),
                                  0.5 * ( surface.FirstVParameter() + surface.LastVParameter() ));

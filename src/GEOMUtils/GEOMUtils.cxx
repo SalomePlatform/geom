@@ -262,7 +262,7 @@ namespace
         levelsListStr.push_back( substr );
     }
     GEOMUtils::LevelsList levelsListData;
-    for( int level = 0; level < levelsListStr.size(); level++ ) {
+    for( size_t level = 0; level < levelsListStr.size(); level++ ) {
       std::vector<std::string> namesListStr;
       std::stringstream ss1( levelsListStr[level] );
       while ( std::getline( ss1, substr, ',' ) ) {
@@ -270,7 +270,7 @@ namespace
           namesListStr.push_back( substr );
       }
       GEOMUtils::LevelInfo levelInfoData;
-      for( int node = 0; node < namesListStr.size(); node++ ) {
+      for( size_t node = 0; node < namesListStr.size(); node++ ) {
         std::vector<std::string> linksListStr;
         std::stringstream ss2( namesListStr[node] );
         while ( std::getline( ss2, substr, '_' ) ) {
@@ -280,7 +280,7 @@ namespace
         std::string nodeItem = linksListStr[0];
         if( !nodeItem.empty() ) {
           GEOMUtils::NodeLinks linksListData;
-          for( int link = 1; link < linksListStr.size(); link++ ) {
+          for( size_t link = 1; link < linksListStr.size(); link++ ) {
             std::string linkItem = linksListStr[link];
             linksListData.push_back( linkItem );
           }// Links
@@ -1083,7 +1083,7 @@ void GEOMUtils::ConvertStringToTree( const std::string& dependencyStr,
     cursor = objectIndex;
 
     std::size_t upwardIndexBegin = dependencyStr.find("{",cursor) + 1;
-    std::size_t upwardIndexFinish = dependencyStr.find("}",upwardIndexBegin);
+    //std::size_t upwardIndexFinish = dependencyStr.find("}",upwardIndexBegin);
     LevelsList upwardList = parseWard( dependencyStr, cursor );
 
     LevelsList downwardList = parseWard( dependencyStr, cursor );

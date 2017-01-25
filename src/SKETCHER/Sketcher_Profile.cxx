@@ -369,7 +369,7 @@ private:
   \brief Constructor
   \internal
 */
-Sketcher_Profile::Functor::Functor() : myError( 0 ), myNumberOfCommand( 0 ), myOk( true )
+Sketcher_Profile::Functor::Functor() : myNumberOfCommand( 0 ), myError( 0 ), myOk( true )
 {
 }
 

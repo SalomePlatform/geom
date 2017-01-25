@@ -279,47 +279,47 @@ Handle(Geom_Surface) ShHealOper_FillHoles::buildSurface(const TopoDS_Wire& theWi
 {
   Handle(Geom_BSplineSurface) aSurf;
   try {
-      GeomPlate_BuildPlateSurface aBuilder(myDegree, myNbPtsOnCur, myNbIter,
-                                                 myTol2d, myTol3d, myTolAng, myTolCrv);
-      TopoDS_Iterator aIter;
-      for(aIter.Initialize (theWire); aIter.More(); aIter.Next()) {
+    GeomPlate_BuildPlateSurface aBuilder(myDegree, myNbPtsOnCur, myNbIter,
+                                         myTol2d, myTol3d, myTolAng, myTolCrv);
+    TopoDS_Iterator aIter;
+    for(aIter.Initialize (theWire); aIter.More(); aIter.Next()) {
 
-        TopoDS_Edge ae = TopoDS::Edge(aIter.Value());
-        BRepAdaptor_Curve adC(ae);
-        Handle(BRepAdaptor_HCurve) aHAD= new BRepAdaptor_HCurve(adC);
-        Handle(BRepFill_CurveConstraint) aConst =
-            new BRepFill_CurveConstraint (Handle(Adaptor3d_HCurve)::DownCast(aHAD), (Standard_Integer) GeomAbs_C0, myNbPtsOnCur, myTol3d);
-        //Handle(GeomPlate_CurveConstraint) aConst =
-         // new GeomPlate_CurveConstraint(aHAD, (Standard_Integer) GeomAbs_C0, myNbPtsOnCur, myTol3d);
-        aBuilder.Add (Handle(GeomPlate_CurveConstraint)::DownCast(aConst));
-      }
-      aBuilder.Perform();
-      if(!aBuilder.IsDone())
-        return aSurf;
-      Handle(GeomPlate_Surface) aPlSurf = aBuilder.Surface();
-
-      //for filling holes without initial specified surface
-      //the initial surface should be build by GeomPlate itself
-      //following code was taken from BRepFill_Filling::Build
-
-      Standard_Real aDist = aBuilder.G0Error();
-      TColgp_SequenceOfXY S2d;
-      TColgp_SequenceOfXYZ S3d;
-      S2d.Clear();
-      S3d.Clear();
-      aBuilder.Disc2dContour(4,S2d);
-      aBuilder.Disc3dContour(4,0,S3d);
-      Standard_Real amaxTol = Max( myTol3d, 10* aDist);
-      GeomPlate_PlateG0Criterion Criterion( S2d, S3d, amaxTol );
-      GeomPlate_MakeApprox Approx( aPlSurf, Criterion, myTol3d, myMaxSeg, myMaxDeg );
-      aSurf = Approx.Surface();
-      if(aSurf.IsNull())
-        return aSurf;
-
-      theCurves2d = aBuilder.Curves2d();
-      theOrders    = aBuilder.Order();
-      theSenses    = aBuilder.Sense();
+      TopoDS_Edge ae = TopoDS::Edge(aIter.Value());
+      BRepAdaptor_Curve adC(ae);
+      Handle(BRepAdaptor_HCurve) aHAD= new BRepAdaptor_HCurve(adC);
+      // Handle(BRepFill_CurveConstraint) aConst =
+      //     new BRepFill_CurveConstraint (Handle(Adaptor3d_HCurve)::DownCast(aHAD), (Standard_Integer) GeomAbs_C0, myNbPtsOnCur, myTol3d);
+      Handle(GeomPlate_CurveConstraint) aConst =
+        new GeomPlate_CurveConstraint(aHAD, (Standard_Integer) GeomAbs_C0, myNbPtsOnCur, myTol3d);
+      aBuilder.Add (aConst);
     }
+    aBuilder.Perform();
+    if(!aBuilder.IsDone())
+      return aSurf;
+    Handle(GeomPlate_Surface) aPlSurf = aBuilder.Surface();
+
+    //for filling holes without initial specified surface
+    //the initial surface should be build by GeomPlate itself
+    //following code was taken from BRepFill_Filling::Build
+
+    Standard_Real aDist = aBuilder.G0Error();
+    TColgp_SequenceOfXY S2d;
+    TColgp_SequenceOfXYZ S3d;
+    S2d.Clear();
+    S3d.Clear();
+    aBuilder.Disc2dContour(4,S2d);
+    aBuilder.Disc3dContour(4,0,S3d);
+    Standard_Real amaxTol = Max( myTol3d, 10* aDist);
+    GeomPlate_PlateG0Criterion Criterion( S2d, S3d, amaxTol );
+    GeomPlate_MakeApprox Approx( aPlSurf, Criterion, myTol3d, myMaxSeg, myMaxDeg );
+    aSurf = Approx.Surface();
+    if(aSurf.IsNull())
+      return aSurf;
+
+    theCurves2d = aBuilder.Curves2d();
+    theOrders    = aBuilder.Order();
+    theSenses    = aBuilder.Sense();
+  }
 
   catch (Standard_Failure) {
     aSurf.Nullify();
