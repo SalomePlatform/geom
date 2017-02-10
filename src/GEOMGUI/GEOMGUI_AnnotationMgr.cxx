@@ -251,7 +251,7 @@ void GEOMGUI_AnnotationMgr::Redisplay( const QString& theEntry, const int theInd
       Handle(GEOM_Annotation) aPresentation = Handle(GEOM_Annotation)::DownCast( aPrs );
 
       GEOMGUI_AnnotationAttrs::SetupPresentation( aPresentation, theProperty, aShapeLCS );
-      aView->getAISContext()->Redisplay( aPresentation );
+      aView->getAISContext()->Redisplay( aPresentation, Standard_True );
     }
   }
 }
@@ -440,7 +440,7 @@ void GEOMGUI_AnnotationMgr::UpdateVisibleAnnotations( const QString& theEntry, S
 
       setDisplayProperties( aPresentation, aView, theEntry );
 
-      aView->getAISContext()->Redisplay( aPresentation );
+      aView->getAISContext()->Redisplay( aPresentation, Standard_True );
     }
   }
   getDisplayer()->UpdateViewer();

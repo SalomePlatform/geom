@@ -234,9 +234,9 @@ bool EntityGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWi
     
         ic->InitSelected();
         if ( pe->modifiers() == Qt::ShiftModifier )
-          ic->ShiftSelect();  // Append selection
+          ic->ShiftSelect( Standard_True );  // Append selection
         else
-          ic->Select();       // New selection
+          ic->Select( Standard_True );       // New selection
 
         ic->InitSelected();
         if ( ic->MoreSelected() ) {
@@ -263,7 +263,7 @@ bool EntityGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWi
         Handle(AIS_InteractiveContext) ic = anOCCViewer->getAISContext();   
 
         ic->InitSelected();
-        ic->Select();       // New selection
+        ic->Select( Standard_True );       // New selection
 
         ic->InitSelected();
         TopoDS_Shape aShape;
@@ -365,7 +365,7 @@ void EntityGUI::DisplaySimulationShape( const TopoDS_Shape& S1, const TopoDS_Sha
     if ( !S1.IsNull() ) {
       /* erase any previous */
       ic->Erase( mySimulationShape1, Standard_True );
-      ic->ClearPrs( mySimulationShape1 );
+      ic->ClearPrs( mySimulationShape1, 0, Standard_True );
 
       mySimulationShape1 = new AIS_Shape( TopoDS_Shape() );
       mySimulationShape1->Set( S1 );
@@ -377,7 +377,7 @@ void EntityGUI::DisplaySimulationShape( const TopoDS_Shape& S1, const TopoDS_Sha
     }
     if ( !S2.IsNull() ) {
       ic->Erase( mySimulationShape2, Standard_True );
-      ic->ClearPrs( mySimulationShape2 );
+      ic->ClearPrs( mySimulationShape2, 0, Standard_True );
 
       mySimulationShape2 = new AIS_Shape( TopoDS_Shape() );
       mySimulationShape2->Set( S2 );
@@ -422,8 +422,8 @@ void EntityGUI::EraseSimulationShape()
       Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
       ic->Erase( mySimulationShape1, Standard_True );
       ic->Erase( mySimulationShape2, Standard_True );
-      ic->ClearPrs( mySimulationShape1 );
-      ic->ClearPrs( mySimulationShape2 );
+      ic->ClearPrs( mySimulationShape1, 0, Standard_True );
+      ic->ClearPrs( mySimulationShape2, 0, Standard_True );
       ic->UpdateCurrentViewer();
     } 
   }

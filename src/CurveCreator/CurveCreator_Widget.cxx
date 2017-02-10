@@ -1090,7 +1090,7 @@ void CurveCreator_Widget::onMouseRelease( SUIT_ViewWindow* theWindow, QMouseEven
     {
       Handle(AIS_InteractiveContext) aCtx = getAISContext();
       if ( !aCtx.IsNull() )
-        aCtx->ClearSelected();
+        aCtx->ClearSelected( Standard_True );
     }
     return;
   } 
@@ -1121,11 +1121,11 @@ void CurveCreator_Widget::onMouseRelease( SUIT_ViewWindow* theWindow, QMouseEven
       // otherwise a rectangular selection.
       if ( myStartPoint == myEndPoint )
       {
-        aCtx->MoveTo( myEndPoint.x(), myEndPoint.y(), aView3d );
+        aCtx->MoveTo( myEndPoint.x(), myEndPoint.y(), aView3d, Standard_True );
         if ( aHasShift )
-          aCtx->ShiftSelect();
+          aCtx->ShiftSelect( Standard_True );
         else
-          aCtx->Select();
+          aCtx->Select( Standard_True );
       }
       else
       {

@@ -780,7 +780,7 @@ void EntityGUI_PolylineDlg::displayPreview()
 
         // Set color for temporary AIS_InteractiveObject
         anAISObj->Attributes()->WireAspect()->SetColor( Quantity_NOC_VIOLET );
-        aCtx->Redisplay( anAISObj );
+        aCtx->Redisplay( anAISObj, Standard_True );
       }
     }
   }

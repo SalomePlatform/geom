@@ -144,9 +144,9 @@ bool BasicGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWin
 
       ic->InitSelected();
       if ( pe->modifiers() == Qt::ShiftModifier )
-        ic->ShiftSelect();  // Append selection
+        ic->ShiftSelect( Standard_True );  // Append selection
       else
-        ic->Select();       // New selection
+        ic->Select( Standard_True );       // New selection
 
       ic->InitSelected();
       if ( ic->MoreSelected() ) {

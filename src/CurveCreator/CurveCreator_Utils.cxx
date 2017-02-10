@@ -687,7 +687,7 @@ void CurveCreator_Utils::setLocalPointContext( const CurveCreator_ICurve* theCur
   }
   else {
     if ( theContext->HasOpenedContext() )
-      theContext->CloseAllContexts();
+      theContext->CloseAllContexts( Standard_True );
   }
 }
 

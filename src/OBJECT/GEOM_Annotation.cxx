@@ -66,7 +66,9 @@ GEOM_Annotation::GEOM_Annotation() : AIS_InteractiveObject()
   SetDisplayMode( 0 );
   SetZLayer( Graphic3d_ZLayerId_Default );
   SetAutoHide( Standard_True );
+#if OCC_VERSION_LARGE <= 0x07010000
   SetHilightMode( HighlightAll );
+#endif
   SetMutable( Standard_True );
   SetDepthCulling( Standard_True );
 
@@ -616,9 +618,9 @@ GEOM_Annotation::OpenGl_Annotation::OpenGl_Annotation( GEOM_Annotation* theAnnot
                                                        const Standard_Integer theTextHeight,
                                                        const OpenGl_GraphicDriver* theDriver )
 : OpenGl_Element(),
-  myDepthMode( 0 ),
   myAISObject( theAnnotation ),
   myText( theAnnotation->myText.ToExtString() ),
+  myDepthMode( 0 ),
   myTextLineY( 0.f ),
   myTextDPI( 0 )
 {
@@ -747,7 +749,15 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
       return;
     }
   }
-
+#if OCC_VERSION_LARGE > 0x07010000
+  const Handle(Graphic3d_PresentationAttributes) aHighlightStyle = theWorkspace->HighlightStyle();
+  if (!aHighlightStyle.IsNull() && myAISObject->myHilightMode == HighlightLabel)
+  {
+    Handle(Graphic3d_PresentationAttributes) empty;
+    theWorkspace->SetHighlightStyle(empty);
+    theWorkspace->ApplyAspectLine();
+  }
+#else    
   const bool toHighlight = theWorkspace->ToHighlight();
 
   if (toHighlight && myAISObject->myHilightMode == HighlightLabel)
@@ -755,7 +765,8 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
     theWorkspace->SetHighlight( false );
     theWorkspace->ApplyAspectLine();
   }
-
+#endif
+  
   GLint myOldDepthMode = 0;
 
   if ( myDepthMode )
@@ -867,11 +878,15 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
   }
 
   aContext->ApplyModelViewMatrix();
-
+  
+#if OCC_VERSION_LARGE > 0x07010000
+  theWorkspace->SetHighlightStyle(aHighlightStyle);
+#else
   if ( toHighlight != theWorkspace->ToHighlight() )
   {
     theWorkspace->SetHighlight( toHighlight );
   }
+#endif
 }
 
 // =======================================================================
@@ -880,14 +895,21 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
 // purpose  : Perform highlighting of the presentation.
 // =======================================================================
 void GEOM_Annotation::GEOM_AnnotationOwner::HilightWithColor( const Handle(PrsMgr_PresentationManager3d)& thePM,
-                                                              const Handle(Graphic3d_HighlightStyle)& theStyle,
+#if OCC_VERSION_LARGE > 0x07010000			
+							      const Handle(Prs3d_Drawer)& theStyle,
+#else			
+							      const Handle(Graphic3d_HighlightStyle)& theStyle,
+#endif			
                                                               const Standard_Integer theMode )
 {
   if ( myPrsSh.IsNull() )
   {
     Handle(Prs3d_Drawer) aDrawer = new Prs3d_Drawer;
+#if OCC_VERSION_LARGE > 0x07010000
+    aDrawer->Link( theStyle );
+#else
     aDrawer->Link( Selectable()->HilightAttributes() );
-
+#endif
     Handle(Prs3d_IsoAspect) aUIsoAspect = new Prs3d_IsoAspect(
       aDrawer->UIsoAspect()->Aspect()->Color(),
       aDrawer->UIsoAspect()->Aspect()->Type(),
@@ -905,7 +927,7 @@ void GEOM_Annotation::GEOM_AnnotationOwner::HilightWithColor( const Handle(PrsMg
   }
 
   myPrsSh->SetZLayer ( Selectable()->ZLayer() );
-
+  
   thePM->Color( Selectable(), theStyle, theMode, NULL, Graphic3d_ZLayerId_Topmost );
 
   thePM->Color( myPrsSh, theStyle, theMode, Selectable(), Graphic3d_ZLayerId_Topmost );
@@ -920,8 +942,12 @@ void GEOM_Annotation::GEOM_AnnotationOwner::Unhilight ( const Handle(PrsMgr_Pres
                                                         const Standard_Integer theMode )
 {
   SelectMgr_EntityOwner::Unhilight( thePM, theMode );
-
+  
+#if OCC_VERSION_LARGE > 0x07010000
+  thePM->Unhighlight( myPrsSh );
+#else
   thePM->Unhighlight( myPrsSh, theMode );
+#endif
 }
 
 // =======================================================================

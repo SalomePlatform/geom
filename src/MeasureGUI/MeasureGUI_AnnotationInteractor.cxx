@@ -211,7 +211,7 @@ bool MeasureGUI_AnnotationInteractor::eventFilter( QObject* theObject, QEvent* t
 
       const Handle(AIS_InteractiveContext) anAISContext = myViewer->getAISContext();
 
-      anAISContext->MoveTo( aMouseEv->x(), aMouseEv->y(), aView3d );
+      anAISContext->MoveTo( aMouseEv->x(), aMouseEv->y(), aView3d, Standard_True );
 
       if ( !anAISContext->HasDetected() )
       {
@@ -316,7 +316,7 @@ bool MeasureGUI_AnnotationInteractor::eventFilter( QObject* theObject, QEvent* t
 
         anAISContext->Update( myActiveIO, Standard_False );
         anAISContext->UpdateCurrentViewer();
-        anAISContext->MoveTo( aMouseEv->pos().x(), aMouseEv->pos().y(), aView3d );
+        anAISContext->MoveTo( aMouseEv->pos().x(), aMouseEv->pos().y(), aView3d, Standard_True );
 
         emit SignalInteractionFinished( myActiveIO );
 

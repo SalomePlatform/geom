@@ -440,7 +440,7 @@ void MeasureGUI_CreateDimensionDlg::StartLocalEditing()
   anAISContext->SetZLayer( myDimension, myEditingLayer );
   anAISContext->Activate( myDimension, AIS_DSM_Line );
   anAISContext->Activate( myDimension, AIS_DSM_Text );
-  anAISContext->Redisplay( myDimension );
+  anAISContext->Redisplay( myDimension , Standard_True );
 }
 
 //=================================================================================
@@ -460,7 +460,7 @@ void MeasureGUI_CreateDimensionDlg::StopLocalEditing()
   Handle(V3d_Viewer)             aViewer3d    = myEditingViewer->getViewer3d();
 
   aViewer3d->RemoveZLayer( myEditingLayer );
-  anAISContext->CloseLocalContext();
+  anAISContext->CloseLocalContext( Standard_True );
 
   myEditingViewer = NULL;
 }

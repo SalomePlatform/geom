@@ -2068,7 +2068,7 @@ void GEOM_Displayer::BeforeDisplay( SALOME_View* v, const SALOME_OCCPrs* )
     if ( !ic.IsNull() )
     {
       if ( ic->HasOpenedContext() )
-      ic->CloseAllContexts();
+      ic->CloseAllContexts(Standard_True);
     }
   }
 }
@@ -3128,11 +3128,11 @@ void GEOM_Displayer::UpdateColorScale( const bool theIsRedisplayFieldSteps, cons
       aView->ColorScaleErase();
 #else
     if( !aViewModel->getAISContext()->IsDisplayed( myColorScale ) )
-      aViewModel->getAISContext()->Display( myColorScale );
+      aViewModel->getAISContext()->Display( myColorScale, Standard_True);
   }
   else
     if( aViewModel->getAISContext()->IsDisplayed( myColorScale ) )
-      aViewModel->getAISContext()->Erase( myColorScale );
+      aViewModel->getAISContext()->Erase( myColorScale, Standard_True );
 #endif
 
   if( theIsRedisplayFieldSteps )

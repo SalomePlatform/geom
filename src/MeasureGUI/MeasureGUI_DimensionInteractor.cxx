@@ -373,7 +373,7 @@ void MeasureGUI_DimensionInteractor::MoveFlyoutFree( const Handle(V3d_View)& the
   if ( aNewFlyout <= Precision::Confusion() )
   {
     myInteractedIO->SetFlyout( 0.0 );
-    myViewer->getAISContext()->Redisplay( myInteractedIO );
+    myViewer->getAISContext()->Redisplay( myInteractedIO, Standard_True );
     return;
   }
 
@@ -382,7 +382,7 @@ void MeasureGUI_DimensionInteractor::MoveFlyoutFree( const Handle(V3d_View)& the
   myInteractedIO->SetFlyout( aNewFlyout );
   myInteractedIO->SetCustomPlane( aNewPlane );
 
-  myViewer->getAISContext()->Redisplay( myInteractedIO );
+  myViewer->getAISContext()->Redisplay( myInteractedIO, Standard_True );
 }
 
 //=================================================================================
@@ -496,7 +496,7 @@ void MeasureGUI_DimensionInteractor::MoveFlyoutInPlane( const Handle(V3d_View)& 
 
   myInteractedIO->SetFlyout( aFlyout );
 
-  myViewer->getAISContext()->Redisplay( myInteractedIO );
+  myViewer->getAISContext()->Redisplay( myInteractedIO, Standard_True );
 }
 
 //=================================================================================
@@ -668,7 +668,7 @@ void MeasureGUI_DimensionInteractor::MoveText( const Handle(V3d_View)& theView,
   myInteractedIO->DimensionAspect()->SetArrowOrientation( aArrPos );
   myInteractedIO->SetToUpdate();
 
-  myViewer->getAISContext()->Redisplay( myInteractedIO );
+  myViewer->getAISContext()->Redisplay( myInteractedIO, Standard_True );
 }
 
 //=================================================================================
@@ -691,7 +691,7 @@ bool MeasureGUI_DimensionInteractor::eventFilter( QObject* theObject, QEvent* th
       QMouseEvent* aMouseEv = dynamic_cast<QMouseEvent*>( theEvent );
 
       // init detection
-      anAISContext->MoveTo( aMouseEv->x(), aMouseEv->y(), aView3d );
+      anAISContext->MoveTo( aMouseEv->x(), aMouseEv->y(), aView3d, Standard_True );
       if ( !anAISContext->HasDetected() )
       {
         return false;
@@ -738,7 +738,7 @@ bool MeasureGUI_DimensionInteractor::eventFilter( QObject* theObject, QEvent* th
       }
 
       anAISContext->ClearSelected( Standard_False );
-      anAISContext->AddOrRemoveSelected( aDetectedOwner );
+      anAISContext->AddOrRemoveSelected( aDetectedOwner, Standard_True );
 
       emit InteractionStarted( myInteractedIO );
 
