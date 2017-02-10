@@ -22,6 +22,8 @@
 
 #include "GEOMImpl_Fillet1d.hxx"
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_Curve.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
@@ -38,6 +40,8 @@
 #include <TColStd_ListIteratorOfListOfReal.hxx>
 #include <IntRes2d_IntersectionSegment.hxx>
 #include <TopExp.hxx>
+
+#include <Standard_NotImplemented.hxx>
 
 
 /**
@@ -156,8 +160,8 @@ static Standard_Boolean isRadiusIntersected(const Handle(Geom2d_Curve)& theCurve
 {
   const Standard_Real aTol = Precision::Confusion();
   const Standard_Real anAngTol = Precision::Angular();
-  Geom2dAPI_InterCurveCurve anInter(theCurve, new Geom2d_Line(theStart,
-    gp_Dir2d(gp_Vec2d(theStart, theEnd))), aTol);
+  Handle(Geom2d_Line) aRadiusLine = new Geom2d_Line (theStart, gp_Dir2d(gp_Vec2d(theStart, theEnd)));
+  Geom2dAPI_InterCurveCurve anInter (theCurve, aRadiusLine, aTol);
   Standard_Integer a;
   gp_Pnt2d aPoint;
   for(a = anInter.NbPoints(); a > 0; a--)
@@ -173,6 +177,16 @@ static Standard_Boolean isRadiusIntersected(const Handle(Geom2d_Curve)& theCurve
   Handle(Geom2d_Curve) aCurve;
   for(a = anInter.NbSegments(); a > 0; a--)
   {
+    // Porting to DEV version of OCCT 10.02.2017 BEGIN
+#if OCC_VERSION_LARGE > 0x07010000
+    Standard_NotImplemented::Raise("The treatment of tangential intersection is not implemented");
+#else
+    // This piece of code seems never worked, because:
+    // 1. In case of two curves intersection
+    //    method Segment with TWO output curves HAS TO be used.
+    // 2. Method Segment with ONE output curve (as below) just raises
+    //    Standard_NotImplemented exception since 05.03.2012 (at least)
+    //    and that is why has been eliminated 03.02.2017.
     anInter.Segment(a, aCurve);
     aPoint = aCurve->Value(aCurve->FirstParameter());
     if (aPoint.Distance(theStart) < aTol)
@@ -190,6 +204,8 @@ static Standard_Boolean isRadiusIntersected(const Handle(Geom2d_Curve)& theCurve
       return Standard_True;
     if (gp_Vec2d(aPoint, theStart).IsOpposite(gp_Vec2d(aPoint, theEnd), anAngTol))
       return Standard_True;
+#endif
+    // Porting to DEV version of OCCT 10.02.2017 END
   }
   return Standard_False;
 }
