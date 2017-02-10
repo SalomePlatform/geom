@@ -33,7 +33,7 @@ from salome.geom import geomBuilder
 geompy = geomBuilder.New(salome.myStudy)
 
 import math
-import GEOM_Spanner
+from . import GEOM_Spanner
 
 isBlocksTest = 0 # False
 isMeshTest   = 0 # False

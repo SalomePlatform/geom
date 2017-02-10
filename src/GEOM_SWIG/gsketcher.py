@@ -1207,7 +1207,7 @@ class Sketcher2D:
         if self.closed:
             self.myCommand = self.myCommand + ":WF"
         else:
-            raise RuntimeError, "Sketcher2D.close() : can't build face on unclosed wire"
+            raise RuntimeError("Sketcher2D.close() : can't build face on unclosed wire")
 
         from salome.geom.geomBuilder import ParseSketcherCommand, RaiseIfFailed
         Command,Parameters = ParseSketcherCommand(self.myCommand)

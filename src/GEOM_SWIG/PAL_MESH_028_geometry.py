@@ -82,7 +82,7 @@ if os.access(theFilenameToSave, os.F_OK):
         os.remove(theFilenameToSave)
         salome.myStudyManager.SaveAs(theFilenameToSave, salome.myStudy, 0)
     else:
-        print "You have no enough permissions to overwrite HDF file: ",theFilenameToSave
+        print("You have no enough permissions to overwrite HDF file: ",theFilenameToSave)
 else:
     salome.myStudyManager.SaveAs(theFilenameToSave, salome.myStudy, 0)
     

@@ -42,8 +42,8 @@ def demidisk(study, r1, a1, roty=0, solid_thickness=0):
   OY = geompy.MakeVectorDXDYDZ(0, 1, 0)
   OZ = geompy.MakeVectorDXDYDZ(0, 0, 1)
   
-  v=range(8)
-  l=range(8)
+  v=list(range(8))
+  l=list(range(8))
   v0 = geompy.MakeVertex(0, 0, 0)
   v[0] = geompy.MakeVertex(0, r1/2.0, 0)
   v[1] = geompy.MakeVertex(0, r1, 0)
@@ -104,7 +104,7 @@ def demidisk(study, r1, a1, roty=0, solid_thickness=0):
 def pointsProjetes(study, vref, face):
   #geompy = geomBuilder.New(study)
   vface = geompy.ExtractShapes(face, geompy.ShapeType["VERTEX"], True)
-  vord = range(len(vref))
+  vord = list(range(len(vref)))
   plan = geompy.MakePlaneThreePnt(vref[0], vref[1], vref[-1], 10000)
   vproj = [ geompy.MakeProjection(vert, plan) for vert in vface ]
   for i,v in enumerate(vproj):
@@ -117,7 +117,7 @@ def pointsProjetes(study, vref, face):
 def arcsProjetes(study, vf, face):
   #geompy = geomBuilder.New(study)
   lface = geompy.ExtractShapes(face, geompy.ShapeType["EDGE"], True)
-  lord = range(3)
+  lord = list(range(3))
   ends = [vf[1], vf[6], vf[7], vf[3]]
   for i in range(3):
     for lf in lface:
@@ -135,7 +135,7 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
 
   if progressBar is not None:
     time0 = time.time()
-    print time.time() -time0
+    print(time.time() -time0)
     
   if solid_thickness < 1e-7:
     with_solid = False
@@ -161,7 +161,7 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
                                                                        h1, h2, a1)
   if progressBar is not None:
     progressBar.addSteps(2)
-    print time.time() -time0
+    print(time.time() -time0)
     
   if with_solid:
     # The same code is executed again with different external radiuses in order
@@ -179,7 +179,7 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
    
   if progressBar is not None:
     progressBar.addSteps(4)
-    print time.time() -time0
+    print(time.time() -time0)
     
   # --- extrusion droite des faces de jonction, pour reconstituer les demi cylindres
   if with_solid:    
@@ -188,7 +188,7 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
     
   if progressBar is not None:
     progressBar.addSteps(1)
-    print time.time() -time0
+    print(time.time() -time0)
     
   extru1 = geompy.MakePrismVecH(sect45, OX, h1+10)
 
@@ -200,7 +200,7 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
 
   if progressBar is not None:
     progressBar.addSteps(1)
-    print time.time() -time0
+    print(time.time() -time0)
     
   # --- partition et coupe
 
@@ -212,7 +212,7 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
 
   if progressBar is not None:
     progressBar.addSteps(1)
-    print time.time() -time0
+    print(time.time() -time0)
     
   box = geompy.MakeBox(0, -2*(r1+h1), -2*(r1+h1), 2*(r1+h1), 2*(r1+h1), 2*(r1+h1))
   rot = geompy.MakeRotation(box, OY, 45*math.pi/180.0)
@@ -222,7 +222,7 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
   
   if progressBar is not None:
     progressBar.addSteps(9)
-    print time.time() -time0
+    print(time.time() -time0)
 
   faces_coupe = faci[:5]
   if with_solid:
@@ -233,7 +233,7 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
 
   if progressBar is not None:
     progressBar.addSteps(3)
-    print time.time() -time0
+    print(time.time() -time0)
 
   box = geompy.MakeBox(-1, -(r1+r2+2*solid_thickness), -1, h1, r1+r2+2*solid_thickness, h2)
   
@@ -242,7 +242,7 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
   
   if progressBar is not None:
     progressBar.addSteps(5)
-    print time.time() -time0
+    print(time.time() -time0)
     
   # --- Partie inférieure
   
@@ -259,7 +259,7 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
 
   if progressBar is not None:
     progressBar.addSteps(1)
-    print time.time() -time0
+    print(time.time() -time0)
       
   return final
 
@@ -395,14 +395,14 @@ def test_t_shape_builder():
   for r1 in [1., 100.]:
     for r2 in [0.9*r1, 0.5*r1, 0.1*r1, 0.05*r1]:
       for thickness in [r1/100., r1/10., r1/2.]:
-        print r1, r2, thickness
+        print(r1, r2, thickness)
         h1 = r1 * 2.0
         h2 = h1
         try:
           res = build_shape(theStudy, r1, r2, h1, h2, thickness)
           geompy.addToStudy(res, "res_%f_%f_%f"%(r1,r2, thickness))
         except:
-          print "problem with res_%f_%f_%f"%(r1,r2, thickness)
+          print("problem with res_%f_%f_%f"%(r1,r2, thickness))
   
 if __name__=="__main__":
   """For testing purpose"""

@@ -51,12 +51,12 @@ def TestProcessShape (geompy):
   theShape = geompy.MakePrismVecH(face, edge, 130)
 
   #Check shape
-  print "Before ProcessShape:"
+  print("Before ProcessShape:")
   isValid = geompy.CheckShape(theShape)
   if isValid == 0:
-    print "The shape is not valid"
+    print("The shape is not valid")
   else:
-    print "The shape seems to be valid"
+    print("The shape seems to be valid")
 
   #Process Shape
   Operators = ["FixShape"]
@@ -66,13 +66,13 @@ def TestProcessShape (geompy):
   PS = geompy.ProcessShape(theShape, Operators, Parameters, Values)
 
   #Check shape
-  print "After ProcessShape:"
+  print("After ProcessShape:")
   isValid = geompy.CheckShape(PS)
   if isValid == 0:
-    print "The shape is not valid"
-    raise RuntimeError, "It seems, that the ProcessShape() has failed"
+    print("The shape is not valid")
+    raise RuntimeError("It seems, that the ProcessShape() has failed")
   else:
-    print "The shape seems to be valid"
+    print("The shape seems to be valid")
 
   #Add In Study
   Id_Shape = geompy.addToStudy(theShape, "Invalid Shape")
@@ -138,7 +138,7 @@ def TestSuppressInternalWires (geompy):
     nbw1 = nbw1 + 1
 
   if nbw1 != 2:
-    raise RuntimeError, "GetFreeBoundary(f12) must return 2 closed wires, but returned ", nbw1
+    raise RuntimeError("GetFreeBoundary(f12) must return 2 closed wires, but returned ").with_traceback(nbw1)
 
   #SuppressInternalWires
   face = geompy.SuppressInternalWires(f12, [])
@@ -154,8 +154,8 @@ def TestSuppressInternalWires (geompy):
     nbw2 = nbw2 + 1
 
   if nbw2 != 1:
-    print "GetFreeBoundary(face) must return 1 closed wires, but returned ", nbw2
-    raise RuntimeError, "SuppressInternalWires() works not correctly"
+    print("GetFreeBoundary(face) must return 1 closed wires, but returned ", nbw2)
+    raise RuntimeError("SuppressInternalWires() works not correctly")
 
   #Add In Study
   Id_face = geompy.addToStudy(face, "Face without internal wires")
@@ -181,12 +181,12 @@ def TestCloseContour (geompy):
   Shape = geompy.MakePolyline([p0, pz, py, p200])
 
   #Check shape
-  print "Before closing contour:"
+  print("Before closing contour:")
   isValid = geompy.CheckShape(Shape)
   if isValid == 0:
-    print "The shape is not valid"
+    print("The shape is not valid")
   else:
-    print "The shape seems to be valid"
+    print("The shape seems to be valid")
 
   #Close Contour
   IsCommonVertex = 0 # false
@@ -202,13 +202,13 @@ def TestCloseContour (geompy):
   CC = geompy.CloseContour(Shape, Wires, IsCommonVertex)
 
   #Check shape
-  print "After closing contour:"
+  print("After closing contour:")
   isValid = geompy.CheckShape(CC)
   if isValid == 0:
-    print "The shape is not valid"
-    raise RuntimeError, "It seems, that the contour was not closed"
+    print("The shape is not valid")
+    raise RuntimeError("It seems, that the contour was not closed")
   else:
-    print "The shape seems to be valid"
+    print("The shape seems to be valid")
 
   #Add In Study
   Id_Shape = geompy.addToStudy(Shape, "Shape with open wire")
@@ -243,7 +243,7 @@ def TestSuppressHoles (geompy):
       f_id = geompy.addToStudyInFather(Cut, face, f_name)
 
       f_glob_id = geompy.GetSubShapeID(Cut, face)
-      print "face ", ind, " global index = ", f_glob_id
+      print("face ", ind, " global index = ", f_glob_id)
       ind = ind + 1
 
   f_glob_id_0 = geompy.GetSubShapeID(Cut, faces[0])
@@ -258,7 +258,7 @@ def TestSuppressHoles (geompy):
       f_id = geompy.addToStudyInFather(cut_without_f_0, face, f_name)
 
       f_glob_id = geompy.GetSubShapeID(cut_without_f_0, face)
-      print "face ", ind, " global index = ", f_glob_id
+      print("face ", ind, " global index = ", f_glob_id)
       ind = ind + 1
 
   f_glob_id_3 = geompy.GetSubShapeID(cut_without_f_0, faces1[3])
@@ -274,7 +274,7 @@ def TestSuppressHoles (geompy):
       w_id = geompy.addToStudyInFather(cut_without_f_0_3, wire, w_name)
 
       w_glob_id = geompy.GetSubShapeID(cut_without_f_0_3, wire)
-      print "wire ", ind, " global index = ", w_glob_id
+      print("wire ", ind, " global index = ", w_glob_id)
       ind = ind + 1
 
   w_3 = geompy.GetSubShapeID(cut_without_f_0_3, wires[3])

@@ -137,11 +137,11 @@ def TEST_toString():
 
     expectedResult = "Sketcher:F 1.234 4.321:TT 2.234 5.321"
     result = mysketcher.toString()
-    print "sketcher=",mysketcher.toString()
+    print("sketcher=",mysketcher.toString())
     if result == expectedResult:
-        print "OK"
+        print("OK")
     else:
-        print "Not OK"
+        print("Not OK")
 
 def TEST_usingGeom():
     mysketcher = Sketcher()

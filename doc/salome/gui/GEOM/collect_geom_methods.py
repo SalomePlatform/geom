@@ -52,13 +52,14 @@ def generate(plugin_name, output):
     plugin_module_name  = plugin_name + "Builder"
     plugin_module       = "salome.%s.%s" % (plugin_name, plugin_module_name)
     import_str          = "from salome.%s import %s" % (plugin_name, plugin_module_name)
-    exec( import_str )
-    exec( "import %s" % plugin_module )
-    exec( "mod = %s" % plugin_module )
+    execLine          = "from salome.%s import %s\nimport %s\nmod = %s" % (plugin_name, plugin_module_name,plugin_module,plugin_module)
+    print(execLine)
+    namespace = {}
+    exec( execLine , namespace)
     functions = []
-    for attr in dir( mod ):
+    for attr in dir( namespace["mod"] ):
         if attr.startswith( '_' ): continue # skip an internal methods 
-        item = getattr( mod, attr )
+        item = getattr( namespace["mod"], attr )
         if type( item ).__name__ == 'function':
             if item not in functions: 
                 functions.append( item )

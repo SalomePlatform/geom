@@ -52,7 +52,7 @@ def ExportSTL(self, theObject, theFileName, theIsASCII = True, theDeflection = 0
     anOp = GetSTLPluginOperations(self)
     anOp.ExportSTL(theObject, theFileName, theIsASCII, theDeflection, theIsRelative )
     if anOp.IsDone() == 0:
-        raise RuntimeError,  "Export : " + anOp.GetErrorCode()
+        raise RuntimeError("Export : " + anOp.GetErrorCode())
         pass
     pass
 

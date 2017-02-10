@@ -68,7 +68,7 @@ def getGeompy(studyId = None):
     salome.salome_init()
     if studyId is None:
         studyId = getActiveStudyId()
-    if not _geompys.has_key(studyId):
+    if studyId not in _geompys:
         from salome.geom import geomBuilder
         study = salome.myStudyManager.GetStudyByID(studyId)
         _geompys[studyId] = geomBuilder.New(study)
@@ -343,7 +343,7 @@ def TEST_createBox():
 def TEST_getGeomObjectSelected():
     tool = GeomStudyTools()
     myGeomObject = tool.getGeomObjectSelected()
-    print myGeomObject
+    print(myGeomObject)
 
 ## This test is a simple use case that illustrates how to create a
 #  GEOM shape in a SALOME session (create the GEOM object, put in in

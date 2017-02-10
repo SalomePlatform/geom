@@ -16,7 +16,7 @@ listChains = geompy.Propagate(check_box)
 geompy.addToStudy(check_box, "Box")
 ii = 1
 for chain in listChains:
-    geompy.addToStudyInFather(check_box, chain, "propagation chain " + `ii`)
+    geompy.addToStudyInFather(check_box, chain, "propagation chain " + repr(ii))
     ii = ii + 1
     pass
 

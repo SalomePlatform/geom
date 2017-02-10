@@ -31,7 +31,7 @@
 
 from launchConfigureParser import verbose
 
-if verbose(): print "============== import GEOM ======================="
+if verbose(): print("============== import GEOM =======================")
 
 import GEOM
 

@@ -18,12 +18,12 @@ face = geompy.MakeFace(wire, 1)
 theShape = geompy.MakePrismVecH(face, edge, 130)
 
 # check the shape at the beginning
-print "Before ProcessShape:"
+print("Before ProcessShape:")
 isValid = geompy.CheckShape(theShape)
 if isValid == 0:
-    print "The shape is not valid"
+    print("The shape is not valid")
 else:
-    print "The shape seems to be valid"
+    print("The shape seems to be valid")
 
 # process the Shape
 Operators = ["FixShape"]
@@ -32,13 +32,13 @@ Values = ["1e-7"]
 PS = geompy.ProcessShape(theShape, Operators, Parameters, Values)
 
 # check the shape at the end
-print "After ProcessShape:"
+print("After ProcessShape:")
 isValid = geompy.CheckShape(PS)
 if isValid == 0:
-    print "The shape is not valid"
-    raise RuntimeError, "It seems, that the ProcessShape() has failed"
+    print("The shape is not valid")
+    raise RuntimeError("It seems, that the ProcessShape() has failed")
 else:
-    print "The shape seems to be valid"
+    print("The shape seems to be valid")
 
 # add in the study and display
 Id_Shape = geompy.addToStudy(theShape, "Invalid Shape")

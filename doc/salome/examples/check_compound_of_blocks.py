@@ -19,6 +19,6 @@ tolerance = 1e-5
 glue = geompy.MakeGlueFaces(compound, tolerance)
 IsValid = geompy.CheckCompoundOfBlocks(glue)
 if IsValid == 0:
-    raise RuntimeError, "Invalid compound created"
+    raise RuntimeError("Invalid compound created")
 else:
-    print "\nCompound is valid"
+    print("\nCompound is valid")

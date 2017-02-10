@@ -32,11 +32,11 @@ geompy = geomBuilder.New(salome.myStudy)
 
 import math
 
-import GEOM_TestAll
-import GEOM_TestOthers
-import GEOM_TestHealing
-import GEOM_TestMeasures
-import GEOM_TestField
+from . import GEOM_TestAll
+from . import GEOM_TestOthers
+from . import GEOM_TestHealing
+from . import GEOM_TestMeasures
+from . import GEOM_TestField
 
 GEOM_TestField.TestField(geompy, math) # it goes 1st as it checks Python Dump
 GEOM_TestMeasures.TestMeasureOperations(geompy, math)

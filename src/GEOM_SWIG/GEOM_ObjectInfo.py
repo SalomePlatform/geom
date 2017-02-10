@@ -47,12 +47,12 @@ obj5_entry = geompy.addToStudy(obj5, "Object5")
 
 # Get information about objects
 hasInfo = geompy.hasObjectInfo()
-print "Check if GEOM module provides information about its objects: ", hasInfo
+print("Check if GEOM module provides information about its objects: ", hasInfo)
 if hasInfo == True:
-    print "Information about first  object: ", geompy.getObjectInfo(salome.myStudyId, obj1_entry)
-    print "Information about second object: ", geompy.getObjectInfo(salome.myStudyId, obj2_entry)
-    print "Information about third  object: ", geompy.getObjectInfo(salome.myStudyId, obj3_entry)
-    print "Information about fourth object: ", geompy.getObjectInfo(salome.myStudyId, obj4_entry)
-    print "Information about fifth  object: ", geompy.getObjectInfo(salome.myStudyId, obj5_entry)
+    print("Information about first  object: ", geompy.getObjectInfo(salome.myStudyId, obj1_entry))
+    print("Information about second object: ", geompy.getObjectInfo(salome.myStudyId, obj2_entry))
+    print("Information about third  object: ", geompy.getObjectInfo(salome.myStudyId, obj3_entry))
+    print("Information about fourth object: ", geompy.getObjectInfo(salome.myStudyId, obj4_entry))
+    print("Information about fifth  object: ", geompy.getObjectInfo(salome.myStudyId, obj5_entry))
 
 salome.sg.updateObjBrowser(True)
