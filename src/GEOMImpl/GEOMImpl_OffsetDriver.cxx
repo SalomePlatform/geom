@@ -105,7 +105,7 @@ Standard_Integer GEOMImpl_OffsetDriver::Execute(LOGBOOK& log) const
 
     if (aType == TopAbs_FACE || aType == TopAbs_SHELL) {
       // Create a thick solid.
-      BRepClass3d_SolidClassifier aClassifier = BRepClass3d_SolidClassifier(aShapeBase);
+      BRepClass3d_SolidClassifier aClassifier(aShapeBase);
       aClassifier.PerformInfinitePoint(Precision::Confusion());
       if (aClassifier.State()==TopAbs_IN)
       {
@@ -125,7 +125,7 @@ Standard_Integer GEOMImpl_OffsetDriver::Execute(LOGBOOK& log) const
 
       // Control the solid orientation. This is mostly done to fix a bug in case of extrusion
       // of a circle. The built solid is then badly oriented
-      BRepClass3d_SolidClassifier anotherClassifier = BRepClass3d_SolidClassifier(aShape);
+      BRepClass3d_SolidClassifier anotherClassifier(aShape);
       anotherClassifier.PerformInfinitePoint(Precision::Confusion());
       if (anotherClassifier.State()==TopAbs_IN)
       {

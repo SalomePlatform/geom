@@ -43,6 +43,10 @@
 #include <BOPCol_ListOfShape.hxx>
 #include <BOPDS_DS.hxx>
 #include <BOPDS_MapOfPassKey.hxx>
+#if OCC_VERSION_LARGE > 0x07010000
+#include <BOPDS_MapOfPair.hxx>
+#include <BOPDS_Pair.hxx>
+#endif
 #include <BRepBndLib.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
 #include <BRepCheck_ListIteratorOfListOfStatus.hxx>
@@ -1574,18 +1578,31 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
 
   //
   Standard_Integer aNbS, n1, n2;
+#if OCC_VERSION_LARGE > 0x07010000
+  BOPDS_MapIteratorOfMapOfPair aItMPK;
+#else  
   BOPDS_MapIteratorMapOfPassKey aItMPK;
+#endif
   //
   // 2. Take the shapes from DS
   const BOPDS_DS& aDS = aCSI.DS();
   aNbS=aDS.NbShapes();
   //
   // 3. Get the pairs of interfered shapes
+#if OCC_VERSION_LARGE > 0x07010000
+  const BOPDS_MapOfPair& aMPK=aDS.Interferences();
+#else
   const BOPDS_MapOfPassKey& aMPK=aDS.Interferences();
+#endif  
   aItMPK.Initialize(aMPK);
   for (; aItMPK.More(); aItMPK.Next()) {
+#if OCC_VERSION_LARGE > 0x07010000
+    const BOPDS_Pair& aPK=aItMPK.Value();
+    aPK.Indices(n1, n2);
+#else      
     const BOPDS_PassKey& aPK=aItMPK.Value();
     aPK.Ids(n1, n2);
+#endif    
     //
     if (n1 > aNbS || n2 > aNbS){
       return false; // Error
