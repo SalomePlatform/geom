@@ -27,20 +27,21 @@ ENDIF(SALOME_BUILD_TESTS)
 INCLUDE_DIRECTORIES(
   ${PTHREAD_INCLUDE_DIR}
   ${LIBXML2_INCLUDE_DIR}
-  ${CAS_INCLUDE_DIRS}
+  ${OpenCASCADE_INCLUDE_DIR}
   )
 
 # additional preprocessor / compiler flags
 ADD_DEFINITIONS(
   ${LIBXML2_DEFINITIONS} 
-  ${CAS_DEFINITIONS}
+  ${OpenCASCADE_DEFINITIONS}
   )
 
 # libraries to link to
 SET(_link_LIBRARIES
   ${PTHREAD_LIBRARIES}
   ${LIBXML2_LIBRARIES}
-  ${CAS_TKBRep} ${CAS_TKTopAlgo} ${CAS_TKG2d}
+  ${OpenCASCADE_ModelingData_LIBRARIES}
+  ${OpenCASCADE_ModelingAlgorithms_LIBRARIES}
   )
 
 # --- headers ---

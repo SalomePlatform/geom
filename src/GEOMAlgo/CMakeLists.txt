@@ -21,7 +21,7 @@
 
 # additional include directories
 INCLUDE_DIRECTORIES(
-  ${CAS_INCLUDE_DIRS}
+  ${OpenCASCADE_INCLUDE_DIR}
   ${KERNEL_INCLUDE_DIRS}
   ${PROJECT_SOURCE_DIR}/src/GEOMUtils
   ${PROJECT_SOURCE_DIR}/src/GEOM
@@ -30,12 +30,13 @@ INCLUDE_DIRECTORIES(
 
 # additional preprocessor / compiler flags
 ADD_DEFINITIONS(
-  ${CAS_DEFINITIONS}
+  ${OpenCASCADE_DEFINITIONS}
   )
 
 # libraries to link to
 SET(_link_LIBRARIES
-  ${CAS_KERNEL} ${CAS_TKBool} ${CAS_TKBO} ${CAS_TKMesh}
+  ${OpenCASCADE_FoundationClasses_LIBRARIES}
+  ${OpenCASCADE_ModelingAlgorithms_LIBRARIES}
   GEOMbasic GEOMUtils
   ${KERNEL_SALOMELocalTrace}
   )
@@ -48,7 +49,6 @@ SET(GEOMAlgo_HEADERS
   GEOMAlgo_BndSphere.hxx
   GEOMAlgo_BndSphereTree.hxx
   GEOMAlgo_BoxBndTree.hxx
-  GEOMAlgo_BuilderShape.hxx
   GEOMAlgo_Clsf.hxx
   GEOMAlgo_ClsfBox.hxx
   GEOMAlgo_ClsfQuad.hxx

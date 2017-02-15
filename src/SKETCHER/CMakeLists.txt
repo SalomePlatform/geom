@@ -21,22 +21,21 @@
 
 # additional include directories
 INCLUDE_DIRECTORIES(
-  ${CAS_INCLUDE_DIRS}
+  ${OpenCASCADE_INCLUDE_DIR}
   ${KERNEL_INCLUDE_DIRS}
   ${PTHREAD_INCLUDE_DIR}
   )
 
 # additional preprocessor / compiler flags
 ADD_DEFINITIONS(
-  ${CAS_DEFINITIONS}
+  ${OpenCASCADE_DEFINITIONS}
   )
 
 # libraries to link to
 SET(_link_LIBRARIES
-  ${CAS_KERNEL} 
-  ${CAS_TKGeomAlgo} ${CAS_TKTopAlgo}
-  ${CAS_TKBRep}
-  ${CAS_TKG2d}
+  ${OpenCASCADE_FoundationClasses_LIBRARIES}
+  ${OpenCASCADE_ModelingAlgorithms_LIBRARIES}
+  ${OpenCASCADE_ModelingData_LIBRARIES}
   ${KERNEL_SALOMELocalTrace}
   )
 

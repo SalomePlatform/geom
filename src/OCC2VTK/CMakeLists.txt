@@ -21,7 +21,7 @@
 
 # additional include directories
 INCLUDE_DIRECTORIES(
-  ${CAS_INCLUDE_DIRS}
+  ${OpenCASCADE_INCLUDE_DIR}
   ${KERNEL_INCLUDE_DIRS}
   ${VTK_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}
@@ -30,15 +30,14 @@ INCLUDE_DIRECTORIES(
 
 # additional preprocessor / compiler flags
 ADD_DEFINITIONS(
-  ${CAS_DEFINITIONS}
+  ${OpenCASCADE_DEFINITIONS}
   )
 
 # libraries to link to
 SET(_link_LIBRARIES
   vtkFiltersCore
-  ${CAS_KERNEL} 
-  ${CAS_TKMesh} ${CAS_TKTopAlgo}
-  ${CAS_MODELER}
+  ${OpenCASCADE_FoundationClasses_LIBRARIES}
+  ${OpenCASCADE_ModelingAlgorithms_LIBRARIES}
   ${KERNEL_SALOMELocalTrace}
   GEOMUtils
   )

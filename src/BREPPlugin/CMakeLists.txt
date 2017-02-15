@@ -25,7 +25,7 @@ ENDIF()
 
 # additional include directories
 INCLUDE_DIRECTORIES(
-  ${CAS_INCLUDE_DIRS}
+  ${OpenCASCADE_INCLUDE_DIR}
   ${KERNEL_INCLUDE_DIRS}
   ${PROJECT_BINARY_DIR}/idl
   ${PROJECT_SOURCE_DIR}/src/GEOMAlgo
@@ -47,7 +47,7 @@ ENDIF()
 
 # additional preprocessor / compiler flags
 ADD_DEFINITIONS(
-  ${CAS_DEFINITIONS}
+  ${OpenCASCADE_DEFINITIONS}
   ${OMNIORB_DEFINITIONS}
   )
   
@@ -63,7 +63,7 @@ ENDIF()
 
 # libraries to link to
 SET(_link_engine_LIBRARIES
-  ${CAS_TKBREP}
+  ${OpenCASCADE_ModelingData_LIBRARIES}
   ${KERNEL_SALOMELocalTrace}
   ${KERNEL_OpUtil}
   SalomeIDLGEOM

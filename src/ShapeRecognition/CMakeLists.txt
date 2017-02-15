@@ -22,7 +22,6 @@
 
 # additional include directories
 INCLUDE_DIRECTORIES(
-  #${CAS_INCLUDE_DIRS}
   ${KERNEL_INCLUDE_DIRS}
   ${OPENCV_INCLUDE_DIR}
   ${QT_INCLUDES}
@@ -31,7 +30,6 @@ INCLUDE_DIRECTORIES(
 
 # additional preprocessor / compiler flags
 ADD_DEFINITIONS(
-  #${CAS_DEFINITIONS}
   ${QT_DEFINITIONS}
   )
 IF(NOT SALOME_GUI_BUILD_WITH_QT5)

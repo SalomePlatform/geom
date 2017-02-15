@@ -22,7 +22,7 @@
 # additional include directories
 INCLUDE_DIRECTORIES(
   ${OMNIORB_INCLUDE_DIR}
-  ${CAS_INCLUDE_DIRS}
+  ${OpenCASCADE_INCLUDE_DIR}
   ${PTHREAD_INCLUDE_DIR}
   ${KERNEL_INCLUDE_DIRS}
   ${PROJECT_BINARY_DIR}/idl
@@ -31,14 +31,14 @@ INCLUDE_DIRECTORIES(
 
 # additional preprocessor / compiler flags
 ADD_DEFINITIONS(
-  ${CAS_DEFINITIONS}
+  ${OpenCASCADE_DEFINITIONS}
   ${OMNIORB_DEFINITIONS}
   )
 
 # libraries to link to
 SET(_link_LIBRARIES
   SalomeIDLGEOM
-  ${CAS_TKBRep}
+  ${OpenCASCADE_ModelingData_LIBRARIES}
   ${KERNEL_SALOMELocalTrace}
   )
 

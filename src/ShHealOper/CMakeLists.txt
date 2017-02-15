@@ -21,19 +21,19 @@
 
 # additional include directories
 INCLUDE_DIRECTORIES(
-  ${CAS_INCLUDE_DIRS}
+  ${OpenCASCADE_INCLUDE_DIR}
   ${KERNEL_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
 # additional preprocessor / compiler flags
 ADD_DEFINITIONS(
-  ${CAS_DEFINITIONS}
+  ${OpenCASCADE_DEFINITIONS}
   )
 
 # libraries to link to
 SET(_link_LIBRARIES
-  ${CAS_TKCAF} ${CAS_TKShHealing} ${CAS_TKBool}
+  ${OpenCASCADE_ApplicationFramework_LIBRARIES} ${OpenCASCADE_ModelingAlgorithms_LIBRARIES}
   ${KERNEL_SALOMELocalTrace}
   )
 

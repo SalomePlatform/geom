@@ -21,7 +21,7 @@
 
 # additional include directories
 INCLUDE_DIRECTORIES(
-  ${CAS_INCLUDE_DIRS}
+  ${OpenCASCADE_INCLUDE_DIR}
   ${PTHREAD_INCLUDE_DIR}
   ${LIBXML2_INCLUDE_DIR}
   ${KERNEL_INCLUDE_DIRS}
@@ -30,19 +30,15 @@ INCLUDE_DIRECTORIES(
 
 # additional preprocessor / compiler flags
 ADD_DEFINITIONS(
-  ${CAS_DEFINITIONS}
+  ${OpenCASCADE_DEFINITIONS}
   ${LIBXML2_DEFINITIONS}
   )
 
 # libraries to link to
 SET(_link_LIBRARIES
-  ${CAS_TKBRep} ${CAS_TKShHealing} ${CAS_TKMesh} ${CAS_TKGeomAlgo}
-  ${CAS_TKTopAlgo}
-  ${CAS_TKG2d}
-  ${CAS_TKG3d}
-  ${CAS_TKV3d}
-  ${CAS_TKGeomBase}
-  ${CAS_TKBO}
+  ${OpenCASCADE_ModelingData_LIBRARIES} 
+  ${OpenCASCADE_ModelingAlgorithms_LIBRARIES} 
+  ${OpenCASCADE_Visualization_LIBRARIES}
   ${LIBXML2_LIBRARIES}
   ${KERNEL_SALOMELocalTrace}
   )

@@ -21,7 +21,7 @@
 
 # additional include directories
 INCLUDE_DIRECTORIES(
-  ${CAS_INCLUDE_DIRS}
+  ${OpenCASCADE_INCLUDE_DIR}
   ${PTHREAD_INCLUDE_DIR}
   ${KERNEL_INCLUDE_DIRS}
   ${PYTHON_INCLUDE_DIRS}
@@ -39,14 +39,13 @@ INCLUDE_DIRECTORIES(
 
 # additional preprocessor / compiler flags
 ADD_DEFINITIONS(
-  ${CAS_DEFINITIONS}
+  ${OpenCASCADE_DEFINITIONS}
   ${PYTHON_DEFINITIONS}
   )
 
 # libraries to link to
 SET(_link_LIBRARIES
-  ${CAS_TKFeat}
-  ${CAS_TKFillet}
+  ${OpenCASCADE_ModelingAlgorithms_LIBRARIES}
   ${PYTHON_LIBRARIES}
   ShHealOper GEOMbasic BlockFix GEOMAlgo GEOMUtils GEOMSketcher GEOMArchimede XAO
   ${KERNEL_SALOMELocalTrace}
