@@ -48,6 +48,7 @@
 #include <TopTools_IndexedMapOfShape.hxx>
 
 #include <BRep_Tool.hxx>
+#include <BRep_Builder.hxx>
 #include <BRepTools.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepCheck_Analyzer.hxx>
@@ -270,11 +271,11 @@ Standard_Integer GEOMImpl_Fillet1dDriver::Execute(LOGBOOK& log) const
 //function : MakeFillet
 //purpose  :
 //=======================================================================
-bool GEOMImpl_Fillet1dDriver::MakeFillet(const TopoDS_Wire& aWire,
-                                         const TopTools_ListOfShape& aVertexList,
-                                         const Standard_Real rad,
+bool GEOMImpl_Fillet1dDriver::MakeFillet(const TopoDS_Wire& theWire,
+                                         const TopTools_ListOfShape& theVertexList,
+                                         const Standard_Real theRadius,
                                          bool isFinalPass,
-                                         TopoDS_Wire& aResult) const
+                                         TopoDS_Wire& theResult) const
 {
   // this variable is needed to break execution
   // in case of fillet failure and try to fuse edges
@@ -290,8 +291,8 @@ bool GEOMImpl_Fillet1dDriver::MakeFillet(const TopoDS_Wire& aWire,
   TopTools_ListOfShape aListOfNewEdge;
   // remember relation between initial and modified map
   TopTools_IndexedDataMapOfShapeListOfShape aMapVToEdges;
-  TopExp::MapShapesAndAncestors( aWire, TopAbs_VERTEX, TopAbs_EDGE, aMapVToEdges );
-  TopTools_ListIteratorOfListOfShape anIt( aVertexList );
+  TopExp::MapShapesAndAncestors( theWire, TopAbs_VERTEX, TopAbs_EDGE, aMapVToEdges );
+  TopTools_ListIteratorOfListOfShape anIt( theVertexList );
   for ( ; anIt.More(); anIt.Next() ) {
     TopoDS_Vertex aV = TopoDS::Vertex( anIt.Value() );
     if ( aV.IsNull() || !aMapVToEdges.Contains( aV ) )
@@ -313,7 +314,7 @@ bool GEOMImpl_Fillet1dDriver::MakeFillet(const TopoDS_Wire& aWire,
       continue; // seems edges does not belong to same plane or parallel (fillet can not be build)
 
     GEOMImpl_Fillet1d aFilletAlgo (anEdge1, anEdge2, aPlane);
-    if (!aFilletAlgo.Perform(rad)) {
+    if (!aFilletAlgo.Perform(theRadius)) {
       if (isFinalPass)
         continue; // can not create fillet with given radius
       else {
@@ -356,23 +357,59 @@ bool GEOMImpl_Fillet1dDriver::MakeFillet(const TopoDS_Wire& aWire,
     return false;
 
   // create new wire instead of original
-  for (TopExp_Explorer anExp (aWire, TopAbs_EDGE); anExp.More(); anExp.Next()) {
+  Standard_Real aTol;
+  Standard_Real aVertMaxTol = -RealLast();
+  for (TopExp_Explorer anExp (theWire, TopAbs_EDGE); anExp.More(); anExp.Next()) {
     TopoDS_Shape anEdge = anExp.Current();
     if (!anEdgeToEdgeMap.IsBound(anEdge))
       aListOfNewEdge.Append(anEdge);
     else if (!anEdgeToEdgeMap.Find(anEdge).IsNull())
       aListOfNewEdge.Append(anEdgeToEdgeMap.Find(anEdge));
+
+    // calculate maximum vertex tolerance of the initial wire
+    // to be used for resulting wire fixing (some gaps are possible)
+    for (TopExp_Explorer anExV (anEdge, TopAbs_VERTEX); anExV.More(); anExV.Next()) {
+      TopoDS_Vertex aVert = TopoDS::Vertex(anExV.Current());
+      aTol = BRep_Tool::Tolerance(aVert);
+      if (aTol > aVertMaxTol)
+        aVertMaxTol = aTol;
+    }
   }
 
-  GEOMUtils::SortShapes(aListOfNewEdge);
+  // Fix for Mantis issue 0023411: BEGIN
+  BRep_Builder B;
+  TopoDS_Wire aResWire;
+  B.MakeWire(aResWire);
+  TopTools_ListIteratorOfListOfShape anItNewEdge (aListOfNewEdge);
+  for (; anItNewEdge.More(); anItNewEdge.Next()) {
+    B.Add(aResWire, TopoDS::Edge(anItNewEdge.Value()));
+  }
+  Handle(ShapeFix_Wire) aFW = new ShapeFix_Wire;
+  aFW->Load(aResWire);
+  aFW->FixReorder();
+  aFW->ClosedWireMode() = theWire.Closed();
+  // Fix for Mantis issue 0023411
+  // We forced to do this because of fillet 1d algorithm feature
+  // (see function DivideEdge in file GEOMImpl_Fillet1d.cxx):
+  // a distance (gap) from new arc end to a vertex of original wire
+  // can reach (aVertexTolerance + Precision::Confusion()),
+  // so a distance between two adjacent arcs will be covered by value below
+  aFW->FixConnected(aVertMaxTol*2.0 + Precision::Confusion()*3.0);
+  theResult = aFW->WireAPIMake();
+  GEOMUtils::FixShapeTolerance(theResult, TopAbs_VERTEX, Precision::Confusion());
 
-  BRepBuilderAPI_MakeWire aWireTool;
-  aWireTool.Add(aListOfNewEdge);
-  aWireTool.Build();
-  if (!aWireTool.IsDone())
-    return 0;
+  // In OCCT 7.0.0 and earlier this gap was successfully covered by
+  // implementation of BRepBuilderAPI_MakeWire::Add(TopTools_ListOfShape)
+  // (in the case described in Mantis issue 0023411)
 
-  aResult = aWireTool.Wire();
+  //GEOMUtils::SortShapes(aListOfNewEdge);
+  //BRepBuilderAPI_MakeWire aWireTool;
+  //aWireTool.Add(aListOfNewEdge);
+  //aWireTool.Build();
+  //if (!aWireTool.IsDone())
+  //  return 0;
+  //theResult = aWireTool.Wire();
+  // Fix for Mantis issue 0023411: END
 
   return isAllStepsOk;
 }
@@ -408,7 +445,7 @@ GetCreationInformation(std::string&             theOperationName,
   default:
     return false;
   }
-  
+
   return true;
 }
 

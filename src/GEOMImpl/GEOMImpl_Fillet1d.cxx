@@ -65,7 +65,7 @@ static Standard_Boolean IsDivideEdge(const TopoDS_Edge   &theEdge,
   gp_Pnt             aPStart   = aCurve->Value(theStart);
   gp_Pnt             aPEnd     = aCurve->Value(theEnd);
   TopoDS_Vertex      aVFirst   = TopExp::FirstVertex(theEdge);
-  TopoDS_Vertex      aVLast    = TopExp::FirstVertex(theEdge);
+  TopoDS_Vertex      aVLast    = TopExp::LastVertex(theEdge);
   Standard_Real      aTolFirst = BRep_Tool::Tolerance(aVFirst);
   Standard_Real      aTolLast  = BRep_Tool::Tolerance(aVLast);
   Standard_Real      aTolConf  = Precision::Confusion();
@@ -81,7 +81,11 @@ static Standard_Boolean IsDivideEdge(const TopoDS_Edge   &theEdge,
       aDistSL <= aTolLast  + aTolConf) {
     if (aDistEF <= aTolFirst + aTolConf ||
         aDistEL <= aTolLast  + aTolConf) {
-      isSplit   = Standard_False;
+
+      isSplit = Standard_False;
+      // in this case the original edge is thrown, and distance (gap) from new arc end
+      // to a vertex of original wire can reach (aVertexTolerance + Precision::Confusion()).
+      // Resulting wire is fixed (Mantis issue 0023411) in GEOMImpl_Fillet1dDriver::MakeFillet()
     }
   }
 
@@ -367,7 +371,7 @@ Standard_Boolean GEOMImpl_Fillet1d::Perform(const Standard_Real theRadius)
           aParam2 > myStart1 + aTol && aParam2 < myEnd1 - aTol) {
         // Add the point in the list in increasing order.
         const Standard_Real aParam = 0.5*(aParam1 + aParam2);
-  
+
         for(anIter.Initialize(aParams); anIter.More(); anIter.Next()) {
           if (anIter.Value() > aParam) {
             aParams.InsertBefore(aParam, anIter);
