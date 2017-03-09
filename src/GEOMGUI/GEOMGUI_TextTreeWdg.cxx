@@ -319,7 +319,7 @@ void GEOMGUI_TextTreeWdg::updateAnnotationBranch( const QString& theEntry )
 //=================================================================================
 void GEOMGUI_TextTreeWdg::updateObjectName( const QString& theEntry )
 {
-  QTreeWidgetItem* anObjectItem;
+  QTreeWidgetItem* anObjectItem = 0;
 
   QHash<QString, QTreeWidgetItem*> anObjects = getObjects( DimensionShape );
   if ( anObjects.contains( theEntry ) )
