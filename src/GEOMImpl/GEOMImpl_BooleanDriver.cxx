@@ -191,7 +191,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(LOGBOOK& log) const
       if (nbShapes > 0) {
         aRefShape = Handle(GEOM_Function)::DownCast(aShapes->Value(1));
         aShape = aRefShape->GetValue();
-	
+
         if (!aShape.IsNull()) {
           // check arguments for Mantis issue 0021019
           if (!GEOMUtils::CheckShape(aShape, true))
@@ -218,12 +218,12 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(LOGBOOK& log) const
           aShape = aShapeCopy;
 
           for (i = 2; i <= nbShapes; i++) {
-	    aRefShape = Handle(GEOM_Function)::DownCast(aShapes->Value(i));
-	    aShape2 = aRefShape->GetValue();
-            
+            aRefShape = Handle(GEOM_Function)::DownCast(aShapes->Value(i));
+            aShape2 = aRefShape->GetValue();
+
             if (!GEOMUtils::CheckShape(aShape2, true))
-	      StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
-	    
+              StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
+
             if (isCheckSelfInte) {
               BOPCol_ListOfShape aList2;
               aList2.Append(aShape2);
@@ -237,17 +237,17 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(LOGBOOK& log) const
             // Copy shape
             aShapeCopy.Nullify();
             TNaming_CopyShape::CopyTool(aShape2, aMapTShapes, aShapeCopy);
-	    aShape = performOperation (aShape, aShapeCopy, aSimpleType);
+            aShape = performOperation (aShape, aShapeCopy, aSimpleType);
 
             if (isRmExtraEdges) {
               aShape = RemoveExtraEdges(aShape);
             }
-	    
-	    if (aShape.IsNull()) {
-	      return 0;
-	    }
-	  }
-	}
+
+            if (aShape.IsNull()) {
+              return 0;
+            }
+          }
+        }
       }
     }
     break;
@@ -262,7 +262,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(LOGBOOK& log) const
         if (!GEOMUtils::CheckShape(aShape, true))
           StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
 
-	BOPAlgo_CheckerSI aCSI;  // checker of self-interferences
+        BOPAlgo_CheckerSI aCSI;  // checker of self-interferences
 
         if (isCheckSelfInte) {
           aCSI.SetLevelOfCheck(BOP_SELF_INTERSECTIONS_LEVEL);
@@ -281,7 +281,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(LOGBOOK& log) const
 
         TNaming_CopyShape::CopyTool(aShape, aMapTShapes, aShapeCopy);
         aShape = aShapeCopy;
-	
+
         Handle(TColStd_HSequenceOfTransient) aTools = aCI.GetShapes();
         const Standard_Integer nbShapes = aTools->Length();
         Standard_Integer i;
@@ -373,6 +373,7 @@ TopoDS_Shape GEOMImpl_BooleanDriver::makeCompoundShellFromFaces
 
   return aResult;
 }
+
 //=======================================================================
 //function : performOperation
 //purpose  :
@@ -415,11 +416,12 @@ TopoDS_Shape GEOMImpl_BooleanDriver::performOperation
           // This allows to avoid adding empty compounds,
           // resulting from COMMON on two non-intersecting shapes.
           if (aStepResult.ShapeType() == TopAbs_COMPOUND) {
-          #if OCC_VERSION_MAJOR >= 7
-            if (aValue1.ShapeType() == TopAbs_FACE && aValue2.ShapeType() == TopAbs_FACE) {
+#if OCC_VERSION_MAJOR >= 7
+            if ((aValue1.ShapeType() == TopAbs_FACE || aValue1.ShapeType() == TopAbs_SHELL) &&
+                (aValue2.ShapeType() == TopAbs_FACE || aValue2.ShapeType() == TopAbs_SHELL)) {
               aStepResult = makeCompoundShellFromFaces(aStepResult);
             }
-          #endif
+#endif
             TopoDS_Iterator aCompIter (aStepResult);
             for (; aCompIter.More(); aCompIter.Next()) {
               // add shape in a result
@@ -477,11 +479,12 @@ TopoDS_Shape GEOMImpl_BooleanDriver::performOperation
         // This allows to avoid adding empty compounds,
         // resulting from CUT of parts
         if (aCut.ShapeType() == TopAbs_COMPOUND) {
-        #if OCC_VERSION_MAJOR >= 7
-          if (itSub1.Value().ShapeType() == TopAbs_FACE) {
+#if OCC_VERSION_MAJOR >= 7
+          if (itSub1.Value().ShapeType() == TopAbs_FACE ||
+              itSub1.Value().ShapeType() == TopAbs_SHELL) {
             aCut = makeCompoundShellFromFaces(aCut);
           }
-        #endif
+#endif
           TopoDS_Iterator aCompIter (aCut);
           for (; aCompIter.More(); aCompIter.Next()) {
             // add shape in a result
@@ -509,7 +512,7 @@ TopoDS_Shape GEOMImpl_BooleanDriver::performOperation
 
   // perform FUSE operation
   else if (theType == BOOLEAN_FUSE) {
-  #if OCC_VERSION_MAJOR >= 7
+#if OCC_VERSION_MAJOR >= 7
     Standard_Boolean isFaces = Standard_False;
     TopTools_ListOfShape listShape1, listShape2;
     GEOMUtils::AddSimpleShapes(theShape1, listShape1);
@@ -521,7 +524,8 @@ TopoDS_Shape GEOMImpl_BooleanDriver::performOperation
       TopTools_ListIteratorOfListOfShape itSub2 (listShape2);
       for (; itSub2.More(); itSub2.Next()) {
         TopoDS_Shape aValue2 = itSub2.Value();
-        if (aValue1.ShapeType() == TopAbs_FACE && aValue2.ShapeType() == TopAbs_FACE) {
+        if ((aValue1.ShapeType() == TopAbs_FACE || aValue1.ShapeType() == TopAbs_SHELL) &&
+            (aValue2.ShapeType() == TopAbs_FACE || aValue2.ShapeType() == TopAbs_SHELL)) {
           isFaces = Standard_True;
         }
       }
@@ -534,10 +538,10 @@ TopoDS_Shape GEOMImpl_BooleanDriver::performOperation
       StdFail_NotDone::Raise("Fuse operation can not be performed on the given shapes");
     }
     aShape = BO.Shape();
-  #if OCC_VERSION_MAJOR >= 7
+#if OCC_VERSION_MAJOR >= 7
     if (isFaces)
       aShape = makeCompoundShellFromFaces(aShape);
-  #endif
+#endif
   }
 
   // perform SECTION operation
@@ -569,7 +573,7 @@ TopoDS_Shape GEOMImpl_BooleanDriver::performOperation
         BO.ComputePCurveOn1(Standard_True);
         BO.ComputePCurveOn2(Standard_True);
         //modified by NIZNHY-PKV Tue Oct 18 14:34:18 2011t
-  
+
         BO.Build();
         if (!BO.IsDone()) {
           StdFail_NotDone::Raise("Section operation can not be performed on the given shapes");
