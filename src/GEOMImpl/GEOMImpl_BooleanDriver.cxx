@@ -342,16 +342,30 @@ TopoDS_Shape GEOMImpl_BooleanDriver::makeCompoundShellFromFaces
   if (theShape.ShapeType() != TopAbs_COMPOUND)
     return theShape;
 
+  BRep_Builder B;
+  TopoDS_Compound aFaces;
+  B.MakeCompound(aFaces);
+
+  // simplify compound structure for
+  // Mantis issue 0023419 (note 0021712)
+  TopExp_Explorer aExp;
+  TopTools_MapOfShape aMapFaces;
+  aExp.Init(theShape, TopAbs_FACE);
+  for (; aExp.More(); aExp.Next()) {
+    const TopoDS_Shape& aFace = aExp.Current();
+    if (aMapFaces.Add(aFace)) {
+      B.Add(aFaces, aFace);
+    }
+  }
+
   BOPCol_ListOfShape aListShapes;
-  BOPTools_AlgoTools::MakeConnexityBlocks(theShape, TopAbs_EDGE, TopAbs_FACE, aListShapes);
+  BOPTools_AlgoTools::MakeConnexityBlocks(aFaces, TopAbs_EDGE, TopAbs_FACE, aListShapes);
 
   if (aListShapes.IsEmpty())
     return theShape;
 
   TopoDS_Compound aResult;
-  BRep_Builder B;
   B.MakeCompound(aResult);
-  TopExp_Explorer aExp;
   BOPCol_ListIteratorOfListOfShape anIter(aListShapes);
 
   for (; anIter.More(); anIter.Next()) {
