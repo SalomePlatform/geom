@@ -554,7 +554,7 @@ engine = None
 doLcc = False
 created = False
 
-class geomBuilder(object, GEOM._objref_GEOM_Gen):
+class geomBuilder(GEOM._objref_GEOM_Gen):
 
         ## Enumeration ShapeType as a dictionary. \n
         ## Topological types of shapes (like Open Cascade types). See GEOM::shape_type for details.
@@ -605,7 +605,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @ingroup l1_geomBuilder_auxiliary
         kind = GEOM.GEOM_IKindOfShape
 
-        def __new__(cls):
+        def __new__(cls, *args):
             global engine
             global geom
             global doLcc
@@ -644,12 +644,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             #print "return geom 2 ", geom
             return geom
 
-        def __init__(self):
+        def __init__(self, *args):
             global created
             #print "-------- geomBuilder __init__ --- ", created, self
             if not created:
               created = True
-              GEOM._objref_GEOM_Gen.__init__(self)
+              GEOM._objref_GEOM_Gen.__init__(self, *args)
               self.myMaxNbSubShapesAllowed = 0 # auto-publishing is disabled by default
               self.myBuilder = None
               self.myStudyId = 0
