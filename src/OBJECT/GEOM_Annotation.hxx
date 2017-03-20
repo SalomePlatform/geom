@@ -363,7 +363,7 @@ public:
     //! \param theMode [in] the display mode.
     virtual void
       HilightWithColor( const Handle(PrsMgr_PresentationManager3d)& thePM,
-#if OCC_VERSION_LARGE > 0x07010000			
+#if OCC_VERSION_LARGE > 0x07010001
 			const Handle(Prs3d_Drawer)& theStyle,
 #else			
 			const Handle(Graphic3d_HighlightStyle)& theStyle,

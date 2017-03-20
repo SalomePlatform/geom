@@ -66,7 +66,7 @@ GEOM_Annotation::GEOM_Annotation() : AIS_InteractiveObject()
   SetDisplayMode( 0 );
   SetZLayer( Graphic3d_ZLayerId_Default );
   SetAutoHide( Standard_True );
-#if OCC_VERSION_LARGE <= 0x07010000
+#if OCC_VERSION_LARGE <= 0x07010001
   SetHilightMode( HighlightAll );
 #endif
   SetMutable( Standard_True );
@@ -749,7 +749,7 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
       return;
     }
   }
-#if OCC_VERSION_LARGE > 0x07010000
+#if OCC_VERSION_LARGE > 0x07010001
   const Handle(Graphic3d_PresentationAttributes) aHighlightStyle = theWorkspace->HighlightStyle();
   if (!aHighlightStyle.IsNull() && myAISObject->myHilightMode == HighlightLabel)
   {
@@ -879,7 +879,7 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
 
   aContext->ApplyModelViewMatrix();
   
-#if OCC_VERSION_LARGE > 0x07010000
+#if OCC_VERSION_LARGE > 0x07010001
   theWorkspace->SetHighlightStyle(aHighlightStyle);
 #else
   if ( toHighlight != theWorkspace->ToHighlight() )
@@ -895,7 +895,7 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
 // purpose  : Perform highlighting of the presentation.
 // =======================================================================
 void GEOM_Annotation::GEOM_AnnotationOwner::HilightWithColor( const Handle(PrsMgr_PresentationManager3d)& thePM,
-#if OCC_VERSION_LARGE > 0x07010000			
+#if OCC_VERSION_LARGE > 0x07010001
 							      const Handle(Prs3d_Drawer)& theStyle,
 #else			
 							      const Handle(Graphic3d_HighlightStyle)& theStyle,
@@ -905,7 +905,7 @@ void GEOM_Annotation::GEOM_AnnotationOwner::HilightWithColor( const Handle(PrsMg
   if ( myPrsSh.IsNull() )
   {
     Handle(Prs3d_Drawer) aDrawer = new Prs3d_Drawer;
-#if OCC_VERSION_LARGE > 0x07010000
+#if OCC_VERSION_LARGE > 0x07010001
     aDrawer->Link( theStyle );
 #else
     aDrawer->Link( Selectable()->HilightAttributes() );
@@ -943,7 +943,7 @@ void GEOM_Annotation::GEOM_AnnotationOwner::Unhilight ( const Handle(PrsMgr_Pres
 {
   SelectMgr_EntityOwner::Unhilight( thePM, theMode );
   
-#if OCC_VERSION_LARGE > 0x07010000
+#if OCC_VERSION_LARGE > 0x07010001
   thePM->Unhighlight( myPrsSh );
 #else
   thePM->Unhighlight( myPrsSh, theMode );
