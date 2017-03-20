@@ -8144,8 +8144,8 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             if Limit == self.ShapeType["AUTO"]:
                 # automatic detection of the most appropriate shape limit type
-                lim = GEOM.SHAPE
-                for s in ListShapes: lim = min( lim, s.GetMaxShapeType() )
+                lim = GEOM.SHAPE._v
+                for s in ListShapes: lim = min( lim, s.GetMaxShapeType()._v )
                 Limit = EnumToLong(lim)
                 pass
             anObj = self.BoolOp.MakePartition(ListShapes, ListTools,
@@ -8217,8 +8217,8 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             """
             if Limit == self.ShapeType["AUTO"]:
                 # automatic detection of the most appropriate shape limit type
-                lim = GEOM.SHAPE
-                for s in ListShapes: lim = min( lim, s.GetMaxShapeType() )
+                lim = GEOM.SHAPE._v
+                for s in ListShapes: lim = min( lim, s.GetMaxShapeType()._v )
                 Limit = EnumToLong(lim)
                 pass
             anObj = self.BoolOp.MakePartitionNonSelfIntersectedShape(ListShapes, ListTools,
