@@ -165,8 +165,8 @@ void GEOMToolsGUI_ReduceStudyDlg::init( const std::set<std::string>& theObjectEn
   GEOM::string_array_var otherObjects = new GEOM::string_array();
 
   GeometryGUI::GetGeomGen()->GetEntriesToReduceStudy( GeometryGUI::ClientStudyToStudy( myStudy ),
-		                                             keptObjects, parentsObjects,
-		                                             subObjects, otherObjects );
+                                                             keptObjects, parentsObjects,
+                                                             subObjects, otherObjects );
 
   for ( int i = 0; i < keptObjects->length(); i++ )
     myKeptObjects.insert( keptObjects[i].in() );
@@ -349,7 +349,7 @@ void GEOMToolsGUI_ReduceStudyDlg::checkVisibleIcon( QTreeWidget* theWidget )
   QTreeWidgetItemIterator it( theWidget );
   while(*it) {
     GEOMToolsGUI_TreeWidgetItem* item = dynamic_cast<GEOMToolsGUI_TreeWidgetItem*>(*it);
-    const char* entry = item->getStudyEntry();
+    //const char* entry = item->getStudyEntry();
     if( item->flags() & Qt::ItemIsSelectable )
       if( !item->isVisible() )
         isInvisible = true;
@@ -658,11 +658,11 @@ void GEOMToolsGUI_ReduceStudyDlg::clickOnOk()
   }
   if( myGroupIntermediates->checkedId() == 2 ) { // remove
     if( !myCBSoftRemoval->isChecked() && 
-	SUIT_MessageBox::question( this,
-				   tr( "GEOM_WRN_WARNING" ),
-				   tr( "GEOM_REDUCE_STUDY_WARNING_DELETE" ),
-				   QMessageBox::Yes | QMessageBox::No,
-				   QMessageBox::Yes ) == QMessageBox::No ) {
+        SUIT_MessageBox::question( this,
+                                   tr( "GEOM_WRN_WARNING" ),
+                                   tr( "GEOM_REDUCE_STUDY_WARNING_DELETE" ),
+                                   QMessageBox::Yes | QMessageBox::No,
+                                   QMessageBox::Yes ) == QMessageBox::No ) {
       return;
     }
     for( iter = myListParents.begin(); iter != myListParents.end(); ++iter )

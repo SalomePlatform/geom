@@ -230,6 +230,7 @@ public:
 
   /* Update visibility and parameters of the currently selected field step's color scale */
   void UpdateColorScale( const bool theIsRedisplayFieldSteps = false, const bool updateViewer = true );
+  void SetUpdateColorScale(bool toUpdate) { myUpdateColorScale = toUpdate; } // IPAL54049
 
 protected:
   /* internal methods */
@@ -304,6 +305,7 @@ protected:
 #if OCC_VERSION_MAJOR >= 7
   Handle(AIS_ColorScale)           myColorScale;
 #endif
+  int                              myUpdateColorScale; // IPAL54049
 
   // Attributes
   Quantity_Color                   myShadingColor;

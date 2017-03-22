@@ -281,17 +281,17 @@ bool XAOPlugin_ImportDlg::execute()
     QStringList anEntryList;
     anEntryList << addInStudy(m_mainShape, m_mainShape->GetName());
     m_mainShape->UnRegister();
-    for (int i = 0; i < subShapes->length(); i++)
+    for (CORBA::ULong i = 0; i < subShapes->length(); i++)
     {
       addInStudy(subShapes[i].in(), subShapes[i]->GetName());
       subShapes[i]->UnRegister();
     }
-    for (int i = 0; i < groups->length(); i++)
+    for (CORBA::ULong i = 0; i < groups->length(); i++)
     {
       addInStudy(groups[i].in(), groups[i]->GetName());
       groups[i]->UnRegister();
     }
-    for (int i = 0; i < fields->length(); i++)
+    for (CORBA::ULong i = 0; i < fields->length(); i++)
     {
       addFieldInStudy(fields[i].in(), m_mainShape);
     }
@@ -329,7 +329,7 @@ QString XAOPlugin_ImportDlg::addFieldInStudy( GEOM::GEOM_Field_ptr theField, GEO
 
   // add steps
   GEOM::ListOfLong_var steps = theField->GetSteps();
-  for (int i = 0; i < steps->length(); ++i)
+  for (CORBA::ULong i = 0; i < steps->length(); ++i)
   {
     GEOM::GEOM_FieldStep_ptr step = theField->GetStep(steps[i]);
     QString stepName = (tr("XAOPLUGIN_STEP") + " %1 %2").arg( step->GetID() ).arg( step->GetStamp() );

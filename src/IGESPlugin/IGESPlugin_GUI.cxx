@@ -116,97 +116,97 @@ bool IGESPlugin_GUI::importIGES( SUIT_Desktop* parent )
   if ( igesOp.isNull() ) return false;
 
   QStringList fileNames = app->getOpenFileNames( SUIT_FileDlg::getLastVisitedPath().isEmpty() ? QDir::currentPath() : QString(""),
-						 tr( "IGES_FILES" ),
-						 tr( "IMPORT_TITLE" ),
-						 parent );
+                                                 tr( "IGES_FILES" ),
+                                                 tr( "IMPORT_TITLE" ),
+                                                 parent );
   if ( fileNames.count() > 0 )
   {
     QStringList entryList;
     QStringList errors;
     SUIT_MessageBox::StandardButton igesAnswer = SUIT_MessageBox::NoButton;
-    
+
     for ( int i = 0; i < fileNames.count(); i++ )
     {
       QString fileName = fileNames.at( i );
       SUIT_OverrideCursor wc;
       GEOM_Operation transaction( app, igesOp.get() );
       bool ignoreUnits = false;
-      
+
       try
       {
-	app->putInfo( tr( "GEOM_PRP_LOADING" ).arg( SUIT_Tools::file( fileName, true ) ) );
-	transaction.start();
-	
-	CORBA::String_var units = igesOp->ReadValue( fileName.toUtf8().constData(), "LEN_UNITS" );
-	QString unitsStr( units.in() );
-	bool unitsOK = unitsStr.isEmpty() || unitsStr == "M" || unitsStr.toLower() == "metre";
-	
-	if ( !unitsOK )
-	{
-	  if( igesAnswer == SUIT_MessageBox::NoToAll )
-	  {
-	    ignoreUnits = true;
-	  }
-	  else if( igesAnswer != SUIT_MessageBox::YesToAll )
-	  {
-	    SUIT_MessageBox::StandardButtons btns = SUIT_MessageBox::Yes | SUIT_MessageBox::No | SUIT_MessageBox::Cancel;
-	    if ( i < fileNames.count()-1 ) btns = btns | SUIT_MessageBox::YesToAll | SUIT_MessageBox::NoToAll;
-	    igesAnswer = SUIT_MessageBox::question( parent,
-						    tr( "WRN_WARNING" ),
-						    tr( "SCALE_DIMENSIONS" ).arg( unitsStr ),
-						    btns,
-						    SUIT_MessageBox::No );
-	    switch ( igesAnswer )
-	    {
-	    case SUIT_MessageBox::Cancel:
-	      return true;             // cancel (break) import operation
-	    case SUIT_MessageBox::Yes:
-	    case SUIT_MessageBox::YesToAll:
-	      break;                   // scaling is confirmed
-	    case SUIT_MessageBox::No:
-	    case SUIT_MessageBox::NoAll:
-	      ignoreUnits = true;      // scaling is rejected
-	    default:
-	      break;
-	    }
-	  }
-	}
-	
-	GEOM::ListOfGO_var result = igesOp->ImportIGES( fileName.toUtf8().constData(), ignoreUnits );
-	if ( result->length() > 0 && igesOp->IsDone() )
-	{
-	  GEOM::GEOM_Object_var main = result[0];
-	  QString publishName = GEOMBase::GetDefaultName( SUIT_Tools::file( fileName, true ) );
-	  SALOMEDS::SObject_var so = GeometryGUI::GetGeomGen()->PublishInStudy( dsStudy,
-										SALOMEDS::SObject::_nil(),
-										main.in(),
-										publishName.toUtf8().constData() );
-	  
-	  entryList.append( so->GetID() );
-	  transaction.commit();
-	  GEOM_Displayer( study ).Display( main.in() );
+        app->putInfo( tr( "GEOM_PRP_LOADING" ).arg( SUIT_Tools::file( fileName, true ) ) );
+        transaction.start();
+
+        CORBA::String_var units = igesOp->ReadValue( fileName.toUtf8().constData(), "LEN_UNITS" );
+        QString unitsStr( units.in() );
+        bool unitsOK = unitsStr.isEmpty() || unitsStr == "M" || unitsStr.toLower() == "metre";
+
+        if ( !unitsOK )
+        {
+          if( igesAnswer == SUIT_MessageBox::NoToAll )
+          {
+            ignoreUnits = true;
+          }
+          else if( igesAnswer != SUIT_MessageBox::YesToAll )
+          {
+            SUIT_MessageBox::StandardButtons btns = SUIT_MessageBox::Yes | SUIT_MessageBox::No | SUIT_MessageBox::Cancel;
+            if ( i < fileNames.count()-1 ) btns = btns | SUIT_MessageBox::YesToAll | SUIT_MessageBox::NoToAll;
+            igesAnswer = SUIT_MessageBox::question( parent,
+                                                    tr( "WRN_WARNING" ),
+                                                    tr( "SCALE_DIMENSIONS" ).arg( unitsStr ),
+                                                    btns,
+                                                    SUIT_MessageBox::No );
+            switch ( igesAnswer )
+            {
+            case SUIT_MessageBox::Cancel:
+              return true;             // cancel (break) import operation
+            case SUIT_MessageBox::Yes:
+            case SUIT_MessageBox::YesToAll:
+              break;                   // scaling is confirmed
+            case SUIT_MessageBox::No:
+            case SUIT_MessageBox::NoAll:
+              ignoreUnits = true;      // scaling is rejected
+            default:
+              break;
+            }
+          }
+        }
+
+        GEOM::ListOfGO_var result = igesOp->ImportIGES( fileName.toUtf8().constData(), ignoreUnits );
+        if ( result->length() > 0 && igesOp->IsDone() )
+        {
+          GEOM::GEOM_Object_var main = result[0];
+          QString publishName = GEOMBase::GetDefaultName( SUIT_Tools::file( fileName, true ) );
+          SALOMEDS::SObject_var so = GeometryGUI::GetGeomGen()->PublishInStudy( dsStudy,
+                                                                                SALOMEDS::SObject::_nil(),
+                                                                                main.in(),
+                                                                                publishName.toUtf8().constData() );
+
+          entryList.append( so->GetID() );
+          transaction.commit();
+          GEOM_Displayer( study ).Display( main.in() );
           main->UnRegister();
-	}
-	else
-	{
-	  transaction.abort();
-	  errors.append( QString( "%1 : %2" ).arg( fileName ).arg( igesOp->GetErrorCode() ) );
-	}
+        }
+        else
+        {
+          transaction.abort();
+          errors.append( QString( "%1 : %2" ).arg( fileName ).arg( igesOp->GetErrorCode() ) );
+        }
       }
       catch( const SALOME::SALOME_Exception& e )
       {
-	transaction.abort();
+        transaction.abort();
       }
     }
 
     getGeometryGUI()->updateObjBrowser( true );
     app->browseObjects( entryList );
-          
+
     if ( errors.count() > 0 )
     {
       SUIT_MessageBox::critical( parent,
-				 tr( "GEOM_ERROR" ),
-				 tr( "GEOM_IMPORT_ERRORS" ) + "\n" + errors.join( "\n" ) );
+                                 tr( "GEOM_ERROR" ),
+                                 tr( "GEOM_IMPORT_ERRORS" ) + "\n" + errors.join( "\n" ) );
     }
   }
   return fileNames.count() > 0;
@@ -245,10 +245,10 @@ bool IGESPlugin_GUI::exportIGES( SUIT_Desktop* parent )
 
     QString version;
     QString fileName = IGESPlugin_ExportDlg::getFileName( QString( io->getName() ),
-							  tr( "IGES_FILES" ),
-							  tr( "EXPORT_TITLE" ),
-							  parent,
-							  version );
+                                                          tr( "IGES_FILES" ),
+                                                          tr( "EXPORT_TITLE" ),
+                                                          parent,
+                                                          version );
     
     if ( fileName.isEmpty() )
       return false;
@@ -266,15 +266,15 @@ bool IGESPlugin_GUI::exportIGES( SUIT_Desktop* parent )
       
       if ( igesOp->IsDone() )
       {
-	transaction.commit();
+        transaction.commit();
       }
       else
       {
-	transaction.abort();
-	SUIT_MessageBox::critical( parent,
-				   tr( "GEOM_ERROR" ),
-				   tr( "GEOM_PRP_ABORT" ) + "\n" + tr( igesOp->GetErrorCode() ) );
-	return false;
+        transaction.abort();
+        SUIT_MessageBox::critical( parent,
+                                   tr( "GEOM_ERROR" ),
+                                   tr( "GEOM_PRP_ABORT" ) + "\n" + tr( igesOp->GetErrorCode() ) );
+        return false;
       }
     }
     catch ( const SALOME::SALOME_Exception& e )
@@ -288,8 +288,8 @@ bool IGESPlugin_GUI::exportIGES( SUIT_Desktop* parent )
   if ( !ok )
   {
     SUIT_MessageBox::warning( parent,
-			      tr( "WRN_WARNING" ),
-			      tr( "GEOM_WRN_NO_APPROPRIATE_SELECTION" ) );
+                              tr( "WRN_WARNING" ),
+                              tr( "GEOM_WRN_NO_APPROPRIATE_SELECTION" ) );
   }
   return ok;
 }

@@ -114,59 +114,59 @@ bool STLPlugin_GUI::importSTL( SUIT_Desktop* parent )
   GEOM::GEOM_IOperations_var op = GeometryGUI::GetGeomGen()->GetPluginOperations( dsStudy->StudyId(), "STLPluginEngine" );
   STLOpPtr stlOp = GEOM::ISTLOperations::_narrow( op );
   if ( stlOp.isNull() ) return false;
-  
+
   QStringList fileNames = app->getOpenFileNames( SUIT_FileDlg::getLastVisitedPath().isEmpty() ? QDir::currentPath() : QString(""),
-						 tr( "STL_FILES" ),
-						 tr( "IMPORT_TITLE" ),
-						 parent );
+                                                 tr( "STL_FILES" ),
+                                                 tr( "IMPORT_TITLE" ),
+                                                 parent );
   if ( fileNames.count() > 0 )
   {
     QStringList entryList;
     QStringList errors;
-    
+
     foreach( QString fileName, fileNames )
     {
       SUIT_OverrideCursor wc;
       GEOM_Operation transaction( app, stlOp.get() );
-      
+
       try
       {
-	app->putInfo( tr( "GEOM_PRP_LOADING" ).arg( fileName ) );
-	transaction.start();
-	GEOM::ListOfGO_var result = stlOp->ImportSTL( fileName.toUtf8().constData() );
-	if ( result->length() > 0 && stlOp->IsDone() )
-	{
-	  GEOM::GEOM_Object_var main = result[0];
-	  QString publishName = GEOMBase::GetDefaultName( SUIT_Tools::file( fileName, true ) );
-	  SALOMEDS::SObject_var so = GeometryGUI::GetGeomGen()->PublishInStudy( dsStudy,
-										SALOMEDS::SObject::_nil(),
-										main.in(),
-										publishName.toUtf8().constData() );
-	  
-	  entryList.append( so->GetID() );
-	  transaction.commit();
-	  GEOM_Displayer( study ).Display( main.in() );
+        app->putInfo( tr( "GEOM_PRP_LOADING" ).arg( fileName ) );
+        transaction.start();
+        GEOM::ListOfGO_var result = stlOp->ImportSTL( fileName.toUtf8().constData() );
+        if ( result->length() > 0 && stlOp->IsDone() )
+        {
+          GEOM::GEOM_Object_var main = result[0];
+          QString publishName = GEOMBase::GetDefaultName( SUIT_Tools::file( fileName, true ) );
+          SALOMEDS::SObject_var so = GeometryGUI::GetGeomGen()->PublishInStudy( dsStudy,
+                                                                                SALOMEDS::SObject::_nil(),
+                                                                                main.in(),
+                                                                                publishName.toUtf8().constData() );
+
+          entryList.append( so->GetID() );
+          transaction.commit();
+          GEOM_Displayer( study ).Display( main.in() );
           main->UnRegister();
-	}
-	else
-	{
-	  transaction.abort();
-	  errors.append( QString( "%1 : %2" ).arg( fileName ).arg( stlOp->GetErrorCode() ) );
-	}
+        }
+        else
+        {
+          transaction.abort();
+          errors.append( QString( "%1 : %2" ).arg( fileName ).arg( stlOp->GetErrorCode() ) );
+        }
       }
       catch( const SALOME::SALOME_Exception& e )
       {
-	transaction.abort();
+        transaction.abort();
       }
     }
     getGeometryGUI()->updateObjBrowser( true );
     app->browseObjects( entryList );
-    
+
     if ( errors.count() > 0 )
     {
       SUIT_MessageBox::critical( parent,
-				 tr( "GEOM_ERROR" ),
-				 tr( "GEOM_IMPORT_ERRORS" ) + "\n" + errors.join( "\n" ) );
+                                 tr( "GEOM_ERROR" ),
+                                 tr( "GEOM_IMPORT_ERRORS" ) + "\n" + errors.join( "\n" ) );
     }
   }
   return fileNames.count() > 0;
@@ -207,12 +207,12 @@ bool STLPlugin_GUI::exportSTL( SUIT_Desktop* parent )
     double deflection = 0.;
     bool isRelative = false;
     QString fileName = STLPlugin_ExportDlg::getFileName( io,
-							 tr( "STL_FILES" ),
-							 tr( "EXPORT_TITLE" ),
-							 parent,
-							 isASCII,
-							 deflection,
-							 isRelative );
+                                                         tr( "STL_FILES" ),
+                                                         tr( "EXPORT_TITLE" ),
+                                                         parent,
+                                                         isASCII,
+                                                         deflection,
+                                                         isRelative );
 
     if ( fileName.isEmpty() )
       return false;
@@ -230,15 +230,15 @@ bool STLPlugin_GUI::exportSTL( SUIT_Desktop* parent )
       
       if ( stlOp->IsDone() )
       {
-	transaction.commit();
+        transaction.commit();
       }
       else
       {
-	transaction.abort();
-	SUIT_MessageBox::critical( parent,
-				   tr( "GEOM_ERROR" ),
-				   tr( "GEOM_PRP_ABORT" ) + "\n" + tr( stlOp->GetErrorCode() ) );
-	return false;
+        transaction.abort();
+        SUIT_MessageBox::critical( parent,
+                                   tr( "GEOM_ERROR" ),
+                                   tr( "GEOM_PRP_ABORT" ) + "\n" + tr( stlOp->GetErrorCode() ) );
+        return false;
       }
     }
     catch ( const SALOME::SALOME_Exception& e )
@@ -252,8 +252,8 @@ bool STLPlugin_GUI::exportSTL( SUIT_Desktop* parent )
   if ( !ok )
   {
     SUIT_MessageBox::warning( parent,
-			      tr( "WRN_WARNING" ),
-			      tr( "GEOM_WRN_NO_APPROPRIATE_SELECTION" ) );
+                              tr( "WRN_WARNING" ),
+                              tr( "GEOM_WRN_NO_APPROPRIATE_SELECTION" ) );
   }
   return ok;
 }

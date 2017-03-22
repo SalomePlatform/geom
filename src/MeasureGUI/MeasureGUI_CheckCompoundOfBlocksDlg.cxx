@@ -418,7 +418,7 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::onErrorsListSelectionChanged()
 
   myListBox2->clear();
 
-  if (aCurItem < aErrs.length()) {
+  if (aCurItem < (int)aErrs.length()) {
     GEOM::GEOM_IBlocksOperations::BCError aErr = aErrs[aCurItem];
     GEOM::ListOfLong aObjLst = aErr.incriminated;
     QStringList aSubShapeList;

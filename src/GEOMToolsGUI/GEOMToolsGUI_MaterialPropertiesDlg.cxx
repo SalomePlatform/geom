@@ -778,7 +778,7 @@ void GEOMToolsGUI_MaterialPropertiesDlg::SelectionIntoArgument()
   if ( study ) {
     SALOME_ListIO aSelList;
     aSelMgr->selectedObjects(aSelList);
-                int nbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aString, true);
-        }
+    /*int nbSel = */GEOMBase::GetNameOfSelectedIObjects(aSelList, aString, true);
+  }
   myLineEditCurArg->setText( aString );
 }

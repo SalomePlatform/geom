@@ -322,8 +322,8 @@ void BuildGUI_FaceDlg::updateConstraintsTree()
     return;
 
   for ( int i = 0, n = aList->length(); i < n; i++ ) {
-    TreeWidgetItem* item = new TreeWidgetItem( myTreeConstraints,
-                                               GEOM::GeomObjPtr( aList[i] ) );
+    /*TreeWidgetItem* item =*/
+    new TreeWidgetItem( myTreeConstraints, GEOM::GeomObjPtr( aList[i] ) );
   }
 
   myEditCurrentArgument->setEnabled(false);

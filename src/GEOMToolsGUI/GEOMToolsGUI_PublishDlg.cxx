@@ -141,22 +141,22 @@ GEOMToolsGUI_PublishDlg::~GEOMToolsGUI_PublishDlg()
     if ( appStudy ) {
       _PTR(Study) aStudy = appStudy->studyDS();
       if ( aStudy ) {
-	GEOM_Displayer displayer ( appStudy );
-	QTreeWidgetItemIterator it( myTreeWidget );
-	while ( *it ) {
-	  QString entry = myEntryToItem.key( *it );
-	  _PTR(SObject) SO ( aStudy->FindObjectID( qPrintable( entry ) ) );
-	  if ( SO ) {
-	    GEOM::GEOM_Object_var aGeomObject = GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( SO ) );
-	    if ( CORBA::is_nil( aGeomObject ) ) continue;
-	    if ( displayer.IsDisplayed( aGeomObject->GetStudyEntry() ) ) {
-	      Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( aGeomObject->GetStudyEntry(), "GEOM", "" );
-	      displayer.Erase( io );
-	    }
-	  }
-	  ++it;
-	}
-	displayer.UpdateViewer();
+        GEOM_Displayer displayer ( appStudy );
+        QTreeWidgetItemIterator it( myTreeWidget );
+        while ( *it ) {
+          QString entry = myEntryToItem.key( *it );
+          _PTR(SObject) SO ( aStudy->FindObjectID( qPrintable( entry ) ) );
+          if ( SO ) {
+            GEOM::GEOM_Object_var aGeomObject = GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( SO ) );
+            if ( CORBA::is_nil( aGeomObject ) ) continue;
+            if ( displayer.IsDisplayed( aGeomObject->GetStudyEntry() ) ) {
+              Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( aGeomObject->GetStudyEntry(), "GEOM", "" );
+              displayer.Erase( io );
+            }
+          }
+          ++it;
+        }
+        displayer.UpdateViewer();
       }
     }
   }
@@ -346,10 +346,10 @@ void GEOMToolsGUI_PublishDlg::clickOnApply() {
       }
       // show references if any
       std::vector< _PTR(SObject) > vso = aStudy->FindDependances(SO);
-      for ( int i = 0; i < vso.size(); i++ ) {
-	_PTR(SObject) refObj = vso[i];
-	aDrw = aBuilder->FindOrCreateAttribute( refObj, "AttributeDrawable" );
-	aDrw->SetDrawable( true );
+      for ( size_t i = 0; i < vso.size(); i++ ) {
+        _PTR(SObject) refObj = vso[i];
+        aDrw = aBuilder->FindOrCreateAttribute( refObj, "AttributeDrawable" );
+        aDrw->SetDrawable( true );
       }
     }
   }

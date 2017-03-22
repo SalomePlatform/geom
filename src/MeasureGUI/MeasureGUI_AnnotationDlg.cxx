@@ -236,7 +236,7 @@ void MeasureGUI_AnnotationDlg::Init()
     myIsScreenFixed->setChecked( myAnnotationProperties.IsScreenFixed );
 
     int aSubShapeTypeIndex = -1;
-    int aTypesCount = aTypesCount = mySubShapeTypeCombo->count();
+    int aTypesCount = mySubShapeTypeCombo->count();
     for ( int i = 0; i < aTypesCount && aSubShapeTypeIndex < 0; i++ ) {
       int aType = mySubShapeTypeCombo->itemData( i ).toInt();
       if ( aType == myAnnotationProperties.ShapeType )
@@ -290,7 +290,7 @@ void MeasureGUI_AnnotationDlg::Init()
     myIsScreenFixed->setChecked( myAnnotationProperties.IsScreenFixed );
 
     int aSubShapeTypeIndex = -1;
-    int aTypesCount = aTypesCount = mySubShapeTypeCombo->count();
+    int aTypesCount = mySubShapeTypeCombo->count();
     for ( int i = 0; i < aTypesCount && aSubShapeTypeIndex < 0; i++ ) {
       int aType = mySubShapeTypeCombo->itemData( i ).toInt();
       if ( aType == myAnnotationProperties.ShapeType )

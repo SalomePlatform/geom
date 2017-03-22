@@ -90,54 +90,61 @@ static bool inUse( _PTR(Study) study, const QString& component, const QMap<QStri
   QMap<QString, GEOM::GEOM_BaseObject_var> gobjects;
   QMap<QString, QString>::ConstIterator oit;
   std::list<_PTR(SObject)> aSelectedSO;
-  for ( oit = objects.begin(); oit != objects.end(); ++oit ) {
+  for ( oit = objects.begin(); oit != objects.end(); ++oit )
+  {
     _PTR(SObject) so = study->FindObjectID( oit.key().toLatin1().data() );
     if ( !so )
       continue;
     aSelectedSO.push_back(so);
-    CORBA::Object_var corbaObj_rem = GeometryGUI::ClientSObjectToObject( so );
+    CORBA::Object_var        corbaObj_rem = GeometryGUI::ClientSObjectToObject( so );
     GEOM::GEOM_BaseObject_var geomObj_rem = GEOM::GEOM_BaseObject::_narrow( corbaObj_rem );
-    if( CORBA::is_nil( geomObj_rem ) )
-      continue;
-    gobjects.insert( oit.key(), geomObj_rem );
+    if ( ! CORBA::is_nil( geomObj_rem ))
+      gobjects.insert( oit.key(), geomObj_rem );
   }
 
   // Search References with other Modules
   std::list< _PTR(SObject) >::iterator itSO = aSelectedSO.begin();
-  for ( ; itSO != aSelectedSO.end(); ++itSO ) {
+  for ( ; itSO != aSelectedSO.end(); ++itSO )
+  {
     std::vector<_PTR(SObject)> aReferences = study->FindDependances( *itSO  );
     int aRefLength = aReferences.size();
-    if (aRefLength) {
-      for (int i = 0; i < aRefLength; i++) {
-        _PTR(SObject) firstSO( aReferences[i] );
-        _PTR(SComponent) aComponent = firstSO->GetFatherComponent();
-        QString type = aComponent->ComponentDataType().c_str();
-        if ( type == "SMESH" )
-          return true;
-      }
+    for ( int i = 0; i < aRefLength; i++ )
+    {
+      _PTR(SObject) firstSO( aReferences[i] );
+      _PTR(SComponent) aComponent = firstSO->GetFatherComponent();
+      QString type = aComponent->ComponentDataType().c_str();
+      if ( type == "SMESH" )
+        return true;
     }
   }
 
-  // browse through all GEOM data tree
+  // browse through all GEOM data tree to find an object with is not deleted and depends
+  // on a deleted object
   _PTR(ChildIterator) it ( study->NewChildIterator( comp ) );
-  for ( it->InitEx( true ); it->More(); it->Next() ) {
-    _PTR(SObject) child( it->Value() );
-    CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject( child );
+  for ( it->InitEx( true ); it->More(); it->Next() )
+  {
+    _PTR(SObject) child   = it->Value();
+    QString       childID = child->GetID().c_str();
+    bool deleted = objects.contains( childID );
+    if ( deleted )
+      continue; // deleted object
+
+    CORBA::Object_var    corbaObj = GeometryGUI::ClientSObjectToObject( child );
     GEOM::GEOM_Object_var geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
-    if( CORBA::is_nil( geomObj ) )
+    if ( CORBA::is_nil( geomObj ) )
       continue;
 
-    GEOM::ListOfGBO_var list = geomObj->GetDependency();
-    if( list->length() == 0 )
-      continue;
+    GEOM::ListOfGBO_var dep = geomObj->GetDependency(); // child depends on dep
+    for( CORBA::ULong i = 0; i < dep->length(); i++ )
+    {
+      CORBA::String_var id = dep[i]->GetStudyEntry();
+      bool depends = objects.contains( id.in() ); // depends on deleted
 
-    for( int i = 0; i < list->length(); i++ ) {
-      bool depends = false;
-      bool deleted = false;
       QMap<QString, GEOM::GEOM_BaseObject_var>::Iterator git;
-      for ( git = gobjects.begin(); git != gobjects.end() && ( !depends || !deleted ); ++git ) {
-        depends = depends || list[i]->_is_equivalent( *git );
-        deleted = deleted || git.key() == child->GetID().c_str() ;//geomObj->_is_equivalent( *git );
+      for ( git = gobjects.begin(); git != gobjects.end() && ( !depends || !deleted ); ++git )
+      {
+        depends = depends || dep[i]->_is_equivalent( *git );
+        deleted = deleted || git.key() == childID ;//geomObj->_is_equivalent( *git )
       }
       if ( depends && !deleted )
         return true;
@@ -150,8 +157,8 @@ static bool inUse( _PTR(Study) study, const QString& component, const QMap<QStri
 // function : getGeomChildrenAndFolders
 // purpose  : Get direct (1-level) GEOM objects under each folder, sub-folder, etc. and these folders itself
 //=======================================================================
-static void getGeomChildrenAndFolders( _PTR(SObject) theSO, 
-                                       QMap<QString,QString>& geomObjList, 
+static void getGeomChildrenAndFolders( _PTR(SObject) theSO,
+                                       QMap<QString,QString>& geomObjList,
                                        QMap<QString,QString>& folderList ) {
   if ( !theSO ) return;
   _PTR(Study) aStudy = theSO->GetStudy();
@@ -182,7 +189,7 @@ static void getGeomChildrenAndFolders( _PTR(SObject) theSO,
 // purpose  : Constructor
 //=======================================================================
 GEOMToolsGUI::GEOMToolsGUI( GeometryGUI* parent )
-: GEOMGUI( parent )
+  : GEOMGUI( parent )
 {
 }
 
@@ -444,6 +451,8 @@ void GEOMToolsGUI::OnEditDelete()
   if ( !dlg.exec() )
     return; // operation is cancelled by user
 
+  SUIT_OverrideCursor wc;
+
   // get currently opened views
   QList<SALOME_View*> views;
   SALOME_View* view;
@@ -457,7 +466,8 @@ void GEOMToolsGUI::OnEditDelete()
   }
 
   _PTR(StudyBuilder) aStudyBuilder (aStudy->NewBuilder());
-  GEOM_Displayer* disp = new GEOM_Displayer( appStudy );
+  GEOM_Displayer disp( appStudy );
+  disp.SetUpdateColorScale( false ); // IPAL54049
 
   if ( isComponentSelected ) {
     // GEOM component is selected: delete all objects recursively
@@ -469,7 +479,7 @@ void GEOMToolsGUI::OnEditDelete()
     for ( it->InitEx( false ); it->More(); it->Next() ) {
       _PTR(SObject) child( it->Value() );
       // remove object from GEOM engine
-      removeObjectWithChildren( child, aStudy, views, disp );
+      removeObjectWithChildren( child, aStudy, views, &disp );
       // remove object from study
       aStudyBuilder->RemoveObjectWithChildren( child );
       // remove object from use case tree
@@ -491,7 +501,7 @@ void GEOMToolsGUI::OnEditDelete()
     for ( it = toBeDeleted.begin(); it != toBeDeleted.end(); ++it ) {
       _PTR(SObject) obj ( aStudy->FindObjectID( it.key().toLatin1().data() ) );
       // remove object from GEOM engine
-      removeObjectWithChildren( obj, aStudy, views, disp );
+      removeObjectWithChildren( obj, aStudy, views, &disp );
       // remove objects from study
       aStudyBuilder->RemoveObjectWithChildren( obj );
       // remove object from use case tree
@@ -501,7 +511,7 @@ void GEOMToolsGUI::OnEditDelete()
     for ( it = toBeDelFolders.begin(); it != toBeDelFolders.end(); ++it ) {
       _PTR(SObject) obj ( aStudy->FindObjectID( it.key().toLatin1().data() ) );
       // remove object from GEOM engine
-      removeObjectWithChildren( obj, aStudy, views, disp );
+      removeObjectWithChildren( obj, aStudy, views, &disp );
       // remove objects from study
       aStudyBuilder->RemoveObjectWithChildren( obj );
       // remove object from use case tree

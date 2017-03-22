@@ -61,7 +61,7 @@ GEOMGUI_AnnotationMgr::GEOMGUI_AnnotationMgr( SalomeApp_Application* theApplicat
 
 QString GEOMGUI_AnnotationMgr::GetEntrySeparator()
 {
-	return "_annotation:";
+        return "_annotation:";
 }
 
 //================================================================
@@ -113,7 +113,7 @@ SALOME_Prs* GEOMGUI_AnnotationMgr::CreatePresentation( const GEOMGUI_AnnotationA
   setDisplayProperties( aPresentation, aView, getEntry( theObject ).c_str() );
 
   // add Prs to preview
-  SUIT_ViewWindow* vw = getApplication()->desktop()->activeWindow();
+  //SUIT_ViewWindow* vw = getApplication()->desktop()->activeWindow();
   SOCC_Prs* aPrs =
       dynamic_cast<SOCC_Prs*>( ( aView )->CreatePrs( 0 ) );
 
@@ -424,7 +424,6 @@ void GEOMGUI_AnnotationMgr::UpdateVisibleAnnotations( const QString& theEntry, S
 
       if ( !aShape.IsNull() ) {
 
-        gp_Ax3 aShapeLCS = gp_Ax3().Transformed( aShape.Location().Transformation() );
         GEOMGUI_AnnotationAttrs::SetupPresentation( aPresentation, aProperty, aShapeLCS );
         if ( aProperty.ShapeType == TopAbs_SHAPE ) {
           aPresentation->SetHilightShape( aShape );
