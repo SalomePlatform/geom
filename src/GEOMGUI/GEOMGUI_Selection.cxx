@@ -538,10 +538,8 @@ bool GEOMGUI_Selection::isNameMode( const int index ) const
 
 bool GEOMGUI_Selection::hasChildren( const _PTR(SObject)& obj )
 {
-  if ( obj ) {
-    // as soon as Use Case browser data tree was added
-    return obj->GetStudy()->GetUseCaseBuilder()->HasChildren( obj );
-  }
+  // as soon as Use Case browser data tree was added
+  return obj ? obj->GetStudy()->GetUseCaseBuilder()->HasChildren( obj ) : false;
 }
 
 bool GEOMGUI_Selection::expandable( const _PTR(SObject)& obj )

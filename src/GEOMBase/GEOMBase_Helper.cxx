@@ -89,7 +89,7 @@ GEOM::GEOM_Gen_ptr GEOMBase_Helper::getGeomEngine()
 // Purpose  :
 //================================================================
 GEOMBase_Helper::GEOMBase_Helper( SUIT_Desktop* desktop )
-  : myDesktop( desktop ), myViewWindow( 0 ), myDisplayer( 0 ), myCommand( 0 ), isPreview( false ),
+  : myDisplayer( 0 ), myCommand( 0 ), myViewWindow( 0 ), isPreview( false ), myDesktop( desktop ),
     myIsApplyAndClose( false ), myIsOptimizedBrowsing( false ), myIsWaitCursorEnabled( true ),
     myIsDisableBrowsing(false), myIsDisplayResult(true)
 {

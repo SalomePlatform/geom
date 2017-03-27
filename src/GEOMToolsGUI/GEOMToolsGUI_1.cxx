@@ -530,6 +530,8 @@ void GEOMToolsGUI::OnDiscloseConcealChildren( bool show )
           return;
         }
 
+        SUIT_OverrideCursor wc;
+        disp->SetUpdateColorScale( false ); // IPAL54049
         for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
           Handle(SALOME_InteractiveObject) IObject = It.Value();
 
@@ -538,10 +540,12 @@ void GEOMToolsGUI::OnDiscloseConcealChildren( bool show )
           if ( obj ) {
             _PTR(AttributeExpandable) aExp = B->FindOrCreateAttribute( obj, "AttributeExpandable" );
             aExp->SetExpandable( show );
-            if(!show)
+            if ( !show ) {
               disp->EraseWithChildren(IObject,true);
+            }
           } // if ( obj )
         } // iterator
+        disp->SetUpdateColorScale( true );
       }
     }
     app->updateObjectBrowser( false );
@@ -593,7 +597,8 @@ void GEOMToolsGUI::OnUnpublishObject() {
                                     QObject::tr( "WRN_STUDY_LOCKED" ) );
           return;
         }
-
+        SUIT_OverrideCursor wc;
+        disp->SetUpdateColorScale( false ); // IPAL54049
         for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
           Handle(SALOME_InteractiveObject) IObject = It.Value();
 
@@ -612,6 +617,7 @@ void GEOMToolsGUI::OnUnpublishObject() {
             }
           } // if ( obj )
         } // iterator
+        disp->SetUpdateColorScale( true ); // IPAL54049
         aSelMgr->clearSelected();
       }
     }
@@ -857,7 +863,7 @@ void GEOMToolsGUI::OnCreateFolder()
   if ( !aFatherSO ) return;
 
   GeometryGUI::GetGeomGen()->CreateFolder( tr("NEW_FOLDER_NAME").toLatin1().constData(), 
-					   _CAST(SObject, aFatherSO)->GetSObject() );
+                                           _CAST(SObject, aFatherSO)->GetSObject() );
   app->updateObjectBrowser( false );
 }
 
@@ -891,7 +897,7 @@ void GEOMToolsGUI::OnSortChildren()
 #ifndef DISABLE_GRAPHICSVIEW
 void GEOMToolsGUI::OnShowDependencyTree()
 {
-  SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
+  //SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
 
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   if ( !app ) return;

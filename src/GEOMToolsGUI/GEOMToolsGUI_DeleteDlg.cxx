@@ -30,40 +30,54 @@
 #include <QGridLayout>
 #include <SUIT_MessageBox.h>
  
-static bool isEntryLess( const QString& e1, const QString& e2 )
+#include <iostream>
+
+namespace
 {
-  QStringList el1 = e1.split(":");
-  QStringList el2 = e2.split(":");
-  int e1c = el1.count(), e2c = el2.count();
-  for ( int i = 0; i < e1c && i < e2c; i++ ) {
-    int id1 = el1[i].toInt();
-    int id2 = el2[i].toInt();
-    if ( id1 < id2 ) return true;
-    else if ( id2 < id1 ) return false;
-  }
-  return el1.count() < el2.count();
+  struct NaturalCompare
+  {
+    bool operator () (const std::string& s1, const std::string& s2) const
+    {
+      // hope the entries are never empty and never equal
+      int diff21 = 0;
+      const char* p1 = s1.c_str();
+      const char* p2 = s2.c_str();
+      for ( ; ; ++p1, ++p2 )
+      {
+        if ( *p1 == *p2 )
+        {
+          if ( diff21 && !*p1 ) // both numbers ends
+            return diff21 > 0;
+          continue;
+        }
+        // different chars
+        bool d1 = isdigit( *p1 );
+        bool d2 = isdigit( *p2 );
+        if ( d1 != d2 ) // one number is shorter then another
+          return d2; // is s1 shorter?
+        if ( !d1 && diff21 ) // both numbers ends
+          return diff21 > 0;
+        if ( !diff21 ) // remember the first difference
+          diff21 = *p2 - *p1;
+      }
+      return diff21 > 0;
+    }
+  };
 }
 
 static QStringList objectsToNames( const QMap<QString, QString>& objects )
 {
-  QStringList entries;
-  for ( QMap<QString, QString>::ConstIterator it = objects.begin(); it != objects.end(); ++it ) {
-    QString entry = it.key();
-    QStringList::Iterator iter;
-    bool added = false;
-    for ( iter = entries.begin(); iter != entries.end() && !added; ++iter ) {
-      if ( isEntryLess( entry, *iter ) ) {
-        entries.insert( iter, entry );
-        added = true;
-      }
-    }
-    if ( !added ) 
-      entries.append( entry );
-  }
+  typedef std::map< std::string, QString, NaturalCompare > TSortMap;
+  TSortMap sortedByEntry;
+  for ( QMap<QString, QString>::ConstIterator it = objects.begin(); it != objects.end(); ++it )
+    sortedByEntry.insert( sortedByEntry.end(), std::make_pair( it.key().toStdString(), it.value() ));
+
   QStringList names;
-  for ( int i = 0; i < entries.count(); i++ ) {
-    int level = entries[i].count(":")-3;
-    names.append( QString( level*2, ' ' ) + objects[ entries[i] ] );
+  for ( TSortMap::iterator it = sortedByEntry.begin(); it != sortedByEntry.end(); ++it )
+  {
+    const std::string& entry = it->first;
+    int level = std::count( entry.begin(), entry.end(), ':' ) - 3;
+    names.append( QString( level * 2, ' ' ) + it->second );
   }
   return names;
 }

@@ -171,7 +171,7 @@ namespace
     if ( aPixmap.IsNull() ) {
       QPixmap px(":images/default_texture.png");
       if ( !px.isNull() )
-	aPixmap = OCCViewer_Utilities::imageToPixmap( px.toImage() );
+        aPixmap = OCCViewer_Utilities::imageToPixmap( px.toImage() );
     }
     return aPixmap;
   }
@@ -464,7 +464,7 @@ static std::string getName( GEOM::GEOM_BaseObject_ptr object )
  */
 //=================================================================
 GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
-: myIsRedisplayed( false )
+  : myUpdateColorScale(true), myIsRedisplayed( false )
 {
   if( st )
     myApp = dynamic_cast<SalomeApp_Application*>( st->application() );
@@ -738,7 +738,7 @@ void GEOM_Displayer::UpdateVisibility( SALOME_View* v, const SALOME_Prs* p, bool
     QString entry = p->GetEntry();
     if ( !entry.isEmpty() ) {
       if ( vId != -1 )
-	aStudy->setObjectProperty( vId, entry, GEOM::propertyName( GEOM::Visibility ), on );
+        aStudy->setObjectProperty( vId, entry, GEOM::propertyName( GEOM::Visibility ), on );
       setVisibilityState( entry, on ? Qtx::ShownState : Qtx::HiddenState );
     }
   }
@@ -1014,9 +1014,9 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
       if ( !aTexture.IsNull() ) {
         Handle(Prs3d_PointAspect) aTextureAspect =
           new Prs3d_PointAspect( HasColor() ? 
-				 // predefined color, manually set to displayer via GEOM_Displayer::SetColor() function
-				 (Quantity_NameOfColor)GetColor() : 
-				 // color from properties 
+                                 // predefined color, manually set to displayer via GEOM_Displayer::SetColor() function
+                                 (Quantity_NameOfColor)GetColor() : 
+                                 // color from properties 
                                  SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::PointColor ) ).value<QColor>() ),
                                  aWidth, aHeight,
                                  aTexture );
@@ -2606,7 +2606,7 @@ PropMap GEOM_Displayer::getDefaultPropertyMap()
 
   // - transparency (opacity = 1-transparency)
   propMap.insert( GEOM::propertyName( GEOM::Transparency ),
-		  resMgr->integerValue( "Geometry", "transparency", 0 ) / 100. );
+                  resMgr->integerValue( "Geometry", "transparency", 0 ) / 100. );
 
   // - display mode (take default value from preferences)
   propMap.insert( GEOM::propertyName( GEOM::DisplayMode ),
@@ -3046,43 +3046,41 @@ void GEOM_Displayer::UpdateColorScale( const bool theIsRedisplayFieldSteps, cons
   Standard_Real aColorScaleMin = 0, aColorScaleMax = 0;
   Standard_Boolean anIsBoolean = Standard_False;
 
-  SALOME_ListIO aSelectedObjects;
-  myApp->selectionMgr()->selectedObjects( aSelectedObjects );
-  if( aSelectedObjects.Extent() == 1 )
+  Handle(SALOME_InteractiveObject) anIO;
+  if ( myUpdateColorScale )
+    anIO = myApp->selectionMgr()->soleSelectedObject();
+
+  if( !anIO.IsNull() )
   {
-    Handle(SALOME_InteractiveObject) anIO = aSelectedObjects.First();
-    if( !anIO.IsNull() )
+    SOCC_Prs* aPrs = dynamic_cast<SOCC_Prs*>( aViewModel->CreatePrs( anIO->getEntry() ) );
+    if( aPrs )
     {
-      SOCC_Prs* aPrs = dynamic_cast<SOCC_Prs*>( aViewModel->CreatePrs( anIO->getEntry() ) );
-      if( aPrs )
+      AIS_ListOfInteractive aList;
+      aPrs->GetObjects( aList );
+      AIS_ListIteratorOfListOfInteractive anIter( aList );
+      for( ; anIter.More(); anIter.Next() )
       {
-        AIS_ListOfInteractive aList;
-        aPrs->GetObjects( aList );
-        AIS_ListIteratorOfListOfInteractive anIter( aList );
-        for( ; anIter.More(); anIter.Next() )
+        Handle(GEOM_AISShape) aShape = Handle(GEOM_AISShape)::DownCast( anIter.Value() );
+        if( !aShape.IsNull() )
         {
-          Handle(GEOM_AISShape) aShape = Handle(GEOM_AISShape)::DownCast( anIter.Value() );
-          if( !aShape.IsNull() )
+          GEOM::field_data_type aFieldDataType;
+          int aFieldDimension;
+          QList<QVariant> aFieldStepData;
+          TCollection_AsciiString aFieldStepName;
+          double aFieldStepRangeMin, aFieldStepRangeMax;
+          aShape->getFieldStepInfo( aFieldDataType,
+                                    aFieldDimension,
+                                    aFieldStepData,
+                                    aFieldStepName,
+                                    aFieldStepRangeMin,
+                                    aFieldStepRangeMax );
+          if( !aFieldStepData.isEmpty() && aFieldDataType != GEOM::FDT_String )
           {
-            GEOM::field_data_type aFieldDataType;
-            int aFieldDimension;
-            QList<QVariant> aFieldStepData;
-            TCollection_AsciiString aFieldStepName;
-            double aFieldStepRangeMin, aFieldStepRangeMax;
-            aShape->getFieldStepInfo( aFieldDataType,
-                                      aFieldDimension,
-                                      aFieldStepData,
-                                      aFieldStepName,
-                                      aFieldStepRangeMin,
-                                      aFieldStepRangeMax );
-            if( !aFieldStepData.isEmpty() && aFieldDataType != GEOM::FDT_String )
-            {
-              anIsDisplayColorScale = Standard_True;
-              aColorScaleTitle = aFieldStepName;
-              aColorScaleMin = aFieldStepRangeMin;
-              aColorScaleMax = aFieldStepRangeMax;
-              anIsBoolean = aFieldDataType == GEOM::FDT_Bool;
-            }
+            anIsDisplayColorScale = Standard_True;
+            aColorScaleTitle = aFieldStepName;
+            aColorScaleMin = aFieldStepRangeMin;
+            aColorScaleMax = aFieldStepRangeMax;
+            anIsBoolean = aFieldDataType == GEOM::FDT_Bool;
           }
         }
       }

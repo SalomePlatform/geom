@@ -1189,7 +1189,7 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   // ---- create menus --------------------------
 
-  int fileId = createMenu( tr( "MEN_FILE" ), -1, -1 );
+  /*int fileId =*/ createMenu( tr( "MEN_FILE" ), -1, -1 );
 
   int editId = createMenu( tr( "MEN_EDIT" ), -1, -1 );
   createMenu( GEOMOp::OpDelete, editId, -1 );
@@ -2246,7 +2246,7 @@ Handle(TColStd_HArray1OfByte) GeometryGUI::getTexture
 
           aTexture  = new TColStd_HArray1OfByte (1, aStream->length());
 
-          for (int i = 0; i < aStream->length(); i++)
+          for ( CORBA::ULong i = 0; i < aStream->length(); i++)
             aTexture->SetValue( i+1, (Standard_Byte)aStream[i] );
           aTextureMap[ theId ] = aTexture;
         }
@@ -2452,7 +2452,7 @@ void GeometryGUI::createPreferences()
   resMgr->value("resources", "GEOM", aFontFile);
   aFontFile = aFontFile + QDir::separator() + "Y14.5M-2009.ttf";
   // add enginier font into combobox
-  int fontID = QFontDatabase::addApplicationFont( aFontFile );
+  /*int fontID =*/ QFontDatabase::addApplicationFont( aFontFile );
   Handle(Font_SystemFont) sf = new Font_SystemFont( 
     new TCollection_HAsciiString("Y14.5M-2009"), 
     Font_FA_Regular, 

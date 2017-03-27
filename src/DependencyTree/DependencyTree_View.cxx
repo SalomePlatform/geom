@@ -475,10 +475,10 @@ void DependencyTree_View::parseTree()
     std::string objectEntry = i->first;
     addNode( objectEntry );
     parseTreeWard( i->second.first );
-    if( i->second.first.size() > myMaxUpwardLevelsNumber )
+    if((int) i->second.first.size() > myMaxUpwardLevelsNumber )
       myMaxUpwardLevelsNumber = i->second.first.size();
     parseTreeWard( i->second.second );
-    if( i->second.second.size() > myMaxDownwardLevelsNumber )
+    if((int) i->second.second.size() > myMaxDownwardLevelsNumber )
       myMaxDownwardLevelsNumber = i->second.second.size();
   }
 
@@ -518,13 +518,13 @@ void DependencyTree_View::parseTreeWard( const GEOMUtils::LevelsList& theWard )
 //=================================================================================
 void DependencyTree_View::parseTreeWardArrow( const GEOMUtils::LevelsList& theWard)
 {
-  for( int j = 0; j < theWard.size(); j++ ) {
+  for( size_t j = 0; j < theWard.size(); j++ ) {
     GEOMUtils::LevelInfo Level = theWard.at(j);
     GEOMUtils::LevelInfo::const_iterator node;
     for( node = Level.begin(); node != Level.end(); node++ ) {
       DependencyTree_Object* object = myTreeMap[ node->first ];
       std::vector<std::string> Links = node->second;
-      for( int link = 0; link < Links.size(); link++ ) {
+      for( size_t link = 0; link < Links.size(); link++ ) {
         DependencyTree_Object* LinkObject = myTreeMap[ Links[ link ] ];
         if( object && LinkObject )
           addArrow( LinkObject, object );
@@ -607,7 +607,7 @@ void DependencyTree_View::drawTree()
   std::map< int, std::vector< std::string > >::const_iterator level;
   for( level = levelObjects.begin(); level != levelObjects.end(); level++ ) {
     int step = -horDistance * ( int(level->second.size()) - 1 ) / 2;
-    for( int objIter = 0; objIter < level->second.size(); objIter++ ) {
+    for( size_t objIter = 0; objIter < level->second.size(); objIter++ ) {
       DependencyTree_Object* anObject = myTreeMap[ level->second.at( objIter ) ];
       anObject->setPos( step, verDistance * level->first );
       step += horDistance;
@@ -647,7 +647,7 @@ void DependencyTree_View::drawWard( const GEOMUtils::LevelsList& theWard,
                                     std::map< int, std::vector< std::string > >& theLevelObjects,
                                     int theCurrentLevel, const int theLevelStep )
 {
-  for( int level = 0; level < theWard.size(); level++ ) {
+  for( int level = 0, size = theWard.size(); level < size; level++ ) {
     if( level >= myLevelsNumber )
       return;
     theCurrentLevel += theLevelStep;
@@ -671,7 +671,7 @@ void DependencyTree_View::drawWard( const GEOMUtils::LevelsList& theWard,
 //=================================================================================
 void DependencyTree_View::drawWardArrows( const GEOMUtils::LevelsList& theWard )
 {
-  for( int j = 0; j < theWard.size(); j++ ) {
+  for( int j = 0, size = theWard.size(); j < size; j++ ) {
     if( j >= myLevelsNumber )
       break;
     GEOMUtils::LevelInfo Level = theWard.at(j);
@@ -679,7 +679,7 @@ void DependencyTree_View::drawWardArrows( const GEOMUtils::LevelsList& theWard )
     for( node = Level.begin(); node != Level.end(); node++ ) {
       DependencyTree_Object* object = myTreeMap[ node->first ];
       GEOMUtils::NodeLinks Links = node->second;
-      for( int link = 0; link < Links.size(); link++ ) {
+      for( size_t link = 0; link < Links.size(); link++ ) {
         DependencyTree_Object* LinkObject = myTreeMap[ Links[ link ] ];
         if( isItemAdded( object ) && isItemAdded( LinkObject ) ) {
           DependencyTree_Arrow* arrow = myArrows[ std::pair<DependencyTree_Object*,DependencyTree_Object*>( LinkObject, object ) ];
@@ -824,4 +824,5 @@ int DependencyTree_View::checkMaxLevelsNumber()
     return myMaxUpwardLevelsNumber;
   else if( myDisplayDescendants->isChecked() )
     return  myMaxDownwardLevelsNumber;
+  return 0;
 }
