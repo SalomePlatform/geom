@@ -48,6 +48,7 @@ SET(_link_LIBRARIES
   OCC2VTK
   SalomeIDLGEOM
   ${CAS_TKBRep}
+  ${CAS_TKOpenGl}
   ${KERNEL_SALOMELocalTrace}
   ${GUI_SalomeObject}
   ${GUI_SVTK}
