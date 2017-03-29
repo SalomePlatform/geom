@@ -13765,8 +13765,8 @@ omniORB.registerObjref(GEOM._objref_GEOM_Gen._NP_RepositoryId, geomBuilder)
 #  @ingroup l2_field
 class geomField( GEOM._objref_GEOM_Field ):
 
-    def __init__(self):
-        GEOM._objref_GEOM_Field.__init__(self)
+    def __init__(self, *args):
+        GEOM._objref_GEOM_Field.__init__(self, *args)
         self.field = GEOM._objref_GEOM_Field
         return
 
