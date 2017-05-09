@@ -240,6 +240,8 @@
 
 ## @}
 
+import omniORB
+
 # initialize SALOME session in try/except block
 # to avoid problems in some cases, e.g. when generating documentation
 try:
@@ -257,6 +259,84 @@ import os
 import functools
 
 from salome.geom.gsketcher import Sketcher3D, Sketcher2D, Polyline2D
+
+# In case the omniORBpy EnumItem class does not fully support Python 3
+# (for instance in version 4.2.1-2), the comparison ordering methods must be
+# defined
+#
+try:
+    GEOM.COMPOUND < GEOM.SOLID
+except TypeError:
+    def enumitem_eq(self, other):
+        try:
+            if isinstance(other, omniORB.EnumItem):
+                if other._parent_id == self._parent_id:
+                    return self._v == other._v
+                else:
+                    return self._parent_id == other._parent_id
+            else:
+                return id(self) == id(other)
+        except:
+            return id(self) == id(other)
+
+    def enumitem_lt(self, other):
+        try:
+            if isinstance(other, omniORB.EnumItem):
+                if other._parent_id == self._parent_id:
+                    return self._v < other._v
+                else:
+                    return self._parent_id < other._parent_id
+            else:
+                return id(self) < id(other)
+        except:
+            return id(self) < id(other)
+
+    def enumitem_le(self, other):
+        try:
+            if isinstance(other, omniORB.EnumItem):
+                if other._parent_id == self._parent_id:
+                    return self._v <= other._v
+                else:
+                    return self._parent_id <= other._parent_id
+            else:
+                return id(self) <= id(other)
+        except:
+            return id(self) <= id(other)
+
+    def enumitem_gt(self, other):
+        try:
+            if isinstance(other, omniORB.EnumItem):
+                if other._parent_id == self._parent_id:
+                    return self._v > other._v
+                else:
+                    return self._parent_id > other._parent_id
+            else:
+                return id(self) > id(other)
+        except:
+            return id(self) > id(other)
+
+    def enumitem_ge(self, other):
+        try:
+            if isinstance(other, omniORB.EnumItem):
+                if other._parent_id == self._parent_id:
+                    return self._v >= other._v
+                else:
+                    return self._parent_id >= other._parent_id
+            else:
+                return id(self) >= id(other)
+        except:
+            return id(self) >= id(other)
+
+    GEOM.omniORB.EnumItem.__eq__ = enumitem_eq
+    GEOM.omniORB.EnumItem.__lt__ = enumitem_lt
+    GEOM.omniORB.EnumItem.__le__ = enumitem_le
+    GEOM.omniORB.EnumItem.__gt__ = enumitem_gt
+    GEOM.omniORB.EnumItem.__ge__ = enumitem_ge
+    omniORB.EnumItem.__eq__ = enumitem_eq
+    omniORB.EnumItem.__lt__ = enumitem_lt
+    omniORB.EnumItem.__le__ = enumitem_le
+    omniORB.EnumItem.__gt__ = enumitem_gt
+    omniORB.EnumItem.__ge__ = enumitem_ge
 
 # service function
 def _toListOfNames(_names, _size=-1):
@@ -8144,8 +8224,8 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             if Limit == self.ShapeType["AUTO"]:
                 # automatic detection of the most appropriate shape limit type
-                lim = GEOM.SHAPE._v
-                for s in ListShapes: lim = min( lim, s.GetMaxShapeType()._v )
+                lim = GEOM.SHAPE
+                for s in ListShapes: lim = min(lim, s.GetMaxShapeType())
                 Limit = EnumToLong(lim)
                 pass
             anObj = self.BoolOp.MakePartition(ListShapes, ListTools,
@@ -8217,8 +8297,8 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             """
             if Limit == self.ShapeType["AUTO"]:
                 # automatic detection of the most appropriate shape limit type
-                lim = GEOM.SHAPE._v
-                for s in ListShapes: lim = min( lim, s.GetMaxShapeType()._v )
+                lim = GEOM.SHAPE
+                for s in ListShapes: lim = min(lim, s.GetMaxShapeType())
                 Limit = EnumToLong(lim)
                 pass
             anObj = self.BoolOp.MakePartitionNonSelfIntersectedShape(ListShapes, ListTools,
@@ -13756,7 +13836,6 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         ## @}
 
 
-import omniORB
 # Register the new proxy for GEOM_Gen
 omniORB.registerObjref(GEOM._objref_GEOM_Gen._NP_RepositoryId, geomBuilder)
 
@@ -13783,7 +13862,7 @@ class geomField( GEOM._objref_GEOM_Field ):
     ## Returns type of field data as integer [0-3]
     def getType(self):
         "Returns type of field data"
-        return self.field.GetDataType(self)._v
+        return EnumToLong(self.field.GetDataType(self))
 
     ## Returns type of field data:
     #  one of GEOM.FDT_Bool, GEOM.FDT_Int, GEOM.FDT_Double, GEOM.FDT_String
