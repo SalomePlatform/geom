@@ -48,55 +48,54 @@ import sys
 import inspect
 
 def generate(plugin_name, output):
-    import types
-    plugin_module_name  = plugin_name + "Builder"
-    plugin_module       = "salome.%s.%s" % (plugin_name, plugin_module_name)
-    import_str          = "from salome.%s import %s" % (plugin_name, plugin_module_name)
-    execLine            = "from salome.%s import %s\nimport %s\nmod = %s" % (plugin_name, plugin_module_name, plugin_module, plugin_module)
+    def get_functions(amodule):
+        for attr in dir(amodule):
+          if attr.startswith( '_' ): continue # skip an internal methods
+          item = getattr(amodule, attr)
+          if inspect.isfunction(item):
+              yield item
+              pass
+          pass
+
+    plugin_module_name = plugin_name + "Builder"
+    plugin_module = "salome.{}.{}".format(plugin_name, plugin_module_name)
+    import_str = "from salome.{} import {}".format(plugin_name, plugin_module_name)
+    execLine = "from salome.{} import {}\n" \
+               "import {}\n" \
+               "mod = {}".format(plugin_name, plugin_module_name, plugin_module, plugin_module)
     print(execLine)
     namespace = {}
     exec(execLine , namespace)
-    functions = []
-    for attr in dir(namespace["mod"]):
-        if attr.startswith( '_' ): continue # skip an internal methods
-        item = getattr(namespace["mod"], attr)
-        if isinstance(item, types.FunctionType):
-            if item not in functions:
-                functions.append(item)
-                pass
-            pass
-        pass
-    if functions:
-        for function in functions:
-            comments = inspect.getcomments(function)
-            if comments:
-                comments = comments.strip().split("\n")
-                comments = "\t" + "\n\t".join(comments)
-                output.append(comments)
-                pass                
-            sources = inspect.getsource(function)
-            if sources is not None:
-                sources_list = sources.split("\n")
-                sources_new_list = []
-                found = False
-                for item in sources_list:
-                    if '"""' in item:
-                        if found == True:
-                            found = False                                
-                            continue
-                        else:
-                            found = True
-                            continue
-                            pass
-                        pass                
-                    if found == False:
-                        sources_new_list.append(item)
+
+    for function in get_functions(namespace["mod"]):
+        comments = inspect.getcomments(function)
+        if comments:
+            comments = comments.strip().split("\n")
+            comments = "\t" + "\n\t".join(comments)
+            output.append(comments)
+            pass                
+        sources = inspect.getsource(function)
+        if sources is not None:
+            sources_list = sources.split("\n")
+            sources_new_list = []
+            found = False
+            for item in sources_list:
+                if '"""' in item:
+                    if found == True:
+                        found = False                                
+                        continue
+                    else:
+                        found = True
+                        continue
                         pass
+                    pass                
+                if found == False:
+                    sources_new_list.append(item)
                     pass
-                sources = "\n".join(sources_new_list)
-                sources = "\t" + sources.replace("\n", "\n\t")
-                output.append(sources)
                 pass
+            sources = "\n".join(sources_new_list)
+            sources = "\t" + sources.replace("\n", "\n\t")
+            output.append(sources)
             pass
         pass
     pass
@@ -144,8 +143,7 @@ if __name__ == "__main__":
     
     for plugin_name in args.plugin:
        generate( plugin_name, output )
-    pass
+       pass
 
     with open(args.output, "w", encoding='utf8') as f:
         f.write('\n'.join(output))
-
