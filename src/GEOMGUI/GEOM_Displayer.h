@@ -277,6 +277,7 @@ protected:
                                   double& theFieldStepRangeMin,
                                   double& theFieldStepRangeMax );
 
+#if OCC_VERSION_MAJOR < 7
   // Note: the method is copied from Aspect_ColorScale class
   static Standard_Integer HueFromValue( const Standard_Integer aValue,
                                         const Standard_Integer aMin,
@@ -288,6 +289,7 @@ protected:
                                      const Standard_Real aMax,
                                      const Standard_Integer ColorsCount,
                                      Quantity_Color& aColor );
+#endif
 
 protected:
   Handle(SALOME_InteractiveObject) myIO;

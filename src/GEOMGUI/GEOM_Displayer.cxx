@@ -2965,7 +2965,11 @@ QList<QVariant> GEOM_Displayer::groupFieldData( const QList<QVariant>& theFieldS
     {
       QColor aQColor;
       Quantity_Color aColor;
+#if OCC_VERSION_MAJOR < 7
       if( FindColor( aVariant.toDouble(), theFieldStepRangeMin, theFieldStepRangeMax, anIsBoolean ? 2 : aNbIntervals, aColor ) )
+#else
+      if( AIS_ColorScale::FindColor( aVariant.toDouble(), theFieldStepRangeMin, theFieldStepRangeMax, anIsBoolean ? 2 : aNbIntervals, aColor ) )
+#endif
         aQColor = QColor::fromRgbF( aColor.Red(), aColor.Green(), aColor.Blue() );
       aResultList << aQColor;
     }
@@ -2973,7 +2977,8 @@ QList<QVariant> GEOM_Displayer::groupFieldData( const QList<QVariant>& theFieldS
   return aResultList;
 }
 
-// Note: the method is copied from AIS_ColorScale class
+#if OCC_VERSION_MAJOR < 7
+// Note: the method is copied from Aspect_ColorScale class
 Standard_Integer GEOM_Displayer::HueFromValue( const Standard_Integer aValue,
                                                const Standard_Integer aMin,
                                                const Standard_Integer aMax )
@@ -2989,7 +2994,7 @@ Standard_Integer GEOM_Displayer::HueFromValue( const Standard_Integer aValue,
   return aHue;
 }
 
-// Note: the method is copied from AIS_ColorScale class
+// Note: the method is copied from Aspect_ColorScale class
 Standard_Boolean GEOM_Displayer::FindColor( const Standard_Real aValue, 
                                             const Standard_Real aMin,
                                             const Standard_Real aMax,
@@ -3016,6 +3021,7 @@ Standard_Boolean GEOM_Displayer::FindColor( const Standard_Real aValue,
     return Standard_True;
   } 
 }
+#endif
 
 void GEOM_Displayer::UpdateColorScale( const bool theIsRedisplayFieldSteps, const bool updateViewer ) 
 {
@@ -3027,7 +3033,6 @@ void GEOM_Displayer::UpdateColorScale( const bool theIsRedisplayFieldSteps, cons
   if( !aViewModel )
     return;
 
-#if OCC_VERSION_MAJOR < 7
   Handle(V3d_Viewer) aViewer = aViewModel->getViewer3d();
   if( aViewer.IsNull() )
     return;
@@ -3039,7 +3044,6 @@ void GEOM_Displayer::UpdateColorScale( const bool theIsRedisplayFieldSteps, cons
   Handle(V3d_View) aView = aViewer->ActiveView();
   if( aView.IsNull() )
     return;
-#endif
 
   Standard_Boolean anIsDisplayColorScale = Standard_False;
   TCollection_AsciiString aColorScaleTitle;
@@ -3103,18 +3107,25 @@ void GEOM_Displayer::UpdateColorScale( const bool theIsRedisplayFieldSteps, cons
     Handle(Aspect_ColorScale) myColorScale = aView->ColorScale();
     if( !myColorScale.IsNull() )
     {
+      myColorScale->SetXPosition( anXPos );
+      myColorScale->SetYPosition( anYPos );
+      myColorScale->SetWidth( aWidth );
+      myColorScale->SetHeight( aHeight );
+#else
+      Standard_Integer aWinWidth = 0, aWinHeight = 0;
+      aView->Window()->Size (aWinWidth, aWinHeight);
+
+      myColorScale->SetPosition (aWinWidth*anXPos, aWinHeight*anYPos);
+      //myColorScale->SetBreadth (aWinWidth); // ???
+      myColorScale->SetBreadth (aWinWidth*aWidth); // ???
+      myColorScale->SetHeight  (aWinHeight*aHeight);
 #endif
 
-    myColorScale->SetXPosition( anXPos );
-    myColorScale->SetYPosition( anYPos );
-    myColorScale->SetWidth( aWidth );
-    myColorScale->SetHeight( aHeight );
+      myColorScale->SetRange( aColorScaleMin, aColorScaleMax );
+      myColorScale->SetNumberOfIntervals( anIsBoolean ? 2 : aNbIntervals );
 
-    myColorScale->SetTextHeight( aTextHeight );
-    myColorScale->SetNumberOfIntervals( anIsBoolean ? 2 : aNbIntervals );
-
-    myColorScale->SetTitle( aColorScaleTitle );
-    myColorScale->SetRange( aColorScaleMin, aColorScaleMax );
+      myColorScale->SetTextHeight( aTextHeight );
+      myColorScale->SetTitle( aColorScaleTitle );
 
 #if OCC_VERSION_MAJOR < 7
     }
