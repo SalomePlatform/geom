@@ -463,16 +463,13 @@ static std::string getName( GEOM::GEOM_BaseObject_ptr object )
  *  Constructor
  */
 //=================================================================
-GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
+GEOM_Displayer::GEOM_Displayer()
   : myUpdateColorScale(true), myIsRedisplayed( false )
 {
-  if( st )
-    myApp = dynamic_cast<SalomeApp_Application*>( st->application() );
-  else
-    myApp = 0;
+  SUIT_Session* session = SUIT_Session::session();
+  myApp = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
 
   /* Shading Color */
-  SUIT_Session* session = SUIT_Session::session();
   SUIT_ResourceMgr* resMgr = session->resourceMgr();
 
   QColor col = resMgr->colorValue( "Geometry", "shading_color", QColor( 255, 0, 0 ) );
@@ -803,7 +800,7 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   int aMgrId = !anIO.IsNull() ? getViewManagerId( myViewFrame ) : -1;
 
   // get presentation properties
-  PropMap propMap = getObjectProperties( study, entry, myViewFrame );
+  PropMap propMap = getObjectProperties( entry, myViewFrame );
 
   // Temporary staff: vertex must be infinite for correct visualization
   AISShape->SetInfiniteState( myShape.Infinite() ); // || myShape.ShapeType() == TopAbs_VERTEX // VSR: 05/04/2010: Fix 20668 (Fit All for points & lines)
@@ -945,14 +942,14 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
     aImagePath = GetTexture().c_str();
     if ( ! entry.isEmpty() ) {
       // check that study is active
-      SalomeApp_Study* study = getActiveStudy();
+      SalomeApp_Study* study = getStudy();
       if ( study ) {
         // Store the texture in object properties for next displays
         study->setObjectProperty( aMgrId, entry, GEOM::propertyName( GEOM::Texture ), QString( GetTexture().c_str() ) );
         study->setObjectProperty( aMgrId, entry, GEOM::propertyName( GEOM::DisplayMode ), 3 );
         
         // Update propeties map
-        propMap = getObjectProperties( study, entry, myViewFrame );
+        propMap = getObjectProperties( entry, myViewFrame );
       }
     }
   }
@@ -1010,7 +1007,7 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
       int textureId = aList[0].toInt();
       Standard_Integer aWidth, aHeight;
       Handle(TColStd_HArray1OfByte) aTexture =
-        GeometryGUI::getTexture( study, textureId, aWidth, aHeight );
+        GeometryGUI::getTexture( textureId, aWidth, aHeight );
       if ( !aTexture.IsNull() ) {
         Handle(Prs3d_PointAspect) aTextureAspect =
           new Prs3d_PointAspect( HasColor() ? 
@@ -1073,7 +1070,7 @@ void GEOM_Displayer::updateActorProperties( GEOM_Actor* actor, bool create )
   int aMgrId = !anIO.IsNull() ? getViewManagerId( myViewFrame ) : -1;
 
   // get presentation properties
-  PropMap propMap = getObjectProperties( study, entry, myViewFrame );
+  PropMap propMap = getObjectProperties( entry, myViewFrame );
   QColor c;
 
   /////////////////////////////////////////////////////////////////////////
@@ -1287,7 +1284,7 @@ void GEOM_Displayer::updateDimensions( const Handle(SALOME_InteractiveObject)& t
   }
   else
   {
-    aRecords.LoadFromAttribute( getStudy(), theIO->getEntry() );
+    aRecords.LoadFromAttribute( theIO->getEntry() );
   }
   
   // create up-to-date dimension presentations
@@ -1762,49 +1759,43 @@ SALOME_Prs* GEOM_Displayer::buildPresentation( const QString& entry,
         // set interactive object
         setIO( theIO );
         //  Find SOBject (because shape should be published previously)
-        SUIT_Session* session = SUIT_Session::session();
-        SUIT_Application* app = session->activeApplication();
-        if ( app )
+        if ( getStudy() )
         {
-          SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-          if ( study )
+          _PTR(SObject) SO ( getStudy()->studyDS()->FindObjectID( theIO->getEntry() ) );
+          if ( SO )
           {
-            _PTR(SObject) SO ( study->studyDS()->FindObjectID( theIO->getEntry() ) );
-            if ( SO )
+            // get CORBA reference to data object
+            CORBA::Object_var object = GeometryGUI::ClientSObjectToObject(SO);
+            if ( !CORBA::is_nil( object ) )
             {
-              // get CORBA reference to data object
-              CORBA::Object_var object = GeometryGUI::ClientSObjectToObject(SO);
-              if ( !CORBA::is_nil( object ) )
+              // downcast to GEOM base object
+              GEOM::GEOM_BaseObject_var GeomBaseObject = GEOM::GEOM_BaseObject::_narrow( object );
+              if ( !GeomBaseObject->_is_nil() )
               {
-                // downcast to GEOM base object
-                GEOM::GEOM_BaseObject_var GeomBaseObject = GEOM::GEOM_BaseObject::_narrow( object );
-                if ( !GeomBaseObject->_is_nil() )
+                myType = GeomBaseObject->GetType();
+
+                // downcast to GEOM object
+                GEOM::GEOM_Object_var GeomObject = GEOM::GEOM_Object::_narrow( GeomBaseObject );
+                if ( myType == GEOM_FIELD_STEP )
                 {
-                  myType = GeomBaseObject->GetType();
-
-                  // downcast to GEOM object
-                  GEOM::GEOM_Object_var GeomObject = GEOM::GEOM_Object::_narrow( GeomBaseObject );
-                  if ( myType == GEOM_FIELD_STEP )
+                  // get the GEOM object from the field's shape
+                  GEOM::GEOM_FieldStep_var GeomFieldStep = GEOM::GEOM_FieldStep::_narrow( GeomBaseObject );
+                  if ( !GeomFieldStep->_is_nil() )
                   {
-                    // get the GEOM object from the field's shape
-                    GEOM::GEOM_FieldStep_var GeomFieldStep = GEOM::GEOM_FieldStep::_narrow( GeomBaseObject );
-                    if ( !GeomFieldStep->_is_nil() )
-                    {
-                      GEOM::GEOM_Field_var GeomField = GeomFieldStep->GetField();
-                      if ( !GeomField->_is_nil() )
-                        GeomObject = GeomField->GetShape();
-                    }
-
-                    // read the field step information
-                    readFieldStepInfo( GeomFieldStep );
+                    GEOM::GEOM_Field_var GeomField = GeomFieldStep->GetField();
+                    if ( !GeomField->_is_nil() )
+                      GeomObject = GeomField->GetShape();
                   }
 
-                  if ( !GeomObject->_is_nil() )
-                  {
-                    theIO->setName( GeomObject->GetName() );
-                    // finally set shape
-                    setShape( GEOM_Client::get_client().GetShape( GeometryGUI::GetGeomGen(), GeomObject ) );
-                  }
+                  // read the field step information
+                  readFieldStepInfo( GeomFieldStep );
+                }
+
+                if ( !GeomObject->_is_nil() )
+                {
+                  theIO->setName( GeomObject->GetName() );
+                  // finally set shape
+                  setShape( GEOM_Client::get_client().GetShape( GeometryGUI::GetGeomGen(), GeomObject ) );
                 }
               }
             }
@@ -2504,21 +2495,20 @@ SALOMEDS::Color GEOM_Displayer::getUniqueColor( const QList<SALOMEDS::Color>& th
   return aSColor;
 }
 
-PropMap GEOM_Displayer::getObjectProperties( SalomeApp_Study* study,
-                                             const QString& entry,
+PropMap GEOM_Displayer::getObjectProperties( const QString& entry,
                                              SALOME_View* view )
 {
   // get default properties for the explicitly specified default view type
   PropMap propMap = GEOM_Displayer::getDefaultPropertyMap();
 
-  if ( study && view ) {
+  if ( getStudy() && view ) {
     SUIT_ViewModel* viewModel = dynamic_cast<SUIT_ViewModel*>( view );
     SUIT_ViewManager* viewMgr = ( viewModel != 0 ) ? viewModel->getViewManager() : 0;
     int viewId = ( viewMgr != 0 ) ? viewMgr->getGlobalId() : -1;
   
     if ( viewModel && viewId != -1 ) {
       // get properties from the study
-      PropMap storedMap = study->getObjectProperties( viewId, entry );
+      PropMap storedMap = getStudy()->getObjectProperties( viewId, entry );
       // overwrite default properties from stored ones (that are specified)
       for ( int prop = GEOM::Visibility; prop <= GEOM::LastProperty; prop++ ) {
         if ( storedMap.contains( GEOM::propertyName( (GEOM::Property)prop ) ) )
@@ -2538,7 +2528,7 @@ PropMap GEOM_Displayer::getObjectProperties( SalomeApp_Study* study,
 
       if ( !entry.isEmpty() ) {
         // get CORBA reference to geom object
-        _PTR(SObject) SO( study->studyDS()->FindObjectID( entry.toStdString() ) );
+        _PTR(SObject) SO( getStudy()->studyDS()->FindObjectID( entry.toStdString() ) );
         if ( SO ) {
           CORBA::Object_var object = GeometryGUI::ClientSObjectToObject( SO );
           if ( !CORBA::is_nil( object ) ) {
@@ -2736,16 +2726,9 @@ SALOMEDS::Color GEOM_Displayer::getColor(GEOM::GEOM_Object_var theGeomObject, bo
 
 
 void GEOM_Displayer::EraseWithChildren(const Handle(SALOME_InteractiveObject)& theIO,
-                                       const bool eraseOnlyChildren) {
-  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-  if ( !app )
-    return;
-
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-  if ( !appStudy )
-    return;
-
-  LightApp_DataObject* parent = appStudy->findObjectByEntry(theIO->getEntry());
+                                       const bool eraseOnlyChildren)
+{
+  LightApp_DataObject* parent = getStudy()->findObjectByEntry(theIO->getEntry());
 
   if( !parent)
     return;
@@ -2753,7 +2736,7 @@ void GEOM_Displayer::EraseWithChildren(const Handle(SALOME_InteractiveObject)& t
   // Erase from all views
   QList<SALOME_View*> views;
   SALOME_View* view;
-  ViewManagerList vmans = app->viewManagers();
+  ViewManagerList vmans = myApp->viewManagers();
   SUIT_ViewManager* vman;
   foreach ( vman, vmans ) {
     SUIT_ViewModel* vmod = vman->getViewModel();
@@ -3025,10 +3008,6 @@ Standard_Boolean GEOM_Displayer::FindColor( const Standard_Real aValue,
 
 void GEOM_Displayer::UpdateColorScale( const bool theIsRedisplayFieldSteps, const bool updateViewer ) 
 {
-  SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( myApp->activeStudy() );
-  if( !aStudy )
-    return;
-
   SOCC_Viewer* aViewModel = dynamic_cast<SOCC_Viewer*>( GetActiveView() );
   if( !aViewModel )
     return;
@@ -3146,14 +3125,14 @@ void GEOM_Displayer::UpdateColorScale( const bool theIsRedisplayFieldSteps, cons
 
   if( theIsRedisplayFieldSteps )
   {
-    _PTR(Study) aStudyDS = aStudy->studyDS();
+    _PTR(Study) aStudyDS = getStudy()->studyDS();
     QList<SUIT_ViewManager*> vmList;
     myApp->viewManagers( vmList );
     for( QList<SUIT_ViewManager*>::Iterator vmIt = vmList.begin(); vmIt != vmList.end(); vmIt++ )
     {
       if( SUIT_ViewManager* aViewManager = *vmIt )
       {
-        const ObjMap& anObjects = aStudy->getObjectProperties( aViewManager->getGlobalId() );
+        const ObjMap& anObjects = getStudy()->getObjectProperties( aViewManager->getGlobalId() );
         for( ObjMap::ConstIterator objIt = anObjects.begin(); objIt != anObjects.end(); objIt++ )
         {
           _PTR(SObject) aSObj( aStudyDS->FindObjectID( objIt.key().toLatin1().constData() ) );

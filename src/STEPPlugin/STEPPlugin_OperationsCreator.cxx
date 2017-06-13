@@ -35,7 +35,7 @@
 // OCCT includes
 #include <TFunction_DriverTable.hxx>
 
-std::map <int, STEPPlugin_IOperations*> STEPPlugin_OperationsCreator::_mapOfOperations;
+STEPPlugin_IOperations* STEPPlugin_OperationsCreator::_operation;
 
 STEPPlugin_OperationsCreator::STEPPlugin_OperationsCreator()
 {
@@ -56,19 +56,17 @@ STEPPlugin_OperationsCreator::~STEPPlugin_OperationsCreator()
 }
 
 GEOM_IOperations_i* STEPPlugin_OperationsCreator::Create( PortableServer::POA_ptr thePOA,
-                                                          int                     theStudyId,
                                                           GEOM::GEOM_Gen_ptr      theEngine,
                                                           ::GEOMImpl_Gen*         theGenImpl )
 {
   Unexpect aCatch( SALOME_SalomeException );
   MESSAGE( "STEPPlugin_OperationsCreator::Create" );
-  return new STEPPlugin_IOperations_i( thePOA, theEngine, get( theGenImpl, theStudyId ) );
+  return new STEPPlugin_IOperations_i( thePOA, theEngine, get(theGenImpl) );
 }
 
-STEPPlugin_IOperations* STEPPlugin_OperationsCreator::get( ::GEOMImpl_Gen* theGenImpl,
-							   int             theStudyId )
+STEPPlugin_IOperations* STEPPlugin_OperationsCreator::get( ::GEOMImpl_Gen* theGenImpl )
 {
-  if (_mapOfOperations.find( theStudyId ) == _mapOfOperations.end() )
-    _mapOfOperations[theStudyId] = new STEPPlugin_IOperations( theGenImpl, theStudyId );
-  return _mapOfOperations[theStudyId];
+  if( !_operation )
+    _operation = new STEPPlugin_IOperations( theGenImpl );
+  return _operation;
 }

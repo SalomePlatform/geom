@@ -301,7 +301,7 @@ void RepairGUI_CloseContourDlg::enterEvent (QEvent*)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr RepairGUI_CloseContourDlg::createOperation()
 {
-  return getGeomEngine()->GetIHealingOperations(getStudyId());
+  return getGeomEngine()->GetIHealingOperations();
 }
 
 //=================================================================================

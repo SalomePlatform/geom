@@ -272,7 +272,7 @@ void MeasureGUI_CenterMassDlg::enterEvent( QEvent* )
 //=================================================================================
 GEOM::GEOM_IOperations_ptr MeasureGUI_CenterMassDlg::createOperation()
 {
-  return getGeomEngine()->GetIMeasureOperations( getStudyId() );
+  return getGeomEngine()->GetIMeasureOperations();
 }
 
 //=================================================================================

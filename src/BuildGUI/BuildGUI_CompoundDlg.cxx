@@ -207,7 +207,7 @@ void BuildGUI_CompoundDlg::enterEvent(QEvent* e)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BuildGUI_CompoundDlg::createOperation()
 {
-  return getGeomEngine()->GetIShapesOperations( getStudyId() );
+  return getGeomEngine()->GetIShapesOperations();
 }
 
 //=================================================================================
@@ -244,12 +244,11 @@ bool BuildGUI_CompoundDlg::execute( ObjectList& objects )
 // function : restoreSubShapes
 // purpose  :
 //=================================================================================
-void BuildGUI_CompoundDlg::restoreSubShapes( SALOMEDS::Study_ptr   theStudy,
-                                             SALOMEDS::SObject_ptr theSObject )
+void BuildGUI_CompoundDlg::restoreSubShapes( SALOMEDS::SObject_ptr theSObject )
 {
   if ( mainFrame()->CheckBoxRestoreSS->isChecked() ) {
     // empty list of arguments means that all arguments should be restored
-    getGeomEngine()->RestoreSubShapesSO( theStudy, theSObject, GEOM::ListOfGO(),
+    getGeomEngine()->RestoreSubShapesSO( theSObject, GEOM::ListOfGO(),
                                          /*theFindMethod=*/GEOM::FSM_GetInPlace, // ? GEOM::FSM_GetSame
                                          /*theInheritFirstArg=*/false,
                                          mainFrame()->CheckBoxAddPrefix->isChecked() );

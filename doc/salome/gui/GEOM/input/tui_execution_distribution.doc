@@ -16,7 +16,7 @@ import salome
 salome.salome_init()
 
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(theStudy)
+geompy = geomBuilder.New()
 \endcode
 
 With this initialization, the geometry engine runs in the default container,
@@ -30,7 +30,7 @@ For instance:
 from salome.geom import geomBuilder
 lcc = salome.lcc
 engineGeom = lcc.FindOrLoadComponent("myServer", "GEOM")
-geompy = geomBuilder.New(theStudy, engineGeom)
+geompy = geomBuilder.New(engineGeom)
 \endcode
 
 Or, within a Distributed Python Node of a YACS Schema, where the container
@@ -38,8 +38,8 @@ is already provided in the Python context of the node, with <em>my_container</em
 \code
 from salome.geom import geomBuilder
 my_container.load_component_Library("GEOM")
-engineGeom = my_container.create_component_instance("GEOM", 0)
-geompy = geomBuilder.New(theStudy, engineGeom)
+engineGeom = my_container.create_component_instance("GEOM")
+geompy = geomBuilder.New(engineGeom)
 \endcode
 
 

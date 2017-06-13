@@ -415,7 +415,7 @@ SALOME_Prs* MeasureGUI_DistanceDlg::buildPrs()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr MeasureGUI_DistanceDlg::createOperation()
 {
-  return getGeomEngine()->GetIMeasureOperations(getStudyId());
+  return getGeomEngine()->GetIMeasureOperations();
 }
 
 //=================================================================================
@@ -434,7 +434,7 @@ bool MeasureGUI_DistanceDlg::isValid (QString& msg)
 bool MeasureGUI_DistanceDlg::execute (ObjectList& objects)
 {
   GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow(getOperation());
-  GEOM::GEOM_IBasicOperations_var aBasicOper = getGeomEngine()->GetIBasicOperations(getStudyId());
+  GEOM::GEOM_IBasicOperations_var aBasicOper = getGeomEngine()->GetIBasicOperations();
 
   GEOM::ListOfDouble_var aDbls;
   int nbSols = anOper->ClosestPoints(myObj1.get(), myObj2.get(), aDbls);

@@ -67,8 +67,8 @@
  *   constructor:
  */
 //=============================================================================
-GEOMImpl_ILocalOperations::GEOMImpl_ILocalOperations (GEOM_Engine* theEngine, int theDocID)
-: GEOM_IOperations(theEngine, theDocID)
+GEOMImpl_ILocalOperations::GEOMImpl_ILocalOperations (GEOM_Engine* theEngine)
+: GEOM_IOperations(theEngine)
 {
   MESSAGE("GEOMImpl_ILocalOperations::GEOMImpl_ILocalOperations");
 }
@@ -95,7 +95,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletAll
   SetErrorCode(KO);
 
   //Add a new Fillet object
-  Handle(GEOM_Object) aFillet = GetEngine()->AddObject(GetDocID(), GEOM_FILLET);
+  Handle(GEOM_Object) aFillet = GetEngine()->AddObject(GEOM_FILLET);
 
   //Add a new Fillet function
   Handle(GEOM_Function) aFunction =
@@ -146,7 +146,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdges
   SetErrorCode(KO);
 
   //Add a new Fillet object
-  Handle(GEOM_Object) aFillet = GetEngine()->AddObject(GetDocID(), GEOM_FILLET);
+  Handle(GEOM_Object) aFillet = GetEngine()->AddObject(GEOM_FILLET);
 
   //Add a new Fillet function
   Handle(GEOM_Function) aFunction =
@@ -213,7 +213,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdgesR1R2
   SetErrorCode(KO);
 
   //Add a new Fillet object
-  Handle(GEOM_Object) aFillet = GetEngine()->AddObject(GetDocID(), GEOM_FILLET);
+  Handle(GEOM_Object) aFillet = GetEngine()->AddObject(GEOM_FILLET);
 
   //Add a new Fillet function
   Handle(GEOM_Function) aFunction =
@@ -282,7 +282,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFaces
   SetErrorCode(KO);
 
   //Add a new Fillet object
-  Handle(GEOM_Object) aFillet = GetEngine()->AddObject(GetDocID(), GEOM_FILLET);
+  Handle(GEOM_Object) aFillet = GetEngine()->AddObject(GEOM_FILLET);
 
   //Add a new Fillet function
   Handle(GEOM_Function) aFunction =
@@ -349,7 +349,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFacesR1R2
   SetErrorCode(KO);
 
   //Add a new Fillet object
-  Handle(GEOM_Object) aFillet = GetEngine()->AddObject(GetDocID(), GEOM_FILLET);
+  Handle(GEOM_Object) aFillet = GetEngine()->AddObject(GEOM_FILLET);
 
   //Add a new Fillet function
   Handle(GEOM_Function) aFunction =
@@ -417,7 +417,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFillet2D
   SetErrorCode(KO);
 
   //Add a new Fillet object
-  Handle(GEOM_Object) aFillet2D = GetEngine()->AddObject(GetDocID(), GEOM_FILLET_2D);
+  Handle(GEOM_Object) aFillet2D = GetEngine()->AddObject(GEOM_FILLET_2D);
 
   //Add a new Fillet function
   Handle(GEOM_Function) aFunction =
@@ -485,7 +485,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFillet1D
   SetErrorCode(KO);
 
   //Add a new Fillet object
-  Handle(GEOM_Object) aFillet1D = GetEngine()->AddObject(GetDocID(), GEOM_FILLET_1D);
+  Handle(GEOM_Object) aFillet1D = GetEngine()->AddObject(GEOM_FILLET_1D);
 
   //Add a new Fillet function
   Handle(GEOM_Function) aFunction =
@@ -553,7 +553,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferAll (Handle(GEOM_Objec
   SetErrorCode(KO);
 
   //Add a new Chamfer object
-  Handle(GEOM_Object) aChamfer = GetEngine()->AddObject(GetDocID(), GEOM_CHAMFER);
+  Handle(GEOM_Object) aChamfer = GetEngine()->AddObject(GEOM_CHAMFER);
 
   //Add a new Chamfer function
   Handle(GEOM_Function) aFunction =
@@ -605,7 +605,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdge
   SetErrorCode(KO);
 
   //Add a new Chamfer object
-  Handle(GEOM_Object) aChamfer = GetEngine()->AddObject(GetDocID(), GEOM_CHAMFER);
+  Handle(GEOM_Object) aChamfer = GetEngine()->AddObject(GEOM_CHAMFER);
 
   //Add a new Chamfer function
   Handle(GEOM_Function) aFunction =
@@ -661,7 +661,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdgeAD
   SetErrorCode(KO);
 
   //Add a new Chamfer object
-  Handle(GEOM_Object) aChamfer = GetEngine()->AddObject(GetDocID(), GEOM_CHAMFER);
+  Handle(GEOM_Object) aChamfer = GetEngine()->AddObject(GEOM_CHAMFER);
 
   //Add a new Chamfer function
   Handle(GEOM_Function) aFunction =
@@ -716,7 +716,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFaces
   SetErrorCode(KO);
 
   //Add a new Chamfer object
-  Handle(GEOM_Object) aChamfer = GetEngine()->AddObject(GetDocID(), GEOM_CHAMFER);
+  Handle(GEOM_Object) aChamfer = GetEngine()->AddObject(GEOM_CHAMFER);
 
   //Add a new Chamfer function
   Handle(GEOM_Function) aFunction =
@@ -785,7 +785,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFacesAD
   SetErrorCode(KO);
 
   //Add a new Chamfer object
-  Handle(GEOM_Object) aChamfer = GetEngine()->AddObject(GetDocID(), GEOM_CHAMFER);
+  Handle(GEOM_Object) aChamfer = GetEngine()->AddObject(GEOM_CHAMFER);
 
   //Add a new Chamfer function
   Handle(GEOM_Function) aFunction =
@@ -854,7 +854,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdges
   SetErrorCode(KO);
 
   //Add a new Chamfer object
-  Handle(GEOM_Object) aChamfer = GetEngine()->AddObject(GetDocID(), GEOM_CHAMFER);
+  Handle(GEOM_Object) aChamfer = GetEngine()->AddObject(GEOM_CHAMFER);
 
   //Add a new Chamfer function
   Handle(GEOM_Function) aFunction =
@@ -924,7 +924,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdgesAD
   SetErrorCode(KO);
 
   //Add a new Chamfer object
-  Handle(GEOM_Object) aChamfer = GetEngine()->AddObject(GetDocID(), GEOM_CHAMFER);
+  Handle(GEOM_Object) aChamfer = GetEngine()->AddObject(GEOM_CHAMFER);
 
   //Add a new Chamfer function
   Handle(GEOM_Function) aFunction =
@@ -995,7 +995,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeArchimede (Handle(GEOM_Object
   SetErrorCode(KO);
 
   //Add a new Archimede object
-  Handle(GEOM_Object) aChamfer = GetEngine()->AddObject(GetDocID(), GEOM_ARCHIMEDE);
+  Handle(GEOM_Object) aChamfer = GetEngine()->AddObject(GEOM_ARCHIMEDE);
 
   //Add a new Archimede function
   Handle(GEOM_Function) aFunction = aChamfer->AddFunction(GEOMImpl_ArchimedeDriver::GetID(), ARCHIMEDE_TYPE);
@@ -1073,7 +1073,7 @@ Standard_Integer GEOMImpl_ILocalOperations::GetSubShapeIndex (Handle(GEOM_Object
 
   if (aGen) {
     GEOMImpl_IShapesOperations* anIShapesOperations =
-      aGen->GetIShapesOperations(GetDocID());
+      aGen->GetIShapesOperations();
     anInd = anIShapesOperations->GetSubShapeIndex(theShape, theSubShape);
     SetErrorCode(anIShapesOperations->GetErrorCode());
   }

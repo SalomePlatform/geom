@@ -364,7 +364,7 @@ void BasicGUI_LineDlg::enterEvent( QEvent* )
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BasicGUI_LineDlg::createOperation()
 {
-  return myGeomGUI->GetGeomGen()->GetIBasicOperations( getStudyId() );
+  return myGeomGUI->GetGeomGen()->GetIBasicOperations();
 }
 
 //=================================================================================

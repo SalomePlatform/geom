@@ -73,13 +73,13 @@
  *  constructor
  */
 //=============================================================================
-GEOMImpl_IInsertOperations::GEOMImpl_IInsertOperations(GEOM_Engine* theEngine, int theDocID)
-: GEOM_IOperations(theEngine, theDocID)
+GEOMImpl_IInsertOperations::GEOMImpl_IInsertOperations(GEOM_Engine* theEngine)
+: GEOM_IOperations(theEngine)
 {
   MESSAGE("GEOMImpl_IInsertOperations::GEOMImpl_IInsertOperations");
-  myShapesOperations = new GEOMImpl_IShapesOperations(GetEngine(), GetDocID());
-  myGroupOperations = new GEOMImpl_IGroupOperations(GetEngine(), GetDocID());
-  myFieldOperations = new GEOMImpl_IFieldOperations(GetEngine(), GetDocID());
+  myShapesOperations = new GEOMImpl_IShapesOperations(GetEngine());
+  myGroupOperations = new GEOMImpl_IGroupOperations(GetEngine());
+  myFieldOperations = new GEOMImpl_IFieldOperations(GetEngine());
 }
 
 //=============================================================================
@@ -107,7 +107,7 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::MakeCopy (Handle(GEOM_Object) th
   if (theOriginal.IsNull()) return NULL;
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GEOM_COPY);
 
   //Add a Copy function for creation a copy object
   Handle(GEOM_Function) aFunction = aCopy->AddFunction(GEOMImpl_CopyDriver::GetID(), COPY_WITH_REF);
@@ -157,7 +157,7 @@ void GEOMImpl_IInsertOperations::Export
 
   if (theOriginal.IsNull()) return;
 
-  if ( !GEOMImpl_IECallBack::GetCallBack( theFormatName )->Export( GetDocID(), theOriginal, theFileName, theFormatName ) )
+  if ( !GEOMImpl_IECallBack::GetCallBack( theFormatName )->Export( theOriginal, theFileName, theFormatName ) )
     return;
   SetErrorCode(OK);
 }
@@ -176,7 +176,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IInsertOperations::Import
   if (theFileName.IsEmpty() || theFormatName.IsEmpty()) return NULL;
 
   Handle(TColStd_HSequenceOfTransient) aSeq =
-    GEOMImpl_IECallBack::GetCallBack( theFormatName )->Import( GetDocID(), theFormatName, theFileName );
+    GEOMImpl_IECallBack::GetCallBack( theFormatName )->Import( theFormatName, theFileName );
   SetErrorCode(OK);
   return aSeq;
 }
@@ -195,7 +195,7 @@ TCollection_AsciiString GEOMImpl_IInsertOperations::ReadValue
   TCollection_AsciiString aValue;
   if (theFileName.IsEmpty() || theFormatName.IsEmpty() || theParameterName.IsEmpty()) return aValue;
 
-  aValue = GEOMImpl_IECallBack::GetCallBack( theFormatName )->ReadValue( GetDocID(), theFileName, theFormatName, theParameterName );
+  aValue = GEOMImpl_IECallBack::GetCallBack( theFormatName )->ReadValue( theFileName, theFormatName, theParameterName );
 
   SetErrorCode(OK);
   return aValue;
@@ -211,7 +211,7 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::RestoreShape (std::istringstream
   SetErrorCode(KO);
 
   //Add a new result object
-  Handle(GEOM_Object) result = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
+  Handle(GEOM_Object) result = GetEngine()->AddObject(GEOM_COPY);
 
   //Add a Copy function
   Handle(GEOM_Function) aFunction = result->AddFunction(GEOMImpl_CopyDriver::GetID(), COPY_WITHOUT_REF);
@@ -305,7 +305,7 @@ int GEOMImpl_IInsertOperations::LoadTexture(const TCollection_AsciiString& theTe
   for (i = 1, bdit = bytedata.begin(); bdit != bytedata.end(); ++bdit, ++i)
     aTexture->SetValue(i, (Standard_Byte)(*bdit));
 
-  int aTextureId = GetEngine()->addTexture(GetDocID(), lenbytes*8, lines.size(), aTexture, theTextureFile);
+  int aTextureId = GetEngine()->addTexture(lenbytes*8, lines.size(), aTexture, theTextureFile);
   if (aTextureId > 0) SetErrorCode(OK);
   return aTextureId;
 }
@@ -314,7 +314,7 @@ int GEOMImpl_IInsertOperations::AddTexture(int theWidth, int theHeight,
                                            const Handle(TColStd_HArray1OfByte)& theTexture)
 {
   SetErrorCode(KO);
-  int aTextureId = GetEngine()->addTexture(GetDocID(), theWidth, theHeight, theTexture);
+  int aTextureId = GetEngine()->addTexture(theWidth, theHeight, theTexture);
   if (aTextureId > 0) SetErrorCode(OK);
   return aTextureId;
 }
@@ -332,7 +332,7 @@ Handle(TColStd_HArray1OfByte) GEOMImpl_IInsertOperations::GetTexture(int theText
   if (theTextureId <= 0)
     return aTexture;
 
-  aTexture = GetEngine()->getTexture(GetDocID(), theTextureId, theWidth, theHeight, aFileName);
+  aTexture = GetEngine()->getTexture(theTextureId, theWidth, theHeight, aFileName);
 
   if (theWidth > 0 && theHeight > 0 && aTexture->Length() > 0) SetErrorCode(OK);
 
@@ -342,7 +342,7 @@ Handle(TColStd_HArray1OfByte) GEOMImpl_IInsertOperations::GetTexture(int theText
 std::list<int> GEOMImpl_IInsertOperations::GetAllTextures()
 {
   SetErrorCode(KO);
-  std::list<int> id_list = GetEngine()->getAllTextures(GetDocID());
+  std::list<int> id_list = GetEngine()->getAllTextures();
   SetErrorCode(OK);
   return id_list;
 }
@@ -366,7 +366,7 @@ bool GEOMImpl_IInsertOperations::TransferData
 
   //Add a new Transfer Data object object
   Handle(GEOM_Object) aTDObj =
-    GetEngine()->AddObject(GetDocID(), GEOM_TRANSFER_DATA);
+    GetEngine()->AddObject(GEOM_TRANSFER_DATA);
 
   //Add a Transfer Data function for created object
   Handle(GEOM_Function) aFunction =

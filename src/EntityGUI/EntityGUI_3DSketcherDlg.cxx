@@ -756,7 +756,7 @@ void EntityGUI_3DSketcherDlg::SelectionIntoArgument()
         aSelMgr->GetIndexes(aSelList.First(), aMap);
         if (aMap.Extent() == 1) {
           int anIndex = aMap(1);
-          GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+          GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations();
           aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
         }
       }
@@ -943,7 +943,7 @@ void EntityGUI_3DSketcherDlg::enterEvent (QEvent*)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr EntityGUI_3DSketcherDlg::createOperation()
 {
-  return getGeomEngine()->GetICurvesOperations(getStudyId());
+  return getGeomEngine()->GetICurvesOperations();
 }
 
 //=================================================================================

@@ -249,8 +249,8 @@ static Standard_Boolean IsQuadrangle(const TopoDS_Face   &theFace,
  *   constructor:
  */
 //=============================================================================
-GEOMImpl_IBlocksOperations::GEOMImpl_IBlocksOperations (GEOM_Engine* theEngine, int theDocID)
-: GEOM_IOperations(theEngine, theDocID)
+GEOMImpl_IBlocksOperations::GEOMImpl_IBlocksOperations (GEOM_Engine* theEngine)
+: GEOM_IOperations(theEngine)
 {
   MESSAGE("GEOMImpl_IBlocksOperations::GEOMImpl_IBlocksOperations");
 }
@@ -281,7 +281,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeQuad
       theEdge3.IsNull() || theEdge4.IsNull()) return NULL;
 
   //Add a new Face object
-  Handle(GEOM_Object) aFace = GetEngine()->AddObject(GetDocID(), GEOM_FACE);
+  Handle(GEOM_Object) aFace = GetEngine()->AddObject(GEOM_FACE);
 
   //Add a new Face function
   Handle(GEOM_Function) aFunction =
@@ -342,7 +342,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeQuad2Edges
   if (theEdge1.IsNull() || theEdge2.IsNull()) return NULL;
 
   //Add a new Face object
-  Handle(GEOM_Object) aFace = GetEngine()->AddObject(GetDocID(), GEOM_FACE);
+  Handle(GEOM_Object) aFace = GetEngine()->AddObject(GEOM_FACE);
 
   //Add a new Face function
   Handle(GEOM_Function) aFunction =
@@ -400,7 +400,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeQuad4Vertices
       thePnt3.IsNull() || thePnt4.IsNull()) return NULL;
 
   //Add a new Face object
-  Handle(GEOM_Object) aFace = GetEngine()->AddObject(GetDocID(), GEOM_FACE);
+  Handle(GEOM_Object) aFace = GetEngine()->AddObject(GEOM_FACE);
 
   //Add a new Face function
   Handle(GEOM_Function) aFunction =
@@ -465,7 +465,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeHexa
       theFace5.IsNull() || theFace6.IsNull()) return NULL;
 
   //Add a new Solid object
-  Handle(GEOM_Object) aBlock = GetEngine()->AddObject(GetDocID(), GEOM_BLOCK);
+  Handle(GEOM_Object) aBlock = GetEngine()->AddObject(GEOM_BLOCK);
 
   //Add a new Block function
   Handle(GEOM_Function) aFunction =
@@ -532,7 +532,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeHexa2Faces
   if (theFace1.IsNull() || theFace2.IsNull()) return NULL;
 
   //Add a new Solid object
-  Handle(GEOM_Object) aBlock = GetEngine()->AddObject(GetDocID(), GEOM_BLOCK);
+  Handle(GEOM_Object) aBlock = GetEngine()->AddObject(GEOM_BLOCK);
 
   //Add a new Block function
   Handle(GEOM_Function) aFunction =
@@ -588,7 +588,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeBlockCompound
   if (theCompound.IsNull()) return NULL;
 
   //Add a new object
-  Handle(GEOM_Object) aBlockComp = GetEngine()->AddObject(GetDocID(), GEOM_COMPOUND);
+  Handle(GEOM_Object) aBlockComp = GetEngine()->AddObject(GEOM_COMPOUND);
 
   //Add a new BlocksComp function
   Handle(GEOM_Function) aFunction =
@@ -2430,7 +2430,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::RemoveExtraEdges
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be fixed
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GEOM_COPY);
 
   //Add a function
   Handle(GEOM_Function) aFunction =
@@ -2482,7 +2482,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::UnionFaces
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be fixed
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GEOM_COPY);
 
   //Add a function
   Handle(GEOM_Function) aFunction =
@@ -2532,7 +2532,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::CheckAndImprove
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be fixed
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GEOM_COPY);
 
   //Add a function
   Handle(GEOM_Function) aFunction =
@@ -3091,7 +3091,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeMultiTransformation1D
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be moved
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GEOM_COPY);
 
   //Add a translate function
   Handle(GEOM_Function) aFunction =
@@ -3150,7 +3150,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeMultiTransformation2D
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be moved
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GEOM_COPY);
 
   //Add a translate function
   Handle(GEOM_Function) aFunction =

@@ -25,7 +25,7 @@ import GEOM
 __libraryName__ = "STEPPluginEngine"
 
 def GetSTEPPluginOperations(self):
-    anOp = self.GetPluginOperations(self.myStudyId, __libraryName__)
+    anOp = self.GetPluginOperations(__libraryName__)
     return anOp._narrow(ISTEPOperations)
 
 ## Export the given shape into a file with given name in STEP format.

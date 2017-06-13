@@ -4,7 +4,7 @@ import salome, math
 salome.salome_init()
 from salome.geom import geomBuilder
 
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 gg     = salome.ImportComponentGUI("GEOM")
 
 # create base points

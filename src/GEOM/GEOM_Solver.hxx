@@ -35,9 +35,9 @@ class GEOM_Solver
   Standard_EXPORT GEOM_Solver(GEOM_Engine* theEngine) :_engine(theEngine) {}
   Standard_EXPORT ~GEOM_Solver() {}
 
-  //Update the values of all GEOM_Object in the document theDocID, theSeq will contain a list of touched labels
+  //Update the values of all GEOM_Object in the document, theSeq will contain a list of touched labels
   //Note: not Implemented
-  Standard_EXPORT bool Update(int theDocID, TDF_LabelSequence& theSeq); 
+  Standard_EXPORT bool Update(TDF_LabelSequence& theSeq);
  
   //Updates a value of theObject, theSeq will contain a list of touched labels
   //Note: not implemented

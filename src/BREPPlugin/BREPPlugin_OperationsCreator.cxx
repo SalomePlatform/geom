@@ -32,7 +32,7 @@
 // OCCT includes
 #include <TFunction_DriverTable.hxx>
 
-std::map <int, BREPPlugin_IOperations*> BREPPlugin_OperationsCreator::_mapOfOperations;
+BREPPlugin_IOperations* BREPPlugin_OperationsCreator::_operation;
 
 BREPPlugin_OperationsCreator::BREPPlugin_OperationsCreator()
 {
@@ -51,19 +51,17 @@ BREPPlugin_OperationsCreator::~BREPPlugin_OperationsCreator()
 }
 
 GEOM_IOperations_i* BREPPlugin_OperationsCreator::Create( PortableServer::POA_ptr thePOA,
-                                                          int                     theStudyId,
                                                           GEOM::GEOM_Gen_ptr      theEngine,
                                                           ::GEOMImpl_Gen*         theGenImpl )
 {
   Unexpect aCatch( SALOME_SalomeException );
   MESSAGE( "BREPPlugin_OperationsCreator::Create" );
-  return new BREPPlugin_IOperations_i( thePOA, theEngine, get( theGenImpl, theStudyId ) );
+  return new BREPPlugin_IOperations_i( thePOA, theEngine, get( theGenImpl ) );
 }
 
-BREPPlugin_IOperations* BREPPlugin_OperationsCreator::get( ::GEOMImpl_Gen* theGenImpl,
-							   int             theStudyId )
+BREPPlugin_IOperations* BREPPlugin_OperationsCreator::get( ::GEOMImpl_Gen* theGenImpl )
 {
-  if (_mapOfOperations.find( theStudyId ) == _mapOfOperations.end() )
-    _mapOfOperations[theStudyId] = new BREPPlugin_IOperations( theGenImpl, theStudyId );
-  return _mapOfOperations[theStudyId];
+  if( !_operation )
+    _operation = new BREPPlugin_IOperations( theGenImpl );
+  return _operation;
 }

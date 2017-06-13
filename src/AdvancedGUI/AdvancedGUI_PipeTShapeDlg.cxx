@@ -555,7 +555,7 @@ void AdvancedGUI_PipeTShapeDlg::SelectionIntoArgument()
 
           if (aFindedObject->_is_nil()) { // Object not found in study
             GEOM::GEOM_IShapesOperations_var aShapesOp =
-              getGeomEngine()->GetIShapesOperations(getStudyId());
+              getGeomEngine()->GetIShapesOperations();
             aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
           }
           else {
@@ -847,7 +847,7 @@ void AdvancedGUI_PipeTShapeDlg::DisplayPreview (const bool activate, const bool 
 //=================================================================================
 GEOM::GEOM_IOperations_ptr AdvancedGUI_PipeTShapeDlg::createOperation()
 {
-  return getGeomEngine()->GetPluginOperations(getStudyId(), "AdvancedEngine");
+  return getGeomEngine()->GetPluginOperations("AdvancedEngine");
 }
 
 //=================================================================================
@@ -1217,8 +1217,7 @@ bool AdvancedGUI_PipeTShapeDlg::executeNoCheck (ObjectList& objects)
 // function : restoreSubShapes
 // purpose  :
 //=================================================================================
-void AdvancedGUI_PipeTShapeDlg::restoreSubShapes (SALOMEDS::Study_ptr theStudy,
-                                                  SALOMEDS::SObject_ptr theSObject)
+void AdvancedGUI_PipeTShapeDlg::restoreSubShapes (SALOMEDS::SObject_ptr theSObject)
 {
   SALOMEDS::GenericAttribute_var anAttr;
   if (!theSObject->FindAttribute(anAttr, "AttributeIOR"))
@@ -1236,7 +1235,7 @@ void AdvancedGUI_PipeTShapeDlg::restoreSubShapes (SALOMEDS::Study_ptr theStudy,
   ObjectList::iterator it = pipeTShapeGroupObjects.begin();
 
   for (int i = 0; it != pipeTShapeGroupObjects.end(); it++, i++) {
-    getGeomEngine()->AddInStudy(theStudy, (*it), tr((*it)->GetName()).toStdString().c_str(), theFather);
+    getGeomEngine()->AddInStudy((*it), tr((*it)->GetName()).toStdString().c_str(), theFather);
   }
 }
 

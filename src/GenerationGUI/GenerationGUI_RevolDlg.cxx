@@ -296,7 +296,7 @@ double GenerationGUI_RevolDlg::getAngle() const
 //=================================================================================
 GEOM::GEOM_IOperations_ptr GenerationGUI_RevolDlg::createOperation()
 {
-  return getGeomEngine()->GetI3DPrimOperations(getStudyId());
+  return getGeomEngine()->GetI3DPrimOperations();
 }
 
 //=================================================================================

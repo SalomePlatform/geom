@@ -31,7 +31,7 @@
 // OCCT includes
 #include <TFunction_DriverTable.hxx>
 
-std::map <int, VTKPlugin_IOperations*> VTKPlugin_OperationsCreator::_mapOfOperations;
+VTKPlugin_IOperations* VTKPlugin_OperationsCreator::_operation;
 
 VTKPlugin_OperationsCreator::VTKPlugin_OperationsCreator()
 {
@@ -49,19 +49,17 @@ VTKPlugin_OperationsCreator::~VTKPlugin_OperationsCreator()
 }
 
 GEOM_IOperations_i* VTKPlugin_OperationsCreator::Create( PortableServer::POA_ptr thePOA,
-                                                         int                     theStudyId,
                                                          GEOM::GEOM_Gen_ptr      theEngine,
                                                          ::GEOMImpl_Gen*         theGenImpl )
 {
   Unexpect aCatch( SALOME_SalomeException );
   MESSAGE( "VTKPlugin_OperationsCreator::Create" );
-  return new VTKPlugin_IOperations_i( thePOA, theEngine, get( theGenImpl, theStudyId ) );
+  return new VTKPlugin_IOperations_i( thePOA, theEngine, get( theGenImpl ) );
 }
 
-VTKPlugin_IOperations* VTKPlugin_OperationsCreator::get( ::GEOMImpl_Gen* theGenImpl,
-							 int             theStudyId )
+VTKPlugin_IOperations* VTKPlugin_OperationsCreator::get( ::GEOMImpl_Gen* theGenImpl )
 {
-  if (_mapOfOperations.find( theStudyId ) == _mapOfOperations.end() )
-    _mapOfOperations[theStudyId] = new VTKPlugin_IOperations( theGenImpl, theStudyId );
-  return _mapOfOperations[theStudyId];
+  if( !_operation )
+    _operation = new VTKPlugin_IOperations( theGenImpl );
+  return _operation;
 }

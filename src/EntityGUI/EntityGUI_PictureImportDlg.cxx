@@ -163,7 +163,7 @@ bool EntityGUI_PictureImportDlg::ClickOnApply()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr EntityGUI_PictureImportDlg::createOperation()
 {
-  return myGeomGUI->GetGeomGen()->GetIBlocksOperations( getStudyId() );
+  return myGeomGUI->GetGeomGen()->GetIBlocksOperations();
 }
 
 //=================================================================================
@@ -175,7 +175,7 @@ bool EntityGUI_PictureImportDlg::execute( ObjectList& objects )
   bool res = false;
   
   GEOM::GEOM_Object_var anObj;
-  GEOM::GEOM_IBasicOperations_var aBasicOperations = myGeomGUI->GetGeomGen()->GetIBasicOperations( getStudyId() );
+  GEOM::GEOM_IBasicOperations_var aBasicOperations = myGeomGUI->GetGeomGen()->GetIBasicOperations();
   GEOM::GEOM_IBlocksOperations_var aBlocksOperations = GEOM::GEOM_IBlocksOperations::_narrow( getOperation() );
   QString theImgFileName = myLineEdit->text();
   if ( theImgFileName.isEmpty() )

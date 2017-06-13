@@ -31,7 +31,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 #Points creation (2.2)
 Vertex_1 = geompy.MakeVertex(0, 0, 0)
@@ -57,4 +57,4 @@ geompy.addToStudy(Curve_1, "Curve_1")
 Line_1 = geompy.MakeLineTwoPnt(Vertex_4, Vertex_5)
 geompy.addToStudy(Line_1, "Line_1")
 
-salome.sg.updateObjBrowser(True)
+salome.sg.updateObjBrowser()

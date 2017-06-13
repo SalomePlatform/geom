@@ -5,7 +5,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 # create a point
 point = geompy.MakeVertex(15., 23., 80.)

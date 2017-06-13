@@ -543,7 +543,7 @@ void BlocksGUI_TrsfDlg::enableWidgets()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BlocksGUI_TrsfDlg::createOperation()
 {
-  return getGeomEngine()->GetIBlocksOperations(getStudyId());
+  return getGeomEngine()->GetIBlocksOperations();
 }
 
 //=================================================================================

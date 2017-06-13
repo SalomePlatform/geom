@@ -141,22 +141,22 @@ GEOMToolsGUI_PublishDlg::~GEOMToolsGUI_PublishDlg()
     if ( appStudy ) {
       _PTR(Study) aStudy = appStudy->studyDS();
       if ( aStudy ) {
-        GEOM_Displayer displayer ( appStudy );
-        QTreeWidgetItemIterator it( myTreeWidget );
-        while ( *it ) {
-          QString entry = myEntryToItem.key( *it );
-          _PTR(SObject) SO ( aStudy->FindObjectID( qPrintable( entry ) ) );
-          if ( SO ) {
-            GEOM::GEOM_Object_var aGeomObject = GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( SO ) );
-            if ( CORBA::is_nil( aGeomObject ) ) continue;
-            if ( displayer.IsDisplayed( aGeomObject->GetStudyEntry() ) ) {
-              Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( aGeomObject->GetStudyEntry(), "GEOM", "" );
-              displayer.Erase( io );
-            }
-          }
-          ++it;
-        }
-        displayer.UpdateViewer();
+        GEOM_Displayer displayer;
+	    QTreeWidgetItemIterator it( myTreeWidget );
+	    while ( *it ) {
+	      QString entry = myEntryToItem.key( *it );
+	      _PTR(SObject) SO ( aStudy->FindObjectID( qPrintable( entry ) ) );
+	      if ( SO ) {
+	        GEOM::GEOM_Object_var aGeomObject = GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( SO ) );
+	        if ( CORBA::is_nil( aGeomObject ) ) continue;
+	        if ( displayer.IsDisplayed( aGeomObject->GetStudyEntry() ) ) {
+	          Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( aGeomObject->GetStudyEntry(), "GEOM", "" );
+	          displayer.Erase( io );
+	        }
+	      }
+	      ++it;
+	    }
+	    displayer.UpdateViewer();
       }
     }
   }
@@ -185,15 +185,7 @@ void GEOMToolsGUI_PublishDlg::initData() {
   if(!myGeomRoot)
     return;
 
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-  if(!appStudy ) 
-    return;
-
-  _PTR(Study) aStudy = appStudy->studyDS();
-  if(!aStudy)
-    return;
-
-  buildTree(aStudy, myGeomRoot);
+  buildTree(myGeomRoot);
 
   myTreeWidget->resizeColumnToContents(0);
   myTreeWidget->resizeColumnToContents(1);
@@ -231,7 +223,7 @@ QTreeWidgetItem* GEOMToolsGUI_PublishDlg::createItem(QTreeWidgetItem* theParent,
 // function : findParentItem()
 // purpose  :
 //=================================================================================
-QTreeWidgetItem* GEOMToolsGUI_PublishDlg::findParentItem(_PTR(Study) theStudy, SalomeApp_DataObject* theObject, BufferedList& theList ) {
+QTreeWidgetItem* GEOMToolsGUI_PublishDlg::findParentItem(SalomeApp_DataObject* theObject, BufferedList& theList ) {
   
   QTreeWidgetItem* aResult = NULL;
   SalomeApp_DataObject* aParrent = dynamic_cast<SalomeApp_DataObject*>(theObject->parent());
@@ -240,14 +232,14 @@ QTreeWidgetItem* GEOMToolsGUI_PublishDlg::findParentItem(_PTR(Study) theStudy, S
     if( !(aResult = myEntryToItem.value(targetEntry)) ) {
       if( aParrent != myGeomRoot ) {
         QString aName;
-        _PTR(SObject) aSO ( theStudy->FindObjectID(qPrintable(aParrent->entry())));
+        _PTR(SObject) aSO ( SalomeApp_Application::getStudy()->FindObjectID(qPrintable(aParrent->entry())));
         _PTR(GenericAttribute) anAttr;
         if ( aSO->FindAttribute(anAttr, "AttributeName") ) {
           _PTR(AttributeName) anAttrName (anAttr);
           aName = anAttrName->Value().c_str();
         }
         theList.push_front(qMakePair(targetEntry, aName));
-        aResult = findParentItem(theStudy,aParrent,theList);
+        aResult = findParentItem(aParrent,theList);
       } else {
         //Publish List
         for(int i = 0; i < theList.size(); i++ ) {
@@ -270,7 +262,7 @@ QTreeWidgetItem* GEOMToolsGUI_PublishDlg::findParentItem(_PTR(Study) theStudy, S
 // function : buildTree()
 // purpose  :
 //=================================================================================
-void GEOMToolsGUI_PublishDlg::buildTree(_PTR(Study) theStudy, SalomeApp_DataObject* theItem) {
+void GEOMToolsGUI_PublishDlg::buildTree(SalomeApp_DataObject* theItem) {
   if(!theItem || theItem->isReference())
     return;
   
@@ -278,7 +270,7 @@ void GEOMToolsGUI_PublishDlg::buildTree(_PTR(Study) theStudy, SalomeApp_DataObje
 
     //If object hasn't "AttributeDrawable" => it visible
     bool isDrawable = true;
-    _PTR(SObject) SO ( theStudy->FindObjectID(qPrintable(theItem->entry())));
+    _PTR(SObject) SO ( SalomeApp_Application::getStudy()->FindObjectID(qPrintable(theItem->entry())));
     _PTR(GenericAttribute) anAttr;
     if ( SO && SO->FindAttribute(anAttr, "AttributeDrawable") ) {
       _PTR(AttributeDrawable) aDrw (anAttr);
@@ -292,7 +284,7 @@ void GEOMToolsGUI_PublishDlg::buildTree(_PTR(Study) theStudy, SalomeApp_DataObje
         aName = aAttrName->Value().c_str();
       }
       BufferedList aList;
-      QTreeWidgetItem* parentItem = findParentItem(theStudy, theItem, aList);
+      QTreeWidgetItem* parentItem = findParentItem(theItem, aList);
       createItem(parentItem,qMakePair(theItem->entry(),aName),true);
     }
   }
@@ -300,7 +292,7 @@ void GEOMToolsGUI_PublishDlg::buildTree(_PTR(Study) theStudy, SalomeApp_DataObje
   DataObjectList listObj = theItem->children( false );
   DataObjectList::iterator itr = listObj.begin();
   while( itr != listObj.end()) {
-    buildTree(theStudy, dynamic_cast<SalomeApp_DataObject*>(*itr));
+    buildTree(dynamic_cast<SalomeApp_DataObject*>(*itr));
     itr++;
   }
 }
@@ -458,7 +450,7 @@ void GEOMToolsGUI_PublishDlg::onItemClicked(QTreeWidgetItem* theItem, int theCol
     if ( !SO ) return;
     GEOM::GEOM_Object_var aGeomObject = GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( SO ) );
     if ( CORBA::is_nil( aGeomObject ) ) return;
-    GEOM_Displayer displayer ( appStudy );
+    GEOM_Displayer displayer;
     SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
     Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( aGeomObject->GetStudyEntry(), "GEOM", "" );
     if ( displayer.IsDisplayed( aGeomObject->GetStudyEntry() ) ) {

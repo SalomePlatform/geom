@@ -59,8 +59,8 @@
  *   constructor:
  */
 //=============================================================================
-GEOMImpl_IBasicOperations::GEOMImpl_IBasicOperations(GEOM_Engine* theEngine, int theDocID)
-: GEOM_IOperations(theEngine, theDocID)
+GEOMImpl_IBasicOperations::GEOMImpl_IBasicOperations(GEOM_Engine* theEngine)
+: GEOM_IOperations(theEngine)
 {
   MESSAGE("GEOMImpl_IBasicOperations::GEOMImpl_IBasicOperations");
 }
@@ -87,7 +87,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointXYZ
   SetErrorCode(KO);
 
   //Add a new Point object
-  Handle(GEOM_Object) aPoint = GetEngine()->AddObject(GetDocID(), GEOM_POINT);
+  Handle(GEOM_Object) aPoint = GetEngine()->AddObject(GEOM_POINT);
 
   //Add a new Point function with XYZ parameters
   Handle(GEOM_Function) aFunction =
@@ -138,7 +138,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointWithReference
   if (theReference.IsNull()) return NULL;
 
   //Add a new Point object
-  Handle(GEOM_Object) aPoint = GetEngine()->AddObject(GetDocID(), GEOM_POINT);
+  Handle(GEOM_Object) aPoint = GetEngine()->AddObject(GEOM_POINT);
 
   //Add a new Point function for creation a point relativley another point
   Handle(GEOM_Function) aFunction = aPoint->AddFunction(GEOMImpl_PointDriver::GetID(), POINT_XYZ_REF);
@@ -197,7 +197,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::makePointOnGeom
   if (theGeomObj.IsNull()) return NULL;
 
   //Add a new Point object
-  Handle(GEOM_Object) aPoint = GetEngine()->AddObject(GetDocID(), GEOM_POINT);
+  Handle(GEOM_Object) aPoint = GetEngine()->AddObject(GEOM_POINT);
 
   //Add a new Point function for creation a point relativley another point
   int fType = POINT_CURVE_PAR;
@@ -403,7 +403,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnLinesIntersection
   if (theLine1.IsNull() || theLine2.IsNull()) return NULL;
 
   //Add a new Point object
-  Handle(GEOM_Object) aPoint = GetEngine()->AddObject(GetDocID(), GEOM_POINT);
+  Handle(GEOM_Object) aPoint = GetEngine()->AddObject(GEOM_POINT);
 
   //Add a new Point function for creation a point relativley another point
   Handle(GEOM_Function) aFunction = aPoint->AddFunction(GEOMImpl_PointDriver::GetID(), POINT_LINES_INTERSECTION);
@@ -455,7 +455,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeTangentOnCurve
   if (theCurve.IsNull()) return NULL;
 
   //Add a new Vector object
-  Handle(GEOM_Object) aVec = GetEngine()->AddObject(GetDocID(), GEOM_VECTOR);
+  Handle(GEOM_Object) aVec = GetEngine()->AddObject(GEOM_VECTOR);
 
   //Add a new Point function for creation a point relativley another point
   Handle(GEOM_Function) aFunction = aVec->AddFunction(GEOMImpl_VectorDriver::GetID(), VECTOR_TANGENT_CURVE_PAR);
@@ -504,7 +504,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeVectorDXDYDZ
   SetErrorCode(KO);
 
   //Add a new Vector object
-  Handle(GEOM_Object) aVector = GetEngine()->AddObject(GetDocID(), GEOM_VECTOR);
+  Handle(GEOM_Object) aVector = GetEngine()->AddObject(GEOM_VECTOR);
 
   //Add a new Vector function with DXDYDZ parameters
   Handle(GEOM_Function) aFunction =
@@ -555,7 +555,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeVectorTwoPnt
   if (thePnt1.IsNull() || thePnt2.IsNull()) return NULL;
 
   //Add a new Vector object
-  Handle(GEOM_Object) aVector = GetEngine()->AddObject(GetDocID(), GEOM_VECTOR);
+  Handle(GEOM_Object) aVector = GetEngine()->AddObject(GEOM_VECTOR);
 
   //Add a new Vector function
   Handle(GEOM_Function) aFunction =
@@ -609,7 +609,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeLine
   if (thePnt.IsNull() || theDir.IsNull()) return NULL;
 
   //Add a new Line object
-  Handle(GEOM_Object) aLine = GetEngine()->AddObject(GetDocID(), GEOM_LINE);
+  Handle(GEOM_Object) aLine = GetEngine()->AddObject(GEOM_LINE);
 
   //Add a new Line function
   Handle(GEOM_Function) aFunction =
@@ -662,7 +662,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeLineTwoPnt
   if (thePnt1.IsNull() || thePnt2.IsNull()) return NULL;
 
   //Add a new Line object
-  Handle(GEOM_Object) aLine = GetEngine()->AddObject(GetDocID(), GEOM_LINE);
+  Handle(GEOM_Object) aLine = GetEngine()->AddObject(GEOM_LINE);
 
   //Add a new Line function
   Handle(GEOM_Function) aFunction =
@@ -715,7 +715,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeLineTwoFaces
   if (theFace1.IsNull() || theFace2.IsNull()) return NULL;
 
   //Add a new Line object
-  Handle(GEOM_Object) aLine = GetEngine()->AddObject(GetDocID(), GEOM_LINE);
+  Handle(GEOM_Object) aLine = GetEngine()->AddObject(GEOM_LINE);
 
   //Add a new Line function
   Handle(GEOM_Function) aFunction =
@@ -769,7 +769,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePlaneThreePnt
   if (thePnt1.IsNull() || thePnt2.IsNull() || thePnt3.IsNull()) return NULL;
 
   //Add a new Plane object
-  Handle(GEOM_Object) aPlane = GetEngine()->AddObject(GetDocID(), GEOM_PLANE);
+  Handle(GEOM_Object) aPlane = GetEngine()->AddObject(GEOM_PLANE);
 
   //Add a new Plane function
   Handle(GEOM_Function) aFunction =
@@ -826,7 +826,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePlanePntVec
   if (thePnt.IsNull() || theVec.IsNull()) return NULL;
 
   //Add a new Plane object
-  Handle(GEOM_Object) aPlane = GetEngine()->AddObject(GetDocID(), GEOM_PLANE);
+  Handle(GEOM_Object) aPlane = GetEngine()->AddObject(GEOM_PLANE);
 
   //Add a new Plane function
   Handle(GEOM_Function) aFunction =
@@ -880,7 +880,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePlaneFace
   if (theFace.IsNull()) return NULL;
 
   //Add a new Plane object
-  Handle(GEOM_Object) aPlane = GetEngine()->AddObject(GetDocID(), GEOM_PLANE);
+  Handle(GEOM_Object) aPlane = GetEngine()->AddObject(GEOM_PLANE);
 
   //Add a new Plane function
   Handle(GEOM_Function) aFunction =
@@ -933,7 +933,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePlane2Vec
   if (theVec1.IsNull() || theVec2.IsNull()) return NULL;
 
   //Add a new Plane object
-  Handle(GEOM_Object) aPlane = GetEngine()->AddObject(GetDocID(), GEOM_PLANE);
+  Handle(GEOM_Object) aPlane = GetEngine()->AddObject(GEOM_PLANE);
 
   //Add a new Plane function
   Handle(GEOM_Function) aFunction =
@@ -985,7 +985,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePlaneLCS
   SetErrorCode(KO);
 
   //Add a new Plane object
-  Handle(GEOM_Object) aPlane = GetEngine()->AddObject(GetDocID(), GEOM_PLANE);
+  Handle(GEOM_Object) aPlane = GetEngine()->AddObject(GEOM_PLANE);
 
   //Add a new Plane function
   Handle(GEOM_Function) aFunction =
@@ -1040,7 +1040,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeMarker
   SetErrorCode(KO);
 
   //Add a new Marker object
-  Handle(GEOM_Object) aMarker = GetEngine()->AddObject(GetDocID(), GEOM_MARKER);
+  Handle(GEOM_Object) aMarker = GetEngine()->AddObject(GEOM_MARKER);
 
   //Add a new Marker function
   Handle(GEOM_Function) aFunction =
@@ -1091,7 +1091,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeMarkerFromShape
   SetErrorCode(KO);
 
   //Add a new Marker object
-  Handle(GEOM_Object) aMarker = GetEngine()->AddObject(GetDocID(), GEOM_MARKER);
+  Handle(GEOM_Object) aMarker = GetEngine()->AddObject(GEOM_MARKER);
 
   //Add a new Marker function
   Handle(GEOM_Function) aFunction =
@@ -1142,7 +1142,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeMarkerPntTwoVec
   SetErrorCode(KO);
 
   //Add a new Marker object
-  Handle(GEOM_Object) aMarker = GetEngine()->AddObject(GetDocID(), GEOM_MARKER);
+  Handle(GEOM_Object) aMarker = GetEngine()->AddObject(GEOM_MARKER);
 
   //Add a new Marker function
   Handle(GEOM_Function) aFunction =
@@ -1201,7 +1201,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeTangentPlaneOnFace(const Hand
   if (theFace.IsNull()) return NULL;
 
   //Add a new Plane object
-  Handle(GEOM_Object) aPlane = GetEngine()->AddObject(GetDocID(), GEOM_PLANE);
+  Handle(GEOM_Object) aPlane = GetEngine()->AddObject(GEOM_PLANE);
 
   //Add a new Plane function
   Handle(GEOM_Function) aFunction =

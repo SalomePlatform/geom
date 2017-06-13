@@ -118,19 +118,19 @@
  *  Constructor
  */
 //=============================================================================
-AdvancedEngine_IOperations::AdvancedEngine_IOperations(GEOM_Engine* theEngine, int theDocID) :
-  GEOM_IOperations(theEngine, theDocID)
+AdvancedEngine_IOperations::AdvancedEngine_IOperations(GEOM_Engine* theEngine) :
+  GEOM_IOperations(theEngine)
 {
   MESSAGE("AdvancedEngine_IOperations::AdvancedEngine_IOperations");
-  myBasicOperations     = new GEOMImpl_IBasicOperations(GetEngine(), GetDocID());
-  myBooleanOperations   = new GEOMImpl_IBooleanOperations(GetEngine(), GetDocID());
-  myShapesOperations    = new GEOMImpl_IShapesOperations(GetEngine(), GetDocID());
-  myTransformOperations = new GEOMImpl_ITransformOperations(GetEngine(), GetDocID());
-  myBlocksOperations    = new GEOMImpl_IBlocksOperations(GetEngine(), GetDocID());
-  my3DPrimOperations    = new GEOMImpl_I3DPrimOperations(GetEngine(), GetDocID());
-  myLocalOperations     = new GEOMImpl_ILocalOperations(GetEngine(), GetDocID());
-  myHealingOperations   = new GEOMImpl_IHealingOperations(GetEngine(), GetDocID());
-  myGroupOperations     = new GEOMImpl_IGroupOperations(GetEngine(), GetDocID());
+  myBasicOperations     = new GEOMImpl_IBasicOperations(GetEngine());
+  myBooleanOperations   = new GEOMImpl_IBooleanOperations(GetEngine());
+  myShapesOperations    = new GEOMImpl_IShapesOperations(GetEngine());
+  myTransformOperations = new GEOMImpl_ITransformOperations(GetEngine());
+  myBlocksOperations    = new GEOMImpl_IBlocksOperations(GetEngine());
+  my3DPrimOperations    = new GEOMImpl_I3DPrimOperations(GetEngine());
+  myLocalOperations     = new GEOMImpl_ILocalOperations(GetEngine());
+  myHealingOperations   = new GEOMImpl_IHealingOperations(GetEngine());
+  myGroupOperations     = new GEOMImpl_IGroupOperations(GetEngine());
 }
 
 //=============================================================================
@@ -1076,7 +1076,7 @@ bool AdvancedEngine_IOperations::MakeInternalGroup
   // Get faces that are laying on conical faces.
   if (aConicalFaces.IsEmpty() == Standard_False) {
     Handle(GEOM_Object) aCone =
-      GetEngine()->AddObject(GetDocID(), GEOM_TSHAPE);
+      GetEngine()->AddObject(GEOM_TSHAPE);
     Handle(GEOM_Function) aFunction =
       aCone->AddFunction(AdvancedEngine_PipeTShapeDriver::GetID(), TSHAPE_BASIC);
     TopTools_ListIteratorOfListOfShape aFIter(aConicalFaces);
@@ -1915,7 +1915,7 @@ Handle(TColStd_HSequenceOfTransient)
   MESSAGE("AdvancedEngine_IOperations::MakePipeTShape");
   SetErrorCode(KO);
   //Add a new object
-  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GetDocID(), GEOM_TSHAPE);
+  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GEOM_TSHAPE);
 
   //Add a new shape function with parameters
   Handle(GEOM_Function) aFunction = aShape->AddFunction(AdvancedEngine_PipeTShapeDriver::GetID(), TSHAPE_BASIC);
@@ -2070,7 +2070,7 @@ AdvancedEngine_IOperations::MakePipeTShapeWithPosition
 {
   SetErrorCode(KO);
   //Add a new object
-  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GetDocID(), GEOM_TSHAPE);
+  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GEOM_TSHAPE);
   /////////////////
   // TSHAPE CODE
   /////////////////
@@ -2238,7 +2238,7 @@ AdvancedEngine_IOperations::MakePipeTShapeChamfer
 {
   SetErrorCode(KO);
   //Add a new object
-  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GetDocID(), GEOM_TSHAPE);
+  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GEOM_TSHAPE);
   //Add a new shape function with parameters
   Handle(GEOM_Function) aFunction = aShape->AddFunction(AdvancedEngine_PipeTShapeDriver::GetID(), TSHAPE_CHAMFER);
   if (aFunction.IsNull()) return NULL;
@@ -2468,7 +2468,7 @@ AdvancedEngine_IOperations::MakePipeTShapeChamferWithPosition
 {
   SetErrorCode(KO);
   //Add a new object
-  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GetDocID(), GEOM_TSHAPE);
+  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GEOM_TSHAPE);
   //Add a new shape function with parameters
   Handle(GEOM_Function) aFunction = aShape->AddFunction(AdvancedEngine_PipeTShapeDriver::GetID(), TSHAPE_CHAMFER);
   if (aFunction.IsNull()) return NULL;
@@ -2699,7 +2699,7 @@ AdvancedEngine_IOperations::MakePipeTShapeFillet
 {
   SetErrorCode(KO);
   //Add a new object
-  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GetDocID(), GEOM_TSHAPE);
+  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GEOM_TSHAPE);
   //Add a new shape function with parameters
   Handle(GEOM_Function) aFunction = aShape->AddFunction(AdvancedEngine_PipeTShapeDriver::GetID(), TSHAPE_FILLET);
   if (aFunction.IsNull()) return NULL;
@@ -2951,7 +2951,7 @@ AdvancedEngine_IOperations::MakePipeTShapeFilletWithPosition
 {
   SetErrorCode(KO);
   //Add a new object
-  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GetDocID(), GEOM_TSHAPE);
+  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GEOM_TSHAPE);
   //Add a new shape function with parameters
   Handle(GEOM_Function) aFunction = aShape->AddFunction(AdvancedEngine_PipeTShapeDriver::GetID(), TSHAPE_FILLET);
   if (aFunction.IsNull()) return NULL;
@@ -3202,7 +3202,7 @@ Handle(GEOM_Object) AdvancedEngine_IOperations::MakeDividedDisk (double theR, do
     return NULL;
   }
   //Add a new object
-  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GetDocID(), GEOM_DIVIDEDDISK);
+  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GEOM_DIVIDEDDISK);
 
   //Add a new shape function with parameters
   Handle(GEOM_Function) aFunction = aShape->AddFunction(AdvancedEngine_DividedDiskDriver::GetID(), DIVIDEDDISK_R_RATIO);
@@ -3270,7 +3270,7 @@ Handle(GEOM_Object) AdvancedEngine_IOperations::MakeDividedDiskPntVecR (Handle(G
   SetErrorCode(KO);
 
   //Add a new object
-  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GetDocID(), GEOM_DIVIDEDDISK);
+  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GEOM_DIVIDEDDISK);
 
   //Add a new shape function with parameters
   Handle(GEOM_Function) aFunction = aShape->AddFunction(AdvancedEngine_DividedDiskDriver::GetID(), DIVIDEDDISK_R_VECTOR_PNT);
@@ -3343,7 +3343,7 @@ Handle(GEOM_Object) AdvancedEngine_IOperations::MakeDividedCylinder (double theR
   SetErrorCode(KO);
   
   //Add a new object
-  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GetDocID(), GEOM_DIVIDEDCYLINDER);
+  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GEOM_DIVIDEDCYLINDER);
 
   Handle(GEOM_Object) aBaseShape = MakeDividedDisk(theR, 67.0, 1, thePattern);
   aBaseShape->GetLastFunction()->SetDescription("");   // Erase dump of MakeDividedDisk
@@ -3391,7 +3391,7 @@ Handle(GEOM_Object) AdvancedEngine_IOperations::MakeSmoothingSurface (std::list<
   SetErrorCode(KO);
 
   //Add a new object
-  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GetDocID(), GEOM_SMOOTHINGSURFACE);
+  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GEOM_SMOOTHINGSURFACE);
 
   //Add a new shape function with parameters
   Handle(GEOM_Function) aFunction = aShape->AddFunction(AdvancedEngine_SmoothingSurfaceDriver::GetID(), SMOOTHINGSURFACE_LPOINTS);

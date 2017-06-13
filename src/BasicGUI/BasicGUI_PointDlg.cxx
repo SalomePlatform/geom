@@ -733,7 +733,7 @@ void BasicGUI_PointDlg::OnPointSelected(const gp_Pnt& thePnt)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BasicGUI_PointDlg::createOperation()
 {
-  return myGeomGUI->GetGeomGen()->GetIBasicOperations(getStudyId());
+  return myGeomGUI->GetGeomGen()->GetIBasicOperations();
 }
 
 //=================================================================================

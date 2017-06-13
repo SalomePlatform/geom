@@ -3,7 +3,7 @@
 import salome
 salome.salome_init()
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 # create a cylindric face and a curve(edge)
 cylinder = geompy.MakeCylinderRH(100, 300)

@@ -48,9 +48,6 @@ myIsUpdate( true )
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   if ( !app ) return;
 
-  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-  myStudy = GeometryGUI::ClientStudyToStudy( study->studyDS());
-
   mySelectionMgr = app->selectionMgr();
   if ( !mySelectionMgr ) return;
 
@@ -181,15 +178,6 @@ void DependencyTree_View::wheelEvent( QWheelEvent* event )
 QString DependencyTree_View::getViewName() const
 {
   return tr( "DEPENDENCY_TREE" );
-}
-
-//=================================================================================
-// function : getStudyId()
-// purpose  : return Id of current study
-//=================================================================================
-int DependencyTree_View::getStudyId() const
-{
-  return myStudy->StudyId();
 }
 
 //=================================================================================
@@ -799,7 +787,7 @@ void DependencyTree_View::getNewTreeModel( bool theUseSelectedObject, bool theUs
 
   // get string which describes dependency tree structure
   SALOMEDS::TMPFile_var SeqFile =
-    GeometryGUI::GetGeomGen()->GetDependencyTree( myStudy, myMainEntries );
+    GeometryGUI::GetGeomGen()->GetDependencyTree( myMainEntries );
   char* buf = (char*)&SeqFile[0];
 
   clearView( true );

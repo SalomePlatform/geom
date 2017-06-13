@@ -290,7 +290,7 @@ void RepairGUI_RemoveIntWiresDlg::enterEvent (QEvent*)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr RepairGUI_RemoveIntWiresDlg::createOperation()
 {
-  return getGeomEngine()->GetIHealingOperations(getStudyId());
+  return getGeomEngine()->GetIHealingOperations();
 }
 
 //=================================================================================

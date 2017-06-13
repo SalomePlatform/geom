@@ -39,8 +39,8 @@
  *   constructor:
  */
 //=============================================================================
-GEOMImpl_IFieldOperations::GEOMImpl_IFieldOperations (GEOM_Engine* theEngine, int theDocID)
-: GEOM_IOperations(theEngine, theDocID)
+GEOMImpl_IFieldOperations::GEOMImpl_IFieldOperations (GEOM_Engine* theEngine)
+: GEOM_IOperations(theEngine)
 {
   MESSAGE("GEOMImpl_IFieldOperations::GEOMImpl_IFieldOperations");
 }
@@ -96,7 +96,7 @@ CreateField( const Handle(GEOM_Object)&                     theShape,
 
   // make a field
   Handle(GEOM_Field) aField = Handle(GEOM_Field)::DownCast
-    ( GetEngine()->AddBaseObject( GetDocID(), GEOM_FIELD ));
+    ( GetEngine()->AddBaseObject( GEOM_FIELD ));
 
   // set field data
   aField->Init( theShape, theName, theType, theDimension, theComponentNames );
@@ -142,7 +142,7 @@ int GEOMImpl_IFieldOperations::CountFields( const Handle(GEOM_Object)& theShape 
   for (; anIt.More(); anIt.Next()) {
     TCollection_ExtendedString& anEntry = anIt.Value();
     anEntry.ToUTF8CString( (Standard_PCharacter&) pentry );
-    Handle(GEOM_BaseObject) anObj = GetEngine()->GetObject(GetDocID(), entry, false);
+    Handle(GEOM_BaseObject) anObj = GetEngine()->GetObject(entry, false);
     nbFields += ( !anObj.IsNull() && anObj->IsKind(STANDARD_TYPE(GEOM_Field)) );
   }
 
@@ -178,7 +178,7 @@ GEOMImpl_IFieldOperations::GetFields( const Handle(GEOM_Object)& theShape )
   for (; anIt.More(); anIt.Next()) {
     TCollection_ExtendedString& anEntry = anIt.Value();
     anEntry.ToUTF8CString( (Standard_PCharacter&) pentry );
-    Handle(GEOM_BaseObject) anObj = GetEngine()->GetObject(GetDocID(), entry, false);
+    Handle(GEOM_BaseObject) anObj = GetEngine()->GetObject(entry, false);
     if ( !anObj.IsNull() && anObj->IsKind(STANDARD_TYPE(GEOM_Field)) )
     {
         Handle(GEOM_Field) field = Handle(GEOM_Field)::DownCast( anObj );
@@ -222,7 +222,7 @@ GEOMImpl_IFieldOperations::GetField( const Handle(GEOM_Object)& theShape,
   for (; anIt.More(); anIt.Next()) {
     TCollection_ExtendedString& anEntry = anIt.Value();
     anEntry.ToUTF8CString( (Standard_PCharacter&) pentry );
-    field = Handle(GEOM_Field)::DownCast( GetEngine()->GetObject( GetDocID(), entry, false ));
+    field = Handle(GEOM_Field)::DownCast( GetEngine()->GetObject( entry, false ));
     if ( !field.IsNull() && field->GetName() == theName ) {
       SetErrorCode(OK);
       break;

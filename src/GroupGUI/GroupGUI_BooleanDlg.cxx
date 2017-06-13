@@ -265,7 +265,7 @@ void GroupGUI_BooleanDlg::enterEvent (QEvent*)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr GroupGUI_BooleanDlg::createOperation()
 {
-  return getGeomEngine()->GetIGroupOperations(getStudyId());
+  return getGeomEngine()->GetIGroupOperations();
 }
 
 //=================================================================================

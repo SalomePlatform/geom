@@ -30,7 +30,7 @@
 #include <Standard_ProgramError.hxx>
 #include <gp_Trsf.hxx>
 
-#include <SalomeApp_Study.h>
+#include <SalomeApp_Application.h>
 
 // Static patterns for casting value-to-string & value-from-string. The patterns are:
 //  ITEM: { name[string] : visibility : type : values[composite] };
@@ -590,9 +590,9 @@ GEOMGUI_DimensionProperty::GEOMGUI_DimensionProperty( const GEOMGUI_DimensionPro
 // function : Init constructor
 // purpose  : 
 //=================================================================================
-GEOMGUI_DimensionProperty::GEOMGUI_DimensionProperty( SalomeApp_Study* theStudy, const std::string& theEntry )
+GEOMGUI_DimensionProperty::GEOMGUI_DimensionProperty( const std::string& theEntry )
 {
-  LoadFromAttribute( theStudy, theEntry );
+  LoadFromAttribute( theEntry );
 }
 
 //=================================================================================
@@ -1018,18 +1018,17 @@ int GEOMGUI_DimensionProperty::GetType( const int theIndex ) const
 // function : LoadFromAttribute
 // purpose  : 
 //=================================================================================
-void GEOMGUI_DimensionProperty::LoadFromAttribute( SalomeApp_Study* theStudy,
-                                                   const std::string& theEntry )
+void GEOMGUI_DimensionProperty::LoadFromAttribute( const std::string& theEntry )
 {
   Clear();
 
-  _PTR(SObject) aSObj = theStudy->studyDS()->FindObjectID( theEntry );
+  _PTR(SObject) aSObj = SalomeApp_Application::getStudy()->FindObjectID( theEntry );
   if ( !aSObj )
   {
     return;
   }
 
-  _PTR(StudyBuilder) aBuilder = theStudy->studyDS()->NewBuilder();
+  _PTR(StudyBuilder) aBuilder = SalomeApp_Application::getStudy()->NewBuilder();
 
   _PTR(GenericAttribute) aSeekAtt;
   _PTR(AttributeTableOfReal) aRecordsAtt;
@@ -1076,16 +1075,15 @@ void GEOMGUI_DimensionProperty::LoadFromAttribute( SalomeApp_Study* theStudy,
 // function : SaveToAttribute
 // purpose  : 
 //=================================================================================
-void GEOMGUI_DimensionProperty::SaveToAttribute( SalomeApp_Study *theStudy,
-                                                 const std::string &theEntry )
+void GEOMGUI_DimensionProperty::SaveToAttribute( const std::string &theEntry )
 {
-  _PTR(SObject) aSObj = theStudy->studyDS()->FindObjectID( theEntry );
+  _PTR(SObject) aSObj = SalomeApp_Application::getStudy()->FindObjectID( theEntry );
   if ( !aSObj )
   {
     return;
   }
 
-  _PTR(StudyBuilder) aBuilder = theStudy->studyDS()->NewBuilder();
+  _PTR(StudyBuilder) aBuilder = SalomeApp_Application::getStudy()->NewBuilder();
 
   _PTR(AttributeTableOfReal) aRecordsAtt;
 

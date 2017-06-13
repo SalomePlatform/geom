@@ -4,7 +4,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 # create a box and some groups of faces on it
 Box_1 = geompy.MakeBoxDXDYDZ(200, 200, 200)
@@ -29,4 +29,4 @@ geompy.addToStudyInFather(Box_1, Group_3, 'Group_3')
 geompy.addToStudyInFather(Box_1, Group_4, 'Group_4')
 geompy.addToStudyInFather(Box_1, Group_I_1_3, 'Group_I_1_3')
 geompy.addToStudyInFather(Box_1, Group_IL_1_3, 'Group_IL_1_3')
-salome.sg.updateObjBrowser(True) 
+salome.sg.updateObjBrowser() 

@@ -124,14 +124,9 @@ void GEOM_Swig::createAndDisplayGO( const char* theEntry, bool theUpdateViewer )
     {}
     virtual void Execute()
     {
-      SUIT_Application* app = SUIT_Session::session()->activeApplication();
-      if ( !app ) return;
-      SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-      if ( !study ) return;
-
       Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( myEntry.c_str(), "GEOM", "" );
 
-      GEOM_Displayer( study ).Display( io, myUpdateViewer );
+      GEOM_Displayer().Display( io, myUpdateViewer );
     }
   };
 
@@ -186,14 +181,9 @@ void GEOM_Swig::eraseGO( const char* theEntry, bool theUpdateViewer )
     {}
     virtual void Execute()
     {
-      SUIT_Application* app = SUIT_Session::session()->activeApplication();
-      if ( !app ) return;
-      SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-      if ( !study ) return;
-
       Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( myEntry.c_str(), "GEOM", "" );
 
-      GEOM_Displayer( study ).Erase( io, true, myUpdateViewer );
+      GEOM_Displayer().Erase( io, true, myUpdateViewer );
     }
   };
 
@@ -212,13 +202,7 @@ void GEOM_Swig::UpdateViewer()
     {}
     virtual void Execute()
     {
-      SUIT_Application* app = SUIT_Session::session()->activeApplication();
-      if ( !app ) return;
-
-      SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-      if ( !study ) return;
-      
-      GEOM_Displayer( study ).UpdateViewer();
+      GEOM_Displayer().UpdateViewer();
     }
   };
   
@@ -248,7 +232,7 @@ int GEOM_Swig::getIndexTopology( const char* theSubIOR, const char* theMainIOR )
   if ( !CORBA::is_nil( aGeomGen ) && !CORBA::is_nil( aMainShape ) && !CORBA::is_nil( aSubShape ) ) {
     // get shapes operations interface
     GEOM::GEOM_IShapesOperations_var anIShapesOperations =
-      aGeomGen->GetIShapesOperations( aMainShape->GetStudyID() );
+      aGeomGen->GetIShapesOperations();
     if ( !CORBA::is_nil( anIShapesOperations ) )
       index = anIShapesOperations->GetTopologyIndex( aMainShape, aSubShape );
   }
@@ -275,7 +259,7 @@ const char* GEOM_Swig::getShapeTypeString( const char* theIOR )
   if ( !CORBA::is_nil( aGeomGen ) && !CORBA::is_nil( aShape ) ) {
     // get shapes operations interface
     GEOM::GEOM_IShapesOperations_var anIShapesOperations =
-      aGeomGen->GetIShapesOperations( aShape->GetStudyID() );
+      aGeomGen->GetIShapesOperations();
     if ( !CORBA::is_nil( anIShapesOperations ) )
       aTypeName = anIShapesOperations->GetShapeTypeString( aShape );
   }
@@ -354,7 +338,7 @@ void TSetPropertyEvent::Execute()
   SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
   if ( !study ) return;
   
-  GEOM_Displayer displayer( study );
+  GEOM_Displayer displayer;
   
   SALOME_View* window = displayer.GetActiveView();
   if ( !window ) return;

@@ -36,8 +36,8 @@
  *  Constructor
  */
 //=============================================================================
-VTKPlugin_IOperations::VTKPlugin_IOperations( GEOM_Engine* theEngine, int theDocID )
-: GEOMImpl_IBaseIEOperations( theEngine, theDocID )
+VTKPlugin_IOperations::VTKPlugin_IOperations( GEOM_Engine* theEngine )
+: GEOMImpl_IBaseIEOperations( theEngine )
 {
   MESSAGE( "VTKPlugin_IOperations::VTKPlugin_IOperations" );
 }
@@ -72,7 +72,7 @@ void VTKPlugin_IOperations::ExportVTK( const Handle(GEOM_Object)      theOrigina
   if( aRefFunction.IsNull() ) return;  //There is no function which creates an object to be exported
 
   //Add a new result object
-  Handle(GEOM_Object) result = GetEngine()->AddObject( GetDocID(), GEOM_IMPORT);
+  Handle(GEOM_Object) result = GetEngine()->AddObject( GEOM_IMPORT);
 
   //Add an Export function
   Handle(GEOM_Function) aFunction = result->AddFunction( VTKPlugin_ExportDriver::GetID(), EXPORT_SHAPE );

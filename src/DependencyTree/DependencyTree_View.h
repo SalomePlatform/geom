@@ -60,7 +60,6 @@ public:
   void                    wheelEvent( QWheelEvent* event );
 
   QString                 getViewName() const;
-  int                     getStudyId() const;
 
   DependencyTree_Object*  getObjectByEntry( const std::string& );
 
@@ -129,7 +128,6 @@ private:
   QCheckBox*              myDisplayDescendants;
   QPushButton*            updateButton;
 
-  SALOMEDS::Study_var     myStudy;
   LightApp_SelectionMgr*  mySelectionMgr;
   GEOM::string_array_var  myMainEntries;
 

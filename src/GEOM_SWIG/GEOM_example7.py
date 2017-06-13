@@ -27,7 +27,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 data_dir = os.getenv('DATA_DIR')
 if data_dir:

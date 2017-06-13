@@ -85,11 +85,11 @@
  *   constructor:
  */
 //=============================================================================
-GEOMImpl_I3DPrimOperations::GEOMImpl_I3DPrimOperations (GEOM_Engine* theEngine, int theDocID)
-: GEOM_IOperations(theEngine, theDocID)
+GEOMImpl_I3DPrimOperations::GEOMImpl_I3DPrimOperations (GEOM_Engine* theEngine)
+: GEOM_IOperations(theEngine)
 {
   MESSAGE("GEOMImpl_I3DPrimOperations::GEOMImpl_I3DPrimOperations");
-  myGroupOperations = new GEOMImpl_IGroupOperations(GetEngine(), GetDocID());
+  myGroupOperations = new GEOMImpl_IGroupOperations(GetEngine());
 }
 
 //=============================================================================
@@ -114,7 +114,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeBoxDXDYDZ (double theDX, dou
   SetErrorCode(KO);
 
   //Add a new Box object
-  Handle(GEOM_Object) aBox = GetEngine()->AddObject(GetDocID(), GEOM_BOX);
+  Handle(GEOM_Object) aBox = GetEngine()->AddObject(GEOM_BOX);
 
   //Add a new Box function with DX_DY_DZ parameters
   Handle(GEOM_Function) aFunction = aBox->AddFunction(GEOMImpl_BoxDriver::GetID(), BOX_DX_DY_DZ);
@@ -165,7 +165,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeBoxTwoPnt (Handle(GEOM_Objec
   if (thePnt1.IsNull() || thePnt2.IsNull()) return NULL;
 
   //Add a new Box object
-  Handle(GEOM_Object) aBox = GetEngine()->AddObject(GetDocID(), GEOM_BOX);
+  Handle(GEOM_Object) aBox = GetEngine()->AddObject(GEOM_BOX);
 
   //Add a new Box function for creation a box relatively to two points
   Handle(GEOM_Function) aFunction = aBox->AddFunction(GEOMImpl_BoxDriver::GetID(), BOX_TWO_PNT);
@@ -218,7 +218,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFaceHW (double theH, double 
   if (theH == 0 || theW == 0) return NULL;
 
   //Add a new Face object
-  Handle(GEOM_Object) aFace = GetEngine()->AddObject(GetDocID(), GEOM_FACE);
+  Handle(GEOM_Object) aFace = GetEngine()->AddObject(GEOM_FACE);
 
   //Add a new Box function for creation a box relatively to two points
   Handle(GEOM_Function) aFunction = aFace->AddFunction(GEOMImpl_FaceDriver::GetID(), FACE_H_W);
@@ -268,7 +268,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFaceObjHW (Handle(GEOM_Objec
   if (theObj.IsNull()) return NULL;
 
   //Add a new Face object
-  Handle(GEOM_Object) aFace = GetEngine()->AddObject(GetDocID(), GEOM_FACE);
+  Handle(GEOM_Object) aFace = GetEngine()->AddObject(GEOM_FACE);
 
   //Add a new Box function for creation a box relatively to two points
   Handle(GEOM_Function) aFunction = aFace->AddFunction(GEOMImpl_FaceDriver::GetID(), FACE_OBJ_H_W);
@@ -323,7 +323,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeDiskPntVecR
   if (thePnt.IsNull() || theVec.IsNull()) return NULL;
 
   //Add a new Disk object
-  Handle(GEOM_Object) aDisk = GetEngine()->AddObject(GetDocID(), GEOM_FACE);
+  Handle(GEOM_Object) aDisk = GetEngine()->AddObject(GEOM_FACE);
 
   //Add a new Disk function for creation a disk relatively to point and vector
   Handle(GEOM_Function) aFunction =
@@ -380,7 +380,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeDiskThreePnt (Handle(GEOM_Ob
   if (thePnt1.IsNull() || thePnt2.IsNull() || thePnt3.IsNull()) return NULL;
 
   //Add a new Disk object
-  Handle(GEOM_Object) aDisk = GetEngine()->AddObject(GetDocID(), GEOM_FACE);
+  Handle(GEOM_Object) aDisk = GetEngine()->AddObject(GEOM_FACE);
 
   //Add a new Disk function for creation a disk relatively to three points
   Handle(GEOM_Function) aFunction =
@@ -436,7 +436,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeDiskR (double theR, int theO
   if (theR == 0 ) return NULL;
 
   //Add a new Disk object
-  Handle(GEOM_Object) aDisk = GetEngine()->AddObject(GetDocID(), GEOM_FACE);
+  Handle(GEOM_Object) aDisk = GetEngine()->AddObject(GEOM_FACE);
 
   //Add a new Box function for creation a box relatively to two points
   Handle(GEOM_Function) aFunction = aDisk->AddFunction(GEOMImpl_DiskDriver::GetID(), DISK_R);
@@ -482,7 +482,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderRH (double theR, dou
   SetErrorCode(KO);
 
   //Add a new Cylinder object
-  Handle(GEOM_Object) aCylinder = GetEngine()->AddObject(GetDocID(), GEOM_CYLINDER);
+  Handle(GEOM_Object) aCylinder = GetEngine()->AddObject(GEOM_CYLINDER);
 
   //Add a new Cylinder function with R and H parameters
   Handle(GEOM_Function) aFunction = aCylinder->AddFunction(GEOMImpl_CylinderDriver::GetID(), CYLINDER_R_H);
@@ -528,7 +528,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderRHA (double theR, do
   SetErrorCode(KO);
 
   //Add a new Cylinder object
-  Handle(GEOM_Object) aCylinder = GetEngine()->AddObject(GetDocID(), GEOM_CYLINDER);
+  Handle(GEOM_Object) aCylinder = GetEngine()->AddObject(GEOM_CYLINDER);
 
   //Add a new Cylinder function with R and H parameters
   Handle(GEOM_Function) aFunction = aCylinder->AddFunction(GEOMImpl_CylinderDriver::GetID(), CYLINDER_R_H_A);
@@ -579,7 +579,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderPntVecRH (Handle(GEO
   if (thePnt.IsNull() || theVec.IsNull()) return NULL;
 
   //Add a new Cylinder object
-  Handle(GEOM_Object) aCylinder = GetEngine()->AddObject(GetDocID(), GEOM_CYLINDER);
+  Handle(GEOM_Object) aCylinder = GetEngine()->AddObject(GEOM_CYLINDER);
 
   //Add a new Cylinder function for creation a cylinder relatively to point and vector
   Handle(GEOM_Function) aFunction =
@@ -637,7 +637,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderPntVecRHA (Handle(GE
   if (thePnt.IsNull() || theVec.IsNull()) return NULL;
 
   //Add a new Cylinder object
-  Handle(GEOM_Object) aCylinder = GetEngine()->AddObject(GetDocID(), GEOM_CYLINDER);
+  Handle(GEOM_Object) aCylinder = GetEngine()->AddObject(GEOM_CYLINDER);
 
   //Add a new Cylinder function for creation a cylinder relatively to point and vector
   Handle(GEOM_Function) aFunction =
@@ -694,7 +694,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeConeR1R2H (double theR1, dou
   SetErrorCode(KO);
 
   //Add a new Cone object
-  Handle(GEOM_Object) aCone = GetEngine()->AddObject(GetDocID(), GEOM_CONE);
+  Handle(GEOM_Object) aCone = GetEngine()->AddObject(GEOM_CONE);
 
   //Add a new Cone function with R and H parameters
   Handle(GEOM_Function) aFunction =
@@ -748,7 +748,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeConePntVecR1R2H (Handle(GEOM
   if (thePnt.IsNull() || theVec.IsNull()) return NULL;
 
   //Add a new Cone object
-  Handle(GEOM_Object) aCone = GetEngine()->AddObject(GetDocID(), GEOM_CONE);
+  Handle(GEOM_Object) aCone = GetEngine()->AddObject(GEOM_CONE);
 
   //Add a new Cone function for creation a cone relatively to point and vector
   Handle(GEOM_Function) aFunction =
@@ -804,7 +804,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeSphereR (double theR)
   SetErrorCode(KO);
 
   //Add a new Sphere object
-  Handle(GEOM_Object) aSphere = GetEngine()->AddObject(GetDocID(), GEOM_SPHERE);
+  Handle(GEOM_Object) aSphere = GetEngine()->AddObject(GEOM_SPHERE);
 
   //Add a new Sphere function with R parameter
   Handle(GEOM_Function) aFunction = aSphere->AddFunction(GEOMImpl_SphereDriver::GetID(), SPHERE_R);
@@ -852,7 +852,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeSpherePntR (Handle(GEOM_Obje
   if (thePnt.IsNull()) return NULL;
 
   //Add a new Point object
-  Handle(GEOM_Object) aSphere = GetEngine()->AddObject(GetDocID(), GEOM_SPHERE);
+  Handle(GEOM_Object) aSphere = GetEngine()->AddObject(GEOM_SPHERE);
 
   //Add a new Sphere function for creation a sphere relatively to point
   Handle(GEOM_Function) aFunction = aSphere->AddFunction(GEOMImpl_SphereDriver::GetID(), SPHERE_PNT_R);
@@ -904,7 +904,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeTorusRR
   SetErrorCode(KO);
 
   //Add a new Torus object
-  Handle(GEOM_Object) anEll = GetEngine()->AddObject(GetDocID(), GEOM_TORUS);
+  Handle(GEOM_Object) anEll = GetEngine()->AddObject(GEOM_TORUS);
 
   //Add a new Torus function
   Handle(GEOM_Function) aFunction =
@@ -955,7 +955,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeTorusPntVecRR
   if (thePnt.IsNull() || theVec.IsNull()) return NULL;
 
   //Add a new Torus object
-  Handle(GEOM_Object) anEll = GetEngine()->AddObject(GetDocID(), GEOM_TORUS);
+  Handle(GEOM_Object) anEll = GetEngine()->AddObject(GEOM_TORUS);
 
   //Add a new Torus function
   Handle(GEOM_Function) aFunction =
@@ -1014,7 +1014,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismVecH (Handle(GEOM_Objec
   if (theBase.IsNull() || theVec.IsNull()) return NULL;
 
   //Add a new Prism object
-  Handle(GEOM_Object) aPrism = GetEngine()->AddObject(GetDocID(), GEOM_PRISM);
+  Handle(GEOM_Object) aPrism = GetEngine()->AddObject(GEOM_PRISM);
 
   //Add a new Prism function for creation a Prism relatively to vector
   Handle(GEOM_Function) aFunction =
@@ -1077,7 +1077,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismVecH2Ways (Handle(GEOM_
   if (theBase.IsNull() || theVec.IsNull()) return NULL;
 
   //Add a new Prism object
-  Handle(GEOM_Object) aPrism = GetEngine()->AddObject(GetDocID(), GEOM_PRISM);
+  Handle(GEOM_Object) aPrism = GetEngine()->AddObject(GEOM_PRISM);
 
   //Add a new Prism function for creation a Prism relatively to vector
   Handle(GEOM_Function) aFunction =
@@ -1136,7 +1136,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismTwoPnt
   if (theBase.IsNull() || thePoint1.IsNull() || thePoint2.IsNull()) return NULL;
 
   //Add a new Prism object
-  Handle(GEOM_Object) aPrism = GetEngine()->AddObject(GetDocID(), GEOM_PRISM);
+  Handle(GEOM_Object) aPrism = GetEngine()->AddObject(GEOM_PRISM);
 
   //Add a new Prism function for creation a Prism relatively to two points
   Handle(GEOM_Function) aFunction =
@@ -1200,7 +1200,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismTwoPnt2Ways
   if (theBase.IsNull() || thePoint1.IsNull() || thePoint2.IsNull()) return NULL;
 
   //Add a new Prism object
-  Handle(GEOM_Object) aPrism = GetEngine()->AddObject(GetDocID(), GEOM_PRISM);
+  Handle(GEOM_Object) aPrism = GetEngine()->AddObject(GEOM_PRISM);
 
   //Add a new Prism function for creation a Prism relatively to two points
   Handle(GEOM_Function) aFunction =
@@ -1259,7 +1259,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismDXDYDZ
   if (theBase.IsNull()) return NULL;
 
   //Add a new Prism object
-  Handle(GEOM_Object) aPrism = GetEngine()->AddObject(GetDocID(), GEOM_PRISM);
+  Handle(GEOM_Object) aPrism = GetEngine()->AddObject(GEOM_PRISM);
 
   //Add a new Prism function for creation a Prism by DXDYDZ
   Handle(GEOM_Function) aFunction =
@@ -1321,7 +1321,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismDXDYDZ2Ways
   if (theBase.IsNull()) return NULL;
 
   //Add a new Prism object
-  Handle(GEOM_Object) aPrism = GetEngine()->AddObject(GetDocID(), GEOM_PRISM);
+  Handle(GEOM_Object) aPrism = GetEngine()->AddObject(GEOM_PRISM);
 
   //Add a new Prism function for creation a Prism by DXDYDZ
   Handle(GEOM_Function) aFunction =
@@ -1381,12 +1381,12 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeDraftPrism
   if ( theFuse )
   {
     //Add a new Extruded Boss object  
-    aPrism = GetEngine()->AddObject(GetDocID(), GEOM_EXTRUDED_BOSS);
+    aPrism = GetEngine()->AddObject(GEOM_EXTRUDED_BOSS);
   }
   else
   { 
     //Add a new Extruded Cut object  
-    aPrism = GetEngine()->AddObject(GetDocID(), GEOM_EXTRUDED_CUT);
+    aPrism = GetEngine()->AddObject(GEOM_EXTRUDED_CUT);
   }
   
   //Add a new Prism function for the creation of a Draft Prism feature
@@ -1464,7 +1464,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_I3DPrimOperations::MakePipe
   if (theBase.IsNull() || thePath.IsNull()) return NULL;
 
   //Add a new Pipe object
-  Handle(GEOM_Object) aPipe = GetEngine()->AddObject(GetDocID(), GEOM_PIPE);
+  Handle(GEOM_Object) aPipe = GetEngine()->AddObject(GEOM_PIPE);
 
   //Add a new Pipe function
   Handle(GEOM_Function) aFunction =
@@ -1541,7 +1541,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeRevolutionAxisAngle (Handle(
   if (theBase.IsNull() || theAxis.IsNull()) return NULL;
 
   //Add a new Revolution object
-  Handle(GEOM_Object) aRevolution = GetEngine()->AddObject(GetDocID(), GEOM_REVOLUTION);
+  Handle(GEOM_Object) aRevolution = GetEngine()->AddObject(GEOM_REVOLUTION);
 
   //Add a new Revolution function for creation a revolution relatively to axis
   Handle(GEOM_Function) aFunction =
@@ -1597,7 +1597,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeRevolutionAxisAngle2Ways
   if (theBase.IsNull() || theAxis.IsNull()) return NULL;
 
   //Add a new Revolution object
-  Handle(GEOM_Object) aRevolution = GetEngine()->AddObject(GetDocID(), GEOM_REVOLUTION);
+  Handle(GEOM_Object) aRevolution = GetEngine()->AddObject(GEOM_REVOLUTION);
 
   //Add a new Revolution function for creation a revolution relatively to axis
   Handle(GEOM_Function) aFunction =
@@ -1659,7 +1659,7 @@ GEOMImpl_I3DPrimOperations::MakeFilling (std::list< Handle(GEOM_Object)> & theCo
     return NULL;
   }
   //Add a new Filling object
-  Handle(GEOM_Object) aFilling = GetEngine()->AddObject(GetDocID(), GEOM_FILLING);
+  Handle(GEOM_Object) aFilling = GetEngine()->AddObject(GEOM_FILLING);
 
   //Add a new Filling function for creation a filling  from a compound
   Handle(GEOM_Function) aFunction = aFilling->AddFunction(GEOMImpl_FillingDriver::GetID(), BASIC_FILLING);
@@ -1735,7 +1735,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeThruSections(
     return anObj;
 
   //Add a new ThruSections object
-  Handle(GEOM_Object) aThruSect = GetEngine()->AddObject(GetDocID(), GEOM_THRUSECTIONS);
+  Handle(GEOM_Object) aThruSect = GetEngine()->AddObject(GEOM_THRUSECTIONS);
 
 
   //Add a new ThruSections function
@@ -1840,7 +1840,7 @@ Handle(TColStd_HSequenceOfTransient)
 
   Standard_Integer nbLocs =  (theLocations.IsNull() ? 0 :theLocations->Length());
   //Add a new Pipe object
-  Handle(GEOM_Object) aPipeDS = GetEngine()->AddObject(GetDocID(), GEOM_PIPE);
+  Handle(GEOM_Object) aPipeDS = GetEngine()->AddObject(GEOM_PIPE);
 
   //Add a new Pipe function
 
@@ -2016,7 +2016,7 @@ Handle(TColStd_HSequenceOfTransient)
   Standard_Integer nbLocs =  (theLocations.IsNull() ? 0 :theLocations->Length());
 
   //Add a new Pipe object
-  Handle(GEOM_Object) aPipeDS = GetEngine()->AddObject(GetDocID(), GEOM_PIPE);
+  Handle(GEOM_Object) aPipeDS = GetEngine()->AddObject(GEOM_PIPE);
 
   //Add a new Pipe function
 
@@ -2205,7 +2205,7 @@ Handle(TColStd_HSequenceOfTransient)
   Standard_Integer nbLocs =  (theLocations.IsNull() ? 0 :theLocations->Length());
 
   //Add a new Pipe object
-  Handle(GEOM_Object) aPipeDS = GetEngine()->AddObject(GetDocID(), GEOM_PIPE);
+  Handle(GEOM_Object) aPipeDS = GetEngine()->AddObject(GEOM_PIPE);
 
   //Add a new Pipe function
 
@@ -2348,7 +2348,7 @@ Handle(TColStd_HSequenceOfTransient)
   if (theBase.IsNull() || thePath.IsNull() || theVec.IsNull()) return NULL;
 
   //Add a new Pipe object
-  Handle(GEOM_Object) aPipe = GetEngine()->AddObject(GetDocID(), GEOM_PIPE);
+  Handle(GEOM_Object) aPipe = GetEngine()->AddObject(GEOM_PIPE);
 
   //Add a new Pipe function
   Handle(GEOM_Function) aFunction =
@@ -2438,7 +2438,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeThickening
   if (isCopy)
   { 
     //Add a new Copy object
-    aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+    aCopy = GetEngine()->AddObject(theObject->GetType());
     aFunction = aCopy->AddFunction(GEOMImpl_OffsetDriver::GetID(), OFFSET_THICKENING_COPY);
   }
   else
@@ -2521,7 +2521,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::RestorePath (Handle(GEOM_Object)
   if (theShape.IsNull() || theBase1.IsNull() || theBase2.IsNull()) return NULL;
 
   // Add a new Path object
-  Handle(GEOM_Object) aPath = GetEngine()->AddObject(GetDocID(), GEOM_PIPE_PATH);
+  Handle(GEOM_Object) aPath = GetEngine()->AddObject(GEOM_PIPE_PATH);
 
   // Add a new Path function
   Handle(GEOM_Function) aFunction =
@@ -2586,7 +2586,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::RestorePath
     return NULL;
 
   // Add a new Path object
-  Handle(GEOM_Object) aPath = GetEngine()->AddObject(GetDocID(), GEOM_PIPE_PATH);
+  Handle(GEOM_Object) aPath = GetEngine()->AddObject(GEOM_PIPE_PATH);
 
   // Add a new Path function
   Handle(GEOM_Function) aFunction =

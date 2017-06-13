@@ -594,7 +594,7 @@ void OperationGUI_FilletDlg::enableWidgets()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr OperationGUI_FilletDlg::createOperation()
 {
-  return getGeomEngine()->GetILocalOperations(getStudyId());
+  return getGeomEngine()->GetILocalOperations();
 }
 
 //=================================================================================

@@ -294,11 +294,6 @@ module GEOM
     string GetEntry();
 
     /*!
-     *  \brief Get ID of study, where the object is created.
-     */
-    long GetStudyID();
-
-    /*!
      *  \brief Get internal type of operation created this object (POINT, BOX, CYLINDER, EXTRUSION...).
      *  \note To get topological information on the object, use \ref GEOM_IMeasureOperations::WhatIs() "WhatIs()"
      * or \ref GEOM_IMeasureOperations::KindOfShape() "KindOfShape()" operation.
@@ -691,11 +686,6 @@ module GEOM
      *  \brief Get the operation error code
      */
     string GetErrorCode();
-
-    /*!
-     *  \brief Get ID of study, where the operation is defined
-     */
-    long GetStudyID();
 
     /*!
      *  \brief Opens a new transaction
@@ -4880,9 +4870,9 @@ module GEOM
      *  \brief Undo/Redo Management
      */
 
-    void Undo (in long theStudyID);
+    void Undo ();
 
-    void Redo (in long theStudyID);
+    void Redo ();
 
     /*!
      * \brief Publishing management
@@ -4891,8 +4881,7 @@ module GEOM
      * if theFather is not NULL the object is placed under thFather's SObject.
      * Returns a SObject where theObject is placed
      */
-    SALOMEDS::SObject AddInStudy (in SALOMEDS::Study theStudy,
-                                  in GEOM_BaseObject theObject,
+    SALOMEDS::SObject AddInStudy (in GEOM_BaseObject theObject,
                                   in string          theName,
                                   in GEOM_BaseObject theFather);
 
@@ -4900,8 +4889,6 @@ module GEOM
      *  \brief Publish sub-shapes, standing for arguments and sub-shapes of arguments
      *
      *  To be used from python scripts out of geompy.addToStudy (non-default usage)
-     *  \param theStudy  the study, in which theObject is published already,
-     *                   and in which the arguments will be published
      *  \param theObject published GEOM_Object, arguments of which will be published
      *  \param theArgs   list of GEOM_Object, operation arguments to be published.
      *                   If this list is empty, all operation arguments will be published
@@ -4920,8 +4907,7 @@ module GEOM
      *                      and prefix "from_subshapes_of_" to names of partially restored sub-shapes.
      *  \return list of published sub-shapes
      */
-    ListOfGO RestoreSubShapesO (in SALOMEDS::Study   theStudy,
-                                in GEOM_Object       theObject,
+    ListOfGO RestoreSubShapesO (in GEOM_Object       theObject,
                                 in ListOfGO          theArgs,
                                 in find_shape_method theFindMethod,
                                 in boolean           theInheritFirstArg,
@@ -4931,8 +4917,6 @@ module GEOM
      *  \brief Publish sub-shapes, standing for arguments and sub-shapes of arguments
      *
      *  To be used from python scripts out of geompy.addToStudy (non-default usage)
-     *  \param theStudy  the study, in which theObject is published already,
-     *                   and in which the arguments will be published
      *  \param theObject published GEOM_Object, arguments of which will be published
      *  \param theArgs   list of GEOM_Object, operation arguments to be published.
      *                   If this list is empty, all operation arguments will be published
@@ -4951,8 +4935,7 @@ module GEOM
      *                      and prefix "from_subshapes_of_" to names of partially restored sub-shapes.
      *  \return list of published sub-shapes
      */
-    ListOfGO RestoreGivenSubShapesO (in SALOMEDS::Study   theStudy,
-                                     in GEOM_Object       theObject,
+    ListOfGO RestoreGivenSubShapesO (in GEOM_Object       theObject,
                                      in ListOfGO          theArgs,
                                      in find_shape_method theFindMethod,
                                      in boolean           theInheritFirstArg,
@@ -4963,8 +4946,6 @@ module GEOM
      *
      *  To be used from GUI and from geompy.addToStudy.
      *  Work like the above method, but accepts study object theSObject instead of GEOM_Object.
-     *  \param theStudy  the study, in which theObject is published already,
-     *                   and in which the arguments will be published
      *  \param theSObject study object, referencing GEOM_Object, arguments of which will be published
      *  \param theArgs   list of GEOM_Object, operation arguments to be published.
      *                   If this list is empty, all operation arguments will be published
@@ -4982,8 +4963,7 @@ module GEOM
      *  \param theAddPrefix add prefix "from_" to names of restored sub-shapes,
      *                      and prefix "from_subshapes_of_" to names of partially restored sub-shapes.
      */
-    ListOfGO RestoreSubShapesSO (in SALOMEDS::Study   theStudy,
-                                 in SALOMEDS::SObject theSObject,
+    ListOfGO RestoreSubShapesSO (in SALOMEDS::SObject theSObject,
                                  in ListOfGO          theArgs,
                                  in find_shape_method theFindMethod,
                                  in boolean           theInheritFirstArg,
@@ -4991,22 +4971,21 @@ module GEOM
 
     // #  Methods to access interfaces for objects creation and transformation
 
-    GEOM_IBasicOperations     GetIBasicOperations    (in long theStudyID) raises (SALOME::SALOME_Exception);
-    GEOM_ITransformOperations GetITransformOperations(in long theStudyID) raises (SALOME::SALOME_Exception);
-    GEOM_I3DPrimOperations    GetI3DPrimOperations   (in long theStudyID) raises (SALOME::SALOME_Exception);
-    GEOM_IShapesOperations    GetIShapesOperations   (in long theStudyID) raises (SALOME::SALOME_Exception);
-    GEOM_IBooleanOperations   GetIBooleanOperations  (in long theStudyID) raises (SALOME::SALOME_Exception);
-    GEOM_ICurvesOperations    GetICurvesOperations   (in long theStudyID) raises (SALOME::SALOME_Exception);
-    GEOM_ILocalOperations     GetILocalOperations    (in long theStudyID) raises (SALOME::SALOME_Exception);
-    GEOM_IHealingOperations   GetIHealingOperations  (in long theStudyID) raises (SALOME::SALOME_Exception);
-    GEOM_IInsertOperations    GetIInsertOperations   (in long theStudyID) raises (SALOME::SALOME_Exception);
-    GEOM_IMeasureOperations   GetIMeasureOperations  (in long theStudyID) raises (SALOME::SALOME_Exception);
-    GEOM_IBlocksOperations    GetIBlocksOperations   (in long theStudyID) raises (SALOME::SALOME_Exception);
-    GEOM_IGroupOperations     GetIGroupOperations    (in long theStudyID) raises (SALOME::SALOME_Exception);
-    GEOM_IFieldOperations     GetIFieldOperations    (in long theStudyID) raises (SALOME::SALOME_Exception);
+    GEOM_IBasicOperations     GetIBasicOperations    () raises (SALOME::SALOME_Exception);
+    GEOM_ITransformOperations GetITransformOperations() raises (SALOME::SALOME_Exception);
+    GEOM_I3DPrimOperations    GetI3DPrimOperations   () raises (SALOME::SALOME_Exception);
+    GEOM_IShapesOperations    GetIShapesOperations   () raises (SALOME::SALOME_Exception);
+    GEOM_IBooleanOperations   GetIBooleanOperations  () raises (SALOME::SALOME_Exception);
+    GEOM_ICurvesOperations    GetICurvesOperations   () raises (SALOME::SALOME_Exception);
+    GEOM_ILocalOperations     GetILocalOperations    () raises (SALOME::SALOME_Exception);
+    GEOM_IHealingOperations   GetIHealingOperations  () raises (SALOME::SALOME_Exception);
+    GEOM_IInsertOperations    GetIInsertOperations   () raises (SALOME::SALOME_Exception);
+    GEOM_IMeasureOperations   GetIMeasureOperations  () raises (SALOME::SALOME_Exception);
+    GEOM_IBlocksOperations    GetIBlocksOperations   () raises (SALOME::SALOME_Exception);
+    GEOM_IGroupOperations     GetIGroupOperations    () raises (SALOME::SALOME_Exception);
+    GEOM_IFieldOperations     GetIFieldOperations    () raises (SALOME::SALOME_Exception);
 
-    GEOM_IOperations GetPluginOperations (in long   theStudyID,
-                                          in string theLibName) raises (SALOME::SALOME_Exception);
+    GEOM_IOperations GetPluginOperations (in string theLibName) raises (SALOME::SALOME_Exception);
 
     // # Objects Management
 
@@ -5019,11 +4998,10 @@ module GEOM
 
     /*!
      *  \brief Returns an object defined by the study and its entry in the GEOM component
-     *  \param theStudyID is a SALOMEDS Study ID
      *  \param theEntry is an entry of the requested GEOM_Object in the GEOM component
      *  \note if the object has not previously been created a NULL GEOM_Object is returned
      */
-    GEOM_BaseObject GetObject (in long theStudyID, in string theEntry);
+    GEOM_BaseObject GetObject (in string theEntry);
 
     /*!
      *  \brief Add a sub-shape defined by indices in \a theIndices
@@ -5062,11 +5040,9 @@ module GEOM
 
     /*!
      *  \brief Publishes the named sub-shapes of given object in the study.
-     *  \param theStudy    The study in which the object is published
      *  \param theObject   The object which named sub-shapes are published
      */
-    ListOfGO PublishNamedShapesInStudy(in SALOMEDS::Study theStudy,
-                                       //in SObject theSObject,
+    ListOfGO PublishNamedShapesInStudy(//in SObject theSObject,
                                        in Object theObject);
 
     /*!
@@ -5119,31 +5095,27 @@ module GEOM
 
     /*!
      * \brief Collects dependencies of the given objects from other ones
-     * \param theStudy The study in which the object is published
      * \param theListOfEntries List of GEOM object entries in OCAF tree (not in study)
      * \return Struct of dependent entries and its links as a byte array
      * \note This method is supposed to be used by GUI only.
      */
-    SALOMEDS::TMPFile GetDependencyTree(in SALOMEDS::Study theStudy,
-					in string_array theListOfEntries);
+    SALOMEDS::TMPFile GetDependencyTree(in string_array theListOfEntries);
 
     /*!
      * \brief Fills 3 lists that is used to reduce study of redundant objects:
      *  - dependencies of the given objects from other ones;
      *  - children of the given objects;
      *  - all other objects in study.
-     * \param theStudy The study in which the object was published
      * \param theSelectedEntries List of GEOM object entries in OCAF tree
      * \param theParentEntries List of GEOM object entries on which the given objects depend
      * \param theSubEntries Children entries list of the given objects
      * \param theOtherEntries List of GEOM object entries which are in the study, but not in parents and children lists
      * \note This method is supposed to be used by GUI only.
      */
-    void GetEntriesToReduceStudy(in SALOMEDS::Study theStudy,
-				 inout string_array theSelectedEntries,
-				 inout string_array theParentEntries,
-				 inout string_array theSubEntries,
-				 inout string_array theOtherEntries);
+    void GetEntriesToReduceStudy(inout string_array theSelectedEntries,
+				                 inout string_array theParentEntries,
+				                 inout string_array theSubEntries,
+				                 inout string_array theOtherEntries);
 
   };
 };

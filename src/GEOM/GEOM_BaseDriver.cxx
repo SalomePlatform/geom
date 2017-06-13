@@ -37,21 +37,6 @@ OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOM_BaseDriver,TFunction_Driver);
 
 //================================================================================
 /*!
- * Returns document id
- */
-//================================================================================
-int GEOM_BaseDriver::GetDocID() const
-{
-  int docId = 0;
-  if (!Label().IsNull()) {
-    Handle(TDocStd_Document) aDoc = TDocStd_Owner::GetDocument(Label().Data());
-    docId = GEOM_Engine::GetEngine()->GetDocID(aDoc);
-  }
-  return docId;
-}
-
-//================================================================================
-/*!
  * \brief Returns a name of creation operation and names and values of creation parameters
  */
 //================================================================================

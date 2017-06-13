@@ -100,24 +100,9 @@ static GEOM_Engine* TheEngine = NULL;
 
 static TCollection_AsciiString BuildIDFromObject(Handle(GEOM_BaseObject)& theObject)
 {
-  TCollection_AsciiString anID(theObject->GetDocID()), anEntry;
+  TCollection_AsciiString anEntry;
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-  anID+=(TCollection_AsciiString("_")+anEntry);
-  return anID;
-}
-
-static TCollection_AsciiString BuildID(Standard_Integer theDocID, const char* theEntry)
-{
-  TCollection_AsciiString anID(theDocID);
-  anID+=(TCollection_AsciiString("_")+theEntry);
-  return anID;
-}
-
-static Standard_Integer ExtractDocID(TCollection_AsciiString& theID)
-{
-  TCollection_AsciiString aDocID = theID.Token("_");
-  if(aDocID.Length() < 1) return -1;
-  return aDocID.IntegerValue();
+  return anEntry;
 }
 
 bool ProcessFunction(Handle(GEOM_Function)&             theFunction,
@@ -146,11 +131,10 @@ void ReplaceEntriesByNames (TCollection_AsciiString&                  theScript,
                             Standard_Integer&                         objectCounter,
                             Resource_DataMapOfAsciiStringAsciiString& aNameToEntry);
 
-void AddObjectColors (int                      theDocID,
-                      TCollection_AsciiString& theScript,
+void AddObjectColors (TCollection_AsciiString& theScript,
                       const TSting2ObjDataMap& theEntry2ObjData);
 
-void AddTextures (int theDocID, TCollection_AsciiString& theScript);
+void AddTextures (TCollection_AsciiString& theScript);
 
 void PublishObject (TObjectData&                              theObjectData,
                     TSting2ObjDataMap&                        theEntry2ObjData,
@@ -252,14 +236,8 @@ GEOM_Engine::~GEOM_Engine()
   for(objit = objs.begin(); objit != objs.end(); ++objit)
     RemoveObject(*objit);
 
-  //Close all documents not closed
-  TColStd_DataMapIteratorOfDataMapOfIntegerTransient anItr (_mapIDDocument);
-  for (; anItr.More(); anItr.Next())
-  {
-    Close(anItr.Key());
-    anItr.Initialize( _mapIDDocument ); // anItr becomes invalid at _mapIDDocument.UnBind(docId)
-  }
-  _mapIDDocument.Clear();
+  //Close document
+  Close();
   _objects.Clear();
 }
 
@@ -268,11 +246,11 @@ GEOM_Engine::~GEOM_Engine()
  *  GetDocument
  */
 //=============================================================================
-Handle(TDocStd_Document) GEOM_Engine::GetDocument(int theDocID, bool force)
+Handle(TDocStd_Document) GEOM_Engine::GetDocument(bool force)
 {
   Handle(TDocStd_Document) aDoc;
-  if(_mapIDDocument.IsBound(theDocID)) {
-    aDoc = Handle(TDocStd_Document)::DownCast(_mapIDDocument(theDocID));
+  if (_document) {
+    aDoc = _document;
   }
   else if (force) {
 #if OCC_VERSION_MAJOR > 6
@@ -281,25 +259,9 @@ Handle(TDocStd_Document) GEOM_Engine::GetDocument(int theDocID, bool force)
     _OCAFApp->NewDocument("SALOME_GEOM", aDoc);
 #endif
     aDoc->SetUndoLimit(_UndoLimit);
-    _mapIDDocument.Bind(theDocID, aDoc);
-    TDataStd_Integer::Set(aDoc->Main(), theDocID);
+    _document = aDoc;
   }
   return aDoc;
-}
-
-//=============================================================================
-/*!
- *  GetDocID
- */
-//=============================================================================
-int GEOM_Engine::GetDocID(Handle(TDocStd_Document) theDocument)
-{
-  if (theDocument.IsNull()) return -1;
-  TColStd_DataMapIteratorOfDataMapOfIntegerTransient anItr (_mapIDDocument);
-  for (; anItr.More(); anItr.Next())
-    if (anItr.Value() == theDocument) return anItr.Key();
-
-  return -1;
 }
 
 //=============================================================================
@@ -308,17 +270,15 @@ int GEOM_Engine::GetDocID(Handle(TDocStd_Document) theDocument)
  */
 //=============================================================================
 
-Handle(GEOM_BaseObject) GEOM_Engine::GetObject(int theDocID, const char* theEntry, bool force)
+Handle(GEOM_BaseObject) GEOM_Engine::GetObject(const char* theEntry, bool force)
 {
   Handle(GEOM_BaseObject) anObject;
 
-  TCollection_AsciiString anID = BuildID(theDocID, theEntry);
-
-  if (_objects.IsBound(anID)) {
-    anObject = Handle(GEOM_BaseObject)::DownCast(_objects(anID));
+  if (_objects.IsBound(theEntry)) {
+    anObject = Handle(GEOM_BaseObject)::DownCast(_objects(theEntry));
   }
   else if (force) {
-    Handle(TDocStd_Document) aDoc = GetDocument(theDocID, force);
+    Handle(TDocStd_Document) aDoc = GetDocument(force);
     if ( !aDoc.IsNull()) {
       TDF_Label aLabel;
       TDF_Tool::Label(aDoc->Main().Data(), theEntry, aLabel, Standard_True);
@@ -329,7 +289,7 @@ Handle(GEOM_BaseObject) GEOM_Engine::GetObject(int theDocID, const char* theEntr
         case GEOM_FIELD_STEP_OBJTYPE: anObject = new GEOM_FieldStep(aLabel); break;
         default:                      anObject = new GEOM_Object   (aLabel);
         }
-        _objects.Bind(anID, anObject);
+        _objects.Bind(theEntry, anObject);
       }
     }
   }
@@ -343,22 +303,19 @@ Handle(GEOM_BaseObject) GEOM_Engine::GetObject(int theDocID, const char* theEntr
  */
 //=============================================================================
 
-Handle(GEOM_BaseObject) GEOM_Engine::AddBaseObject(int theDocID, int theType)
+Handle(GEOM_BaseObject) GEOM_Engine::AddBaseObject(int theType)
 {
-  Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
+  Handle(TDocStd_Document) aDoc = GetDocument();
   Handle(TDataStd_TreeNode) aRoot = TDataStd_TreeNode::Set(aDoc->Main());
 
   // NPAL18604: use existing label to decrease memory usage,
   //            if this label has been freed (object deleted)
   bool useExisting = false;
   TDF_Label aChild;
-  if (_freeLabels.find(theDocID) != _freeLabels.end()) {
-    std::list<TDF_Label>& aFreeLabels = _freeLabels[theDocID];
-    if (!aFreeLabels.empty()) {
-      useExisting = true;
-      aChild = aFreeLabels.front();
-      aFreeLabels.pop_front();
-    }
+  if (!_freeLabels.empty()) {
+    useExisting = true;
+    aChild = _freeLabels.front();
+    _freeLabels.pop_front();
   }
   if (!useExisting) {
     // create new label
@@ -386,9 +343,9 @@ Handle(GEOM_BaseObject) GEOM_Engine::AddBaseObject(int theDocID, int theType)
  */
 //================================================================================
 
-Handle(GEOM_Object) GEOM_Engine::AddObject(int theDocID, int theType)
+Handle(GEOM_Object) GEOM_Engine::AddObject(int theType)
 {
-  return Handle(GEOM_Object)::DownCast( AddBaseObject(theDocID, theType) );
+  return Handle(GEOM_Object)::DownCast( AddBaseObject(theType) );
 }
 
 //=============================================================================
@@ -403,21 +360,17 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object)              th
 {
   if (theMainShape.IsNull() || theIndices.IsNull()) return NULL;
 
-  Handle(TDocStd_Document) aDoc = GetDocument(theMainShape->GetDocID());
+  Handle(TDocStd_Document) aDoc = GetDocument();
   Handle(TDataStd_TreeNode) aRoot = TDataStd_TreeNode::Set(aDoc->Main());
 
   // NPAL18604: use existing label to decrease memory usage,
   //            if this label has been freed (object deleted)
   bool useExisting = false;
-  TDF_Label aChild;
-  int aDocID = theMainShape->GetDocID();
-  if (_freeLabels.find(aDocID) != _freeLabels.end()) {
-    std::list<TDF_Label>& aFreeLabels = _freeLabels[aDocID];
-    if (!aFreeLabels.empty()) {
-      useExisting = true;
-      aChild = aFreeLabels.front();
-      aFreeLabels.pop_front();
-    }
+  TDF_Label aChild;;
+  if (!_freeLabels.empty()) {
+    useExisting = true;
+    aChild = _freeLabels.front();
+    _freeLabels.pop_front();
   }
   if (!useExisting) {
     // create new label
@@ -479,8 +432,7 @@ bool GEOM_Engine::RemoveObject(Handle(GEOM_BaseObject)& theObject)
 {
   if (theObject.IsNull()) return false;
 
-  int aDocID = theObject->GetDocID();
-  if(!_mapIDDocument.IsBound(aDocID))
+  if(!_document)
     return false;  // document is closed...
 
   //Remove an object from the map of available objects
@@ -515,16 +467,14 @@ bool GEOM_Engine::RemoveObject(Handle(GEOM_BaseObject)& theObject)
   aLabel.ForgetAllAttributes(Standard_True);
 
   // Remember the label to reuse it then
-  std::list<TDF_Label>& aFreeLabels = _freeLabels[aDocID];
-  if ( aFreeLabels.empty() || aFreeLabels.back() != aLabel )
-    aFreeLabels.push_back(aLabel);
+  if ( _freeLabels.empty() || _freeLabels.back() != aLabel )
+    _freeLabels.push_back(aLabel);
 
   // we can't explicitely delete theObject. At least prevent its functioning
   // as an alive object when aLabel is reused for a new object
   theObject->_label = aLabel.Root();
   theObject->_ior.Clear();
-  theObject->_parameters.Clear();
-  theObject->_docID = -1;
+  theObject->_parameters.Clear();;
 
   theObject.Nullify();
 
@@ -536,9 +486,9 @@ bool GEOM_Engine::RemoveObject(Handle(GEOM_BaseObject)& theObject)
  *  Undo
  */
 //=============================================================================
-void GEOM_Engine::Undo(int theDocID)
+void GEOM_Engine::Undo()
 {
-  GetDocument(theDocID)->Undo();
+  GetDocument()->Undo();
 }
 
 //=============================================================================
@@ -546,9 +496,9 @@ void GEOM_Engine::Undo(int theDocID)
  *  Redo
  */
 //=============================================================================
-void GEOM_Engine::Redo(int theDocID)
+void GEOM_Engine::Redo()
 {
-  GetDocument(theDocID)->Redo();
+  GetDocument()->Redo();
 }
 
 //=============================================================================
@@ -556,12 +506,11 @@ void GEOM_Engine::Redo(int theDocID)
  *  Save
  */
 //=============================================================================
-bool GEOM_Engine::Save(int theDocID, const char* theFileName)
+bool GEOM_Engine::Save(const char* theFileName)
 {
-  if(!_mapIDDocument.IsBound(theDocID)) return false;
-  Handle(TDocStd_Document) aDoc = Handle(TDocStd_Document)::DownCast(_mapIDDocument(theDocID));
+  if(!_document) return false;
 
-  _OCAFApp->SaveAs(aDoc, theFileName);
+  _OCAFApp->SaveAs(_document, theFileName);
 
   return true;
 }
@@ -571,7 +520,7 @@ bool GEOM_Engine::Save(int theDocID, const char* theFileName)
  *  Load
  */
 //=============================================================================
-bool GEOM_Engine::Load(int theDocID, const char* theFileName)
+bool GEOM_Engine::Load(const char* theFileName)
 {
   Handle(TDocStd_Document) aDoc;
   if (_OCAFApp->Open(theFileName, aDoc) != PCDM_RS_OK) {
@@ -587,10 +536,7 @@ bool GEOM_Engine::Load(int theDocID, const char* theFileName)
 
   aDoc->SetUndoLimit(_UndoLimit);
 
-  if(_mapIDDocument.IsBound(theDocID)) _mapIDDocument.UnBind(theDocID);
-  _mapIDDocument.Bind(theDocID, aDoc);
-
-  TDataStd_Integer::Set(aDoc->Main(), theDocID);
+  _document = aDoc;
 
   return true;
 }
@@ -600,30 +546,24 @@ bool GEOM_Engine::Load(int theDocID, const char* theFileName)
  *  Close
  */
 //=============================================================================
-void GEOM_Engine::Close(int theDocID)
+void GEOM_Engine::Close()
 {
-  if (_mapIDDocument.IsBound(theDocID)) {
-    Handle(TDocStd_Document) aDoc = Handle(TDocStd_Document)::DownCast(_mapIDDocument(theDocID));
-
-    //Remove all GEOM Objects associated to the given document
+  if (_document) {
+    //Remove all GEOM Objects associated to the document
     TColStd_SequenceOfAsciiString aSeq;
     GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient It (_objects);
     for (; It.More(); It.Next()) {
-      TCollection_AsciiString anObjID (It.Key());
-      Standard_Integer anID = ExtractDocID(anObjID);
-      if (theDocID == anID) aSeq.Append(It.Key());
+      aSeq.Append(It.Key());
     }
-    for (Standard_Integer i=1; i<=aSeq.Length(); i++) _objects.UnBind(aSeq.Value(i));
-
-    // Forget free labels for this document
-    TFreeLabelsList::iterator anIt = _freeLabels.find(theDocID);
-    if (anIt != _freeLabels.end()) {
-      _freeLabels.erase(anIt);
+    for (Standard_Integer i=1; i<=aSeq.Length(); i++) {
+      _objects.UnBind(aSeq.Value(i));
     }
 
-    _mapIDDocument.UnBind(theDocID);
-    _OCAFApp->Close(aDoc);
-    aDoc.Nullify();
+    // Forget free labels for document
+    _freeLabels.clear();
+
+    _OCAFApp->Close(_document);
+    _document.Nullify();
   }
 }
 
@@ -632,8 +572,7 @@ void GEOM_Engine::Close(int theDocID)
  *  DumpPython
  */
 //=============================================================================
-TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
-                                                std::vector<TObjectData>& theObjectData,
+TCollection_AsciiString GEOM_Engine::DumpPython(std::vector<TObjectData>& theObjectData,
                                                 TVariablesList theVariables,
                                                 bool isPublished,
                                                 bool isMultiFile, 
@@ -643,26 +582,29 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   Kernel_Utils::Localizer loc;
 
   TCollection_AsciiString aScript;
-  Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
+  Handle(TDocStd_Document) aDoc = GetDocument();
 
   if (aDoc.IsNull())
   {
     TCollection_AsciiString anEmptyScript;
     if( isMultiFile )
-      anEmptyScript = "def RebuildData(theStudy): pass\n";
+      anEmptyScript = "def RebuildData(): pass\n";
     return anEmptyScript;
   }
+  
+  if( isMultiFile )
+    aScript  = "import salome\n";
 
-  aScript  = "import GEOM\n";
+  aScript += "import GEOM\n";
   aScript += "from salome.geom import geomBuilder\n";
   aScript += "import math\n";
   aScript += "import SALOMEDS\n\n";
   if( isMultiFile )
-    aScript += "def RebuildData(theStudy):";
+    aScript += "def RebuildData():";
 
-  aScript += "\n\tgeompy = geomBuilder.New(theStudy)\n";
+  aScript += "\n\tgeompy = geomBuilder.New()\n";
 
-  AddTextures(theDocID, aScript);
+  AddTextures(aScript);
 
   Standard_Integer posToInsertGlobalVars = aScript.Length() + 1;
 
@@ -798,7 +740,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   aScript += aFuncScript;
 
   // ouv : NPAL12872
-  AddObjectColors( theDocID, aScript, aEntry2ObjData );
+  AddObjectColors(aScript, aEntry2ObjData );
 
   // Make script to publish in study
   TSting2ObjDataPtrMap::iterator aStEntry2ObjDataPtrIt;
@@ -908,24 +850,21 @@ Handle(TColStd_HSequenceOfAsciiString) GEOM_Engine::GetAllDumpNames() const
 #define TEXTURE_LABEL_HEIGHT   4
 #define TEXTURE_LABEL_DATA     5
 
-int GEOM_Engine::addTexture(int theDocID, int theWidth, int theHeight,
+int GEOM_Engine::addTexture(int theWidth, int theHeight,
                             const Handle(TColStd_HArray1OfByte)& theTexture,
                             const TCollection_AsciiString& theFileName)
 {
-  Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
+  Handle(TDocStd_Document) aDoc = GetDocument();
   Handle(TDataStd_TreeNode) aRoot = TDataStd_TreeNode::Set(aDoc->Main());
 
   // NPAL18604: use existing label to decrease memory usage,
   //            if this label has been freed (object deleted)
   bool useExisting = false;
   TDF_Label aChild;
-  if (_freeLabels.find(theDocID) != _freeLabels.end()) {
-    std::list<TDF_Label>& aFreeLabels = _freeLabels[theDocID];
-    if (!aFreeLabels.empty()) {
-      useExisting = true;
-      aChild = aFreeLabels.front();
-      aFreeLabels.pop_front();
-    }
+  if (!_freeLabels.empty()) {
+    useExisting = true;
+    aChild = _freeLabels.front();
+    _freeLabels.pop_front();
   }
   if (!useExisting) {
     // create new label
@@ -954,14 +893,14 @@ int GEOM_Engine::addTexture(int theDocID, int theWidth, int theHeight,
   return aTextureID;
 }
 
-Handle(TColStd_HArray1OfByte) GEOM_Engine::getTexture(int theDocID, int theTextureID,
+Handle(TColStd_HArray1OfByte) GEOM_Engine::getTexture(int theTextureID,
                                                       int& theWidth, int& theHeight,
                                                       TCollection_AsciiString& theFileName)
 {
   Handle(TColStd_HArray1OfByte) anArray;
   theWidth = theHeight = 0;
 
-  Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
+  Handle(TDocStd_Document) aDoc = GetDocument();
 
   TDF_ChildIterator anIterator(aDoc->Main(), Standard_True);
   bool found = false;
@@ -995,11 +934,11 @@ Handle(TColStd_HArray1OfByte) GEOM_Engine::getTexture(int theDocID, int theTextu
   return anArray;
 }
 
-std::list<int> GEOM_Engine::getAllTextures(int theDocID)
+std::list<int> GEOM_Engine::getAllTextures()
 {
   std::list<int> id_list;
 
-  Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
+  Handle(TDocStd_Document) aDoc = GetDocument();
 
   TDF_ChildIterator anIterator(aDoc->Main(), Standard_True);
   for (; anIterator.More(); anIterator.Next()) {
@@ -1012,17 +951,6 @@ std::list<int> GEOM_Engine::getAllTextures(int theDocID)
     }
   }
   return id_list;
-}
-
-void GEOM_Engine::DocumentModified(const int theDocId, const bool isModified)
-{
-  if (isModified) _mapModifiedDocs.Add(theDocId);
-  else _mapModifiedDocs.Remove(theDocId);
-}
- 
-bool GEOM_Engine::DocumentModified(const int theDocId)
-{
-  return _mapModifiedDocs.Contains(theDocId);
 }
 
 //===========================================================================
@@ -1665,12 +1593,11 @@ void ReplaceEntriesByNames (TCollection_AsciiString&                  theScript,
  *  AddObjectColors: Add color to objects
  */
 //=============================================================================
-void AddObjectColors (int                      theDocID,
-                      TCollection_AsciiString& theScript,
+void AddObjectColors (TCollection_AsciiString& theScript,
                       const TSting2ObjDataMap& theEntry2ObjData)
 {
   GEOM_Engine* engine = GEOM_Engine::GetEngine();
-  Handle(TDocStd_Document) aDoc = engine->GetDocument(theDocID);
+  Handle(TDocStd_Document) aDoc = engine->GetDocument();
 
   TSting2ObjDataMap::const_iterator anEntryToNameIt;
   for (anEntryToNameIt = theEntry2ObjData.begin();
@@ -1774,10 +1701,10 @@ static TCollection_AsciiString pack_data (const Handle(TColStd_HArray1OfByte)& a
   return stream;
 }
 
-void AddTextures (int theDocID, TCollection_AsciiString& theScript)
+void AddTextures (TCollection_AsciiString& theScript)
 {
   GEOM_Engine* engine = GEOM_Engine::GetEngine();
-  std::list<int> allTextures = engine->getAllTextures(theDocID);
+  std::list<int> allTextures = engine->getAllTextures();
   std::list<int>::const_iterator it;
 
   if (allTextures.size() > 0) {
@@ -1788,7 +1715,7 @@ void AddTextures (int theDocID, TCollection_AsciiString& theScript)
       Standard_Integer aWidth, aHeight;
       TCollection_AsciiString aFileName;
       Handle(TColStd_HArray1OfByte) aTexture =
-        engine->getTexture(theDocID, *it, aWidth, aHeight, aFileName);
+        engine->getTexture(*it, aWidth, aHeight, aFileName);
       if (aWidth > 0 && aHeight > 0 && !aTexture.IsNull() && aTexture->Length() > 0 ) {
         TCollection_AsciiString aCommand = "\n\t";
         aCommand += "texture_map["; aCommand += *it; aCommand += "] = ";

@@ -56,7 +56,7 @@ class GEOMImpl_IInsertOperations : public GEOM_IOperations {
     long                    myMaxNumber;
   };
 
-  Standard_EXPORT GEOMImpl_IInsertOperations(GEOM_Engine* theEngine, int theDocID);
+  Standard_EXPORT GEOMImpl_IInsertOperations(GEOM_Engine* theEngine);
   Standard_EXPORT ~GEOMImpl_IInsertOperations();
 
 

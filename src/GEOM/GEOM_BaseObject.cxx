@@ -85,15 +85,9 @@ Handle(GEOM_BaseObject) GEOM_BaseObject::GetObject(const TDF_Label& theLabel)
   TCollection_AsciiString anEntry;
   TDF_Tool::Entry(theLabel, anEntry);
 
-  Handle(TDocStd_Document) aDoc = TDocStd_Owner::GetDocument(theLabel.Data());
-  if(aDoc.IsNull()) return NULL;
-
-  Handle(TDataStd_Integer) anID;
-  if(!aDoc->Main().FindAttribute(TDataStd_Integer::GetID(), anID)) return NULL;
-
   GEOM_Engine* anEngine = GEOM_Engine::GetEngine();
   if(anEngine == NULL) return NULL;
-  return anEngine->GetObject(anID->Get(), anEntry.ToCString());
+  return anEngine->GetObject(anEntry.ToCString());
 }
 
 //=============================================================================
@@ -167,14 +161,8 @@ int GEOM_BaseObject::GetType(const TDF_Label& theLabel)
  */
 //=============================================================================
 GEOM_BaseObject::GEOM_BaseObject(const TDF_Label& theEntry)
-  : _label(theEntry), _ior(""), _docID(-1)
+  : _label(theEntry), _ior("")
 {
-  Handle(TDocStd_Document) aDoc = TDocStd_Owner::GetDocument(_label.Data());
-  if(!aDoc.IsNull()) {
-    Handle(TDataStd_Integer) anID;
-    if(aDoc->Main().FindAttribute(TDataStd_Integer::GetID(), anID)) _docID = anID->Get();
-  }
-
   if(!theEntry.FindAttribute(TDataStd_TreeNode::GetDefaultTreeID(), _root))
     _root = TDataStd_TreeNode::Set(theEntry);
 }
@@ -185,14 +173,8 @@ GEOM_BaseObject::GEOM_BaseObject(const TDF_Label& theEntry)
  */
 //=============================================================================
 GEOM_BaseObject::GEOM_BaseObject(const TDF_Label& theEntry, int theType)
-: _label(theEntry), _ior(""), _docID(-1)
+: _label(theEntry), _ior("")
 {
-  Handle(TDocStd_Document) aDoc = TDocStd_Owner::GetDocument(_label.Data());
-  if(!aDoc.IsNull()) {
-    Handle(TDataStd_Integer) anID;
-    if(aDoc->Main().FindAttribute(TDataStd_Integer::GetID(), anID)) _docID = anID->Get();
-  }
-
   theEntry.ForgetAllAttributes(Standard_True);
 
   if(!theEntry.FindAttribute(TDataStd_TreeNode::GetDefaultTreeID(), _root))
@@ -286,17 +268,6 @@ void GEOM_BaseObject::IncrementTic()
     aTic = aTicAttr->Get();
 
   TDataStd_Integer::Set(aTicLabel, aTic + 1);
-}
-
-
-//=============================================================================
-/*!
- *  GetDocID
- */
-//=============================================================================
-int GEOM_BaseObject::GetDocID()
-{
-  return _docID;
 }
 
 //=============================================================================

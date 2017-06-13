@@ -69,8 +69,7 @@ GEOM::GEOM_Object_ptr GEOM_Field_i::GetShape()
   HANDLE_NAMESPACE(GEOM_Object) shape = _impl->GetShape();
   if ( !shape.IsNull() )
   {
-    GEOM::GEOM_BaseObject_var obj = _engine->GetObject( shape->GetDocID(),
-                                                        shape->GetEntryString().ToCString());
+    GEOM::GEOM_BaseObject_var obj = _engine->GetObject( shape->GetEntryString().ToCString());
     shapeVar = GEOM::GEOM_Object::_narrow( obj );
   }
   return shapeVar._retn();
@@ -138,8 +137,7 @@ GEOM::GEOM_FieldStep_ptr GEOM_Field_i::AddStep(::CORBA::Long stepID, ::CORBA::Lo
   HANDLE_NAMESPACE(GEOM_FieldStep) step = _impl->AddStep( stepID, stamp );
   if ( !step.IsNull() )
   {
-    GEOM::GEOM_BaseObject_var obj = _engine->GetObject( step->GetDocID(),
-                                                        step->GetEntryString().ToCString());
+    GEOM::GEOM_BaseObject_var obj = _engine->GetObject( step->GetEntryString().ToCString());
     stepVar = GEOM::GEOM_FieldStep::_narrow( obj );
   }
   return stepVar._retn();
@@ -201,8 +199,7 @@ GEOM::GEOM_FieldStep_ptr GEOM_Field_i::GetStep(CORBA::Long stepID)
   HANDLE_NAMESPACE(GEOM_FieldStep) step = _impl->GetStep(stepID);
   if ( !step.IsNull() )
   {
-    GEOM::GEOM_BaseObject_var obj = _engine->GetObject( step->GetDocID(),
-                                                        step->GetEntryString().ToCString());
+    GEOM::GEOM_BaseObject_var obj = _engine->GetObject( step->GetEntryString().ToCString());
     stepVar = GEOM::GEOM_FieldStep::_narrow( obj );
   }
   return stepVar._retn();
@@ -291,8 +288,7 @@ GEOM::GEOM_Field_ptr GEOM_FieldStep_i::GetField()
   HANDLE_NAMESPACE(GEOM_Field) field = _impl->GetField();
   if ( !field.IsNull() )
   {
-    GEOM::GEOM_BaseObject_var obj = _engine->GetObject( field->GetDocID(),
-                                                        field->GetEntryString().ToCString());
+    GEOM::GEOM_BaseObject_var obj = _engine->GetObject( field->GetEntryString().ToCString());
     fieldVar = GEOM::GEOM_Field::_narrow( obj );
   }
   return fieldVar._retn();

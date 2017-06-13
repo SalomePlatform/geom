@@ -87,9 +87,6 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   SalomeApp_Application* app = getGeometryGUI()->getApp();
   if (!app) return false;
 
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-  if ( !appStudy ) return false;
-
   LightApp_SelectionMgr *Sel = app->selectionMgr();
   SALOME_ListIO selected;
   Sel->selectedObjects( selected );
@@ -173,7 +170,7 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
     break;
   }
   Sel->setSelectedObjects( selected );
-  GEOM_Displayer( appStudy ).UpdateColorScale();
+  GEOM_Displayer().UpdateColorScale();
   return true;
 }
 
@@ -183,12 +180,7 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 //=====================================================================================
 void DisplayGUI::DisplayAll()
 {
-  SalomeApp_Application* app = getGeometryGUI()->getApp();
-  if ( !app ) return;
-
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-  if ( !appStudy ) return;
-  _PTR(Study) aStudy = appStudy->studyDS();
+  _PTR(Study) aStudy = SalomeApp_Application::getStudy();
   if ( !aStudy ) return;
   _PTR(SComponent) SC ( aStudy->FindComponent( "GEOM" ) );
   if ( !SC )
@@ -210,7 +202,7 @@ void DisplayGUI::DisplayAll()
     } 
     anIter->Next();
   }
-  GEOM_Displayer( appStudy ).Display( listIO, true );
+  GEOM_Displayer().Display( listIO, true );
 }
 
 //=====================================================================================
@@ -225,11 +217,10 @@ void DisplayGUI::EraseAll()
   if ( app ) {
     SUIT_ViewWindow* vw = app->desktop()->activeWindow();
     if ( vw ) {
-      SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
       SUIT_ViewManager* vman = vw->getViewManager();
       if ( vman->getType() == OCCViewer_Viewer::Type() || 
            vman->getType() == SVTK_Viewer::Type() ) {
-        GEOM_Displayer( appStudy ).EraseAll(true);
+        GEOM_Displayer().EraseAll(true);
       }
     }
   }
@@ -258,8 +249,8 @@ void DisplayGUI::DisplayOnlyChildren()
   SalomeApp_Application* app = getGeometryGUI()->getApp();
   if (!app) return;
 
-  SalomeApp_Study* anActiveStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
-  if (!anActiveStudy) return;
+  SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
+  if (!aStudy) return;
 
   LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
   if (!aSelMgr) return;
@@ -275,14 +266,14 @@ void DisplayGUI::DisplayOnlyChildren()
   for (; It.More(); It.Next()) {
     Handle(SALOME_InteractiveObject) anIObject = It.Value();
     if (anIObject->hasEntry()) {
-      _PTR(SObject) SO (anActiveStudy->studyDS()->FindObjectID(anIObject->getEntry()));
+      _PTR(SObject) SO (aStudy->studyDS()->FindObjectID(anIObject->getEntry()));
       if (SO) {
         _PTR(SComponent) SC (SO->GetFatherComponent());
         if (QString(SO->GetID().c_str()) == QString(SO->GetFatherComponent()->GetID().c_str())) {
           // if component is selected, pass it
         }
         else {
-          _PTR(ChildIterator) anIter (anActiveStudy->studyDS()->NewChildIterator(SO));
+          _PTR(ChildIterator) anIter (aStudy->studyDS()->NewChildIterator(SO));
           anIter->InitEx(true);
           while (anIter->More()) {
             _PTR(SObject) valSO (anIter->Value());
@@ -298,7 +289,7 @@ void DisplayGUI::DisplayOnlyChildren()
       }
     }
   }
-  GEOM_Displayer(anActiveStudy).Display(listIO, true);
+  GEOM_Displayer().Display(listIO, true);
 }
 
 //=====================================================================================
@@ -312,8 +303,8 @@ void DisplayGUI::Display()
   SalomeApp_Application* app = getGeometryGUI()->getApp();
   if ( !app ) return;
 
-  SalomeApp_Study* anActiveStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-  if ( !anActiveStudy ) return;
+  SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  if ( !aStudy ) return;
 
   //get SalomeApp selection manager
   LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
@@ -328,12 +319,12 @@ void DisplayGUI::Display()
   for( ;It.More();It.Next() ) {
     Handle(SALOME_InteractiveObject) anIObject = It.Value();
     if ( anIObject->hasEntry() ) {
-      _PTR(SObject) SO ( anActiveStudy->studyDS()->FindObjectID( anIObject->getEntry() ) );
+      _PTR(SObject) SO ( aStudy->studyDS()->FindObjectID( anIObject->getEntry() ) );
       if ( SO && QString(SO->GetID().c_str()) == QString(SO->GetFatherComponent()->GetID().c_str()) ) {
         _PTR(SComponent) SC ( SO->GetFatherComponent() );
         // if component is selected
         listIO.Clear();
-        _PTR(ChildIterator) anIter ( anActiveStudy->studyDS()->NewChildIterator( SO ) );
+        _PTR(ChildIterator) anIter ( aStudy->studyDS()->NewChildIterator( SO ) );
         anIter->InitEx( true );
         while( anIter->More() ) {
           _PTR(SObject) valSO ( anIter->Value() );
@@ -355,7 +346,7 @@ void DisplayGUI::Display()
       listIO.Append( anIObject );
     }
   }
-  GEOM_Displayer( anActiveStudy ).Display( listIO, true );
+  GEOM_Displayer().Display( listIO, true );
 }
 
 
@@ -370,8 +361,8 @@ void DisplayGUI::Erase()
   SalomeApp_Application* app = getGeometryGUI()->getApp();
   if ( !app ) return;
 
-  SalomeApp_Study* anActiveStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-  if ( !anActiveStudy ) return;
+  SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  if ( !aStudy ) return;
 
   //get SalomeApp selection manager
   LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
@@ -386,12 +377,12 @@ void DisplayGUI::Erase()
   for( ; It.More(); It.Next() ) {
     Handle(SALOME_InteractiveObject) anIObject = It.Value();
     if ( anIObject->hasEntry() ) {
-      _PTR(SObject) SO ( anActiveStudy->studyDS()->FindObjectID( anIObject->getEntry() ) );
+      _PTR(SObject) SO ( aStudy->studyDS()->FindObjectID( anIObject->getEntry() ) );
       if ( SO && QString(SO->GetID().c_str()) == QString(SO->GetFatherComponent()->GetID().c_str()) ) {
         _PTR(SComponent) SC ( SO->GetFatherComponent() );
         // if component is selected
         listIO.Clear();
-        _PTR(ChildIterator) anIter ( anActiveStudy->studyDS()->NewChildIterator( SO ) );
+        _PTR(ChildIterator) anIter ( aStudy->studyDS()->NewChildIterator( SO ) );
         anIter->InitEx( true );
         while( anIter->More() ) {
           _PTR(SObject) valSO ( anIter->Value() );
@@ -419,7 +410,7 @@ void DisplayGUI::Erase()
   if(viewWindow->getViewManager()->getType() == SVTK_Viewer::Type())
     aIsForced = false;
 
-  GEOM_Displayer(anActiveStudy).Erase( listIO, aIsForced);
+  GEOM_Displayer().Erase( listIO, aIsForced);
   getGeometryGUI()->getApp()->selectionMgr()->clearSelected();
 }
 
@@ -440,7 +431,7 @@ void DisplayGUI::SetDisplayMode( const int mode, SUIT_ViewWindow* viewWindow )
   SalomeApp_Study* aStudy = dynamic_cast< SalomeApp_Study* >( app->activeStudy() );
   if ( !aStudy ) return;
 
-  GEOM_Displayer displayer( aStudy );
+  GEOM_Displayer displayer;
 
   int mgrId = viewWindow->getViewManager()->getGlobalId();
 
@@ -476,7 +467,7 @@ void DisplayGUI::SetVectorMode( const bool mode, SUIT_ViewWindow* viewWindow )
   if ( !viewWindow ) 
     viewWindow = app->desktop()->activeWindow();
 
-  GEOM_Displayer displayer( aStudy );
+  GEOM_Displayer displayer;
 
   viewWindow->setProperty( "VectorsMode", mode );
 
@@ -525,7 +516,7 @@ void DisplayGUI::SetVerticesMode( const bool mode, SUIT_ViewWindow* viewWindow )
   if ( !viewWindow ) 
     viewWindow = app->desktop()->activeWindow();
 
-  GEOM_Displayer displayer( aStudy );
+  GEOM_Displayer displayer;
 
   viewWindow->setProperty( "VerticesMode", mode );
 
@@ -576,7 +567,7 @@ void DisplayGUI::SetNameMode( const bool mode, SUIT_ViewWindow* viewWindow )
 
   viewWindow->setProperty( "NameMode", mode );
 
-  GEOM_Displayer displayer( aStudy );
+  GEOM_Displayer displayer;
 
   int aMgrId = viewWindow->getViewManager()->getGlobalId();
 
@@ -631,7 +622,7 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
   aSelMgr->selectedObjects( selected );
   if ( selected.IsEmpty() ) return;
 
-  GEOM_Displayer displayer( aStudy );
+  GEOM_Displayer displayer;
 
   int mgrId = viewWindow->getViewManager()->getGlobalId();
 

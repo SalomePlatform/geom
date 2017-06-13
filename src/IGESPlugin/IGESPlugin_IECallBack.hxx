@@ -36,17 +36,14 @@ public:
   IGESPlugin_IECallBack();
   ~IGESPlugin_IECallBack();
   
-  bool         Export( int                            theDocId,
-		       const Handle(GEOM_Object)      theOriginal,
-		       const TCollection_AsciiString& theFileName,
+  bool Export( const Handle(GEOM_Object)      theOriginal,
+               const TCollection_AsciiString& theFileName,
 		       const TCollection_AsciiString& theFormatName );
   
-  Handle(TColStd_HSequenceOfTransient) Import( int                            theDocId,
-					       const TCollection_AsciiString& theFormatName,
-					       const TCollection_AsciiString& theFileName );
+  Handle(TColStd_HSequenceOfTransient) Import( const TCollection_AsciiString& theFormatName,
+					                           const TCollection_AsciiString& theFileName );
   
-  TCollection_AsciiString  ReadValue( int                            theDocId,
-				      const TCollection_AsciiString& theFileName,
+  TCollection_AsciiString  ReadValue( const TCollection_AsciiString& theFileName,
                                       const TCollection_AsciiString& theFormatName,
                                       const TCollection_AsciiString& theParameterName );
 };

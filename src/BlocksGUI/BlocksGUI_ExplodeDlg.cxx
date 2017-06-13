@@ -360,7 +360,7 @@ bool BlocksGUI_ExplodeDlg::isAllSubShapes() const
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BlocksGUI_ExplodeDlg::createOperation()
 {
-  return getGeomEngine()->GetIBlocksOperations( getStudyId() );
+  return getGeomEngine()->GetIBlocksOperations();
 }
 
 //=================================================================================

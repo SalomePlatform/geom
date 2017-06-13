@@ -36,15 +36,13 @@ public:
   STLPlugin_IECallBack();
   ~STLPlugin_IECallBack();
   
-  virtual bool Export( int                            theDocId,
-		       const Handle(GEOM_Object)      theOriginal,
-		       const TCollection_AsciiString& theFileName,
-		       const TCollection_AsciiString& theFormatName );
+  virtual bool Export( const Handle(GEOM_Object)      theOriginal,
+                       const TCollection_AsciiString& theFileName,
+                       const TCollection_AsciiString& theFormatName );
 
   virtual
-  Handle(TColStd_HSequenceOfTransient) Import( int                            theDocId,
-					       const TCollection_AsciiString& theFormatName,
-					       const TCollection_AsciiString& theFileName );
+  Handle(TColStd_HSequenceOfTransient) Import( const TCollection_AsciiString& theFormatName,
+                                               const TCollection_AsciiString& theFileName );
 };
 
 #endif

@@ -188,7 +188,7 @@ void MeasureGUI_NormaleDlg::SelectionIntoArgument()
       aSelMgr->GetIndexes(aSelList.First(), aMap);
       if (aMap.Extent() == 1) // Local Selection
       {
-        GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+        GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations();
         int anIndex = aMap(1);
         aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
         aName += QString(":face_%1").arg(anIndex);
@@ -221,7 +221,7 @@ void MeasureGUI_NormaleDlg::SelectionIntoArgument()
       aSelMgr->GetIndexes(aSelList.First(), aMap);
       if (aMap.Extent() == 1) // Local Selection
       {
-        GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+        GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations();
         int anIndex = aMap(1);
         aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
         aName += QString(":vertex_%1").arg(anIndex);
@@ -333,7 +333,7 @@ void MeasureGUI_NormaleDlg::enterEvent (QEvent*)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr MeasureGUI_NormaleDlg::createOperation()
 {
-  return getGeomEngine()->GetIMeasureOperations(getStudyId());
+  return getGeomEngine()->GetIMeasureOperations();
 }
 
 //=================================================================================

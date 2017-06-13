@@ -253,7 +253,7 @@ void OperationGUI_ArchimedeDlg::enterEvent( QEvent* )
 //=================================================================================
 GEOM::GEOM_IOperations_ptr OperationGUI_ArchimedeDlg::createOperation()
 {
-  return getGeomEngine()->GetILocalOperations( getStudyId() );
+  return getGeomEngine()->GetILocalOperations();
 }
 
 //=================================================================================

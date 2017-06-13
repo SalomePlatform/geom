@@ -59,13 +59,7 @@ myIsMainObject( false )
   myTextItem->setFont( textFont );
 
   myEntry = theEntry;
-
-  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-  if ( !app ) return;
-  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
-  SALOMEDS::Study_var aStudyDS = GeometryGUI::ClientStudyToStudy( study->studyDS() );
-  int studyId = aStudyDS->StudyId();
-  myGeomObject = GeometryGUI::GetGeomGen()->GetObject( studyId, myEntry.c_str() );
+  myGeomObject = GeometryGUI::GetGeomGen()->GetObject( myEntry.c_str() );
 
   updateName();
 

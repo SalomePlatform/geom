@@ -85,7 +85,7 @@ Standard_Integer GEOMImpl_ExportDriver::Execute(LOGBOOK& log) const
   if (aFileName.IsEmpty() || aFormatName.IsEmpty() || aLibName.IsEmpty())
     return 0;
 
-  if( !GEOMImpl_IECallBack::GetCallBack( aFormatName )->Export( GetDocID(), obj, aFileName, aFormatName ) );
+  if( !GEOMImpl_IECallBack::GetCallBack( aFormatName )->Export( obj, aFileName, aFormatName ) );
     return 0;
 
 #if OCC_VERSION_MAJOR < 7

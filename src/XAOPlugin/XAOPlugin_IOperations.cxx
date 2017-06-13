@@ -99,8 +99,8 @@ TopAbs_ShapeEnum getGroupDimension(XAO::Group* group)
  *  Constructor
  */
 //=============================================================================
-XAOPlugin_IOperations::XAOPlugin_IOperations( GEOM_Engine* theEngine, int theDocID )
-: GEOMImpl_IBaseIEOperations( theEngine, theDocID )
+XAOPlugin_IOperations::XAOPlugin_IOperations( GEOM_Engine* theEngine )
+: GEOMImpl_IBaseIEOperations( theEngine )
 {
   MESSAGE( "XAOPlugin_IOperations::XAOPlugin_IOperations" );
 }
@@ -323,7 +323,7 @@ bool XAOPlugin_IOperations::ExportXAO( Handle(GEOM_Object) shape,
   if (lastFunction.IsNull()) return false;
 
   // add a new result object
-  Handle(GEOM_Object) result = GetEngine()->AddObject(GetDocID(), GEOM_IMPORT);
+  Handle(GEOM_Object) result = GetEngine()->AddObject(GEOM_IMPORT);
 
   // add an Export function
   Handle(GEOM_Function) exportFunction = result->AddFunction(XAOPlugin_Driver::GetID(), EXPORT_SHAPE);
@@ -409,7 +409,7 @@ void XAOPlugin_IOperations::importSubShapes( XAO::Geometry* xaoGeometry,
     anArray = new TColStd_HArray1OfInteger(1, 1);
     anArray->SetValue(1, iref);
 
-    subShape = GetEngine()->AddObject(GetDocID(), GEOM_SUBSHAPE);
+    subShape = GetEngine()->AddObject(GEOM_SUBSHAPE);
     Handle(GEOM_Function) aFunction = subShape->AddFunction(GEOM_Object::GetSubShapeID(), 1);
     if (aFunction.IsNull())
       return;
@@ -473,7 +473,7 @@ bool XAOPlugin_IOperations::ImportXAO( const char* fileName,
   }
 
   // create the shape
-  shape = GetEngine()->AddObject(GetDocID(), GEOM_IMPORT);
+  shape = GetEngine()->AddObject(GEOM_IMPORT);
   Handle(GEOM_Function) function = shape->AddFunction(XAOPlugin_Driver::GetID(), IMPORT_SHAPE);
   if (function.IsNull()) return false;
   if (function->GetDriverGUID() != XAOPlugin_Driver::GetID()) return false;

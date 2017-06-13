@@ -364,7 +364,7 @@ Handle(GEOM_FieldStep) GEOM_Field::AddStep(const int stepID, const int stamp)
   if(anEngine == NULL) return NULL;
 
   step = Handle(GEOM_FieldStep)::DownCast
-    ( anEngine->AddBaseObject( GetDocID(),GEOM_FIELD_STEP_OBJTYPE ));
+    ( anEngine->AddBaseObject( GEOM_FIELD_STEP_OBJTYPE ));
   if ( step.IsNull())
     return step;
 

@@ -190,7 +190,7 @@ void EntityGUI_IsolineDlg::TypeChanged(int)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr EntityGUI_IsolineDlg::createOperation()
 {
-  return myGeomGUI->GetGeomGen()->GetICurvesOperations( getStudyId() );
+  return myGeomGUI->GetGeomGen()->GetICurvesOperations();
 }
 
 //=================================================================================

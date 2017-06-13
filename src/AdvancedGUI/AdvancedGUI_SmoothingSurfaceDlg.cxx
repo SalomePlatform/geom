@@ -195,7 +195,7 @@ void AdvancedGUI_SmoothingSurfaceDlg::enterEvent (QEvent*)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr AdvancedGUI_SmoothingSurfaceDlg::createOperation()
 {
-  return getGeomEngine()->GetPluginOperations(getStudyId(), "AdvancedEngine");
+  return getGeomEngine()->GetPluginOperations("AdvancedEngine");
 }
 
 //=================================================================================

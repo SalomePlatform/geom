@@ -502,7 +502,7 @@ void GenerationGUI_PipeDlg::enterEvent (QEvent*)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr GenerationGUI_PipeDlg::createOperation()
 {
-  return getGeomEngine()->GetI3DPrimOperations(getStudyId());
+  return getGeomEngine()->GetI3DPrimOperations();
 }
 
 //=================================================================================
@@ -642,8 +642,7 @@ bool GenerationGUI_PipeDlg::extractPrefix() const
 // purpose  : virtual method to restore tree of argument's sub-shapes under
 //            the resulting shape. Redefined from GEOMBase_Helper class.
 //=================================================================================
-void GenerationGUI_PipeDlg::restoreSubShapes
-              (SALOMEDS::Study_ptr theStudy, SALOMEDS::SObject_ptr theSObject)
+void GenerationGUI_PipeDlg::restoreSubShapes(SALOMEDS::SObject_ptr theSObject)
 {
   QCheckBox *aGenGroupCheck = NULL;
   QLineEdit *aPrefixEdit    = NULL;
@@ -691,8 +690,7 @@ void GenerationGUI_PipeDlg::restoreSubShapes
       }
 
       aName += tr((*it)->GetName());
-      getGeomEngine()->AddInStudy(theStudy, (*it).get(),
-                                  aName.toStdString().c_str(), aFather);
+      getGeomEngine()->AddInStudy((*it).get(), aName.toStdString().c_str(), aFather);
     }
   }
 }

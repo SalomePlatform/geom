@@ -452,7 +452,7 @@ void BasicGUI_ArcDlg::enterEvent( QEvent* )
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BasicGUI_ArcDlg::createOperation()
 {
-  return myGeomGUI->GetGeomGen()->GetICurvesOperations( getStudyId() );
+  return myGeomGUI->GetGeomGen()->GetICurvesOperations();
 }
 
 //=================================================================================

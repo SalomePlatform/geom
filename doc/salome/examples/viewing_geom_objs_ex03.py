@@ -4,7 +4,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 box = geompy.MakeBox(0,0,0, 50,50,50)
 sphere = geompy.MakeSphere(50,50,50, 30)

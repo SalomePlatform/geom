@@ -52,7 +52,7 @@
 ## @code
 ## import salome
 ## from salome.geom import geomBuilder
-## geompy = geomBuilder.New(salome.myStudy)
+## geompy = geomBuilder.New()
 ## box = geompy.MakeBoxDXDYDZ(100, 100, 100) # box is not published in the study yet
 ## geompy.addToStudy(box, "box")             # explicit publishing
 ## @endcode
@@ -115,7 +115,7 @@
 ## @code
 ## import salome
 ## from salome.geom import geomBuilder
-## geompy = geomBuilder.New(salome.myStudy)
+## geompy = geomBuilder.New()
 ## geompy.addToStudyAuto() # enable automatic publication
 ## box = geompy.MakeBoxDXDYDZ(100, 100, 100)
 ## # the box is created and published in the study with default name
@@ -157,7 +157,7 @@
 ## @code
 ## import salome
 ## from salome.geom import geomBuilder
-## geompy = geomBuilder.New(salome.myStudy)
+## geompy = geomBuilder.New()
 ## box = geompy.MakeBoxDXDYDZ(100, 100, 100, "Box")
 ## # the box was created and published in the study
 ## folder = geompy.NewFolder("Primitives")
@@ -438,7 +438,7 @@ def PackData(data):
 ## For example,
 ## \code
 ## from salome.geom import geomBuilder
-## geompy = geomBuilder.New(salome.myStudy)
+## geompy = geomBuilder.New()
 ## texture = geompy.readtexture('mytexture.dat')
 ## texture = geompy.AddTexture(*texture)
 ## obj.SetMarkerTexture(texture)
@@ -464,7 +464,7 @@ def ReadTexture(fname):
 
     Example of usage:
         from salome.geom import geomBuilder
-        geompy = geomBuilder.New(salome.myStudy)
+        geompy = geomBuilder.New()
         texture = geompy.readtexture('mytexture.dat')
         texture = geompy.AddTexture(*texture)
         obj.SetMarkerTexture(texture)
@@ -652,7 +652,6 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
               GEOM._objref_GEOM_Gen.__init__(self)
               self.myMaxNbSubShapesAllowed = 0 # auto-publishing is disabled by default
               self.myBuilder = None
-              self.myStudyId = 0
               self.father    = None
 
               self.BasicOp  = None
@@ -753,12 +752,11 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
         ## @addtogroup l1_geomBuilder_auxiliary
         ## @{
-        def init_geom(self,theStudy):
-            self.myStudy = theStudy
-            self.myStudyId = self.myStudy._get_StudyId()
+        def init_geom(self):
+            self.myStudy = salome.myStudy
             self.myBuilder = self.myStudy.NewBuilder()
             self.father = self.myStudy.FindComponent("GEOM")
-            notebook.myStudy = theStudy
+            notebook.myStudy = salome.myStudy
             if self.father is None:
                 self.father = self.myBuilder.NewComponent("GEOM")
                 A1 = self.myBuilder.FindOrCreateAttribute(self.father, "AttributeName")
@@ -769,19 +767,19 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 aPixmap.SetPixMap("ICON_OBJBROWSER_Geometry")
                 self.myBuilder.DefineComponentInstance(self.father,self)
                 pass
-            self.BasicOp  = self.GetIBasicOperations    (self.myStudyId)
-            self.CurvesOp = self.GetICurvesOperations   (self.myStudyId)
-            self.PrimOp   = self.GetI3DPrimOperations   (self.myStudyId)
-            self.ShapesOp = self.GetIShapesOperations   (self.myStudyId)
-            self.HealOp   = self.GetIHealingOperations  (self.myStudyId)
-            self.InsertOp = self.GetIInsertOperations   (self.myStudyId)
-            self.BoolOp   = self.GetIBooleanOperations  (self.myStudyId)
-            self.TrsfOp   = self.GetITransformOperations(self.myStudyId)
-            self.LocalOp  = self.GetILocalOperations    (self.myStudyId)
-            self.MeasuOp  = self.GetIMeasureOperations  (self.myStudyId)
-            self.BlocksOp = self.GetIBlocksOperations   (self.myStudyId)
-            self.GroupOp  = self.GetIGroupOperations    (self.myStudyId)
-            self.FieldOp  = self.GetIFieldOperations    (self.myStudyId)
+            self.BasicOp  = self.GetIBasicOperations    ()
+            self.CurvesOp = self.GetICurvesOperations   ()
+            self.PrimOp   = self.GetI3DPrimOperations   ()
+            self.ShapesOp = self.GetIShapesOperations   ()
+            self.HealOp   = self.GetIHealingOperations  ()
+            self.InsertOp = self.GetIInsertOperations   ()
+            self.BoolOp   = self.GetIBooleanOperations  ()
+            self.TrsfOp   = self.GetITransformOperations()
+            self.LocalOp  = self.GetILocalOperations    ()
+            self.MeasuOp  = self.GetIMeasureOperations  ()
+            self.BlocksOp = self.GetIBlocksOperations   ()
+            self.GroupOp  = self.GetIGroupOperations    ()
+            self.FieldOp  = self.GetIFieldOperations    ()
 
             # set GEOM as root in the use case tree
             self.myUseCaseBuilder = self.myStudy.GetUseCaseBuilder()
@@ -792,8 +790,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self.myBuilder.LoadWith(self.father, self)
             pass
 
-        def GetPluginOperations(self, studyID, libraryName):
-            op = GEOM._objref_GEOM_Gen.GetPluginOperations(self, studyID, libraryName)
+        def GetPluginOperations(self, libraryName):
+            op = GEOM._objref_GEOM_Gen.GetPluginOperations(self, libraryName)
             return op
 
         ## Enable / disable results auto-publishing
@@ -833,12 +831,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
         ## Dump component to the Python script
         #  This method overrides IDL function to allow default values for the parameters.
-        def DumpPython(self, theStudy, theIsPublished=True, theIsMultiFile=True):
+        def DumpPython(self, theIsPublished=True, theIsMultiFile=True):
             """
             Dump component to the Python script
             This method overrides IDL function to allow default values for the parameters.
             """
-            return GEOM._objref_GEOM_Gen.DumpPython(self, theStudy, theIsPublished, theIsMultiFile)
+            return GEOM._objref_GEOM_Gen.DumpPython(self, theIsPublished, theIsMultiFile)
 
         ## Get name for sub-shape aSubObj of shape aMainObj
         #
@@ -893,10 +891,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             # Example: see GEOM_TestAll.py
             try:
-                aSObject = self.AddInStudy(self.myStudy, aShape, aName, None)
+                aSObject = self.AddInStudy(aShape, aName, None)
                 if aSObject and aName: aSObject.SetAttrString("AttributeName", aName)
                 if doRestoreSubShapes:
-                    self.RestoreSubShapesSO(self.myStudy, aSObject, theArgs,
+                    self.RestoreSubShapesSO(aSObject, theArgs,
                                             theFindMethod, theInheritFirstArg, True )
             except:
                 print "addToStudy() failed"
@@ -926,7 +924,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             # Example: see GEOM_TestAll.py
             try:
-                aSObject = self.AddInStudy(self.myStudy, aShape, aName, aFather)
+                aSObject = self.AddInStudy(aShape, aName, aFather)
                 if aSObject and aName: aSObject.SetAttrString("AttributeName", aName)
             except:
                 print "addToStudyInFather() failed"
@@ -1012,7 +1010,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 list of published sub-shapes
             """
             # Example: see GEOM_TestAll.py
-            return self.RestoreSubShapesO(self.myStudy, theObject, theArgs,
+            return self.RestoreSubShapesO(theObject, theArgs,
                                           theFindMethod, theInheritFirstArg, theAddPrefix)
 
         ## Publish sub-shapes, standing for arguments and sub-shapes of arguments
@@ -1064,7 +1062,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 list of published sub-shapes
             """
             # Example: see GEOM_TestAll.py
-            return self.RestoreGivenSubShapesO(self.myStudy, theObject, theArgs,
+            return self.RestoreGivenSubShapesO(theObject, theArgs,
                                                theFindMethod, theInheritFirstArg, theAddPrefix)
 
         # end of l3_restore_ss
@@ -13441,7 +13439,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self.addToStudyInFather(shape, group_edges, "Group of edges with " + `min_length`
                                     + left_str + "length" + right_str + `max_length`)
 
-            sg.updateObjBrowser(True)
+            sg.updateObjBrowser()
 
             return group_edges
 
@@ -13904,12 +13902,11 @@ omniORB.registerObjref(GEOM._objref_GEOM_Field._NP_RepositoryId, geomField)
 #    import salome
 #    salome.salome_init()
 #    from salome.geom import geomBuilder
-#    geompy = geomBuilder.New(salome.myStudy)
+#    geompy = geomBuilder.New()
 #  \endcode
-#  @param  study     SALOME study, generally obtained by salome.myStudy.
 #  @param  instance  CORBA proxy of GEOM Engine. If None, the default Engine is used.
 #  @return geomBuilder instance
-def New( study, instance=None):
+def New( instance=None):
     """
     Create a new geomBuilder instance.The geomBuilder class provides the Python
     interface to GEOM operations.
@@ -13918,10 +13915,9 @@ def New( study, instance=None):
         import salome
         salome.salome_init()
         from salome.geom import geomBuilder
-        geompy = geomBuilder.New(salome.myStudy)
+        geompy = geomBuilder.New()
 
     Parameters:
-        study     SALOME study, generally obtained by salome.myStudy.
         instance  CORBA proxy of GEOM Engine. If None, the default Engine is used.
     Returns:
         geomBuilder instance
@@ -13935,7 +13931,7 @@ def New( study, instance=None):
       doLcc = True
     geom = geomBuilder()
     assert isinstance(geom,geomBuilder), "Geom engine class is %s but should be geomBuilder.geomBuilder. Import geomBuilder before creating the instance."%geom.__class__
-    geom.init_geom(study)
+    geom.init_geom()
     return geom
 
 

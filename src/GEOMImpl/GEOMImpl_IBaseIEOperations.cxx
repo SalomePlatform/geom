@@ -39,12 +39,12 @@ typedef NCollection_DataMap< TCollection_ExtendedString, NCollection_List<TopoDS
  *  constructor
  */
 //=============================================================================
-GEOMImpl_IBaseIEOperations::GEOMImpl_IBaseIEOperations(GEOM_Engine* theEngine, int theDocID)
-: GEOM_IOperations(theEngine, theDocID)
+GEOMImpl_IBaseIEOperations::GEOMImpl_IBaseIEOperations(GEOM_Engine* theEngine)
+: GEOM_IOperations(theEngine)
 {
-  myGroupOperations = new GEOMImpl_IGroupOperations( GetEngine(), GetDocID() );
-  myFieldOperations = new GEOMImpl_IFieldOperations( GetEngine(), GetDocID() );
-  myShapesOperations = new GEOMImpl_IShapesOperations( GetEngine(), GetDocID() );
+  myGroupOperations = new GEOMImpl_IGroupOperations( GetEngine() );
+  myFieldOperations = new GEOMImpl_IFieldOperations( GetEngine() );
+  myShapesOperations = new GEOMImpl_IShapesOperations( GetEngine() );
 }
 
 //=============================================================================

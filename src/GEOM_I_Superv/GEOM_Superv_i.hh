@@ -81,11 +81,6 @@ public:
   PortableServer::ServantBase_var GetServant(CORBA::Object_ptr       theObject,
                                              PortableServer::POA_ptr thePOA);
 
-  //-----------------------------------------------------------------------//
-  // Set current stydy ID                                                  //
-  //-----------------------------------------------------------------------//
-  void SetStudyID( CORBA::Long theId );
-
   //-----------------------------------------------------------//
   // Create ListOfGO and add items to it                       //
   //-----------------------------------------------------------//
@@ -143,13 +138,11 @@ public:
                                CORBA::Boolean isASCII);
 
   CORBA::Boolean CanPublishInStudy(CORBA::Object_ptr theIOR);
-  SALOMEDS::SObject_ptr PublishInStudy(SALOMEDS::Study_ptr theStudy,
-                                       SALOMEDS::SObject_ptr theSObject,
+  SALOMEDS::SObject_ptr PublishInStudy(SALOMEDS::SObject_ptr theSObject,
                                        CORBA::Object_ptr theObject,
                                        const char* theName) throw (SALOME::SALOME_Exception) ;
 
-  GEOM::ListOfGO* PublishNamedShapesInStudy(SALOMEDS::Study_ptr theStudy,
-                                            //SALOMEDS::SObject_ptr theSObject,
+  GEOM::ListOfGO* PublishNamedShapesInStudy(//SALOMEDS::SObject_ptr theSObject,
                                             CORBA::Object_ptr theObject);
 
   CORBA::Boolean CanCopy(SALOMEDS::SObject_ptr theObject);
@@ -791,8 +784,6 @@ public:
 private:
   SALOME_NamingService *  name_service;
   GEOM::GEOM_Gen_var      myGeomEngine;
-  CORBA::Long             myStudyID;
-  CORBA::Long             myLastStudyID; // mkr : PAL10770
   PortableServer::POA_var myPOA;
 
   GEOM::GEOM_IBasicOperations_var     myBasicOp;

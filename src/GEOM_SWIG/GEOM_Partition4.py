@@ -27,7 +27,7 @@
 # import couplex2_01_GEOM
 # reload(couplex2_01_GEOM)
 # Dimensions de alveolus
-# Parall‰pipˆde rectangle de taille alDx, alDy, alDz
+# Parallï¿½pipï¿½de rectangle de taille alDx, alDy, alDz
 #
 alDx   = 2.5
 alDy   = 20.0
@@ -35,7 +35,7 @@ alDz   = 2.5
 alSepx = 18.0
 
 # Dimensions de backfill
-# Parall‰pipˆde rectangle de taille baDx, baDy, baDz
+# Parallï¿½pipï¿½de rectangle de taille baDx, baDy, baDz
 
 baDx = 27.0
 baDy = 4.8
@@ -53,7 +53,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 # -- Construction de backfill
 

@@ -719,7 +719,7 @@ void EntityGUI_FeatureDetectorDlg::showImageSample()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr EntityGUI_FeatureDetectorDlg::createOperation()
 {
-  return myGeomGUI->GetGeomGen()->GetIShapesOperations( getStudyId() );
+  return myGeomGUI->GetGeomGen()->GetIShapesOperations();
 }
 
 //=================================================================================
@@ -730,7 +730,7 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
 {
   bool res = false;
   
-  GEOM::GEOM_IBasicOperations_var  aBasicOperations  = myGeomGUI->GetGeomGen()->GetIBasicOperations( getStudyId() );
+  GEOM::GEOM_IBasicOperations_var  aBasicOperations  = myGeomGUI->GetGeomGen()->GetIBasicOperations();
   GEOM::GEOM_IShapesOperations_var aShapesOperations = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
 
   ShapeRec_Parameters* parameters = parametersChanged();
@@ -791,7 +791,7 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
     }
     else if (myConstructorId == CONTOURS)
     {    
-      GEOM::GEOM_ICurvesOperations_var aCurveOperations = myGeomGUI->GetGeomGen()->GetICurvesOperations( getStudyId() );
+      GEOM::GEOM_ICurvesOperations_var aCurveOperations = myGeomGUI->GetGeomGen()->GetICurvesOperations();
 
       myDetector->ComputeContours( useROI, parameters );
       std::vector< std::vector<cv::Point> >   contours  = myDetector->GetContours();

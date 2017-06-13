@@ -24,7 +24,7 @@ from GEOM import IIGESOperations
 __libraryName__ = "IGESPluginEngine"
 
 def GetIGESPluginOperations(self):
-    anOp = self.GetPluginOperations(self.myStudyId, __libraryName__)
+    anOp = self.GetPluginOperations(__libraryName__)
     return anOp._narrow(IIGESOperations)
 
 ## Export the given shape into a file with given name in IGES format.

@@ -85,17 +85,6 @@ char* GEOM_BaseObject_i::GetEntry()
 
 //=============================================================================
 /*!
- *  GetStudyID
- */
-//=============================================================================
-
-CORBA::Long GEOM_BaseObject_i::GetStudyID()
-{
-   return _impl->GetDocID();
-}
-
-//=============================================================================
-/*!
  *  GetType
  */
 //=============================================================================
@@ -184,7 +173,7 @@ GEOM::ListOfGBO* GEOM_BaseObject_i::GetDependency()
     HANDLE_NAMESPACE(GEOM_BaseObject) anObj = HANDLE_NAMESPACE(GEOM_BaseObject)::DownCast(aSeq->Value(i));
     if (anObj.IsNull()) continue;
     TDF_Tool::Entry(anObj->GetEntry(), anEntry);
-    GEOM::GEOM_BaseObject_var obj = _engine->GetObject(anObj->GetDocID(), (char*) anEntry.ToCString());
+    GEOM::GEOM_BaseObject_var obj = _engine->GetObject((char*) anEntry.ToCString());
     aList[i-1] = obj;
   }
 
@@ -213,8 +202,7 @@ GEOM::ListOfGBO* GEOM_BaseObject_i::GetLastDependency()
   for (int i = 1; i<=aLength; i++) {
      HANDLE_NAMESPACE(GEOM_BaseObject) anObj = HANDLE_NAMESPACE(GEOM_BaseObject)::DownCast(aSeq->Value(i));
      if (anObj.IsNull()) continue;
-     GEOM::GEOM_BaseObject_var obj = _engine->GetObject(anObj->GetDocID(),
-                                                        anObj->GetEntryString().ToCString());
+     GEOM::GEOM_BaseObject_var obj = _engine->GetObject(anObj->GetEntryString().ToCString());
      aList[i-1] = GEOM::GEOM_BaseObject::_duplicate( obj );
   }
 

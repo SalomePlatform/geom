@@ -39,9 +39,6 @@ class TShapeDialog(Ui_Dialog,QWidget):
       self.dsb_smallRadius.setValue(40.0)
       self.dsb_bigHeight.setValue(80.0)
       self.dsb_smallHeight.setValue(80.0)
-   
-    def setContext(self, context):
-      self._activeStudy = context.study
       
     def accept(self):
       from salome.geom.t_shape import t_shape_progress
@@ -50,10 +47,10 @@ class TShapeDialog(Ui_Dialog,QWidget):
       self.close()
       r1, r2, h1, h2, thickness = self.getData()
       #QMessageBox.about(None, "Building in progress", "building shape, please be patient")
-      #shape = t_shape_builder.build_shape(activeStudy, r1, r2, h1, h2, thickness)
+      #shape = t_shape_builder.build_shape(r1, r2, h1, h2, thickness)
       shapeBuilder = t_shape_progress.t_shape_progress()
-      shape = shapeBuilder.run(self._activeStudy, r1, r2, h1, h2, thickness)
-      entry = xalome.addToStudy(self._activeStudy, shape, "T_shape_fluid" )
+      shape = shapeBuilder.run(r1, r2, h1, h2, thickness)
+      entry = xalome.addToStudy(shape, "T_shape_fluid" )
       xalome.displayShape(entry)
 
     def getData(self):

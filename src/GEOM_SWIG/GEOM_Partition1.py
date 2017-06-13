@@ -32,7 +32,7 @@
 barier_height = 7.0
 barier_radius = 5.6 / 2 # Rayon de la bariere
 colis_radius = 1.0 / 2  # Rayon du colis
-colis_step = 2.0        # Distance s‰parant deux colis
+colis_step = 2.0        # Distance sï¿½parant deux colis
 cc_width = 0.11         # Epaisseur du complement de colisage
 
 # --
@@ -47,7 +47,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 boolean_common  = 1
 boolean_cut     = 2

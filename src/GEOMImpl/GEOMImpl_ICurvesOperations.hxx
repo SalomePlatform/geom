@@ -38,7 +38,7 @@ class GEOMImpl_ICurvesOperations : public GEOM_IOperations {
 
   enum CurveType { Polyline, Bezier, Interpolation };
 
-  Standard_EXPORT GEOMImpl_ICurvesOperations(GEOM_Engine* theEngine, int theDocID);
+  Standard_EXPORT GEOMImpl_ICurvesOperations(GEOM_Engine* theEngine);
   Standard_EXPORT ~GEOMImpl_ICurvesOperations();
 
   Standard_EXPORT Handle(GEOM_Object) MakeCircleThreePnt (Handle(GEOM_Object) thePnt1,

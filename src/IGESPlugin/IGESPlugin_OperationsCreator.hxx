@@ -41,15 +41,13 @@ public:
   ~IGESPlugin_OperationsCreator();
 
   GEOM_IOperations_i* Create( PortableServer::POA_ptr thePOA,
-			      int                     theStudyId,
-			      GEOM::GEOM_Gen_ptr      theEngine,
-			      ::GEOMImpl_Gen*         theGenImpl );
+			                  GEOM::GEOM_Gen_ptr      theEngine,
+			                  ::GEOMImpl_Gen*         theGenImpl );
 private:
-  static IGESPlugin_IOperations* get( ::GEOMImpl_Gen*         theGenImpl,
-				      int                     theStudyId );
+  static IGESPlugin_IOperations* get(::GEOMImpl_Gen* theGenImpl);
 
 private:
-  static std::map <int, IGESPlugin_IOperations*>  _mapOfOperations;
+  static IGESPlugin_IOperations* _operation;
 
   friend class IGESPlugin_IECallBack;
 };

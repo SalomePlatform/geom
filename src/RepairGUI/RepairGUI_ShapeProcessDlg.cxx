@@ -519,7 +519,7 @@ QString set_convert( const char* theParam, const char* theValue )
 //=================================================================================
 void RepairGUI_ShapeProcessDlg::loadDefaults()
 {
-  GEOM::GEOM_IHealingOperations_var anOp = myGeomGUI->GetGeomGen()->GetIHealingOperations( getStudyId() );
+  GEOM::GEOM_IHealingOperations_var anOp = myGeomGUI->GetGeomGen()->GetIHealingOperations();
   GEOM::string_array_var anOperators, aParams, aValues;
   anOp->GetShapeProcessParameters( anOperators, aParams, aValues );
 
@@ -615,7 +615,7 @@ QString RepairGUI_ShapeProcessDlg::getText( QWidget* theControl ) const
 //=================================================================================
 GEOM::GEOM_IOperations_ptr RepairGUI_ShapeProcessDlg::createOperation()
 {
-  return getGeomEngine()->GetIHealingOperations( getStudyId() );
+  return getGeomEngine()->GetIHealingOperations();
 }
 
 //=================================================================================

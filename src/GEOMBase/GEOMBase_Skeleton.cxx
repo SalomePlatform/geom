@@ -187,7 +187,7 @@ void GEOMBase_Skeleton::initSpinBox( SalomeApp_DoubleSpinBox* spinBox,
 void GEOMBase_Skeleton::updateAttributes( GEOM::GEOM_Object_ptr theObj,
                                           const QStringList& theParameters)
 {
-  SALOMEDS::Study_var aStudy = GeometryGUI::ClientStudyToStudy(getStudy()->studyDS());
+  SALOMEDS::Study_var aStudy = GeometryGUI::getStudyServant();
   SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
   SALOMEDS::SObject_var aSObject = aStudy->FindObjectID(theObj->GetStudyEntry());
   SALOMEDS::GenericAttribute_var anAttr = aStudyBuilder->FindOrCreateAttribute(aSObject, "AttributeString");

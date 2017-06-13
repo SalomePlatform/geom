@@ -226,7 +226,7 @@ void XAOPlugin_ExportDlg::processObject()
   else
   {
     ledShape->setText(GEOMBase::GetName(m_mainObj));
-    GEOM::GEOM_IShapesOperations_var shapeOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+    GEOM::GEOM_IShapesOperations_var shapeOp = getGeomEngine()->GetIShapesOperations();
 
     // add groups names
     GEOM::ListOfGO_var groups = shapeOp->GetExistingSubObjects(m_mainObj, true);
@@ -243,7 +243,7 @@ void XAOPlugin_ExportDlg::processObject()
     lstGroups->sortItems(Qt::AscendingOrder);
 
     // add fields
-    GEOM::GEOM_IFieldOperations_var fieldOp = getGeomEngine()->GetIFieldOperations(getStudyId());
+    GEOM::GEOM_IFieldOperations_var fieldOp = getGeomEngine()->GetIFieldOperations();
 
     GEOM::ListOfFields_var fields = fieldOp->GetFields(m_mainObj);
     for (int i = 0, n = fields->length(); i < n; i++)
@@ -389,7 +389,7 @@ void XAOPlugin_ExportDlg::enterEvent(QEvent*)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr XAOPlugin_ExportDlg::createOperation()
 {
-  return getGeomEngine()->GetPluginOperations( getStudyId(), "XAOPluginEngine" );
+  return getGeomEngine()->GetPluginOperations( "XAOPluginEngine" );
 }
 
 //=================================================================================

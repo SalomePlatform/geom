@@ -60,8 +60,8 @@
  *   constructor:
  */
 //=============================================================================
-GEOMImpl_IHealingOperations::GEOMImpl_IHealingOperations (GEOM_Engine* theEngine, int theDocID)
-: GEOM_IOperations(theEngine, theDocID)
+GEOMImpl_IHealingOperations::GEOMImpl_IHealingOperations (GEOM_Engine* theEngine)
+: GEOM_IOperations(theEngine)
 {
   myModifStats = new ShHealOper_ModifStats;
   MESSAGE("GEOMImpl_IHealingOperations::GEOMImpl_IHealingOperations");
@@ -117,7 +117,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ShapeProcess (Handle(GEOM_Objec
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be processed
 
   // Add a new object
-  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject( GetDocID(), GEOM_COPY );
+  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject( GEOM_COPY );
 
   //Add the function
   aFunction = aNewObject->AddFunction(GEOMImpl_HealingDriver::GetID(), SHAPE_PROCESS);
@@ -334,7 +334,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::SuppressFaces
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be processed
 
   // Add a new object
-  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
+  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject(GEOM_COPY);
 
   //Add the function
   aFunction = aNewObject->AddFunction(GEOMImpl_HealingDriver::GetID(), SUPPRESS_FACES);
@@ -402,7 +402,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::CloseContour
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be processed
 
   // Add a new object
-  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject( GetDocID(), GEOM_COPY );
+  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject( GEOM_COPY );
 
   //Add the function
   aFunction = aNewObject->AddFunction(GEOMImpl_HealingDriver::GetID(), CLOSE_CONTOUR);
@@ -471,7 +471,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::RemoveIntWires
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be processed
 
   // Add a new object
-  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject( GetDocID(), GEOM_COPY );
+  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject( GEOM_COPY );
 
   //Add the function
   aFunction = aNewObject->AddFunction(GEOMImpl_HealingDriver::GetID(), REMOVE_INT_WIRES);
@@ -538,7 +538,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::FillHoles (Handle(GEOM_Object) 
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be processed
 
   // Add a new object
-  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject( GetDocID(), GEOM_COPY );
+  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject( GEOM_COPY );
 
   //Add the function
   aFunction = aNewObject->AddFunction(GEOMImpl_HealingDriver::GetID(), FILL_HOLES);
@@ -611,7 +611,7 @@ GEOMImpl_IHealingOperations::Sew (std::list<Handle(GEOM_Object)>& theObjects,
   }
 
   // Add a new object
-  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject( GetDocID(), GEOM_COPY );
+  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject( GEOM_COPY );
 
   //Add the function
   int aFunctionType = (isAllowNonManifold ? SEWING_NON_MANIFOLD : SEWING);
@@ -680,7 +680,7 @@ GEOMImpl_IHealingOperations::RemoveInternalFaces (std::list< Handle(GEOM_Object)
   }
 
   // Add a new object
-  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
+  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject(GEOM_COPY);
 
   //Add the function
   Handle(GEOM_Function)
@@ -738,7 +738,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::DivideEdge (Handle(GEOM_Object)
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be processed
 
   // Add a new object
-  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject( GetDocID(), GEOM_COPY );
+  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject( GEOM_COPY );
 
   //Add the function
   aFunction = aNewObject->AddFunction(GEOMImpl_HealingDriver::GetID(), DIVIDE_EDGE);
@@ -805,7 +805,7 @@ GEOMImpl_IHealingOperations::DivideEdgeByPoint (Handle(GEOM_Object)             
   }
 
   // Add a new object
-  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject( GetDocID(), GEOM_COPY );
+  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject( GEOM_COPY );
 
   //Add the function
   aFunction = aNewObject->AddFunction(GEOMImpl_HealingDriver::GetID(), DIVIDE_EDGE_BY_POINT);
@@ -860,7 +860,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::FuseCollinearEdgesWithinWire
   if (theWire.IsNull()) return NULL;
 
   // Add a new object
-  Handle(GEOM_Object) aRes = GetEngine()->AddObject(GetDocID(), theWire->GetType());
+  Handle(GEOM_Object) aRes = GetEngine()->AddObject(theWire->GetType());
 
   // Add a new function
   Handle(GEOM_Function) aFunction;
@@ -973,7 +973,7 @@ bool GEOMImpl_IHealingOperations::GetFreeBoundary (Handle(TColStd_HSequenceOfTra
   TopExp_Explorer anExp;
   for ( anExp.Init( aClosed, TopAbs_WIRE ); anExp.More(); anExp.Next() )
   {
-    anObj = GetEngine()->AddObject( GetDocID(), GEOM_FREE_BOUNDS );
+    anObj = GetEngine()->AddObject( GEOM_FREE_BOUNDS );
     aFunction = anObj->AddFunction( GEOMImpl_CopyDriver::GetID(), COPY_WITHOUT_REF );
     TopoDS_Shape aValueShape = anExp.Current();
     aFunction->SetValue( aValueShape );
@@ -981,7 +981,7 @@ bool GEOMImpl_IHealingOperations::GetFreeBoundary (Handle(TColStd_HSequenceOfTra
   }
   for ( anExp.Init( anOpen, TopAbs_WIRE ); anExp.More(); anExp.Next() )
   {
-    anObj = GetEngine()->AddObject( GetDocID(), GEOM_FREE_BOUNDS );
+    anObj = GetEngine()->AddObject( GEOM_FREE_BOUNDS );
     aFunction = anObj->AddFunction( GEOMImpl_CopyDriver::GetID(), COPY_WITHOUT_REF );
     TopoDS_Shape aValueShape = anExp.Current();
     aFunction->SetValue( aValueShape );
@@ -1116,7 +1116,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientationCopy (Handle(G
     return NULL; //There is no function which creates an object to be processed
 
   // Add a new object
-  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
+  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject(GEOM_COPY);
 
   if (theObject->GetType() == GEOM_VECTOR) { // Mantis issue 21066
     //Add the function
@@ -1189,7 +1189,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::LimitTolerance (Handle(GEOM_Obj
     return NULL; // There is no function which creates an object to be processed
 
   // Add a new object
-  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject(theObject->GetType());
 
   // Add the function
   aFunction = aNewObject->AddFunction(GEOMImpl_HealingDriver::GetID(), LIMIT_TOLERANCE);

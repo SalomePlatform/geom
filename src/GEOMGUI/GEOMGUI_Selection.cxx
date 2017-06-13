@@ -539,7 +539,7 @@ bool GEOMGUI_Selection::isNameMode( const int index ) const
 bool GEOMGUI_Selection::hasChildren( const _PTR(SObject)& obj )
 {
   // as soon as Use Case browser data tree was added
-  return obj ? obj->GetStudy()->GetUseCaseBuilder()->HasChildren( obj ) : false;
+  return obj ? SalomeApp_Application::getStudy()->GetUseCaseBuilder()->HasChildren( obj ) : false;
 }
 
 bool GEOMGUI_Selection::expandable( const _PTR(SObject)& obj )
@@ -601,8 +601,8 @@ int GEOMGUI_Selection::nbChildren( const int index ) const
     _PTR(Study) study = appStudy->studyDS();
     if ( study && !anEntry.isEmpty() ) {
       _PTR(SObject) aSO( study->FindObjectID( anEntry.toStdString() ) );
-      if ( aSO && aSO->GetStudy()->GetUseCaseBuilder()->IsUseCaseNode(aSO) ) {
-        _PTR(UseCaseIterator) it = aSO->GetStudy()->GetUseCaseBuilder()->GetUseCaseIterator( aSO ); 
+      if ( aSO && study->GetUseCaseBuilder()->IsUseCaseNode(aSO) ) {
+        _PTR(UseCaseIterator) it = study->GetUseCaseBuilder()->GetUseCaseIterator( aSO );
         for (it->Init(false); it->More(); it->Next()) nb++;
       }
     }
@@ -808,21 +808,13 @@ bool GEOMGUI_Selection::isFolder( const int index ) const
 
 bool GEOMGUI_Selection::hasDimensions( const int theIndex, bool& theHidden, bool& theVisible ) const
 {
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( study() );
-
-  if ( !appStudy )
-  {
-    return false;
-  }
-
   QString anEntry = entry( theIndex );
-  _PTR(Study) aStudy = appStudy->studyDS();
-  if ( !aStudy || anEntry.isNull() )
+  if ( anEntry.isNull() )
   {
     return false;
   }
 
-  GEOMGUI_DimensionProperty aDimensions( appStudy, anEntry.toStdString() );
+  GEOMGUI_DimensionProperty aDimensions( anEntry.toStdString() );
 
   theHidden  = false;
   theVisible = false;

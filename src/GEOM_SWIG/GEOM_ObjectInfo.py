@@ -27,7 +27,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 # Create several objects
 obj1 = geompy.MakeVertex(0.,0.,0.)
@@ -49,10 +49,10 @@ obj5_entry = geompy.addToStudy(obj5, "Object5")
 hasInfo = geompy.hasObjectInfo()
 print "Check if GEOM module provides information about its objects: ", hasInfo
 if hasInfo == True:
-    print "Information about first  object: ", geompy.getObjectInfo(salome.myStudyId, obj1_entry)
-    print "Information about second object: ", geompy.getObjectInfo(salome.myStudyId, obj2_entry)
-    print "Information about third  object: ", geompy.getObjectInfo(salome.myStudyId, obj3_entry)
-    print "Information about fourth object: ", geompy.getObjectInfo(salome.myStudyId, obj4_entry)
-    print "Information about fifth  object: ", geompy.getObjectInfo(salome.myStudyId, obj5_entry)
+    print "Information about first  object: ", geompy.getObjectInfo(obj1_entry)
+    print "Information about second object: ", geompy.getObjectInfo(obj2_entry)
+    print "Information about third  object: ", geompy.getObjectInfo(obj3_entry)
+    print "Information about fourth object: ", geompy.getObjectInfo(obj4_entry)
+    print "Information about fifth  object: ", geompy.getObjectInfo(obj5_entry)
 
-salome.sg.updateObjBrowser(True)
+salome.sg.updateObjBrowser()

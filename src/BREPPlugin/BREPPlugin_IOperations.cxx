@@ -38,8 +38,8 @@
  *  Constructor
  */
 //=============================================================================
-BREPPlugin_IOperations::BREPPlugin_IOperations( GEOM_Engine* theEngine, int theDocID )
-: GEOMImpl_IBaseIEOperations( theEngine, theDocID )
+BREPPlugin_IOperations::BREPPlugin_IOperations( GEOM_Engine* theEngine )
+: GEOMImpl_IBaseIEOperations( theEngine )
 {
   MESSAGE( "BREPPlugin_IOperations::BREPPlugin_IOperations" );
 }
@@ -74,7 +74,7 @@ void BREPPlugin_IOperations::ExportBREP( const Handle(GEOM_Object)      theOrigi
   if( aRefFunction.IsNull() ) return;  //There is no function which creates an object to be exported
 
   //Add a new result object
-  Handle(GEOM_Object) result = GetEngine()->AddObject( GetDocID(), GEOM_IMPORT);
+  Handle(GEOM_Object) result = GetEngine()->AddObject( GEOM_IMPORT);
 
   //Add an Export function
   Handle(GEOM_Function) aFunction = result->AddFunction( BREPPlugin_ExportDriver::GetID(), EXPORT_SHAPE );
@@ -124,7 +124,7 @@ BREPPlugin_IOperations::ImportBREP( const TCollection_AsciiString& theFileName )
   if( theFileName.IsEmpty() ) return NULL;
 
   //Add a new result object
-  Handle(GEOM_Object) anImported = GetEngine()->AddObject( GetDocID(), GEOM_IMPORT );
+  Handle(GEOM_Object) anImported = GetEngine()->AddObject( GEOM_IMPORT );
 
   //Add an Import function
   Handle(GEOM_Function) aFunction =

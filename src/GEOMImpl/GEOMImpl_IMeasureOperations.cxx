@@ -90,8 +90,8 @@
  *  Constructor
  */
 //=============================================================================
-GEOMImpl_IMeasureOperations::GEOMImpl_IMeasureOperations (GEOM_Engine* theEngine, int theDocID)
-: GEOM_IOperations(theEngine, theDocID)
+GEOMImpl_IMeasureOperations::GEOMImpl_IMeasureOperations (GEOM_Engine* theEngine)
+: GEOM_IOperations(theEngine)
 {
   MESSAGE("GEOMImpl_IMeasureOperations::GEOMImpl_IMeasureOperations");
 }
@@ -811,7 +811,7 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetCentreOfMass
   if (theShape.IsNull()) return NULL;
 
   //Add a new CentreOfMass object
-  Handle(GEOM_Object) aCDG = GetEngine()->AddObject(GetDocID(), GEOM_CDG);
+  Handle(GEOM_Object) aCDG = GetEngine()->AddObject(GEOM_CDG);
 
   //Add a new CentreOfMass function
   Handle(GEOM_Function) aFunction =
@@ -866,7 +866,7 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetVertexByIndex
   if (aRefShape.IsNull()) return NULL;
 
   //Add a new Vertex object
-  Handle(GEOM_Object) aVertex = GetEngine()->AddObject(GetDocID(), GEOM_POINT);
+  Handle(GEOM_Object) aVertex = GetEngine()->AddObject(GEOM_POINT);
 
   //Add a function
   Handle(GEOM_Function) aFunction =
@@ -915,7 +915,7 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetNormal
   if (theFace.IsNull()) return NULL;
 
   //Add a new Normale object
-  Handle(GEOM_Object) aNorm = GetEngine()->AddObject(GetDocID(), GEOM_VECTOR);
+  Handle(GEOM_Object) aNorm = GetEngine()->AddObject(GEOM_VECTOR);
 
   //Add a new Normale function
   Handle(GEOM_Function) aFunction =
@@ -1157,7 +1157,7 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetBoundingBox
   if (theShape.IsNull()) return NULL;
 
   //Add a new BoundingBox object
-  Handle(GEOM_Object) aBnd = GetEngine()->AddObject(GetDocID(), GEOM_BOX);
+  Handle(GEOM_Object) aBnd = GetEngine()->AddObject(GEOM_BOX);
 
   //Add a new BoundingBox function
   const int aType = (precise ? BND_BOX_MEASURE_PRECISE : BND_BOX_MEASURE);

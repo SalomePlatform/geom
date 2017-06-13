@@ -21,13 +21,11 @@
 
 import salome_pluginsmanager
 
-def t_shape_fluid(context):
-    activeStudy = context.study
+def t_shape_fluid():
 
     #from salome.geom.t_shape import t_shape_builder
     from salome.geom.t_shape import t_shape_dialog
     dialog = t_shape_dialog.getDialog()
-    dialog.setContext(context)
     dialog.show()
 
 salome_pluginsmanager.AddFunction('T shape fluid',

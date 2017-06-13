@@ -31,7 +31,7 @@
 
 class GEOMImpl_IBasicOperations : public GEOM_IOperations {
  public:
-  Standard_EXPORT GEOMImpl_IBasicOperations(GEOM_Engine* theEngine, int theDocID);
+  Standard_EXPORT GEOMImpl_IBasicOperations(GEOM_Engine* theEngine);
   Standard_EXPORT ~GEOMImpl_IBasicOperations();
 
   // Point

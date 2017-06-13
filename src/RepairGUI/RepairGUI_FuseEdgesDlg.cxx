@@ -186,7 +186,7 @@ void RepairGUI_FuseEdgesDlg::SelectionIntoArgument()
             GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(anObj, aName);
 
             if (aFindedObject->_is_nil()) { // Object not found in study
-              GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+              GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations();
               anObj = aShapesOp->GetSubShape(anObj, anIndex);
             }
             else
@@ -304,7 +304,7 @@ void RepairGUI_FuseEdgesDlg::activateSelection()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr RepairGUI_FuseEdgesDlg::createOperation()
 {
-  return getGeomEngine()->GetIHealingOperations(getStudyId());
+  return getGeomEngine()->GetIHealingOperations();
 }
 
 //=================================================================================

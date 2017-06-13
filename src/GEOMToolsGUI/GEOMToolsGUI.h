@@ -97,7 +97,6 @@ private:
 
   // Recursive deletion of object with children
   void         removeObjectWithChildren( _PTR(SObject),
-                                         _PTR(Study),
                                          QList<SALOME_View*>,
                                          GEOM_Displayer* );
 };

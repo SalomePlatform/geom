@@ -41,15 +41,13 @@ public:
   ~XAOPlugin_OperationsCreator();
 
   GEOM_IOperations_i* Create( PortableServer::POA_ptr thePOA,
-			      int                     theStudyId,
-			      GEOM::GEOM_Gen_ptr      theEngine,
-			      ::GEOMImpl_Gen*         theGenImpl );
+                              GEOM::GEOM_Gen_ptr      theEngine,
+                              ::GEOMImpl_Gen*         theGenImpl );
 private:
-  static XAOPlugin_IOperations* get( ::GEOMImpl_Gen*         theGenImpl,
-				     int                     theStudyId );
-  
+  static XAOPlugin_IOperations* get(::GEOMImpl_Gen* theGenImpl);
+
 private:
-  static std::map <int, XAOPlugin_IOperations*>  _mapOfOperations;
+  static XAOPlugin_IOperations* _operation;
 
   friend class XAOPlugin_IECallBack;
 };

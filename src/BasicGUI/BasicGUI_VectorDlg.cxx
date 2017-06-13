@@ -395,7 +395,7 @@ void BasicGUI_VectorDlg::ReverseVector( int state )
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BasicGUI_VectorDlg::createOperation()
 {
-  return myGeomGUI->GetGeomGen()->GetIBasicOperations( getStudyId() );
+  return myGeomGUI->GetGeomGen()->GetIBasicOperations();
 }
 
 //=================================================================================

@@ -49,8 +49,8 @@
  *   constructor:
  */
 //=============================================================================
-GEOMImpl_IBooleanOperations::GEOMImpl_IBooleanOperations (GEOM_Engine* theEngine, int theDocID)
-: GEOM_IOperations(theEngine, theDocID)
+GEOMImpl_IBooleanOperations::GEOMImpl_IBooleanOperations (GEOM_Engine* theEngine)
+: GEOM_IOperations(theEngine)
 {
   MESSAGE("GEOMImpl_IBooleanOperations::GEOMImpl_IBooleanOperations");
 }
@@ -82,7 +82,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeBoolean
   if (theShape1.IsNull() || theShape2.IsNull()) return NULL;
 
   //Add a new Boolean object
-  Handle(GEOM_Object) aBool = GetEngine()->AddObject(GetDocID(), GEOM_BOOLEAN);
+  Handle(GEOM_Object) aBool = GetEngine()->AddObject(GEOM_BOOLEAN);
 
   //Add a new Boolean function
   Handle(GEOM_Function) aFunction;
@@ -162,7 +162,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeFuse
   if (theShape1.IsNull() || theShape2.IsNull()) return NULL;
 
   //Add a new Boolean object
-  Handle(GEOM_Object) aBool = GetEngine()->AddObject(GetDocID(), GEOM_BOOLEAN);
+  Handle(GEOM_Object) aBool = GetEngine()->AddObject(GEOM_BOOLEAN);
 
   //Add a new Boolean function
   Handle(GEOM_Function) aFunction =
@@ -225,7 +225,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeFuseList
   if (theShapes.IsNull()) return NULL;
 
   //Add a new Boolean object
-  Handle(GEOM_Object) aBool = GetEngine()->AddObject(GetDocID(), GEOM_BOOLEAN);
+  Handle(GEOM_Object) aBool = GetEngine()->AddObject(GEOM_BOOLEAN);
 
   //Add a new Boolean function
   Handle(GEOM_Function) aFunction =
@@ -286,7 +286,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeCommonList
   if (theShapes.IsNull()) return NULL;
 
   //Add a new Boolean object
-  Handle(GEOM_Object) aBool = GetEngine()->AddObject(GetDocID(), GEOM_BOOLEAN);
+  Handle(GEOM_Object) aBool = GetEngine()->AddObject(GEOM_BOOLEAN);
 
   //Add a new Boolean function
   Handle(GEOM_Function) aFunction =
@@ -353,7 +353,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeCutList
   if (theShapes.IsNull()) return NULL;
 
   //Add a new Boolean object
-  Handle(GEOM_Object) aBool = GetEngine()->AddObject(GetDocID(), GEOM_BOOLEAN);
+  Handle(GEOM_Object) aBool = GetEngine()->AddObject(GEOM_BOOLEAN);
 
   //Add a new Boolean function
   Handle(GEOM_Function) aFunction =
@@ -429,7 +429,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
   SetErrorCode(KO);
 
   //Add a new Partition object
-  Handle(GEOM_Object) aPartition = GetEngine()->AddObject(GetDocID(), GEOM_PARTITION);
+  Handle(GEOM_Object) aPartition = GetEngine()->AddObject(GEOM_PARTITION);
 
   //Add a new Partition function
   Handle(GEOM_Function) aFunction;
@@ -565,7 +565,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeHalfPartition
   if (theShape.IsNull() || thePlane.IsNull()) return NULL;
 
   //Add a new Boolean object
-  Handle(GEOM_Object) aPart = GetEngine()->AddObject(GetDocID(), GEOM_PARTITION);
+  Handle(GEOM_Object) aPart = GetEngine()->AddObject(GEOM_PARTITION);
 
   //Add a new Partition function
   Handle(GEOM_Function) aFunction =

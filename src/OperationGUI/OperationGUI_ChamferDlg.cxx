@@ -748,7 +748,7 @@ void OperationGUI_ChamferDlg::enableWidgets()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr OperationGUI_ChamferDlg::createOperation()
 {
-  return getGeomEngine()->GetILocalOperations(getStudyId());
+  return getGeomEngine()->GetILocalOperations();
 }
 
 //=================================================================================

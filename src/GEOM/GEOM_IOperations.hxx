@@ -39,7 +39,7 @@
 class GEOM_IOperations
 {
  public:
-  Standard_EXPORT GEOM_IOperations(GEOM_Engine* theEngine, int theDocID);
+  Standard_EXPORT GEOM_IOperations(GEOM_Engine* theEngine);
   Standard_EXPORT ~GEOM_IOperations();
 
   //Starts a new operation (opens a tansaction)
@@ -73,15 +73,11 @@ class GEOM_IOperations
   //Return a pointer to Solver associated with this operation interface
   Standard_EXPORT GEOM_Solver* GetSolver() { return _solver; }
 
-  //Returns an ID of the OCAF document where this operation stores the data
-  Standard_EXPORT int GetDocID() { return _docID; }
-
  private:
   
   TCollection_AsciiString _errorCode;
   GEOM_Engine*   _engine;
   GEOM_Solver*   _solver;
-  int                     _docID;
 
 };
 

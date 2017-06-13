@@ -4,7 +4,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 # create solids with some coincident faces
 Box_1 = geompy.MakeBoxDXDYDZ(200, 200, 200)
@@ -23,4 +23,4 @@ geompy.addToStudy(Partition_1, 'Partition_1')
 Joined_1 = geompy.RemoveInternalFaces(Partition_1)
 geompy.addToStudy(Joined_1, 'Joined_1')
 
-salome.sg.updateObjBrowser(True) 
+salome.sg.updateObjBrowser() 

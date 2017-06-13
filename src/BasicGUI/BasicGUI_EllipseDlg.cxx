@@ -371,7 +371,7 @@ void BasicGUI_EllipseDlg::ValueChangedInSpinBox( double newValue )
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BasicGUI_EllipseDlg::createOperation()
 {
-  return myGeomGUI->GetGeomGen()->GetICurvesOperations( getStudyId() );
+  return myGeomGUI->GetGeomGen()->GetICurvesOperations();
 }
 
 //=================================================================================

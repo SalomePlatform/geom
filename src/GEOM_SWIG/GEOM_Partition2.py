@@ -35,7 +35,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 vecx = geompy.MakeVectorDXDYDZ(1.,0.,0.)
 vecy = geompy.MakeVectorDXDYDZ(0.,1.,0.)

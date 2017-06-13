@@ -482,7 +482,7 @@ void BlocksGUI_QuadFaceDlg::activateSelection()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BlocksGUI_QuadFaceDlg::createOperation()
 {
-  return getGeomEngine()->GetIBlocksOperations(getStudyId());
+  return getGeomEngine()->GetIBlocksOperations();
 }
 
 //=================================================================================

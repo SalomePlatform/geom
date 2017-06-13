@@ -222,7 +222,7 @@ void BlocksGUI_PropagateDlg::enterEvent( QEvent* )
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BlocksGUI_PropagateDlg::createOperation()
 {
-  return getGeomEngine()->GetIBlocksOperations( getStudyId() );
+  return getGeomEngine()->GetIBlocksOperations();
 }
 
 //=================================================================================

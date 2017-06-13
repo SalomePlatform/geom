@@ -50,7 +50,7 @@
 #  structElemManager = StructuralElementManager()
 #  elem = structElemManager.createElement(commandList)
 #  elem.display()
-#  salome.sg.updateObjBrowser(True)
+#  salome.sg.updateObjBrowser()
 #  \endcode
 #
 #  \defgroup orientation
@@ -90,7 +90,7 @@ Example::
     structElemManager = StructuralElementManager()
     elem = structElemManager.createElement(commandList)
     elem.display()
-    salome.sg.updateObjBrowser(True)
+    salome.sg.updateObjBrowser()
 
 """
 
@@ -112,23 +112,15 @@ from salome.geom.structelem.parts import InvalidParameterError
 import GEOM
 
 ## This class manages the structural elements in the study. It is used to
-#  create a new structural element from a list of commands. The parameter
-#  \em studyId defines the ID of the study in which the manager will create
-#  structural elements. If it is \b None or not specified, it will use
-#  the ID of the current study as defined by 
-#  \b salome.kernel.studyedit.getActiveStudyId() function.
+#  create a new structural element from a list of commands.
 #  \ingroup structelem
 class StructuralElementManager:
     """
     This class manages the structural elements in the study. It is used to
-    create a new structural element from a list of commands. The parameter
-    `studyId` defines the ID of the study in which the manager will create
-    structural elements. If it is :const:`None` or not specified, it will use
-    the ID of the current study as defined by
-    :func:`salome.kernel.studyedit.getActiveStudyId` function.
+    create a new structural element from a list of commands.
     """
-    def __init__(self, studyId = None):
-        self._studyEditor = getStudyEditor(studyId)
+    def __init__(self):
+        self._studyEditor = getStudyEditor()
 
     ## Create a structural element from the list of commands \em commandList.
     #  Each command in this list represent a part of the structural element,
@@ -218,7 +210,7 @@ class StructuralElementManager:
         logger.debug("StructuralElementManager.createElement: START")
         logger.debug("Command list: %s" % commandList)
 
-        element = StructuralElement(self._studyEditor.studyId)
+        element = StructuralElement()
         orientationCmdList = []
         for command in commandList:
             (parttype, parameters) = command
@@ -252,9 +244,8 @@ class StructuralElementManager:
                     
                     # Create the part
                     try:
-                        part = parts.__dict__[parttype](
-                                        self._studyEditor.studyId, meshGroup,
-                                        groupGeomObj, newparams)
+                        part = parts.__dict__[parttype](meshGroup,
+                                                        groupGeomObj, newparams)
                         element.addPart(part)
                     except InvalidParameterError, e:
                         logger.error("Invalid parameter error: %s" % e)
@@ -317,30 +308,22 @@ class StructuralElementManager:
 
 
 ## This class represents a structural element, i.e. a set of geometrical
-#  objects built along geometrical primitives. The parameter \em studyId
-#  defines the ID of the study that will contain the structural element. If
-#  it is \b None or not specified, the constructor will use the ID of
-#  the active study as defined by \b salome.kernel.studyedit.getActiveStudyId
-#  function. Structural elements are normally created by the class
-#  StructuralElementManager, so this class should not be
-#  instantiated directly in the general case.
+#  objects built along geometrical primitives. Structural elements are 
+#  normally created by the class StructuralElementManager, so this class 
+#  should not be instantiated directly in the general case.
 #  \ingroup structelem
 class StructuralElement:
     """
     This class represents a structural element, i.e. a set of geometrical
-    objects built along geometrical primitives. The parameter `studyId`
-    defines the ID of the study that will contain the structural element. If
-    it is :const:`None` or not specified, the constructor will use the ID of
-    the active study as defined by :func:`salome.kernel.studyedit.getActiveStudyId`
-    function. Structural elements are normally created by the class
-    :class:`StructuralElementManager`, so this class should not be
-    instantiated directly in the general case.
+    objects built along geometrical primitives. Structural elements 
+    are normally created by the class :class:`StructuralElementManager`, 
+    so this class should not be instantiated directly in the general case.
     """
     _counter = 1
 
     MAIN_FOLDER_NAME = "Structural Elements"
 
-    def __init__(self, studyId = None):
+    def __init__(self):
         # _parts is the dictionary mapping group name to structural element
         # part. _shapeDict is the dictionary mapping SubShapeID objects to
         # structural element parts. Both are used to avoid duplicate shapes
@@ -349,9 +332,8 @@ class StructuralElement:
         self._shapeDict = {}
         self._id = StructuralElement._counter
         StructuralElement._counter += 1
-        self._studyEditor = getStudyEditor(studyId)
-        logger.debug("Creating structural element in study %s" %
-                     self._studyEditor.studyId)
+        self._studyEditor = getStudyEditor()
+        logger.debug("Creating structural element in study")
         self._SObject = None
 
     ## Find or create the study object corresponding to the structural
@@ -364,7 +346,7 @@ class StructuralElement:
         numerical ID. 
         """
         if self._SObject is None:
-            geompy = getGeompy(self._studyEditor.studyId)
+            geompy = getGeompy()
             geomComponent = self._studyEditor.study.FindComponent("GEOM")
             mainFolder = self._studyEditor.findItem(geomComponent,
                                                     name = StructuralElement.MAIN_FOLDER_NAME,
@@ -452,7 +434,7 @@ class StructuralElement:
         different parts of the structural element, and add them to the study.
         """
         gg = salome.ImportComponentGUI("GEOM")
-        geompy = getGeompy(self._studyEditor.studyId)
+        geompy = getGeompy()
         for part in self._parts.itervalues():
             # Build the structural element part
             logger.debug("Building %s" % part)
@@ -494,9 +476,8 @@ class StructuralElement:
         """
         if theSObject is not None:
             gg = salome.ImportComponentGUI("GEOM")
-            aStudy = theSObject.GetStudy()
-            useCaseBuilder = aStudy.GetUseCaseBuilder()
-            editor = getStudyEditor(aStudy._get_StudyId())
+            useCaseBuilder = salome.myStudy.GetUseCaseBuilder()
+            editor = getStudyEditor()
             aIterator = useCaseBuilder.GetUseCaseIterator(theSObject)
             aIterator.Init(False)
             while aIterator.More():
@@ -514,9 +495,9 @@ def TEST_CreateGeometry():
     salome.salome_init()
     import GEOM
     from salome.geom import geomBuilder
-    geompy = geomBuilder.New(salome.myStudy)
+    geompy = geomBuilder.New()
     import SALOMEDS
-    geompy.init_geom(salome.myStudy)
+    geompy.init_geom()
     Box_1 = geompy.MakeBoxDXDYDZ(200, 200, 200)
     edges = geompy.SubShapeAllSorted(Box_1, geompy.ShapeType["EDGE"])
     geompy.addToStudy(Box_1, "Box_1")
@@ -578,7 +559,7 @@ def TEST_StructuralElement():
     elem = structElemManager.createElement(liste_commandes)
     if salome.hasDesktop():
         elem.display()
-        salome.sg.updateObjBrowser(True)
+        salome.sg.updateObjBrowser()
 
 
 # Main function only used to test the module

@@ -30,7 +30,7 @@
 #  @code
 #  import GEOM
 #  from salome.geom import geomBuilder
-#  geompy = geomBuilder.New(salome.myStudy)
+#  geompy = geomBuilder.New()
 #
 #  # create a wire for sketcher
 #  geomObj_1 = geompy.MakeMarker(0, 0, 0, 1, 0, 0, 0, 1, 0)
@@ -48,7 +48,7 @@
 #  geompy.addToStudy( Sketch_1, 'Sketch_1' )
 #
 #  # update object browser
-#  salome.sg.updateObjBrowser(True)
+#  salome.sg.updateObjBrowser()
 #  @endcode
 #  @n Additionnal examples can be found as unit tests in the source code.
 #  @}

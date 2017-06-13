@@ -422,7 +422,7 @@ void BlocksGUI_BlockDlg::enterEvent (QEvent*)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BlocksGUI_BlockDlg::createOperation()
 {
-  return getGeomEngine()->GetIBlocksOperations(getStudyId());
+  return getGeomEngine()->GetIBlocksOperations();
 }
 
 //=================================================================================

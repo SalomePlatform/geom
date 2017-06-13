@@ -37,21 +37,18 @@ class GEOMImpl_IECallBack
   Standard_EXPORT GEOMImpl_IECallBack();
   Standard_EXPORT ~GEOMImpl_IECallBack();
   
-  Standard_EXPORT virtual bool Export( int                            theDocId,
-				       const Handle(GEOM_Object)      theOriginal,
+  Standard_EXPORT virtual bool Export( const Handle(GEOM_Object)      theOriginal,
                                        const TCollection_AsciiString& theFileName,
                                        const TCollection_AsciiString& theFormatName );
 
   Standard_EXPORT virtual
-  Handle(TColStd_HSequenceOfTransient) Import( int                            theDocId,
-					       const TCollection_AsciiString& theFormatName,
-					       const TCollection_AsciiString& theFileName );
+  Handle(TColStd_HSequenceOfTransient) Import( const TCollection_AsciiString& theFormatName,
+					                           const TCollection_AsciiString& theFileName );
 
   Standard_EXPORT virtual
-  TCollection_AsciiString  ReadValue( int                            theDocId,
-				      const TCollection_AsciiString& theFileName,
-				      const TCollection_AsciiString& theFormatName,
-				      const TCollection_AsciiString& theParameterName );
+  TCollection_AsciiString  ReadValue( const TCollection_AsciiString& theFileName,
+				                      const TCollection_AsciiString& theFormatName,
+				                      const TCollection_AsciiString& theParameterName );
 
   Standard_EXPORT static void Register( const TCollection_AsciiString& theFormatName, GEOMImpl_IECallBack* theCallBack );
 

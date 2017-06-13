@@ -360,7 +360,7 @@ bool MeasureGUI_FastCheckIntersectionsDlg::extractPrefix() const
 //=================================================================================
 GEOM::GEOM_IOperations_ptr MeasureGUI_FastCheckIntersectionsDlg::createOperation()
 {
-  return getGeomEngine()->GetIMeasureOperations( getStudyId() );
+  return getGeomEngine()->GetIMeasureOperations();
 }
 
 //=================================================================================
@@ -611,7 +611,7 @@ GEOM::ListOfGO_var MeasureGUI_FastCheckIntersectionsDlg::getLstObjFromListSelect
   }
 
   if (myShapesOper->_is_nil())
-    myShapesOper = getGeomEngine()->GetIShapesOperations(getStudyId());
+    myShapesOper = getGeomEngine()->GetIShapesOperations();
 
   GEOM::ListOfGO_var aObjLstCreate = myShapesOper->MakeSubShapes(anObj.get(), anArray);
 

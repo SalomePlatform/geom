@@ -392,7 +392,7 @@ void TransformationGUI_ScaleDlg::SetDoubleSpinBoxStep(double step)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr TransformationGUI_ScaleDlg::createOperation()
 {
-  return getGeomEngine()->GetITransformOperations(getStudyId());
+  return getGeomEngine()->GetITransformOperations();
 }
 
 //=================================================================================
@@ -500,12 +500,11 @@ bool TransformationGUI_ScaleDlg::execute (ObjectList& objects)
 // function : restoreSubShapes
 // purpose  :
 //=================================================================================
-void TransformationGUI_ScaleDlg::restoreSubShapes (SALOMEDS::Study_ptr   theStudy,
-                                                   SALOMEDS::SObject_ptr theSObject)
+void TransformationGUI_ScaleDlg::restoreSubShapes (SALOMEDS::SObject_ptr theSObject)
 {
   if (mainFrame()->CheckBoxRestoreSS->isChecked()) {
     // empty list of arguments means that all arguments should be restored
-    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(),
+    getGeomEngine()->RestoreSubShapesSO(theSObject, GEOM::ListOfGO(),
                                         /*theFindMethod=*/GEOM::FSM_Transformed,
                                         /*theInheritFirstArg=*/true,
                                         mainFrame()->CheckBoxAddPrefix->isChecked());

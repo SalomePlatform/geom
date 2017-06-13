@@ -416,7 +416,7 @@ void BuildGUI_EdgeDlg::ValueChangedInSpinBox(double newValue)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BuildGUI_EdgeDlg::createOperation()
 {
-  return getGeomEngine()->GetIShapesOperations(getStudyId());
+  return getGeomEngine()->GetIShapesOperations();
 }
 
 //=================================================================================

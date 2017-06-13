@@ -511,7 +511,7 @@ void BasicGUI_MarkerDlg::enterEvent( QEvent* )
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BasicGUI_MarkerDlg::createOperation()
 {
-  return myGeomGUI->GetGeomGen()->GetIBasicOperations( getStudyId() );
+  return myGeomGUI->GetGeomGen()->GetIBasicOperations();
 }
 
 //=================================================================================

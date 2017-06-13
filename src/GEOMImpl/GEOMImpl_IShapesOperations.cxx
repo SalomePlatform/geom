@@ -168,8 +168,8 @@ namespace
  *   constructor:
  */
 //=============================================================================
-GEOMImpl_IShapesOperations::GEOMImpl_IShapesOperations (GEOM_Engine* theEngine, int theDocID)
-: GEOM_IOperations(theEngine, theDocID)
+GEOMImpl_IShapesOperations::GEOMImpl_IShapesOperations (GEOM_Engine* theEngine)
+: GEOM_IOperations(theEngine)
 {
   MESSAGE("GEOMImpl_IShapesOperations::GEOMImpl_IShapesOperations");
 }
@@ -197,7 +197,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdge
   if (thePnt1.IsNull() || thePnt2.IsNull()) return NULL;
 
   //Add a new Edge object
-  Handle(GEOM_Object) anEdge = GetEngine()->AddObject(GetDocID(), GEOM_EDGE);
+  Handle(GEOM_Object) anEdge = GetEngine()->AddObject(GEOM_EDGE);
 
   //Add a new Vector function
   Handle(GEOM_Function) aFunction =
@@ -252,7 +252,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdgeOnCurveByLength
   if (theRefCurve.IsNull()) return NULL;
 
   //Add a new Edge object
-  Handle(GEOM_Object) anEdge = GetEngine()->AddObject(GetDocID(), GEOM_EDGE);
+  Handle(GEOM_Object) anEdge = GetEngine()->AddObject(GEOM_EDGE);
 
   //Add a new Vector function
   Handle(GEOM_Function) aFunction =
@@ -311,7 +311,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdgeWire
   if (theWire.IsNull()) return NULL;
 
   //Add a new Edge object
-  Handle(GEOM_Object) anEdge = GetEngine()->AddObject(GetDocID(), GEOM_EDGE);
+  Handle(GEOM_Object) anEdge = GetEngine()->AddObject(GEOM_EDGE);
 
   //Add a new Vector function
   Handle(GEOM_Function) aFunction =
@@ -377,7 +377,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeWire
   SetErrorCode(KO);
 
   //Add a new object
-  Handle(GEOM_Object) aWire = GetEngine()->AddObject(GetDocID(), GEOM_WIRE);
+  Handle(GEOM_Object) aWire = GetEngine()->AddObject(GEOM_WIRE);
 
   //Add a new function
   Handle(GEOM_Function) aFunction =
@@ -449,7 +449,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFace (Handle(GEOM_Object) th
   if (theWire.IsNull()) return NULL;
 
   //Add a new Face object
-  Handle(GEOM_Object) aFace = GetEngine()->AddObject(GetDocID(), GEOM_FACE);
+  Handle(GEOM_Object) aFace = GetEngine()->AddObject(GEOM_FACE);
 
   //Add a new Shape function for creation of a face from a wire
   Handle(GEOM_Function) aFunction =
@@ -509,7 +509,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceWires
   SetErrorCode(KO);
 
   //Add a new object
-  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GetDocID(), GEOM_FACE);
+  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GEOM_FACE);
 
   //Add a new function
   Handle(GEOM_Function) aFunction =
@@ -588,7 +588,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceFromSurface
   SetErrorCode(KO);
 
   //Add a new object
-  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GetDocID(), GEOM_FACE);
+  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GEOM_FACE);
 
   //Add a new function
   Handle(GEOM_Function) aFunction =
@@ -658,7 +658,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceWithConstraints
   SetErrorCode(KO);
 
   //Add a new object
-  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GetDocID(), GEOM_FILLING);
+  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GEOM_FILLING);
 
   //Add a new function
   Handle(GEOM_Function) aFunction =
@@ -799,7 +799,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeShape
   SetErrorCode(KO);
 
   //Add a new object
-  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GetDocID(), theObjectType);
+  Handle(GEOM_Object) aShape = GetEngine()->AddObject(theObjectType);
 
   //Add a new function
   Handle(GEOM_Function) aFunction =
@@ -869,7 +869,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeSolidFromConnectedFaces
   SetErrorCode(KO);
 
   //Add a new object
-  Handle(GEOM_Object) aSolid = GetEngine()->AddObject(GetDocID(), GEOM_SOLID);
+  Handle(GEOM_Object) aSolid = GetEngine()->AddObject(GEOM_SOLID);
 
   //Add a new function
   Handle(GEOM_Function) aFunction =
@@ -947,7 +947,7 @@ GEOMImpl_IShapesOperations::MakeGlueFaces (std::list< Handle(GEOM_Object) >& the
   }
 
   //Add a new Glued object
-  Handle(GEOM_Object) aGlued = GetEngine()->AddObject(GetDocID(), GEOM_GLUED);
+  Handle(GEOM_Object) aGlued = GetEngine()->AddObject(GEOM_GLUED);
 
   //Add a new Glue function
   Handle(GEOM_Function) aFunction;
@@ -1095,7 +1095,7 @@ GEOMImpl_IShapesOperations::MakeGlueFacesByList(std::list< Handle(GEOM_Object) >
   }
 
   //Add a new Glued object
-  Handle(GEOM_Object) aGlued = GetEngine()->AddObject(GetDocID(), GEOM_GLUED);
+  Handle(GEOM_Object) aGlued = GetEngine()->AddObject(GEOM_GLUED);
 
   //Add a new Glue function
   Handle(GEOM_Function) aFunction;
@@ -1163,7 +1163,7 @@ GEOMImpl_IShapesOperations::MakeGlueEdges (std::list< Handle(GEOM_Object) >& the
   }
 
   //Add a new Glued object
-  Handle(GEOM_Object) aGlued = GetEngine()->AddObject(GetDocID(), GEOM_GLUED);
+  Handle(GEOM_Object) aGlued = GetEngine()->AddObject(GEOM_GLUED);
 
   //Add a new Glue function
   Handle(GEOM_Function) aFunction;
@@ -1344,7 +1344,7 @@ GEOMImpl_IShapesOperations::MakeGlueEdgesByList (std::list< Handle(GEOM_Object) 
     return NULL;
   }
   //Add a new Glued object
-  Handle(GEOM_Object) aGlued = GetEngine()->AddObject(GetDocID(), GEOM_GLUED);
+  Handle(GEOM_Object) aGlued = GetEngine()->AddObject(GEOM_GLUED);
 
   //Add a new Glue function
   Handle(GEOM_Function) aFunction;
@@ -1452,7 +1452,7 @@ GEOMImpl_IShapesOperations::GetExistingSubObjects(Handle(GEOM_Object)    theShap
     Standard_Integer aStrLen = anEntry.LengthOfCString();
     char* anEntryStr = new char[aStrLen+1];
     anEntry.ToUTF8CString(anEntryStr);
-    Handle(GEOM_BaseObject) anObj = GetEngine()->GetObject(GetDocID(), anEntryStr, false);
+    Handle(GEOM_BaseObject) anObj = GetEngine()->GetObject(anEntryStr, false);
     if (!anObj.IsNull() ) {
       bool isGroup    = anObj->IsKind(STANDARD_TYPE(GEOM_Object)) && anObj->GetType() == GEOM_GROUP;
       bool isSubShape = anObj->IsKind(STANDARD_TYPE(GEOM_Object)) && anObj->GetType() != GEOM_GROUP;
@@ -1553,7 +1553,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
 
     //anObj = GetEngine()->AddSubShape(theShape, anArray);
     {
-      anObj = GetEngine()->AddObject(GetDocID(), GEOM_SUBSHAPE);
+      anObj = GetEngine()->AddObject(GEOM_SUBSHAPE);
       Handle(GEOM_Function) aFunction = anObj->AddFunction(GEOM_Object::GetSubShapeID(), 1);
       if (aFunction.IsNull()) return aSeq;
 
@@ -1766,7 +1766,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeSubShapes
       anArray = new TColStd_HArray1OfInteger(1,1);
       anArray->SetValue(1, id);
 
-      anObj = GetEngine()->AddObject(GetDocID(), GEOM_SUBSHAPE);
+      anObj = GetEngine()->AddObject(GEOM_SUBSHAPE);
       if (!anObj.IsNull()) {
         Handle(GEOM_Function) aFunction = anObj->AddFunction(GEOM_Object::GetSubShapeID(), 1);
         if (aFunction.IsNull()) return aSeq;
@@ -2155,7 +2155,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::ReverseShape(Handle(GEOM_Object)
 
   /*
   //Add a new reversed object
-  Handle(GEOM_Object) aReversed = GetEngine()->AddObject(GetDocID(), theShape->GetType());
+  Handle(GEOM_Object) aReversed = GetEngine()->AddObject(theShape->GetType());
 
   //Add a new Revese function
   Handle(GEOM_Function) aFunction;
@@ -2201,7 +2201,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::ReverseShape(Handle(GEOM_Object)
 
   if (aGen) {
     GEOMImpl_IHealingOperations* anIHealingOperations =
-      aGen->GetIHealingOperations(GetDocID());
+      aGen->GetIHealingOperations();
     aReversed = anIHealingOperations->ChangeOrientationCopy(theShape);
     SetErrorCode(anIHealingOperations->GetErrorCode());
   }
@@ -3000,7 +3000,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetShapesOnShapeAsCompound
   }
 
   //Add a new result object
-  Handle(GEOM_Object) aRes = GetEngine()->AddObject(GetDocID(), GEOM_SHAPES_ON_SHAPE);
+  Handle(GEOM_Object) aRes = GetEngine()->AddObject(GEOM_SHAPES_ON_SHAPE);
   Handle(GEOM_Function) aFunction =
     aRes->AddFunction(GEOMImpl_ShapeDriver::GetID(), SHAPES_ON_SHAPE);
   aFunction->SetValue(aCompound);
@@ -3182,7 +3182,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeExtraction
 
   //Add a new Result object
   Handle(GEOM_Object) aResult =
-              GetEngine()->AddObject(GetDocID(), GEOM_EXTRACTION);
+              GetEngine()->AddObject(GEOM_EXTRACTION);
 
   //Add a new Extraction function
   Handle(GEOM_Function) aFunction =
@@ -5140,7 +5140,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::ExtendEdge
   }
 
   //Add a new Edge object
-  Handle(GEOM_Object) aResEdge = GetEngine()->AddObject(GetDocID(), GEOM_EDGE);
+  Handle(GEOM_Object) aResEdge = GetEngine()->AddObject(GEOM_EDGE);
 
   //Add a new Vector function
   Handle(GEOM_Function) aFunction =
@@ -5207,7 +5207,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::ExtendFace
   }
 
   //Add a new Face object
-  Handle(GEOM_Object) aResFace = GetEngine()->AddObject(GetDocID(), GEOM_FACE);
+  Handle(GEOM_Object) aResFace = GetEngine()->AddObject(GEOM_FACE);
 
   //Add a new Vector function
   Handle(GEOM_Function) aFunction =
@@ -5273,7 +5273,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeSurfaceFromFace
   }
 
   //Add a new Face object
-  Handle(GEOM_Object) aResFace = GetEngine()->AddObject(GetDocID(), GEOM_FACE);
+  Handle(GEOM_Object) aResFace = GetEngine()->AddObject(GEOM_FACE);
 
   //Add a new Vector function
   Handle(GEOM_Function) aFunction =

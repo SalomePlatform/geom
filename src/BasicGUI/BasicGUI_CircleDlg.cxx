@@ -543,7 +543,7 @@ double BasicGUI_CircleDlg::getRadius() const
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BasicGUI_CircleDlg::createOperation()
 {
-  return myGeomGUI->GetGeomGen()->GetICurvesOperations( getStudyId() );
+  return myGeomGUI->GetGeomGen()->GetICurvesOperations();
 }
 
 //=================================================================================

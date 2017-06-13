@@ -724,7 +724,7 @@ void MeasureGUI_AnnotationDlg::onDragged( Handle_GEOM_Annotation theAnnotation )
 //=================================================================================
 GEOM::GEOM_IOperations_ptr MeasureGUI_AnnotationDlg::createOperation()
 {
-  return getGeomEngine()->GetILocalOperations( getStudyId() );
+  return getGeomEngine()->GetILocalOperations( );
 }
 
 //=================================================================================

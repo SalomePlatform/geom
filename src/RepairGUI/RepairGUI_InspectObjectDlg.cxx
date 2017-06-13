@@ -1188,8 +1188,6 @@ void RepairGUI_InspectObjectDlg::clickOnHide()
 //=================================================================================
 void RepairGUI_InspectObjectDlg::clickOnPublish()
 {
-  _PTR(Study) studyDS = dynamic_cast<SalomeApp_Study*>( myGeomGUI->getApp()->activeStudy() )->studyDS();
-
   // find main object
   TreeWidgetItem* aMainItem = dynamic_cast<TreeWidgetItem*>( myCurrentTreeObjects->topLevelItem(0) );
 
@@ -1217,12 +1215,12 @@ void RepairGUI_InspectObjectDlg::clickOnPublish()
   anArray->length(j);
 
   // get selected sub-shapes
-  GEOM::GEOM_IShapesOperations_var anOper = getGeomEngine()->GetIShapesOperations( getStudyId() );
+  GEOM::GEOM_IShapesOperations_var anOper = getGeomEngine()->GetIShapesOperations();
   GEOM::ListOfGO_var aList = anOper->MakeSubShapes( aMainObject, anArray );
 
   // publish sub-shapes
   for ( int i = 0; i < aList->length(); i++ )
-    GeometryGUI::GetGeomGen()->AddInStudy( GeometryGUI::ClientStudyToStudy( studyDS ), aList[i],
+    GeometryGUI::GetGeomGen()->AddInStudy( aList[i],
                                            anIndices.values().at(i).toStdString().c_str(), aMainObject );
 
   updateObjBrowser();

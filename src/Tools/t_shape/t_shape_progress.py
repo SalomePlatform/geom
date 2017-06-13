@@ -30,8 +30,8 @@ class t_shape_progress(QProgressDialog):
       QProgressDialog.__init__(self, "t_shape fluid build", "stop", 0, self._nmaxSteps, parent, Qt.Tool)
       self.show()
         
-    def run(self, activeStudy, r1, r2, h1, h2, thickness):
-      shape = t_shape_builder.build_shape(activeStudy, r1, r2, h1, h2, thickness, self)
+    def run(self, r1, r2, h1, h2, thickness):
+      shape = t_shape_builder.build_shape(r1, r2, h1, h2, thickness, self)
       self.setValue(self._nmaxSteps)
       return shape
       

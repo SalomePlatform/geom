@@ -51,9 +51,6 @@ GEOM_Superv_i::GEOM_Superv_i(CORBA::ORB_ptr orb,
 
   setGeomEngine();
 
-  myStudyID = -1;
-  myLastStudyID = -1;
-
   myBasicOp = GEOM::GEOM_IBasicOperations::_nil();
   my3DPrimOp = GEOM::GEOM_I3DPrimOperations::_nil();
   myBoolOp = GEOM::GEOM_IBooleanOperations::_nil();
@@ -109,50 +106,6 @@ void GEOM_Superv_i::setGeomEngine()
   delete lcc;
 
   myGeomEngine = GEOM::GEOM_Gen::_narrow(comp);
-}
-
-//=============================================================================
-//  SetStudyID:
-//=============================================================================
-void GEOM_Superv_i::SetStudyID( CORBA::Long theId )
-{
-  // mkr : PAL10770 -->
-  myLastStudyID = myStudyID;
-
-  CORBA::Object_ptr anObject = name_service->Resolve("/Kernel/Session");
-  if ( !CORBA::is_nil(anObject) ) {
-    SALOME::Session_var aSession = SALOME::Session::_narrow(anObject);
-    if ( !CORBA::is_nil(aSession) ) {
-      int aStudyID = aSession->GetActiveStudyId();
-      if ( theId != aStudyID && aStudyID > 0) { // mkr : IPAL12128
-        MESSAGE("Warning : given study ID theId="<<theId<<" is wrong and will be replaced by the value "<<aStudyID);
-        myStudyID = aStudyID;
-      }
-      else
-        myStudyID = theId; // mkr : IPAL12128
-    }
-  }
-
-  if ( isNewStudy(myLastStudyID,myStudyID) ) {
-    if (CORBA::is_nil(myGeomEngine)) setGeomEngine();
-    std::string anEngine = _orb->object_to_string( myGeomEngine );
-
-    CORBA::Object_var anObj = name_service->Resolve("/myStudyManager");
-    if ( !CORBA::is_nil(anObj) ) {
-      SALOMEDS::StudyManager_var aStudyManager = SALOMEDS::StudyManager::_narrow(anObj);
-      if ( !CORBA::is_nil(aStudyManager) ) {
-        _PTR(Study) aDSStudy = ClientFactory::Study(aStudyManager->GetStudyByID(myStudyID));
-        if ( aDSStudy ) {
-          _PTR(SComponent) aSCO = aDSStudy->FindComponent(myGeomEngine->ComponentDataType());
-          if ( aSCO ) {
-            _PTR(StudyBuilder) aBuilder = aDSStudy->NewBuilder();
-            if ( aBuilder ) aBuilder->LoadWith( aSCO, anEngine );
-          }
-        }
-      }
-    }
-  }
-  // mkr : PAL10770 <--
 }
 
 //=============================================================================
@@ -236,11 +189,8 @@ void GEOM_Superv_i::getBasicOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_IBasicOperations interface
-  if (CORBA::is_nil(myBasicOp) || isNewStudy(myLastStudyID,myStudyID)) {
-    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
-    //     Try to get id of the study from the SALOME Session
-    if(myStudyID < 0 ) SetStudyID(-1);
-    myBasicOp = myGeomEngine->GetIBasicOperations(myStudyID);
+  if (CORBA::is_nil(myBasicOp)) {
+    myBasicOp = myGeomEngine->GetIBasicOperations();
   }
 }
 
@@ -252,11 +202,8 @@ void GEOM_Superv_i::get3DPrimOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_I3DPrimOperations interface
-  if (CORBA::is_nil(my3DPrimOp) || isNewStudy(myLastStudyID,myStudyID)) {
-    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
-    //     Try to get id of the study from the SALOME Session
-    if(myStudyID < 0 ) SetStudyID(-1);
-    my3DPrimOp = myGeomEngine->GetI3DPrimOperations(myStudyID);
+  if (CORBA::is_nil(my3DPrimOp)) {
+    my3DPrimOp = myGeomEngine->GetI3DPrimOperations();
   }
 }
 
@@ -268,11 +215,8 @@ void GEOM_Superv_i::getBoolOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_IBooleanOperations interface
-  if (CORBA::is_nil(myBoolOp) || isNewStudy(myLastStudyID,myStudyID)) {
-    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
-    //     Try to get id of the study from the SALOME Session
-    if(myStudyID < 0 ) SetStudyID(-1);
-    myBoolOp = myGeomEngine->GetIBooleanOperations(myStudyID);
+  if (CORBA::is_nil(myBoolOp)) {
+    myBoolOp = myGeomEngine->GetIBooleanOperations();
   }
 }
 
@@ -284,11 +228,8 @@ void GEOM_Superv_i::getInsOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_IInsertOperations interface
-  if (CORBA::is_nil(myInsOp) || isNewStudy(myLastStudyID,myStudyID)) {
-    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
-    //     Try to get id of the study from the SALOME Session
-    if(myStudyID < 0 ) SetStudyID(-1);
-    myInsOp = myGeomEngine->GetIInsertOperations(myStudyID);
+  if (CORBA::is_nil(myInsOp)) {
+    myInsOp = myGeomEngine->GetIInsertOperations();
   }
 }
 
@@ -300,11 +241,8 @@ void GEOM_Superv_i::getTransfOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_ITransformOperations interface
-  if (CORBA::is_nil(myTransfOp) || isNewStudy(myLastStudyID,myStudyID)) {
-    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
-    //     Try to get id of the study from the SALOME Session
-    if(myStudyID < 0 ) SetStudyID(-1);
-    myTransfOp = myGeomEngine->GetITransformOperations(myStudyID);
+  if (CORBA::is_nil(myTransfOp)) {
+    myTransfOp = myGeomEngine->GetITransformOperations();
   }
 }
 
@@ -316,11 +254,8 @@ void GEOM_Superv_i::getShapesOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_IShapesOperations interface
-  if (CORBA::is_nil(myShapesOp) || isNewStudy(myLastStudyID,myStudyID)) {
-    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
-    //     Try to get id of the study from the SALOME Session
-    if(myStudyID < 0 ) SetStudyID(-1);
-    myShapesOp = myGeomEngine->GetIShapesOperations(myStudyID);
+  if (CORBA::is_nil(myShapesOp)) {
+    myShapesOp = myGeomEngine->GetIShapesOperations();
   }
 }
 
@@ -332,11 +267,8 @@ void GEOM_Superv_i::getBlocksOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_IBlocksOperations interface
-  if (CORBA::is_nil(myBlocksOp) || isNewStudy(myLastStudyID,myStudyID)) {
-    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
-    //     Try to get id of the study from the SALOME Session
-    if(myStudyID < 0 ) SetStudyID(-1);
-    myBlocksOp = myGeomEngine->GetIBlocksOperations(myStudyID);
+  if (CORBA::is_nil(myBlocksOp)) {
+    myBlocksOp = myGeomEngine->GetIBlocksOperations();
   }
 }
 
@@ -348,11 +280,8 @@ void GEOM_Superv_i::getCurvesOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_ICurvesOperations interface
-  if (CORBA::is_nil(myCurvesOp) || isNewStudy(myLastStudyID,myStudyID)) {
-    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
-    //     Try to get id of the study from the SALOME Session
-    if(myStudyID < 0 ) SetStudyID(-1);
-    myCurvesOp = myGeomEngine->GetICurvesOperations(myStudyID);
+  if (CORBA::is_nil(myCurvesOp)) {
+    myCurvesOp = myGeomEngine->GetICurvesOperations();
   }
 }
 
@@ -364,11 +293,8 @@ void GEOM_Superv_i::getLocalOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_ILocalOperations interface
-  if (CORBA::is_nil(myLocalOp) || isNewStudy(myLastStudyID,myStudyID)) {
-    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
-    //     Try to get id of the study from the SALOME Session
-    if(myStudyID < 0 ) SetStudyID(-1);
-    myLocalOp = myGeomEngine->GetILocalOperations(myStudyID);
+  if (CORBA::is_nil(myLocalOp)) {
+    myLocalOp = myGeomEngine->GetILocalOperations();
   }
 }
 
@@ -380,11 +306,8 @@ void GEOM_Superv_i::getGroupOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_IGroupOperations interface
-  if (CORBA::is_nil(myGroupOp) || isNewStudy(myLastStudyID,myStudyID)) {
-    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
-    //     Try to get id of the study from the SALOME Session
-    if(myStudyID < 0 ) SetStudyID(-1);
-    myGroupOp = myGeomEngine->GetIGroupOperations(myStudyID);
+  if (CORBA::is_nil(myGroupOp)) {
+    myGroupOp = myGeomEngine->GetIGroupOperations();
   }
 }
 
@@ -396,11 +319,8 @@ void GEOM_Superv_i::getAdvancedOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM::IAdvancedOperations interface
-  if (CORBA::is_nil(myAdvancedOp) || isNewStudy(myLastStudyID,myStudyID)) {
-    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
-    //     Try to get id of the study from the SALOME Session
-    if(myStudyID < 0 ) SetStudyID(-1);
-    myAdvancedOp = GEOM::IAdvancedOperations::_narrow(myGeomEngine->GetPluginOperations(myStudyID, "AdvancedEngine"));
+  if (CORBA::is_nil(myAdvancedOp)) {
+    myAdvancedOp = GEOM::IAdvancedOperations::_narrow(myGeomEngine->GetPluginOperations("AdvancedEngine"));
   }
 }
 
@@ -412,11 +332,8 @@ void GEOM_Superv_i::getSTLPluginOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM::ISTLOperations interface
-  if (CORBA::is_nil(mySTLOp) || isNewStudy(myLastStudyID,myStudyID)) {
-    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
-    //     Try to get id of the study from the SALOME Session
-    if(myStudyID < 0 ) SetStudyID(-1);
-    mySTLOp = GEOM::ISTLOperations::_narrow(myGeomEngine->GetPluginOperations(myStudyID, "STLPluginEngine"));
+  if (CORBA::is_nil(mySTLOp)) {
+    mySTLOp = GEOM::ISTLOperations::_narrow(myGeomEngine->GetPluginOperations("STLPluginEngine"));
   }
 }
 
@@ -428,11 +345,8 @@ void GEOM_Superv_i::getBREPPluginOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM:IBREPOperations interface
-  if (CORBA::is_nil(myBREPOp) || isNewStudy(myLastStudyID,myStudyID)) {
-    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
-    //     Try to get id of the study from the SALOME Session
-    if(myStudyID < 0 ) SetStudyID(-1);
-    myBREPOp = GEOM::IBREPOperations::_narrow(myGeomEngine->GetPluginOperations(myStudyID, "BREPPluginEngine"));
+  if (CORBA::is_nil(myBREPOp)) {
+    myBREPOp = GEOM::IBREPOperations::_narrow(myGeomEngine->GetPluginOperations("BREPPluginEngine"));
   }
 }
 
@@ -444,11 +358,8 @@ void GEOM_Superv_i::getSTEPPluginOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM::ISTEPOperations interface
-  if (CORBA::is_nil(mySTEPOp) || isNewStudy(myLastStudyID,myStudyID)) {
-    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
-    //     Try to get id of the study from the SALOME Session
-    if(myStudyID < 0 ) SetStudyID(-1);
-    mySTEPOp = GEOM::ISTEPOperations::_narrow(myGeomEngine->GetPluginOperations(myStudyID, "STEPPluginEngine"));
+  if (CORBA::is_nil(mySTEPOp)) {
+    mySTEPOp = GEOM::ISTEPOperations::_narrow(myGeomEngine->GetPluginOperations("STEPPluginEngine"));
   }
 }
 
@@ -460,11 +371,8 @@ void GEOM_Superv_i::getIGESPluginOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM::IIGESOperations interface
-  if (CORBA::is_nil(myIGESOp) || isNewStudy(myLastStudyID,myStudyID)) {
-    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
-    //     Try to get id of the study from the SALOME Session
-    if(myStudyID < 0 ) SetStudyID(-1);
-    myIGESOp = GEOM::IIGESOperations::_narrow(myGeomEngine->GetPluginOperations(myStudyID, "IGESPluginEngine"));
+  if (CORBA::is_nil(myIGESOp)) {
+    myIGESOp = GEOM::IIGESOperations::_narrow(myGeomEngine->GetPluginOperations("IGESPluginEngine"));
   }
 }
 
@@ -476,11 +384,8 @@ void GEOM_Superv_i::getXAOPluginOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM::IXAOOperations interface
-  if (CORBA::is_nil(myXAOOp) || isNewStudy(myLastStudyID,myStudyID)) {
-    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
-    //     Try to get id of the study from the SALOME Session
-    if(myStudyID < 0 ) SetStudyID(-1);
-    myXAOOp = GEOM::IXAOOperations::_narrow(myGeomEngine->GetPluginOperations(myStudyID, "XAOPluginEngine"));
+  if (CORBA::is_nil(myXAOOp)) {
+    myXAOOp = GEOM::IXAOOperations::_narrow(myGeomEngine->GetPluginOperations("XAOPluginEngine"));
   }
 }
 
@@ -493,11 +398,8 @@ void GEOM_Superv_i::getVTKPluginOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM::IVTKOperations interface
-  if (CORBA::is_nil(myVTKOp) || isNewStudy(myLastStudyID,myStudyID)) {
-    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
-    //     Try to get id of the study from the SALOME Session
-    if(myStudyID < 0 ) SetStudyID(-1);
-    myVTKOp = GEOM::IVTKOperations::_narrow(myGeomEngine->GetPluginOperations(myStudyID, "VTKPluginEngine"));
+  if (CORBA::is_nil(myVTKOp)) {
+    myVTKOp = GEOM::IVTKOperations::_narrow(myGeomEngine->GetPluginOperations("VTKPluginEngine"));
   }
 }
 #endif
@@ -619,14 +521,13 @@ CORBA::Boolean GEOM_Superv_i::CanPublishInStudy(CORBA::Object_ptr theIOR)
 // function : PublishInStudy
 // purpose  :
 //============================================================================
-SALOMEDS::SObject_ptr GEOM_Superv_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
-                                                    SALOMEDS::SObject_ptr theSObject,
+SALOMEDS::SObject_ptr GEOM_Superv_i::PublishInStudy(SALOMEDS::SObject_ptr theSObject,
                                                     CORBA::Object_ptr theObject,
                                                     const char* theName) throw (SALOME::SALOME_Exception)
 {
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
-  return myGeomEngine->PublishInStudy(theStudy, theSObject, theObject, theName);
+  return myGeomEngine->PublishInStudy(theSObject, theObject, theName);
 }
 
 //============================================================================
@@ -634,13 +535,12 @@ SALOMEDS::SObject_ptr GEOM_Superv_i::PublishInStudy(SALOMEDS::Study_ptr theStudy
 // purpose  :
 //============================================================================
 GEOM::ListOfGO*
-GEOM_Superv_i::PublishNamedShapesInStudy(SALOMEDS::Study_ptr theStudy,
-                                         //SALOMEDS::SObject_ptr theSObject,
+GEOM_Superv_i::PublishNamedShapesInStudy(//SALOMEDS::SObject_ptr theSObject,
                                          CORBA::Object_ptr theObject)
 {
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
-  return myGeomEngine->PublishNamedShapesInStudy(theStudy, theObject);
+  return myGeomEngine->PublishNamedShapesInStudy(theObject);
 }
 
 //============================================================================

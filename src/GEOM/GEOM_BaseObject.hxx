@@ -92,9 +92,6 @@ public:
   Standard_EXPORT void SetTic(int theTic);
   Standard_EXPORT void IncrementTic();
 
-  //Returns an ID of the OCAF document where this GEOM_BaseObject is stored
-  Standard_EXPORT int GetDocID();
-
   //Sets a name of this GEOM_BaseObject
   Standard_EXPORT void SetName(const char* theName);
 
@@ -163,7 +160,6 @@ public:
   TDF_Label                 _label;
   TCollection_AsciiString   _ior;
   TCollection_AsciiString   _parameters;
-  int                       _docID;
 
 public:
   OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_BaseObject,Standard_Transient)

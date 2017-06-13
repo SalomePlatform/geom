@@ -83,12 +83,11 @@ void ConvertV6toV7( TCollection_AsciiString& theScript )
 //purpose  : 
 //=======================================================================
 
-Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy, 
-					 CORBA::Boolean isPublished, 
-					 CORBA::Boolean isMultiFile,
+Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Boolean isPublished,
+                                         CORBA::Boolean isMultiFile,
                                          CORBA::Boolean& isValidScript)
 {
-  SALOMEDS::Study_var aStudy = SALOMEDS::Study::_narrow(theStudy);
+  SALOMEDS::Study_var aStudy = getStudyServant();
   if(CORBA::is_nil(aStudy))
     return new Engines::TMPFile(0);   
 
@@ -151,7 +150,7 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
   }
   
   TCollection_AsciiString aScript;
-  aScript += _impl->DumpPython(aStudy->StudyId(), objectDataVec, aVariableMap, isPublished, isMultiFile, isValidScript);
+  aScript += _impl->DumpPython(objectDataVec, aVariableMap, isPublished, isMultiFile, isValidScript);
 
   if (isPublished)
   {

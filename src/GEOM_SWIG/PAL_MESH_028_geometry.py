@@ -31,7 +31,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 import os
 
@@ -80,11 +80,11 @@ theFilenameToSave = theHomePath + "/Pyramid.hdf"
 if os.access(theFilenameToSave, os.F_OK):
     if os.access(theFilenameToSave, os.W_OK):
         os.remove(theFilenameToSave)
-        salome.myStudyManager.SaveAs(theFilenameToSave, salome.myStudy, 0)
+        salome.myStudy.SaveAs(theFilenameToSave, 0, 0)
     else:
         print "You have no enough permissions to overwrite HDF file: ",theFilenameToSave
 else:
-    salome.myStudyManager.SaveAs(theFilenameToSave, salome.myStudy, 0)
+    salome.myStudy.SaveAs(theFilenameToSave, 0, 0)
     
 
-salome.sg.updateObjBrowser(True)
+salome.sg.updateObjBrowser()

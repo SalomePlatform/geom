@@ -237,7 +237,7 @@ void GEOMToolsGUI_MarkerDlg::accept()
               }
             }
           }
-          GEOM_Displayer displayer( getStudy() );
+          GEOM_Displayer displayer;
           displayer.Redisplay( selected, true );
           selMgr->setSelectedObjects( selected );
         }
@@ -277,7 +277,7 @@ void GEOMToolsGUI_MarkerDlg::init()
   // ---
   
   GEOM::GEOM_Gen_var engine = GeometryGUI::GetGeomGen();
-  myOperation = engine->GetIInsertOperations( getStudy()->id() );
+  myOperation = engine->GetIInsertOperations();
   GEOM::ListOfLong_var ids = myOperation->GetAllTextures();
   for ( int i = 0; i < ids->length(); i++ )
     addTexture( ids[i] );
@@ -339,7 +339,7 @@ void GEOMToolsGUI_MarkerDlg::addTexture( int id, bool select ) const
   if ( id > 0 && myCustomTypeCombo->index( id ) == -1 ) {
     int tWidth, tHeight;
 
-    Handle(TColStd_HArray1OfByte) texture = GeometryGUI::getTexture(getStudy(), id, tWidth, tHeight);
+    Handle(TColStd_HArray1OfByte) texture = GeometryGUI::getTexture(id, tWidth, tHeight);
 
     if ( !texture.IsNull() && texture->Length() == tWidth*tHeight/8 ) {
       QImage image( tWidth, tHeight, QImage::Format_Mono );

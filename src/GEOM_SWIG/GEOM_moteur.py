@@ -30,7 +30,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 import math
 
 #Variables modifiables
@@ -56,7 +56,7 @@ PosCour = PosZ + HauteurT * 4 / 7
 PosRot = PosZ + 0.9 * HauteurT
 
 #Points
-BasicOp = geompy.GetIBasicOperations(salome.myStudyId)
+BasicOp = geompy.GetIBasicOperations()
 OO = BasicOp.MakePointXYZ(0, 0, 0)
 P0 = BasicOp.MakePointXYZ(0, 0, 1)
 P1 = BasicOp.MakePointXYZ(PosX, PosY, PosZ)

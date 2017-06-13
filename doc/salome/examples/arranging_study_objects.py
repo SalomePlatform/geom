@@ -5,7 +5,7 @@ salome.salome_init()
 
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 Circle_1 = geompy.MakeCircle(None, None, 100)
 Box_1 = geompy.MakeBoxDXDYDZ(200, 200, 200)
@@ -22,4 +22,4 @@ geompy.PutListToFolder([Box_1, Cylinder_1], Primitives)
 
 
 if salome.sg.hasDesktop():
-  salome.sg.updateObjBrowser(True)
+  salome.sg.updateObjBrowser()

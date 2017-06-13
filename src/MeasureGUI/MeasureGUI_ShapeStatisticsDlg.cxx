@@ -40,7 +40,6 @@
 #include <LightApp_SelectionMgr.h>
 
 #include <SalomeApp_Application.h>
-#include <SalomeApp_Study.h>
 
 #include <Plot2d_Histogram.h>
 #include <Plot2d_ViewFrame.h>
@@ -206,7 +205,7 @@ MeasureGUI_ShapeStatisticsDlg::~MeasureGUI_ShapeStatisticsDlg()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr MeasureGUI_ShapeStatisticsDlg::createOperation()
 {
-  return getGeomEngine()->GetIGroupOperations(getStudyId());
+  return getGeomEngine()->GetIGroupOperations();
 }
 
 #define RETURN_WITH_MSG(a, b) \
@@ -307,7 +306,7 @@ void MeasureGUI_ShapeStatisticsDlg::updateTypes( QList<GEOM::GeomObjPtr> theShap
     myShapes.push_back( aShape );
 
     GEOM::ListOfLong_var aSubShapes;
-    GEOM::GEOM_IShapesOperations_var aShOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
+    GEOM::GEOM_IShapesOperations_var aShOp = getGeomEngine()->GetIShapesOperations();
     if ( hasEdges != 0 )
       hasEdges = aShOp->NumberOfSubShapes( aShapePtr.get(), TopAbs_EDGE ) > 0;
     if ( hasFaces != 0 )
@@ -472,7 +471,6 @@ bool MeasureGUI_ShapeStatisticsDlg::execute(ObjectList& objects)
   int aPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
   QString aTypePrefix = myCBTypes->currentText().replace(' ', '_');
   QString objIOR, aMin, aMax, aGroupName;
-  SalomeApp_Study* study = getStudy();
 
   GEOMUtils::Distribution aShapesDistr = 
     GEOMUtils::ComputeDistribution( myShapes, currentType(), myNbIntervals->value(), aRange );

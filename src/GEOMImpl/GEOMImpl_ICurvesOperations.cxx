@@ -183,8 +183,8 @@ namespace
  *   constructor:
  */
 //=============================================================================
-GEOMImpl_ICurvesOperations::GEOMImpl_ICurvesOperations (GEOM_Engine* theEngine, int theDocID)
-: GEOM_IOperations(theEngine, theDocID)
+GEOMImpl_ICurvesOperations::GEOMImpl_ICurvesOperations (GEOM_Engine* theEngine)
+: GEOM_IOperations(theEngine)
 {
   MESSAGE("GEOMImpl_ICurvesOperations::GEOMImpl_ICurvesOperations");
 }
@@ -214,7 +214,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCircleThreePnt (Handle(GEOM_
   if (thePnt1.IsNull() || thePnt2.IsNull() || thePnt3.IsNull()) return NULL;
 
   //Add a new Circle object
-  Handle(GEOM_Object) aCircle = GetEngine()->AddObject(GetDocID(), GEOM_CIRCLE);
+  Handle(GEOM_Object) aCircle = GetEngine()->AddObject(GEOM_CIRCLE);
 
   //Add a new Circle function for creation a circle relatively to three points
   Handle(GEOM_Function) aFunction =
@@ -272,7 +272,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCircleCenter2Pnt (Handle(GEO
   if (thePnt1.IsNull() || thePnt2.IsNull() || thePnt3.IsNull()) return NULL;
 
   //Add a new Circle object
-  Handle(GEOM_Object) aCircle = GetEngine()->AddObject(GetDocID(), GEOM_CIRCLE);
+  Handle(GEOM_Object) aCircle = GetEngine()->AddObject(GEOM_CIRCLE);
 
   //Add a new Circle function for creation a circle relatively to center and 2 points
   Handle(GEOM_Function) aFunction =
@@ -331,7 +331,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCirclePntVecR
   //if (thePnt.IsNull() || theVec.IsNull()) return NULL;
 
   //Add a new Circle object
-  Handle(GEOM_Object) aCircle = GetEngine()->AddObject(GetDocID(), GEOM_CIRCLE);
+  Handle(GEOM_Object) aCircle = GetEngine()->AddObject(GEOM_CIRCLE);
 
   //Add a new Circle function for creation a circle relatively to point and vector
   Handle(GEOM_Function) aFunction =
@@ -397,7 +397,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeEllipse
   //if (thePnt.IsNull() || theVec.IsNull()) return NULL;
 
   //Add a new Ellipse object
-  Handle(GEOM_Object) anEll = GetEngine()->AddObject(GetDocID(), GEOM_ELLIPSE);
+  Handle(GEOM_Object) anEll = GetEngine()->AddObject(GEOM_ELLIPSE);
 
   //Add a new Ellipse function
   Handle(GEOM_Function) aFunction =
@@ -473,7 +473,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArc (Handle(GEOM_Object) the
   if (thePnt1.IsNull() || thePnt2.IsNull() || thePnt3.IsNull()) return NULL;
 
   //Add a new Circle Arc object
-  Handle(GEOM_Object) anArc = GetEngine()->AddObject(GetDocID(), GEOM_CIRC_ARC);
+  Handle(GEOM_Object) anArc = GetEngine()->AddObject(GEOM_CIRC_ARC);
 
   //Add a new Circle Arc function
   Handle(GEOM_Function) aFunction =
@@ -531,7 +531,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArcCenter (Handle(GEOM_Objec
   if (thePnt1.IsNull() || thePnt2.IsNull() || thePnt3.IsNull()) return NULL;
 
   //Add a new Circle Arc object
-  Handle(GEOM_Object) anArc = GetEngine()->AddObject(GetDocID(), GEOM_CIRC_ARC);
+  Handle(GEOM_Object) anArc = GetEngine()->AddObject(GEOM_CIRC_ARC);
 
   //Add a new Circle Arc function
   Handle(GEOM_Function) aFunction =
@@ -589,7 +589,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArcOfEllipse (Handle(GEOM_Ob
   if (thePnt1.IsNull() || thePnt2.IsNull() || thePnt3.IsNull()) return NULL;
 
   //Add a new Circle Arc object
-  Handle(GEOM_Object) anArc = GetEngine()->AddObject(GetDocID(), GEOM_ELLIPSE_ARC);
+  Handle(GEOM_Object) anArc = GetEngine()->AddObject(GEOM_ELLIPSE_ARC);
 
   //Add a new Circle Arc function
   Handle(GEOM_Function) aFunction =
@@ -644,7 +644,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline (std::list<Handle(G
   SetErrorCode(KO);
 
   //Add a new Polyline object
-  Handle(GEOM_Object) aPolyline = GetEngine()->AddObject(GetDocID(), GEOM_POLYLINE);
+  Handle(GEOM_Object) aPolyline = GetEngine()->AddObject(GEOM_POLYLINE);
 
   //Add a new Polyline function for creation a polyline relatively to points set
   Handle(GEOM_Function) aFunction =
@@ -714,7 +714,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineBezier
   SetErrorCode(KO);
 
   //Add a new Spline object
-  Handle(GEOM_Object) aSpline = GetEngine()->AddObject(GetDocID(), GEOM_SPLINE);
+  Handle(GEOM_Object) aSpline = GetEngine()->AddObject(GEOM_SPLINE);
 
   //Add a new Spline function for creation a bezier curve relatively to points set
   Handle(GEOM_Function) aFunction =
@@ -784,7 +784,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
   SetErrorCode(KO);
 
   //Add a new Spline object
-  Handle(GEOM_Object) aSpline = GetEngine()->AddObject(GetDocID(), GEOM_SPLINE);
+  Handle(GEOM_Object) aSpline = GetEngine()->AddObject(GEOM_SPLINE);
 
   //Add a new Spline function for interpolation type
   Handle(GEOM_Function) aFunction =
@@ -855,7 +855,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolWithTangents
   SetErrorCode(KO);
 
   //Add a new Spline object
-  Handle(GEOM_Object) aSpline = GetEngine()->AddObject(GetDocID(), GEOM_SPLINE);
+  Handle(GEOM_Object) aSpline = GetEngine()->AddObject(GEOM_SPLINE);
 
   //Add a new Spline function for interpolation type
   Handle(GEOM_Function) aFunction =
@@ -1069,7 +1069,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
   switch(theCurveType) {
   case Polyline: {
     //Add a new Polyline object
-    aCurve = GetEngine()->AddObject(GetDocID(), GEOM_POLYLINE);
+    aCurve = GetEngine()->AddObject(GEOM_POLYLINE);
 
     //Add a new Polyline function for creation a polyline relatively to points set
     aFunction = aCurve->AddFunction(GEOMImpl_PolylineDriver::GetID(), POLYLINE_POINTS);
@@ -1089,7 +1089,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
   }
   case Bezier: {
     //Add a new Spline object
-    aCurve = GetEngine()->AddObject(GetDocID(), GEOM_SPLINE);
+    aCurve = GetEngine()->AddObject(GEOM_SPLINE);
     //Add a new Spline function for creation a bezier curve relatively to points set
     aFunction =
       aCurve->AddFunction(GEOMImpl_SplineDriver::GetID(), SPLINE_BEZIER);
@@ -1108,7 +1108,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
   }
   case Interpolation: {
     //Add a new Spline object
-    aCurve = GetEngine()->AddObject(GetDocID(), GEOM_SPLINE);
+    aCurve = GetEngine()->AddObject(GEOM_SPLINE);
 
     //Add a new Spline function for creation a bezier curve relatively to points set
     aFunction = aCurve->AddFunction(GEOMImpl_SplineDriver::GetID(), SPLINE_INTERPOLATION);
@@ -1185,7 +1185,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher (const char* theCom
   if (!theCommand || strcmp(theCommand, "") == 0) return NULL;
 
   //Add a new Sketcher object
-  Handle(GEOM_Object) aSketcher = GetEngine()->AddObject(GetDocID(), GEOM_SKETCHER);
+  Handle(GEOM_Object) aSketcher = GetEngine()->AddObject(GEOM_SKETCHER);
 
   //Add a new Sketcher function
   Handle(GEOM_Function) aFunction =
@@ -1248,7 +1248,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcherOnPlane
   if (!theCommand || strcmp(theCommand, "") == 0) return NULL;
 
   //Add a new Sketcher object
-  Handle(GEOM_Object) aSketcher = GetEngine()->AddObject(GetDocID(), GEOM_SKETCHER);
+  Handle(GEOM_Object) aSketcher = GetEngine()->AddObject(GEOM_SKETCHER);
 
   //Add a new Sketcher function
   Handle(GEOM_Function) aFunction =
@@ -1301,7 +1301,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::Make3DSketcherCommand (const cha
   if (!theCommand || strcmp(theCommand, "") == 0) return NULL;
 
   //Add a new Sketcher object
-  Handle(GEOM_Object) aSketcher = GetEngine()->AddObject(GetDocID(), GEOM_3DSKETCHER);
+  Handle(GEOM_Object) aSketcher = GetEngine()->AddObject(GEOM_3DSKETCHER);
 
   //Add a new Sketcher function
   Handle(GEOM_Function) aFunction =
@@ -1348,7 +1348,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::Make3DSketcher (std::list<double
   SetErrorCode(KO);
 
   //Add a new Sketcher object
-  Handle(GEOM_Object) a3DSketcher = GetEngine()->AddObject(GetDocID(), GEOM_3DSKETCHER);
+  Handle(GEOM_Object) a3DSketcher = GetEngine()->AddObject(GEOM_3DSKETCHER);
 
   //Add a new Sketcher function
   Handle(GEOM_Function) aFunction =
@@ -1421,7 +1421,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeIsoline
 
   //Add a new Spline object
   Handle(GEOM_Object) anIsoline =
-    GetEngine()->AddObject(GetDocID(), GEOM_ISOLINE);
+    GetEngine()->AddObject(GEOM_ISOLINE);
 
   //Add a new Spline function for interpolation type
   Handle(GEOM_Function) aFunction =
@@ -1490,7 +1490,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline2D
 
   // Add a new Polyline object
   Handle(GEOM_Object)   aResult   =
-    GetEngine()->AddObject(GetDocID(), GEOM_POLYLINE2D);
+    GetEngine()->AddObject(GEOM_POLYLINE2D);
   Handle(GEOM_Function) aFunction = aResult->AddFunction
     (GEOMImpl_PolylineDriver::GetID(), POLYLINE2D_PLN_COORDS);
 
@@ -1563,7 +1563,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline2DOnPlane
 
   //Add a new Polyline object
   Handle(GEOM_Object) aResult =
-    GetEngine()->AddObject(GetDocID(), GEOM_POLYLINE2D);
+    GetEngine()->AddObject(GEOM_POLYLINE2D);
   Handle(GEOM_Function) aFunction = aResult->AddFunction
     (GEOMImpl_PolylineDriver::GetID(), POLYLINE2D_PLN_OBJECT);
 

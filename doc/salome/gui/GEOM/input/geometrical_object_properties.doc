@@ -77,7 +77,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 box = geompy.MakeBoxDXDYDZ(10,10,10)
 type = geompy.ShapeIdToType(box.GetType())
@@ -103,7 +103,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 box = geompy.MakeBoxDXDYDZ(10,10,10)
 type = box.GetShapeType()

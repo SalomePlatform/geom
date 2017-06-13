@@ -810,7 +810,7 @@ void EntityGUI_SubShapeDlg::activateSelection()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr EntityGUI_SubShapeDlg::createOperation()
 {
-  return getGeomEngine()->GetIShapesOperations(getStudyId());
+  return getGeomEngine()->GetIShapesOperations();
 }
 
 //=================================================================================

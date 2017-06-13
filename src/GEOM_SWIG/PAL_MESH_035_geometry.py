@@ -31,7 +31,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 #Box creation (2.2)
 Box_1 = geompy.MakeBoxDXDYDZ(200, 400, 300)
@@ -111,4 +111,4 @@ for i in range (0, NbExplodedVertices_Face_18):
    name = "Vertex_" + str(NbExplodedVertices_Box_1+NbExplodedVertices_Face_7+NbExplodedVertices_Face_10+NbExplodedVertices_Face_15+i+1)
    geompy.addToStudyInFather(ListOfFaces_Partition_1[NbExplodedFaces_Partition_1-1], ListOfVertices_Face_18[i], name)
 
-salome.sg.updateObjBrowser(True)
+salome.sg.updateObjBrowser()

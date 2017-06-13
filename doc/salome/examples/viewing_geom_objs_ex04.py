@@ -5,7 +5,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 texture_file = os.path.join(os.getenv("GEOM_ROOT_DIR"), "share", "salome", "resources", "geom", "textures", "texture1.dat")
 texture = geompy.LoadTexture(texture_file)

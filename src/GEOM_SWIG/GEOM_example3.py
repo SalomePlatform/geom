@@ -30,17 +30,17 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 import math
 from time import sleep
 import salome_ComponentGUI
 
 gg = salome.ImportComponentGUI("GEOM")
 
-BasicOp  = geompy.GetIBasicOperations(salome.myStudyId)
-PrimOp   = geompy.GetI3DPrimOperations(salome.myStudyId)
-InsertOp = geompy.GetIInsertOperations(salome.myStudyId)
-TrsfOp   = geompy.GetITransformOperations(salome.myStudyId)
+BasicOp  = geompy.GetIBasicOperations()
+PrimOp   = geompy.GetI3DPrimOperations()
+InsertOp = geompy.GetIInsertOperations()
+TrsfOp   = geompy.GetITransformOperations()
 
 point0  = BasicOp.MakePointXYZ(0.,0.,0.)
 pointz1 = BasicOp.MakePointXYZ(0.,0.,1.)

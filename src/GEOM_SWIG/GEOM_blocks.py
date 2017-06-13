@@ -30,7 +30,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 import math
 import GEOM_Spanner
@@ -42,4 +42,4 @@ smesh = None
 
 GEOM_Spanner.MakeSpanner(geompy, math, isBlocksTest, isMeshTest, smesh)
 
-salome.sg.updateObjBrowser(True);
+salome.sg.updateObjBrowser();

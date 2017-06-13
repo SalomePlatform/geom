@@ -165,7 +165,7 @@ public:
 					      bool fuse);
   
 public:
-  AdvancedEngine_IOperations(GEOM_Engine* theEngine, int theDocID);
+  AdvancedEngine_IOperations(GEOM_Engine* theEngine);
   ~AdvancedEngine_IOperations();
 
   Handle(TColStd_HSequenceOfTransient) 

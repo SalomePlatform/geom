@@ -36,11 +36,6 @@ module GEOM
   interface GEOM_Superv : Engines::EngineComponent,SALOMEDS::Driver
   {
     //-----------------------------------------------------------//
-    // Set current study ID                                      //
-    //-----------------------------------------------------------//
-    void SetStudyID (in long theStudyID) ;
-
-    //-----------------------------------------------------------//
     // Create ListOfGO and add items to it                       //
     //-----------------------------------------------------------//
     GEOM_List CreateListOfGO();

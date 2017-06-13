@@ -61,9 +61,9 @@ namespace
   {
   public:
 
-    DimensionsProperty( SalomeApp_Study* theStudy, const std::string& theEntry ) :
-      myStudy( theStudy ), myEntry( theEntry ) {
-      myAttr.LoadFromAttribute( theStudy, theEntry );
+    DimensionsProperty( const std::string& theEntry ) :
+      myEntry( theEntry ) {
+      myAttr.LoadFromAttribute( theEntry );
     }
     virtual int GetNumber() Standard_OVERRIDE {
       return myAttr.GetNumber();
@@ -78,13 +78,12 @@ namespace
       myAttr.SetVisible( theIndex, theIsVisible );
     }
     virtual void Save() Standard_OVERRIDE {
-      myAttr.SaveToAttribute( myStudy, myEntry );
+      myAttr.SaveToAttribute( myEntry );
     }
     GEOMGUI_DimensionProperty& Attr() { return myAttr; }
 
   private:
     GEOMGUI_DimensionProperty myAttr;
-    SalomeApp_Study* myStudy;
     std::string myEntry;
   };
 
@@ -93,10 +92,9 @@ namespace
   {
   public:
 
-    AnnotationsProperty( SalomeApp_Study* theStudy, const std::string& theEntry ) {
+    AnnotationsProperty( const std::string& theEntry ) {
       myEntry = theEntry.c_str();
-      myStudy = theStudy;
-      _PTR(SObject) aSObj = theStudy->studyDS()->FindObjectID( theEntry );
+      _PTR(SObject) aSObj = SalomeApp_Application::getStudy()->FindObjectID( theEntry );
       if ( aSObj ) {
         myAttr = GEOMGUI_AnnotationAttrs::FindAttributes( aSObj );
       }
@@ -132,7 +130,7 @@ namespace
 protected:
     GEOMGUI_AnnotationMgr* annotationMgr() const
     {
-      CAM_Application* anApp = dynamic_cast<CAM_Application*>(myStudy->application());
+      CAM_Application* anApp = dynamic_cast<CAM_Application*>(SUIT_Session::session()->activeApplication());
       GeometryGUI* aModule = dynamic_cast<GeometryGUI*>(anApp->activeModule());
       if (!aModule) {
         return NULL;
@@ -143,7 +141,6 @@ protected:
 private:
     QString myEntry;
     Handle(GEOMGUI_AnnotationAttrs) myAttr;
-    SalomeApp_Study* myStudy;
   };
 }
 
@@ -156,10 +153,9 @@ private:
 // purpose  :
 //=================================================================================
 GEOMGUI_TextTreeWdg::GEOMGUI_TextTreeWdg( SalomeApp_Application* app )
-  : myDisplayer(NULL)
 {
   myStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-  myDisplayer = GEOM_Displayer( myStudy );
+  myDisplayer = GEOM_Displayer();
 
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   myVisibleIcon = QIcon( resMgr->loadPixmap( "SUIT", tr( "ICON_DATAOBJ_VISIBLE" ) ) );
@@ -407,8 +403,8 @@ QSharedPointer<GEOMGUI_TextTreeWdg::VisualProperty>
 {
   switch ( theBranchType )
   {
-    case DimensionShape  : return QSharedPointer<VisualProperty>( new DimensionsProperty( theStudy, theEntry ) );
-    case AnnotationShape : return QSharedPointer<VisualProperty>( new AnnotationsProperty( theStudy, theEntry ) );
+    case DimensionShape  : return QSharedPointer<VisualProperty>( new DimensionsProperty( theEntry ) );
+    case AnnotationShape : return QSharedPointer<VisualProperty>( new AnnotationsProperty( theEntry ) );
     default: break;
   }
   return QSharedPointer<VisualProperty>();
@@ -448,7 +444,8 @@ void GEOMGUI_TextTreeWdg::onItemClicked( QTreeWidgetItem* theItem, int theColumn
 
   QSharedPointer<VisualProperty> aProp = getVisualProperty( aBranchType, myStudy, anEntry );
 
-  CAM_Application* anApp = dynamic_cast<CAM_Application*>(myStudy->application());
+  SalomeApp_Application* anApp =
+    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   GeometryGUI* aModule = dynamic_cast<GeometryGUI*>(anApp->activeModule());
   if ( aProp->GetIsVisible( aDimIndex ) ) {
     aModule->GetAnnotationMgr()->Erase(anEntry.c_str(), aDimIndex);

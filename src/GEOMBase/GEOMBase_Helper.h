@@ -124,7 +124,6 @@ protected:
   bool hasCommand      () const;
 
   void updateObjBrowser() const;
-  int  getStudyId      () const;
   SalomeApp_Study* getStudy  () const;
   bool checkViewWindow ();
 
@@ -166,7 +165,7 @@ protected:
   // It should perform the required operation and put all new or modified objects into
   // <objects> argument.Should return <false> if some error occurs during its execution.
 
-  virtual void restoreSubShapes( SALOMEDS::Study_ptr theStudy, SALOMEDS::SObject_ptr theSObject );
+  virtual void restoreSubShapes( SALOMEDS::SObject_ptr theSObject );
   // This method is called by addInStudy().
 
   virtual GEOM::GEOM_Object_ptr getFather( GEOM::GEOM_Object_ptr theObj );

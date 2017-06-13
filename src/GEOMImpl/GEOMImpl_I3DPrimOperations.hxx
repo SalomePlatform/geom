@@ -36,7 +36,7 @@ class GEOMImpl_IPipe;
 
 class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
  public:
-  Standard_EXPORT GEOMImpl_I3DPrimOperations(GEOM_Engine* theEngine, int theDocID);
+  Standard_EXPORT GEOMImpl_I3DPrimOperations(GEOM_Engine* theEngine);
   Standard_EXPORT ~GEOMImpl_I3DPrimOperations();
 
   Standard_EXPORT Handle(GEOM_Object) MakeBoxDXDYDZ (double theDX, double theDY, double theDZ);

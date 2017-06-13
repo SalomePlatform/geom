@@ -46,12 +46,11 @@ STEPPlugin_IECallBack::~STEPPlugin_IECallBack()
  */
 //=============================================================================
 bool
-STEPPlugin_IECallBack::Export( int                            theDocId,
-			       const Handle(GEOM_Object)      theOriginal,
-			       const TCollection_AsciiString& theFileName,
-			       const TCollection_AsciiString& theFormatName )
+STEPPlugin_IECallBack::Export( const Handle(GEOM_Object)      theOriginal,
+                               const TCollection_AsciiString& theFileName,
+                               const TCollection_AsciiString& theFormatName )
 {
-  STEPPlugin_IOperations* aPluginOperations = STEPPlugin_OperationsCreator::get( GetEngine(), theDocId );
+  STEPPlugin_IOperations* aPluginOperations = STEPPlugin_OperationsCreator::get( GetEngine() );
   const STEPPlugin_IOperations::LengthUnit aUnit = STEPPlugin_IOperations::LengthUnit_Meter;
 
   aPluginOperations->ExportSTEP( theOriginal, theFileName, aUnit );
@@ -64,11 +63,10 @@ STEPPlugin_IECallBack::Export( int                            theDocId,
  */
 //=============================================================================
 Handle(TColStd_HSequenceOfTransient)
-STEPPlugin_IECallBack::Import( int                            theDocId,
-			       const TCollection_AsciiString& theFormatName,
-			       const TCollection_AsciiString& theFileName )
+STEPPlugin_IECallBack::Import( const TCollection_AsciiString& theFormatName,
+                               const TCollection_AsciiString& theFileName )
 {
-  STEPPlugin_IOperations* aPluginOperations = STEPPlugin_OperationsCreator::get( GetEngine(), theDocId );
+  STEPPlugin_IOperations* aPluginOperations = STEPPlugin_OperationsCreator::get( GetEngine() );
   bool anIsIgnoreUnits = ( theFormatName == "STEP_SCALE" ) ? true : false;
   return aPluginOperations->ImportSTEP( theFileName, anIsIgnoreUnits, false );
 }
@@ -79,11 +77,10 @@ STEPPlugin_IECallBack::Import( int                            theDocId,
  */
 //=============================================================================
 TCollection_AsciiString
-STEPPlugin_IECallBack::ReadValue( int                            theDocId,
-				  const TCollection_AsciiString& theFileName,
-				  const TCollection_AsciiString& theFormatName,
-				  const TCollection_AsciiString& theParameterName )
+STEPPlugin_IECallBack::ReadValue( const TCollection_AsciiString& theFileName,
+                                  const TCollection_AsciiString& theFormatName,
+                                  const TCollection_AsciiString& theParameterName )
 {
-  STEPPlugin_IOperations* aPluginOperations = STEPPlugin_OperationsCreator::get( GetEngine(), theDocId );
+  STEPPlugin_IOperations* aPluginOperations = STEPPlugin_OperationsCreator::get( GetEngine() );
   return aPluginOperations->ReadValue( theFileName, theParameterName );
 }

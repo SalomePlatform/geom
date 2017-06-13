@@ -462,7 +462,7 @@ void EntityGUI_SketcherDlg::Init()
 
   myHelpFileName = "create_sketcher_page.html";
   
-  GEOM::GEOM_IBasicOperations_var aBasicOp = getGeomEngine()->GetIBasicOperations( getStudyId() );
+  GEOM::GEOM_IBasicOperations_var aBasicOp = getGeomEngine()->GetIBasicOperations();
   myGlobalCS = aBasicOp->MakeMarker( 0,0,0,
                                      1,0,0,
                                      0,1,0 ); 
@@ -2270,7 +2270,7 @@ QString EntityGUI_SketcherDlg::GetNewCommand( QString& theParameters )
 //=================================================================================
 GEOM::GEOM_IOperations_ptr EntityGUI_SketcherDlg::createOperation()
 {
-  return getGeomEngine()->GetICurvesOperations( getStudyId() );
+  return getGeomEngine()->GetICurvesOperations();
 }
 
 //=================================================================================
@@ -2794,7 +2794,7 @@ gp_Ax3 EntityGUI_SketcherDlg::WPlaneToLCS( GEOM::GEOM_Object_var geomObj )
   if (aShape.ShapeType() == TopAbs_FACE) 
   {
     GEOM::GEOM_IMeasureOperations_ptr aMeasureOp =
-    myGeometryGUI->GetGeomGen()->GetIMeasureOperations( getStudyId() );
+    myGeometryGUI->GetGeomGen()->GetIMeasureOperations();
     double Ox, Oy, Oz, Zx, Zy, Zz, Xx, Xy, Xz;
     aMeasureOp->GetPosition( geomObj, Ox, Oy, Oz, Zx, Zy, Zz, Xx, Xy, Xz);
     if ( aMeasureOp->IsDone() )

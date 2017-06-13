@@ -90,16 +90,6 @@ char* GEOM_IOperations_i::GetErrorCode()
 
 //=============================================================================
 /*!
- *  GetStudyID
- */
-//=============================================================================
-CORBA::Long GEOM_IOperations_i::GetStudyID()
-{
-  return _impl->GetDocID();
-}
-
-//=============================================================================
-/*!
  *  StartOperation
  */
 //=============================================================================
@@ -141,7 +131,7 @@ GEOM_IOperations_i::GetBaseObject(HANDLE_NAMESPACE(GEOM_BaseObject) theObject)
   if (theObject.IsNull()) return GO._retn();
   TCollection_AsciiString anEntry;
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-  GO = _engine->GetObject(theObject->GetDocID(), (char*) anEntry.ToCString());
+  GO = _engine->GetObject((char*) anEntry.ToCString());
   return GO._retn();
 }
 
@@ -156,7 +146,7 @@ GEOM_IOperations_i::GetBaseObjectImpl(GEOM::GEOM_BaseObject_ptr theObject)
   HANDLE_NAMESPACE(GEOM_BaseObject) anImpl;
   if (!CORBA::is_nil(theObject)) {
     CORBA::String_var anEntry = theObject->GetEntry();
-    anImpl = GetImpl()->GetEngine()->GetObject( theObject->GetStudyID(), anEntry );
+    anImpl = GetImpl()->GetEngine()->GetObject( anEntry );
   }
   return anImpl;
 }

@@ -37,7 +37,7 @@ from salome.geom.geomBuilder import info, PackData, ReadTexture, EnumToLong
 try:
     # get GEOM engine and initialize GEOM with current study
     engineGeom = lcc.FindOrLoadComponent( "FactoryServer", "GEOM" )
-    geom = geomBuilder.New(salome.myStudy, engineGeom)
+    geom = geomBuilder.New(engineGeom)
 
     # export the methods of geomBuilder
     for k in dir( geom ):
@@ -65,13 +65,13 @@ replace
 -------
 
 import geompy
-geompy.init_geom(theStudy)
+geompy.init_geom()
 
 with
 ----
 
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 See also GEOM User's Guide for more details
 

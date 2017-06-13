@@ -48,7 +48,7 @@ Example::
 
     # Put it in the study
     from salome.geom import geomBuilder
-    geompy = geomBuilder.New(salome.myStudy)
+    geompy = geomBuilder.New()
     geompy.addToStudy( wire, 'mysketch' )
 
 Additionnal examples can be found as unit tests in the source code.
@@ -62,7 +62,7 @@ try:
         salome.salome_init()
         import GEOM
         from salome.geom import geomBuilder
-        geompy = geomBuilder.New(salome.myStudy)
+        geompy = geomBuilder.New()
         pass
     pass
 except:

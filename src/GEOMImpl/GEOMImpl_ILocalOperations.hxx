@@ -33,7 +33,7 @@
 
 class GEOMImpl_ILocalOperations : public GEOM_IOperations {
  public:
-  Standard_EXPORT GEOMImpl_ILocalOperations(GEOM_Engine* theEngine, int theDocID);
+  Standard_EXPORT GEOMImpl_ILocalOperations(GEOM_Engine* theEngine);
   Standard_EXPORT ~GEOMImpl_ILocalOperations();
 
   Standard_EXPORT Handle(GEOM_Object) MakeFilletAll   (Handle(GEOM_Object) theShape, double theR);

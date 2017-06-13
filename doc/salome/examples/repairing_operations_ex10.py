@@ -4,7 +4,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 # Variant 1: using DivideEdge()
 
@@ -40,4 +40,4 @@ edge = geompy.GetEdgeNearPoint( box, p1, theName="edge to split")
 div  = geompy.DivideEdgeByPoint( box, edge, [p1, p2], theName="box (edge divided)")
 
 
-salome.sg.updateObjBrowser(True) 
+salome.sg.updateObjBrowser() 

@@ -34,7 +34,7 @@ class GEOM_Object;
 
 class GEOMImpl_IFieldOperations : public GEOM_IOperations {
  public:
-  Standard_EXPORT GEOMImpl_IFieldOperations(GEOM_Engine* theEngine, int theDocID);
+  Standard_EXPORT GEOMImpl_IFieldOperations(GEOM_Engine* theEngine);
   Standard_EXPORT ~GEOMImpl_IFieldOperations();
 
   Standard_EXPORT Handle(GEOM_Field)

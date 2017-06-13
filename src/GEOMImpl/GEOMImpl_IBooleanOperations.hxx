@@ -33,7 +33,7 @@ class GEOM_Object;
 
 class GEOMImpl_IBooleanOperations : public GEOM_IOperations {
  public:
-  Standard_EXPORT GEOMImpl_IBooleanOperations(GEOM_Engine* theEngine, int theDocID);
+  Standard_EXPORT GEOMImpl_IBooleanOperations(GEOM_Engine* theEngine);
   Standard_EXPORT ~GEOMImpl_IBooleanOperations();
 
   Standard_EXPORT Handle(GEOM_Object) MakeBoolean

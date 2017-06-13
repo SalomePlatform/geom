@@ -193,13 +193,7 @@
             <service-version>@SALOMEGEOM_VERSION@</service-version>
             <service-comment>unknown</service-comment>
             <service-by-default>0</service-by-default>
-            <inParameter-list>
-              <inParameter>
-                <inParameter-name>theStudyID</inParameter-name>
-                <inParameter-type>long</inParameter-type>
-                <inParameter-comment>unknown</inParameter-comment>
-              </inParameter>
-            </inParameter-list>
+            <inParameter-list></inParameter-list>
             <outParameter-list></outParameter-list>
             <DataStream-list></DataStream-list>
           </component-service>
@@ -209,13 +203,7 @@
             <service-version>@SALOMEGEOM_VERSION@</service-version>
             <service-comment>unknown</service-comment>
             <service-by-default>0</service-by-default>
-            <inParameter-list>
-              <inParameter>
-                <inParameter-name>theStudyID</inParameter-name>
-                <inParameter-type>long</inParameter-type>
-                <inParameter-comment>unknown</inParameter-comment>
-              </inParameter>
-            </inParameter-list>
+            <inParameter-list></inParameter-list>
             <outParameter-list></outParameter-list>
             <DataStream-list></DataStream-list>
           </component-service>
@@ -226,11 +214,6 @@
             <service-comment>unknown</service-comment>
             <service-by-default>0</service-by-default>
             <inParameter-list>
-              <inParameter>
-                <inParameter-name>theStudy</inParameter-name>
-                <inParameter-type>Study</inParameter-type>
-                <inParameter-comment>unknown</inParameter-comment>
-              </inParameter>
               <inParameter>
                 <inParameter-name>theObject</inParameter-name>
                 <inParameter-type>GEOM/GEOM_BaseObject</inParameter-type>
@@ -263,11 +246,6 @@
             <service-comment>unknown</service-comment>
             <service-by-default>0</service-by-default>
             <inParameter-list>
-              <inParameter>
-                <inParameter-name>theStudy</inParameter-name>
-                <inParameter-type>Study</inParameter-type>
-                <inParameter-comment>unknown</inParameter-comment>
-              </inParameter>
               <inParameter>
                 <inParameter-name>theObject</inParameter-name>
                 <inParameter-type>GEOM/GEOM_Object</inParameter-type>
@@ -311,11 +289,6 @@
             <service-by-default>0</service-by-default>
             <inParameter-list>
               <inParameter>
-                <inParameter-name>theStudy</inParameter-name>
-                <inParameter-type>Study</inParameter-type>
-                <inParameter-comment>unknown</inParameter-comment>
-              </inParameter>
-              <inParameter>
                 <inParameter-name>theObject</inParameter-name>
                 <inParameter-type>GEOM/GEOM_Object</inParameter-type>
                 <inParameter-comment>unknown</inParameter-comment>
@@ -358,11 +331,6 @@
             <service-by-default>0</service-by-default>
             <inParameter-list>
               <inParameter>
-                <inParameter-name>theStudy</inParameter-name>
-                <inParameter-type>Study</inParameter-type>
-                <inParameter-comment>unknown</inParameter-comment>
-              </inParameter>
-              <inParameter>
                 <inParameter-name>theSObject</inParameter-name>
                 <inParameter-type>SObject</inParameter-type>
                 <inParameter-comment>unknown</inParameter-comment>
@@ -403,13 +371,7 @@
             <service-version>@SALOMEGEOM_VERSION@</service-version>
             <service-comment>unknown</service-comment>
             <service-by-default>0</service-by-default>
-            <inParameter-list>
-              <inParameter>
-                <inParameter-name>theStudyID</inParameter-name>
-                <inParameter-type>long</inParameter-type>
-                <inParameter-comment>unknown</inParameter-comment>
-              </inParameter>
-            </inParameter-list>
+            <inParameter-list></inParameter-list>
             <outParameter-list>
               <outParameter>
                 <outParameter-name>return</outParameter-name>
@@ -425,13 +387,7 @@
             <service-version>@SALOMEGEOM_VERSION@</service-version>
             <service-comment>unknown</service-comment>
             <service-by-default>0</service-by-default>
-            <inParameter-list>
-              <inParameter>
-                <inParameter-name>theStudyID</inParameter-name>
-                <inParameter-type>long</inParameter-type>
-                <inParameter-comment>unknown</inParameter-comment>
-              </inParameter>
-            </inParameter-list>
+            <inParameter-list></inParameter-list>
             <outParameter-list>
               <outParameter>
                 <outParameter-name>return</outParameter-name>
@@ -447,13 +403,7 @@
             <service-version>@SALOMEGEOM_VERSION@</service-version>
             <service-comment>unknown</service-comment>
             <service-by-default>0</service-by-default>
-            <inParameter-list>
-              <inParameter>
-                <inParameter-name>theStudyID</inParameter-name>
-                <inParameter-type>long</inParameter-type>
-                <inParameter-comment>unknown</inParameter-comment>
-              </inParameter>
-            </inParameter-list>
+            <inParameter-list></inParameter-list>
             <outParameter-list>
               <outParameter>
                 <outParameter-name>return</outParameter-name>
@@ -469,13 +419,7 @@
             <service-version>@SALOMEGEOM_VERSION@</service-version>
             <service-comment>unknown</service-comment>
             <service-by-default>0</service-by-default>
-            <inParameter-list>
-              <inParameter>
-                <inParameter-name>theStudyID</inParameter-name>
-                <inParameter-type>long</inParameter-type>
-                <inParameter-comment>unknown</inParameter-comment>
-              </inParameter>
-            </inParameter-list>
+            <inParameter-list></inParameter-list>
             <outParameter-list>
               <outParameter>
                 <outParameter-name>return</outParameter-name>
@@ -491,13 +435,7 @@
             <service-version>@SALOMEGEOM_VERSION@</service-version>
             <service-comment>unknown</service-comment>
             <service-by-default>0</service-by-default>
-            <inParameter-list>
-              <inParameter>
-                <inParameter-name>theStudyID</inParameter-name>
-                <inParameter-type>long</inParameter-type>
-                <inParameter-comment>unknown</inParameter-comment>
-              </inParameter>
-            </inParameter-list>
+            <inParameter-list></inParameter-list>
             <outParameter-list>
               <outParameter>
                 <outParameter-name>return</outParameter-name>
@@ -513,13 +451,7 @@
             <service-version>@SALOMEGEOM_VERSION@</service-version>
             <service-comment>unknown</service-comment>
             <service-by-default>0</service-by-default>
-            <inParameter-list>
-              <inParameter>
-                <inParameter-name>theStudyID</inParameter-name>
-                <inParameter-type>long</inParameter-type>
-                <inParameter-comment>unknown</inParameter-comment>
-              </inParameter>
-            </inParameter-list>
+            <inParameter-list></inParameter-list>
             <outParameter-list>
               <outParameter>
                 <outParameter-name>return</outParameter-name>
@@ -535,13 +467,7 @@
             <service-version>@SALOMEGEOM_VERSION@</service-version>
             <service-comment>unknown</service-comment>
             <service-by-default>0</service-by-default>
-            <inParameter-list>
-              <inParameter>
-                <inParameter-name>theStudyID</inParameter-name>
-                <inParameter-type>long</inParameter-type>
-                <inParameter-comment>unknown</inParameter-comment>
-              </inParameter>
-            </inParameter-list>
+            <inParameter-list></inParameter-list>
             <outParameter-list>
               <outParameter>
                 <outParameter-name>return</outParameter-name>
@@ -557,13 +483,7 @@
             <service-version>@SALOMEGEOM_VERSION@</service-version>
             <service-comment>unknown</service-comment>
             <service-by-default>0</service-by-default>
-            <inParameter-list>
-              <inParameter>
-                <inParameter-name>theStudyID</inParameter-name>
-                <inParameter-type>long</inParameter-type>
-                <inParameter-comment>unknown</inParameter-comment>
-              </inParameter>
-            </inParameter-list>
+            <inParameter-list></inParameter-list>
             <outParameter-list>
               <outParameter>
                 <outParameter-name>return</outParameter-name>
@@ -579,13 +499,7 @@
             <service-version>@SALOMEGEOM_VERSION@</service-version>
             <service-comment>unknown</service-comment>
             <service-by-default>0</service-by-default>
-            <inParameter-list>
-              <inParameter>
-                <inParameter-name>theStudyID</inParameter-name>
-                <inParameter-type>long</inParameter-type>
-                <inParameter-comment>unknown</inParameter-comment>
-              </inParameter>
-            </inParameter-list>
+            <inParameter-list></inParameter-list>
             <outParameter-list>
               <outParameter>
                 <outParameter-name>return</outParameter-name>
@@ -601,13 +515,7 @@
             <service-version>@SALOMEGEOM_VERSION@</service-version>
             <service-comment>unknown</service-comment>
             <service-by-default>0</service-by-default>
-            <inParameter-list>
-              <inParameter>
-                <inParameter-name>theStudyID</inParameter-name>
-                <inParameter-type>long</inParameter-type>
-                <inParameter-comment>unknown</inParameter-comment>
-              </inParameter>
-            </inParameter-list>
+            <inParameter-list></inParameter-list>
             <outParameter-list>
               <outParameter>
                 <outParameter-name>return</outParameter-name>
@@ -623,13 +531,7 @@
             <service-version>@SALOMEGEOM_VERSION@</service-version>
             <service-comment>unknown</service-comment>
             <service-by-default>0</service-by-default>
-            <inParameter-list>
-              <inParameter>
-                <inParameter-name>theStudyID</inParameter-name>
-                <inParameter-type>long</inParameter-type>
-                <inParameter-comment>unknown</inParameter-comment>
-              </inParameter>
-            </inParameter-list>
+            <inParameter-list></inParameter-list>
             <outParameter-list>
               <outParameter>
                 <outParameter-name>return</outParameter-name>
@@ -645,13 +547,7 @@
             <service-version>@SALOMEGEOM_VERSION@</service-version>
             <service-comment>unknown</service-comment>
             <service-by-default>0</service-by-default>
-            <inParameter-list>
-              <inParameter>
-                <inParameter-name>theStudyID</inParameter-name>
-                <inParameter-type>long</inParameter-type>
-                <inParameter-comment>unknown</inParameter-comment>
-              </inParameter>
-            </inParameter-list>
+            <inParameter-list></inParameter-list>
             <outParameter-list>
               <outParameter>
                 <outParameter-name>return</outParameter-name>
@@ -667,13 +563,7 @@
             <service-version>@SALOMEGEOM_VERSION@</service-version>
             <service-comment>unknown</service-comment>
             <service-by-default>0</service-by-default>
-            <inParameter-list>
-              <inParameter>
-                <inParameter-name>theStudyID</inParameter-name>
-                <inParameter-type>long</inParameter-type>
-                <inParameter-comment>unknown</inParameter-comment>
-              </inParameter>
-            </inParameter-list>
+            <inParameter-list></inParameter-list>
             <outParameter-list>
               <outParameter>
                 <outParameter-name>return</outParameter-name>
@@ -690,11 +580,6 @@
             <service-comment>unknown</service-comment>
             <service-by-default>0</service-by-default>
             <inParameter-list>
-              <inParameter>
-                <inParameter-name>theStudyID</inParameter-name>
-                <inParameter-type>long</inParameter-type>
-                <inParameter-comment>unknown</inParameter-comment>
-              </inParameter>
               <inParameter>
                 <inParameter-name>theLibName</inParameter-name>
                 <inParameter-type>string</inParameter-type>
@@ -733,11 +618,6 @@
             <service-comment>unknown</service-comment>
             <service-by-default>0</service-by-default>
             <inParameter-list>
-              <inParameter>
-                <inParameter-name>theStudyID</inParameter-name>
-                <inParameter-type>long</inParameter-type>
-                <inParameter-comment>unknown</inParameter-comment>
-              </inParameter>
               <inParameter>
                 <inParameter-name>theEntry</inParameter-name>
                 <inParameter-type>string</inParameter-type>
@@ -830,13 +710,7 @@
             <service-version>@SALOMEGEOM_VERSION@</service-version>
             <service-comment>unknown</service-comment>
             <service-by-default>0</service-by-default>
-            <inParameter-list>
-              <inParameter>
-                <inParameter-name>theStudyEntry</inParameter-name>
-                <inParameter-type>string</inParameter-type>
-                <inParameter-comment>unknown</inParameter-comment>
-              </inParameter>
-            </inParameter-list>
+            <inParameter-list></inParameter-list>
             <outParameter-list>
               <outParameter>
                 <outParameter-name>return</outParameter-name>
@@ -869,11 +743,6 @@
             <service-comment>unknown</service-comment>
             <service-by-default>0</service-by-default>
             <inParameter-list>
-              <inParameter>
-                <inParameter-name>theStudy</inParameter-name>
-                <inParameter-type>Study</inParameter-type>
-                <inParameter-comment>unknown</inParameter-comment>
-              </inParameter>
               <inParameter>
                 <inParameter-name>theObject</inParameter-name>
                 <inParameter-type>CORBA/Object</inParameter-type>
@@ -1008,22 +877,6 @@
         <component-interface-comment>unknown</component-interface-comment>
 	<!-- interface services list -->
         <component-service-list>
-          <component-service>
-            <service-name>SetStudyID</service-name>
-            <service-author>SALOME team</service-author>
-            <service-version>@SALOMEGEOM_VERSION@</service-version>
-            <service-comment>unknown</service-comment>
-            <service-by-default>0</service-by-default>
-            <inParameter-list>
-              <inParameter>
-                <inParameter-name>theStudyID</inParameter-name>
-                <inParameter-type>long</inParameter-type>
-                <inParameter-comment>unknown</inParameter-comment>
-              </inParameter>
-            </inParameter-list>
-            <outParameter-list></outParameter-list>
-            <DataStream-list></DataStream-list>
-          </component-service>
           <component-service>
             <service-name>CreateListOfGO</service-name>
             <service-author>SALOME team</service-author>

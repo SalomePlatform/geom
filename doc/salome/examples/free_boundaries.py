@@ -3,7 +3,7 @@
 import salome
 salome.salome_init()
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 # create a shape
 box1 = geompy.MakeBox(0,   0,   0, 100, 100, 100)

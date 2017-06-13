@@ -358,7 +358,7 @@ void TransformationGUI_ExtensionDlg::ValueChangedInSpinBox(double newValue)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr TransformationGUI_ExtensionDlg::createOperation()
 {
-  return getGeomEngine()->GetIShapesOperations(getStudyId());
+  return getGeomEngine()->GetIShapesOperations();
 }
 
 //=================================================================================

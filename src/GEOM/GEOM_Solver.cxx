@@ -34,7 +34,7 @@
  *  Update
  */
 //=============================================================================
-bool GEOM_Solver::Update(int theDocID, TDF_LabelSequence& theSeq)
+bool GEOM_Solver::Update(TDF_LabelSequence& theSeq)
 {
   return false;
 } 

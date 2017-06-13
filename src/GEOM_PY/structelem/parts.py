@@ -119,7 +119,6 @@ class SubShapeID:
 
 ## This class is the base class for all structural element parts. It should
 #  not be instantiated directly (consider it as an "abstract" class).
-#  \param studyId (integer) the ID of the study in which the part is created.
 #  \param groupName (string) the name of the underlying geometrical primitive 
 #  in the study.
 #  \param groupGeomObj (GEOM object) the underlying geometrical primitive.
@@ -131,9 +130,6 @@ class StructuralElementPart:
     """
     This class is the base class for all structural element parts. It should
     not be instantiated directly (consider it as an "abstract" class).
-
-    :type  studyId: integer
-    :param studyId: the ID of the study in which the part is created.
 
     :type  groupName: string
     :param groupName: the name of the underlying geometrical primitive in the
@@ -153,7 +149,7 @@ class StructuralElementPart:
     
     DEFAULT_NAME = "StructElemPart"
 
-    def __init__(self, studyId, groupName, groupGeomObj, parameters,
+    def __init__(self, groupName, groupGeomObj, parameters,
                  name = DEFAULT_NAME, color = None):
         self._parameters = parameters
         self.groupName = groupName
@@ -161,7 +157,7 @@ class StructuralElementPart:
         self._orientation = None
         self._paramUserName = {}
         self.name = name
-        self.geom = getGeompy(studyId)
+        self.geom = getGeompy()
         self.baseShapesSet = set()
         self.isMainShape = (groupGeomObj.GetType() != 37) # See geompyDC.ShapeIdToType for type codes
         if not self.isMainShape:
@@ -236,11 +232,11 @@ class StructuralElementPart:
                                         mindim, value)
 
     ## Build the geometric shapes and the markers corresponding to the
-    #  structural element part in the study \em studyId.
+    #  structural element part in the study.
     def build(self):
         """
         Build the geometric shapes and the markers corresponding to the
-        structural element part in the study `studyId`.
+        structural element part in the study.
         """
         shape = self._buildPart()
         markers = self._buildMarkers()
@@ -308,9 +304,9 @@ class Beam(StructuralElementPart):
 
     DEFAULT_NAME = "Beam"
 
-    def __init__(self, studyId, groupName, groupGeomObj, parameters,
+    def __init__(self, groupName, groupGeomObj, parameters,
                  name = DEFAULT_NAME, color = None):
-        StructuralElementPart.__init__(self, studyId, groupName, groupGeomObj,
+        StructuralElementPart.__init__(self, groupName, groupGeomObj,
                                        parameters, name, color)
         self._orientation = orientation.Orientation1D()
 
@@ -454,7 +450,7 @@ class CircularBeam(Beam):
 
     """
 
-    def __init__(self, studyId, groupName, groupGeomObj, parameters,
+    def __init__(self, groupName, groupGeomObj, parameters,
                  name = Beam.DEFAULT_NAME, color = None):
         if color is None:
             if parameters.has_key("R1"): # variable section
@@ -462,7 +458,7 @@ class CircularBeam(Beam):
             else:                       # constant section
                 color = RED
 
-        Beam.__init__(self, studyId, groupName, groupGeomObj, parameters,
+        Beam.__init__(self, groupName, groupGeomObj, parameters,
                       name, color)
 
         self.R1 = self._getParameter(["R1", "R"])
@@ -566,7 +562,7 @@ class RectangularBeam(Beam):
 
     """
 
-    def __init__(self, studyId, groupName, groupGeomObj, parameters,
+    def __init__(self, groupName, groupGeomObj, parameters,
                  name = Beam.DEFAULT_NAME, color = None):
         if color is None:
             if parameters.has_key("HY1") or parameters.has_key("H1"):
@@ -574,7 +570,7 @@ class RectangularBeam(Beam):
             else:                  # constant section
                 color = BLUE
 
-        Beam.__init__(self, studyId, groupName, groupGeomObj, parameters,
+        Beam.__init__(self, groupName, groupGeomObj, parameters,
                       name, color)
 
         self.HY1 = self._getParameter(["HY1", "HY", "H1", "H"])
@@ -714,7 +710,7 @@ class GeneralBeam(RectangularBeam):
     parameters.
     """
 
-    def __init__(self, studyId, groupName, groupGeomObj, parameters,
+    def __init__(self, groupName, groupGeomObj, parameters,
                  name = Beam.DEFAULT_NAME, color = None):
         self.IY1 = getParameterInDict(["IY1", "IY"], parameters)
         self.IZ1 = getParameterInDict(["IZ1", "IZ"], parameters)
@@ -733,7 +729,7 @@ class GeneralBeam(RectangularBeam):
             else:                         # constant section
                 color = GREEN
 
-        RectangularBeam.__init__(self, studyId, groupName, groupGeomObj, parameters,
+        RectangularBeam.__init__(self, groupName, groupGeomObj, parameters,
                                  name, color)
 
 ## This class is an "abstract" class for all 2D structural element parts. It
@@ -749,9 +745,9 @@ class StructuralElementPart2D(StructuralElementPart):
 
     DEFAULT_NAME = "StructuralElementPart2D"
 
-    def __init__(self, studyId, groupName, groupGeomObj, parameters,
+    def __init__(self, groupName, groupGeomObj, parameters,
                  name = DEFAULT_NAME):
-        StructuralElementPart.__init__(self, studyId, groupName, groupGeomObj,
+        StructuralElementPart.__init__(self, groupName, groupGeomObj,
                                        parameters, name)
         self._orientation = orientation.Orientation2D(
                                         self._getParameter(["angleAlpha"]),
@@ -834,9 +830,9 @@ class ThickShell(StructuralElementPart2D):
 
     DEFAULT_NAME = "ThickShell"
 
-    def __init__(self, studyId, groupName, groupGeomObj, parameters,
+    def __init__(self, groupName, groupGeomObj, parameters,
                  name = DEFAULT_NAME):
-        StructuralElementPart2D.__init__(self, studyId, groupName,
+        StructuralElementPart2D.__init__(self, groupName,
                                          groupGeomObj, parameters, name)
         self.thickness = self._getParameter(["Epais"])
         logger.debug(repr(self))
@@ -978,9 +974,9 @@ class Grid(StructuralElementPart2D):
 
     DEFAULT_NAME = "Grid"
 
-    def __init__(self, studyId, groupName, groupGeomObj, parameters,
+    def __init__(self, groupName, groupGeomObj, parameters,
                  name = DEFAULT_NAME):
-        StructuralElementPart2D.__init__(self, studyId, groupName,
+        StructuralElementPart2D.__init__(self, groupName,
                                          groupGeomObj, parameters, name)
         self.xr = self._getParameter(["origAxeX"])
         self.yr = self._getParameter(["origAxeY"])
@@ -1106,82 +1102,82 @@ class Grid(StructuralElementPart2D):
 
 ## Alias for class GeneralBeam.
 #  \ingroup parts
-def VisuPoutreGenerale(studyId, groupName, groupGeomObj, parameters,
+def VisuPoutreGenerale(groupName, groupGeomObj, parameters,
                        name = "POUTRE"):
     """
     Alias for class :class:`GeneralBeam`.
     """
-    return GeneralBeam(studyId, groupName, groupGeomObj, parameters, name)
+    return GeneralBeam(groupName, groupGeomObj, parameters, name)
 
 ## Alias for class CircularBeam.
 #  \ingroup parts
-def VisuPoutreCercle(studyId, groupName, groupGeomObj, parameters,
+def VisuPoutreCercle(groupName, groupGeomObj, parameters,
                      name = "POUTRE"):
     """
     Alias for class :class:`CircularBeam`.
     """
-    return CircularBeam(studyId, groupName, groupGeomObj, parameters, name)
+    return CircularBeam(groupName, groupGeomObj, parameters, name)
 
 ## Alias for class RectangularBeam. 
 #  \ingroup parts
-def VisuPoutreRectangle(studyId, groupName, groupGeomObj, parameters,
+def VisuPoutreRectangle(groupName, groupGeomObj, parameters,
                         name = "POUTRE"):
     """
     Alias for class :class:`RectangularBeam`.
     """
-    return RectangularBeam(studyId, groupName, groupGeomObj, parameters, name)
+    return RectangularBeam(groupName, groupGeomObj, parameters, name)
 
 ## Alias for class GeneralBeam.  
 #  \ingroup parts
-def VisuBarreGenerale(studyId, groupName, groupGeomObj, parameters,
+def VisuBarreGenerale(groupName, groupGeomObj, parameters,
                       name = "BARRE"):
     """
     Alias for class :class:`GeneralBeam`.
     """
-    return GeneralBeam(studyId, groupName, groupGeomObj, parameters, name,
+    return GeneralBeam(groupName, groupGeomObj, parameters, name,
                        color = ORANGE)
 
 ## Alias for class RectangularBeam.      
 #  \ingroup parts
-def VisuBarreRectangle(studyId, groupName, groupGeomObj, parameters,
+def VisuBarreRectangle(groupName, groupGeomObj, parameters,
                        name = "BARRE"):
     """
     Alias for class :class:`RectangularBeam`.
     """
-    return RectangularBeam(studyId, groupName, groupGeomObj, parameters, name,
+    return RectangularBeam(groupName, groupGeomObj, parameters, name,
                            color = ORANGE)
 
 ## Alias for class CircularBeam.
 #  \ingroup parts
-def VisuBarreCercle(studyId, groupName, groupGeomObj, parameters,
+def VisuBarreCercle(groupName, groupGeomObj, parameters,
                     name = "BARRE"):
     """
     Alias for class :class:`CircularBeam`.
     """
-    return CircularBeam(studyId, groupName, groupGeomObj, parameters, name,
+    return CircularBeam(groupName, groupGeomObj, parameters, name,
                         color = ORANGE)
 
 ## Alias for class CircularBeam.
 #  \ingroup parts
-def VisuCable(studyId, groupName, groupGeomObj, parameters, name = "CABLE"):
+def VisuCable(groupName, groupGeomObj, parameters, name = "CABLE"):
     """
     Alias for class :class:`CircularBeam`.
     """
-    return CircularBeam(studyId, groupName, groupGeomObj, parameters, name,
+    return CircularBeam(groupName, groupGeomObj, parameters, name,
                         color = PURPLE)
 
 ## Alias for class ThickShell.
 #  \ingroup parts
-def VisuCoque(studyId, groupName, groupGeomObj, parameters, name = "COQUE"):
+def VisuCoque(groupName, groupGeomObj, parameters, name = "COQUE"):
     """
     Alias for class :class:`ThickShell`.
     """
-    return ThickShell(studyId, groupName, groupGeomObj, parameters, name)
+    return ThickShell(groupName, groupGeomObj, parameters, name)
 
 ## Alias for class Grid.
 #  \ingroup parts
-def VisuGrille(studyId, groupName, groupGeomObj, parameters, name = "GRILLE"):
+def VisuGrille(groupName, groupGeomObj, parameters, name = "GRILLE"):
     """
     Alias for class :class:`Grid`.
     """
-    return Grid(studyId, groupName, groupGeomObj, parameters, name)
+    return Grid(groupName, groupGeomObj, parameters, name)

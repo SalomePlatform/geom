@@ -99,53 +99,48 @@ class GEOM_Engine
   Standard_EXPORT static GEOM_Engine* GetEngine();   
 
   //Returns the OCAF document by its ID, if document doesn't exists it will be created
-  Standard_EXPORT Handle(TDocStd_Document) GetDocument(int theDocID, bool force=true);
-
-  //Returns the ID of the given OCAF document
-  Standard_EXPORT int GetDocID(Handle(TDocStd_Document) theDocument);
+  Standard_EXPORT Handle(TDocStd_Document) GetDocument(bool force=true);
   
   //Returns the OCAF appliaction
   Standard_EXPORT Handle(TDocStd_Application) GetApplication() { return _OCAFApp; }
 
   //Returns a pointer to GEOM_BaseObject defined by a document and the entry
-  Standard_EXPORT Handle(GEOM_BaseObject) GetObject(int         theDocID,
-                                                    const char* theEntry,
+  Standard_EXPORT Handle(GEOM_BaseObject) GetObject(const char* theEntry,
                                                     bool        force=true);
 
   //Adds a new object of the type theType in the OCAF document
-  Standard_EXPORT Handle(GEOM_BaseObject) AddBaseObject(int theDocID, int theType);
+  Standard_EXPORT Handle(GEOM_BaseObject) AddBaseObject(int theType);
 
   //Adds a new object of the type theType in the OCAF document
-  Standard_EXPORT Handle(GEOM_Object) AddObject(int theDocID, int theType);
+  Standard_EXPORT Handle(GEOM_Object) AddObject(int theType);
 
   //Removes the object from the OCAF document
   Standard_EXPORT bool RemoveObject(Handle(GEOM_BaseObject)& theObject);  
 
-  //Saves the OCAF document with ID = theDocID with file with name theFileName
-  Standard_EXPORT bool Save(int theDocID, const char* theFileName);
+  //Saves the OCAF document with file with name theFileName
+  Standard_EXPORT bool Save(const char* theFileName);
   
-  //Loads the OCAF document into the application and assigns to it an ID = theDocID
-  Standard_EXPORT bool Load(int theDocID, const char* theFileName);
+  //Loads the OCAF document into the application
+  Standard_EXPORT bool Load(const char* theFileName);
 
-  //Closes the document with ID =  theDocID
-  Standard_EXPORT void Close(int theDocID);
+  //Closes the document
+  Standard_EXPORT void Close();
 
   //Sets the number of Undos (default value = 10)
   Standard_EXPORT void SetUndoLimit(int theLimit) { _UndoLimit = theLimit; }
 
-  //Applies an Undo to document with ID = theDocID
-  Standard_EXPORT void Undo(int theDocID);
+  //Applies an Undo to document
+  Standard_EXPORT void Undo();
 
-  //Applies an Redo to document with ID = theDocID
-  Standard_EXPORT void Redo(int theDocID);
+  //Applies an Redo to document
+  Standard_EXPORT void Redo();
 
   //Adds a new sub-shape object of the MainShape object
   Standard_EXPORT Handle(GEOM_Object) AddSubShape(Handle(GEOM_Object) theMainShape, 
                                                   Handle(TColStd_HArray1OfInteger) theIndices,
                                                   bool isStandaloneOperation = false);
 
-  Standard_EXPORT TCollection_AsciiString DumpPython(int theDocID, 
-                                                     std::vector<TObjectData>& theObjectData,
+  Standard_EXPORT TCollection_AsciiString DumpPython(std::vector<TObjectData>& theObjectData,
                                                      TVariablesList theVariables,
                                                      bool isPublished, 
                                                      bool isMultiFile, 
@@ -155,15 +150,15 @@ class GEOM_Engine
 
   Standard_EXPORT Handle(TColStd_HSequenceOfAsciiString) GetAllDumpNames() const;
 
-  Standard_EXPORT int addTexture(int theDocID, int theWidth, int theHeight,
+  Standard_EXPORT int addTexture(int theWidth, int theHeight,
                                  const Handle(TColStd_HArray1OfByte)& theTexture,
                                  const TCollection_AsciiString& theFileName = "");
 
-  Standard_EXPORT Handle(TColStd_HArray1OfByte) getTexture(int  theDocID, int theTextureID,
+  Standard_EXPORT Handle(TColStd_HArray1OfByte) getTexture(int theTextureID,
                                                            int& theWidth, int& theHeight,
                                                            TCollection_AsciiString& theFileName);
 
-  Standard_EXPORT std::list<int> getAllTextures(int theDocID);
+  Standard_EXPORT std::list<int> getAllTextures();
 
   static const Standard_GUID& GetTextureGUID();
 
@@ -171,25 +166,20 @@ class GEOM_Engine
                                    const TCollection_AsciiString&            anEntry,
                                    Resource_DataMapOfAsciiStringAsciiString& aNameToEntry);
 
-  Standard_EXPORT void DocumentModified(const int theDocId, const bool isModified);
-  
-  Standard_EXPORT bool DocumentModified(const int theDocId);
-
  protected:
   Standard_EXPORT static void SetEngine(GEOM_Engine* theEngine);       
   
  private:
 
   Handle(GEOM_Application)  _OCAFApp;
-  TColStd_DataMapOfIntegerTransient _mapIDDocument;
-  TColStd_MapOfInteger _mapModifiedDocs; // keeps the identifiers of the modified document ids
+  Handle(TDocStd_Document) _document;
 
   int _UndoLimit;
   GEOM_DataMapOfAsciiStringTransient _objects;
 
   Resource_DataMapOfAsciiStringAsciiString _studyEntry2NameMap;
 
-  TFreeLabelsList                          _freeLabels;
+  std::list<TDF_Label>  _freeLabels;
 };
 
 #endif

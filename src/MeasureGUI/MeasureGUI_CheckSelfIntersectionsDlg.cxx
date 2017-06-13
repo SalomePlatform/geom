@@ -486,7 +486,7 @@ bool MeasureGUI_CheckSelfIntersectionsDlg::extractPrefix() const
 //=================================================================================
 GEOM::GEOM_IOperations_ptr MeasureGUI_CheckSelfIntersectionsDlg::createOperation()
 {
-  return getGeomEngine()->GetIMeasureOperations( getStudyId() );
+  return getGeomEngine()->GetIMeasureOperations();
 }
 
 //=================================================================================
@@ -710,7 +710,7 @@ bool MeasureGUI_CheckSelfIntersectionsDlg::execute(ObjectList& objects)
     }
   }
 
-  GEOM::ShapesOpPtr shapesOper = getGeomEngine()->GetIShapesOperations(getStudyId());
+  GEOM::ShapesOpPtr shapesOper = getGeomEngine()->GetIShapesOperations();
   
   // Explode sub-shapes
   GEOM::ListOfLong_var anArray   = new GEOM::ListOfLong;

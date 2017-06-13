@@ -255,7 +255,7 @@ void OperationGUI_TransferDataDlg::enterEvent (QEvent*)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr OperationGUI_TransferDataDlg::createOperation()
 {
-  return getGeomEngine()->GetIInsertOperations(getStudyId());
+  return getGeomEngine()->GetIInsertOperations();
 }
 
 //=================================================================================

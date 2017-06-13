@@ -51,7 +51,7 @@ public:
 
 
 public:
-  STEPPlugin_IOperations( GEOM_Engine*, int );
+  STEPPlugin_IOperations( GEOM_Engine* );
   ~STEPPlugin_IOperations();
 
   void ExportSTEP( const Handle(GEOM_Object),

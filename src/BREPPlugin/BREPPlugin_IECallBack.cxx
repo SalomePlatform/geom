@@ -46,12 +46,11 @@ BREPPlugin_IECallBack::~BREPPlugin_IECallBack()
  */
 //=============================================================================
 bool 
-BREPPlugin_IECallBack::Export( int                            theDocId,
-			       const Handle(GEOM_Object)      theOriginal,
-			       const TCollection_AsciiString& theFileName,
-			       const TCollection_AsciiString& theFormatName )
+BREPPlugin_IECallBack::Export( const Handle(GEOM_Object)      theOriginal,
+			                   const TCollection_AsciiString& theFileName,
+			                   const TCollection_AsciiString& theFormatName )
 {
-  BREPPlugin_IOperations* aPluginOperations = BREPPlugin_OperationsCreator::get( GetEngine(), theDocId );
+  BREPPlugin_IOperations* aPluginOperations = BREPPlugin_OperationsCreator::get( GetEngine() );
   aPluginOperations->ExportBREP( theOriginal, theFileName );
   return true;
 }
@@ -62,11 +61,10 @@ BREPPlugin_IECallBack::Export( int                            theDocId,
  */
 //=============================================================================
 Handle(TColStd_HSequenceOfTransient)
-BREPPlugin_IECallBack::Import( int                            theDocId,
-			       const TCollection_AsciiString& theFormatName,
-			       const TCollection_AsciiString& theFileName )
+BREPPlugin_IECallBack::Import( const TCollection_AsciiString& theFormatName,
+			                   const TCollection_AsciiString& theFileName )
 {
-  BREPPlugin_IOperations* aPluginOperations = BREPPlugin_OperationsCreator::get( GetEngine(), theDocId );
+  BREPPlugin_IOperations* aPluginOperations = BREPPlugin_OperationsCreator::get( GetEngine() );
   return aPluginOperations->ImportBREP( theFileName );
 }
 
