@@ -135,4 +135,4 @@ SET(GOOD_TESTS
   check_self_intersections_fast.py # OCC > 6.9.0
 )
 
-SET(EXAMPLES_TESTS ${BAD_TESTS} ${GOOD_TESTS} testme)
+SET(EXAMPLES_TESTS ${BAD_TESTS} ${GOOD_TESTS} testme.py)
