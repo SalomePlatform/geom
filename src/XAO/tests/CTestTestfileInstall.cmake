@@ -1,4 +1,4 @@
-# Copyright (C) 2015-2017  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2017  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -21,11 +21,5 @@ SET(SALOME_TEST_DRIVER "$ENV{ABSOLUTE_APPLI_PATH}/bin/salome/appliskel/salome_te
 SET(COMPONENT_NAME GEOM)
 SET(TIMEOUT        300)
 
-INCLUDE(tests.set)
-
-FOREACH(tfile ${GOOD_TESTS})
-  GET_FILENAME_COMPONENT(BASE_NAME ${tfile} NAME_WE)
-  SET(TEST_NAME GEOM_${BASE_NAME})
-  ADD_TEST(${TEST_NAME} python ${SALOME_TEST_DRIVER} ${TIMEOUT} ${tfile})
-  SET_TESTS_PROPERTIES(${TEST_NAME} PROPERTIES LABELS "${COMPONENT_NAME}")
-ENDFOREACH()
+ADD_TEST(GEOM_TestXAO python ${SALOME_TEST_DRIVER} ${TIMEOUT} TestXAO)
+SET_TESTS_PROPERTIES(GEOM_GEOM_TestXAO PROPERTIES LABELS "${COMPONENT_NAME}")

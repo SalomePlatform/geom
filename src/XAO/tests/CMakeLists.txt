@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2016  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2012-2017  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -62,3 +62,12 @@ ADD_TEST(TestXAO TestXAO)
 SET_TESTS_PROPERTIES(TestXAO PROPERTIES ENVIRONMENT "GEOM_SRC_DIR=${PROJECT_SOURCE_DIR};${tests_env}")
 
 INSTALL(TARGETS TestXAO DESTINATION ${SALOME_INSTALL_BINS})
+
+# Application tests
+
+SET(TEST_INSTALL_DIRECTORY ${SALOME_INSTALL_SCRIPT_SCRIPTS}/test)
+INSTALL(FILES TestXAO DESTINATION ${TEST_INSTALL_DIRECTORY})
+
+INSTALL(FILES CTestTestfileInstall.cmake
+        DESTINATION ${TEST_INSTALL_DIRECTORY}
+        RENAME CTestTestfile.cmake)
