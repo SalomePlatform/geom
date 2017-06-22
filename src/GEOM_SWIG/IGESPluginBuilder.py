@@ -46,7 +46,7 @@ def ExportIGES(self, theObject, theFileName, theVersion="5.1"):
     anOp = GetIGESPluginOperations(self)
     anOp.ExportIGES(theObject, theFileName, theVersion)
     if anOp.IsDone() == 0:
-        raise RuntimeError,  "Export : " + anOp.GetErrorCode()
+        raise RuntimeError("Export : " + anOp.GetErrorCode())
         pass
     pass
 
@@ -96,7 +96,7 @@ def ImportIGES(self, theFileName, theIsIgnoreUnits = False, theName=None):
     
     anIsIgnoreUnits = theIsIgnoreUnits
     aName = theName
-    if isinstance( theIsIgnoreUnits, basestring ):
+    if isinstance( theIsIgnoreUnits, str ):
         anIsIgnoreUnits = False
         aName = theIsIgnoreUnits
         pass

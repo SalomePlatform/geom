@@ -66,6 +66,7 @@
 #include <SALOMEDS_Tool.hxx>
 #include <SALOMEDS_wrap.hxx>
 #include <Basics_DirUtils.hxx>
+#include <Basics_Utils.hxx>
 
 #include <set>
 #include <sstream>
@@ -594,8 +595,8 @@ SALOMEDS::TMPFile* GEOM_Gen_i::Save(SALOMEDS::SComponent_ptr theComponent,
   // Prepare a file name to open
   TCollection_AsciiString aNameWithExt("");
   if (isMultiFile)
-    aNameWithExt = TCollection_AsciiString((char*)(SALOMEDS_Tool::GetNameFromPath
-                                                   (getStudyServant()->URL())).c_str());
+    aNameWithExt = TCollection_AsciiString( (char*)(SALOMEDS_Tool::GetNameFromPath( 
+					   Kernel_Utils::encode(getStudyServant()->URL())).c_str()));
 #if OCC_VERSION_MAJOR > 6
   aNameWithExt += TCollection_AsciiString("_GEOM.cbf");
 #else

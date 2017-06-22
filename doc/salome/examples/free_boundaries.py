@@ -19,17 +19,17 @@ for fi in range(len(faces)):
     fid = geompy.addToStudyInFather(cut, faces[fi], "Face %d" % (fi+1))
     isSuccess, closedWires, openWires = geompy.GetFreeBoundary(faces[fi])
     if isSuccess:
-        print "Check free boudaries in face %d: OK" % (fi+1)
-        print "-- Nb of closed boundaries = %d" % len(closedWires)
+        print("Check free boudaries in face %d: OK" % (fi+1))
+        print("-- Nb of closed boundaries = %d" % len(closedWires))
         for wi in range(len(closedWires)):
             wid = geompy.addToStudyInFather(faces[fi], closedWires[wi], "Closed wire %d" % (wi+1))
             pass
-        print "-- Nb of open boundaries = %d" % len(openWires)
+        print("-- Nb of open boundaries = %d" % len(openWires))
         for wi in range(len(openWires)):
             wid = geompy.addToStudyInFather(faces[fi], openWires[wi], "Open wire %d" % (wi+1))
             pass
         pass
     else:
-        print "Check free boudaries in face %d: KO" % (fi+1)
+        print("Check free boudaries in face %d: KO" % (fi+1))
         pass
     pass

@@ -47,13 +47,13 @@ def CheckFieldCreation(shape, name, ftype, dimension, componentNames, nbFiOrMust
     # WARNING: assure name uniquness to check geompy.GetField( shape, name )
     try:
         field = geompy.CreateField(shape, name, ftype, dimension, componentNames)
-    except Exception, e:
+    except Exception as e:
         if nbFiOrMustFail == MustFail:
-            print "Ok, expected exception caught: %s"%e
+            print("Ok, expected exception caught: %s"%e)
             return
         raise e
     if nbFiOrMustFail == MustFail:
-        raise RuntimeError, "Expected exception NOT thrown"
+        raise RuntimeError("Expected exception NOT thrown")
     assert field.getShape()
     assert field.getShape().IsSame( shape )
     assert field.getName() == name
@@ -70,13 +70,13 @@ def CheckFieldCreation(shape, name, ftype, dimension, componentNames, nbFiOrMust
 def CheckStepManips(field, step, stamp, values, nbStepsOrMustFail, toRemove=False):
     try:
         stp = field.addStep(step, stamp, values)
-    except Exception, e:
+    except Exception as e:
         if nbStepsOrMustFail == MustFail:
-            print "Ok, expected exception caught: %s"%e
+            print("Ok, expected exception caught: %s"%e)
             return
         raise e
     if nbStepsOrMustFail == MustFail:
-        raise RuntimeError, "Expected exception NOT thrown"
+        raise RuntimeError("Expected exception NOT thrown")
     assert field.countSteps() == nbStepsOrMustFail
     assert len( field.getSteps() ) == nbStepsOrMustFail
     assert step in field.getSteps()
@@ -138,12 +138,12 @@ def TestField (geomBuilder, math):
     CheckStepManips( bfield, 2, -2, [1,0]*4, 1 )
     # int field on 6 faces
     ifield = geompy.CreateField(shape, "intF", GEOM.FDT_Int, 2, ["id","domain"])
-    CheckStepManips( ifield, -1, -10, range(12),  1 )
-    CheckStepManips( ifield, -2, -20, range(6)*2, 2 )
+    CheckStepManips( ifield, -1, -10, list(range(12)),  1 )
+    CheckStepManips( ifield, -2, -20, list(range(6))*2, 2 )
     # double field on a solid
     dfield = geompy.CreateField(shape, "dblS", GEOM.FDT_Double, 3, ["a","b","c"])
     CheckStepManips( dfield, -1, -10, [-1.1, 2.3, 4000], 1 )
-    CheckStepManips( dfield, -2, -20, range(3), 2 )
+    CheckStepManips( dfield, -2, -20, list(range(3)), 2 )
 
     # assert exception in case of invalid parameters
     CheckStepManips( sfield, -1, -10, ["25 Sep","2013"], MustFail ) # step already exists
@@ -159,7 +159,7 @@ def TestField (geomBuilder, math):
     # dump the study
     import salome
     assert( salome.myStudy.DumpStudy(os.path.dirname(dumpFile), os.path.basename(dumpFile), 1, 0))
-    execfile( pyFile )
+    exec(compile(open( pyFile ).read(), pyFile, 'exec'))
     os.remove( pyFile )
 
-    print "Field manipulations work OK"
+    print("Field manipulations work OK")

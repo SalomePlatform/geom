@@ -329,7 +329,7 @@ def TEST_createBox():
 def TEST_getGeomObjectSelected():
     tool = GeomStudyTools()
     myGeomObject = tool.getGeomObjectSelected()
-    print myGeomObject
+    print(myGeomObject)
 
 ## This test is a simple use case that illustrates how to create a
 #  GEOM shape in a SALOME session (create the GEOM object, put in in

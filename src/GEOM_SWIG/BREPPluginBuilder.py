@@ -42,7 +42,7 @@ def ExportBREP(self, theObject, theFileName):
     anOp = GetBREPPluginOperations(self)
     anOp.ExportBREP(theObject, theFileName)
     if anOp.IsDone() == 0:
-        raise RuntimeError,  "Export : " + anOp.GetErrorCode()
+        raise RuntimeError("Export : " + anOp.GetErrorCode())
         pass
     pass
 

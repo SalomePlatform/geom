@@ -45,7 +45,7 @@ from salome.kernel import termcolor
 logger = Logger("salome.geom.structelem.parts", color = termcolor.RED)
 from salome.geom.geomtools import getGeompy
 
-import orientation
+from . import orientation
 
 # Filling for the beams
 FULL = "FULL"
@@ -182,7 +182,7 @@ class StructuralElementPart:
         if len(nameList) > 0:
             paramName = nameList[0]
         for name in nameList:
-            if self._parameters.has_key(name):
+            if name in self._parameters:
                 self._paramUserName[paramName] = name
                 return self._parameters[name]
         return default
@@ -192,7 +192,7 @@ class StructuralElementPart:
         """
         This method finds the user name for a parameter.
         """
-        if self._paramUserName.has_key(paramName):
+        if paramName in self._paramUserName:
             return self._paramUserName[paramName]
         else:
             return paramName
@@ -453,7 +453,7 @@ class CircularBeam(Beam):
     def __init__(self, groupName, groupGeomObj, parameters,
                  name = Beam.DEFAULT_NAME, color = None):
         if color is None:
-            if parameters.has_key("R1"): # variable section
+            if "R1" in parameters: # variable section
                 color = LIGHT_RED
             else:                       # constant section
                 color = RED
@@ -565,7 +565,7 @@ class RectangularBeam(Beam):
     def __init__(self, groupName, groupGeomObj, parameters,
                  name = Beam.DEFAULT_NAME, color = None):
         if color is None:
-            if parameters.has_key("HY1") or parameters.has_key("H1"):
+            if "HY1" in parameters or "H1" in parameters:
                 color = LIGHT_BLUE # variable section
             else:                  # constant section
                 color = BLUE
@@ -683,7 +683,7 @@ def getParameterInDict(nameList, parametersDict, default = None):
     several different names.
     """
     for name in nameList:
-        if parametersDict.has_key(name):
+        if name in parametersDict:
             return parametersDict[name]
     return default
 
@@ -724,7 +724,7 @@ class GeneralBeam(RectangularBeam):
         parameters["HZ2"] = math.sqrt(12 * self.IY2 / self.A2)
 
         if color is None:
-            if parameters.has_key("IY1"): # variable section
+            if "IY1" in parameters: # variable section
                 color = LIGHT_GREEN
             else:                         # constant section
                 color = GREEN

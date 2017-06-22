@@ -41,19 +41,19 @@ try:
 
     # export the methods of geomBuilder
     for k in dir( geom ):
-	if k[0] == '_': continue
-	globals()[k] = getattr( geom, k )
+        if k[0] == '_': continue
+        globals()[k] = getattr( geom, k )
         pass
     del k
     ShapeType = geom.ShapeType
     kind      = geom.kind
     pass
 except:
-    print "exception in geompy.py"
+    print("exception in geompy.py")
     geom = None
     pass
 
-print """
+print("""
 ===============================================================================
 WARNING:
 Usage of geompy.py is deprecated after SALOME V7.2!
@@ -80,4 +80,4 @@ The geompy.py module works correctly only in first created study.
 It does not work in second, third, etc studies!
 
 ===============================================================================
-"""
+""")

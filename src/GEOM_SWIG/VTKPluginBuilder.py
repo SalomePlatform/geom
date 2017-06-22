@@ -45,6 +45,6 @@ def ExportVTK(self, theObject, theFileName, theDeflection=0.001):
     anOp = GetVTKPluginOperations(self)
     anOp.ExportVTK(theObject, theFileName, theDeflection)
     if anOp.IsDone() == 0:
-        raise RuntimeError,  "Export : " + anOp.GetErrorCode()
+        raise RuntimeError("Export : " + anOp.GetErrorCode())
         pass
     pass

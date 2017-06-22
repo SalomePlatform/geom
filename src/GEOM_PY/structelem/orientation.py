@@ -82,13 +82,13 @@ class Orientation1D:
                            'times for the same mesh group, only the last '
                            'parameter will be used')
         mydict = params.copy()
-        if mydict.has_key("VECT_Y"):
+        if "VECT_Y" in mydict:
             newVecCoords = mydict.pop("VECT_Y")
             logger.debug("Setting orientation vector Y to %s" %
                              str(newVecCoords))
             self._vectorYCoords = newVecCoords
             self._angle = 0.0
-        if mydict.has_key("ANGL_VRIL"):
+        if "ANGL_VRIL" in mydict:
             newAngle = mydict.pop("ANGL_VRIL")
             logger.debug("Setting orientation angle to %f" % newAngle)
             self._angle = newAngle

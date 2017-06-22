@@ -1,5 +1,4 @@
-#! /usr/bin/env python
-#  -*- coding: iso-8859-1 -*-
+#! /usr/bin/env python3
 # Copyright (C) 2007-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
@@ -58,7 +57,7 @@ def set_env( args ):
     plugin_list.append("AdvancedGEOM")
 
     # find additional plugins
-    for env_var in os.environ.keys():
+    for env_var in os.environ:
         value = os.environ[env_var]
         if env_var[-9:] == "_ROOT_DIR" and value:
             plugin_root = value
@@ -84,7 +83,7 @@ def set_env( args ):
                         plugin_list.append(plugin)
 
                         # add paths of plugin
-                        if not os.environ.has_key("SALOME_"+plugin+"Resources"):
+                        if "SALOME_"+plugin+"Resources" not in os.environ:
                             resource_path = os.path.join(plugin_root, "share", salome_subdir, "resources", plugin.lower())
                             os.environ["SALOME_"+plugin+"Resources"] = resource_path
                             resource_path_list.append(resource_path)

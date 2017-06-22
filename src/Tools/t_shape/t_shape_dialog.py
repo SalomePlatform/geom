@@ -22,7 +22,7 @@
 import sys
 from qtsalome import *
 
-from t_shape_dialog_ui import Ui_Dialog
+from salome.geom.t_shape.t_shape_dialog_ui import Ui_Dialog
 
 
 class TShapeDialog(Ui_Dialog,QWidget):

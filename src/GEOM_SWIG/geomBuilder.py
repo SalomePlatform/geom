@@ -240,6 +240,8 @@
 
 ## @}
 
+import omniORB
+
 # initialize SALOME session in try/except block
 # to avoid problems in some cases, e.g. when generating documentation
 try:
@@ -258,11 +260,89 @@ import functools
 
 from salome.geom.gsketcher import Sketcher3D, Sketcher2D, Polyline2D
 
+# In case the omniORBpy EnumItem class does not fully support Python 3
+# (for instance in version 4.2.1-2), the comparison ordering methods must be
+# defined
+#
+try:
+    GEOM.COMPOUND < GEOM.SOLID
+except TypeError:
+    def enumitem_eq(self, other):
+        try:
+            if isinstance(other, omniORB.EnumItem):
+                if other._parent_id == self._parent_id:
+                    return self._v == other._v
+                else:
+                    return self._parent_id == other._parent_id
+            else:
+                return id(self) == id(other)
+        except:
+            return id(self) == id(other)
+
+    def enumitem_lt(self, other):
+        try:
+            if isinstance(other, omniORB.EnumItem):
+                if other._parent_id == self._parent_id:
+                    return self._v < other._v
+                else:
+                    return self._parent_id < other._parent_id
+            else:
+                return id(self) < id(other)
+        except:
+            return id(self) < id(other)
+
+    def enumitem_le(self, other):
+        try:
+            if isinstance(other, omniORB.EnumItem):
+                if other._parent_id == self._parent_id:
+                    return self._v <= other._v
+                else:
+                    return self._parent_id <= other._parent_id
+            else:
+                return id(self) <= id(other)
+        except:
+            return id(self) <= id(other)
+
+    def enumitem_gt(self, other):
+        try:
+            if isinstance(other, omniORB.EnumItem):
+                if other._parent_id == self._parent_id:
+                    return self._v > other._v
+                else:
+                    return self._parent_id > other._parent_id
+            else:
+                return id(self) > id(other)
+        except:
+            return id(self) > id(other)
+
+    def enumitem_ge(self, other):
+        try:
+            if isinstance(other, omniORB.EnumItem):
+                if other._parent_id == self._parent_id:
+                    return self._v >= other._v
+                else:
+                    return self._parent_id >= other._parent_id
+            else:
+                return id(self) >= id(other)
+        except:
+            return id(self) >= id(other)
+
+    GEOM.omniORB.EnumItem.__eq__ = enumitem_eq
+    GEOM.omniORB.EnumItem.__lt__ = enumitem_lt
+    GEOM.omniORB.EnumItem.__le__ = enumitem_le
+    GEOM.omniORB.EnumItem.__gt__ = enumitem_gt
+    GEOM.omniORB.EnumItem.__ge__ = enumitem_ge
+    omniORB.EnumItem.__eq__ = enumitem_eq
+    omniORB.EnumItem.__lt__ = enumitem_lt
+    omniORB.EnumItem.__le__ = enumitem_le
+    omniORB.EnumItem.__gt__ = enumitem_gt
+    omniORB.EnumItem.__ge__ = enumitem_ge
+
 # service function
 def _toListOfNames(_names, _size=-1):
     l = []
     import types
-    if type(_names) in [types.ListType, types.TupleType]:
+    if type(_names) in [list, tuple]:
         for i in _names: l.append(i)
     elif _names:
         l.append(_names)
@@ -296,7 +376,7 @@ def ManageTransactions(theOpeName):
 ## @ingroup l1_geomBuilder_auxiliary
 def RaiseIfFailed (Method_name, Operation):
     if not Operation.IsDone() and Operation.GetErrorCode() != "NOT_FOUND_ANY":
-        raise RuntimeError, Method_name + " : " + Operation.GetErrorCode()
+        raise RuntimeError(Method_name + " : " + Operation.GetErrorCode())
 
 ## Return list of variables value from salome notebook
 ## @ingroup l1_geomBuilder_auxiliary
@@ -316,7 +396,7 @@ def ParseParameters(*parameters):
                 if notebook.isVariable(parameter):
                     Result.append(notebook.get(parameter))
                 else:
-                    raise RuntimeError, "Variable with name '" + parameter + "' doesn't exist!!!"
+                    raise RuntimeError("Variable with name '" + parameter + "' doesn't exist!!!")
                 pass
             else:
                 Result.append(parameter)
@@ -365,7 +445,7 @@ def ParseSketcherCommand(command):
                     Result = Result + str(notebook.get(parameter)) + " "
                     pass
                 else:
-                    raise RuntimeError, "Variable with name '" + parameter + "' doesn't exist!!!"
+                    raise RuntimeError("Variable with name '" + parameter + "' doesn't exist!!!")
                     pass
                 pass
             else:
@@ -554,7 +634,7 @@ engine = None
 doLcc = False
 created = False
 
-class geomBuilder(object, GEOM._objref_GEOM_Gen):
+class geomBuilder(GEOM._objref_GEOM_Gen):
 
         ## Enumeration ShapeType as a dictionary. \n
         ## Topological types of shapes (like Open Cascade types). See GEOM::shape_type for details.
@@ -605,7 +685,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @ingroup l1_geomBuilder_auxiliary
         kind = GEOM.GEOM_IKindOfShape
 
-        def __new__(cls):
+        def __new__(cls, *args):
             global engine
             global geom
             global doLcc
@@ -644,12 +724,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             #print "return geom 2 ", geom
             return geom
 
-        def __init__(self):
+        def __init__(self, *args):
             global created
             #print "-------- geomBuilder __init__ --- ", created, self
             if not created:
               created = True
-              GEOM._objref_GEOM_Gen.__init__(self)
+              GEOM._objref_GEOM_Gen.__init__(self, *args)
               self.myMaxNbSubShapesAllowed = 0 # auto-publishing is disabled by default
               self.myBuilder = None
               self.father    = None
@@ -685,10 +765,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             # ---
             def _item_name(_names, _defname, _idx=-1):
                 if not _names: _names = _defname
-                if type(_names) in [types.ListType, types.TupleType]:
+                if type(_names) in [list, tuple]:
                     if _idx >= 0:
                         if _idx >= len(_names) or not _names[_idx]:
-                            if type(_defname) not in [types.ListType, types.TupleType]:
+                            if type(_defname) not in [list, tuple]:
                                 _name = "%s_%d"%(_defname, _idx+1)
                             elif len(_defname) > 0 and _idx >= 0 and _idx < len(_defname):
                                 _name = _defname[_idx]
@@ -733,7 +813,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             if not theName and not theDefaultName:
                 return # neither theName nor theDefaultName is given
             import types
-            if type(theObj) in [types.ListType, types.TupleType]:
+            if type(theObj) in [list, tuple]:
                 # list of objects is being published
                 idx = 0
                 for obj in theObj:
@@ -897,7 +977,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                     self.RestoreSubShapesSO(aSObject, theArgs,
                                             theFindMethod, theInheritFirstArg, True )
             except:
-                print "addToStudy() failed"
+                print("addToStudy() failed")
                 return ""
             return aShape.GetStudyEntry()
 
@@ -927,7 +1007,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 aSObject = self.AddInStudy(aShape, aName, aFather)
                 if aSObject and aName: aSObject.SetAttrString("AttributeName", aName)
             except:
-                print "addToStudyInFather() failed"
+                print("addToStudyInFather() failed")
                 return ""
             return aShape.GetStudyEntry()
 
@@ -3067,14 +3147,14 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             if isinstance(theA,str):
                 flag = True
             theR,theH,theA,Parameters = ParseParameters(theR, theH, theA)
-	    if flag:
+            if flag:
                 theA = theA*math.pi/180.
-	    if theA<=0. or theA>=2*math.pi:
-	      raise ValueError("The angle parameter should be strictly between 0 and 2*pi.")
-	    anObj = self.PrimOp.MakeCylinderPntVecRHA(thePnt, theAxis, theR, theH, theA)
-	    RaiseIfFailed("MakeCylinderPntVecRHA", self.PrimOp)
-	    anObj.SetParameters(Parameters)
-	    self._autoPublish(anObj, theName, "cylinder")
+            if theA<=0. or theA>=2*math.pi:
+                raise ValueError("The angle parameter should be strictly between 0 and 2*pi.")
+            anObj = self.PrimOp.MakeCylinderPntVecRHA(thePnt, theAxis, theR, theH, theA)
+            RaiseIfFailed("MakeCylinderPntVecRHA", self.PrimOp)
+            anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName, "cylinder")
             return anObj
 
         ## Create a cylinder with given radius and height at
@@ -3153,7 +3233,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             if flag:
                 theA = theA*math.pi/180.
             if theA<=0. or theA>=2*math.pi:
-	      raise ValueError("The angle parameter should be strictly between 0 and 2*pi.")
+                raise ValueError("The angle parameter should be strictly between 0 and 2*pi.")
             anObj = self.PrimOp.MakeCylinderRHA(theR, theH, theA)
             RaiseIfFailed("MakeCylinderRHA", self.PrimOp)
             anObj.SetParameters(Parameters)
@@ -4210,11 +4290,11 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                                                               theWithContact, theWithCorrection,
                                                               IsGenerateGroups)
                 if self.PrimOp.IsDone() == 0:
-                    print "Problems with pipe creation between ",i," and ",i+1," sections"
+                    print("Problems with pipe creation between ",i," and ",i+1," sections")
                     RaiseIfFailed("MakePipeWithShellSections", self.PrimOp)
                     break
                 else:
-                    print "Pipe between ",i," and ",i+1," sections is OK"
+                    print("Pipe between ",i," and ",i+1," sections is OK")
                     res.append(aList[0])
                     pass
                 pass
@@ -4702,7 +4782,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeFace(theWire, isPlanarWanted)
             if isPlanarWanted and anObj is not None and self.ShapesOp.GetErrorCode() == "MAKE_FACE_TOLERANCE_TOO_BIG":
-                print "WARNING: Cannot build a planar face: required tolerance is too big. Non-planar face is built."
+                print("WARNING: Cannot build a planar face: required tolerance is too big. Non-planar face is built.")
             else:
                 RaiseIfFailed("MakeFace", self.ShapesOp)
             self._autoPublish(anObj, theName, "face")
@@ -4744,7 +4824,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeFaceWires(ToList(theWires), isPlanarWanted)
             if isPlanarWanted and anObj is not None and self.ShapesOp.GetErrorCode() == "MAKE_FACE_TOLERANCE_TOO_BIG":
-                print "WARNING: Cannot build a planar face: required tolerance is too big. Non-planar face is built."
+                print("WARNING: Cannot build a planar face: required tolerance is too big. Non-planar face is built.")
             else:
                 RaiseIfFailed("MakeFaceWires", self.ShapesOp)
             self._autoPublish(anObj, theName, "face")
@@ -4891,7 +4971,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 #if len(descr) > 0:
                 #    raise RuntimeError, "MakeSolidShells : " + descr
                 if descr == "WRN_SHAPE_UNCLOSED":
-                    raise RuntimeError, "MakeSolidShells : Unable to create solid from unclosed shape"
+                    raise RuntimeError("MakeSolidShells : Unable to create solid from unclosed shape")
             anObj = self.ShapesOp.MakeSolidShells(theShells)
             RaiseIfFailed("MakeSolidShells", self.ShapesOp)
             self._autoPublish(anObj, theName, "solid")
@@ -7439,7 +7519,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             theTolerance,Parameters = ParseParameters(theTolerance)
             anObj = self.ShapesOp.MakeGlueFaces(ToList(theShapes), theTolerance, doKeepNonSolids)
             if anObj is None:
-                raise RuntimeError, "MakeGlueFaces : " + self.ShapesOp.GetErrorCode()
+                raise RuntimeError("MakeGlueFaces : " + self.ShapesOp.GetErrorCode())
             anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "glueFaces")
             return anObj
@@ -7521,7 +7601,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             anObj = self.ShapesOp.MakeGlueFacesByList(ToList(theShapes), theTolerance, ToList(theFaces),
                                                       doKeepNonSolids, doGlueAllEdges)
             if anObj is None:
-                raise RuntimeError, "MakeGlueFacesByList : " + self.ShapesOp.GetErrorCode()
+                raise RuntimeError("MakeGlueFacesByList : " + self.ShapesOp.GetErrorCode())
             self._autoPublish(anObj, theName, "glueFaces")
             return anObj
 
@@ -7553,7 +7633,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             theTolerance,Parameters = ParseParameters(theTolerance)
             anObj = self.ShapesOp.MakeGlueEdges(ToList(theShapes), theTolerance)
             if anObj is None:
-                raise RuntimeError, "MakeGlueEdges : " + self.ShapesOp.GetErrorCode()
+                raise RuntimeError("MakeGlueEdges : " + self.ShapesOp.GetErrorCode())
             anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "glueEdges")
             return anObj
@@ -7623,7 +7703,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             anObj = self.ShapesOp.MakeGlueEdgesByList(ToList(theShapes), theTolerance, theEdges)
             if anObj is None:
-                raise RuntimeError, "MakeGlueEdgesByList : " + self.ShapesOp.GetErrorCode()
+                raise RuntimeError("MakeGlueEdgesByList : " + self.ShapesOp.GetErrorCode())
             self._autoPublish(anObj, theName, "glueEdges")
             return anObj
 
@@ -8143,7 +8223,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             if Limit == self.ShapeType["AUTO"]:
                 # automatic detection of the most appropriate shape limit type
                 lim = GEOM.SHAPE
-                for s in ListShapes: lim = min( lim, s.GetMaxShapeType() )
+                for s in ListShapes: lim = min(lim, s.GetMaxShapeType())
                 Limit = EnumToLong(lim)
                 pass
             anObj = self.BoolOp.MakePartition(ListShapes, ListTools,
@@ -8216,7 +8296,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             if Limit == self.ShapeType["AUTO"]:
                 # automatic detection of the most appropriate shape limit type
                 lim = GEOM.SHAPE
-                for s in ListShapes: lim = min( lim, s.GetMaxShapeType() )
+                for s in ListShapes: lim = min(lim, s.GetMaxShapeType())
                 Limit = EnumToLong(lim)
                 pass
             anObj = self.BoolOp.MakePartitionNonSelfIntersectedShape(ListShapes, ListTools,
@@ -9801,7 +9881,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             Deprecated method. Use MultiRotate1DNbTimes instead.
             """
-            print "The method MultiRotate1D is DEPRECATED. Use MultiRotate1DNbTimes instead."
+            print("The method MultiRotate1D is DEPRECATED. Use MultiRotate1DNbTimes instead.")
             return self.MultiRotate1DNbTimes(theObject, theAxis, theNbTimes, theName)
 
         ## The same, as MultiRotate2DByStep(), but theAngle is in degrees.
@@ -9815,7 +9895,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Example of usage:
                 rot2d = geompy.MultiRotate2D(prism, vect, 60, 4, 50, 5)
             """
-            print "The method MultiRotate2D is DEPRECATED. Use MultiRotate2DByStep instead."
+            print("The method MultiRotate2D is DEPRECATED. Use MultiRotate2DByStep instead.")
             theAngle, theNbTimes1, theStep, theNbTimes2, Parameters = ParseParameters(theAngle, theNbTimes1, theStep, theNbTimes2)
             anObj = self.TrsfOp.MultiRotate2D(theObject, theAxis, theAngle, theNbTimes1, theStep, theNbTimes2)
             RaiseIfFailed("MultiRotate2D", self.TrsfOp)
@@ -9835,7 +9915,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 vy = geompy.MakeVectorDXDYDZ(0, 100, 0)
                 MultiRot1D = geompy.MakeMultiRotation1D(prism, vy, pz, 6)
             """
-            print "The method MakeMultiRotation1D is DEPRECATED. Use MakeMultiRotation1DNbTimes instead."
+            print("The method MakeMultiRotation1D is DEPRECATED. Use MakeMultiRotation1DNbTimes instead.")
             aVec = self.MakeLine(aPoint,aDir)
             # note: auto-publishing is done in self.MultiRotate1D()
             anObj = self.MultiRotate1D(aShape, aVec, aNbTimes, theName)
@@ -9853,7 +9933,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 vy = geompy.MakeVectorDXDYDZ(0, 100, 0)
                 MultiRot2D = geompy.MakeMultiRotation2D(f12, vy, pz, 45, 6, 30, 3)
             """
-            print "The method MakeMultiRotation2D is DEPRECATED. Use MakeMultiRotation2DByStep instead."
+            print("The method MakeMultiRotation2D is DEPRECATED. Use MakeMultiRotation2DByStep instead.")
             aVec = self.MakeLine(aPoint,aDir)
             # note: auto-publishing is done in self.MultiRotate2D()
             anObj = self.MultiRotate2D(aShape, aVec, anAngle, nbtimes1, aStep, nbtimes2, theName)
@@ -11314,7 +11394,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Descr = self.MeasuOp.PrintShapeErrors(theShape, theShapeErrors)
             if theReturnStatus == 1:
                 return Descr
-            print Descr
+            print(Descr)
             pass
 
         ## Check a topology of the given shape.
@@ -11369,7 +11449,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             if IsValid == 0:
                 if theReturnStatus == 0:
                     Descr = self.MeasuOp.PrintShapeErrors(theShape, ShapeErrors)
-                    print Descr
+                    print(Descr)
             if theReturnStatus == 1:
               Descr = self.MeasuOp.PrintShapeErrors(theShape, ShapeErrors)
               return (IsValid, Descr)
@@ -11660,10 +11740,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 material groups are not automatically published.
             """
             # Example: see GEOM_TestOthers.py
-            print """
+            print("""
             WARNING: Function ImportFile is deprecated, use Import<FormatName> instead,
             where <FormatName> is a name of desirable format for importing.
-            """
+            """)
             aListObj = self.InsertOp.ImportFile(theFileName, theFormatName)
             RaiseIfFailed("ImportFile", self.InsertOp)
             aNbObj = len(aListObj)
@@ -11719,7 +11799,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             if not theStream:
                 # this is the workaround to ignore invalid case when data stream is empty
                 if int(os.getenv("GEOM_IGNORE_RESTORE_SHAPE", "0")) > 0:
-                    print "WARNING: Result of RestoreShape is a NULL shape!"
+                    print("WARNING: Result of RestoreShape is a NULL shape!")
                     return None
             anObj = self.InsertOp.RestoreShape(theStream)
             RaiseIfFailed("RestoreShape", self.InsertOp)
@@ -11754,13 +11834,13 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                               geompy.InsertOp.ExportTranslators()[0] method.
             """
             # Example: see GEOM_TestOthers.py
-            print """
+            print("""
             WARNING: Function Export is deprecated, use Export<FormatName> instead,
             where <FormatName> is a name of desirable format for exporting.
-            """
+            """)
             self.InsertOp.Export(theObject, theFileName, theFormatName)
             if self.InsertOp.IsDone() == 0:
-                raise RuntimeError,  "Export : " + self.InsertOp.GetErrorCode()
+                raise RuntimeError("Export : " + self.InsertOp.GetErrorCode())
                 pass
             pass
 
@@ -12363,7 +12443,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             RaiseIfFailed("CheckCompoundOfBlocks", self.BlocksOp)
             if IsValid == 0:
                 Descr = self.BlocksOp.PrintBCErrors(theCompound, BCErrors)
-                print Descr
+                print(Descr)
             return IsValid
 
         ## Retrieve all non blocks solids and faces from \a theShape.
@@ -13387,7 +13467,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                             edges_in_range.append(edge)
 
             if len(edges_in_range) <= 0:
-                print "No edges found by given criteria"
+                print("No edges found by given criteria")
                 return None
 
             # note: auto-publishing is done in self.CreateGroup()
@@ -13420,10 +13500,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             nb_selected = sg.SelectedCount()
             if nb_selected < 1:
-                print "Select a shape before calling this function, please."
+                print("Select a shape before calling this function, please.")
                 return 0
             if nb_selected > 1:
-                print "Only one shape must be selected"
+                print("Only one shape must be selected")
                 return 0
 
             id_shape = sg.getSelected(0)
@@ -13436,8 +13516,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             if include_min: left_str  = " <= "
             if include_max: right_str  = " <= "
 
-            self.addToStudyInFather(shape, group_edges, "Group of edges with " + `min_length`
-                                    + left_str + "length" + right_str + `max_length`)
+            self.addToStudyInFather(shape, group_edges, "Group of edges with " + repr(min_length)
+                                    + left_str + "length" + right_str + repr(max_length))
 
             sg.updateObjBrowser()
 
@@ -13704,7 +13784,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             if isinstance( type, int ):
                 if type < 0 or type > 3:
-                    raise RuntimeError, "CreateField : Error: data type must be within [0-3] range"
+                    raise RuntimeError("CreateField : Error: data type must be within [0-3] range")
                 type = [GEOM.FDT_Bool,GEOM.FDT_Int,GEOM.FDT_Double,GEOM.FDT_String][type]
 
             f = self.FieldOp.CreateField( shape, name, type, dimension, componentNames)
@@ -13723,7 +13803,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             elif isinstance( field, geomField ):
                 geom.RemoveObject( field.field )
             else:
-                raise RuntimeError, "RemoveField() : the object is not a field"
+                raise RuntimeError("RemoveField() : the object is not a field")
             return
 
         ## Returns number of fields on a shape
@@ -13754,7 +13834,6 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## @}
 
 
-import omniORB
 # Register the new proxy for GEOM_Gen
 omniORB.registerObjref(GEOM._objref_GEOM_Gen._NP_RepositoryId, geomBuilder)
 
@@ -13763,8 +13842,8 @@ omniORB.registerObjref(GEOM._objref_GEOM_Gen._NP_RepositoryId, geomBuilder)
 #  @ingroup l2_field
 class geomField( GEOM._objref_GEOM_Field ):
 
-    def __init__(self):
-        GEOM._objref_GEOM_Field.__init__(self)
+    def __init__(self, *args):
+        GEOM._objref_GEOM_Field.__init__(self, *args)
         self.field = GEOM._objref_GEOM_Field
         return
 
@@ -13781,7 +13860,7 @@ class geomField( GEOM._objref_GEOM_Field ):
     ## Returns type of field data as integer [0-3]
     def getType(self):
         "Returns type of field data"
-        return self.field.GetDataType(self)._v
+        return EnumToLong(self.field.GetDataType(self))
 
     ## Returns type of field data:
     #  one of GEOM.FDT_Bool, GEOM.FDT_Int, GEOM.FDT_Double, GEOM.FDT_String
@@ -13809,8 +13888,7 @@ class geomField( GEOM._objref_GEOM_Field ):
         "Adds a time step to the field"
         stp = self.field.AddStep( self, step, stamp )
         if not stp:
-            raise RuntimeError, \
-                  "Field.addStep() : Error: step %s already exists in this field"%step
+            raise RuntimeError("Field.addStep() : Error: step %s already exists in this field"%step)
         global geom
         geom._autoPublish( stp, "", "Step %s, %s"%(step,stamp))
         self.setValues( step, values )
@@ -13848,7 +13926,7 @@ class geomField( GEOM._objref_GEOM_Field ):
         "Returns a time step by its ID"
         stp = self.field.GetStep(self, step)
         if not stp:
-            raise RuntimeError, "Step %s is missing from this field"%step
+            raise RuntimeError("Step %s is missing from this field"%step)
         return stp
 
     ## Returns the time of the field step
@@ -13873,19 +13951,19 @@ class geomField( GEOM._objref_GEOM_Field ):
         errBeg = "Field.setValues(values) : Error: "
         try:
             ok = stp.SetValues( values )
-        except Exception, e:
+        except Exception as e:
             excStr = str(e)
             if excStr.find("WrongPythonType") > 0:
-                raise RuntimeError, errBeg +\
-                      "wrong type of values, %s values are expected"%str(self.getTypeEnum())[4:]
-            raise RuntimeError, errBeg + str(e)
+                raise RuntimeError(errBeg +\
+                      "wrong type of values, %s values are expected"%str(self.getTypeEnum())[4:])
+            raise RuntimeError(errBeg + str(e))
         if not ok:
             nbOK = self.field.GetArraySize(self)
             nbKO = len(values)
             if nbOK != nbKO:
-                raise RuntimeError, errBeg + "len(values) must be %s but not %s"%(nbOK,nbKO)
+                raise RuntimeError(errBeg + "len(values) must be %s but not %s"%(nbOK,nbKO))
             else:
-                raise RuntimeError, errBeg + "failed"
+                raise RuntimeError(errBeg + "failed")
         return
 
     pass # end of class geomField
@@ -13941,15 +14019,15 @@ plugins_var = os.environ.get( "GEOM_PluginsList" )
 plugins = None
 if plugins_var is not None:
     plugins = plugins_var.split( ":" )
-    plugins=filter(lambda x: len(x)>0, plugins)
+    plugins=[x for x in plugins if len(x)>0]
 if plugins is not None:
     for pluginName in plugins:
         pluginBuilderName = pluginName + "Builder"
         try:
             exec( "from salome.%s.%s import *" % (pluginName, pluginBuilderName))
-        except Exception, e:
+        except Exception as e:
             from salome_utils import verbose
-            print "Exception while loading %s: %s" % ( pluginBuilderName, e )
+            print("Exception while loading %s: %s" % ( pluginBuilderName, e ))
             continue
         exec( "from salome.%s import %s" % (pluginName, pluginBuilderName))
         plugin = eval( pluginBuilderName )

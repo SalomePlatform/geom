@@ -247,7 +247,7 @@ class StructuralElementManager:
                         part = parts.__dict__[parttype](meshGroup,
                                                         groupGeomObj, newparams)
                         element.addPart(part)
-                    except InvalidParameterError, e:
+                    except InvalidParameterError as e:
                         logger.error("Invalid parameter error: %s" % e)
                         raise
                     except:
@@ -295,7 +295,7 @@ class StructuralElementManager:
         elif groupMailleParam is not None and meshGroupParam is None:
             meshGroupParam = groupMailleParam
         
-        if isinstance(meshGroupParam, types.StringTypes):
+        if isinstance(meshGroupParam, str):
             meshGroupList = [meshGroupParam]
         else:
             meshGroupList = meshGroupParam
@@ -370,13 +370,13 @@ class StructuralElement:
         newshapes = newpart.baseShapesSet
 
         # Check duplicate groups
-        if self._parts.has_key(newpart.groupName):
+        if newpart.groupName in self._parts:
             logger.warning('Mesh group "%s" is used several times in the '
                            'structural element. Only the last definition '
                            'will be used.' % newpart.groupName)
         else:
             # Check duplicate shapes
-            intersect = newshapes.intersection(self._shapeDict.keys())
+            intersect = newshapes.intersection(list(self._shapeDict.keys()))
             while len(intersect) > 0:
                 shape, = intersect
                 oldpartwithshape = self._shapeDict[shape]
@@ -420,7 +420,7 @@ class StructuralElement:
                              :class:`~orientation.Orientation1D`.
 
         """
-        if self._parts.has_key(meshGroup):
+        if meshGroup in self._parts:
             self._parts[meshGroup].addOrientation(orientParams)
         else:
             logger.warning('Mesh group "%s" not found in structural element, '
@@ -434,8 +434,9 @@ class StructuralElement:
         different parts of the structural element, and add them to the study.
         """
         gg = salome.ImportComponentGUI("GEOM")
+
         geompy = getGeompy()
-        for part in self._parts.itervalues():
+        for part in self._parts.values():
             # Build the structural element part
             logger.debug("Building %s" % part)
             try:
