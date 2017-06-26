@@ -76,6 +76,10 @@
 #include <TColgp_SequenceOfDir.hxx>
 #include <V3d_View.hxx>
 
+#if OCC_VERSION_LARGE >= 0x07010000
+#include <Quantity_Parameter.hxx>
+#endif
+
 
 // plane associated with custom data
 struct PlaneAndSegment
