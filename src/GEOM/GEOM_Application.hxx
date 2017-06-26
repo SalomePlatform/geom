@@ -28,21 +28,16 @@
 #include <Standard_DefineHandle.hxx>
 #include <TColStd_SequenceOfExtendedString.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
 class GEOM_Application : public TDocStd_Application
 {
 public:
   Standard_EXPORT GEOM_Application();
   Standard_EXPORT ~GEOM_Application();
 
-#if OCC_VERSION_LARGE <= 0x07000000
-  Standard_EXPORT virtual void Formats(TColStd_SequenceOfExtendedString& Formats);
-#endif
   Standard_EXPORT Standard_CString ResourcesName();
 
 public:
-  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_Application,TDocStd_Application)
+  DEFINE_STANDARD_RTTIEXT(GEOM_Application,TDocStd_Application)
 };
 
 DEFINE_STANDARD_HANDLE(GEOM_Application, TDocStd_Application)

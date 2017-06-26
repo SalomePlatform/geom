@@ -69,7 +69,7 @@ class GEOMAlgo_Clsf : public GEOMAlgo_HAlgo
   Standard_EXPORT
     virtual  Standard_Boolean CanBeON(const Handle(Geom_Surface)& aST) const;
 
-  OCCT_DEFINE_STANDARD_RTTIEXT(GEOMAlgo_Clsf,GEOMAlgo_HAlgo)
+  DEFINE_STANDARD_RTTIEXT(GEOMAlgo_Clsf,GEOMAlgo_HAlgo)
 
  protected:
   Standard_EXPORT

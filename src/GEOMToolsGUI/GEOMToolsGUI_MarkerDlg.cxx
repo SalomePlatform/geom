@@ -26,8 +26,6 @@
 #include <GEOM_Constants.h>
 #include <GEOM_Displayer.h>
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <QtxComboBox.h>
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_Session.h>

@@ -40,8 +40,6 @@
 #include <GEOM_PythonDump.hxx>
 #include "GEOM_ISubShape.hxx"
 
-#include <Basics_OCCTVersion.hxx>
-
 #include "utilities.h"
 #include <OpUtil.hxx>
 #include <Utils_ExceptHandlers.hxx>

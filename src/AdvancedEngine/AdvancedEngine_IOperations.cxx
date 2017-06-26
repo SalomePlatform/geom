@@ -27,8 +27,6 @@
 #include "AdvancedEngine_SmoothingSurfaceDriver.hxx"
 #include "AdvancedEngine_ISmoothingSurface.hxx"
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <utilities.h>
 #include <OpUtil.hxx>
 #include <Utils_ExceptHandlers.hxx>

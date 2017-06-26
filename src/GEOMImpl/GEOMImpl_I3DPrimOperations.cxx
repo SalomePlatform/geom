@@ -22,8 +22,6 @@
 
 #include <Standard_Stream.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <GEOMImpl_I3DPrimOperations.hxx>
 
 #include "utilities.h"

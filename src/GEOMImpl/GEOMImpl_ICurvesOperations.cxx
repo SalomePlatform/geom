@@ -62,8 +62,6 @@
 #include "GEOMImpl_IIsoline.hxx"
 #include "GEOMImpl_PolylineDumper.hxx"
 
-#include <Basics_OCCTVersion.hxx>
-
 #include "utilities.h"
 
 #include <TDF_Tool.hxx>
@@ -1513,9 +1511,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline2D
 
   // Compute the isoline curve
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Polyline driver failed");
       return NULL;
@@ -1592,9 +1588,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline2DOnPlane
 
   //Compute the isoline curve
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Polyline driver failed");
       return NULL;

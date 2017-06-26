@@ -41,8 +41,6 @@
 
 #include <BOPTools.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
 static 
   void TreatCompound(const TopoDS_Shape& aC, 
                      BOPCol_ListOfShape& aLSX);
@@ -150,10 +148,6 @@ void GEOMAlgo_Splitter::Clear()
 //=======================================================================
 void GEOMAlgo_Splitter::BuildResult(const TopAbs_ShapeEnum theType)
 {
-#if OCC_VERSION_LARGE <= 0x07010000
-  myErrorStatus=0;
-#endif
-  //
   TopAbs_ShapeEnum aType;
   BRep_Builder aBB;
   BOPCol_MapOfShape aM;

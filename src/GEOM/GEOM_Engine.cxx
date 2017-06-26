@@ -34,8 +34,6 @@
 #include "GEOM_SubShapeDriver.hxx"
 #include "Sketcher_Profile.hxx"
 
-#include <Basics_OCCTVersion.hxx>
-
 #include "utilities.h"
 
 #include <Basics_Utils.hxx>
@@ -66,11 +64,9 @@
 
 #include <Resource_DataMapIteratorOfDataMapOfAsciiStringAsciiString.hxx>
 
-#if OCC_VERSION_LARGE > 0x07000000
 #include <BinDrivers.hxx>
 #include <StdDrivers_DocumentRetrievalDriver.hxx>
 #include <PCDM_StorageDriver.hxx>
-#endif
 
 #include <set>
 
@@ -241,11 +237,9 @@ GEOM_Engine::GEOM_Engine()
   TFunction_DriverTable::Get()->AddDriver(GEOM_Object::GetSubShapeID(), new GEOM_SubShapeDriver());
   
   _OCAFApp = new GEOM_Application();
-#if OCC_VERSION_LARGE > 0x07000000
   _OCAFApp->DefineFormat("SALOME_GEOM", "GEOM Document Version 1.0", "sgd",
                          new StdDrivers_DocumentRetrievalDriver, 0);
   BinDrivers::DefineFormat(_OCAFApp);
-#endif
   _UndoLimit = 0;
 }
 
@@ -285,11 +279,7 @@ Handle(TDocStd_Document) GEOM_Engine::GetDocument(int theDocID, bool force)
     aDoc = Handle(TDocStd_Document)::DownCast(_mapIDDocument(theDocID));
   }
   else if (force) {
-#if OCC_VERSION_MAJOR > 6
     _OCAFApp->NewDocument("BinOcaf", aDoc);
-#else
-    _OCAFApp->NewDocument("SALOME_GEOM", aDoc);
-#endif
     aDoc->SetUndoLimit(_UndoLimit);
     _mapIDDocument.Bind(theDocID, aDoc);
     TDataStd_Integer::Set(aDoc->Main(), theDocID);
@@ -588,12 +578,10 @@ bool GEOM_Engine::Load(int theDocID, const char* theFileName)
     return false;
   }
 
-#if OCC_VERSION_MAJOR > 6
   // Replace old document format by the new one.
   if (aDoc->StorageFormat().IsEqual("SALOME_GEOM")) {
     aDoc->ChangeStorageFormat("BinOcaf");
   }
-#endif
 
   aDoc->SetUndoLimit(_UndoLimit);
 

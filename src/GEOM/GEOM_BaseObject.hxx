@@ -166,7 +166,7 @@ public:
   int                       _docID;
 
 public:
-  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_BaseObject,Standard_Transient)
+  DEFINE_STANDARD_RTTIEXT(GEOM_BaseObject,Standard_Transient)
 };
 
 #endif

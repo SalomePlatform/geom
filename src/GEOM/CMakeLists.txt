@@ -40,14 +40,12 @@ SET(_link_LIBRARIES
   ${CAS_TKCDF}
   ${CAS_TKG3d}
   ${CAS_TKStdL}
+  ${CAS_TKStd}
+  ${CAS_TKBin}
   ${KERNEL_SALOMELocalTrace}
   ${KERNEL_OpUtil}
   GEOMSketcher
   )
-
-IF(CAS_VERSION_STR VERSION_GREATER "7.0.0")
-  LIST(APPEND _link_LIBRARIES ${CAS_TKStd} ${CAS_TKBin})
-ENDIF()
 
 # --- headers ---
 

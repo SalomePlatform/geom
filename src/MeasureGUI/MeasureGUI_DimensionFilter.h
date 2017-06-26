@@ -27,9 +27,6 @@
 #ifndef MEASUREGUI_DIMENSIONFILTER_H
 #define MEASUREGUI_DIMENSIONFILTER_H
 
-// KERNEL includes
-#include <Basics_OCCTVersion.hxx>
-
 // GEOM includes
 #include <GEOM_GenericObjPtr.h>
 
@@ -49,7 +46,7 @@ class MeasureGUI_DimensionFilter : public SelectMgr_Filter
 {
 public:
 
-  OCCT_DEFINE_STANDARD_RTTIEXT(MeasureGUI_DimensionFilter,SelectMgr_Filter)
+  DEFINE_STANDARD_RTTIEXT(MeasureGUI_DimensionFilter,SelectMgr_Filter)
 
 public:
   Standard_EXPORT MeasureGUI_DimensionFilter( const Handle(AIS_InteractiveObject)& theIO );

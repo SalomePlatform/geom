@@ -27,8 +27,6 @@
 #include <GEOM_Solver.hxx>
 #include <GEOM_ISubShape.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
 #include "utilities.h"
 
 #include <TDF.hxx>
@@ -980,4 +978,4 @@ void* GEOM_Function::GetCallBackData()
   return reinterpret_cast<void*> ( address );
 }
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOM_Function, Standard_Transient );
+IMPLEMENT_STANDARD_RTTIEXT(GEOM_Function, Standard_Transient );

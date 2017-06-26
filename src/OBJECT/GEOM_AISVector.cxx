@@ -30,7 +30,7 @@
 #include <Prs3d_Presentation.hxx>
 #include <PrsMgr_PresentationManager3d.hxx>
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOM_AISVector, GEOM_AISShape)
+IMPLEMENT_STANDARD_RTTIEXT(GEOM_AISVector, GEOM_AISShape)
 
 //=======================================================================
 //function : GEOM_AISVector

@@ -27,8 +27,6 @@
 #include "GEOM_Object.hxx"
 #include "GEOM_DataMapOfAsciiStringTransient.hxx"
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <TColStd_DataMapOfIntegerTransient.hxx>
 
 #include <Resource_DataMapOfAsciiStringAsciiString.hxx>

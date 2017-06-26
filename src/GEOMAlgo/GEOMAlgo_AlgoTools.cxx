@@ -25,8 +25,6 @@
 
 #include <GEOMAlgo_AlgoTools.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <gp_Pnt.hxx>
 #include <gp_Pnt2d.hxx>
 #include <gp_Dir2d.hxx>
@@ -197,12 +195,7 @@ Standard_Integer GEOMAlgo_AlgoTools::BuildPCurveForEdgeOnFace
   (const TopoDS_Edge& aEold,
    const TopoDS_Edge& aEnew,
    const TopoDS_Face& aF,
-#if OCC_VERSION_LARGE > 0x06070100
-   const Handle(IntTools_Context)& aCtx
-#else
-   const Handle(BOPInt_Context)& aCtx
-#endif
-   )
+   const Handle(IntTools_Context)& aCtx)
 {
   Standard_Boolean bIsClosed, bUClosed, bHasOld;
   Standard_Integer iRet, aNbPoints;
@@ -222,7 +215,6 @@ Standard_Integer GEOMAlgo_AlgoTools::BuildPCurveForEdgeOnFace
     return iRet;
   }
   //
-#if OCC_VERSION_LARGE > 0x06080000
   // Try to copy PCurve from old edge to the new one.
   iRet = BOPTools_AlgoTools2D::AttachExistingPCurve(aEold, aEnew, aF, aCtx);
 
@@ -233,7 +225,6 @@ Standard_Integer GEOMAlgo_AlgoTools::BuildPCurveForEdgeOnFace
     // The PCurve is attached successfully.
     return iRet;
   }
-#endif
   //
   BOPTools_AlgoTools2D::BuildPCurveForEdgeOnFace(aEnew, aF);
   aC2D=BRep_Tool::CurveOnSurface(aEnew, aF, aT1, aT2);
@@ -446,12 +437,7 @@ void GEOMAlgo_AlgoTools::RefinePCurveForEdgeOnFace(const TopoDS_Edge& aE,
 Standard_Boolean GEOMAlgo_AlgoTools::IsSplitToReverse
   (const TopoDS_Edge& aEF1,
    const TopoDS_Edge& aEF2,
-#if OCC_VERSION_LARGE > 0x06070100
-   const Handle(IntTools_Context)& aContext
-#else
-   const Handle(BOPInt_Context)& aContext
-#endif
-   )
+   const Handle(IntTools_Context)& aContext)
 {
   Standard_Boolean aFlag;
   Standard_Real aT1, aT2, aScPr, a, b;
@@ -496,12 +482,7 @@ Standard_Boolean GEOMAlgo_AlgoTools::ProjectPointOnShape
   (const gp_Pnt& aP1,
    const TopoDS_Shape& aS,
    gp_Pnt& aP2,
-#if OCC_VERSION_LARGE > 0x06070100
-   const Handle(IntTools_Context)& aCtx
-#else
-   const Handle(BOPInt_Context)& aCtx
-#endif
-   )
+   const Handle(IntTools_Context)& aCtx)
 {
   Standard_Boolean bIsDone = Standard_False;
   Standard_Real aT2;
@@ -648,12 +629,7 @@ Standard_Integer GEOMAlgo_AlgoTools::FindSDShapes
    const TopTools_ListOfShape& aLE,
    const Standard_Real aTol,
    TopTools_ListOfShape& aLESD,
-#if OCC_VERSION_LARGE > 0x06070100
-   const Handle(IntTools_Context)& aCtx
-#else
-   const Handle(BOPInt_Context)& aCtx
-#endif
-   )
+   const Handle(IntTools_Context)& aCtx)
 {
   Standard_Boolean bIsDone;
   Standard_Real aTol2, aD2;
@@ -692,12 +668,7 @@ Standard_Integer GEOMAlgo_AlgoTools::FindSDShapes
   (const TopTools_ListOfShape& aLE,
    const Standard_Real aTol,
    TopTools_IndexedDataMapOfShapeListOfShape& aMEE,
-#if OCC_VERSION_LARGE > 0x06070100
-   const Handle(IntTools_Context)& aCtx
-#else
-   const Handle(BOPInt_Context)& aCtx
-#endif
-   )
+   const Handle(IntTools_Context)& aCtx)
 {
   Standard_Integer aNbE, aNbEProcessed, aNbESD, iErr;
   TopTools_ListOfShape aLESD;
@@ -765,12 +736,7 @@ Standard_Integer GEOMAlgo_AlgoTools::FindSDShapes
 Standard_Integer GEOMAlgo_AlgoTools::RefineSDShapes
   (GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape& aMPKLE,
    const Standard_Real aTol,
-#if OCC_VERSION_LARGE > 0x06070100
-   const Handle(IntTools_Context)& aCtx
-#else
-   const Handle(BOPInt_Context)& aCtx
-#endif
-   )
+   const Handle(IntTools_Context)& aCtx)
 {
   Standard_Integer i, aNbE, iErr, j, aNbEE, aNbToAdd;
   TopTools_IndexedDataMapOfShapeListOfShape aMEE, aMSDE, aMEToAdd;

@@ -27,8 +27,6 @@
 #ifndef GEOM_Annotation_HeaderFile
 #define GEOM_Annotation_HeaderFile
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <AIS_InteractiveObject.hxx>
 #include <Bnd_Box.hxx>
 #include <Font_FontAspect.hxx>
@@ -363,11 +361,7 @@ public:
     //! \param theMode [in] the display mode.
     virtual void
       HilightWithColor( const Handle(PrsMgr_PresentationManager3d)& thePM,
-#if OCC_VERSION_LARGE > 0x07010001
 			const Handle(Prs3d_Drawer)& theStyle,
-#else			
-			const Handle(Graphic3d_HighlightStyle)& theStyle,
-#endif			
                         const Standard_Integer theMode = 0 ) Standard_OVERRIDE;
 
     //! Removes highlighting from the type of shape.

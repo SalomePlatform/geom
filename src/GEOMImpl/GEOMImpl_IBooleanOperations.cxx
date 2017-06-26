@@ -35,8 +35,6 @@
 #include <GEOMImpl_PartitionDriver.hxx>
 #include <GEOMImpl_IPartition.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <TDF_Tool.hxx>
 
 #include "utilities.h"

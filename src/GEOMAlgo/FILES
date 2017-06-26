@@ -106,6 +106,4 @@ GEOMAlgo_ShapeInfo.hxx
 GEOMAlgo_ShapeInfo.cxx
 GEOMAlgo_IndexedDataMapOfShapeShapeInfo.hxx
 
-Basics_OCCTVersion.hxx
-
 GEOMAlgo_KindOfDef.hxx

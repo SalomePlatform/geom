@@ -47,7 +47,7 @@
 
 #include <GEOMAlgo_SurfaceTools.hxx>
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfBox, GEOMAlgo_Clsf)
+IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfBox, GEOMAlgo_Clsf)
 
 //=======================================================================
 //function :

@@ -28,8 +28,6 @@
 #include "EntityGUI_3DSketcherDlg.h"
 #include "EntityGUI_Widgets.h"
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <GEOMBase.h>
 #include <GeometryGUI.h>
 #include <Precision.hxx>
@@ -105,7 +103,7 @@ DEFINE_STANDARD_HANDLE(AIS_Text, AIS_InteractiveObject)
 class AIS_Text:public AIS_InteractiveObject
 {
 public:
-  OCCT_DEFINE_STANDARD_RTTIEXT(AIS_Text,AIS_InteractiveObject)
+  DEFINE_STANDARD_RTTIEXT(AIS_Text,AIS_InteractiveObject)
 
   AIS_Text(){};
 
@@ -147,7 +145,7 @@ protected:
   Graphic3d_VerticalTextAlignment     aVJustification;
 };
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT(AIS_Text, AIS_InteractiveObject)
+IMPLEMENT_STANDARD_RTTIEXT(AIS_Text, AIS_InteractiveObject)
 
 AIS_Text::AIS_Text( const TCollection_ExtendedString& text, const gp_Pnt& position,
                           Quantity_Color    color       = Quantity_NOC_YELLOW,

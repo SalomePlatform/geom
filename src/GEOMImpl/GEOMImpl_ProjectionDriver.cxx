@@ -93,7 +93,7 @@ GEOMImpl_ProjectionDriver::GEOMImpl_ProjectionDriver()
 //function : Execute
 //purpose  :
 //======================================================================= 
-Standard_Integer GEOMImpl_ProjectionDriver::Execute(LOGBOOK& log) const
+Standard_Integer GEOMImpl_ProjectionDriver::Execute(Handle(TFunction_Logbook)& log) const
 {
   if (Label().IsNull())  return 0;    
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
@@ -247,11 +247,7 @@ Standard_Integer GEOMImpl_ProjectionDriver::Execute(LOGBOOK& log) const
     if (aShape.IsNull()) return 0;
 
     aFunction->SetValue(aShape);
-#if OCC_VERSION_MAJOR < 7
-    log.SetTouched(Label());
-#else
     log->SetTouched(Label());
-#endif
   } else if (aType == PROJECTION_ON_WIRE) {
     // Perform projection of point on a wire or an edge.
     GEOMImpl_IProjection aProj (aFunction);
@@ -713,11 +709,7 @@ TopoDS_Shape GEOMImpl_ProjectionDriver::projectOnCylinder
       }
 
       // Transform the curve to cylinder's parametric space.
-#if OCC_VERSION_MAJOR < 7
-      GEOMUtils::Handle(HTrsfCurve2d) aTrsfCurve =
-#else
       Handle(GEOMUtils::HTrsfCurve2d) aTrsfCurve =
-#endif
         new GEOMUtils::HTrsfCurve2d(aCurve, aPar[0], aPar[1], aTrsf2d);
       Approx_Curve2d                  aConv (aTrsfCurve, aPar[0], aPar[1],
                                                          aUResol, aVResol, GeomAbs_C1,
@@ -807,4 +799,4 @@ TopoDS_Shape GEOMImpl_ProjectionDriver::projectOnCylinder
   return aResult;
 }
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_ProjectionDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_ProjectionDriver,GEOM_BaseDriver);

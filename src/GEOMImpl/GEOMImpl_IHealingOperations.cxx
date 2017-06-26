@@ -37,8 +37,6 @@
 #include <ShHealOper_ModifStats.hxx>
 #include <ShHealOper_ShapeProcess.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <utilities.h>
 #include <OpUtil.hxx>
 #include <Utils_ExceptHandlers.hxx>

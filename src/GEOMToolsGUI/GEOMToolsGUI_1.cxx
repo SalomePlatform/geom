@@ -55,8 +55,6 @@
 #include <DependencyTree_Selector.h>
 #endif
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <SALOME_ListIO.hxx>
 
 #include <SALOMEDS_SObject.hxx>

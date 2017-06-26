@@ -24,7 +24,6 @@
 // KERNEL includes
 #include <utilities.h>
 #include <Basics_Utils.hxx>
-#include <Basics_OCCTVersion.hxx>
 
 // GEOM includes
 #include "GEOM_Function.hxx"
@@ -63,7 +62,7 @@ STLPlugin_ExportDriver::STLPlugin_ExportDriver()
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer STLPlugin_ExportDriver::Execute(LOGBOOK& log) const
+Standard_Integer STLPlugin_ExportDriver::Execute(Handle(TFunction_Logbook)& log) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction( Label() );
@@ -97,7 +96,6 @@ Standard_Integer STLPlugin_ExportDriver::Execute(LOGBOOK& log) const
     TopoDS_Shape aCopyShape = aCopy.Shape();
     // ASCII mode
     aWriter.ASCIIMode() = anIsASCII;
-#if OCC_VERSION_LARGE > 0x06080000
     if ( anIsRelative ) {
       Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
       Bnd_Box bndBox;
@@ -108,20 +106,8 @@ Standard_Integer STLPlugin_ExportDriver::Execute(LOGBOOK& log) const
     //Compute triangulation
     BRepTools::Clean( aCopyShape );
     BRepMesh_IncrementalMesh aMesh( aCopyShape, aDeflection );
-#else
-    // set relative mode on false for using custom deflection coefficient
-    aWriter.RelativeMode( ) = anIsRelative;
-    if( anIsRelative )
-      aWriter.SetCoefficient( aDeflection );
-    else
-      aWriter.SetDeflection( aDeflection );
-#endif
     aWriter.Write( aCopyShape, aFileName.ToCString() );
-#if OCC_VERSION_MAJOR < 7
-    log.SetTouched(Label());
-#else
     log->SetTouched(Label());
-#endif
     return 1;
   }
   catch( Standard_Failure )
@@ -143,4 +129,4 @@ GetCreationInformation( std::string&             theOperationName,
   return false;
 }
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT( STLPlugin_ExportDriver,GEOM_BaseDriver );
+IMPLEMENT_STANDARD_RTTIEXT( STLPlugin_ExportDriver,GEOM_BaseDriver );

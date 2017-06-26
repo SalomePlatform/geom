@@ -123,7 +123,7 @@ class GEOM_Field : public GEOM_BaseObject
   // Returns all steps
   Standard_EXPORT std::list< Handle(GEOM_FieldStep)> GetSteps();
 
-  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_Field,GEOM_BaseObject)
+  DEFINE_STANDARD_RTTIEXT(GEOM_Field,GEOM_BaseObject)
 
 private:
 
@@ -185,7 +185,7 @@ public:
   // Returns GUID of CAF data array
   const Standard_GUID& GetDataID();
 
-  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_FieldStep,GEOM_BaseObject)
+  DEFINE_STANDARD_RTTIEXT(GEOM_FieldStep,GEOM_BaseObject)
 
 private:
 

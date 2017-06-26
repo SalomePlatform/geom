@@ -20,8 +20,6 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <GEOMImpl_IMeasureOperations.hxx>
 #include <GEOMImpl_IMeasure.hxx>
 #include <GEOMImpl_MeasureDriver.hxx>
@@ -43,10 +41,8 @@
 #include <BOPCol_ListOfShape.hxx>
 #include <BOPDS_DS.hxx>
 #include <BOPDS_MapOfPassKey.hxx>
-#if OCC_VERSION_LARGE > 0x07010000
 #include <BOPDS_MapOfPair.hxx>
 #include <BOPDS_Pair.hxx>
-#endif
 #include <BRepBndLib.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
 #include <BRepCheck_ListIteratorOfListOfStatus.hxx>
@@ -55,10 +51,8 @@
 #include <BRepClass_FaceClassifier.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
 #include <BRepExtrema_ShapeProximity.hxx>
-#if OCC_VERSION_LARGE > 0x06090000
 #include <BRepExtrema_SelfIntersection.hxx>
 #include <BRepExtrema_MapOfIntegerPackedMapOfInteger.hxx>
-#endif
 #include <BRepGProp.hxx>
 #include <BRepTools.hxx>
 #include <BRep_Tool.hxx>
@@ -1576,39 +1570,22 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
 
   // 1. Launch the checker
   aCSI.Perform();
-#if OCC_VERSION_LARGE > 0x07010001
   Standard_Boolean iErr = aCSI.HasErrors();
-#else
-  Standard_Integer iErr = aCSI.ErrorStatus();
-#endif
 
   //
   Standard_Integer aNbS, n1, n2;
-#if OCC_VERSION_LARGE > 0x07010000
   BOPDS_MapIteratorOfMapOfPair aItMPK;
-#else  
-  BOPDS_MapIteratorMapOfPassKey aItMPK;
-#endif
   //
   // 2. Take the shapes from DS
   const BOPDS_DS& aDS = aCSI.DS();
   aNbS=aDS.NbShapes();
   //
   // 3. Get the pairs of interfered shapes
-#if OCC_VERSION_LARGE > 0x07010000
   const BOPDS_MapOfPair& aMPK=aDS.Interferences();
-#else
-  const BOPDS_MapOfPassKey& aMPK=aDS.Interferences();
-#endif  
   aItMPK.Initialize(aMPK);
   for (; aItMPK.More(); aItMPK.Next()) {
-#if OCC_VERSION_LARGE > 0x07010000
     const BOPDS_Pair& aPK=aItMPK.Value();
     aPK.Indices(n1, n2);
-#else      
-    const BOPDS_PassKey& aPK=aItMPK.Value();
-    aPK.Ids(n1, n2);
-#endif    
     //
     if (n1 > aNbS || n2 > aNbS){
       return false; // Error
@@ -1663,7 +1640,6 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersectionsFast
   TopTools_IndexedMapOfShape anIndices;
   TopExp::MapShapes(aScopy, anIndices);
 
-#if OCC_VERSION_LARGE > 0x06090000
   // Checker of fast interferences
   BRepExtrema_SelfIntersection aTool(aScopy, (theTolerance <= 0.) ? 0.0 : theTolerance);
 
@@ -1691,7 +1667,6 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersectionsFast
 
   if (aTool.IsDone())
     SetErrorCode(OK);
-#endif
 
   return theIntersections->IsEmpty();
 }
@@ -1794,21 +1769,13 @@ bool GEOMImpl_IMeasureOperations::FastIntersect (Handle(GEOM_Object) theShape1, 
   aBSP.Perform();
  
   // 2. Get sets of IDs of overlapped faces
-#if OCC_VERSION_LARGE > 0x06090000
   for (BRepExtrema_MapOfIntegerPackedMapOfInteger::Iterator anIt1 (aBSP.OverlapSubShapes1()); anIt1.More(); anIt1.Next())
-#else
-  for (BRepExtrema_OverlappedSubShapes::Iterator anIt1 (aBSP.OverlapSubShapes1()); anIt1.More(); anIt1.Next())
-#endif
   {
     const TopoDS_Shape& aS1 = aBSP.GetSubShape1(anIt1.Key());
     theIntersections1->Append(anIndices1.FindIndex(aS1));
   }
   
-#if OCC_VERSION_LARGE > 0x06090000
   for (BRepExtrema_MapOfIntegerPackedMapOfInteger::Iterator anIt2 (aBSP.OverlapSubShapes2()); anIt2.More(); anIt2.Next())
-#else
-  for (BRepExtrema_OverlappedSubShapes::Iterator anIt2 (aBSP.OverlapSubShapes2()); anIt2.More(); anIt2.Next())
-#endif
   {
     const TopoDS_Shape& aS2 = aBSP.GetSubShape2(anIt2.Key());
     theIntersections2->Append(anIndices2.FindIndex(aS2));

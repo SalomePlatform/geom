@@ -46,8 +46,6 @@
 #include <GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx>
 #include <BlockFix_CheckTool.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
 #include "utilities.h"
 #include <OpUtil.hxx>
 #include <Utils_ExceptHandlers.hxx>

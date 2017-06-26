@@ -27,7 +27,6 @@
 #ifndef ShHealOper_ChangeOrientation_HeaderFile
 #define ShHealOper_ChangeOrientation_HeaderFile
 
-#include <MMgt_TShared.hxx>
 #include <ShHealOper_Tool.hxx>
 #include <TopoDS_Shape.hxx>
 

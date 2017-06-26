@@ -35,8 +35,6 @@
 #include <Standard_Boolean.hxx>
 #include <GeomAbs_Shape.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
 class TopoDS_Vertex;
 class TopoDS_Edge;
 class TopoDS_Face;
@@ -83,7 +81,7 @@ public:
                                             const TopoDS_Face& NewF1,
                                             const TopoDS_Face& NewF2);
 
-  OCCT_DEFINE_STANDARD_RTTIEXT(BlockFix_PeriodicSurfaceModifier,BRepTools_Modification)
+  DEFINE_STANDARD_RTTIEXT(BlockFix_PeriodicSurfaceModifier,BRepTools_Modification)
 
 private:
   Standard_Real myTolerance;

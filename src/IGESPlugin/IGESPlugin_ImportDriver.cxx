@@ -80,7 +80,7 @@ IGESPlugin_ImportDriver::IGESPlugin_ImportDriver()
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer IGESPlugin_ImportDriver::Execute(LOGBOOK& log) const
+Standard_Integer IGESPlugin_ImportDriver::Execute(Handle(TFunction_Logbook)& log) const
 {
   if( Label().IsNull() ) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction( Label() );
@@ -195,11 +195,7 @@ Standard_Integer IGESPlugin_ImportDriver::Execute(LOGBOOK& log) const
 
   aFunction->SetValue( aResShape );
 
-#if OCC_VERSION_MAJOR < 7
-  log.SetTouched(Label());
-#else
   log->SetTouched(Label());
-#endif
 
   return 1;
 }
@@ -282,4 +278,4 @@ IGESPlugin_ImportDriver::GetValue( const TCollection_AsciiString& theFileName,
     return TCollection_AsciiString();
 }
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT( IGESPlugin_ImportDriver, GEOM_BaseDriver );
+IMPLEMENT_STANDARD_RTTIEXT( IGESPlugin_ImportDriver, GEOM_BaseDriver );

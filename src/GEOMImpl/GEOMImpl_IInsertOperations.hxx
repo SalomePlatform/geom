@@ -28,8 +28,6 @@
 #include "GEOM_Object.hxx"
 #include "GEOM_Field.hxx"
 
-#include <Basics_OCCTVersion.hxx>
-
 #include "Utils_SALOME_Exception.hxx"
 
 #include <TDocStd_Document.hxx>

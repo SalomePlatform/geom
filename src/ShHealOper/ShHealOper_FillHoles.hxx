@@ -27,7 +27,6 @@
 #ifndef ShHealOper_FillHoles_HeaderFile
 #define ShHealOper_FillHoles_HeaderFile
 
-#include <MMgt_TShared.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopTools_SequenceOfShape.hxx>
 #include <TopoDS_Wire.hxx>

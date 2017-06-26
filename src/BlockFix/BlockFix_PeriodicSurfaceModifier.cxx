@@ -50,7 +50,7 @@
 
 #include <gp_Pnt.hxx>
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT(BlockFix_PeriodicSurfaceModifier, BRepTools_Modification);
+IMPLEMENT_STANDARD_RTTIEXT(BlockFix_PeriodicSurfaceModifier, BRepTools_Modification);
 
 //=======================================================================
 //function : BlockFix_PeriodicSurfaceModifier()

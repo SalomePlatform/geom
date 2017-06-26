@@ -27,7 +27,6 @@
 #ifndef ShHealOper_RemoveFace_HeaderFile
 #define ShHealOper_RemoveFace_HeaderFile
 
-#include <MMgt_TShared.hxx>
 #include <ShHealOper_Tool.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopTools_SequenceOfShape.hxx>

@@ -24,8 +24,6 @@
 
 #include <GEOMUtils.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <OpUtil.hxx>
 #include <Utils_ExceptHandlers.hxx>
 
@@ -96,9 +94,7 @@
 #include <sstream>
 #include <algorithm>
 
-#if OCC_VERSION_LARGE >= 0x07010000
 #include <V3d_Coordinate.hxx>
-#endif
 
 #include <Standard_Failure.hxx>
 #include <Standard_NullObject.hxx>

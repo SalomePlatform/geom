@@ -88,7 +88,6 @@
 
 #include <SALOMEDS_SObject.hxx>
 
-#include <Basics_OCCTVersion.hxx>
 #include <QtxFontEdit.h>
 
 // External includes

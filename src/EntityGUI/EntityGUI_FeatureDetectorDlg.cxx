@@ -64,7 +64,8 @@
 #include <BRepBuilderAPI_MakePolygon.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
 
-#include <AIS_TexturedShape.hxx>
+#include <AIS_Shape.hxx>
+
 #include <TCollection_AsciiString.hxx>
 #include <StdSelect_DisplayMode.hxx>
 

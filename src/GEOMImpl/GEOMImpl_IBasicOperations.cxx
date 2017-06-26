@@ -24,8 +24,6 @@
 
 #include <GEOMImpl_IBasicOperations.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
 #include "utilities.h"
 #include <OpUtil.hxx>
 #include <Utils_ExceptHandlers.hxx>
