@@ -76,11 +76,6 @@
 #include <TColgp_SequenceOfDir.hxx>
 #include <V3d_View.hxx>
 
-#if OCC_VERSION_LARGE >= 0x07010000
-#include <Quantity_Parameter.hxx>
-#endif
-
-
 // plane associated with custom data
 struct PlaneAndSegment
 {
@@ -1151,8 +1146,8 @@ template <typename TPlane>
 TPlane MeasureGUI_DimensionCreateTool::SelectPlaneForProjection( const NCollection_Sequence<TPlane>& thePlanes,
                                                                  const Handle(V3d_View)& theView ) const
 {
-  Quantity_Parameter U[3];
-  Quantity_Parameter N[3];
+  Standard_Real U[3];
+  Standard_Real N[3];
   theView->Up( U[0], U[1], U[2] );
   theView->Proj( N[0], N[1], N[2] );
 

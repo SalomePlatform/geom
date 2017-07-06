@@ -2029,7 +2029,7 @@ GEOMImpl_IMeasureOperations::AreCoordsInside(Handle(GEOM_Object)        theShape
                    project.NbPoints() > 0 &&
                    project.LowerDistance() <= tolerance )
               {
-                Quantity_Parameter u, v;
+                Standard_Real u, v;
                 project.LowerDistanceParameters(u, v);
                 gp_Pnt2d uv( u, v );
                 BRepClass_FaceClassifier FC ( face, uv, tolerance );

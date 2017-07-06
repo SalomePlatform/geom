@@ -160,7 +160,7 @@ Standard_Integer GEOMImpl_ProjectionDriver::Execute(LOGBOOK& log) const
         Standard_ConstructionError::Raise("No solution found");
       }
 
-      Quantity_Parameter U, V;
+      Standard_Real U, V;
       proj.LowerDistanceParameters(U, V);
       gp_Pnt2d aProjPnt (U, V);
 
@@ -170,7 +170,7 @@ Standard_Integer GEOMImpl_ProjectionDriver::Execute(LOGBOOK& log) const
         bool isSol = false;
         double minDist = RealLast();
         for (int i = 1; i <= nbPoints; i++) {
-          Quantity_Parameter Ui, Vi;
+          Standard_Real Ui, Vi;
           proj.Parameters(i, Ui, Vi);
           aProjPnt = gp_Pnt2d(Ui, Vi);
           aClsf.Perform(aFace, aProjPnt, tol);

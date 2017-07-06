@@ -146,7 +146,7 @@ gp_Pnt CurveCreator_Utils::ConvertClickToPoint( int x, int y, Handle(V3d_View) a
   // we need the projection to the XOY plane
   // 1. find a point in the plane of the eye and the normal to the plane
   Standard_Real X, Y, Z;
-  Quantity_Parameter Vx, Vy, Vz;
+  Standard_Real Vx, Vy, Vz;
   aView->ConvertWithProj( x, y, X, Y, Z, Vx, Vy, Vz );
 
   // 2. build a ray from the point by the normal to the XOY plane and intersect it
