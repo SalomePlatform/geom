@@ -145,7 +145,9 @@ GEOMImpl_IMeasureOperations::ShapeKind GEOMImpl_IMeasureOperations::KindOfShape
   GEOMAlgo_ShapeInfoFiller aSF;
   aSF.SetShape(aShape);
   aSF.Perform();
+
   Standard_Integer iErr = aSF.ErrorStatus();
+
   if (iErr) {
     SetErrorCode("Error in GEOMAlgo_ShapeInfoFiller");
     return SK_NO_SHAPE;
@@ -1574,7 +1576,11 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
 
   // 1. Launch the checker
   aCSI.Perform();
+#if OCC_VERSION_LARGE > 0x07010000
+  Standard_Boolean iErr = aCSI.HasErrors();
+#else
   Standard_Integer iErr = aCSI.ErrorStatus();
+#endif
 
   //
   Standard_Integer aNbS, n1, n2;

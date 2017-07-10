@@ -80,7 +80,11 @@ void GEOMAlgo_WireSolid::Perform()
       myErrorStatus=10;
       return;
     }
+#if OCC_VERSION_LARGE > 0x07010000
+    if(myDSFiller->HasErrors()) {
+#else
     if(myDSFiller->ErrorStatus()) {
+#endif
       myErrorStatus=11;
       return;
     }
