@@ -111,7 +111,7 @@ void GEOMAlgo_ShellSolidBuilder::PerformInternal(const BOPAlgo_PaveFiller& theFi
   //
   // 1. CheckData
   CheckData();
-#if OCC_VERSION_LARGE > 0x07010000
+#if OCC_VERSION_LARGE > 0x07010001
   if (HasErrors()) {
 #else
   if (myErrorStatus) {
@@ -121,7 +121,7 @@ void GEOMAlgo_ShellSolidBuilder::PerformInternal(const BOPAlgo_PaveFiller& theFi
   //
   // 2. Prepare
   Prepare();
-#if OCC_VERSION_LARGE > 0x07010000
+#if OCC_VERSION_LARGE > 0x07010001
   if (HasErrors()) {
 #else
   if (myErrorStatus) {
@@ -132,7 +132,7 @@ void GEOMAlgo_ShellSolidBuilder::PerformInternal(const BOPAlgo_PaveFiller& theFi
   // 3. Fill Images
   // 3.1 Vertice
   FillImagesVertices();
-#if OCC_VERSION_LARGE > 0x07010000
+#if OCC_VERSION_LARGE > 0x07010001
   if (HasErrors()) {
 #else
   if (myErrorStatus) {
@@ -141,7 +141,7 @@ void GEOMAlgo_ShellSolidBuilder::PerformInternal(const BOPAlgo_PaveFiller& theFi
   }
   //
   BuildResult(TopAbs_VERTEX);
-#if OCC_VERSION_LARGE > 0x07010000
+#if OCC_VERSION_LARGE > 0x07010001
   if (HasErrors()) {
 #else
   if (myErrorStatus) {
@@ -150,7 +150,7 @@ void GEOMAlgo_ShellSolidBuilder::PerformInternal(const BOPAlgo_PaveFiller& theFi
   }
   // 3.2 Edges
   FillImagesEdges();
-#if OCC_VERSION_LARGE > 0x07010000
+#if OCC_VERSION_LARGE > 0x07010001
   if (HasErrors()) {
 #else
   if (myErrorStatus) {
@@ -159,7 +159,7 @@ void GEOMAlgo_ShellSolidBuilder::PerformInternal(const BOPAlgo_PaveFiller& theFi
   }
   //
   BuildResult(TopAbs_EDGE);
-#if OCC_VERSION_LARGE > 0x07010000
+#if OCC_VERSION_LARGE > 0x07010001
   if (HasErrors()) {
 #else
   if (myErrorStatus) {
@@ -169,7 +169,7 @@ void GEOMAlgo_ShellSolidBuilder::PerformInternal(const BOPAlgo_PaveFiller& theFi
   //
   // 3.3 Wires
   FillImagesContainers(TopAbs_WIRE);
-#if OCC_VERSION_LARGE > 0x07010000
+#if OCC_VERSION_LARGE > 0x07010001
   if (HasErrors()) {
 #else
   if (myErrorStatus) {
@@ -178,7 +178,7 @@ void GEOMAlgo_ShellSolidBuilder::PerformInternal(const BOPAlgo_PaveFiller& theFi
   }
   //
   BuildResult(TopAbs_WIRE);
-#if OCC_VERSION_LARGE > 0x07010000
+#if OCC_VERSION_LARGE > 0x07010001
   if (HasErrors()) {
 #else
   if (myErrorStatus) {
@@ -188,7 +188,7 @@ void GEOMAlgo_ShellSolidBuilder::PerformInternal(const BOPAlgo_PaveFiller& theFi
   
   // 3.4 Faces
   FillImagesFaces();
-#if OCC_VERSION_LARGE > 0x07010000
+#if OCC_VERSION_LARGE > 0x07010001
   if (HasErrors()) {
 #else
   if (myErrorStatus) {
@@ -197,7 +197,7 @@ void GEOMAlgo_ShellSolidBuilder::PerformInternal(const BOPAlgo_PaveFiller& theFi
   }
   //
   BuildResult(TopAbs_FACE);
-#if OCC_VERSION_LARGE > 0x07010000
+#if OCC_VERSION_LARGE > 0x07010001
   if (HasErrors()) {
 #else
   if (myErrorStatus) {
@@ -251,7 +251,7 @@ void GEOMAlgo_ShellSolid::Perform()
       myErrorStatus=10;
       return;
     }
-#if OCC_VERSION_LARGE > 0x07010000
+#if OCC_VERSION_LARGE > 0x07010001
     if(myDSFiller->HasErrors()) {
 #else
     if(myDSFiller->ErrorStatus()) {
@@ -299,7 +299,7 @@ void GEOMAlgo_ShellSolid::Perform()
     GEOMAlgo_ShellSolidBuilder aSSB;
     //
     aSSB.PerformWithFiller(*myDSFiller);
-#if OCC_VERSION_LARGE > 0x07010000
+#if OCC_VERSION_LARGE > 0x07010001
     iErr=aSSB.HasErrors();
 #else
     iErr=aSSB.ErrorStatus();

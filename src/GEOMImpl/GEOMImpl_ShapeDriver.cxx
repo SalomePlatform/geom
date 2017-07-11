@@ -770,7 +770,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(LOGBOOK& log) const
     aMV.SetArguments(aLS);
     aMV.SetIntersect(aCI.GetIsIntersect());
     aMV.Perform();
-#if OCC_VERSION_LARGE > 0x07010000
+#if OCC_VERSION_LARGE > 0x07010001
     if (aMV.HasErrors()) return 0;
 #else
     if (aMV.ErrorStatus()) return 0;

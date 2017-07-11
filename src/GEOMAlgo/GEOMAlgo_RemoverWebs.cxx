@@ -225,7 +225,7 @@ void GEOMAlgo_RemoverWebs::BuildSolid()
   aSB.SetContext(myContext);
   aSB.SetShapes(aSFS);
   aSB.Perform();
-#if OCC_VERSION_LARGE > 0x07010000
+#if OCC_VERSION_LARGE > 0x07010001
   iErr=aSB.HasErrors();
 #else
   iErr=aSB.ErrorStatus();

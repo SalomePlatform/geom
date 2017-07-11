@@ -1576,7 +1576,7 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
 
   // 1. Launch the checker
   aCSI.Perform();
-#if OCC_VERSION_LARGE > 0x07010000
+#if OCC_VERSION_LARGE > 0x07010001
   Standard_Boolean iErr = aCSI.HasErrors();
 #else
   Standard_Integer iErr = aCSI.ErrorStatus();
