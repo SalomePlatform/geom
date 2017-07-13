@@ -1,4 +1,4 @@
-# Copyright (C) 2017  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2017  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,5 +17,10 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-ADD_TEST(GEOM_TestXAO python ${SALOME_TEST_DRIVER} ${TIMEOUT} TestXAO)
-SET_TESTS_PROPERTIES(GEOM_TestXAO PROPERTIES LABELS "${COMPONENT_NAME}")
+SET(SALOME_TEST_DRIVER "$ENV{ABSOLUTE_APPLI_PATH}/bin/salome/appliskel/salome_test_driver.py")
+
+SET(COMPONENT_NAME GEOM)
+SET(TIMEOUT        300)
+
+SUBDIRS(examples)
+SUBDIRS(xao)
