@@ -17,10 +17,6 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-SET(SALOME_TEST_DRIVER "$ENV{ABSOLUTE_APPLI_PATH}/bin/salome/appliskel/salome_test_driver.py")
-SET(COMPONENT_NAME GEOM)
-SET(TIMEOUT        300)
-
 INCLUDE(tests.set)
 
 FOREACH(tfile ${GOOD_TESTS})
