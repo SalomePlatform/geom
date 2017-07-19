@@ -150,11 +150,19 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(LOGBOOK& log) const
           aList2.Append(aShape2);
           aCSI.SetArguments(aList1);
           aCSI.Perform();
+#if OCC_VERSION_LARGE > 0x07010001
+          if (aCSI.HasErrors() || aCSI.DS().Interferences().Extent() > 0)
+#else
           if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0)
+#endif
             StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
           aCSI.SetArguments(aList2);
           aCSI.Perform();
+#if OCC_VERSION_LARGE > 0x07010001
+          if (aCSI.HasErrors() || aCSI.DS().Interferences().Extent() > 0)
+#else
           if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0)
+#endif
             StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
         }
 
@@ -205,7 +213,11 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(LOGBOOK& log) const
             aList1.Append(aShape);
             aCSI.SetArguments(aList1);
             aCSI.Perform();
+#if OCC_VERSION_LARGE > 0x07010001
+            if (aCSI.HasErrors() || aCSI.DS().Interferences().Extent() > 0) {
+#else
             if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0) {
+#endif
               StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
             }
           }
@@ -229,7 +241,11 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(LOGBOOK& log) const
               aList2.Append(aShape2);
               aCSI.SetArguments(aList2);
               aCSI.Perform();
-              if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0) {
+#if OCC_VERSION_LARGE > 0x07010001
+	      if (aCSI.HasErrors() || aCSI.DS().Interferences().Extent() > 0) {
+#else
+	      if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0) {
+#endif
                 StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
               }
             }
@@ -270,7 +286,11 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(LOGBOOK& log) const
           aList1.Append(aShape);
           aCSI.SetArguments(aList1);
           aCSI.Perform();
-          if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0) {
+#if OCC_VERSION_LARGE > 0x07010001
+	  if (aCSI.HasErrors() || aCSI.DS().Interferences().Extent() > 0) {
+#else
+	  if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0) {
+#endif
             StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
           }
         }
@@ -300,7 +320,11 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(LOGBOOK& log) const
             aList2.Append(aTool);
             aCSI.SetArguments(aList2);
             aCSI.Perform();
-            if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0) {
+#if OCC_VERSION_LARGE > 0x07010001
+	    if (aCSI.HasErrors() || aCSI.DS().Interferences().Extent() > 0) {
+#else
+	    if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0) {
+#endif
               StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
             }
           }

@@ -56,6 +56,10 @@
 #include <Geom_Plane.hxx>
 #include <NCollection_Sequence.hxx>
 
+#if OCC_VERSION_LARGE >= 0x07010000
+#include <Quantity_Length.hxx>
+#endif
+
 //=================================================================================
 // function : Constructor
 // purpose  : 

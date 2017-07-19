@@ -150,7 +150,7 @@ static Standard_Boolean IsToMerge
     // Check if they belong to the same faces.
     Standard_Boolean isSame = Standard_False;
     Standard_Boolean has1   = theMapEdgeFaces.Contains(theEdge1);
-    Standard_Boolean has2   = theMapEdgeFaces.Contains(theEdge1);
+    Standard_Boolean has2   = theMapEdgeFaces.Contains(theEdge2);
 
     if (has1 && has2) {
       const TopTools_ListOfShape &aLst1 = theMapEdgeFaces.FindFromKey(theEdge1);

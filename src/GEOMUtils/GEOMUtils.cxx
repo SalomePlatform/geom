@@ -96,6 +96,10 @@
 #include <sstream>
 #include <algorithm>
 
+#if OCC_VERSION_LARGE >= 0x07010000
+#include <V3d_Coordinate.hxx>
+#endif
+
 #include <Standard_Failure.hxx>
 #include <Standard_NullObject.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC

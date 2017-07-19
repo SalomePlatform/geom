@@ -822,12 +822,7 @@ void GEOM_Function::AddSubShapeReference(Handle(GEOM_Function) theSubShape)
 
   TDF_Label aSubShapesLabel = _label.FindChild(SUBSHAPES_LABEL);
 
-  Handle(TDataStd_ExtStringList) aList;
-  if (!aSubShapesLabel.FindAttribute(TDataStd_ExtStringList::GetID(), aList)) {
-    aList = new TDataStd_ExtStringList;
-    aSubShapesLabel.AddAttribute(aList);
-  }
-
+  Handle(TDataStd_ExtStringList) aList = TDataStd_ExtStringList::Set( aSubShapesLabel );
   TCollection_AsciiString anEntry;
   TDF_Tool::Entry(theSubShape->GetOwnerEntry(), anEntry);
   aList->Append(anEntry);
@@ -880,11 +875,7 @@ const TDataStd_ListOfExtendedString& GEOM_Function::GetSubShapeReferences()
 
   TDF_Label aSubShapesLabel = _label.FindChild(SUBSHAPES_LABEL);
 
-  Handle(TDataStd_ExtStringList) aList;
-  if (!aSubShapesLabel.FindAttribute(TDataStd_ExtStringList::GetID(), aList)) {
-    aList = new TDataStd_ExtStringList;
-    aSubShapesLabel.AddAttribute(aList);
-  }
+  Handle(TDataStd_ExtStringList) aList = TDataStd_ExtStringList::Set( aSubShapesLabel );
 
   _isDone = true;
   return aList->List();

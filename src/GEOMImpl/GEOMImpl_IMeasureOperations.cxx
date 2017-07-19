@@ -145,7 +145,9 @@ GEOMImpl_IMeasureOperations::ShapeKind GEOMImpl_IMeasureOperations::KindOfShape
   GEOMAlgo_ShapeInfoFiller aSF;
   aSF.SetShape(aShape);
   aSF.Perform();
+
   Standard_Integer iErr = aSF.ErrorStatus();
+
   if (iErr) {
     SetErrorCode("Error in GEOMAlgo_ShapeInfoFiller");
     return SK_NO_SHAPE;
@@ -1574,7 +1576,11 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
 
   // 1. Launch the checker
   aCSI.Perform();
+#if OCC_VERSION_LARGE > 0x07010001
+  Standard_Boolean iErr = aCSI.HasErrors();
+#else
   Standard_Integer iErr = aCSI.ErrorStatus();
+#endif
 
   //
   Standard_Integer aNbS, n1, n2;
@@ -2029,7 +2035,7 @@ GEOMImpl_IMeasureOperations::AreCoordsInside(Handle(GEOM_Object)        theShape
                    project.NbPoints() > 0 &&
                    project.LowerDistance() <= tolerance )
               {
-                Quantity_Parameter u, v;
+                Standard_Real u, v;
                 project.LowerDistanceParameters(u, v);
                 gp_Pnt2d uv( u, v );
                 BRepClass_FaceClassifier FC ( face, uv, tolerance );

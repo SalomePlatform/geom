@@ -90,7 +90,11 @@ void GEOMAlgo_VertexSolid::Perform()
       myErrorStatus=10;
       return;
     }
+#if OCC_VERSION_LARGE > 0x07010001
+    if(myDSFiller->HasErrors()) {
+#else
     if(myDSFiller->ErrorStatus()) {
+#endif
       myErrorStatus=11;
       return;
     }

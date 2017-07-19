@@ -37,6 +37,7 @@
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
+#include <Basics_OCCTVersion.hxx>
 
 #include <GEOMAlgo_IndexedDataMapOfShapeState.hxx>
 
@@ -84,7 +85,11 @@ void GEOMAlgo_SolidSolid::Perform()
       myErrorStatus=10;
       return;
     }
+#if OCC_VERSION_LARGE > 0x07010001
+    if(myDSFiller->HasErrors()) {
+#else
     if(myDSFiller->ErrorStatus()) {
+#endif
       myErrorStatus=11;
       return;
     }
