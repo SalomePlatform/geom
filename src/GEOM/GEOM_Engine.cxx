@@ -1853,7 +1853,7 @@ void PublishObject (TObjectData&                              theObjectData,
 
     // store aCreationCommand before publishing commands
     int tag = GetTag(theObjectData._entry);
-    theEntryToCmdMap.insert( std::make_pair( tag + 2*theEntry2ObjData.size(), aCreationCommand ));
+    theEntryToCmdMap.insert( std::make_pair( tag + -2*theEntry2ObjData.size(), aCreationCommand ));
   }
 
   // make a command
