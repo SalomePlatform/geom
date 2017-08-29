@@ -90,6 +90,14 @@ static int MYDEBUG = 0;
 static int MYDEBUG = 0;
 #endif
 
+// VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+// Next macro, when defined, causes appearing of SubShapeAllIDs(), SubShapeAllSortedIDs(), GetSameIDs()
+// and other such commands in Python dump.
+// See also GEOMImpl_IShapesOperations.cxx.
+// ---------------------------------------
+// #define DUMP_SUBSHAPE_IDS
+// ---------------------------------------
+
 typedef std::map< TCollection_AsciiString, TCollection_AsciiString > TSting2StringMap;
 typedef std::map< TCollection_AsciiString, TObjectData >             TSting2ObjDataMap;
 typedef std::map< TCollection_AsciiString, TObjectData* >            TSting2ObjDataPtrMap;
@@ -164,6 +172,8 @@ static TCollection_AsciiString GetPublishCommands
                     const std::map< int, TCollection_AsciiString > &theEntryToCmdMap,
                     const TIntToListIntMap                         &theMapRefs,
                           std::set< int >                          &thePublished);
+
+void Prettify(TCollection_AsciiString& theScript);
 
 //================================================================================
 /*!
@@ -868,6 +878,11 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
     globalVars.Insert( 1, "\n\tglobal " );
     aScript.Insert( posToInsertGlobalVars, globalVars );
   }
+
+  // VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+#ifndef DUMP_SUBSHAPE_IDS
+  Prettify(aScript);
+#endif
 
   return aScript;
 }
@@ -1916,6 +1931,43 @@ TCollection_AsciiString GetPublishCommands
   }
 
   return aResult;
+}
+
+void Prettify(TCollection_AsciiString& theScript)
+{
+  TCollection_AsciiString output;
+  static std::list<TCollection_AsciiString> ToRemove;
+  if (ToRemove.empty()) {
+    ToRemove.push_back("geompy.SubShapeAllIDs");
+    ToRemove.push_back("geompy.SubShapeAllSortedCentresIDs");
+    ToRemove.push_back("geompy.SubShapeAllSortedIDs");
+    ToRemove.push_back("geompy.GetFreeFacesIDs");
+    ToRemove.push_back("geompy.GetShapesOnBoxIDs");
+    ToRemove.push_back("geompy.GetShapesOnShapeIDs");
+    ToRemove.push_back("geompy.GetShapesOnPlaneIDs");
+    ToRemove.push_back("geompy.GetShapesOnPlaneWithLocationIDs");
+    ToRemove.push_back("geompy.GetShapesOnCylinderIDs");
+    ToRemove.push_back("geompy.GetShapesOnCylinderWithLocationIDs");
+    ToRemove.push_back("geompy.GetShapesOnSphereIDs");
+    ToRemove.push_back("geompy.GetShapesOnQuadrangleIDs");
+    ToRemove.push_back("geompy.GetSameIDs");
+  }
+
+  int start = 1;
+  while (start <= theScript.Length()) {
+    int end = theScript.Location("\n", start, theScript.Length());
+    if (end == -1) end = theScript.Length();
+    TCollection_AsciiString line = theScript.SubString(start, end);
+    bool found = false;
+    for (std::list<TCollection_AsciiString>::const_iterator it = ToRemove.begin(); it != ToRemove.end() && !found; ++it)
+      found = line.Search( *it ) != -1;
+    if (!found)
+      output += line;
+    start = end + 1;
+  }
+  theScript = output;
+
+  //OK @@@@@@@@@@@@@@@@@@@@@@@@@@@
 }
 
 //================================================================================

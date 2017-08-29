@@ -105,6 +105,14 @@
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
+// VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+// Next macro, when defined, causes appearing of SubShapeAllIDs(), SubShapeAllSortedIDs(), GetSameIDs()
+// and other such commands in Python dump.
+// See also GEOM_Engine.cxx.
+// ---------------------------------------
+// #define DUMP_SUBSHAPE_IDS
+// ---------------------------------------
+
 namespace {
 
   void AddFlatSubShapes(const TopoDS_Shape& S, TopTools_ListOfShape& L, TopTools_MapOfShape& M)
@@ -1675,6 +1683,8 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::SubShapeAllIDs
 
   Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
 
+  // VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+#ifdef DUMP_SUBSHAPE_IDS
   //Make a Python command
   GEOM::TPythonDump pd (aFunction, /*append=*/true);
   pd << "listSubShapeIDs = geompy.SubShapeAll";
@@ -1691,6 +1701,7 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::SubShapeAllIDs
     break;
   default: ;
   }
+#endif // DUMP_SUBSHAPE_IDS
 
   SetErrorCode(OK);
   return aSeq;
@@ -2250,9 +2261,12 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetFreeFacesIDs
   //The explode doesn't change object so no new function is required.
   Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
 
+  // VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+#ifdef DUMP_SUBSHAPE_IDS
   //Make a Python command
   GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listFreeFacesIDs = geompy.GetFreeFacesIDs(" << theShape << ")";
+#endif // DUMP_SUBSHAPE_IDS
 
   SetErrorCode(OK);
   return aSeq;
@@ -2712,6 +2726,8 @@ Handle(TColStd_HSequenceOfInteger)
   // The GetShapesOnBox() doesn't change object so no new function is required.
   Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast(theShape,theBox)->GetLastFunction();
 
+  // VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+#ifdef DUMP_SUBSHAPE_IDS
   // Make a Python command
   GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listShapesOnBoxIDs = geompy.GetShapesOnBoxIDs("
@@ -2719,6 +2735,7 @@ Handle(TColStd_HSequenceOfInteger)
     << theShape << ", "
     << TopAbs_ShapeEnum(theShapeType) << ", "
     << theState << ")";
+#endif // DUMP_SUBSHAPE_IDS
 
   SetErrorCode(OK);
   return aSeqOfIDs;
@@ -2907,13 +2924,16 @@ Handle(TColStd_HSequenceOfInteger)
   Handle(GEOM_Function) aFunction =
     GEOM::GetCreatedLast(theShape,theCheckShape)->GetLastFunction();
 
+  // VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+#ifdef DUMP_SUBSHAPE_IDS
   // Make a Python command
   GEOM::TPythonDump(aFunction, /*append=*/true)
-    << "listShapesOnBoxIDs = geompy.GetShapesOnShapeIDs("
+    << "listShapesOnShapeIDs = geompy.GetShapesOnShapeIDs("
     << theCheckShape << ", "
     << theShape << ", "
     << TopAbs_ShapeEnum(theShapeType) << ", "
     << theState << ")";
+#endif // DUMP_SUBSHAPE_IDS
 
   SetErrorCode(OK);
   return aSeqOfIDs;
@@ -3915,10 +3935,13 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnPlaneI
   // The GetShapesOnPlaneIDs() doesn't change object so no new function is required.
   Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast(theShape,theAx1)->GetLastFunction();
 
+  // VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+#ifdef DUMP_SUBSHAPE_IDS
   // Make a Python command
   GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listShapesOnPlane = geompy.GetShapesOnPlaneIDs"
     << "(" << theShape << "," << aShapeType << "," << theAx1 << "," << theState << ")";
+#endif // DUMP_SUBSHAPE_IDS
 
   SetErrorCode(OK);
   return aSeq;
@@ -3982,10 +4005,13 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnPlaneW
   // The GetShapesOnPlaneIDs() doesn't change object so no new function is required.
   Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast(theShape,theAx1)->GetLastFunction();
 
+  // VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+#ifdef DUMP_SUBSHAPE_IDS
   // Make a Python command
   GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listShapesOnPlane = geompy.GetShapesOnPlaneWithLocationIDs"
     << "(" << theShape << ", " << aShapeType << ", " << theAx1 << ", "<< thePnt << ", "  << theState << ")";
+#endif // DUMP_SUBSHAPE_IDS
 
   SetErrorCode(OK);
   return aSeq;
@@ -4028,11 +4054,14 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnCylind
   // The GetShapesOnCylinder() doesn't change object so no new function is required.
   Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast(theShape,theAxis)->GetLastFunction();
 
+  // VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+#ifdef DUMP_SUBSHAPE_IDS
   // Make a Python command
   GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listShapesOnCylinder = geompy.GetShapesOnCylinderIDs"
     << "(" << theShape << ", " << aShapeType << ", " << theAxis << ", "
     << theRadius << ", " << theState << ")";
+#endif // DUMP_SUBSHAPE_IDS
 
   SetErrorCode(OK);
   return aSeq;
@@ -4096,11 +4125,14 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnCylind
   Handle(GEOM_Function) aFunction =
     GEOM::GetCreatedLast(theShape, GEOM::GetCreatedLast(thePnt,theAxis))->GetLastFunction();
 
+  // VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+#ifdef DUMP_SUBSHAPE_IDS
   // Make a Python command
   GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listShapesOnCylinder = geompy.GetShapesOnCylinderWithLocationIDs"
     << "(" << theShape << ", " << aShapeType << ", " << theAxis << ", "
     << thePnt << ", " << theRadius << ", " << theState << ")";
+#endif // DUMP_SUBSHAPE_IDS
 
   SetErrorCode(OK);
   return aSeq;
@@ -4146,11 +4178,14 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnSphere
   // The GetShapesOnSphere() doesn't change object so no new function is required.
   Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast(theShape,theCenter)->GetLastFunction();
 
+  // VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+#ifdef DUMP_SUBSHAPE_IDS
   // Make a Python command
   GEOM::TPythonDump(aFunction, /*append=*/true)
-    << "listShapesOnCylinder = geompy.GetShapesOnSphereIDs"
+    << "listShapesOnSphere = geompy.GetShapesOnSphereIDs"
     << "(" << theShape << ", " << aShapeType << ", " << theCenter << ", "
     << theRadius << ", " << theState << ")";
+#endif // DUMP_SUBSHAPE_IDS
 
   SetErrorCode(OK);
   return aSeq;
@@ -4390,6 +4425,8 @@ Handle(TColStd_HSequenceOfInteger)
   lastObj = GEOM::GetCreatedLast(lastObj,theBottomLeftPoint);
   Handle(GEOM_Function) aFunction = lastObj->GetLastFunction();
 
+  // VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+#ifdef DUMP_SUBSHAPE_IDS
   GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listShapesOnQuadrangle = geompy.GetShapesOnQuadrangleIDs("
     << theShape << ", "
@@ -4399,6 +4436,7 @@ Handle(TColStd_HSequenceOfInteger)
     << theBottomLeftPoint << ", "
     << theBottomRigthPoint << ", "
     << theState << ")";
+#endif // DUMP_SUBSHAPE_IDS
 
   SetErrorCode(OK);
   return aSeqOfIDs;
@@ -5112,11 +5150,14 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetSameIDs
     // The GetSameIDs() doesn't change object so no new function is required.
     Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast(theShapeWhere,theShapeWhat)->GetLastFunction();
 
+  // VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+#ifdef DUMP_SUBSHAPE_IDS
   // Make a Python command
   GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listSameIDs = geompy.GetSameIDs("
     << theShapeWhere << ", "
     << theShapeWhat << ")";
+#endif // DUMP_SUBSHAPE_IDS
     return aSeq;
   } else {
     SetErrorCode(NOT_FOUND_ANY);
