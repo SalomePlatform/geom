@@ -94,10 +94,13 @@ void CurveCreator_TableItemDelegate::setModelData( QWidget* theEditor,
     QItemDelegate::setModelData( theEditor, theModel, theIndex );
 }
 
+
+
+
 CurveCreator_TableView::CurveCreator_TableView( CurveCreator_ICurve* theCurve,
                                                 QWidget* theParent,
                                                 const QStringList& theCoordTitles )
-: QTableWidget( theParent ), myCurve( theCurve )
+  : QTableWidget( theParent ), myCurve( theCurve ), myCurrentSortId( -1 ), myCurrentSortOrder( Qt::AscendingOrder )
 {
   setItemDelegate( new CurveCreator_TableItemDelegate( this ) );
   setVisible( false );
@@ -199,5 +202,12 @@ int CurveCreator_TableView::getPointId( const int theRowId ) const
 
 void CurveCreator_TableView::OnHeaderClick( int theLogicalId )
 {
-  sortByColumn( theLogicalId, Qt::AscendingOrder );
+  if( theLogicalId == myCurrentSortId )
+    if( myCurrentSortOrder == Qt::AscendingOrder )
+      myCurrentSortOrder = Qt::DescendingOrder;
+    else
+      myCurrentSortOrder = Qt::AscendingOrder;
+
+  sortByColumn( theLogicalId, myCurrentSortOrder );
+  myCurrentSortId = theLogicalId;
 }

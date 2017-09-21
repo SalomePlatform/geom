@@ -69,6 +69,8 @@ private slots:
 private:
   CurveCreator_ICurve* myCurve;
 
+  int           myCurrentSortId;
+  Qt::SortOrder myCurrentSortOrder;
 };
 
 #endif // CURVECREATOR_TABLEVIEW_H
