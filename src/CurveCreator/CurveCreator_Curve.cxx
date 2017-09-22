@@ -971,11 +971,17 @@ CurveCreator::Coordinates CurveCreator_Curve::getPoint( const int theISection,
 // function: getPoints
 // purpose:
 //=======================================================================
-CurveCreator::Coordinates CurveCreator_Curve::getPoints( const int theISection ) const
+CurveCreator::Coordinates CurveCreator_Curve::getCoords( int theISection ) const
+{
+  CurveCreator_Section* aSection = (CurveCreator_Section*)getSection( theISection );
+  return aSection ? aSection->myPoints : CurveCreator::Coordinates();
+}
+
+Handle(TColgp_HArray1OfPnt) CurveCreator_Curve::GetDifferentPoints( int theISection ) const
 {
   //DEBTRACE("getPoints");
   CurveCreator_Section* aSection = (CurveCreator_Section*)getSection( theISection );
-  return aSection ? aSection->myPoints : CurveCreator::Coordinates();
+  return aSection ? aSection->GetDifferentPoints( (int)myDimension ) : Handle(TColgp_HArray1OfPnt)();
 }
 
 void CurveCreator_Curve::constructAISObject()

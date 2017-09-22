@@ -336,7 +336,7 @@ bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
               aSectionId = anIt->first;
               aPointId = anIt->second;
               const CurveCreator::Coordinates &aPoints =
-                      theCurve->getPoints(aSectionId);
+                      theCurve->getCoords(aSectionId);
               CurveCreator::Coordinates::const_iterator anIterBegin =
                   aPoints.begin() + (aDim*aPointId);
               CurveCreator::Coordinates::const_iterator anIterEnd = 
@@ -526,7 +526,7 @@ bool CurveCreator_Diff::addSectionToUndo
                        CurveCreator_Operation &theOperation) const
 {
   const std::string aName = theCurve->getSectionName(theIndex);
-  const CurveCreator::Coordinates &aPnts = theCurve->getPoints(theIndex);
+  const CurveCreator::Coordinates &aPnts = theCurve->getCoords(theIndex);
   const CurveCreator::SectionType aType = theCurve->getSectionType(theIndex);
   const bool isClosed = theCurve->isClosed(theIndex);
 

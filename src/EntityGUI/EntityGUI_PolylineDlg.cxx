@@ -252,7 +252,7 @@ void EntityGUI_PolylineDlg::GetCurveParams(GEOM::ListOfListOfDouble &theCoords,
 
   for (i = 0; i < aNbSec; ++i) {
     // Set coordinates
-    CurveCreator::Coordinates aCoords   = myCurve->getPoints(i);
+    CurveCreator::Coordinates aCoords   = myCurve->getCoords(i);
     const int                 aNbPoints = aCoords.size();
 
     theCoords[i].length(aNbPoints);

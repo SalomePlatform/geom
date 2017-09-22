@@ -59,8 +59,7 @@ struct CURVECREATOR_EXPORT CurveCreator_ISection
   virtual ~CurveCreator_ISection() {}
 
   //! Calculates the different points of the section.
-  virtual void GetDifferentPoints(
-    const int theDimension, Handle(TColgp_HArray1OfPnt)& thePoints) const = 0;
+  virtual Handle(TColgp_HArray1OfPnt) GetDifferentPoints( int theDimension ) const = 0;
 };
 
 /**
@@ -192,7 +191,7 @@ public:
   /**
    * Get points of a section (the total points in Curve if theISection is equal to -1)..
    */
-  virtual CurveCreator::Coordinates getPoints( const int theISection = -1 ) const = 0;
+  virtual Handle(TColgp_HArray1OfPnt) GetDifferentPoints( int theISection = -1 ) const = 0;
 
   /**
    *  Get number of points in specified section or (the total number of points

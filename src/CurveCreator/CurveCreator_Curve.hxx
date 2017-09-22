@@ -261,7 +261,9 @@ public:
   /**
    * Get points of a section (the total points in Curve if theISection is equal to -1)..
    */
-  virtual CurveCreator::Coordinates getPoints( const int theISection = -1 ) const;
+  virtual Handle(TColgp_HArray1OfPnt) GetDifferentPoints( int theISection = -1 ) const;
+
+  CurveCreator::Coordinates getCoords( int theISection = -1 ) const;
 
 
   /**
