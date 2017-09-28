@@ -3025,7 +3025,6 @@ void GEOM_Displayer::UpdateColorScale()
             colorScale->SetBreadth( viewWidth * width );
             colorScale->SetHeight( viewHeight * height );
             colorScale->SetRange( fieldStepRangeMin, fieldStepRangeMax );
-            printf("fieldStepRangeMin, fieldStepRangeMax: %f, %f\n", fieldStepRangeMin, fieldStepRangeMax);
             colorScale->SetNumberOfIntervals( fieldDataType == GEOM::FDT_Bool ? 2 : nbIntervals );
             colorScale->SetTextHeight( textHeight );
             colorScale->SetTitle( fieldStepName );
