@@ -41,7 +41,7 @@ public:
                                  const QModelIndex& theIndex ) const;
 };
 
-class CurveCreator_TableView : public QTableWidget
+class CURVECREATOR_EXPORT CurveCreator_TableView : public QTableWidget
 {
   Q_OBJECT
 
@@ -65,7 +65,7 @@ public:
    */
   int getPointId( const int theRowId ) const;
 
-private slots:
+public slots:
   void OnHeaderClick( int );
 
 private:
