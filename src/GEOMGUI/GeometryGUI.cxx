@@ -230,7 +230,7 @@ GeometryGUI::GeometryGUI() :
   myTextTreeWdg = 0;
   myAnnotationMgr = 0;
 
-  connect( Material_ResourceMgr::resourceMgr(), SIGNAL( changed() ), this, SLOT( updateMaterials() ) );
+  connect( Material_ResourceMgr::resourceMgr(), SIGNAL( changed() ), this, SLOT( updateMaterials() ), Qt::UniqueConnection );
 
   Q_INIT_RESOURCE( GEOMGUI );
 }
@@ -1863,7 +1863,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   // end of GEOM plugins loading
 
   connect( application()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ),
-          this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ) );
+           this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ), Qt::UniqueConnection );
 
   // Reset actions accelerator keys
   action(GEOMOp::OpDelete)->setEnabled( true ); // Delete: Key_Delete
@@ -1874,9 +1874,9 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
 
   LightApp_SelectionMgr* sm = getApp()->selectionMgr();
 
-  connect( sm, SIGNAL( currentSelectionChanged() ), this, SLOT( updateCreationInfo() ));
-  connect( sm, SIGNAL( currentSelectionChanged() ), this, SLOT( onAutoBringToFront() ));
-  connect( sm, SIGNAL( currentSelectionChanged() ), this, SLOT( updateFieldColorScale() ));
+  connect( sm, SIGNAL( currentSelectionChanged() ), this, SLOT( updateCreationInfo() ), Qt::UniqueConnection );
+  connect( sm, SIGNAL( currentSelectionChanged() ), this, SLOT( onAutoBringToFront() ), Qt::UniqueConnection );
+  connect( sm, SIGNAL( currentSelectionChanged() ), this, SLOT( updateFieldColorScale() ), Qt::UniqueConnection );
 
   if ( !myCreationInfoWdg )
     myCreationInfoWdg = new GEOMGUI_CreationInfoWdg( getApp() );
@@ -1913,7 +1913,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
 
   QMenu* viewMenu = menuMgr()->findMenu( STD_Application::MenuViewId );
   if ( viewMenu )
-    connect( viewMenu, SIGNAL( aboutToShow() ), this, SLOT( onViewAboutToShow() ) );
+    connect( viewMenu, SIGNAL( aboutToShow() ), this, SLOT( onViewAboutToShow() ), Qt::UniqueConnection );
 
   // 0020836 (Basic vectors and origin)
   SUIT_ResourceMgr* aResourceMgr = SUIT_Session::session()->resourceMgr();
@@ -1952,7 +1952,7 @@ bool GeometryGUI::deactivateModule( SUIT_Study* study )
   LightApp_SelectionMgr* selMrg = getApp()->selectionMgr();
 
   disconnect( selMrg, SIGNAL( currentSelectionChanged() ), this, SLOT( updateCreationInfo() ));
-  disconnect( selMrg, SIGNAL( currentSelectionChanged() ), this, SLOT( updateFieldColorScale() ));
+  //disconnect( selMrg, SIGNAL( currentSelectionChanged() ), this, SLOT( updateFieldColorScale() ));
   if ( myCreationInfoWdg ) {
     getApp()->removeDockWindow( myCreationInfoWdg->getWinID() );
     myCreationInfoWdg = 0;
@@ -2212,8 +2212,7 @@ void GeometryGUI::updateFieldColorScale()
 {
   if( SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( getApp()->activeStudy() ) )
   {
-    GEOM_Displayer aDisplayer( aStudy );
-    aDisplayer.UpdateColorScale();
+    GEOM_Displayer( aStudy ).UpdateColorScale();
   }
 }
 
@@ -2818,9 +2817,7 @@ void GeometryGUI::preferencesChanged( const QString& section, const QString& par
              param == QString("scalar_bar_nb_intervals")) {
       if( SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( getApp()->activeStudy() ) )
       {
-        GEOM_Displayer aDisplayer( aStudy );
-        bool anIsRedisplayFieldSteps = param == QString("scalar_bar_nb_intervals");
-        aDisplayer.UpdateColorScale( anIsRedisplayFieldSteps, true );
+        updateFieldColorScale();
       }
     }
     else if ( param == QString("dimensions_color")            ||

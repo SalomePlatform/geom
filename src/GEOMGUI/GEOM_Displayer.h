@@ -45,7 +45,6 @@ class SALOME_OCCViewType;
 #include <LightApp_Displayer.h>
 #include <LightApp_Study.h>
 #include <Aspect_TypeOfMarker.hxx>
-#include <AIS_ColorScale.hxx>
 #include <TCollection_AsciiString.hxx>
 #include <TColStd_MapOfInteger.hxx>
 #include <QList>
@@ -226,8 +225,8 @@ public:
                                                 SALOME_View* = 0);
 
   /* Update visibility and parameters of the currently selected field step's color scale */
-  void UpdateColorScale( const bool theIsRedisplayFieldSteps = false, const bool updateViewer = true );
-  void SetUpdateColorScale(bool toUpdate) { myUpdateColorScale = toUpdate; } // IPAL54049
+  void UpdateColorScale();
+  bool SetUpdateColorScale(bool);
 
 protected:
   /* internal methods */
@@ -287,8 +286,7 @@ protected:
   std::string                      myTexture;
   int                              myType;
   SALOME_View*                     myViewFrame;
-  Handle(AIS_ColorScale)           myColorScale;
-  int                              myUpdateColorScale; // IPAL54049
+  bool                             myUpdateColorScale; // IPAL54049
 
   // Attributes
   Quantity_Color                   myShadingColor;
