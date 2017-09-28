@@ -19,6 +19,7 @@
 
 #include "CurveCreator_TableView.h"
 #include "CurveCreator_UtilsICurve.hxx"
+#include "CurveCreator_Widget.h"
 
 #include <gp_Pnt.hxx>
 
@@ -98,9 +99,10 @@ void CurveCreator_TableItemDelegate::setModelData( QWidget* theEditor,
 
 
 CurveCreator_TableView::CurveCreator_TableView( CurveCreator_ICurve* theCurve,
-                                                QWidget* theParent,
+                                                CurveCreator_Widget* theParent,
                                                 const QStringList& theCoordTitles )
-  : QTableWidget( theParent ), myCurve( theCurve ), myCurrentSortId( -1 ), myCurrentSortOrder( Qt::AscendingOrder )
+  : QTableWidget( theParent ), myWidget( theParent ),
+    myCurve( theCurve ), myCurrentSortId( -1 ), myCurrentSortOrder( Qt::AscendingOrder )
 {
   setItemDelegate( new CurveCreator_TableItemDelegate( this ) );
   setVisible( false );
@@ -209,5 +211,15 @@ void CurveCreator_TableView::OnHeaderClick( int theLogicalId )
       myCurrentSortOrder = Qt::AscendingOrder;
 
   sortByColumn( theLogicalId, myCurrentSortOrder );
+
+  CurveCreator_ICurve::SectionToPointList selected;
+  for( int r=0, n=rowCount(); r<n; r++ )
+  {
+    int section = item( r, 0 )->data( Qt::UserRole ).toInt();
+    int point = item( r, 1 )->data( Qt::UserRole ).toInt();
+    selected.push_back( CurveCreator_ICurve::SectionToPoint( section, point ) );
+  }
+  myWidget->setSelectedPoints( selected );
+
   myCurrentSortId = theLogicalId;
 }

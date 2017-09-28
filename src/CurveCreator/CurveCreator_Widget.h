@@ -95,6 +95,9 @@ public:
 
   void SetViewer2DMode(const bool To2D);
 
+  void setSelectedPoints( const CurveCreator_ICurve::SectionToPointList& =
+                               CurveCreator_ICurve::SectionToPointList() );
+
 signals:
   void selectionChanged();
   void subOperationStarted( QWidget*, bool );
@@ -185,8 +188,6 @@ private:
   void setDragStarted( const bool theState, const QPoint& thePoint = QPoint() );
 
   void getSelectedPoints( CurveCreator_ICurve::SectionToPointList& thePoints );
-  void setSelectedPoints( const CurveCreator_ICurve::SectionToPointList& =
-                               CurveCreator_ICurve::SectionToPointList() );
 
   void stopActionMode();
 
