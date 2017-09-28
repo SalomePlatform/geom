@@ -98,14 +98,15 @@ public:
   void setSelectedPoints( const CurveCreator_ICurve::SectionToPointList& =
                                CurveCreator_ICurve::SectionToPointList() );
 
+  void updateLocalPointView();
+  void setLocalPointContext( const bool theOpen, const bool isUpdateTable = false );
+
 signals:
   void selectionChanged();
   void subOperationStarted( QWidget*, bool );
   void subOperationFinished( QWidget* );
 
 public slots:
-
-protected slots:
   void     onAdditionMode(bool checked);
   void     onModificationMode(bool checked);
   void     onDetectionMode(bool checked);
@@ -165,13 +166,15 @@ protected:
                  BRING_TOGETHER_ID
   };
 
+public:
+  QAction* getAction(ActionId theId);
+  QAction* getAction(ActionMode theMode);
+
 private:
   OCCViewer_Viewer* getOCCViewer();
 
   QAction* createAction( ActionId theId, const QString& theName, const QPixmap& theImage,
                          const QString& theToolTip, const QKeySequence& theShortcut );
-  QAction* getAction(ActionId theId);
-  QAction* getAction(ActionMode theMode);
 
   void updateActionsStates();
   void updateUndoRedo();
@@ -182,8 +185,6 @@ private:
   void insertPointToSelectedSegment( const int theXPosition,
                                      const int theYPosition );
   void moveSelectedPoints( const int theXPosition, const int theYPosition );
-  void updateLocalPointView();
-  void setLocalPointContext( const bool theOpen, const bool isUpdateTable = false );
 
   void setDragStarted( const bool theState, const QPoint& thePoint = QPoint() );
 
