@@ -2977,6 +2977,7 @@ void GEOM_Displayer::UpdateColorScale()
   foreach( SUIT_ViewWindow* window, windows )
   {
     OCCViewer_ViewWindow* occWindow = dynamic_cast<OCCViewer_ViewWindow*>( window );
+    if ( !occWindow ) continue;
     if ( !occWindow->getViewManager() ) continue;
     if ( !window->getViewManager() ) continue;
     if ( !window->getViewManager()->getViewModel() ) continue;
