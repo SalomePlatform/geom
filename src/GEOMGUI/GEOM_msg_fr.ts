@@ -617,7 +617,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_EDGES</source>
-        <translation type="unfinished">Edges</translation>
+        <translation>Arêtes</translation>
     </message>
     <message>
         <source>GEOM_EDGE_TITLE</source>
@@ -3498,47 +3498,47 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_SHAPE_ANNOTATIONS</source>
-        <translation type="unfinished">Shape annotations</translation>
+        <translation>Annotations</translation>
     </message>
     <message>
         <source>PREF_SHAPE_ANNOTATIONS_FONT</source>
-        <translation type="unfinished">Font</translation>
+        <translation>Fonte</translation>
     </message>
     <message>
         <source>PREF_SHAPE_ANNOTATIONS_FONT_COLOR</source>
-        <translation type="unfinished">Font color</translation>
+        <translation>Couleur du texte</translation>
     </message>
     <message>
         <source>PREF_SHAPE_ANNOTATIONS_LINE_COLOR</source>
-        <translation type="unfinished">Line color</translation>
+        <translation>Couleur de la ligne</translation>
     </message>
     <message>
        <source>PREF_SHAPE_ANNOTATIONS_LINE_WIDTH</source>
-       <translation type="unfinished">Line width</translation>
+       <translation>Epaisseur de la ligne</translation>
     </message>
     <message>
        <source>PREF_SHAPE_ANNOTATIONS_LINE_STYLE</source>
-       <translation type="unfinished">Line style</translation>
+       <translation>Style de la ligne</translation>
     </message>
     <message>
        <source>PREF_SHAPE_ANNOTATIONS_AUTOHIDE</source>
-       <translation type="unfinished">Hide when attachment is invisible</translation>
+       <translation>Cacher quand l'objet attaché est invisible</translation>
     </message>
     <message>
        <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_SOLID</source>
-       <translation type="unfinished">Solid</translation>
+       <translation>Continu</translation>
     </message>
     <message>
        <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_DASH</source>
-       <translation type="unfinished">Dashed</translation>
+       <translation>Tirets</translation>
     </message>
     <message>
        <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_DOT</source>
-       <translation type="unfinished">Dotted</translation>
+       <translation>Points</translation>
     </message>
     <message>
        <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_DOTDASH</source>
-       <translation type="unfinished">Mixed</translation>
+       <translation>Mélangé</translation>
     </message>
     <message>
         <source>PREF_HIDE_INPUT_OBJECT</source>
@@ -5074,27 +5074,27 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_POP_SHOW_ALL_ANNOTATIONS</source>
-        <translation type="unfinished">Show all annotations</translation>
+        <translation>Montrer toutes les annotations</translation>
     </message>
     <message>
         <source>STB_POP_SHOW_ALL_ANNOTATIONS</source>
-        <translation type="unfinished">Show all shape annotations for the object</translation>
+        <translation>Montrer toutes les annotations pour l'objet</translation>
     </message>
     <message>
         <source>TOP_POP_SHOW_ALL_ANNOTATIONS</source>
-        <translation type="unfinished">Show all shape annotations for the object</translation>
+        <translation>Montrer toutes les annotations pour l'objet</translation>
     </message>
     <message>
         <source>MEN_POP_HIDE_ALL_ANNOTATIONS</source>
-        <translation type="unfinished">Hide all annotations</translation>
+        <translation>Cacher toutes les annotations</translation>
     </message>
     <message>
         <source>STB_POP_HIDE_ALL_ANNOTATIONS</source>
-        <translation type="unfinished">Hide all shape annotations for the object</translation>
+        <translation>Cacher toutes les annotations pour l'objet</translation>
     </message>
     <message>
         <source>TOP_POP_HIDE_ALL_ANNOTATIONS</source>
-        <translation type="unfinished">Hide all shape annotations for the object</translation>
+        <translation>Cacher toutes les annotations pour l'objet</translation>
     </message>
     <message>
         <source>TOP_POP_AUTO_COLOR</source>
@@ -5338,19 +5338,19 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_EXTRACTION</source>
-        <translation type="unfinished">Extract and Rebuild</translation>
+        <translation>Extrait et reconstruit</translation>
     </message>
     <message>
         <source>MEN_EXTRACTION</source>
-        <translation type="unfinished">Extract and Rebuild</translation>
+        <translation>Extrait et reconstruit</translation>
     </message>
     <message>
         <source>STB_EXTRACTION</source>
-        <translation type="unfinished">Extract and Rebuild</translation>
+        <translation>Extrait et reconstruit</translation>
     </message>
     <message>
         <source>TOP_EXTENSION</source>
-        <translation>Extend Edge or Face</translation>
+        <translation>Etend l'arête ou la face</translation>
     </message>
     <message>
         <source>MEN_EXTENSION</source>
@@ -5358,7 +5358,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_EXTENSION</source>
-        <translation>Extend Edge or Face</translation>
+        <translation>Etend l'arête ou la face</translation>
     </message>
     <message>
         <source>GEOM_PUBLISH_RESULT_GRP</source>
@@ -7808,51 +7808,51 @@ Voulez-vous en créer un nouveau ?</translation>
     <name>OperationGUI_ExtractionDlg</name>
     <message>
         <source>GEOM_EXTRACT_TITLE</source>
-        <translation type="unfinished">Extract and Rebuild</translation>
+        <translation>Extrait et reconstruit</translation>
     </message>
     <message>
         <source>GEOM_EXTRACT_TYPE</source>
-        <translation type="unfinished">Extraction type</translation>
+        <translation>Type d'extraction</translation>
     </message>
     <message>
         <source>GEOM_EXTRACT_INPUT_PARAMS</source>
-        <translation type="unfinished">Input parameters</translation>
+        <translation>Paramètres d'entrée</translation>
     </message>
     <message>
         <source>GEOM_EXTRACT_STATISTICS</source>
-        <translation type="unfinished">Statistics</translation>
+        <translation>Statistiques</translation>
     </message>
     <message>
         <source>GEOM_EXTRACT_SUB_SHAPE_TYPE</source>
-        <translation type="unfinished">Sub-shape type</translation>
+        <translation>Type de sous-objet</translation>
     </message>
     <message>
         <source>GEOM_EXTRACT_FILTERED_SHAPES</source>
-        <translation type="unfinished">Filtered shapes</translation>
+        <translation>Objets filtrés</translation>
     </message>
     <message>
         <source>GEOM_EXTRACT_SHAPES_TO_EXTRACT</source>
-        <translation type="unfinished">Shapes to extract</translation>
+        <translation>Objets à extraire</translation>
     </message>
     <message>
         <source>GEOM_EXTRACT_REBUILD</source>
-        <translation type="unfinished">Rebuild</translation>
+        <translation>Reconstruit</translation>
     </message>
     <message>
         <source>GEOM_EXTRACT_REMOVED</source>
-        <translation type="unfinished">Removed</translation>
+        <translation>Supprimé</translation>
     </message>
     <message>
         <source>GEOM_EXTRACT_MODIFIED</source>
-        <translation type="unfinished">Modified</translation>
+        <translation>Modifié</translation>
     </message>
     <message>
         <source>GEOM_EXTRACT_ADDED</source>
-        <translation type="unfinished">Added</translation>
+        <translation>Ajouté</translation>
     </message>
     <message>
         <source>GEOM_EXTRACT_NAME</source>
-        <translation type="unfinished">Extraction</translation>
+        <translation>Extraction</translation>
     </message>
 </context>
 </TS>
