@@ -576,6 +576,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Dimensions</translation>
     </message>
     <message>
+        <source>GEOM_ANNOTATIONS</source>
+        <translation>Annotations</translation>
+    </message>
+    <message>
         <source>GEOM_SKETCHER_DIST</source>
         <translation>Distance</translation>
     </message>
@@ -4993,6 +4997,42 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Gérer la cotation d&apos;un objet</translation>
     </message>
     <message>
+        <source>TOP_ANNOTATION</source>
+        <translation>Annotation</translation>
+    </message>
+    <message>
+        <source>MEN_ANNOTATION</source>
+        <translation>Annotation</translation>
+    </message>
+    <message>
+        <source>STB_ANNOTATION</source>
+        <translation>Annotation</translation>
+    </message>
+    <message>
+        <source>TOP_EDIT_ANNOTATION</source>
+        <translation>Editer une annotation</translation>
+    </message>
+    <message>
+        <source>MEN_EDIT_ANNOTATION</source>
+        <translation>Editer</translation>
+    </message>
+    <message>
+        <source>STB_EDIT_ANNOTATION</source>
+        <translation>Editer une annotation</translation>
+    </message>
+    <message>
+      <source>TOP_DELETE_ANNOTATION</source>
+      <translation>Supprimer l'annotation</translation>
+    </message>
+    <message>
+      <source>MEN_DELETE_ANNOTATION</source>
+      <translation>Supprimer</translation>
+    </message>
+    <message>
+      <source>STB_DELETE_ANNOTATION</source>
+      <translation>Supprimer l'annotation</translation>
+    </message>
+    <message>
         <source>MEN_POP_SHOW_DEPENDENCY_TREE</source>
         <translation>Montrer l&apos;arbre des dépendances</translation>
     </message>
@@ -6733,6 +6773,61 @@ Voulez-vous continuer?</translation>
         <source>WARNING_MSG_INVALID_ARGUMENTS</source>
         <translation>The dimension can not be created for the specified arguments.
 Please specify suitable arguments.</translation>
+    </message>
+</context>
+<context>
+    <name>MeasureGUI_AnnotationDlg</name>
+    <message>
+        <source>CREATE_ANNOTATION_TITLE</source>
+        <translation>Créer une annotation</translation>
+    </message>
+    <message>
+        <source>EDIT_ANNOTATION_TITLE</source>
+        <translation>Editer une annotation</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_PREFIX</source>
+        <translation>Annotation</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_NAME</source>
+        <translation>Nom de l'annotation</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_PROPERTIES</source>
+        <translation>Propriétés</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_TEXT</source>
+        <translation>Texte</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_SHAPE</source>
+        <translation>Pièce</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_TYPE</source>
+        <translation>Type</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_SUB_SHAPE</source>
+        <translation>Type du sous-objet</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_IS_SCREEN_FIXED</source>
+        <translation>Position fixe sur l'écran</translation>
+    </message>
+    <message>
+        <source>WHOLE_SHAPE</source>
+        <translation>Toute la pièce</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_STYLE</source>
+        <translation>Style</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_FONT</source>
+        <translation>Fonte</translation>
     </message>
 </context>
 <context>
