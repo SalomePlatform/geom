@@ -473,7 +473,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_COMPSOLIDS</source>
-        <translation type="unfinished">CompSolids</translation>
+        <translation>CompSolides</translation>
     </message>
     <message>
         <source>GEOM_COMPOUND_TITLE</source>
@@ -2030,7 +2030,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SOLIDS</source>
-        <translation type="unfinished">Solids</translation>
+        <translation>Solides</translation>
     </message>
     <message>
         <source>GEOM_SOLID_TITLE</source>
