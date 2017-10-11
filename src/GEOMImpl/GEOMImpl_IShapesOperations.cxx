@@ -1231,7 +1231,7 @@ GEOMImpl_IShapesOperations::GetGlueShapes (std::list< Handle(GEOM_Object) >& the
   TopoDS_Shape aShape;
   TopTools_SequenceOfShape shapes;
   std::list< Handle(GEOM_Object) >::iterator s = theShapes.begin();
-  Handle(GEOM_Object) lastCreatedGO;
+  Handle(GEOM_BaseObject) lastCreatedGO;
   for ( ; s != theShapes.end(); ++s )
   {
     Handle(GEOM_Object) go = *s;
@@ -1414,23 +1414,23 @@ GEOMImpl_IShapesOperations::GetExistingSubObjects(Handle(GEOM_Object)    theShap
   Standard_Integer types = theGroupsOnly ? Groups : Groups|SubShapes;
   Handle(TColStd_HSequenceOfTransient) results = GetExistingSubObjects(theShape, types);
 
+  Handle(GEOM_BaseObject) lastCreatedGO = GEOM::GetCreatedLast(results);
+  lastCreatedGO = GEOM::GetCreatedLast(lastCreatedGO, theShape);
+
   if (results->Length() > 0) {
-    //Make a Python command
-    TCollection_AsciiString anAsciiList;
-    for (int i = 1; i <= results->Length(); i++)
+    // Make a Python command
+    GEOM::TPythonDump pd (lastCreatedGO->GetLastFunction(), /*append=*/true);
+    pd << "[";
+    Standard_Integer i, aLen = results->Length();
+    for (i = 1; i <= aLen; i++)
     {
-      Handle(GEOM_BaseObject) obj = Handle(GEOM_BaseObject)::DownCast( results->Value(i));
-      obj->GetEntryString();
-      if ( i < results->Length() )
-        anAsciiList += ",";
+      Handle(GEOM_BaseObject) obj = Handle(GEOM_BaseObject)::DownCast(results->Value(i));
+      pd << obj << ((i < aLen) ? ", " : "");
     }
-    
-    GEOM::TPythonDump pd (theShape->GetLastFunction(), /*append=*/true);
-    pd << "[" << anAsciiList.ToCString();
     pd << "] = geompy.GetExistingSubObjects(";
     pd << theShape << ", " << (bool)theGroupsOnly << ")";
   }
-
+ 
   return results;
 }
 
@@ -4419,7 +4419,7 @@ Handle(TColStd_HSequenceOfInteger)
   // Make a Python command
 
   // The GetShapesOnCylinder() doesn't change object so no new function is required.
-  Handle(GEOM_Object) lastObj = GEOM::GetCreatedLast(theShape,theTopLeftPoint);
+  Handle(GEOM_BaseObject) lastObj = GEOM::GetCreatedLast(theShape,theTopLeftPoint);
   lastObj = GEOM::GetCreatedLast(lastObj,theTopRigthPoint);
   lastObj = GEOM::GetCreatedLast(lastObj,theBottomRigthPoint);
   lastObj = GEOM::GetCreatedLast(lastObj,theBottomLeftPoint);

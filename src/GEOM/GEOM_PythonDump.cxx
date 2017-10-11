@@ -170,41 +170,43 @@ namespace GEOM
     return *this;
   }
 
-  Handle(GEOM_Object) GetCreatedLast(const Handle(GEOM_Object)& theObj1,
-                                     const Handle(GEOM_Object)& theObj2)
+  Handle(GEOM_BaseObject) GetCreatedLast(const Handle(Standard_Transient)& theObj1,
+                                         const Handle(Standard_Transient)& theObj2)
   {
-    if (theObj1.IsNull()) return theObj2;
-    if (theObj2.IsNull()) return theObj1;
+    Handle(GEOM_BaseObject) bo1 = Handle(GEOM_Object)::DownCast(theObj1);
+    Handle(GEOM_BaseObject) bo2 = Handle(GEOM_Object)::DownCast(theObj2);
+    if (bo1.IsNull()) return bo2;
+    if (bo2.IsNull()) return bo1;
 
     TColStd_ListOfInteger aTags1, aTags2;
-    TDF_Tool::TagList(theObj1->GetEntry(), aTags1);
-    TDF_Tool::TagList(theObj2->GetEntry(), aTags2);
+    TDF_Tool::TagList(bo1->GetEntry(), aTags1);
+    TDF_Tool::TagList(bo2->GetEntry(), aTags2);
     TColStd_ListIteratorOfListOfInteger aListIter1(aTags1), aListIter2(aTags2);
     for (; aListIter1.More(); aListIter1.Next(), aListIter2.Next()) {
       if (!aListIter2.More())
-        return theObj1; // anObj1 is stored under anObj2
+        return bo1; // anObj1 is stored under anObj2
 
       if (aListIter1.Value() > aListIter2.Value())
-        return theObj1;
+        return bo1;
       else if (aListIter1.Value() < aListIter2.Value())
-        return theObj2;
+        return bo2;
     }
-    return theObj1;
+    return bo1;
   }
 
-  Handle(GEOM_Object) GetCreatedLast(const Handle(TColStd_HSequenceOfTransient)& theObjects)
+  Handle(GEOM_BaseObject) GetCreatedLast(const Handle(TColStd_HSequenceOfTransient)& theObjects)
   {
-    Handle(GEOM_Object) anObject, aLatest;
+    Handle(GEOM_BaseObject) anObject, aLatest;
     int i, aLen = theObjects->Length();
     if (aLen < 1)
       return aLatest;
 
     for (i = 1; i <= aLen; i++) {
-      anObject = Handle(GEOM_Object)::DownCast(theObjects->Value(i));
+      anObject = Handle(GEOM_BaseObject)::DownCast(theObjects->Value(i));
       if ( anObject.IsNull() ) {
         Handle(GEOM_Function) fun = Handle(GEOM_Function)::DownCast(theObjects->Value(i));
         if ( !fun.IsNull() )
-          anObject = GEOM_Object::GetObject( fun->GetOwnerEntry() );
+          anObject = GEOM_BaseObject::GetObject( fun->GetOwnerEntry() );
       }
       aLatest = GetCreatedLast(aLatest, anObject);
     }

@@ -67,12 +67,12 @@ namespace GEOM
 
   /*! Returns an object from two given, which has the latest entry
    */
-  Standard_EXPORT Handle(::GEOM_Object) GetCreatedLast (const Handle(::GEOM_Object)& theObj1,
-                                      const Handle(::GEOM_Object)& theObj2);
+  Standard_EXPORT Handle(::GEOM_BaseObject) GetCreatedLast (const Handle(Standard_Transient)& theObj1,
+                                                            const Handle(Standard_Transient)& theObj2);
 
   /*! Returns an object from \a theObjects, which has the latest entry
    */
-  Standard_EXPORT Handle(::GEOM_Object) GetCreatedLast (const Handle(TColStd_HSequenceOfTransient)& theObjects);
+  Standard_EXPORT Handle(::GEOM_BaseObject) GetCreatedLast (const Handle(TColStd_HSequenceOfTransient)& theObjects);
 }
 
 #endif
