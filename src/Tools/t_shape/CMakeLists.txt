@@ -24,33 +24,36 @@ ENDIF()
 # --- scripts ---
 
 # base scripts
-SET(base_SCRIPTS
+SET(_base_SCRIPTS
   __init__.py
   t_shape_builder.py
   )
 
 IF(SALOME_BUILD_GUI)
    # gui scripts 
-   SET(gui_SCRIPTS
+   SET(_gui_SCRIPTS
      t_shape_dialog.py
      t_shape_dialog.ui
      t_shape_progress.py
      )
 
   # uic files / to be processed by pyuic
-  SET(_pyuic_files
+  SET(_pyuic_FILES
     t_shape_dialog.ui
     )
 
   # scripts / pyuic wrappings
-  PYQT_WRAP_UIC(_pyuic_SCRIPTS ${_pyuic_files})
+  PYQT_WRAP_UIC(_pyuic_SCRIPTS ${_pyuic_FILES} TARGET_NAME _target_name_pyuic)
 ENDIF()
 
 # --- rules ---
 
-SALOME_INSTALL_SCRIPTS("${base_SCRIPTS}" ${SALOME_INSTALL_PYTHON}/salome/geom/t_shape)
+SALOME_INSTALL_SCRIPTS("${_base_SCRIPTS}" ${SALOME_INSTALL_PYTHON}/salome/geom/t_shape)
 
 IF(SALOME_BUILD_GUI)
-  SALOME_INSTALL_SCRIPTS("${gui_SCRIPTS}" ${SALOME_INSTALL_PYTHON}/salome/geom/t_shape)
-  SALOME_INSTALL_SCRIPTS("${_pyuic_SCRIPTS}" ${SALOME_INSTALL_PYTHON}/salome/geom/t_shape)
+  SALOME_INSTALL_SCRIPTS("${_gui_SCRIPTS}" ${SALOME_INSTALL_PYTHON}/salome/geom/t_shape)
+  SALOME_INSTALL_SCRIPTS("${_pyuic_SCRIPTS}" ${SALOME_INSTALL_PYTHON}/salome/geom/t_shape TARGET_NAME _target_name_pyuic_py)
+  # add dependency of compiled py files on uic files in order
+  # to avoid races problems when compiling in parallel
+  ADD_DEPENDENCIES(${_target_name_pyuic_py} ${_target_name_pyuic})
 ENDIF()
