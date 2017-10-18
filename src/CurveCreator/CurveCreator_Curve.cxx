@@ -56,7 +56,10 @@ CurveCreator_Curve::CurveCreator_Curve( const CurveCreator::Dimension theDimensi
   myNbRedos   (0),
   myUndoDepth (-1),
   myOpLevel(0),
-  mySkipSorting(false)
+  mySkipSorting(false),
+  myPointAspectColor (Quantity_NOC_ROYALBLUE4), 
+  myCurveColor (Quantity_NOC_RED),
+  myLineWidth(1)
 {
 }
 
@@ -249,13 +252,16 @@ void CurveCreator_Curve::getCoordinates( int theISection, int theIPoint, double&
   }
 }
 
-void CurveCreator_Curve::redisplayCurve()
+void CurveCreator_Curve::redisplayCurve(bool preEraseAllObjects)
 {
   //DEBTRACE("redisplayCurve");
-  if( myDisplayer ) {
-    myDisplayer->eraseAll( false );
+  if( myDisplayer ) 
+  {
+    if (preEraseAllObjects)
+      myDisplayer->eraseAll( false );
+    else
+      myDisplayer->erase( myAISShape, false);
     myAISShape = NULL;
-
     myDisplayer->display( getAISObject( true ), true );
   }
 }
@@ -422,7 +428,7 @@ bool CurveCreator_Curve::joinInternal( const std::list<int>& theSections )
       break;
   }
 
-  redisplayCurve();
+  redisplayCurve(false);
   return res;
 }
 
@@ -465,7 +471,7 @@ int CurveCreator_Curve::addSectionInternal
   aSection->myIsClosed = theIsClosed;
   aSection->myPoints   = thePoints;
   mySections.push_back(aSection);
-  redisplayCurve();
+  redisplayCurve(false);
   return mySections.size()-1;
 }
 
@@ -525,7 +531,7 @@ bool CurveCreator_Curve::removeSectionInternal( const int theISection )
     delete *anIterRm;
     mySections.erase(anIterRm);
   }
-  redisplayCurve();
+  redisplayCurve(false);
   return true;
 }
   
@@ -616,14 +622,14 @@ bool CurveCreator_Curve::setClosedInternal( const int theISection,
       aSection = (CurveCreator_Section*)getSection( i );
       if( aSection ) {
         aSection->myIsClosed = theIsClosed;
-        redisplayCurve();
+        redisplayCurve(false);
       }
     }
   } else {
     aSection = (CurveCreator_Section*)getSection( theISection );
     if ( aSection ) {
       aSection->myIsClosed = theIsClosed;
-      redisplayCurve();
+      redisplayCurve(false);
     }
   }
   return true;
@@ -706,12 +712,12 @@ bool CurveCreator_Curve::setSectionTypeInternal( const int theISection,
       if ( aSection )
         aSection->myType = theType;
     }
-    redisplayCurve();
+    redisplayCurve(false);
   } else {
     aSection = (CurveCreator_Section*)getSection( theISection );
     if ( aSection && aSection->myType != theType ){
       aSection->myType = theType;
-      redisplayCurve();
+      redisplayCurve(false);
     }
   }
   return true;
@@ -772,7 +778,7 @@ bool CurveCreator_Curve::addPointsInternal( const CurveCreator::SectionsMap &the
     }
   }
   if(res)
-    redisplayCurve();
+    redisplayCurve(false);
   return res;
 }
 
@@ -830,7 +836,7 @@ bool CurveCreator_Curve::setPointInternal( const CurveCreator::SectionsMap &theS
     }
   }
   if(res)
-    redisplayCurve();
+    redisplayCurve(false);
   
   return res;
 }
@@ -914,7 +920,7 @@ bool CurveCreator_Curve::removePointsInternal( const SectionToPointList &thePoin
     aRes = removeSectionPoints(aSectionId, anIt->second);
   }
   if( aRes)
-    redisplayCurve();
+    redisplayCurve(false);
 
   return aRes;
 }
@@ -989,20 +995,21 @@ void CurveCreator_Curve::constructAISObject()
   //DEBTRACE("constructAISObject");
   TopoDS_Shape aShape;
   CurveCreator_Utils::constructShape( this, aShape );
-
-  myAISShape = new AIS_Shape( aShape );
+  myAISShape = new AIS_Shape( aShape );  
+  myAISShape->SetColor( myCurveColor );
+  myAISShape->SetWidth( myLineWidth );
   Handle(Prs3d_PointAspect) anAspect = myAISShape->Attributes()->PointAspect();
   anAspect->SetScale( 3.0 );
   anAspect->SetTypeOfMarker(Aspect_TOM_O_POINT);
-  anAspect->SetColor(Quantity_NOC_ROYALBLUE4);
+  anAspect->SetColor(myPointAspectColor);
   myAISShape->Attributes()->SetPointAspect( anAspect );
-
 }
 
 Handle(AIS_InteractiveObject) CurveCreator_Curve::getAISObject( const bool theNeedToBuild ) const
 {
   //DEBTRACE("getAISObject");
-  if ( !myAISShape && theNeedToBuild ) {
+  if ( !myAISShape && theNeedToBuild ) 
+  {
     CurveCreator_Curve* aCurve = (CurveCreator_Curve*)this;
     aCurve->constructAISObject();
   }
