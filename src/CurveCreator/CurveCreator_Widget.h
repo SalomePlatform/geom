@@ -71,8 +71,7 @@ public:
                                 CurveCreator_ICurve *theCurve,
                                 const int theActionFlags = NoFlags,
                                 const QStringList& theCoordTitles = QStringList(),
-                                Qt::WindowFlags fl=0,
-                                int theLocalPointRowLimit = 20);
+                                Qt::WindowFlags fl=0);
 
   // OCC viewer manipulation
   void setOCCViewer( OCCViewer_Viewer* theViewer );
