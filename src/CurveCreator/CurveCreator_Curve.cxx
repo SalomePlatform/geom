@@ -59,6 +59,7 @@ CurveCreator_Curve::CurveCreator_Curve( const CurveCreator::Dimension theDimensi
   mySkipSorting(false),
   myPointAspectColor (Quantity_NOC_ROYALBLUE4), 
   myCurveColor (Quantity_NOC_RED),
+  myEraseAll(true),
   myLineWidth(1)
 {
 }
@@ -363,8 +364,12 @@ bool CurveCreator_Curve::redo()
 bool CurveCreator_Curve::clearInternal()
 {
   // erase curve from the viewer
-  if( myDisplayer ) {
-    myDisplayer->eraseAll( true );
+  if( myDisplayer )
+  {
+    if (myEraseAll)
+      myDisplayer->eraseAll( true );
+    else
+      myDisplayer->erase(myAISShape, false);
     myAISShape = NULL;
   }
   // Delete all allocated data.
@@ -398,6 +403,23 @@ bool CurveCreator_Curve::clear()
   res = clearInternal();
   finishOperation();
   return res;
+}
+
+//=======================================================================
+// function: clear
+// purpose:
+//=======================================================================
+void CurveCreator_Curve::SetEraseAllState(bool toEraseAll)
+{
+  myEraseAll = toEraseAll;
+}
+//=======================================================================
+// function: clear
+// purpose:
+//=======================================================================
+bool CurveCreator_Curve::GetEraseAllState() const
+{
+  return myEraseAll;
 }
 
 //! For internal use only! Undo/Redo are not used here.

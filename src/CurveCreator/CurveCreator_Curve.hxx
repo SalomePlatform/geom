@@ -140,6 +140,14 @@ public:
   //! Clear the polyline (remove all sections)
   virtual bool clear();
 
+  //! set erase-all state
+  //! if true => erase all objects from viever, else remove only the current curve
+  void SetEraseAllState(bool toEraseAll);
+
+  //! get erase-all state
+  //! if true => erase all objects from viever, else remove only the current curve
+  bool GetEraseAllState() const;
+
   //! For internal use only! Undo/Redo are not used here.
   virtual bool joinInternal( const std::list<int>& theSections );
 
@@ -338,6 +346,7 @@ private:
   int                             myUndoDepth;
   int                             myOpLevel;
   AIS_Shape*                      myAISShape;   //!< AIS shape
+  bool                            myEraseAll;
 };
 
 #endif
