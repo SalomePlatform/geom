@@ -212,9 +212,13 @@ int CurveCreator_TreeViewModel::getPoint( const QModelIndex& theIndx ) const
 
 void CurveCreator_TreeViewModel::setCurve( CurveCreator_ICurve* theCurve )
 {
-  myCurve = theCurve;
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+  myCurve = theCurve;
   reset();
+#else
+  beginResetModel();
+  myCurve = theCurve;
+  endResetModel();
 #endif
 }
 
