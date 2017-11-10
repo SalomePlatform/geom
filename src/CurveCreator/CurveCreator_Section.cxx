@@ -36,13 +36,16 @@ Handle(TColgp_HArray1OfPnt) CurveCreator_Section::GetDifferentPoints( int theDim
 
   std::vector<gp_Pnt> aTmpPoints;
 
+  CurveCreator::Coordinates::const_iterator aPIt = myPoints.begin();
+  CurveCreator::Coordinates::const_iterator aPItLast = myPoints.end();
+
+  gp_Pnt aFirstPoint;
+  gp_Pnt aPoint;
+
   if( myPoints.size() > 0 )
   {
-    CurveCreator::Coordinates::const_iterator aPIt = myPoints.begin();
-    CurveCreator::Coordinates::const_iterator aPItLast = myPoints.end();
-    const gp_Pnt aFirstPoint(
-      *aPIt, *(aPIt + 1), (theDimension == 2) ? 0 : *(aPIt + 2));
-    gp_Pnt aPoint = aFirstPoint;
+    aFirstPoint = gp_Pnt(*aPIt, *(aPIt + 1), (theDimension == 2) ? 0 : *(aPIt + 2));
+    aPoint = aFirstPoint;
     aTmpPoints.push_back(aPoint);
   }
 
