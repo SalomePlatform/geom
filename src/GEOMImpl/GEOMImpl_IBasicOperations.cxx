@@ -109,9 +109,8 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointXYZ
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -162,9 +161,8 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointWithReference
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -265,9 +263,8 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::makePointOnGeom
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -426,9 +423,8 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnLinesIntersection
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -477,9 +473,8 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeTangentOnCurve
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -526,9 +521,8 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeVectorDXDYDZ
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -579,9 +573,8 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeVectorTwoPnt
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -633,9 +626,8 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeLine
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -686,9 +678,8 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeLineTwoPnt
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -739,9 +730,8 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeLineTwoFaces
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -796,9 +786,8 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePlaneThreePnt
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -851,9 +840,8 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePlanePntVec
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -903,9 +891,8 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePlaneFace
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -958,9 +945,8 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePlane2Vec
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1010,9 +996,8 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePlaneLCS
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1062,9 +1047,8 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeMarker
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1114,9 +1098,8 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeMarkerFromShape
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1169,9 +1152,8 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeMarkerPntTwoVec
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1226,9 +1208,8 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeTangentPlaneOnFace(const Hand
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 

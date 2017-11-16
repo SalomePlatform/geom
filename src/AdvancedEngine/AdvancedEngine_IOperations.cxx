@@ -1552,9 +1552,8 @@ bool AdvancedEngine_IOperations::MakePipeTShapePartition(Handle(GEOM_Object) the
     TopoDS_Shape aShape = Te3->GetValue();
     theShape->GetLastFunction()->SetValue(aShape);
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return false;
   }
 
@@ -1963,9 +1962,8 @@ Handle(TColStd_HSequenceOfTransient)
       aFunction->SetValue(aResShape);
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1987,9 +1985,8 @@ Handle(TColStd_HSequenceOfTransient)
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -2125,9 +2122,8 @@ AdvancedEngine_IOperations::MakePipeTShapeWithPosition
       aFunction->SetValue(aResShape);
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -2158,9 +2154,8 @@ AdvancedEngine_IOperations::MakePipeTShapeWithPosition
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -2268,9 +2263,8 @@ AdvancedEngine_IOperations::MakePipeTShapeChamfer
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -2321,9 +2315,8 @@ AdvancedEngine_IOperations::MakePipeTShapeChamfer
   try {
     aChamfer = myLocalOperations->MakeChamferEdges(aShape, theW, theH, theEdges);
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
   if (aChamfer.IsNull()) {
@@ -2357,9 +2350,8 @@ AdvancedEngine_IOperations::MakePipeTShapeChamfer
       aFunction->SetValue(aResShape);
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -2381,9 +2373,8 @@ AdvancedEngine_IOperations::MakePipeTShapeChamfer
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -2503,9 +2494,8 @@ AdvancedEngine_IOperations::MakePipeTShapeChamferWithPosition
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -2554,9 +2544,8 @@ AdvancedEngine_IOperations::MakePipeTShapeChamferWithPosition
   try {
     aChamfer = myLocalOperations->MakeChamferEdges(aShape, theW, theH, theEdges);
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
   if (aChamfer.IsNull()) {
@@ -2590,9 +2579,8 @@ AdvancedEngine_IOperations::MakePipeTShapeChamferWithPosition
       aFunction->SetValue(aResShape);
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -2620,9 +2608,8 @@ AdvancedEngine_IOperations::MakePipeTShapeChamferWithPosition
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -2728,9 +2715,8 @@ AdvancedEngine_IOperations::MakePipeTShapeFillet
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -2780,9 +2766,8 @@ AdvancedEngine_IOperations::MakePipeTShapeFillet
   try {
     aFillet = myLocalOperations->MakeFilletEdges(aShape, theRF, theEdges);
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
   if (aFillet.IsNull()) {
@@ -2842,9 +2827,8 @@ AdvancedEngine_IOperations::MakePipeTShapeFillet
       aFunction->SetValue(aResShape);
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -2866,9 +2850,8 @@ AdvancedEngine_IOperations::MakePipeTShapeFillet
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -2985,9 +2968,8 @@ AdvancedEngine_IOperations::MakePipeTShapeFilletWithPosition
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -3037,9 +3019,8 @@ AdvancedEngine_IOperations::MakePipeTShapeFilletWithPosition
   try {
     aFillet = myLocalOperations->MakeFilletEdges(aShape, theRF, theEdges);
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
   if (aFillet.IsNull()) {
@@ -3098,9 +3079,8 @@ AdvancedEngine_IOperations::MakePipeTShapeFilletWithPosition
       aFunction->SetValue(aResShape);
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -3128,9 +3108,8 @@ AdvancedEngine_IOperations::MakePipeTShapeFilletWithPosition
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -3224,9 +3203,8 @@ Handle(GEOM_Object) AdvancedEngine_IOperations::MakeDividedDisk (double theR, do
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
   
@@ -3299,9 +3277,8 @@ Handle(GEOM_Object) AdvancedEngine_IOperations::MakeDividedDiskPntVecR (Handle(G
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
   
@@ -3425,9 +3402,8 @@ Handle(GEOM_Object) AdvancedEngine_IOperations::MakeSmoothingSurface (std::list<
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 

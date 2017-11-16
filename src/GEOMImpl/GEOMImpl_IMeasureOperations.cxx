@@ -785,9 +785,8 @@ void GEOMImpl_IMeasureOperations::GetPosition
     aDirZ.Coord(Zx, Zy, Zz);
     aDirX.Coord(Xx, Xy, Xz);
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return;
   }
 
@@ -832,9 +831,8 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetCentreOfMass
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -884,9 +882,8 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetVertexByIndex
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -941,9 +938,8 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetNormal
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1003,9 +999,8 @@ void GEOMImpl_IMeasureOperations::GetBasicProperties (Handle(GEOM_Object) theSha
       }
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return;
   }
 
@@ -1069,9 +1064,8 @@ void GEOMImpl_IMeasureOperations::GetInertia
     GProp_PrincipalProps Pr = System.PrincipalProperties();
     Pr.Moments(Ix,Iy,Iz);
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return;
   }
 
@@ -1130,9 +1124,8 @@ void GEOMImpl_IMeasureOperations::GetBoundingBox
 
     B.Get(Xmin, Ymin, Zmin, Xmax, Ymax, Zmax);
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return;
   }
 
@@ -1179,9 +1172,8 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetBoundingBox
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1256,9 +1248,8 @@ void GEOMImpl_IMeasureOperations::GetTolerance
         VertMin = T;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return;
   }
 
@@ -1299,9 +1290,8 @@ bool GEOMImpl_IMeasureOperations::CheckShape (Handle(GEOM_Object)     theShape,
       FillErrors(ana, aShape, theErrors);
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return false;
   }
 
@@ -1924,9 +1914,8 @@ TCollection_AsciiString GEOMImpl_IMeasureOperations::WhatIs (Handle(GEOM_Object)
 	Astr = Astr + " SOLID : " + TCollection_AsciiString(nbFlatType[TopAbs_SOLID]) + "\n";
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return Astr;
   }
 
@@ -2097,9 +2086,8 @@ GEOMImpl_IMeasureOperations::GetMinDistance (Handle(GEOM_Object) theShape1,
       return MinDist;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return MinDist;
   }
 
@@ -2173,9 +2161,8 @@ Standard_Integer GEOMImpl_IMeasureOperations::ClosestPoints (Handle(GEOM_Object)
       }
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return nbSolutions;
   }
 
@@ -2216,10 +2203,9 @@ void GEOMImpl_IMeasureOperations::PointCoordinates (Handle(GEOM_Object) theShape
 
     SetErrorCode(OK);
   }
-  catch (Standard_Failure)
+  catch (Standard_Failure& aFail)
   {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode( aFail->GetMessageString() );
+    SetErrorCode( aFail.GetMessageString() );
   }
 }
 
@@ -2289,10 +2275,9 @@ Standard_Real GEOMImpl_IMeasureOperations::GetAngle (Handle(GEOM_Object) theLine
 
     SetErrorCode(OK);
   }
-  catch (Standard_Failure)
+  catch (Standard_Failure& aFail)
   {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+    SetErrorCode(aFail.GetMessageString());
   }
 
   return anAngle;
@@ -2354,10 +2339,9 @@ Standard_Real GEOMImpl_IMeasureOperations::GetAngleBtwVectors (Handle(GEOM_Objec
 
     SetErrorCode(OK);
   }
-  catch (Standard_Failure)
+  catch (Standard_Failure& aFail)
   {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+    SetErrorCode(aFail.GetMessageString());
   }
 
   return anAngle;
@@ -2400,9 +2384,8 @@ Standard_Real GEOMImpl_IMeasureOperations::CurveCurvatureByParam
     aRes = fabs(Prop.Curvature());
     SetErrorCode(OK);
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return aRes;
   }
 
@@ -2455,9 +2438,8 @@ Standard_Real GEOMImpl_IMeasureOperations::CurveCurvatureByPoint
       SetErrorCode(OK);
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return aRes;
   }
 
@@ -2507,9 +2489,8 @@ Standard_Real GEOMImpl_IMeasureOperations::getSurfaceCurvatures
       SetErrorCode(OK);
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return aRes;
   }
 

@@ -96,9 +96,8 @@ void BREPPlugin_IOperations::ExportBREP( const Handle(GEOM_Object)      theOrigi
       return;
     }
   }
-  catch( Standard_Failure ) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode( aFail->GetMessageString() );
+  catch( Standard_Failure& aFail ) {
+    SetErrorCode( aFail.GetMessageString() );
     return;
   }
 
@@ -152,9 +151,8 @@ BREPPlugin_IOperations::ImportBREP( const TCollection_AsciiString& theFileName )
     // Greate material groups.
     // MakeMaterialGroups( anImported, aSeq );
   }
-  catch( Standard_Failure ) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode( aFail->GetMessageString() );
+  catch( Standard_Failure& aFail ) {
+    SetErrorCode( aFail.GetMessageString() );
     return NULL;
   }
 

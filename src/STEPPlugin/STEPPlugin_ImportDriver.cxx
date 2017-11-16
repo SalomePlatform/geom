@@ -787,9 +787,8 @@ Standard_Integer STEPPlugin_ImportDriver::Execute(Handle(TFunction_Logbook)& log
       aResShape.Nullify();
     }
   }
-  catch( Standard_Failure ) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    anError = aFail->GetMessageString();
+  catch( Standard_Failure& aFail ) {
+    anError = aFail.GetMessageString();
     aResShape.Nullify();
   }
 
@@ -872,9 +871,8 @@ STEPPlugin_ImportDriver::GetValue( const TCollection_AsciiString& theFileName,
       theError = theFileName + " reading failed";
     }
   }
-  catch( Standard_Failure ) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    theError = aFail->GetMessageString();
+  catch( Standard_Failure& aFail ) {
+    theError = aFail.GetMessageString();
   }
   return aValue;
 }

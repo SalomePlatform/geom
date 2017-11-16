@@ -242,9 +242,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCircleThreePnt (Handle(GEOM_
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -300,9 +299,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCircleCenter2Pnt (Handle(GEO
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -363,9 +361,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCirclePntVecR
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -436,9 +433,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeEllipse
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -501,9 +497,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArc (Handle(GEOM_Object) the
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -560,9 +555,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArcCenter (Handle(GEOM_Objec
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
   //Make a Python command
@@ -617,9 +611,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArcOfEllipse (Handle(GEOM_Ob
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -679,9 +672,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline (std::list<Handle(G
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -748,9 +740,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineBezier
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -818,9 +809,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -895,9 +885,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolWithTangents
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1144,9 +1133,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1211,9 +1199,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher (const char* theCom
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1273,9 +1260,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcherOnPlane
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1322,9 +1308,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::Make3DSketcherCommand (const cha
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1380,9 +1365,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::Make3DSketcher (std::list<double
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1453,9 +1437,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeIsoline
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1517,9 +1500,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline2D
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1594,9 +1576,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline2DOnPlane
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 

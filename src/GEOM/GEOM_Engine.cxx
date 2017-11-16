@@ -440,9 +440,8 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object)              th
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    MESSAGE("GEOM_Engine::AddSubShape Error: " << aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    MESSAGE("GEOM_Engine::AddSubShape Error: " << aFail.GetMessageString());
     return NULL;
   }
 

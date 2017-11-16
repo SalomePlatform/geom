@@ -313,9 +313,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeQuad
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -369,9 +368,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeQuad2Edges
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -432,9 +430,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeQuad4Vertices
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -502,9 +499,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeHexa
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -559,9 +555,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeHexa2Faces
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -613,9 +608,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeBlockCompound
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -863,9 +857,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetEdge
       anArray->SetValue(1, anIndices.FindIndex(anEdge));
       aResult = GetEngine()->AddSubShape(theShape, anArray);
     }
-  } catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  } catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -924,9 +917,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetEdgeNearPoint
     anArray->SetValue(1, anIndices.FindIndex(aShape));
     aResult = GetEngine()->AddSubShape(theShape, anArray);
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1065,9 +1057,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceByPoints
       aResult = GetEngine()->AddSubShape(theShape, anArray);
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1188,9 +1179,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceByEdges
       aResult = GetEngine()->AddSubShape(theShape, anArray);
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1256,9 +1246,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetOppositeFace
     anArray->SetValue(1, anIndices.FindIndex(aShape));
     aResult = GetEngine()->AddSubShape(theShape, anArray);
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1446,9 +1435,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceNearPoint
       aResult = GetEngine()->AddSubShape(theShape, anArray);
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1574,9 +1562,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceByNormale
       aResult = GetEngine()->AddSubShape(theShape, anArray);
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1699,9 +1686,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetShapesNearPoint
       aResult = GetEngine()->AddSubShape(theShape, anArray);
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1767,9 +1753,8 @@ Standard_Boolean GEOMImpl_IBlocksOperations::IsCompoundOfBlocks
       }
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return isCompOfBlocks;
   }
 
@@ -2449,9 +2434,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::RemoveExtraEdges
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -2500,9 +2484,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::UnionFaces
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -2554,9 +2537,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::CheckAndImprove
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -2626,9 +2608,8 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IBlocksOperations::ExplodeCompound
       }
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return aBlocks;
   }
 
@@ -2811,9 +2792,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetBlockNearPoint
       aResult = GetEngine()->AddSubShape(theCompound, anArray);
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -2926,9 +2906,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetBlockByParts
       anArray->SetValue(1, anIndices.FindIndex(aShape));
       aResult = GetEngine()->AddSubShape(theCompound, anArray);
     }
-  } catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  } catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -3052,9 +3031,8 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IBlocksOperations::GetBlocksByPart
       }
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -3112,9 +3090,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeMultiTransformation1D
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -3174,9 +3151,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeMultiTransformation2D
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 

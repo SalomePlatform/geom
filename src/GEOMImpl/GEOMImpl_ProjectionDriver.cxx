@@ -220,9 +220,8 @@ Standard_Integer GEOMImpl_ProjectionDriver::Execute(Handle(TFunction_Logbook)& l
 
       try {
         OrtProj.Build();
-      } catch (Standard_Failure) {
-        Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-        TCollection_AsciiString aMsg (aFail->GetMessageString());
+      } catch (Standard_Failure& aFail) {
+        TCollection_AsciiString aMsg (aFail.GetMessageString());
         if (!aMsg.Length())
           aMsg = "Projection aborted : possibly the source shape intersects the cylinder's axis";
         Standard_ConstructionError::Raise(aMsg.ToCString());

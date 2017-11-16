@@ -248,9 +248,8 @@ TopoDS_Shape GEOM_Function::GetValue()
           return aShape;
         }
       }
-      catch (Standard_Failure) {
-        Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-        MESSAGE("GEOM_Function::GetValue Error: " << aFail->GetMessageString());
+      catch (Standard_Failure& aFail) {
+        MESSAGE("GEOM_Function::GetValue Error: " << aFail.GetMessageString());
         return aShape;
       }
     }

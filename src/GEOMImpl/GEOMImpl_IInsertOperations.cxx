@@ -128,9 +128,8 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::MakeCopy (Handle(GEOM_Object) th
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -396,9 +395,8 @@ bool GEOMImpl_IInsertOperations::TransferData
       return false;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return false;
   }
 

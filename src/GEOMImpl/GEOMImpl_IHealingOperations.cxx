@@ -144,10 +144,9 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ShapeProcess (Handle(GEOM_Objec
       return NULL;
     }
   }
-  catch (Standard_Failure)
+  catch (Standard_Failure& aFail)
   {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -357,10 +356,9 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::SuppressFaces
       return NULL;
     }
   }
-  catch (Standard_Failure)
+  catch (Standard_Failure& aFail)
   {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -426,10 +424,9 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::CloseContour
       return NULL;
     }
   }
-  catch (Standard_Failure)
+  catch (Standard_Failure& aFail)
   {
-        Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -494,10 +491,9 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::RemoveIntWires
       return NULL;
     }
   }
-  catch (Standard_Failure)
+  catch (Standard_Failure& aFail)
   {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -561,10 +557,9 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::FillHoles (Handle(GEOM_Object) 
       return NULL;
     }
   }
-  catch (Standard_Failure)
+  catch (Standard_Failure& aFail)
   {
-        Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -636,9 +631,8 @@ GEOMImpl_IHealingOperations::Sew (std::list<Handle(GEOM_Object)>& theObjects,
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -703,9 +697,8 @@ GEOMImpl_IHealingOperations::RemoveInternalFaces (std::list< Handle(GEOM_Object)
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -762,9 +755,8 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::DivideEdge (Handle(GEOM_Object)
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -829,9 +821,8 @@ GEOMImpl_IHealingOperations::DivideEdgeByPoint (Handle(GEOM_Object)             
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -895,9 +886,8 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::FuseCollinearEdgesWithinWire
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1082,9 +1072,8 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientation (Handle(GEOM_
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1153,9 +1142,8 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientationCopy (Handle(G
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1213,9 +1201,8 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::LimitTolerance (Handle(GEOM_Obj
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
