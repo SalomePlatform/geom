@@ -54,10 +54,18 @@ void CurveCreator_Displayer::eraseAll( bool isUpdate )
 {
   if(myObjects.empty())
     return;
-  for( int i = 0 ; i < myObjects.size() ; i++ ){
+  for( int i = 0 ; i < myObjects.size() ; i++ )
     myContext->Erase(myObjects[i], Standard_False);
-  }
   myObjects.clear();
+  if( isUpdate )
+    myContext->UpdateCurrentViewer();
+}
+
+void CurveCreator_Displayer::erase( const Handle(AIS_InteractiveObject)& theObject, bool isUpdate )
+{
+  if(theObject.IsNull())
+    return;
+  myContext->Erase(theObject, Standard_False);
   if( isUpdate )
     myContext->UpdateCurrentViewer();
 }
@@ -68,6 +76,13 @@ Quantity_Color CurveCreator_Displayer::getActiveColor( bool isHL )
     return Quantity_Color( 1., 0., 0., Quantity_TOC_RGB );
   }
   return Quantity_Color( 0., 1., 0., Quantity_TOC_RGB );
+}
+
+void CurveCreator_Displayer::Update()
+{
+  for( int i = 0 ; i < myObjects.size() ; i++ )
+    myContext->Update(myObjects[i], Standard_True);
+  myContext->UpdateCurrentViewer();
 }
 
 /*void CurveCreator_Displayer::highlight( const AISObjectsList& theObjects, bool isHL )

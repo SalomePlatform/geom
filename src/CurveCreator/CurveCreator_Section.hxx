@@ -36,13 +36,13 @@ struct CURVECREATOR_EXPORT CurveCreator_Section :
   CurveCreator_Section() : myName("Section"),myType(CurveCreator::Polyline), myIsClosed(false)
   { }
 
-  std::string               myName; //!< section name
+  std::string               myName;     //!< section name
   CurveCreator::Coordinates myPoints;   //!< points coordinates
   CurveCreator::SectionType myType;     //!< type of the section
   bool                      myIsClosed; //!< closed or not
 
   //! A virtual method.
-  void GetDifferentPoints(const int theDimension, Handle(TColgp_HArray1OfPnt)& thePoints) const;
+  Handle(TColgp_HArray1OfPnt) GetDifferentPoints( int theDimension ) const;
 };
 
 #endif

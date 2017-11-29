@@ -38,6 +38,8 @@ public:
 
   void display( const Handle(AIS_InteractiveObject)& theObject, bool isUpdate );
   void eraseAll( bool isUpdate );
+  void erase( const Handle(AIS_InteractiveObject)& theObject, bool isUpdate );
+  void Update();
   //void highlight( const AISObjectsList& theObjects, bool isHL );
 
 protected:

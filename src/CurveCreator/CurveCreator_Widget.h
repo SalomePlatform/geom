@@ -71,8 +71,7 @@ public:
                                 CurveCreator_ICurve *theCurve,
                                 const int theActionFlags = NoFlags,
                                 const QStringList& theCoordTitles = QStringList(),
-                                Qt::WindowFlags fl=0,
-                                int theLocalPointRowLimit = 20);
+                                Qt::WindowFlags fl=0);
 
   // OCC viewer manipulation
   void setOCCViewer( OCCViewer_Viewer* theViewer );
@@ -95,14 +94,18 @@ public:
 
   void SetViewer2DMode(const bool To2D);
 
+  void setSelectedPoints( const CurveCreator_ICurve::SectionToPointList& =
+                               CurveCreator_ICurve::SectionToPointList() );
+
+  void updateLocalPointView();
+  void setLocalPointContext( const bool theOpen, const bool isUpdateTable = false );
+
 signals:
   void selectionChanged();
   void subOperationStarted( QWidget*, bool );
   void subOperationFinished( QWidget* );
 
 public slots:
-
-protected slots:
   void     onAdditionMode(bool checked);
   void     onModificationMode(bool checked);
   void     onDetectionMode(bool checked);
@@ -162,13 +165,15 @@ protected:
                  BRING_TOGETHER_ID
   };
 
+public:
+  QAction* getAction(ActionId theId);
+  QAction* getAction(ActionMode theMode);
+
 private:
   OCCViewer_Viewer* getOCCViewer();
 
   QAction* createAction( ActionId theId, const QString& theName, const QPixmap& theImage,
                          const QString& theToolTip, const QKeySequence& theShortcut );
-  QAction* getAction(ActionId theId);
-  QAction* getAction(ActionMode theMode);
 
   void updateActionsStates();
   void updateUndoRedo();
@@ -179,14 +184,10 @@ private:
   void insertPointToSelectedSegment( const int theXPosition,
                                      const int theYPosition );
   void moveSelectedPoints( const int theXPosition, const int theYPosition );
-  void updateLocalPointView();
-  void setLocalPointContext( const bool theOpen, const bool isUpdateTable = false );
 
   void setDragStarted( const bool theState, const QPoint& thePoint = QPoint() );
 
   void getSelectedPoints( CurveCreator_ICurve::SectionToPointList& thePoints );
-  void setSelectedPoints( const CurveCreator_ICurve::SectionToPointList& =
-                               CurveCreator_ICurve::SectionToPointList() );
 
   void stopActionMode();
 

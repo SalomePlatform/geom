@@ -309,9 +309,7 @@ void CurveCreator_Utils::constructShape(
     }
 
     // Get the different points.
-    const CurveCreator_ISection* aSection = theCurve->getSection(aSectionI);
-    Handle(TColgp_HArray1OfPnt) aPoints;
-    aSection->GetDifferentPoints(theCurve->getDimension(), aPoints);
+    Handle(TColgp_HArray1OfPnt) aPoints = theCurve->GetDifferentPoints( aSectionI );
     const int aPointCount = aPoints->Length();
     const bool isClosed = theCurve->isClosed(aSectionI);
 
@@ -617,6 +615,12 @@ void CurveCreator_Utils::setSelectedPoints( Handle(AIS_InteractiveContext) theCo
   theContext->SetAutomaticHilight( Standard_False );
 
   Handle(SelectMgr_Selection) aSelection = anAISShape->Selection( AIS_Shape::SelectionMode( TopAbs_VERTEX ) );
+
+  CurveCreator_ICurve::SectionToPointList::const_iterator anIt = thePoints.begin(),
+                                                          aLast = thePoints.end();
+  bool isFound = false;
+  for( int i=0; i<aSize; i++ )
+  {
   for( aSelection->Init(); aSelection->More(); aSelection->Next() )
   {    
     const Handle(SelectMgr_SensitiveEntity) aHSenEntity = aSelection->Sensitive();
@@ -629,12 +633,6 @@ void CurveCreator_Utils::setSelectedPoints( Handle(AIS_InteractiveContext) theCo
     gp_Pnt anOwnerPnt = aSenPnt->Point();
     Handle(SelectMgr_EntityOwner) anOwner = Handle(SelectMgr_EntityOwner)::DownCast( aSenPnt->OwnerId() );
 
-
-    CurveCreator_ICurve::SectionToPointList::const_iterator anIt = thePoints.begin(),
-                                                                   aLast = thePoints.end();
-    bool isFound = false;
-    for( int i=0; i<aSize; i++ )
-    {
       bool isIntersect = fabs( aPntsToSelect[i].X() - anOwnerPnt.X() ) < LOCAL_SELECTION_TOLERANCE &&
                          fabs( aPntsToSelect[i].Y() - anOwnerPnt.Y() ) < LOCAL_SELECTION_TOLERANCE;
       if( isIntersect )
