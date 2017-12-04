@@ -432,8 +432,8 @@ void GEOM_Swig::setColor( const char* theEntry, int theRed, int theGreen, int th
 /*!
   \brief Set number of iso-lines to the presentation
   \param theEntry geometry object's entry
-  \param theNbU number of iso-lines along U axis (interger value >= 0)
-  \param theNbV number of iso-lines along V axis (interger value >= 0)
+  \param theNbU number of iso-lines along U axis (integer value >= 0)
+  \param theNbV number of iso-lines along V axis (integer value >= 0)
   \param theUpdateViewer \c true to update active view's contents
 */
 void GEOM_Swig::setIsos( const char* theEntry, int theNbU, int theNbV, bool theUpdateViewer )

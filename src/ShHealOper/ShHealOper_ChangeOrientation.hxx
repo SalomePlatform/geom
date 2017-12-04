@@ -46,10 +46,10 @@ class ShHealOper_ChangeOrientation : public ShHealOper_Tool
 
   /// Copy constructor
   Standard_EXPORT ShHealOper_ChangeOrientation (const TopoDS_Shape& theShape);
-  //Method for initalization by whole shape.
+  //Method for initialization by whole shape.
   
   Standard_EXPORT virtual void Init(const TopoDS_Shape& theShape);
-  //Method for initalization by whole shape.
+  //Method for initialization by whole shape.
   
   Standard_EXPORT Standard_Boolean Perform();
   //Change orientation

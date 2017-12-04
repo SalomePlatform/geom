@@ -235,7 +235,7 @@ bool ShapeRec_FeatureDetector::ComputeContours( bool useROI, ShapeRec_Parameters
   
     detected_edges = cv::Mat(binary_backproject);
   }
-  // else if ( detection_method == RIDGE_DETECTOR )  // Method adapted for engineering drawings (e.g. watershed functionnality could be used here cf.OpenCV documentation and samples)
+  // else if ( detection_method == RIDGE_DETECTOR )  // Method adapted for engineering drawings (e.g. watershed functionality could be used here cf.OpenCV documentation and samples)
   // {
   //   // TODO
   //   return false;

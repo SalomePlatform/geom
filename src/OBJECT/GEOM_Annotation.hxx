@@ -102,7 +102,7 @@ public:
   //! screen, while its position is a 3D point defined in world's coordinate system.
   Standard_EXPORT void SetIsScreenFixed( const Standard_Boolean theIsFixed );
 
-  //! Retuns value of "screen fixed" positioning mode.
+  //! Returns value of "screen fixed" positioning mode.
   Standard_Boolean GetIsScreenFixed() const { return myIsScreenFixed; }
 
   //! Converts annotation position to screen fixed coordinates and

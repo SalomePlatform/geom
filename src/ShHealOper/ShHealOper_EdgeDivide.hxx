@@ -49,7 +49,7 @@ class ShHealOper_EdgeDivide : public ShHealOper_Tool
    /// Constructor initializes by shape.
 
   Standard_EXPORT virtual void Init(const TopoDS_Shape& theShape);
-  //Method for initalization by whole shape.
+  //Method for initialization by whole shape.
 
   Standard_EXPORT Standard_Boolean Perform(const TopoDS_Shape& theEdge, 
                                            const Standard_Real theValue,

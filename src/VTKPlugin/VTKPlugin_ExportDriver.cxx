@@ -100,13 +100,13 @@ Standard_Integer VTKPlugin_ExportDriver::Execute(LOGBOOK& log) const
     aWriter->SetFileName( aFileName.ToCString() );
     aWriter->Write();
     aWriter->Delete();
-    pd->Delete(); //instanciated by the GEOM::GetData(...) method
+    pd->Delete(); //instantiated by the GEOM::GetData(...) method
 
     return 1;
   }
   catch( Standard_Failure )
   {
-    //THROW_SALOME_CORBA_EXCEPTION("Exception catched in ExportVTK", SALOME::BAD_PARAM);
+    //THROW_SALOME_CORBA_EXCEPTION("Exception caught in ExportVTK", SALOME::BAD_PARAM);
   }
   return 0;
 }

@@ -53,7 +53,7 @@ class ShHealOper_FillHoles : public ShHealOper_Tool
   Standard_EXPORT ShHealOper_FillHoles (const TopoDS_Shape& theShape);
 
   Standard_EXPORT virtual void Init(const TopoDS_Shape& theShape);
-  //Method for initalization by whole shape.
+  //Method for initialization by whole shape.
   
   Standard_EXPORT void InitParameters(Standard_Integer theDegree = 3,//3(2)
                                  Standard_Integer theNbPtsOnCur =5,//3,

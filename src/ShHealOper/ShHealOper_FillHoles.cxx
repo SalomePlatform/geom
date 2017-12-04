@@ -361,7 +361,7 @@ Standard_Boolean ShHealOper_FillHoles::addFace(const Handle(Geom_Surface)& theSu
     aB.Range (anEdge, aFace, aF, aL);
 
     // Set orientation of the edge: orientation should be changed
-    // if its orientation does not make sence with curve orientation
+    // if its orientation does not make sense with curve orientation
     // recommended by GeomPlate
     if ((anEdge.Orientation() == TopAbs_FORWARD) ==
         (theSenses->Value (theOrders->Value (aInd)) == 1)) {

@@ -137,7 +137,7 @@ Standard_Integer STEPPlugin_ExportDriver::Execute(LOGBOOK& log) const
   }
   catch (Standard_Failure)
   {
-      //THROW_SALOME_CORBA_EXCEPTION("Exception catched in STEPExport", SALOME::BAD_PARAM);
+      //THROW_SALOME_CORBA_EXCEPTION("Exception caught in STEPExport", SALOME::BAD_PARAM);
   }
   return 0;
 }

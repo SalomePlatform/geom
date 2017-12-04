@@ -51,7 +51,7 @@ class ShHealOper_CloseContour : public ShHealOper_Tool
   //Initalizes by whole shape.
 
   Standard_EXPORT virtual void Init(const TopoDS_Shape& theShape);
-   //Method for initalization by whole shape.
+   //Method for initialization by whole shape.
 
   Standard_EXPORT Standard_Boolean Perform(const TopTools_SequenceOfShape& theSeqEdges,
                           const Standard_Boolean theModeVertex = Standard_False,

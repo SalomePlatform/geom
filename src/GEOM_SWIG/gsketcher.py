@@ -50,7 +50,7 @@
 #  # update object browser
 #  salome.sg.updateObjBrowser(True)
 #  @endcode
-#  @n Additionnal examples can be found as unit tests in the source code.
+#  @n Additional examples can be found as unit tests in the source code.
 #  @}
 
 """

@@ -123,7 +123,7 @@
 ## vertices = geompy.SubShapeAll(box, geomBuilder.ShapeType['VERTEX'])
 ## # only 5 first vertices will be published, with default names
 ## print len(vertices)
-## # note, that result value still containes all 8 vertices
+## # note, that result value still contains all 8 vertices
 ## geompy.addToStudyAuto(-1) # disable automatic publication
 ## @endcode
 ##
@@ -976,7 +976,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #                            in place of sub-shapes of the first argument,
         #                            because the whole shape corresponds to the first argument.
         #                            Mainly to be used after transformations, but it also can be
-        #                            usefull after partition with one object shape, and some other
+        #                            useful after partition with one object shape, and some other
         #                            operations, where only the first argument has to be considered.
         #                            If theObject has only one argument shape, this flag is automatically
         #                            considered as True, not regarding really passed value.
@@ -1002,7 +1002,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                                    in place of sub-shapes of the first argument,
                                    because the whole shape corresponds to the first argument.
                                    Mainly to be used after transformations, but it also can be
-                                   usefull after partition with one object shape, and some other
+                                   useful after partition with one object shape, and some other
                                    operations, where only the first argument has to be considered.
                                    If theObject has only one argument shape, this flag is automatically
                                    considered as True, not regarding really passed value.
@@ -1027,7 +1027,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #                            in place of sub-shapes of the first argument,
         #                            because the whole shape corresponds to the first argument.
         #                            Mainly to be used after transformations, but it also can be
-        #                            usefull after partition with one object shape, and some other
+        #                            useful after partition with one object shape, and some other
         #                            operations, where only the first argument has to be considered.
         #                            If theObject has only one argument shape, this flag is automatically
         #                            considered as True, not regarding really passed value.
@@ -1053,7 +1053,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                                    in place of sub-shapes of the first argument,
                                    because the whole shape corresponds to the first argument.
                                    Mainly to be used after transformations, but it also can be
-                                   usefull after partition with one object shape, and some other
+                                   useful after partition with one object shape, and some other
                                    operations, where only the first argument has to be considered.
                                    If theObject has only one argument shape, this flag is automatically
                                    considered as True, not regarding really passed value.
@@ -1560,7 +1560,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             return anObj
 
         ## Create a line, passing through the given point
-        #  and parrallel to the given direction
+        #  and parallel to the given direction
         #  @param thePnt Point. The resulting line will pass through it.
         #  @param theDir Direction. The resulting line will be parallel to it.
         #  @param theName Object name; when specified, this parameter is used
@@ -1574,7 +1574,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         def MakeLine(self, thePnt, theDir, theName=None):
             """
             Create a line, passing through the given point
-            and parrallel to the given direction
+            and parallel to the given direction
 
             Parameters:
                 thePnt Point. The resulting line will pass through it.
@@ -3893,7 +3893,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  possible to generate groups along with the result by means of
         #  setting the flag \a IsGenerateGroups.<BR>
         #  If \a thePath is a closed edge or wire and \a IsGenerateGroups is
-        #  set, an error is occured. If \a thePath is not closed edge/wire,
+        #  set, an error is occurred. If \a thePath is not closed edge/wire,
         #  the following groups are returned:
         #  - If \a theBase is unclosed edge or wire: "Down", "Up", "Side1",
         #    "Side2";
@@ -3933,7 +3933,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             possible to generate groups along with the result by means of
             setting the flag IsGenerateGroups.
             If thePath is a closed edge or wire and IsGenerateGroups is
-            set, an error is occured. If thePath is not closed edge/wire,
+            set, an error is occurred. If thePath is not closed edge/wire,
             the following groups are returned:
             - If theBase is unclosed edge or wire: "Down", "Up", "Side1",
               "Side2";
@@ -4182,7 +4182,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## Create a shape by extrusion of the profile shape along
         #  the path shape. This function is used only for debug pipe
         #  functionality - it is a version of function MakePipeWithShellSections()
-        #  which give a possibility to recieve information about
+        #  which give a possibility to receive information about
         #  creating pipe between each pair of sections step by step.
         @ManageTransactions("PrimOp")
         def MakePipeWithShellSectionsBySteps(self, theSeqBases, theSeqSubBases,
@@ -4194,7 +4194,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             the path shape. This function is used only for debug pipe
             functionality - it is a version of previous function
             geompy.MakePipeWithShellSections() which give a possibility to
-            recieve information about creating pipe between each pair of
+            receive information about creating pipe between each pair of
             sections step by step.
             """
             res = []
@@ -7378,7 +7378,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         publication is switched on, default value is used for result name.
         #
         #  @return [\a status, \a theClosedWires, \a theOpenWires]
-        #  \n \a status: FALSE, if an error(s) occured during the method execution.
+        #  \n \a status: FALSE, if an error(s) occurred during the method execution.
         #  \n \a theClosedWires: Closed wires on the free boundary of the given shape.
         #  \n \a theOpenWires: Open wires on the free boundary of the given shape.
         #
@@ -7397,7 +7397,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
             Returns:
                 [status, theClosedWires, theOpenWires]
-                 status: FALSE, if an error(s) occured during the method execution.
+                 status: FALSE, if an error(s) occurred during the method execution.
                  theClosedWires: Closed wires on the free boundary of the given shape.
                  theOpenWires: Open wires on the free boundary of the given shape.
             """
@@ -8094,7 +8094,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #      @param ListRemoveInside Shapes, inside which the results will be deleted.
         #         Each shape from theRemoveInside must belong to theShapes also.
         #      @param RemoveWebs If TRUE, perform Glue 3D algorithm.
-        #      @param ListMaterials Material indices for each shape. Make sence,
+        #      @param ListMaterials Material indices for each shape. Make sense,
         #         only if theRemoveWebs is TRUE.
         #
         #  @return New GEOM.GEOM_Object, containing the result shapes.
@@ -8136,7 +8136,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 ListRemoveInside Shapes, inside which the results will be deleted.
                                  Each shape from theRemoveInside must belong to theShapes also.
                 RemoveWebs If TRUE, perform Glue 3D algorithm.
-                ListMaterials Material indices for each shape. Make sence, only if theRemoveWebs is TRUE.
+                ListMaterials Material indices for each shape. Make sense, only if theRemoveWebs is TRUE.
 
             Returns:
                 New GEOM.GEOM_Object, containing the result shapes.
@@ -10277,14 +10277,14 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "chamfer")
             return anObj
 
-        ## The Same that MakeChamferFaces() but with params theD is chamfer lenght and
+        ## The Same that MakeChamferFaces() but with params theD is chamfer length and
         #  theAngle is Angle of chamfer (angle in radians or a name of variable which defines angle in degrees)
         #
         #  @ref swig_FilletChamfer "Example"
         @ManageTransactions("LocalOp")
         def MakeChamferFacesAD(self, theShape, theD, theAngle, theFaces, theName=None):
             """
-            The Same that geompy.MakeChamferFaces but with params theD is chamfer lenght and
+            The Same that geompy.MakeChamferFaces but with params theD is chamfer length and
             theAngle is Angle of chamfer (angle in radians or a name of variable which defines angle in degrees)
             """
             flag = False
@@ -10335,12 +10335,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "chamfer")
             return anObj
 
-        ## The Same that MakeChamferEdges() but with params theD is chamfer lenght and
+        ## The Same that MakeChamferEdges() but with params theD is chamfer length and
         #  theAngle is Angle of chamfer (angle in radians or a name of variable which defines angle in degrees)
         @ManageTransactions("LocalOp")
         def MakeChamferEdgesAD(self, theShape, theD, theAngle, theEdges, theName=None):
             """
-            The Same that geompy.MakeChamferEdges but with params theD is chamfer lenght and
+            The Same that geompy.MakeChamferEdges but with params theD is chamfer length and
             theAngle is Angle of chamfer (angle in radians or a name of variable which defines angle in degrees)
             """
             flag = False
@@ -12769,7 +12769,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## Build all possible propagation groups.
         #  Propagation group is a set of all edges, opposite to one (main)
         #  edge of this group directly or through other opposite edges.
-        #  Notion of Opposite Edge make sence only on quadrangle face.
+        #  Notion of Opposite Edge make sense only on quadrangle face.
         #  @param theShape Shape to build propagation groups on.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
@@ -12784,7 +12784,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Build all possible propagation groups.
             Propagation group is a set of all edges, opposite to one (main)
             edge of this group directly or through other opposite edges.
-            Notion of Opposite Edge make sence only on quadrangle face.
+            Notion of Opposite Edge make sense only on quadrangle face.
 
             Parameters:
                 theShape Shape to build propagation groups on.
@@ -13209,7 +13209,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             return aType
 
         ## Convert a type of geom object from id to string value
-        #  @param theId is a GEOM obect type id.
+        #  @param theId is a GEOM object type id.
         #  @return type of geom object (POINT, VECTOR, PLANE, LINE, TORUS, ... )
         #  @ref swig_GetType "Example"
         def ShapeIdToType(self, theId):
@@ -13217,7 +13217,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Convert a type of geom object from id to string value
 
             Parameters:
-                theId is a GEOM obect type id.
+                theId is a GEOM object type id.
 
             Returns:
                 type of geom object (POINT, VECTOR, PLANE, LINE, TORUS, ... )
