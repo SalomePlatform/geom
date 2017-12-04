@@ -173,7 +173,7 @@ CORBA::Object_var GeometryGUI::ClientSObjectToObject (_PTR(SObject) theSObject)
       anObj = anORB->string_to_object(aValue.c_str());
     }
   } catch(...) {
-    INFOS("ClientSObjectToObject - Unknown exception was occured!!!");
+    INFOS("ClientSObjectToObject - Unknown exception has occurred!!!");
   }
   return anObj._retn();
 }
@@ -624,7 +624,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpFace:               // MENU BUILD - FACE
   case GEOMOp::OpShell:              // MENU BUILD - SHELL
   case GEOMOp::OpSolid:              // MENU BUILD - SOLID
-  case GEOMOp::OpCompound:           // MENU BUILD - COMPUND
+  case GEOMOp::OpCompound:           // MENU BUILD - COMPOUND
     libName = "BuildGUI";
     break;
   case GEOMOp::OpFuse:               // MENU BOOLEAN - FUSE
@@ -2980,7 +2980,7 @@ void GeometryGUI::storeVisualParameters (int savePoint)
         _PTR(SObject) obj( studyDS->FindObjectID( o_it.key().toLatin1().data() ) );
         if ( !obj || !(aProps.count() > 0))
           continue;
-        // entry is "encoded" = it does NOT contain component adress, since it is a
+        // entry is "encoded" = it does NOT contain component address, since it is a
         // subject to change on next component loading
 
         std::string entry = ip->encodeEntry(o_it.key().toLatin1().data(), componentName);
@@ -3154,7 +3154,7 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
 
   for (std::vector<std::string>::iterator entIt = entries.begin(); entIt != entries.end(); ++entIt)
   {
-    // entry is a normal entry - it should be "decoded" (setting base adress of component)
+    // entry is a normal entry - it should be "decoded" (setting base address of component)
     QString entry (ip->decodeEntry(*entIt).c_str());
 
     // Check that the entry corresponds to a real object in the Study

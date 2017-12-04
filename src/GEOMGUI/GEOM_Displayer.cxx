@@ -951,7 +951,7 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
         study->setObjectProperty( aMgrId, entry, GEOM::propertyName( GEOM::Texture ), QString( GetTexture().c_str() ) );
         study->setObjectProperty( aMgrId, entry, GEOM::propertyName( GEOM::DisplayMode ), 3 );
         
-        // Update propeties map
+        // Update properties map
         propMap = getObjectProperties( study, entry, myViewFrame );
       }
     }

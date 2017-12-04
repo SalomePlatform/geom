@@ -217,7 +217,7 @@ Standard_Integer GEOMImpl_ChamferDriver::Execute(LOGBOOK& log) const
   }
   else if (aType == CHAMFER_SHAPE_EDGES || aType == CHAMFER_SHAPE_EDGES_AD)
   {
-    // chamfer on selected edges with lenght param D1 & D2.
+    // chamfer on selected edges with length param D1 & D2.
 
     int aLen = aCI.GetLength();
     int ind = 1;

@@ -325,7 +325,7 @@ def TestAll (geompy, math):
   MultiRot2Dt  = geompy.MultiRotate2DNbTimes(Chamfer, vx, nbtimes1, step1, nbtimes2)
   MultiRot2Ds  = geompy.MultiRotate2DByStep(Chamfer, vx, angle1, nbtimes1, step1, nbtimes2)
 
-  #Create Informations objects
+  #Create Information objects
   CDG        = geompy.MakeCDG(Prism)               #(GEOM_Object)->GEOM_Object
   Archimede  = geompy.Archimede(Box, weight, waterdensity,
                                 meshingdeflection) #(GEOM_Object, 3 Doubles)->GEOM_Object

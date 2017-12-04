@@ -970,7 +970,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_INERTIA_TITLE</source>
-        <translation>Calculs Of Inertia</translation>
+        <translation>Calculus Of Inertia</translation>
     </message>
     <message>
         <source>GEOM_INF_LOADED</source>
@@ -1150,7 +1150,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_MINDIST_TITLE</source>
-        <translation>Minimun Distance Between Two Objects</translation>
+        <translation>Minimum Distance Between Two Objects</translation>
     </message>
     <message>
         <source>GEOM_MIRROR</source>
@@ -1830,7 +1830,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_ADD_PARAMS</source>
-        <translation>Additionnal Parameters</translation>
+        <translation>Additional Parameters</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_ANGLE</source>
@@ -5210,7 +5210,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_CLOSEDUNCLOSED</source>
-        <translation>Not defined, Closed or Opened. Possibly, error occured.</translation>
+        <translation>Not defined, Closed or Opened. Possibly, error occurred.</translation>
     </message>
     <message>
         <source>GEOM_DISK_CIRCLE</source>

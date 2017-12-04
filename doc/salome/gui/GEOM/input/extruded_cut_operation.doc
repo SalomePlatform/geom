@@ -37,7 +37,7 @@ The input arguments are:
 
 - The \b height of extrusion. It's calculated from the <b>base profile</b> along the normal to its plane.
 
-And optionnaly:
+And optionally:
 
 - A <b>draft angle</b> in degrees. Activated by clicking on \image html draft.png
 

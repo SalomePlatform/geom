@@ -155,7 +155,7 @@ GEOM_Function::~GEOM_Function()
 
 //================================================================================
 /*!
- * \brief Retuns true if this function is the last one in the study
+ * \brief Returns true if this function is the last one in the study
  */
 //================================================================================
 

@@ -954,7 +954,7 @@ void CurveCreator_Widget::SetViewer2DMode(const bool To2D)
 
 //=================================================================================
 // function : GeometryGUI::addCoordsByClick()
-// purpose  : Manage mouse press events in Additon mode
+// purpose  : Manage mouse press events in Addition mode
 //=================================================================================
 void CurveCreator_Widget::addCoordsByClick( QMouseEvent* pe )
 {

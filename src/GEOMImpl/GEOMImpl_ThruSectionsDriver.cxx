@@ -127,8 +127,8 @@ Standard_Integer GEOMImpl_ThruSectionsDriver::Execute(LOGBOOK& log) const
   }
 
   if ( !GEOMUtils::CheckShape(aShape) && !GEOMUtils::FixShapeTolerance(aShape) ) {
-    //algoritm thru section creats on the arcs invalid shapes gka
-    //  Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
+    //algorithm through section creates on the arcs invalid shapes gka
+    //  Standard_ConstructionError::Raise("Algorithm has produced an invalid shape result");
   }
 
   aFunction->SetValue(aShape);

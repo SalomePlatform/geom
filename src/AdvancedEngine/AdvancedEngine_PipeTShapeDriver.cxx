@@ -200,7 +200,7 @@ Handle(TColStd_HSequenceOfInteger)
   // Default value=3
   aFinder.SetNbPntsMin(3);
   // Sets the maximal number of inner points for edges or faces.
-  // It is usefull for the cases when this number is very big (e.g =2000) to improve
+  // It is useful for the cases when this number is very big (e.g =2000) to improve
   // the performance. If this value =0, all inner points will be taken into account.
   // Default value=0
   aFinder.SetNbPntsMax(0);

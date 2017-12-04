@@ -127,7 +127,7 @@ Standard_Integer& BlockFix_UnionFaces::GetOptimumNbFaces()
 
 //=======================================================================
 //function : AddOrdinaryEdges
-//purpose  : auxilary
+//purpose  : auxiliary
 //           adds edges from the shape to the sequence
 //           seams and equal edges are dropped
 //           Returns true if one of original edges dropped
@@ -179,7 +179,7 @@ static Standard_Boolean AddOrdinaryEdges(TopTools_SequenceOfShape& edges,
 
 //=======================================================================
 //function : ClearRts
-//purpose  : auxilary
+//purpose  : auxiliary
 //=======================================================================
 static Handle(Geom_Surface) ClearRts(const Handle(Geom_Surface)& aSurface)
 {
@@ -193,7 +193,7 @@ static Handle(Geom_Surface) ClearRts(const Handle(Geom_Surface)& aSurface)
 
 //=======================================================================
 //function : IsFacesOfSameSolids
-//purpose  : auxilary
+//purpose  : auxiliary
 //=======================================================================
 static Standard_Boolean IsFacesOfSameSolids
        (const TopoDS_Face                               &theFace1,

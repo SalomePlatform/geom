@@ -281,7 +281,7 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
   // about what will be considered INSIDE the zone we want to find the frontier of
   // This makes the algorithm more robust against a bit inhomogeneous parts in the zone
   // that we want to delimitate.
-  // The drawback is if we want to delimitate a zone wich color is very similar to the zone
+  // The drawback is if we want to delimitate a zone which color is very similar to the zone
   // we consider as the OUTSIDE, the result will be bad.
   // The current use cases are more of the first form : 
   //  - Strongly contrasted INSIDE and OUTSIDE zones

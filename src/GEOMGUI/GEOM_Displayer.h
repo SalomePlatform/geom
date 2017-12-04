@@ -196,7 +196,7 @@ public:
   virtual void  BeforeErase  ( SALOME_View*, const SALOME_OCCPrs* );
   virtual void  AfterErase   ( SALOME_View*, const SALOME_OCCPrs* );
 
-  /* This methos is used for activisation/deactivisation of objects to be displayed*/
+  /* This methods is used for activisation/deactivisation of objects to be displayed*/
   void          SetToActivate( const bool );
   bool          ToActivate() const;
 

@@ -174,7 +174,7 @@ public:
   //Returns true if the last method succided
   Standard_EXPORT bool IsDone() { return _isDone; }
 
-  //Retuns true if this function is the last one in the study
+  //Returns true if this function is the last one in the study
   Standard_EXPORT bool IsLastFuntion();
 
   //Returns a sequence of the external dependencies of this function

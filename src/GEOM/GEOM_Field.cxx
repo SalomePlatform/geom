@@ -46,7 +46,7 @@ namespace
 {
   //================================================================================
   /*!
-   * \brief Returns a funtion with a given type OR the 1st function
+   * \brief Returns a function with a given type OR the 1st function
    */
   //================================================================================
 
@@ -101,7 +101,7 @@ void GEOM_Field::Init(const Handle(GEOM_Object)&                     theShape,
 {
   Handle(GEOM_Function) fun = GetFunction(1);
   if ( !fun.IsNull() )
-    Standard_MultiplyDefined::Raise( "Reinitialization of GEOM_Field is forbiden" );
+    Standard_MultiplyDefined::Raise( "Reinitialization of GEOM_Field is forbidden" );
   fun = AddFunction( GetFieldID(), FUN_ADD_FIELD );
 
   GEOM_IField data( fun );
@@ -498,7 +498,7 @@ void GEOM_FieldStep::Init(const Handle(GEOM_Field)& theField,
 {
   Handle(GEOM_Function) fun = GetFunction(1);
   if ( !fun.IsNull() )
-    Standard_MultiplyDefined::Raise( "Reinitialization of GEOM_FieldStep is forbiden" );
+    Standard_MultiplyDefined::Raise( "Reinitialization of GEOM_FieldStep is forbidden" );
   fun = AddFunction( GEOM_Field::GetFieldID(), GEOM_Field::FUN_ADD_STEP );
 
   GEOM_IField data( fun );

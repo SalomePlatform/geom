@@ -463,7 +463,7 @@ static TopoDS_Edge GlueEdgesWithPCurves(const TopTools_SequenceOfShape& aChain,
 
 //=======================================================================
 //function : MergeEdges
-//purpose  : auxilary
+//purpose  : auxiliary
 //=======================================================================
 static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
                                    const Standard_Real Tol,

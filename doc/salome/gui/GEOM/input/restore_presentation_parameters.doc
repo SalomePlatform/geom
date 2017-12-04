@@ -17,7 +17,7 @@ faces and Cylinder_1 with free published edges.
 \image html restore-ss-viewer-before.png "The initial box and cylinder"
 
 First, we examine the case when the resulting shape corresponds to one argument (after transformation, 
-after the Boolean operation Cut, or after the partiton with one object shape). 
+after the Boolean operation Cut, or after the partition with one object shape). 
 
 We create a Cut of Box_1 with Cylinder_1.
 

@@ -450,7 +450,7 @@ TopoDS_Shape GEOMImpl_BooleanDriver::performOperation
           TopoDS_Shape aStepResult = BO.Shape();
 
           // check result of this step: if it is a compound (boolean operations
-          // allways return a compound), we add all sub-shapes of it.
+          // always return a compound), we add all sub-shapes of it.
           // This allows to avoid adding empty compounds,
           // resulting from COMMON on two non-intersecting shapes.
           if (aStepResult.ShapeType() == TopAbs_COMPOUND) {
@@ -513,7 +513,7 @@ TopoDS_Shape GEOMImpl_BooleanDriver::performOperation
       }
       if (isCompound) {
         // check result of this step: if it is a compound (boolean operations
-        // allways return a compound), we add all sub-shapes of it.
+        // always return a compound), we add all sub-shapes of it.
         // This allows to avoid adding empty compounds,
         // resulting from CUT of parts
         if (aCut.ShapeType() == TopAbs_COMPOUND) {
@@ -620,7 +620,7 @@ TopoDS_Shape GEOMImpl_BooleanDriver::performOperation
           TopoDS_Shape aStepResult = BO.Shape();
 
           // check result of this step: if it is a compound (boolean operations
-          // allways return a compound), we add all sub-shapes of it.
+          // always return a compound), we add all sub-shapes of it.
           // This allows to avoid adding empty compounds,
           // resulting from SECTION on two non-intersecting shapes.
           if (aStepResult.ShapeType() == TopAbs_COMPOUND) {

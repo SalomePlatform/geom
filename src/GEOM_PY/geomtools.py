@@ -230,13 +230,13 @@ class GeomStudyTools:
 
     ## Display the geometrical shape whose entry is given by \em entry. 
     #  You should prefer use this function instead of the
-    #  displayShapeByName() which can have an unpredictible behavior in 
+    #  displayShapeByName() which can have an unpredictable behavior in 
     #  the case where several objects exist with the same name in the study.
     def displayShapeByEntry(self, shapeStudyEntry, color = None, fit=True):
         """
         Display the geometrical shape whose entry is given by
         `entry`. You should prefer use this function instead of the
-        displayShapeByName which can have an unpredictible behavior in
+        displayShapeByName which can have an unpredictable behavior in
         the case where several objects exist with the same name in the
         study.
         """
@@ -271,7 +271,7 @@ class GeomStudyTools:
     # Helper functions for a complete suppression of a shape from the
     # SALOME session.
     # ======================================================================
-    ## This completly deletes a geom shape.
+    ## This completely deletes a geom shape.
     #  \warning Please be aware that to delete a geom object, 
     #  you have three operations to perform:
     #    
@@ -280,7 +280,7 @@ class GeomStudyTools:
     #  3. destroy the underlying geom object
     def deleteShape(self,shapeStudyEntry):
         """
-        This completly deletes a geom shape.
+        This completely deletes a geom shape.
         
         WARNING: please be aware that to delete a geom object, you have
         three operations to perform:
@@ -416,7 +416,7 @@ def TEST_createAndDeleteShape():
     gst.eraseShapeByEntry(sphereStudyEntry)
 
     # --------------------------------------------------
-    # In this last example, we completly delete an object from the
+    # In this last example, we completely delete an object from the
     # SALOME session (erase from viewer, remove from study and finnaly
     # destroy the object). This is done by a simple call to
     # deleteShape().

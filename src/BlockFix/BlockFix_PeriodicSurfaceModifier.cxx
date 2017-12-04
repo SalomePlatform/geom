@@ -81,7 +81,7 @@ void BlockFix_PeriodicSurfaceModifier::SetTolerance(const Standard_Real Tol)
 
 //=======================================================================
 //function : ModifySurface
-//purpose  : auxilary
+//purpose  : auxiliary
 //=======================================================================
 static Standard_Boolean ModifySurface(const TopoDS_Face& aFace,
                                       const Handle(Geom_Surface)& aSurface,

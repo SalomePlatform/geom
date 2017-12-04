@@ -154,10 +154,10 @@ GEOMImpl_IMeasureOperations::ShapeKind GEOMImpl_IMeasureOperations::KindOfShape
   }
   const GEOMAlgo_ShapeInfo& anInfo = aSF.Info();
 
-  // specific processing for some "advandced" objects
+  // specific processing for some "advanced" objects
   switch ( geom_type ) {
   case GEOM_MARKER:
-    // local coordinate systen
+    // local coordinate system
     // (+) geompy.kind.LCS  xc yc zc xx xy xz yx yy yz zx zy zz
 
     TopoDS_Face aFace = TopoDS::Face( aShape );

@@ -197,7 +197,7 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(LOGBOOK& log) const
     Standard_Real anAngle    = aCI.GetDraftAngle();         // Draft angle
     Standard_Boolean isProtrusion = (aCI.GetFuseFlag()==1); 
     Standard_Boolean isInvert = aCI.GetInvertFlag();
-    // Flag to know wether the feature is a protrusion (fuse) or a depression (cut)
+    // Flag to know whether the feature is a protrusion (fuse) or a depression (cut)
     
     // history of the Base wire (RefBase)
     Handle(GEOM_Object) aSuppObj;

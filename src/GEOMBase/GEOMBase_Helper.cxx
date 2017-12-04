@@ -836,7 +836,7 @@ bool GEOMBase_Helper::checkViewWindow()
 //================================================================
 // Function : onAccept
 // Purpose  : This method should be called from dialog's slots onOk() and onApply()
-//            It perfroms user input validation, then it
+//            It performs user input validation, then it
 //            performs a proper operation and manages transactions, etc.
 //================================================================
 bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, bool erasePreviewFlag )
@@ -955,7 +955,7 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, b
   catch( const SALOME::SALOME_Exception& e ) {
     SalomeApp_Tools::QtCatchCorbaException( e );
     abortCommand();
-    MESSAGE("Exception catched")
+    MESSAGE("Exception caught")
   }
 
   updateViewer();

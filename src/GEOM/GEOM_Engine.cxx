@@ -529,7 +529,7 @@ bool GEOM_Engine::RemoveObject(Handle(GEOM_BaseObject)& theObject)
   if ( aFreeLabels.empty() || aFreeLabels.back() != aLabel )
     aFreeLabels.push_back(aLabel);
 
-  // we can't explicitely delete theObject. At least prevent its functioning
+  // we can't explicitly delete theObject. At least prevent its functioning
   // as an alive object when aLabel is reused for a new object
   theObject->_label = aLabel.Root();
   theObject->_ior.Clear();
@@ -679,7 +679,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   // a map containing copies of TObjectData from theObjectData
   TSting2ObjDataMap    aEntry2ObjData;
   // contains pointers to TObjectData of either aEntry2ObjData or theObjectData; the latter
-  // occures when several StudyEntries correspond to one Entry
+  // occurs when several StudyEntries correspond to one Entry
   TSting2ObjDataPtrMap aStEntry2ObjDataPtr;
 
   //Resource_DataMapOfAsciiStringAsciiString aEntry2StEntry, aStEntry2Entry, theObjectNames;

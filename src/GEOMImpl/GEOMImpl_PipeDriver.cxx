@@ -146,7 +146,7 @@ GEOMImpl_PipeDriver::GEOMImpl_PipeDriver()
 
 //=======================================================================
 //function : EvaluateBestSweepMode
-//purpose  : auxilary for right call of MakePipe and MakePipeShell
+//purpose  : auxiliary for right call of MakePipe and MakePipeShell
 //=======================================================================
 static GeomFill_Trihedron EvaluateBestSweepMode(const TopoDS_Shape& Spine)
 {
@@ -202,7 +202,7 @@ static Standard_Boolean BuildPipeShell(BRepOffsetAPI_MakePipeShell &theBuilder)
 
 //=======================================================================
 //function : FillForOtherEdges
-//purpose  : auxilary for CreatePipeForShellSections()
+//purpose  : auxiliary for CreatePipeForShellSections()
 //=======================================================================
 static bool FillForOtherEdges(const TopoDS_Shape& F1,
                               const TopoDS_Shape& E1,
@@ -278,7 +278,7 @@ static bool FillForOtherEdges(const TopoDS_Shape& F1,
 
 //=======================================================================
 //function : FillCorrespondingEdges
-//purpose  : auxilary for CreatePipeForShellSections()
+//purpose  : auxiliary for CreatePipeForShellSections()
 //=======================================================================
 static bool FillCorrespondingEdges(const TopoDS_Shape& FS1,
                                    const TopoDS_Shape& FS2,
@@ -406,7 +406,7 @@ static bool FillCorrespondingEdges(const TopoDS_Shape& FS1,
 
 //=======================================================================
 //function : FillCorrespondingEdges
-//purpose  : auxilary for CreatePipeShellsWithoutPath()
+//purpose  : auxiliary for CreatePipeShellsWithoutPath()
 //=======================================================================
 static bool FillCorrespondingEdges(const TopoDS_Shape& FS1,
                                    const TopoDS_Shape& FS2,
@@ -508,7 +508,7 @@ static bool FillCorrespondingEdges(const TopoDS_Shape& FS1,
 
 //=======================================================================
 //function : FindNextPairOfFaces
-//purpose  : auxilary for CreatePipeForShellSections()
+//purpose  : auxiliary for CreatePipeForShellSections()
 //=======================================================================
 static void FindNextPairOfFaces(const TopoDS_Shape& aCurFace,
                                 TopTools_IndexedDataMapOfShapeListOfShape& aMapEdgeFaces1,
@@ -578,7 +578,7 @@ static void FindNextPairOfFaces(const TopoDS_Shape& aCurFace,
 
 //=======================================================================
 //function : FindFirstPairFaces
-//purpose  : auxilary for Execute()
+//purpose  : auxiliary for Execute()
 //=======================================================================
 static void FindFirstPairFaces(const TopoDS_Shape& S1, const TopoDS_Shape& S2,
                                TopoDS_Vertex& V1, TopoDS_Vertex& V2,
@@ -700,7 +700,7 @@ static void FindFirstPairFaces(const TopoDS_Shape& S1, const TopoDS_Shape& S2,
 //function : RemoveFaces
 //purpose  : This function returns theShapeFrom without faces of the shape
 //           theFacesToRm. It returns a shell if theShapeFrom is a solid or
-//           a compound otherwise. Auxilary for CreatePipeWithDifferentSections
+//           a compound otherwise. Auxiliary for CreatePipeWithDifferentSections
 //           method.
 //=======================================================================
 static TopoDS_Shape RemoveFaces(const TopoDS_Shape &theShapeFrom,
@@ -1309,7 +1309,7 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
 
 //=======================================================================
 //function : CreatePipeForShellSections
-//purpose  : auxilary for Execute()
+//purpose  : auxiliary for Execute()
 //=======================================================================
 static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
                                                GEOMImpl_IPipe* aCI)
@@ -2034,7 +2034,7 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
 
 //=======================================================================
 //function : CreatePipeShellsWithoutPath
-//purpose  : auxilary for Execute()
+//purpose  : auxiliary for Execute()
 //=======================================================================
 static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
 {
@@ -2154,13 +2154,13 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
       if (aCI) delete aCI;
       Standard_ConstructionError::Raise("Can not create correct pipe");
     }
-    MESSAGE ("  correspondences for sub-shapes of first pair of faces is found");
+    MESSAGE ("  correspondences for sub-shapes of first pair of faces found");
 
     FindNextPairOfFaces(FS1, aMapEdgeFaces1, aMapEdgeFaces2, FF, aCI);
-    MESSAGE ("  other correspondences is found, make pipe for all pairs of faces");
+    MESSAGE ("  other correspondences found, make pipe for all pairs of faces");
 
     // make pipe for each pair of faces
-    // auxilary map vertex->edge for created pipe edges
+    // auxiliary map vertex->edge for created pipe edges
     TopTools_IndexedDataMapOfShapeShape VPE;
     ShapeAnalysis_Edge sae;
     //cout<<"FF.Extent()="<<FF.Extent()<<endl;
@@ -2225,7 +2225,7 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
         if (VPE.Contains(E1)) {
           aNewFs.Append(VPE.FindFromKey(E1));
 #ifdef _DEBUG_
-          MESSAGE ("    using existed face");
+          MESSAGE ("    using existing face");
 #endif
           continue;
         }
@@ -2542,7 +2542,7 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
 
 //=======================================================================
 //function : CreatePipeBiNormalAlongVector
-//purpose  : auxilary for Execute()
+//purpose  : auxiliary for Execute()
 //=======================================================================
 static TopoDS_Shape CreatePipeBiNormalAlongVector(const TopoDS_Wire& aWirePath,
                                                   GEOMImpl_IPipe* aCI)
@@ -2619,7 +2619,7 @@ static TopoDS_Shape CreatePipeBiNormalAlongVector(const TopoDS_Wire& aWirePath,
 
 //=======================================================================
 //function : FillGroups
-//purpose  : auxilary for DoGroups()
+//purpose  : auxiliary for DoGroups()
 //=======================================================================
 bool FillGroups(const TopTools_SequenceOfShape         *theGroups,
                 const TopTools_IndexedMapOfShape       &theIndices,
@@ -2652,7 +2652,7 @@ bool FillGroups(const TopTools_SequenceOfShape         *theGroups,
 
 //=======================================================================
 //function : StoreGroups
-//purpose  : auxilary for CreateGroups()
+//purpose  : auxiliary for CreateGroups()
 //=======================================================================
 void StoreGroups(GEOMImpl_IPipe                   *theCI,
                  Handle(TColStd_HArray1OfInteger) *theGroups)
@@ -2680,7 +2680,7 @@ void StoreGroups(GEOMImpl_IPipe                   *theCI,
 
 //=======================================================================
 //function : CreateDownUpGroups
-//purpose  : auxilary for DoGroups()
+//purpose  : auxiliary for DoGroups()
 //=======================================================================
 static bool CreateDownUpGroups(BRepPrimAPI_MakeSweep    *theSweep,
                                TopTools_SequenceOfShape *theGroups,
@@ -2745,7 +2745,7 @@ static bool CreateDownUpGroups(BRepPrimAPI_MakeSweep    *theSweep,
 
 //=======================================================================
 //function : DoGroups1
-//purpose  : auxilary for CreateGroups1()
+//purpose  : auxiliary for CreateGroups1()
 //=======================================================================
 bool DoGroups1 (const TopoDS_Shape          &theProfile,
 		BRepOffsetAPI_MakePipeShell &theSweep,
@@ -2856,7 +2856,7 @@ bool DoGroups1 (const TopoDS_Shape          &theProfile,
 
 //=======================================================================
 //function : CreateGroups1
-//purpose  : auxilary for Execute()
+//purpose  : auxiliary for Execute()
 //=======================================================================
 bool CreateGroups1 (const TopoDS_Shape          &theProfile,
 		    BRepOffsetAPI_MakePipeShell &theSweep,
@@ -2893,7 +2893,7 @@ bool CreateGroups1 (const TopoDS_Shape          &theProfile,
 
 //=======================================================================
 //function : DoGroups2
-//purpose  : auxilary for CreateGroups()
+//purpose  : auxiliary for CreateGroups()
 //=======================================================================
 static bool DoGroups2(const TopoDS_Shape             &theProfile,
 		      const TopoDS_Shape             &thePath,
@@ -2981,7 +2981,7 @@ static bool DoGroups2(const TopoDS_Shape             &theProfile,
 
 //=======================================================================
 //function : CreateGroups
-//purpose  : auxilary for Execute()
+//purpose  : auxiliary for Execute()
 //=======================================================================
 static bool CreateGroups2(const TopoDS_Shape     &theProfile,
 			  const TopoDS_Shape     &thePath,

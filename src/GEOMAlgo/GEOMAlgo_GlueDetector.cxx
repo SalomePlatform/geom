@@ -219,7 +219,7 @@ void GEOMAlgo_GlueDetector::DetectVertices()
         //
         aNbVSD=aBBTree.Select(aSelector);
         if (!aNbVSD) {
-          continue;  // it shoild not be so [at least IP itself]
+          continue;  // it should not be so [at least IP itself]
         }
         //
         const TColStd_ListOfInteger& aLI=aSelector.Indices();

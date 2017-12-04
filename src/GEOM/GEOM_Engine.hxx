@@ -91,11 +91,11 @@ typedef std::map<int, std::list<TDF_Label> > TFreeLabelsList;
 
 class GEOM_Engine
 {
- public:
+public:
   Standard_EXPORT GEOM_Engine();
   Standard_EXPORT virtual ~GEOM_Engine();
 
-  //Retuns the engine    
+  //Returns the engine
   Standard_EXPORT static GEOM_Engine* GetEngine();   
 
   //Returns the OCAF document by its ID, if document doesn't exists it will be created
@@ -175,10 +175,10 @@ class GEOM_Engine
   
   Standard_EXPORT bool DocumentModified(const int theDocId);
 
- protected:
+protected:
   Standard_EXPORT static void SetEngine(GEOM_Engine* theEngine);       
   
- private:
+private:
 
   Handle(GEOM_Application)  _OCAFApp;
   TColStd_DataMapOfIntegerTransient _mapIDDocument;

@@ -57,7 +57,7 @@ namespace GEOM
     object that should be removed by the caller as soon as the object is no more required.
     For example, function GetSubShape() of the GEOM_IShapesOperation interface always creates
     new servant object and returns new object reference to it. If the object is not published
-    in the study, it has to be destroyed and the coresponding servant should be deleted.
+    in the study, it has to be destroyed and the corresponding servant should be deleted.
     
     Examples:
     \code

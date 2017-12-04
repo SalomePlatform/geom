@@ -364,7 +364,7 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
                                                  GEOM::find_shape_method theFindMethod,
                                                  CORBA::Boolean          theAddPrefix);
 
-  // auxilary for PublishNamedShapesInStudy
+  // auxiliary for PublishNamedShapesInStudy
   void CreateAndPublishGroup(SALOMEDS::Study_ptr theStudy,
                              GEOM::GEOM_Object_var theMainShape,
                              const TopTools_IndexedMapOfShape& anIndices,

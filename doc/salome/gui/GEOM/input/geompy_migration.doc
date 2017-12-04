@@ -34,7 +34,7 @@ geompy = geomBuilder.New(salome.myStudy)
 
 
 <b> Of course, <em>from geompy import *</em> is no more possible.</b>
-\n You have to explicitely write <em>geompy.some_method()</em>.
+\n You have to explicitly write <em>geompy.some_method()</em>.
 
 \n <b>Some variables have been transferred from the namespace <em>geompy.GEOM</em> to the namespace <em>GEOM</em>.</b>
 \n All occurrences of <em>geompy.GEOM.</em> can be replaced by  <em>GEOM.</em>.

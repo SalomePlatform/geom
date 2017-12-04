@@ -908,7 +908,7 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
 {
   InitClick();
   Group3Spin->SpinBox_DX->blockSignals(true); // Block signals in order not to modify
-  Group3Spin->SpinBox_DY->blockSignals(true); // defaut values
+  Group3Spin->SpinBox_DY->blockSignals(true); // default values
   Group3Spin->SpinBox_DZ->blockSignals(true);
   
   Group2Spin->SpinBox_DX->blockSignals(true);
@@ -1591,7 +1591,7 @@ void EntityGUI_SketcherDlg::LineEditReturnPressed()
      myEditCurrentArgument = Group2Sel->LineEdit2;
 
   /* User name of object input management                          */
-  /* If successfull the selection is changed and signal emitted... */
+  /* If successful the selection is changed and signal emitted... */
   /* so SelectionIntoArgument() is automatically called.           */
   const QString objectUserName = myEditCurrentArgument->text();
   QWidget* thisWidget = (QWidget*)this;
@@ -1692,8 +1692,8 @@ void EntityGUI_SketcherDlg::closeEvent( QCloseEvent* e )
 void EntityGUI_SketcherDlg::OnPointSelected(Qt::KeyboardModifiers modifiers, const gp_Pnt& thePnt,
                                             bool isStart )
 {
-  // NOTE Basing the autoapply functionnality on the background picture has no sense anymore
-  // The import picture functionnality is now used for drawing on top of a picture
+  // NOTE Basing the autoapply functionality on the background picture has no sense anymore
+  // The import picture functionality is now used for drawing on top of a picture
   
 //   SUIT_ViewWindow*      theViewWindow  = getDesktop()->activeWindow();
 //   OCCViewer_ViewPort3d* vp             = ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();

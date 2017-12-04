@@ -682,7 +682,7 @@ module GEOM
 
     /*!
      *  \brief Set the operation error code
-     *  \param theErrorID is a string describing the error occured
+     *  \param theErrorID is a string describing the error occurred
      *  \note This method is supposed to be used only by interfaces inheriting from IOperations.
      */
     void SetErrorCode (in string theErrorID);
@@ -703,7 +703,7 @@ module GEOM
     void StartOperation();
 
     /*!
-     *  \brief Closes the previously opened trasaction
+     *  \brief Closes the previously opened transaction
      */
     void FinishOperation();
 
@@ -855,7 +855,7 @@ module GEOM
 
     /*!
      *  C\brief reate a line, passing through the given point
-     *  and parrallel to the given direction
+     *  and parallel to the given direction
      *  \param thePnt Point. The resulting line will pass through it.
      *  \param theDir Direction. The resulting line will be parallel to it.
      *  \return New GEOM_Object, containing the created line.
@@ -3217,7 +3217,7 @@ module GEOM
      *
      *  Propagation group is a set of all edges, opposite to one (main)
      *  edge of this group directly or through other opposite edges.
-     *  Notion of Opposite Edge make sence only on quadrangle face.
+     *  Notion of Opposite Edge make sense only on quadrangle face.
      *  \param theShape Shape to build propagation groups on.
      *  \return List of GEOM_Object, each of them is a propagation group.
      */
@@ -3316,7 +3316,7 @@ module GEOM
      *  \param theRemoveInside Shapes, inside which the results will be deleted.
      *         Each shape from theRemoveInside must belong to theShapes also.
      *  \param theRemoveWebs If TRUE, perform Glue 3D algorithm.
-     *  \param theMaterials Material indices for each shape. Make sence, only if theRemoveWebs is TRUE.
+     *  \param theMaterials Material indices for each shape. Make sense, only if theRemoveWebs is TRUE.
      *
      *  \return New GEOM_Object, containing the result shapes.
      */
@@ -3332,7 +3332,7 @@ module GEOM
     /*!
      *  \brief Perform partition operation.
      *
-     *  This method may be usefull if it is needed to make a partition for
+     *  This method may be useful if it is needed to make a partition for
      *  a compound containing nonintersected shapes. Performance will be better
      *  since intersection between shapes from compound is not performed.
      *
@@ -3795,7 +3795,7 @@ module GEOM
      *  \param theVertexes Global indices of vertexes to perform fillet on.
      *    \note Global index of sub-shape can be obtained, using method
      *          <VAR>GEOM_IShapesOperations.GetSubShapeIndex()</VAR>.
-     *    \note The list of vertices coudl be empty, in this case fillet fill be done
+     *    \note The list of vertices could be empty, in this case fillet fill be done
      *          at all vertices in given wire
      *  \param doIgnoreSecantVertices If FALSE, fillet radius is always limited
      *         by the length of the edges, nearest to the fillet vertex.
@@ -3834,7 +3834,7 @@ module GEOM
                                  in double theD1, in double theD2,
                                  in long theFace1, in long theFace2);
     /*!
-     *  \brief The Same but with params theD = Chamfer Lenght
+     *  \brief The Same but with params theD = Chamfer Length
      *  and theAngle = Chamfer Angle (Angle in radians)
      */
     GEOM_Object MakeChamferEdgeAD (in GEOM_Object theShape,
@@ -3858,7 +3858,7 @@ module GEOM
                                   in double theD1, in double theD2,
                                   in ListOfLong theFaces);
     /*!
-     *  The Same but with params theD = Chamfer Lenght
+     *  The Same but with params theD = Chamfer Length
      *  and theAngle = Chamfer Angle (Angle in radians)
      */
     GEOM_Object MakeChamferFacesAD (in GEOM_Object theShape,
@@ -3877,7 +3877,7 @@ module GEOM
                                   in double theD1, in double theD2,
                                   in ListOfLong theEdges);
     /*!
-     *  The Same but with params theD = Chamfer Lenght
+     *  The Same but with params theD = Chamfer Length
      *  and theAngle = Chamfer Angle (Angle in radians)
      */
     GEOM_Object MakeChamferEdgesAD (in GEOM_Object theShape,
@@ -4064,7 +4064,7 @@ module GEOM
      *  \param theObjects Shapes to get free boundary of.
      *  \param theClosedWires Output. Closed wires on the free boundary of the given shape.
      *  \param theOpenWires Output. Open wires on the free boundary of the given shape.
-     *  \return FALSE, if an error(s) occured during the method execution.
+     *  \return FALSE, if an error(s) occurred during the method execution.
      */
     boolean GetFreeBoundary (in  ListOfGO theObjects,
                              out ListOfGO theClosedWires,
@@ -4194,7 +4194,7 @@ module GEOM
     };
 
     /*!
-     *  \brief Sequence of non-topological information tranfer data.
+     *  \brief Sequence of non-topological information transfer data.
      */
     typedef sequence<TransferDatum> ListOfTransferDatum;
 
@@ -4209,7 +4209,7 @@ module GEOM
      *  \param theResult statistics of the operation. Output parameter. It
      *         represents a sequence of Transfer Datum. A datum has the type
      *         (string code), the total number of items of this type and
-     *         the number of transfered items.
+     *         the number of transferred items.
      *  \return true in case of success; otherwise false.
      */
     boolean TransferData(in  GEOM_Object         theObjectFrom,
@@ -4912,7 +4912,7 @@ module GEOM
      *                            in place of sub-shapes of the first argument,
      *                            because the whole shape corresponds to the first argument.
      *                            Mainly to be used after transformations, but it also can be
-     *                            usefull after partition with one object shape, and some other
+     *                            useful after partition with one object shape, and some other
      *                            operations, where only the first argument has to be considered.
      *                            If theObject has only one argument shape, this flag is automatically
      *                            considered as True, not regarding really passed value.
@@ -4943,7 +4943,7 @@ module GEOM
      *                            in place of sub-shapes of the first argument,
      *                            because the whole shape corresponds to the first argument.
      *                            Mainly to be used after transformations, but it also can be
-     *                            usefull after partition with one object shape, and some other
+     *                            useful after partition with one object shape, and some other
      *                            operations, where only the first argument has to be considered.
      *                            If theObject has only one argument shape, this flag is automatically
      *                            considered as True, not regarding really passed value.
@@ -4975,7 +4975,7 @@ module GEOM
      *                            in place of sub-shapes of the first argument,
      *                            because the whole shape corresponds to the first argument.
      *                            Mainly to be used after transformations, but it also can be
-     *                            usefull after partition with one object shape, and some other
+     *                            useful after partition with one object shape, and some other
      *                            operations, where only the first argument has to be considered.
      *                            If theObject has only one argument shape, this flag is automatically
      *                            considered as True, not regarding really passed value.

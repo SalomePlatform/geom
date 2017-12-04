@@ -262,7 +262,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr   theStudy,
   // BEGIN: try to find existed name for current shape
   if ( !aShape->_is_nil() && mytype != GEOM_GROUP)
   {
-    // recieve current TopoDS shape
+    // receive current TopoDS shape
     CORBA::String_var entry = aShape->GetEntry();
     HANDLE_NAMESPACE(GEOM_Object) aGShape = HANDLE_NAMESPACE(GEOM_Object)::DownCast
       ( _impl->GetObject( aShape->GetStudyID(), entry ));
@@ -450,7 +450,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr   theStudy,
 
 //============================================================================
 // function : CreateAndPublishGroup
-// purpose  : auxilary for PublishNamedShapesInStudy
+// purpose  : auxiliary for PublishNamedShapesInStudy
 //============================================================================
 void GEOM_Gen_i::CreateAndPublishGroup(SALOMEDS::Study_ptr theStudy,
                                        GEOM::GEOM_Object_var theMainShape,
@@ -2516,7 +2516,7 @@ void GEOM_Gen_i::LoadPlugin(const std::string& theLibName)
     // load plugin library
     LibHandle libHandle = LoadLib( aPlatformLibName.c_str() );
     if (!libHandle) {
-      // report any error, if occured
+      // report any error, if occurred
 #ifndef WIN32
       throw(SALOME_Exception(dlerror()));
 #else

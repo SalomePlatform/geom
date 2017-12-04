@@ -390,7 +390,7 @@ void EntityGUI::DisplaySimulationShape( const TopoDS_Shape& S1, const TopoDS_Sha
     ic->UpdateCurrentViewer();
   }
   catch( Standard_Failure ) {
-    MESSAGE( "Exception catched in EntityGUI::DisplaySimulationShape" );
+    MESSAGE( "Exception caught in EntityGUI::DisplaySimulationShape" );
   } 
 }
 

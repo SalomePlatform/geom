@@ -117,7 +117,7 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFacesWithWarnings (const TopoDS_Shape& the
       Standard_Failure::Raise(MSG_BAD_ARG_SHAPE);
       break;
     case 200:
-      Standard_Failure::Raise("Error occured during check of geometric coincidence");
+      Standard_Failure::Raise("Error occurred during check of geometric coincidence");
       break;
     default:
       {
@@ -236,7 +236,7 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFaces (const TopoDS_Shape& theShape,
       Standard_Failure::Raise("Result shape is Null");
       break;
     case 200:
-      Standard_Failure::Raise("Error occured during check of geometric coincidence");
+      Standard_Failure::Raise("Error occurred during check of geometric coincidence");
       break;
     default:
       {
