@@ -598,10 +598,13 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
       sfw->SetMaxTolerance(Max(1.,myTolerance*1000.));
       sfw->SetFace(aFace);
       for (TopoDS_Iterator iter (aFace,Standard_False); iter.More(); iter.Next()) {
-        TopoDS_Wire wire = TopoDS::Wire(iter.Value());
-        sfw->Load(wire);
-        sfw->FixReorder();
-        sfw->FixShifted();
+        TopoDS_Shape aFaceCont = iter.Value();
+        if (!aFaceCont.IsNull() && aFaceCont.ShapeType() == TopAbs_WIRE) {
+          TopoDS_Wire wire = TopoDS::Wire(iter.Value());
+          sfw->Load(wire);
+          sfw->FixReorder();
+          sfw->FixShifted();
+        }
       }
     }
   } // end processing each solid
