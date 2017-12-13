@@ -32,7 +32,7 @@
 #include <BRep_Builder.hxx>
 #include <BRepClass3d_SolidClassifier.hxx>
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfSolid, GEOMAlgo_Clsf)
+IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfSolid, GEOMAlgo_Clsf)
 
 //=======================================================================
 //function :

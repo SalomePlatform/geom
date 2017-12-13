@@ -59,8 +59,6 @@
 #include <SUIT_ViewManager.h>
 #include <SUIT_ResourceMgr.h>
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <SalomeApp_Study.h>
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
@@ -90,9 +88,6 @@
 #include <AIS_AngleDimension.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 #include <Aspect_PolygonOffsetMode.hxx>
-#if OCC_VERSION_MAJOR < 7
-  #include <Aspect_ColorScale.hxx>
-#endif
 #include <Prs3d_IsoAspect.hxx>
 #include <Prs3d_PointAspect.hxx>
 #include <StdSelect_TypeOfEdge.hxx>
@@ -113,6 +108,7 @@
 #include <TopoDS.hxx>
 #include <NCollection_DataMap.hxx>
 #include <NCollection_Map.hxx>
+#include <Graphic3d_Texture2Dmanual.hxx>
 
 #include <Prs3d_ShadingAspect.hxx>
 
@@ -242,8 +238,11 @@ namespace
       if ( aAISShape.IsNull() )
         continue;
 
-#ifdef USE_TEXTURED_SHAPE
-      const Handle(Image_PixMap)& aPixmap = aAISShape->TexturePixMap();
+      const Handle(Graphic3d_TextureMap)& aTexture = aAISShape->Attributes()->ShadingAspect()->Aspect()->TextureMap();
+      if ( aTexture.IsNull() )
+        continue;
+
+      const Handle(Image_PixMap)& aPixmap = aTexture->GetImage();
       if ( aPixmap.IsNull() )
         continue;
 
@@ -258,7 +257,6 @@ namespace
         aPixmapUsersMap.UnBind( aPixmap );
         aPixmapCacheMap.remove( aPixmapCacheMap.key( aPixmap ) );
       }
-#endif
     }
   }
 
@@ -464,7 +462,7 @@ static std::string getName( GEOM::GEOM_BaseObject_ptr object )
  */
 //=================================================================
 GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
-  : myUpdateColorScale(true), myIsRedisplayed( false )
+  : myUpdateColorScale( true ), myIsRedisplayed( false )
 {
   if( st )
     myApp = dynamic_cast<SalomeApp_Application*>( st->application() );
@@ -511,13 +509,6 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
   BRepMesh_IncrementalMesh::SetParallelDefault(parallel_visu);
 
   myViewFrame = 0;
-
-#if OCC_VERSION_MAJOR >= 7
-  myColorScale = new AIS_ColorScale;
-  myColorScale->SetZLayer (Graphic3d_ZLayerId_TopOSD);
-  myColorScale->SetTransformPersistence (
-    Graphic3d_TransformPers::FromDeprecatedParams(Graphic3d_TMF_2d, gp_Pnt (-1,-1,0)));
-#endif
 
   myFieldDataType = GEOM::FDT_Double;
   myFieldDimension = 0;
@@ -866,11 +857,12 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   AISShape->SetLabelColor( qColorFromResources( "label_color", QColor( 255, 255, 255 ) ) );
 
   // set display mode
-  AISShape->SetDisplayMode( HasDisplayMode() ? 
-                            // predefined display mode, manually set to displayer via GEOM_Displayer::SetDisplayMode() function 
-                            GetDisplayMode() :
-                            // display mode from properties
-                            propMap.value( GEOM::propertyName( GEOM::DisplayMode ) ).toInt() );
+  int displayMode = HasDisplayMode() ? 
+    // predefined display mode, manually set to displayer via GEOM_Displayer::SetDisplayMode() function 
+    GetDisplayMode() :
+    // display mode from properties
+    propMap.value( GEOM::propertyName( GEOM::DisplayMode ) ).toInt();
+  AISShape->SetDisplayMode( displayMode );
 
   // - face boundaries color and line width
   anAspect = AISShape->Attributes()->FaceBoundaryAspect();
@@ -960,7 +952,6 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
     aImagePath = propMap.value( GEOM::propertyName( GEOM::Texture ) ).toString();
   }
 
-#ifdef USE_TEXTURED_SHAPE
   Handle(Image_PixMap) aPixmap;
   if ( !aImagePath.isEmpty() )
     aPixmap = cacheTextureFor( aImagePath, AISShape );
@@ -969,14 +960,12 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
 
   // apply image to shape
   if ( !aPixmap.IsNull() ) {
-    AISShape->SetTexturePixMap( aPixmap );
-    AISShape->SetTextureMapOn();
-    AISShape->DisableTextureModulate();
+    AISShape->Attributes()->ShadingAspect()->Aspect()->SetTextureMap( new Graphic3d_Texture2Dmanual( aPixmap ) );
   }
-  else {
-    AISShape->SetTextureMapOff();
-  }
-#endif
+  if ( displayMode == GEOM_AISShape::TexturedShape )
+    AISShape->Attributes()->ShadingAspect()->Aspect()->SetTextureMapOn();
+  else
+    AISShape->Attributes()->ShadingAspect()->Aspect()->SetTextureMapOff();
 
   // set line width
   AISShape->SetWidth( HasWidth() ?
@@ -2075,7 +2064,7 @@ void GEOM_Displayer::BeforeDisplay( SALOME_View* v, const SALOME_OCCPrs* )
 
 void GEOM_Displayer::AfterDisplay( SALOME_View* v, const SALOME_OCCPrs* p )
 {
-  UpdateColorScale(false,false);
+  UpdateColorScale();
 
   // visualize annotations for displayed presentation
   SUIT_Session* session = SUIT_Session::session();
@@ -2099,7 +2088,7 @@ void GEOM_Displayer::BeforeErase( SALOME_View* v, const SALOME_OCCPrs* p )
 void GEOM_Displayer::AfterErase( SALOME_View* v, const SALOME_OCCPrs* p )
 {
   LightApp_Displayer::AfterErase( v, p );
-  UpdateColorScale(false,false);
+  UpdateColorScale();
 
   if ( !myIsRedisplayed ) {
     // hide annotations for erased presentation
@@ -2965,11 +2954,7 @@ QList<QVariant> GEOM_Displayer::groupFieldData( const QList<QVariant>& theFieldS
     {
       QColor aQColor;
       Quantity_Color aColor;
-#if OCC_VERSION_MAJOR < 7
-      if( FindColor( aVariant.toDouble(), theFieldStepRangeMin, theFieldStepRangeMax, anIsBoolean ? 2 : aNbIntervals, aColor ) )
-#else
       if( AIS_ColorScale::FindColor( aVariant.toDouble(), theFieldStepRangeMin, theFieldStepRangeMax, anIsBoolean ? 2 : aNbIntervals, aColor ) )
-#endif
         aQColor = QColor::fromRgbF( aColor.Red(), aColor.Green(), aColor.Blue() );
       aResultList << aQColor;
     }
@@ -2977,205 +2962,91 @@ QList<QVariant> GEOM_Displayer::groupFieldData( const QList<QVariant>& theFieldS
   return aResultList;
 }
 
-#if OCC_VERSION_MAJOR < 7
-// Note: the method is copied from Aspect_ColorScale class
-Standard_Integer GEOM_Displayer::HueFromValue( const Standard_Integer aValue,
-                                               const Standard_Integer aMin,
-                                               const Standard_Integer aMax )
+void GEOM_Displayer::UpdateColorScale() 
 {
-  Standard_Integer minLimit( 0 ), maxLimit( 230 );
+  if ( !myUpdateColorScale )
+    return;
 
-  Standard_Integer aHue = maxLimit;
-  if ( aMin != aMax )
-    aHue = (Standard_Integer)( maxLimit - ( maxLimit - minLimit ) * ( aValue - aMin ) / ( aMax - aMin ) );
+  SUIT_Session* session = SUIT_Session::session();
+  SUIT_Application* app = session->activeApplication();
+  if ( !app ) return;
 
-  aHue = Min( Max( minLimit, aHue ), maxLimit );
+  Handle(SALOME_InteractiveObject) io = myApp->selectionMgr()->soleSelectedObject();
 
-  return aHue;
-}
-
-// Note: the method is copied from Aspect_ColorScale class
-Standard_Boolean GEOM_Displayer::FindColor( const Standard_Real aValue, 
-                                            const Standard_Real aMin,
-                                            const Standard_Real aMax,
-                                            const Standard_Integer ColorsCount,
-                                            Quantity_Color& aColor )
-{
-  if( aValue<aMin || aValue>aMax || aMax<aMin )
-    return Standard_False;
-
-  else
+  QList<SUIT_ViewWindow*> windows = app->desktop()->windows();
+  foreach( SUIT_ViewWindow* window, windows )
   {
-    Standard_Real IntervNumber = 0;
-    if( aValue<aMin )
-      IntervNumber = 0;
-    else if( aValue>aMax )
-      IntervNumber = ColorsCount-1;
-    else if( Abs( aMax-aMin ) > Precision::Approximation() )
-      IntervNumber = Floor( Standard_Real( ColorsCount ) * ( aValue - aMin ) / ( aMax - aMin ) ); // 'Ceiling' replaced with 'Floor'
-
-    Standard_Integer Interv = Standard_Integer( IntervNumber );
-
-    aColor = Quantity_Color( HueFromValue( Interv, 0, ColorsCount - 1 ), 1.0, 1.0, Quantity_TOC_HLS );
-
-    return Standard_True;
-  } 
-}
-#endif
-
-void GEOM_Displayer::UpdateColorScale( const bool theIsRedisplayFieldSteps, const bool updateViewer ) 
-{
-  SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( myApp->activeStudy() );
-  if( !aStudy )
-    return;
-
-  SOCC_Viewer* aViewModel = dynamic_cast<SOCC_Viewer*>( GetActiveView() );
-  if( !aViewModel )
-    return;
-
-  Handle(V3d_Viewer) aViewer = aViewModel->getViewer3d();
-  if( aViewer.IsNull() )
-    return;
-
-  aViewer->InitActiveViews();
-  if( !aViewer->MoreActiveViews() )
-    return;
-
-  Handle(V3d_View) aView = aViewer->ActiveView();
-  if( aView.IsNull() )
-    return;
-
-  Standard_Boolean anIsDisplayColorScale = Standard_False;
-  TCollection_AsciiString aColorScaleTitle;
-  Standard_Real aColorScaleMin = 0, aColorScaleMax = 0;
-  Standard_Boolean anIsBoolean = Standard_False;
-
-  Handle(SALOME_InteractiveObject) anIO;
-  if ( myUpdateColorScale )
-    anIO = myApp->selectionMgr()->soleSelectedObject();
-
-  if( !anIO.IsNull() )
-  {
-    SOCC_Prs* aPrs = dynamic_cast<SOCC_Prs*>( aViewModel->CreatePrs( anIO->getEntry() ) );
-    if( aPrs )
+    OCCViewer_ViewWindow* occWindow = dynamic_cast<OCCViewer_ViewWindow*>( window );
+    if ( !occWindow ) continue;
+    if ( !occWindow->getViewManager() ) continue;
+    if ( !window->getViewManager() ) continue;
+    if ( !window->getViewManager()->getViewModel() ) continue;
+    SOCC_Viewer* view = dynamic_cast<SOCC_Viewer*>( window->getViewManager()->getViewModel() );
+    if ( !view ) continue;
+    Handle(V3d_Viewer) viewer = view->getViewer3d();
+    if ( !io.IsNull() && view->isVisible( io ) )
     {
-      AIS_ListOfInteractive aList;
-      aPrs->GetObjects( aList );
-      AIS_ListIteratorOfListOfInteractive anIter( aList );
-      for( ; anIter.More(); anIter.Next() )
+      bool visible = false;
+      SOCC_Prs* prs = dynamic_cast<SOCC_Prs*>( view->CreatePrs( io->getEntry() ) );
+      if ( prs )
       {
-        Handle(GEOM_AISShape) aShape = Handle(GEOM_AISShape)::DownCast( anIter.Value() );
-        if( !aShape.IsNull() )
+        AIS_ListOfInteractive presentations;
+        prs->GetObjects( presentations );
+        AIS_ListIteratorOfListOfInteractive iter( presentations );
+        for ( ; iter.More(); iter.Next() )
         {
-          GEOM::field_data_type aFieldDataType;
-          int aFieldDimension;
-          QList<QVariant> aFieldStepData;
-          TCollection_AsciiString aFieldStepName;
-          double aFieldStepRangeMin, aFieldStepRangeMax;
-          aShape->getFieldStepInfo( aFieldDataType,
-                                    aFieldDimension,
-                                    aFieldStepData,
-                                    aFieldStepName,
-                                    aFieldStepRangeMin,
-                                    aFieldStepRangeMax );
-          if( !aFieldStepData.isEmpty() && aFieldDataType != GEOM::FDT_String )
+          Handle(GEOM_AISShape) shape = Handle(GEOM_AISShape)::DownCast( iter.Value() );
+          if ( shape.IsNull() ) continue;
+          GEOM::field_data_type fieldDataType;
+          int fieldDimension;
+          QList<QVariant> fieldStepData;
+          TCollection_AsciiString fieldStepName;
+          Standard_Real fieldStepRangeMin, fieldStepRangeMax;
+          shape->getFieldStepInfo( fieldDataType, fieldDimension, fieldStepData,
+                                   fieldStepName, fieldStepRangeMin,  fieldStepRangeMax );
+          visible = !fieldStepData.isEmpty() && fieldDataType != GEOM::FDT_String;
+          if ( visible )
           {
-            anIsDisplayColorScale = Standard_True;
-            aColorScaleTitle = aFieldStepName;
-            aColorScaleMin = aFieldStepRangeMin;
-            aColorScaleMax = aFieldStepRangeMax;
-            anIsBoolean = aFieldDataType == GEOM::FDT_Bool;
-          }
+            SUIT_Session* session = SUIT_Session::session();
+            SUIT_ResourceMgr* resMgr = session->resourceMgr();
+            
+            Standard_Real xPos = resMgr->doubleValue( "Geometry", "scalar_bar_x_position", 0.05 );
+            Standard_Real yPos = resMgr->doubleValue( "Geometry", "scalar_bar_y_position", 0.1 );
+            Standard_Real width = resMgr->doubleValue( "Geometry", "scalar_bar_width", 0.2 );
+            Standard_Real height = resMgr->doubleValue( "Geometry", "scalar_bar_height", 0.5 );
+            Standard_Integer textHeight = resMgr->integerValue( "Geometry", "scalar_bar_text_height", 14 );
+            Standard_Integer nbIntervals = resMgr->integerValue( "Geometry", "scalar_bar_nb_intervals", 20 );
+            
+            Standard_Integer viewWidth = 0, viewHeight = 0;
+            occWindow->getView(0)->getViewPort()->getView()->Window()->Size( viewWidth, viewHeight );
+            
+            Handle(AIS_ColorScale) colorScale = view->getColorScale();
+            
+            colorScale->SetPosition( viewWidth * xPos, viewHeight * yPos );
+            colorScale->SetBreadth( viewWidth * width );
+            colorScale->SetHeight( viewHeight * height );
+            colorScale->SetRange( fieldStepRangeMin, fieldStepRangeMax );
+            colorScale->SetNumberOfIntervals( fieldDataType == GEOM::FDT_Bool ? 2 : nbIntervals );
+            colorScale->SetTextHeight( textHeight );
+            colorScale->SetTitle( fieldStepName );
+          } // if ( visible )
         }
       }
-    }
-  }
-
-  if( anIsDisplayColorScale )
-  {
-    SUIT_Session* session = SUIT_Session::session();
-    SUIT_ResourceMgr* resMgr = session->resourceMgr();
-
-    Standard_Real anXPos = resMgr->doubleValue( "Geometry", "scalar_bar_x_position", 0.05 );
-    Standard_Real anYPos = resMgr->doubleValue( "Geometry", "scalar_bar_y_position", 0.1 );
-    Standard_Real aWidth = resMgr->doubleValue( "Geometry", "scalar_bar_width", 0.2 );
-    Standard_Real aHeight = resMgr->doubleValue( "Geometry", "scalar_bar_height", 0.5 );
-    Standard_Integer aTextHeight = resMgr->integerValue( "Geometry", "scalar_bar_text_height", 14 );
-    Standard_Integer aNbIntervals = resMgr->integerValue( "Geometry", "scalar_bar_nb_intervals", 20 );
-
-#if OCC_VERSION_MAJOR < 7
-    Handle(Aspect_ColorScale) myColorScale = aView->ColorScale();
-    if( !myColorScale.IsNull() )
+      view->setColorScaleShown( visible );
+    } // if ( view->isVisible( io ) )
+    else
     {
-      myColorScale->SetXPosition( anXPos );
-      myColorScale->SetYPosition( anYPos );
-      myColorScale->SetWidth( aWidth );
-      myColorScale->SetHeight( aHeight );
-#else
-      Standard_Integer aWinWidth = 0, aWinHeight = 0;
-      aView->Window()->Size (aWinWidth, aWinHeight);
-
-      myColorScale->SetPosition (aWinWidth*anXPos, aWinHeight*anYPos);
-      //myColorScale->SetBreadth (aWinWidth); // ???
-      myColorScale->SetBreadth (aWinWidth*aWidth); // ???
-      myColorScale->SetHeight  (aWinHeight*aHeight);
-#endif
-
-      myColorScale->SetRange( aColorScaleMin, aColorScaleMax );
-      myColorScale->SetNumberOfIntervals( anIsBoolean ? 2 : aNbIntervals );
-
-      myColorScale->SetTextHeight( aTextHeight );
-      myColorScale->SetTitle( aColorScaleTitle );
-
-#if OCC_VERSION_MAJOR < 7
+      view->setColorScaleShown( false );
     }
-    if( !aView->ColorScaleIsDisplayed() )
-      aView->ColorScaleDisplay();
-  }
-  else
-    if( aView->ColorScaleIsDisplayed() )
-      aView->ColorScaleErase();
-#else
-    if( !aViewModel->getAISContext()->IsDisplayed( myColorScale ) )
-      aViewModel->getAISContext()->Display( myColorScale, Standard_True);
-  }
-  else
-    if( aViewModel->getAISContext()->IsDisplayed( myColorScale ) )
-      aViewModel->getAISContext()->Erase( myColorScale, Standard_True );
-#endif
-
-  if( theIsRedisplayFieldSteps )
-  {
-    _PTR(Study) aStudyDS = aStudy->studyDS();
-    QList<SUIT_ViewManager*> vmList;
-    myApp->viewManagers( vmList );
-    for( QList<SUIT_ViewManager*>::Iterator vmIt = vmList.begin(); vmIt != vmList.end(); vmIt++ )
-    {
-      if( SUIT_ViewManager* aViewManager = *vmIt )
-      {
-        const ObjMap& anObjects = aStudy->getObjectProperties( aViewManager->getGlobalId() );
-        for( ObjMap::ConstIterator objIt = anObjects.begin(); objIt != anObjects.end(); objIt++ )
-        {
-          _PTR(SObject) aSObj( aStudyDS->FindObjectID( objIt.key().toLatin1().constData() ) );
-          if( aSObj )
-          {
-            CORBA::Object_var anObject = GeometryGUI::ClientSObjectToObject( aSObj );
-            if( !CORBA::is_nil( anObject ) )
-            {
-              GEOM::GEOM_FieldStep_var aFieldStep = GEOM::GEOM_FieldStep::_narrow( anObject );
-              if( !aFieldStep->_is_nil() )
-              {
-                CORBA::String_var aStepEntry = aFieldStep->GetStudyEntry();
-                Handle(SALOME_InteractiveObject) aStepIO =
-                  new SALOME_InteractiveObject( aStepEntry.in(), "GEOM", "TEMP_IO" );
-                Redisplay( aStepIO, false, false );
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  if(updateViewer)
-    UpdateViewer();
+  } // foreach( SUIT_ViewWindow* window, windows )
 }
+
+bool GEOM_Displayer::SetUpdateColorScale( bool toUpdate ) // IPAL54049
+{
+  bool previous = myUpdateColorScale;
+  myUpdateColorScale = toUpdate;
+  if ( myUpdateColorScale && !previous )
+    UpdateColorScale();
+  return previous;
+}
+

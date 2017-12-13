@@ -36,17 +36,9 @@
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <string>
 #include <vector>
 #include <sstream>
-
-#if OCC_VERSION_MAJOR < 7
-  #define LOGBOOK TFunction_Logbook
-#else
-  #define LOGBOOK Handle(TFunction_Logbook)
-#endif
 
 struct GEOM_Param
 {
@@ -107,7 +99,7 @@ public:
     return params.back();
   }
 
-  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_BaseDriver,TFunction_Driver)
+  DEFINE_STANDARD_RTTIEXT(GEOM_BaseDriver,TFunction_Driver)
 };
 
 DEFINE_STANDARD_HANDLE (GEOM_BaseDriver,TFunction_Driver);

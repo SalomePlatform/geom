@@ -44,9 +44,7 @@
 #include <Standard_NullObject.hxx>
 #include <StdFail_NotDone.hxx>
 #include <BOPAlgo_CheckerSI.hxx>
-#if OCC_VERSION_LARGE > 0x07010001
 #include <BOPAlgo_Alerts.hxx>
-#endif
 #include <BOPCol_IndexedDataMapOfShapeListOfShape.hxx>
 #include <BOPCol_ListOfShape.hxx>
 #include <BOPDS_DS.hxx>
@@ -109,11 +107,7 @@ static void CheckSelfIntersection(const TopoDS_Shape &theShape)
   aCSI.SetLevelOfCheck(BOP_SELF_INTERSECTIONS_LEVEL);
   aCSI.SetArguments(aList);
   aCSI.Perform();
-#if OCC_VERSION_LARGE > 0x07010001
   if (aCSI.HasErrors() || aCSI.DS().Interferences().Extent() > 0) {
-#else
-  if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0) {
-#endif
     StdFail_NotDone::Raise("Partition operation will not be performed, because argument shape is self-intersected");
   }
 }
@@ -122,7 +116,7 @@ static void CheckSelfIntersection(const TopoDS_Shape &theShape)
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer GEOMImpl_PartitionDriver::Execute(LOGBOOK& log) const
+Standard_Integer GEOMImpl_PartitionDriver::Execute(Handle(TFunction_Logbook)& log) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
@@ -417,11 +411,7 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(LOGBOOK& log) const
   aShape = PS.Shape();
   if (aShape.IsNull()) {
     // Mantis issue 22009
-#if OCC_VERSION_LARGE > 0x07010001
     if (PS.HasError(STANDARD_TYPE(BOPAlgo_AlertTooFewArguments)) && PS.Tools().Extent() == 0 && PS.Arguments().Extent() == 1)
-#else
-    if (PS.ErrorStatus() == 100 && PS.Tools().Extent() == 0 && PS.Arguments().Extent() == 1)
-#endif      
       aShape = PS.Arguments().First();
     else
       return 0;
@@ -507,11 +497,7 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(LOGBOOK& log) const
     }
   }
 
-#if OCC_VERSION_MAJOR < 7
-  log.SetTouched(Label());
-#else
   log->SetTouched(Label());
-#endif
 
   return 1;
 }
@@ -569,4 +555,4 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_PartitionDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_PartitionDriver,GEOM_BaseDriver);

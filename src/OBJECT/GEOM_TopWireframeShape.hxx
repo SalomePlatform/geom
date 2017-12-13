@@ -50,7 +50,7 @@ public:
   Standard_EXPORT virtual void highlightSubShapes(const TColStd_IndexedMapOfInteger& aIndexMap, const Standard_Boolean aHighlight );
 
 public:
-  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_TopWireframeShape,SALOME_AISShape)
+  DEFINE_STANDARD_RTTIEXT(GEOM_TopWireframeShape,SALOME_AISShape)
 };
 
 DEFINE_STANDARD_HANDLE(GEOM_TopWireframeShape, SALOME_AISShape)

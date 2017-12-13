@@ -20,12 +20,8 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-//  File   : GEOM_GEOM_I.hxx
-//  Author : Alexander A. BORODIN
-//  Module : GEOM
-//
-#ifndef _GEOM_GEOM_I_HXX_
-#define _GEOM_GEOM_I_HXX_
+#ifndef GEOM_GEOM_I_HXX
+#define GEOM_GEOM_I_HXX
 
 #ifdef WIN32
   #if defined GEOM_I_EXPORTS || defined GEOMEngine_EXPORTS
@@ -37,11 +33,4 @@
    #define GEOM_I_EXPORT
 #endif
 
-#include <Basics_OCCTVersion.hxx>
-#if OCC_VERSION_MAJOR < 7
-  #define HANDLE_NAMESPACE(CLS) Handle(CLS)
-#else
-  #define HANDLE_NAMESPACE(CLS) Handle(::CLS)
-#endif
-
-#endif //_GEOM_GEOM_I_HXX_
+#endif // GEOM_GEOM_I_HXX

@@ -66,7 +66,7 @@ GEOMImpl_CopyDriver::GEOMImpl_CopyDriver()
 //function : Execute
 //purpose  :
 //======================================================================= 
-Standard_Integer GEOMImpl_CopyDriver::Execute(LOGBOOK& log) const
+Standard_Integer GEOMImpl_CopyDriver::Execute(Handle(TFunction_Logbook)& log) const
 {
   if (Label().IsNull()) return 0;    
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
@@ -98,11 +98,7 @@ Standard_Integer GEOMImpl_CopyDriver::Execute(LOGBOOK& log) const
 
   aFunction->SetValue(aCopy);
 
-#if OCC_VERSION_MAJOR < 7
-  log.SetTouched(Label());
-#else
   log->SetTouched(Label());
-#endif
 
   return 1;    
 }
@@ -150,7 +146,7 @@ GetCreationInformation(std::string&             theOperationName,
  * \brief Performs Transfer Data operation.
  */
 //================================================================================
-Standard_Integer GEOMImpl_CopyDriver::transferData(LOGBOOK& log) const
+Standard_Integer GEOMImpl_CopyDriver::transferData(Handle(TFunction_Logbook)& log) const
 {
   Handle(GEOM_Function)  aFunction = GEOM_Function::GetFunction(Label());
   GEOMImpl_ITransferData aTD (aFunction);
@@ -414,4 +410,4 @@ Standard_Boolean GEOMImpl_CopyDriver::getInPlaceByHistory
   return Standard_True;
 }
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_CopyDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_CopyDriver,GEOM_BaseDriver);

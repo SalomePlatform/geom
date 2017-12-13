@@ -25,17 +25,15 @@
 
 #include <Standard.hxx>
 #include <Standard_DefineHandle.hxx>
+#include <Standard_Transient.hxx>
 
 #include <ShapeBuild_ReShape.hxx>
 #include <TopoDS_Shape.hxx>
 #include <Standard_Real.hxx>
-#include <MMgt_TShared.hxx>
 
-#include <Basics_OCCTVersion.hxx>
+DEFINE_STANDARD_HANDLE(BlockFix_BlockFixAPI, Standard_Transient);
 
-DEFINE_STANDARD_HANDLE(BlockFix_BlockFixAPI, MMgt_TShared);
-
-class BlockFix_BlockFixAPI : public MMgt_TShared
+class BlockFix_BlockFixAPI : public Standard_Transient
 {
 public:
   Standard_EXPORT BlockFix_BlockFixAPI();
@@ -48,7 +46,7 @@ public:
   Standard_Integer& OptimumNbFaces();
   Standard_EXPORT void Perform();
 
-  OCCT_DEFINE_STANDARD_RTTIEXT(BlockFix_BlockFixAPI,MMgt_TShared)
+  DEFINE_STANDARD_RTTIEXT(BlockFix_BlockFixAPI, Standard_Transient)
 
 private:
   Handle(ShapeBuild_ReShape) myContext;

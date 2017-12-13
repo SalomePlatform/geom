@@ -28,7 +28,7 @@
 #include "GEOM_AISTrihedron.hxx"
 #include <Geom_Axis2Placement.hxx>
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOM_AISTrihedron, AIS_Trihedron)
+IMPLEMENT_STANDARD_RTTIEXT(GEOM_AISTrihedron, AIS_Trihedron)
 
 /*
   Class       : GEOM_AISTrihedron

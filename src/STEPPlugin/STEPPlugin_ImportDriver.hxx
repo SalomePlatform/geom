@@ -32,9 +32,9 @@ public:
   ~STEPPlugin_ImportDriver() {};
 
   static const Standard_GUID& GetID();
-  virtual Standard_Integer    Execute(LOGBOOK& log) const;
-  Standard_Boolean            MustExecute( const LOGBOOK& ) const { return Standard_True; }
-  virtual void                Validate( LOGBOOK& ) const {}
+  virtual Standard_Integer    Execute(Handle(TFunction_Logbook)& log) const;
+  Standard_Boolean            MustExecute( const Handle(TFunction_Logbook)& ) const { return Standard_True; }
+  virtual void                Validate( Handle(TFunction_Logbook)& ) const {}
 
   virtual bool                GetCreationInformation( std::string& theOperationName,
                                                       std::vector<GEOM_Param>& params );
@@ -43,7 +43,7 @@ public:
                                         const TCollection_AsciiString&,
                                         TCollection_AsciiString& );
 
-  OCCT_DEFINE_STANDARD_RTTIEXT(STEPPlugin_ImportDriver,GEOM_BaseDriver)
+  DEFINE_STANDARD_RTTIEXT(STEPPlugin_ImportDriver,GEOM_BaseDriver)
 };
 
 #endif // _STEPPlugin_ImportDriver_HXX

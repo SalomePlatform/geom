@@ -28,8 +28,6 @@
 
 #include "utilities.h"
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <BRep_Tool.hxx>
 #include <BRep_TFace.hxx>
 #include <BRep_Builder.hxx>
@@ -1363,7 +1361,6 @@ TCollection_AsciiString GEOMImpl_Block6Explorer::MakeAnyFace (const TopoDS_Wire&
 
   if (!theResult.IsNull()) {
     // try to deal with result of BRepBuilderAPI_MakeFace + ShHealOper_ShapeProcess
-#if OCC_VERSION_LARGE >= 0x06080000
 #ifdef MAKE_FACE_PCURVES_FIX_TOLERANCE
     // check and fix pcurves, if necessary
     Standard_Real aT, aTolE, aD, aDMax;
@@ -1395,7 +1392,6 @@ TCollection_AsciiString GEOMImpl_Block6Explorer::MakeAnyFace (const TopoDS_Wire&
     for (; aDMETolIt.More(); aDMETolIt.Next()) {
       sat.LimitTolerance(aDMETolIt.Key(), aDMETolIt.Value());
     }
-#endif
 #endif
   }
   else {

@@ -26,8 +26,6 @@
 
 #include <BlockFix_UnionFaces.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <ShapeAnalysis_WireOrder.hxx>
 #include <ShapeAnalysis_Edge.hxx>
 
@@ -246,9 +244,6 @@ static Standard_Boolean IsEdgeValidToMerge(const TopoDS_Edge &theEdge,
   Standard_Boolean isValid = Standard_True;
 
   if (BRep_Tool::IsClosed(theEdge, theFace)) {
-    // Mantis issue 0023451, now code corresponds to the comment to this method
-    isValid = Standard_False;
-
     // This is a seam edge. Check if there are another seam edges on the face.
     TopExp_Explorer anExp(theFace, TopAbs_EDGE);
 
@@ -264,9 +259,7 @@ static Standard_Boolean IsEdgeValidToMerge(const TopoDS_Edge &theEdge,
       TopoDS_Edge anEdge = TopoDS::Edge(aShEdge);
 
       if (BRep_Tool::IsClosed(anEdge, theFace)) {
-        // Mantis issue 0023451, now code corresponds to the comment to this method
-        //isValid = Standard_False;
-        isValid = Standard_True;
+        isValid = Standard_False;
         break;
       }
     }

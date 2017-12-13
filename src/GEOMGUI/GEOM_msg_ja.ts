@@ -572,6 +572,10 @@
       <translation>寸法</translation>
     </message>
     <message>
+      <source>GEOM_ANNOTATIONS</source>
+      <translation>注釈</translation>
+    </message>
+    <message>
       <source>GEOM_SKETCHER_DIST</source>
       <translation>距離</translation>
     </message>
@@ -3497,47 +3501,47 @@
     </message>
     <message>
       <source>PREF_SHAPE_ANNOTATIONS</source>
-      <translation type="unfinished">Shape annotations</translation>
+      <translation>形状の注釈</translation>
     </message>
     <message>
       <source>PREF_SHAPE_ANNOTATIONS_FONT</source>
-      <translation type="unfinished">Font</translation>
+      <translation>フォント</translation>
     </message>
     <message>
       <source>PREF_SHAPE_ANNOTATIONS_FONT_COLOR</source>
-      <translation type="unfinished">Font color</translation>
+      <translation>フォント色</translation>
     </message>
     <message>
       <source>PREF_SHAPE_ANNOTATIONS_LINE_COLOR</source>
-      <translation type="unfinished">Line color</translation>
+      <translation>線色</translation>
     </message>
     <message>
       <source>PREF_SHAPE_ANNOTATIONS_LINE_WIDTH</source>
-      <translation type="unfinished">Line width</translation>
+      <translation>線幅</translation>
     </message>
     <message>
       <source>PREF_SHAPE_ANNOTATIONS_LINE_STYLE</source>
-      <translation type="unfinished">Line style</translation>
+      <translation>線スタイル</translation>
     </message>
     <message>
       <source>PREF_SHAPE_ANNOTATIONS_AUTOHIDE</source>
-      <translation type="unfinished">Hide when attachment is invisible</translation>
+      <translation>添付が見えない時に非表示</translation>
     </message>
     <message>
       <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_SOLID</source>
-      <translation type="unfinished">Solid</translation>
+      <translation>ソリッド</translation>
     </message>
     <message>
       <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_DASH</source>
-      <translation type="unfinished">Dashed</translation>
+      <translation>ダッシュ</translation>
     </message>
     <message>
       <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_DOT</source>
-      <translation type="unfinished">Dotted</translation>
+      <translation>ドット</translation>
     </message>
     <message>
       <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_DOTDASH</source>
-      <translation type="unfinished">Mixed</translation>
+      <translation>混合</translation>
     </message>
     <message>
       <source>PREF_HIDE_INPUT_OBJECT</source>
@@ -4996,6 +5000,42 @@
       <translation>オブジェクトの基準寸法を管理</translation>
     </message>
     <message>
+      <source>TOP_ANNOTATION</source>
+      <translation>注記</translation>
+    </message>
+    <message>
+      <source>MEN_ANNOTATION</source>
+      <translation>注記</translation>
+    </message>
+    <message>
+      <source>STB_ANNOTATION</source>
+      <translation>注記</translation>
+    </message>
+    <message>
+      <source>TOP_EDIT_ANNOTATION</source>
+      <translation>注記の編集</translation>
+    </message>
+    <message>
+      <source>MEN_EDIT_ANNOTATION</source>
+      <translation>編集</translation>
+    </message>
+    <message>
+      <source>STB_EDIT_ANNOTATION</source>
+      <translation>注記の編集</translation>
+    </message>
+    <message>
+      <source>TOP_DELETE_ANNOTATION</source>
+      <translation>注記の削除</translation>
+    </message>
+    <message>
+      <source>MEN_DELETE_ANNOTATION</source>
+      <translation>削除</translation>
+    </message>
+    <message>
+      <source>STB_DELETE_ANNOTATION</source>
+      <translation>注記の削除</translation>
+    </message>
+    <message>
       <source>MEN_POP_SHOW_DEPENDENCY_TREE</source>
       <translation>依存ツリーの表示</translation>
     </message>
@@ -5037,27 +5077,27 @@
     </message>
     <message>
       <source>MEN_POP_SHOW_ALL_ANNOTATIONS</source>
-      <translation type="unfinished">Show all annotations</translation>
+      <translation>全ての注釈を表示</translation>
     </message>
     <message>
       <source>STB_POP_SHOW_ALL_ANNOTATIONS</source>
-      <translation type="unfinished">Show all shape annotations for the object</translation>
+      <translation>対象オブジェクトにある全ての形状注釈を表示</translation>
     </message>
     <message>
       <source>TOP_POP_SHOW_ALL_ANNOTATIONS</source>
-      <translation type="unfinished">Show all shape annotations for the object</translation>
+      <translation>対象オブジェクトにある全ての形状注釈を表示</translation>
     </message>
     <message>
       <source>MEN_POP_HIDE_ALL_ANNOTATIONS</source>
-      <translation type="unfinished">Hide all annotations</translation>
+      <translation>全ての注釈を非表示</translation>
     </message>
     <message>
       <source>STB_POP_HIDE_ALL_ANNOTATIONS</source>
-      <translation type="unfinished">Hide all shape annotations for the object</translation>
+      <translation>対象オブジェクトにある全ての形状注釈の非表示</translation>
     </message>
     <message>
       <source>TOP_POP_HIDE_ALL_ANNOTATIONS</source>
-      <translation type="unfinished">Hide all shape annotations for the object</translation>
+      <translation>対象オブジェクトにある全ての形状注釈を非表示</translation>
     </message>
     <message>
       <source>TOP_POP_AUTO_COLOR</source>
@@ -6726,6 +6766,61 @@
     <message>
       <source>WARNING_MSG_INVALID_ARGUMENTS</source>
       <translation>寸法は具体的に明記された引数のために作られることは不可能です．適した引数を明記してください．</translation>
+    </message>
+  </context>
+  <context>
+    <name>MeasureGUI_AnnotationDlg</name>
+    <message>
+      <source>CREATE_ANNOTATION_TITLE</source>
+      <translation>注釈の作成</translation>
+    </message>
+    <message>
+      <source>EDIT_ANNOTATION_TITLE</source>
+      <translation>注釈の編集</translation>
+    </message>
+    <message>
+      <source>ANNOTATION_PREFIX</source>
+      <translation>Annotation</translation>
+    </message>
+    <message>
+      <source>ANNOTATION_NAME</source>
+      <translation>注釈名</translation>
+    </message>
+    <message>
+      <source>ANNOTATION_PROPERTIES</source>
+      <translation>プロパティ</translation>
+    </message>
+    <message>
+      <source>ANNOTATION_TEXT</source>
+      <translation>テキスト</translation>
+    </message>
+    <message>
+      <source>ANNOTATION_SHAPE</source>
+      <translation>形状</translation>
+    </message>
+    <message>
+      <source>ANNOTATION_TYPE</source>
+      <translation>タイプ</translation>
+    </message>
+    <message>
+      <source>ANNOTATION_SUB_SHAPE</source>
+      <translation>副形状タイプ</translation>
+    </message>
+    <message>
+      <source>ANNOTATION_IS_SCREEN_FIXED</source>
+      <translation>スクリーン位置の固定</translation>
+    </message>
+    <message>
+      <source>WHOLE_SHAPE</source>
+      <translation>形状全体</translation>
+    </message>
+    <message>
+      <source>ANNOTATION_STYLE</source>
+      <translation>スタイル</translation>
+    </message>
+    <message>
+      <source>ANNOTATION_FONT</source>
+      <translation>注釈のフォント</translation>
     </message>
   </context>
   <context>

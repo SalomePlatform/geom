@@ -61,7 +61,7 @@ private:
   Handle(SALOME_InteractiveObject)                 myObject;
 
 public:
-  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_AISTrihedron,AIS_Trihedron)
+  DEFINE_STANDARD_RTTIEXT(GEOM_AISTrihedron,AIS_Trihedron)
 };
 
 #endif

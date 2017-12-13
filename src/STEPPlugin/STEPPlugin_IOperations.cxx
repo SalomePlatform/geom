@@ -145,9 +145,8 @@ void STEPPlugin_IOperations::ExportSTEP
       return;
     }
   }
-  catch( Standard_Failure ) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode( aFail->GetMessageString() );
+  catch( Standard_Failure& aFail ) {
+    SetErrorCode( aFail.GetMessageString() );
     return;
   }
 
@@ -205,9 +204,8 @@ STEPPlugin_IOperations::ImportSTEP(const TCollection_AsciiString& theFileName,
     // Greate material groups.
     MakeMaterialGroups( anImported, aSeq );
   }
-  catch( Standard_Failure ) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode( aFail->GetMessageString() );
+  catch( Standard_Failure& aFail ) {
+    SetErrorCode( aFail.GetMessageString() );
     return NULL;
   }
 

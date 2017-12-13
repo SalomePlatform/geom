@@ -63,7 +63,7 @@ XAOPlugin_Driver::~XAOPlugin_Driver()
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer XAOPlugin_Driver::Execute(LOGBOOK& log) const
+Standard_Integer XAOPlugin_Driver::Execute(Handle(TFunction_Logbook)& log) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
@@ -88,11 +88,7 @@ Standard_Integer XAOPlugin_Driver::Execute(LOGBOOK& log) const
   if (shape.IsNull()) return 0;
   function->SetValue(shape);
 
-#if OCC_VERSION_MAJOR < 7
-  log.SetTouched(Label());
-#else
   log->SetTouched(Label());
-#endif
 
   return 1;
 }
@@ -114,5 +110,5 @@ bool XAOPlugin_Driver::GetCreationInformation(std::string&             theOperat
   return true;
 }
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT(XAOPlugin_Driver, GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT(XAOPlugin_Driver, GEOM_BaseDriver);
  

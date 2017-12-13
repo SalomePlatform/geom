@@ -26,9 +26,9 @@
 
 #include "GEOM_AISDimension.hxx"
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOM_AISLength,   AIS_LengthDimension)
-OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOM_AISDiameter, AIS_DiameterDimension)
-OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOM_AISAngle,    AIS_AngleDimension)
+IMPLEMENT_STANDARD_RTTIEXT(GEOM_AISLength,   AIS_LengthDimension)
+IMPLEMENT_STANDARD_RTTIEXT(GEOM_AISDiameter, AIS_DiameterDimension)
+IMPLEMENT_STANDARD_RTTIEXT(GEOM_AISAngle,    AIS_AngleDimension)
 
 /* ****************************************************************************** *
  *                                                                                *

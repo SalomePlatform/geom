@@ -27,8 +27,6 @@
 //
 #include <GEOMAlgo_ShellSolid.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <Standard_Failure.hxx>
 
 #include <gp_Pnt2d.hxx>
@@ -52,11 +50,7 @@
 
 #include <BOPCol_DataMapOfShapeListOfShape.hxx>
 #include <BOPCol_ListOfShape.hxx>
-#if OCC_VERSION_LARGE > 0x06070100
 #include <IntTools_Context.hxx>
-#else
-#include <BOPInt_Context.hxx>
-#endif
 #include <BOPDS_DS.hxx>
 #include <BOPAlgo_Builder.hxx>
 
@@ -101,9 +95,6 @@ GEOMAlgo_ShellSolidBuilder::~GEOMAlgo_ShellSolidBuilder()
 //=======================================================================
 void GEOMAlgo_ShellSolidBuilder::PerformInternal(const BOPAlgo_PaveFiller& theFiller)
 {
-#if OCC_VERSION_LARGE <= 0x07010000
-  myErrorStatus=0;
-#endif 
    //
   myPaveFiller=(BOPAlgo_PaveFiller*)&theFiller;
   myDS=myPaveFiller->PDS();
@@ -111,97 +102,57 @@ void GEOMAlgo_ShellSolidBuilder::PerformInternal(const BOPAlgo_PaveFiller& theFi
   //
   // 1. CheckData
   CheckData();
-#if OCC_VERSION_LARGE > 0x07010001
   if (HasErrors()) {
-#else
-  if (myErrorStatus) {
-#endif
     return;
   }
   //
   // 2. Prepare
   Prepare();
-#if OCC_VERSION_LARGE > 0x07010001
   if (HasErrors()) {
-#else
-  if (myErrorStatus) {
-#endif
     return;
   }
   //
   // 3. Fill Images
   // 3.1 Vertice
   FillImagesVertices();
-#if OCC_VERSION_LARGE > 0x07010001
   if (HasErrors()) {
-#else
-  if (myErrorStatus) {
-#endif
     return;
   }
   //
   BuildResult(TopAbs_VERTEX);
-#if OCC_VERSION_LARGE > 0x07010001
   if (HasErrors()) {
-#else
-  if (myErrorStatus) {
-#endif
     return;
   }
   // 3.2 Edges
   FillImagesEdges();
-#if OCC_VERSION_LARGE > 0x07010001
   if (HasErrors()) {
-#else
-  if (myErrorStatus) {
-#endif
     return;
   }
   //
   BuildResult(TopAbs_EDGE);
-#if OCC_VERSION_LARGE > 0x07010001
   if (HasErrors()) {
-#else
-  if (myErrorStatus) {
-#endif
     return;
   } 
   //
   // 3.3 Wires
   FillImagesContainers(TopAbs_WIRE);
-#if OCC_VERSION_LARGE > 0x07010001
   if (HasErrors()) {
-#else
-  if (myErrorStatus) {
-#endif
     return;
   }
   //
   BuildResult(TopAbs_WIRE);
-#if OCC_VERSION_LARGE > 0x07010001
   if (HasErrors()) {
-#else
-  if (myErrorStatus) {
-#endif
     return;
   }
   
   // 3.4 Faces
   FillImagesFaces();
-#if OCC_VERSION_LARGE > 0x07010001
   if (HasErrors()) {
-#else
-  if (myErrorStatus) {
-#endif
     return;
   }
   //
   BuildResult(TopAbs_FACE);
-#if OCC_VERSION_LARGE > 0x07010001
   if (HasErrors()) {
-#else
-  if (myErrorStatus) {
-#endif
     return;
   }
 }
@@ -228,9 +179,6 @@ GEOMAlgo_ShellSolid::~GEOMAlgo_ShellSolid()
 //=======================================================================
 void GEOMAlgo_ShellSolid::Perform()
 {
-#if OCC_VERSION_LARGE <= 0x07010000
-  myErrorStatus=0;
-#endif
   //
   try {
     Standard_Integer aNbArgs, iRank, iErr, iBeg, iEnd, i, aNbSp;
@@ -251,11 +199,7 @@ void GEOMAlgo_ShellSolid::Perform()
       myErrorStatus=10;
       return;
     }
-#if OCC_VERSION_LARGE > 0x07010001
     if(myDSFiller->HasErrors()) {
-#else
-    if(myDSFiller->ErrorStatus()) {
-#endif
       myErrorStatus=11;
       return;
     }
@@ -285,11 +229,7 @@ void GEOMAlgo_ShellSolid::Perform()
       return;
     }
     //
-#if OCC_VERSION_LARGE > 0x06070100
     Handle(IntTools_Context) aCtx=myDSFiller->Context();
-#else
-    Handle(BOPInt_Context) aCtx=myDSFiller->Context();
-#endif
     const BOPDS_IndexRange& aRange=pDS->Range(iRank);
     aRange.Indices(iBeg, iEnd);
     const TopoDS_Solid& aSolid=(!iRank) ? *((TopoDS_Solid*)&aTool) : *((TopoDS_Solid*)&aObj);
@@ -299,11 +239,7 @@ void GEOMAlgo_ShellSolid::Perform()
     GEOMAlgo_ShellSolidBuilder aSSB;
     //
     aSSB.PerformWithFiller(*myDSFiller);
-#if OCC_VERSION_LARGE > 0x07010001
     iErr=aSSB.HasErrors();
-#else
-    iErr=aSSB.ErrorStatus();
-#endif
     if (iErr) {
       myErrorStatus=15;
       return;

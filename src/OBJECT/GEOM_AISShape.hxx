@@ -157,7 +157,7 @@ private:
   static Quantity_Color    myTopLevelColor;
 
 public:
-  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_AISShape,SALOME_AISShape)
+  DEFINE_STANDARD_RTTIEXT(GEOM_AISShape, SALOME_AISShape)
 };
 
 DEFINE_STANDARD_HANDLE(GEOM_AISShape, SALOME_AISShape)

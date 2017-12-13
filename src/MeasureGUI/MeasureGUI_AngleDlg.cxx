@@ -28,8 +28,6 @@
 #include <GEOMBase.h>
 #include <GeometryGUI.h>
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <SUIT_Session.h>
 #include <SUIT_Desktop.h>
 #include <SUIT_ResourceMgr.h>

@@ -35,9 +35,9 @@ class GEOMImpl_FilletDriver : public GEOM_BaseDriver {
 public:
 
   Standard_EXPORT GEOMImpl_FilletDriver();
-  Standard_EXPORT virtual Standard_Integer Execute(LOGBOOK& log) const;
-  Standard_EXPORT virtual void Validate(LOGBOOK&) const {}
-  Standard_EXPORT Standard_Boolean MustExecute(const LOGBOOK&) const { return Standard_True; }
+  Standard_EXPORT virtual Standard_Integer Execute(Handle(TFunction_Logbook)& log) const;
+  Standard_EXPORT virtual void Validate(Handle(TFunction_Logbook)&) const {}
+  Standard_EXPORT Standard_Boolean MustExecute(const Handle(TFunction_Logbook)&) const { return Standard_True; }
 
   Standard_EXPORT static const Standard_GUID& GetID();
   Standard_EXPORT ~GEOMImpl_FilletDriver() {};
@@ -46,7 +46,7 @@ public:
   bool GetCreationInformation(std::string&             theOperationName,
                               std::vector<GEOM_Param>& params);
 
-  OCCT_DEFINE_STANDARD_RTTIEXT(GEOMImpl_FilletDriver,GEOM_BaseDriver)
+  DEFINE_STANDARD_RTTIEXT(GEOMImpl_FilletDriver,GEOM_BaseDriver)
 };
 
 #endif

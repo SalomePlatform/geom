@@ -35,9 +35,9 @@ class GEOM_SubShapeDriver : public GEOM_BaseDriver {
 public:
 
   Standard_EXPORT GEOM_SubShapeDriver();
-  Standard_EXPORT virtual Standard_Integer Execute(LOGBOOK& log) const;
-  Standard_EXPORT virtual void Validate(LOGBOOK&) const {}
-  Standard_EXPORT Standard_Boolean MustExecute(const LOGBOOK&) const { return Standard_True; }
+  Standard_EXPORT virtual Standard_Integer Execute(Handle(TFunction_Logbook)& log) const;
+  Standard_EXPORT virtual void Validate(Handle(TFunction_Logbook)&) const {}
+  Standard_EXPORT Standard_Boolean MustExecute(const Handle(TFunction_Logbook)&) const { return Standard_True; }
 
   Standard_EXPORT static const Standard_GUID& GetID();
   Standard_EXPORT ~GEOM_SubShapeDriver() {};
@@ -46,7 +46,7 @@ public:
   bool GetCreationInformation(std::string&             theOperationName,
                               std::vector<GEOM_Param>& params);
 
-  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_SubShapeDriver,GEOM_BaseDriver)
+  DEFINE_STANDARD_RTTIEXT(GEOM_SubShapeDriver,GEOM_BaseDriver)
 };
 
 #endif

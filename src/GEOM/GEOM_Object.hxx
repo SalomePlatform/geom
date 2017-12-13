@@ -115,7 +115,7 @@ class GEOM_Object : public GEOM_BaseObject
     GetLastFunctions( const std::list< Handle(GEOM_Object) >& theObjects );
 
 public:
-  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_Object,GEOM_BaseObject)
+  DEFINE_STANDARD_RTTIEXT(GEOM_Object,GEOM_BaseObject)
 };
 
 #endif

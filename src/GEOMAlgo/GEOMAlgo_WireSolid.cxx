@@ -27,8 +27,6 @@
 //
 #include <GEOMAlgo_WireSolid.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <Standard_Failure.hxx>
 
 #include <TopAbs_ShapeEnum.hxx>
@@ -40,16 +38,10 @@
 #include <BOPDS_ListOfPaveBlock.hxx>
 #include <BOPDS_PaveBlock.hxx>
 #include <TopoDS_Solid.hxx>
-#if OCC_VERSION_LARGE > 0x06070100
 #include <IntTools_Context.hxx>
-#else
-#include <BOPInt_Context.hxx>
-#endif
 #include <BRepClass3d_SolidClassifier.hxx>
 #include <BRep_Tool.hxx>
 #include <BOPTools_AlgoTools.hxx>
-
-#include <Basics_OCCTVersion.hxx>
 
 //=======================================================================
 //function : GEOMAlgo_WireSolid
@@ -80,11 +72,7 @@ void GEOMAlgo_WireSolid::Perform()
       myErrorStatus=10;
       return;
     }
-#if OCC_VERSION_LARGE > 0x07010001
     if(myDSFiller->HasErrors()) {
-#else
-    if(myDSFiller->ErrorStatus()) {
-#endif
       myErrorStatus=11;
       return;
     }
@@ -154,11 +142,7 @@ void GEOMAlgo_WireSolid::BuildResult()
   const TopoDS_Solid& aSolid=(iRank==0) ?  *((TopoDS_Solid*)&aTool) :
     *((TopoDS_Solid*)&aObj);
   //
-#if OCC_VERSION_LARGE > 0x06070100
   Handle(IntTools_Context) aCtx=myDSFiller->Context();
-#else
-  Handle(BOPInt_Context) aCtx=myDSFiller->Context();
-#endif
   //BRepClass3d_SolidClassifier& aSC=aCtx->SolidClassifier(aSolid);
   //
   const BOPDS_IndexRange& aRange=pDS->Range(iRank);

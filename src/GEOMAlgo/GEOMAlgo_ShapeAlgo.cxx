@@ -26,11 +26,7 @@
 //              <pkv@irinox>
 //
 #include <GEOMAlgo_ShapeAlgo.hxx>
-#if OCC_VERSION_LARGE > 0x06070100
 #include <IntTools_Context.hxx>
-#else
-#include <BOPInt_Context.hxx>
-#endif
 
 //=======================================================================
 //function : GEOMAlgo_ShapeAlgo
@@ -54,11 +50,7 @@ GEOMAlgo_ShapeAlgo::~GEOMAlgo_ShapeAlgo()
 //function : SetContext
 //purpose  :
 //=======================================================================
-#if OCC_VERSION_LARGE > 0x06070100
 void GEOMAlgo_ShapeAlgo::SetContext(const Handle(IntTools_Context)& theContext)
-#else
-void GEOMAlgo_ShapeAlgo::SetContext(const Handle(BOPInt_Context)& theContext)
-#endif
 {
   myContext=theContext;
 }
@@ -66,11 +58,7 @@ void GEOMAlgo_ShapeAlgo::SetContext(const Handle(BOPInt_Context)& theContext)
 //function : Context
 //purpose  :
 //=======================================================================
-#if OCC_VERSION_LARGE > 0x06070100
 const Handle(IntTools_Context)& GEOMAlgo_ShapeAlgo::Context()const
-#else
-const Handle(BOPInt_Context)& GEOMAlgo_ShapeAlgo::Context()const
-#endif
 {
   return myContext;
 }
@@ -121,10 +109,6 @@ const TopoDS_Shape& GEOMAlgo_ShapeAlgo::Result()const
 void GEOMAlgo_ShapeAlgo::Perform()
 {
   if (myContext.IsNull()) {
-#if OCC_VERSION_LARGE > 0x06070100
     myContext=new IntTools_Context;
-#else
-    myContext=new BOPInt_Context;
-#endif
   }
 }

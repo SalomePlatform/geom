@@ -27,8 +27,6 @@
 //
 #include <GEOMAlgo_VertexSolid.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <gp_Pnt.hxx>
 
 #include <TopAbs_ShapeEnum.hxx>
@@ -48,11 +46,7 @@
 #include <BRepClass3d_SolidClassifier.hxx>
 //
 #include <BOPCol_ListOfShape.hxx>
-#if OCC_VERSION_LARGE > 0x06070100
 #include <IntTools_Context.hxx>
-#else
-#include <BOPInt_Context.hxx>
-#endif
 //
 #include <BOPDS_DS.hxx>
 #include <BOPDS_IndexRange.hxx>
@@ -90,11 +84,7 @@ void GEOMAlgo_VertexSolid::Perform()
       myErrorStatus=10;
       return;
     }
-#if OCC_VERSION_LARGE > 0x07010001
     if(myDSFiller->HasErrors()) {
-#else
-    if(myDSFiller->ErrorStatus()) {
-#endif
       myErrorStatus=11;
       return;
     }
@@ -152,11 +142,7 @@ void GEOMAlgo_VertexSolid::BuildResult()
   const TopoDS_Shape& aTool=aLS.Last();
   const TopoDS_Solid& aSolid=(myRank==0) ? TopoDS::Solid(aTool) : TopoDS::Solid(aObj);
   //
-#if OCC_VERSION_LARGE > 0x06070100
   Handle(IntTools_Context) aCtx=myDSFiller->Context();
-#else
-  Handle(BOPInt_Context) aCtx=myDSFiller->Context();
-#endif
   BRepClass3d_SolidClassifier& aSC=aCtx->SolidClassifier(aSolid);
   //
   aNbRanges=aDS.NbRanges();

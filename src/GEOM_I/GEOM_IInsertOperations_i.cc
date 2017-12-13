@@ -36,10 +36,7 @@
 #include "GEOM_BaseObject.hxx"
 #include "GEOMImpl_Types.hxx"
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <TColStd_HSequenceOfAsciiString.hxx>
-
 #include <TColStd_HArray1OfByte.hxx>
 
 //=============================================================================
@@ -79,11 +76,11 @@ GEOM::GEOM_Object_ptr GEOM_IInsertOperations_i::MakeCopy(GEOM::GEOM_Object_ptr t
   GetOperations()->SetNotDone();
 
   //Get the reference shape
-  HANDLE_NAMESPACE(GEOM_Object) anOriginal = GetObjectImpl(theOriginal);
+  Handle(::GEOM_Object) anOriginal = GetObjectImpl(theOriginal);
   if (anOriginal.IsNull()) return aGEOMObject._retn();
 
   //Create the copy
-  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->MakeCopy(anOriginal);
+  Handle(::GEOM_Object) anObject = GetOperations()->MakeCopy(anOriginal);
 
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
@@ -106,7 +103,7 @@ void GEOM_IInsertOperations_i::Export
   GetOperations()->SetNotDone();
 
   //Get the reference shape
-  HANDLE_NAMESPACE(GEOM_Object) anOriginal = GetObjectImpl(theOriginal);
+  Handle(::GEOM_Object) anOriginal = GetObjectImpl(theOriginal);
   if (anOriginal.IsNull()) return;
 
   //Export the shape to the file
@@ -139,7 +136,7 @@ GEOM::ListOfGBO* GEOM_IInsertOperations_i::ImportFile
 
   aSeq->length(aLength);
   for (Standard_Integer i = 1; i <= aLength; i++)
-    aSeq[i-1] = GetBaseObject(HANDLE_NAMESPACE(GEOM_BaseObject)::DownCast(aHSeq->Value(i)));
+    aSeq[i-1] = GetBaseObject(Handle(::GEOM_BaseObject)::DownCast(aHSeq->Value(i)));
 
   return aSeq._retn();
 }
@@ -180,7 +177,7 @@ GEOM::GEOM_Object_ptr GEOM_IInsertOperations_i::RestoreShape (const SALOMEDS::TM
   char* buf = (char*)theStream.NP_data();
   std::istringstream aStream (buf);
 
-  HANDLE_NAMESPACE(GEOM_Object) anObject = GetOperations()->RestoreShape(aStream);
+  Handle(::GEOM_Object) anObject = GetOperations()->RestoreShape(aStream);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -280,8 +277,8 @@ CORBA::Boolean GEOM_IInsertOperations_i::TransferData
   }
 
   //Get the reference shape
-  HANDLE_NAMESPACE(GEOM_Object) aShapeFrom = GetObjectImpl(theObjectFrom);
-  HANDLE_NAMESPACE(GEOM_Object) aShapeTo   = GetObjectImpl(theObjectTo);
+  Handle(::GEOM_Object) aShapeFrom = GetObjectImpl(theObjectFrom);
+  Handle(::GEOM_Object) aShapeTo   = GetObjectImpl(theObjectTo);
 
   if (aShapeFrom.IsNull() || aShapeTo.IsNull())
   {

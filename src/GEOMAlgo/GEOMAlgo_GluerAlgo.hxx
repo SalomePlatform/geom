@@ -27,18 +27,11 @@
 #ifndef _GEOMAlgo_GluerAlgo_HeaderFile
 #define _GEOMAlgo_GluerAlgo_HeaderFile
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <Standard_Macro.hxx>
 #include <TopoDS_Shape.hxx>
 #include <Standard_Real.hxx>
 #include <Standard_Boolean.hxx>
-
-#if OCC_VERSION_LARGE > 0x06070100
 #include <IntTools_Context.hxx>
-#else
-#include <BOPInt_Context.hxx>
-#endif
 #include <TopTools_DataMapOfShapeListOfShape.hxx>
 #include <TopTools_DataMapOfShapeShape.hxx>
 
@@ -80,18 +73,10 @@ public:
     virtual  void Clear() ;
 
   Standard_EXPORT
-#if OCC_VERSION_LARGE > 0x06070100
     void SetContext(const Handle(IntTools_Context)&) ;
-#else
-    void SetContext(const Handle(BOPInt_Context)&) ;
-#endif
 
   Standard_EXPORT
-#if OCC_VERSION_LARGE > 0x06070100
     const Handle(IntTools_Context)& Context() ;
-#else
-    const Handle(BOPInt_Context)& Context() ;
-#endif
 
   Standard_EXPORT
     const TopTools_DataMapOfShapeListOfShape& Images() const;
@@ -103,11 +88,7 @@ protected:
   TopoDS_Shape myArgument;
   Standard_Real myTolerance;
   Standard_Boolean myCheckGeometry;
-#if OCC_VERSION_LARGE > 0x06070100
   Handle(IntTools_Context) myContext;
-#else
-  Handle(BOPInt_Context) myContext;
-#endif
   TopTools_DataMapOfShapeListOfShape myImages;
   TopTools_DataMapOfShapeShape myOrigins;
 

@@ -64,11 +64,7 @@ bool GEOM_Solver::ComputeFunction(Handle(GEOM_Function) theFunction)
           
   aDriver->Init(theFunction->GetEntry());
 
-#if OCC_VERSION_MAJOR < 7
-  TFunction_Logbook aLog;
-#else
   Handle(TFunction_Logbook) aLog = TFunction_Logbook::Set( aDriver->Label() );
-#endif
   if(aDriver->Execute(aLog) == 0) return false;
                 
   return true;     

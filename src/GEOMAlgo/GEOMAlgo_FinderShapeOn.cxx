@@ -26,8 +26,6 @@
 
 #include <GEOMAlgo_FinderShapeOn.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <Precision.hxx>
 
 #include <gp_Pnt.hxx>

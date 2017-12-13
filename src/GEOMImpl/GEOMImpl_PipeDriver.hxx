@@ -39,9 +39,9 @@ class GEOMImpl_PipeDriver : public GEOM_BaseDriver {
 public:
 
   Standard_EXPORT GEOMImpl_PipeDriver();
-  Standard_EXPORT virtual Standard_Integer Execute(LOGBOOK& log) const;
-  Standard_EXPORT virtual void Validate(LOGBOOK& log) const {}
-  Standard_EXPORT Standard_Boolean MustExecute(const LOGBOOK& log) const { return Standard_True; }
+  Standard_EXPORT virtual Standard_Integer Execute(Handle(TFunction_Logbook)& log) const;
+  Standard_EXPORT virtual void Validate(Handle(TFunction_Logbook)& log) const {}
+  Standard_EXPORT Standard_Boolean MustExecute(const Handle(TFunction_Logbook)& log) const { return Standard_True; }
 
   Standard_EXPORT static const Standard_GUID& GetID();
   Standard_EXPORT ~GEOMImpl_PipeDriver() {};
@@ -59,7 +59,7 @@ public:
   bool GetCreationInformation(std::string&             theOperationName,
                               std::vector<GEOM_Param>& params);
 
-  OCCT_DEFINE_STANDARD_RTTIEXT(GEOMImpl_PipeDriver,GEOM_BaseDriver)
+  DEFINE_STANDARD_RTTIEXT(GEOMImpl_PipeDriver,GEOM_BaseDriver)
 };
 
 #endif

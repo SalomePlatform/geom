@@ -83,7 +83,7 @@ AdvancedEngine_DividedDiskDriver::AdvancedEngine_DividedDiskDriver()
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer AdvancedEngine_DividedDiskDriver::Execute(LOGBOOK& log) const
+Standard_Integer AdvancedEngine_DividedDiskDriver::Execute(Handle(TFunction_Logbook)& log) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
@@ -138,11 +138,7 @@ Standard_Integer AdvancedEngine_DividedDiskDriver::Execute(LOGBOOK& log) const
 
   aFunction->SetValue(aShape);
 
-#if OCC_VERSION_MAJOR < 7
-  log.SetTouched(Label());
-#else
   log->SetTouched(Label());
-#endif
 
   return 1;
 }
@@ -527,4 +523,4 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT (AdvancedEngine_DividedDiskDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (AdvancedEngine_DividedDiskDriver,GEOM_BaseDriver);

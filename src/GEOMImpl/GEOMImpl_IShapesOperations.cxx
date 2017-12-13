@@ -231,9 +231,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdge
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -290,9 +289,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdgeOnCurveByLength
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -346,9 +344,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdgeWire
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -420,9 +417,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeWire
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -485,9 +481,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFace (Handle(GEOM_Object) th
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     // to provide warning
     if (!aFunction->GetValue().IsNull()) {
       isWarning = Standard_True;
@@ -554,9 +549,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceWires
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     // to provide warning
     if (!aFunction->GetValue().IsNull()) {
       isWarning = Standard_True;
@@ -640,9 +634,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceFromSurface
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -728,9 +721,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceWithConstraints
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     // to provide warning
     if (!aFunction->GetValue().IsNull()) {
       isWarning = Standard_True;
@@ -841,9 +833,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeShape
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -912,9 +903,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeSolidFromConnectedFaces
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -980,9 +970,8 @@ GEOMImpl_IShapesOperations::MakeGlueFaces (std::list< Handle(GEOM_Object) >& the
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     // to provide warning
     if (!aFunction->GetValue().IsNull()) {
       isWarning = Standard_True;
@@ -1130,9 +1119,8 @@ GEOMImpl_IShapesOperations::MakeGlueFacesByList(std::list< Handle(GEOM_Object) >
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     // to provide warning
     if (!aFunction->GetValue().IsNull()) {
       isWarning = Standard_True;
@@ -1196,9 +1184,8 @@ GEOMImpl_IShapesOperations::MakeGlueEdges (std::list< Handle(GEOM_Object) >& the
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     // to provide warning
     if (!aFunction->GetValue().IsNull()) {
       isWarning = Standard_True;
@@ -1231,7 +1218,7 @@ GEOMImpl_IShapesOperations::GetGlueShapes (std::list< Handle(GEOM_Object) >& the
   TopoDS_Shape aShape;
   TopTools_SequenceOfShape shapes;
   std::list< Handle(GEOM_Object) >::iterator s = theShapes.begin();
-  Handle(GEOM_Object) lastCreatedGO;
+  Handle(GEOM_BaseObject) lastCreatedGO;
   for ( ; s != theShapes.end(); ++s )
   {
     Handle(GEOM_Object) go = *s;
@@ -1378,9 +1365,8 @@ GEOMImpl_IShapesOperations::MakeGlueEdgesByList (std::list< Handle(GEOM_Object) 
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     // to provide warning
     if (!aFunction->GetValue().IsNull()) {
       isWarning = Standard_True;
@@ -1414,23 +1400,23 @@ GEOMImpl_IShapesOperations::GetExistingSubObjects(Handle(GEOM_Object)    theShap
   Standard_Integer types = theGroupsOnly ? Groups : Groups|SubShapes;
   Handle(TColStd_HSequenceOfTransient) results = GetExistingSubObjects(theShape, types);
 
+  Handle(GEOM_BaseObject) lastCreatedGO = GEOM::GetCreatedLast(results);
+  lastCreatedGO = GEOM::GetCreatedLast(lastCreatedGO, theShape);
+
   if (results->Length() > 0) {
-    //Make a Python command
-    TCollection_AsciiString anAsciiList;
-    for (int i = 1; i <= results->Length(); i++)
+    // Make a Python command
+    GEOM::TPythonDump pd (lastCreatedGO->GetLastFunction(), /*append=*/true);
+    pd << "[";
+    Standard_Integer i, aLen = results->Length();
+    for (i = 1; i <= aLen; i++)
     {
-      Handle(GEOM_BaseObject) obj = Handle(GEOM_BaseObject)::DownCast( results->Value(i));
-      obj->GetEntryString();
-      if ( i < results->Length() )
-        anAsciiList += ",";
+      Handle(GEOM_BaseObject) obj = Handle(GEOM_BaseObject)::DownCast(results->Value(i));
+      pd << obj << ((i < aLen) ? ", " : "");
     }
-    
-    GEOM::TPythonDump pd (theShape->GetLastFunction(), /*append=*/true);
-    pd << "[" << anAsciiList.ToCString();
     pd << "] = geompy.GetExistingSubObjects(";
     pd << theShape << ", " << (bool)theGroupsOnly << ")";
   }
-
+ 
   return results;
 }
 
@@ -2143,9 +2129,8 @@ Standard_Integer GEOMImpl_IShapesOperations::NumberOfSubShapes
         nbShapes = nbTypes[theShapeType];
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return -1;
   }
 
@@ -2191,9 +2176,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::ReverseShape(Handle(GEOM_Object)
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -3233,9 +3217,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeExtraction
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
 
     return NULL;
   }
@@ -3323,9 +3306,8 @@ Handle(TColStd_HSequenceOfInteger)
         VertMax = T;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return aSeqOfIDs;
   }
   // END: Mantis issue 0020961
@@ -4419,7 +4401,7 @@ Handle(TColStd_HSequenceOfInteger)
   // Make a Python command
 
   // The GetShapesOnCylinder() doesn't change object so no new function is required.
-  Handle(GEOM_Object) lastObj = GEOM::GetCreatedLast(theShape,theTopLeftPoint);
+  Handle(GEOM_BaseObject) lastObj = GEOM::GetCreatedLast(theShape,theTopLeftPoint);
   lastObj = GEOM::GetCreatedLast(lastObj,theTopRigthPoint);
   lastObj = GEOM::GetCreatedLast(lastObj,theBottomRigthPoint);
   lastObj = GEOM::GetCreatedLast(lastObj,theBottomLeftPoint);
@@ -5213,9 +5195,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::ExtendEdge
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
 
     return NULL;
   }
@@ -5282,9 +5263,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::ExtendFace
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
 
     return NULL;
   }
@@ -5344,9 +5324,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeSurfaceFromFace
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
 
     return NULL;
   }

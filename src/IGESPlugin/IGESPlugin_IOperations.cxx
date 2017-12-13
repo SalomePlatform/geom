@@ -100,9 +100,8 @@ void IGESPlugin_IOperations::ExportIGES( const Handle(GEOM_Object)      theOrigi
       return;
     }
   }
-  catch( Standard_Failure ) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode( aFail->GetMessageString() );
+  catch( Standard_Failure& aFail ) {
+    SetErrorCode( aFail.GetMessageString() );
     return;
   }
 
@@ -158,9 +157,8 @@ IGESPlugin_IOperations::ImportIGES( const TCollection_AsciiString& theFileName,
     // Greate material groups.
     // MakeMaterialGroups( anImported, aSeq );
   }
-  catch( Standard_Failure ) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode( aFail->GetMessageString() );
+  catch( Standard_Failure& aFail ) {
+    SetErrorCode( aFail.GetMessageString() );
     return NULL;
   }
 
