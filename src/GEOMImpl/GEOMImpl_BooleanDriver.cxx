@@ -145,7 +145,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(Handle(TFunction_Logbook)& log)
         if (isCheckSelfInte) {
           BOPAlgo_CheckerSI aCSI;  // checker of self-interferences
           aCSI.SetLevelOfCheck(BOP_SELF_INTERSECTIONS_LEVEL);
-          BOPCol_ListOfShape aList1, aList2;
+          TopTools_ListOfShape aList1, aList2;
           aList1.Append(aShape1);
           aList2.Append(aShape2);
           aCSI.SetArguments(aList1);
@@ -201,7 +201,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(Handle(TFunction_Logbook)& log)
 
           if (isCheckSelfInte) {
             aCSI.SetLevelOfCheck(BOP_SELF_INTERSECTIONS_LEVEL);
-            BOPCol_ListOfShape aList1;
+            TopTools_ListOfShape aList1;
             aList1.Append(aShape);
             aCSI.SetArguments(aList1);
             aCSI.Perform();
@@ -225,7 +225,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(Handle(TFunction_Logbook)& log)
               StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
 
             if (isCheckSelfInte) {
-              BOPCol_ListOfShape aList2;
+              TopTools_ListOfShape aList2;
               aList2.Append(aShape2);
               aCSI.SetArguments(aList2);
               aCSI.Perform();
@@ -266,7 +266,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(Handle(TFunction_Logbook)& log)
 
         if (isCheckSelfInte) {
           aCSI.SetLevelOfCheck(BOP_SELF_INTERSECTIONS_LEVEL);
-          BOPCol_ListOfShape aList1;
+          TopTools_ListOfShape aList1;
           aList1.Append(aShape);
           aCSI.SetArguments(aList1);
           aCSI.Perform();
@@ -296,7 +296,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(Handle(TFunction_Logbook)& log)
             StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
 
           if (isCheckSelfInte) {
-            BOPCol_ListOfShape aList2;
+            TopTools_ListOfShape aList2;
             aList2.Append(aTool);
             aCSI.SetArguments(aList2);
             aCSI.Perform();
@@ -354,7 +354,7 @@ TopoDS_Shape GEOMImpl_BooleanDriver::makeCompoundShellFromFaces
     }
   }
 
-  BOPCol_ListOfShape aListShapes;
+  TopTools_ListOfShape aListShapes;
   BOPTools_AlgoTools::MakeConnexityBlocks(aFaces, TopAbs_EDGE, TopAbs_FACE, aListShapes);
 
   if (aListShapes.IsEmpty())
@@ -362,7 +362,7 @@ TopoDS_Shape GEOMImpl_BooleanDriver::makeCompoundShellFromFaces
 
   TopoDS_Compound aResult;
   B.MakeCompound(aResult);
-  BOPCol_ListIteratorOfListOfShape anIter(aListShapes);
+  TopTools_ListIteratorOfListOfShape anIter(aListShapes);
 
   for (; anIter.More(); anIter.Next()) {
     TopoDS_Shell aShell;

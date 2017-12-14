@@ -45,8 +45,8 @@
 #include <StdFail_NotDone.hxx>
 #include <BOPAlgo_CheckerSI.hxx>
 #include <BOPAlgo_Alerts.hxx>
-#include <BOPCol_IndexedDataMapOfShapeListOfShape.hxx>
-#include <BOPCol_ListOfShape.hxx>
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
+#include <TopTools_ListOfShape.hxx>
 #include <BOPDS_DS.hxx>
 
 // Depth of self-intersection check (see BOPAlgo_CheckerSI::SetLevelOfCheck() for more details)
@@ -101,7 +101,7 @@ static void PrepareShapes (const TopoDS_Shape&   theShape,
 static void CheckSelfIntersection(const TopoDS_Shape &theShape)
 {
   BOPAlgo_CheckerSI aCSI;  // checker of self-interferences
-  BOPCol_ListOfShape aList;
+  TopTools_ListOfShape aList;
 
   aList.Append(theShape);
   aCSI.SetLevelOfCheck(BOP_SELF_INTERSECTIONS_LEVEL);
@@ -436,7 +436,7 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(Handle(TFunction_Logbook)& lo
   TopExp::MapShapes(aShape, aResIndices);
 
   // Map: source_shape/images of source_shape in Result
-  const BOPCol_IndexedDataMapOfShapeListOfShape& aMR = PS.ImagesResult();
+  const TopTools_IndexedDataMapOfShapeListOfShape& aMR = PS.ImagesResult();
   //const TopTools_IndexedDataMapOfShapeListOfShape& aMR = PS.ImagesResult();
 
   // history for all argument shapes
@@ -468,13 +468,13 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(Handle(TFunction_Logbook)& lo
       //
       if (!aMR.Contains(anEntity)) continue;
 
-      const BOPCol_ListOfShape& aModified = aMR.FindFromKey(anEntity);
+      const TopTools_ListOfShape& aModified = aMR.FindFromKey(anEntity);
       //const TopTools_ListOfShape& aModified = aMR.FindFromKey(anEntity);
       Standard_Integer nbModified = aModified.Extent();
 
       if (nbModified > 0) { // Mantis issue 0021182
         int ih = 1;
-        BOPCol_ListIteratorOfListOfShape itM (aModified);
+        TopTools_ListIteratorOfListOfShape itM (aModified);
         for (; itM.More() && nbModified > 0; itM.Next(), ++ih) {
           if (!aResIndices.Contains(itM.Value())) {
             nbModified = 0;
@@ -487,7 +487,7 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(Handle(TFunction_Logbook)& lo
           TDataStd_IntegerArray::Set(aWhatHistoryLabel, 1, nbModified);
 
         int ih = 1;
-        BOPCol_ListIteratorOfListOfShape itM (aModified);
+        TopTools_ListIteratorOfListOfShape itM (aModified);
         //TopTools_ListIteratorOfListOfShape itM (aModified);
         for (; itM.More(); itM.Next(), ++ih) {
           int id = aResIndices.FindIndex(itM.Value());

@@ -48,8 +48,8 @@
 
 #include <BOPTools_AlgoTools.hxx>
 
-#include <BOPCol_DataMapOfShapeListOfShape.hxx>
-#include <BOPCol_ListOfShape.hxx>
+#include <TopTools_DataMapOfShapeListOfShape.hxx>
+#include <TopTools_ListOfShape.hxx>
 #include <IntTools_Context.hxx>
 #include <BOPDS_DS.hxx>
 #include <BOPAlgo_Builder.hxx>
@@ -206,7 +206,7 @@ void GEOMAlgo_ShellSolid::Perform()
     //
     const BOPDS_DS& aDS=myDSFiller->DS();
     BOPDS_DS* pDS=(BOPDS_DS*)&aDS;
-    const BOPCol_ListOfShape& aLS=pDS->Arguments();
+    const TopTools_ListOfShape& aLS=pDS->Arguments();
     //
     aNbArgs=aLS.Extent();
     if (aNbArgs!=2) {
@@ -245,7 +245,7 @@ void GEOMAlgo_ShellSolid::Perform()
       return;
     }
     //
-    const BOPCol_DataMapOfShapeListOfShape& aImages=aSSB.Images();
+    const TopTools_DataMapOfShapeListOfShape& aImages=aSSB.Images();
     //
     //-------------------------------
     for (i=iBeg; i<=iEnd; ++i) {
@@ -268,7 +268,7 @@ void GEOMAlgo_ShellSolid::Perform()
         aState=BOPTools_AlgoTools::ComputeState(aP, aSolid, aTol, aCtx);
       }
       else {
-        const BOPCol_ListOfShape& aLSp=aImages.Find(aS);
+        const TopTools_ListOfShape& aLSp=aImages.Find(aS);
         aNbSp=aLSp.Extent();
         if (aNbSp>0) {
           continue;

@@ -80,7 +80,7 @@ void GEOMAlgo_WireSolid::Perform()
     Standard_Integer aNbArgs;
     //
     const BOPDS_DS& aDS=myDSFiller->DS();
-    const BOPCol_ListOfShape& aLS=aDS.Arguments();
+    const TopTools_ListOfShape& aLS=aDS.Arguments();
     aNbArgs=aLS.Extent();
     if (!aNbArgs) {
       myErrorStatus=13;
@@ -115,7 +115,7 @@ void GEOMAlgo_WireSolid::BuildResult()
   const BOPDS_DS& aDS=myDSFiller->DS();
   BOPDS_DS* pDS=(BOPDS_DS*)&aDS;
   //
-  const BOPCol_ListOfShape& aLS=pDS->Arguments();
+  const TopTools_ListOfShape& aLS=pDS->Arguments();
   aNbArgs=aLS.Extent();
   if (aNbArgs!=2) {
     myErrorStatus=14;

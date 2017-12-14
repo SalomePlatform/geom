@@ -38,9 +38,8 @@
 // OCCT Includes
 #include <Bnd_Box.hxx>
 #include <BOPAlgo_CheckerSI.hxx>
-#include <BOPCol_ListOfShape.hxx>
+#include <TopTools_ListOfShape.hxx>
 #include <BOPDS_DS.hxx>
-#include <BOPDS_MapOfPassKey.hxx>
 #include <BOPDS_MapOfPair.hxx>
 #include <BOPDS_Pair.hxx>
 #include <BRepBndLib.hxx>
@@ -1551,7 +1550,7 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
   TopTools_IndexedMapOfShape anIndices;
   TopExp::MapShapes(aScopy, anIndices);
 
-  BOPCol_ListOfShape aLCS;
+  TopTools_ListOfShape aLCS;
   aLCS.Append(aScopy);
   //
   BOPAlgo_CheckerSI aCSI; // checker of self-interferences
@@ -1748,7 +1747,7 @@ bool GEOMImpl_IMeasureOperations::FastIntersect (Handle(GEOM_Object) theShape1, 
   TopExp::MapShapes(aScopy1, anIndices1);
   TopExp::MapShapes(aScopy2, anIndices2);
 
-  BOPCol_ListOfShape aLCS1, aLCS2;
+  TopTools_ListOfShape aLCS1, aLCS2;
   aLCS1.Append(aScopy1); aLCS2.Append(aScopy2);
   //
   BRepExtrema_ShapeProximity aBSP; // checker of fast interferences

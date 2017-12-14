@@ -744,7 +744,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(Handle(TFunction_Logbook)& log) c
     unsigned int ind, nbshapes = aShapes->Length();
     
     // add faces
-    BOPCol_ListOfShape aLS;
+    TopTools_ListOfShape aLS;
     for (ind = 1; ind <= nbshapes; ind++) {
       Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast(aShapes->Value(ind));
       TopoDS_Shape aShape_i = aRefShape->GetValue();

@@ -45,7 +45,7 @@
 #include <BRep_Tool.hxx>
 #include <BRepClass3d_SolidClassifier.hxx>
 //
-#include <BOPCol_ListOfShape.hxx>
+#include <TopTools_ListOfShape.hxx>
 #include <IntTools_Context.hxx>
 //
 #include <BOPDS_DS.hxx>
@@ -93,7 +93,7 @@ void GEOMAlgo_VertexSolid::Perform()
     TopTools_IndexedMapOfShape aM;
     //
     const BOPDS_DS& aDS=myDSFiller->DS();
-    const BOPCol_ListOfShape& aLS=aDS.Arguments();
+    const TopTools_ListOfShape& aLS=aDS.Arguments();
     aNbArgs=aLS.Extent();
     if (aNbArgs!=2) {
       myErrorStatus=14;
@@ -136,7 +136,7 @@ void GEOMAlgo_VertexSolid::BuildResult()
   BOPDS_VectorOfInterfVE& aVEs=pDS->InterfVE();
   BOPDS_VectorOfInterfVF& aVFs=pDS->InterfVF();
   //
-  const BOPCol_ListOfShape& aLS=aDS.Arguments();
+  const TopTools_ListOfShape& aLS=aDS.Arguments();
   const TopoDS_Shape& aObj=aLS.First();
   //
   const TopoDS_Shape& aTool=aLS.Last();
@@ -161,7 +161,7 @@ void GEOMAlgo_VertexSolid::BuildResult()
     iFound=0;
     //
     // 1
-    aNbVV=aVVs.Extent();
+    aNbVV=aVVs.Length();
     for (j=0; j<aNbVV; ++j) {
       BOPDS_InterfVV& aVV=aVVs(j);
       if (aVV.Contains(i)) {
@@ -174,7 +174,7 @@ void GEOMAlgo_VertexSolid::BuildResult()
       continue; 
     }
     // 2
-    aNbVE=aVEs.Extent();
+    aNbVE=aVEs.Length();
     for (j=0; j<aNbVE; ++j) {
       BOPDS_InterfVE& aVE=aVEs(j);
       if (aVE.Contains(i)) {
@@ -187,7 +187,7 @@ void GEOMAlgo_VertexSolid::BuildResult()
       continue; 
     }
     // 3
-    aNbVF=aVFs.Extent();
+    aNbVF=aVFs.Length();
     for (j=0; j<aNbVF; ++j) {
       BOPDS_InterfVF& aVF=aVFs(j);
       if (aVF.Contains(i)) {

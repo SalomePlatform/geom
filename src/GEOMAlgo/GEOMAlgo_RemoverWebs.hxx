@@ -38,8 +38,8 @@
 #include <Standard_Macro.hxx>
 //
 #include <GEOMAlgo_ShapeAlgo.hxx>
-#include <BOPCol_ListOfShape.hxx>
-#include <BOPCol_IndexedMapOfShape.hxx>
+#include <TopTools_ListOfShape.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 
 //=======================================================================
 //function : GEOMAlgo_RemoverWebs
@@ -66,8 +66,8 @@ protected:
     void BuildSolid() ;
 
   Standard_EXPORT
-    static void AddInternalShapes(const BOPCol_ListOfShape& ,
-				  const BOPCol_IndexedMapOfShape& );
+    static void AddInternalShapes(const TopTools_ListOfShape& ,
+				  const TopTools_IndexedMapOfShape& );
   //
 };
 
