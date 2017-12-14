@@ -26,6 +26,8 @@
 
 #include <BlockFix_UnionFaces.hxx>
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <ShapeAnalysis_WireOrder.hxx>
 #include <ShapeAnalysis_Edge.hxx>
 
@@ -82,6 +84,10 @@
 #include <Geom_SurfaceOfRevolution.hxx>
 #include <Geom_SurfaceOfLinearExtrusion.hxx>
 #include <Geom_RectangularTrimmedSurface.hxx>
+#include <BRepAdaptor_Surface.hxx>
+#include <BRepAdaptor_HSurface.hxx>
+#include <LocalAnalysis_SurfaceContinuity.hxx>
+#include <GeomConvert_ApproxSurface.hxx>
 
 #include <Geom_Curve.hxx>
 #include <Geom_Line.hxx>
@@ -233,11 +239,164 @@ static Standard_Boolean IsFacesOfSameSolids
   return isSame;
 }
 
+#if OCC_VERSION_LARGE > 0x07020001
+// for Mantis issue 0023451 by JGV
+//=======================================================================
+//function : IsTangentFaces
+//purpose  : decides: is edge on closed surface tangent or not
+//=======================================================================
+static Standard_Boolean IsTangentFaces(const TopoDS_Edge& theEdge,
+                                       const TopoDS_Face& theFace)
+{
+  Standard_Real TolC0 = Max(0.001, 1.5*BRep_Tool::Tolerance(theEdge));
+
+  Standard_Real aFirst;
+  Standard_Real aLast;
+    
+// Obtaining of pcurves of edge on two faces.
+  const Handle(Geom2d_Curve) aC2d1 = BRep_Tool::CurveOnSurface
+                                                (theEdge, theFace, aFirst, aLast);
+  TopoDS_Edge ReversedEdge = theEdge;
+  ReversedEdge.Reverse();
+  const Handle(Geom2d_Curve) aC2d2 = BRep_Tool::CurveOnSurface
+                                                (ReversedEdge, theFace, aFirst, aLast);
+  if (aC2d1.IsNull() || aC2d2.IsNull())
+    return Standard_False;
+
+// Obtaining of two surfaces from adjacent faces.
+  Handle(Geom_Surface) aSurf = BRep_Tool::Surface(theFace);
+
+  if (aSurf.IsNull())
+    return Standard_False;
+
+// Computation of the number of samples on the edge.
+  BRepAdaptor_Surface              aBAS(theFace);
+  Handle(BRepAdaptor_HSurface)     aBAHS      = new BRepAdaptor_HSurface(aBAS);
+  Handle(BRepTopAdaptor_TopolTool) aTool      = new BRepTopAdaptor_TopolTool(aBAHS);
+  Standard_Integer                 aNbSamples =     aTool->NbSamples();
+  const Standard_Integer           aNbSamplesMax =   23;
+  aNbSamples = Min(aNbSamplesMax, aNbSamples);
+  const Standard_Real              aTolAngle   =     M_PI/18;
+
+
+// Computation of the continuity.
+  Standard_Real    aPar;
+  Standard_Real    aDelta = (aLast - aFirst)/(aNbSamples - 1);
+  Standard_Integer i, nbNotDone = 0;
+
+  for (i = 1, aPar = aFirst; i <= aNbSamples; i++, aPar += aDelta) {
+    if (i == aNbSamples) aPar = aLast;
+
+    LocalAnalysis_SurfaceContinuity aCont(aC2d1,  aC2d2,  aPar,
+                                          aSurf, aSurf, GeomAbs_G1,
+                                          0.001, TolC0, aTolAngle, 0.1, 0.1);
+    if (!aCont.IsDone()) 
+    {
+      nbNotDone++;
+      continue;
+    }
+
+    if (!aCont.IsG1())
+      return Standard_False;
+  }
+  
+  if (nbNotDone == aNbSamples)
+    return Standard_False;
+
+  return Standard_True;
+}
+
+//=======================================================================
+//function : HasSeamEdge
+//purpose  : Detects if a face contains a seam edge
+//=======================================================================
+static Standard_Boolean HasSeamEdge(const TopoDS_Face& theFace)
+{
+  TopExp_Explorer Explo(theFace, TopAbs_EDGE);
+  for (; Explo.More(); Explo.Next())
+  {
+    const TopoDS_Edge& anEdge = TopoDS::Edge(Explo.Current());
+    if (BRepTools::IsReallyClosed(anEdge, theFace))
+      return Standard_True;
+  }
+
+  return Standard_False;
+}
+#endif
+
 //=======================================================================
 //function : IsEdgeValidToMerge
 //purpose  : Edge is valid if it is not seam or if it is a seam and the face
 //           has another seam edge.
 //=======================================================================
+#if OCC_VERSION_LARGE > 0x07020001
+// for Mantis issue 0023451 by JGV
+static Standard_Boolean IsEdgeValidToMerge(const TopoDS_Edge& theEdge,
+                                           const TopoDS_Face& theFace,
+                                           const Handle(Geom_Surface)& theSurface,
+                                           Standard_Boolean& theIsEdgeOnSeam,
+                                           Standard_Boolean& theToMakeUPeriodic,
+                                           Standard_Boolean& theToMakeVPeriodic)
+{
+  Standard_Boolean isValid = Standard_True;
+
+  theIsEdgeOnSeam |= BRep_Tool::IsClosed(theEdge, theFace);
+  
+  if (BRepTools::IsReallyClosed(theEdge, theFace)) {
+    // Mantis issue 0023451, now code corresponds to the comment to this method
+    isValid = Standard_False;
+
+    // This is a seam edge. Check if there are another seam edges on the face.
+    TopExp_Explorer anExp(theFace, TopAbs_EDGE);
+
+    for (; anExp.More(); anExp.Next()) {
+      const TopoDS_Shape &aShEdge = anExp.Current();
+
+      // Skip same edge.
+      if (theEdge.IsSame(aShEdge)) {
+        continue;
+      }
+
+      // Check if this edge is a seam.
+      TopoDS_Edge anEdge = TopoDS::Edge(aShEdge);
+
+      if (BRep_Tool::IsClosed(anEdge, theFace)) {
+        // Mantis issue 0023451, now code corresponds to the comment to this method
+        //isValid = Standard_False;
+        isValid = Standard_True;
+        break;
+      }
+    }
+  }
+  else if (theIsEdgeOnSeam)
+  {
+    Standard_Real fpar, lpar;
+    Handle(Geom2d_Curve) aPCurve = BRep_Tool::CurveOnSurface(theEdge, theFace, fpar, lpar);
+    gp_Pnt2d P2d1 = aPCurve->Value(fpar);
+    gp_Pnt2d P2d2 = aPCurve->Value(lpar);
+    if (!theSurface->IsUPeriodic() &&
+        theSurface->IsUClosed() &&
+        Abs(P2d1.X() - P2d2.X()) < Abs(P2d1.Y() - P2d2.Y()))
+    {
+      if (IsTangentFaces(theEdge, theFace))
+        theToMakeUPeriodic = Standard_True;
+      else
+        isValid = Standard_False;
+    }
+    if (!theSurface->IsVPeriodic() &&
+        theSurface->IsVClosed() &&
+        Abs(P2d1.Y() - P2d2.Y()) < Abs(P2d1.X() - P2d2.X()))
+    {
+      if (IsTangentFaces(theEdge, theFace))
+        theToMakeVPeriodic = Standard_True;
+      else
+        isValid = Standard_False;
+    }
+  }
+
+  return isValid;
+}
+#else
 static Standard_Boolean IsEdgeValidToMerge(const TopoDS_Edge &theEdge,
                                            const TopoDS_Face &theFace)
 {
@@ -267,6 +426,7 @@ static Standard_Boolean IsEdgeValidToMerge(const TopoDS_Edge &theEdge,
 
   return isValid;
 }
+#endif
 
 //=======================================================================
 //function : Perform
@@ -334,12 +494,26 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
       Handle(Geom_Surface) aBaseSurface = BRep_Tool::Surface(aFace,aBaseLocation);
       aBaseSurface = ClearRts(aBaseSurface);
       aBaseSurface = Handle(Geom_Surface)::DownCast(aBaseSurface->Copy());
+#if OCC_VERSION_LARGE > 0x07020001
+// for Mantis issue 0023451 by JGV
+      Standard_Boolean ToMakeUPeriodic = Standard_False, ToMakeVPeriodic = Standard_False;
+#endif
 
       // find adjacent faces to union
       Standard_Integer i;
       for (i = 1; i <= edges.Length(); i++) {
         TopoDS_Edge edge = TopoDS::Edge(edges(i));
-        if (BRep_Tool::Degenerated(edge) || !IsEdgeValidToMerge(edge, aFace))
+#if OCC_VERSION_LARGE > 0x07020001
+// for Mantis issue 0023451 by JGV
+        Standard_Boolean IsEdgeOnSeam = Standard_False;
+#endif
+        if (BRep_Tool::Degenerated(edge) ||
+#if OCC_VERSION_LARGE > 0x07020001
+// for Mantis issue 0023451 by JGV
+            !IsEdgeValidToMerge(edge, aFace, aBaseSurface, IsEdgeOnSeam, ToMakeUPeriodic, ToMakeVPeriodic))
+#else
+            !IsEdgeValidToMerge(edge, aFace))
+#endif
           continue;
 
         const TopTools_ListOfShape& aList = aMapEdgeFaces.FindFromKey(edge);
@@ -352,7 +526,13 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
           if (aProcessed.Contains(anCheckedFace))
             continue;
 
+#if OCC_VERSION_LARGE > 0x07020001
+// for Mantis issue 0023451 by JGV
+          if (!IsEdgeValidToMerge(edge, anCheckedFace, aBaseSurface,
+                                  IsEdgeOnSeam, ToMakeUPeriodic, ToMakeVPeriodic)) {
+#else
           if (!IsEdgeValidToMerge(edge, anCheckedFace)) {
+#endif
             // Skip seam edge.
             continue;
           }
@@ -368,6 +548,14 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
               // non mainfold case is not processed
               continue;
             }
+
+#if OCC_VERSION_LARGE > 0x07020001
+// for Mantis issue 0023451 by JGV
+            //Prevent creating a face with parametric range more than period
+            if (IsEdgeOnSeam &&
+                (HasSeamEdge(aFace) || HasSeamEdge(anCheckedFace)))
+              continue;
+#endif
 
             // replacing pcurves
             TopoDS_Face aMockUpFace;
@@ -392,6 +580,30 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
         NbModif++;
         TopoDS_Face aResult;
         BRep_Builder B;
+#if OCC_VERSION_LARGE > 0x07020001
+// for Mantis issue 0023451 by JGV
+        if (ToMakeUPeriodic || ToMakeVPeriodic)
+        {
+          Handle(Geom_BSplineSurface) aBSplineSurface = Handle(Geom_BSplineSurface)::DownCast(aBaseSurface);
+          if (aBSplineSurface.IsNull())
+          {
+            Standard_Real aTol = 1.e-4;
+            GeomAbs_Shape aUCont = GeomAbs_C1, aVCont = GeomAbs_C1;
+            Standard_Integer degU = 14, degV = 14;
+            Standard_Integer nmax = 16;
+            Standard_Integer aPrec = 1;  
+            GeomConvert_ApproxSurface Approximator(aBaseSurface,aTol,aUCont,aVCont,degU,degV,nmax,aPrec);
+            aBSplineSurface = Approximator.Surface();
+          }
+          
+          if (ToMakeUPeriodic)
+            aBSplineSurface->SetUPeriodic();
+          if (ToMakeVPeriodic)
+            aBSplineSurface->SetVPeriodic();
+          
+          aBaseSurface = aBSplineSurface;
+        }
+#endif
         B.MakeFace(aResult,aBaseSurface,aBaseLocation,0);
         Standard_Integer nbWires = 0;
 
@@ -516,6 +728,9 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
         sff.SetMaxTolerance(Max(1.,myTolerance*1000.));
         //Setting modes
         sff.FixOrientationMode() = 0;
+#if OCC_VERSION_LARGE > 0x07020001
+        sff.FixWireTool()->CheckMissingEdgesMode() = Standard_False;
+#endif
         //sff.FixWireMode() = 0;
         sff.SetContext(aContext);
         // Applying the fixes
