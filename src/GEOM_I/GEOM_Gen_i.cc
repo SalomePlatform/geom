@@ -159,7 +159,7 @@ char* GEOM_Gen_i::IORToLocalPersistentID(SALOMEDS::SObject_ptr theSObject,
   GEOM::GEOM_BaseObject_var anObject =
     GEOM::GEOM_BaseObject::_narrow(_orb->string_to_object(IORString));
   if (!CORBA::is_nil(anObject)) {
-    return CORBA::string_dup(anObject->GetEntry());
+    return anObject->GetEntry();
   }
   return 0;
 }

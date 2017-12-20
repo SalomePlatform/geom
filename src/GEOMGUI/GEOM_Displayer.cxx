@@ -1790,7 +1790,8 @@ SALOME_Prs* GEOM_Displayer::buildPresentation( const QString& entry,
 
                   if ( !GeomObject->_is_nil() )
                   {
-                    theIO->setName( GeomObject->GetName() );
+                    CORBA::String_var name = GeomObject->GetName();
+                    theIO->setName( name );
                     // finally set shape
                     setShape( GEOM_Client::get_client().GetShape( GeometryGUI::GetGeomGen(), GeomObject ) );
                   }
