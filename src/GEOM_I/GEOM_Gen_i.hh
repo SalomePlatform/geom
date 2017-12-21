@@ -68,7 +68,7 @@
 //=====================================================================
 class GEOM_I_EXPORT GEOM_GenericOperationsCreator
 {
-public:
+ public:
   // Create operations
   virtual GEOM_IOperations_i* Create (PortableServer::POA_ptr thePOA,
                                       int                     theStudyId,
@@ -76,6 +76,7 @@ public:
                                       ::GEOMImpl_Gen*         theGenImpl) = 0;
   // return the name of IDL module
   //virtual std::string GetModuleName() = 0;
+  virtual ~GEOM_GenericOperationsCreator() {}
 };
 
 //=====================================================================

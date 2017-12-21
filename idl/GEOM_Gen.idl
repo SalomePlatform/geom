@@ -1300,17 +1300,23 @@ module GEOM
      *  \brief Replace the given object by its offset.
      *  \param theObject The base object for the offset.
      *  \param theOffset Offset value.
+     *  \param theJoinByPipes To join offset surfaces by pipes or by intersection.
      *  \return theObject.
      */
-    GEOM_Object OffsetShape (in GEOM_Object theObject, in double theOffset);
+    GEOM_Object OffsetShape (in GEOM_Object theObject,
+                             in double      theOffset,
+                             in boolean     theJoinByPipes);
 
     /*!
      *  \brief Create new object as offset of the given one.
      *  \param theObject The base object for the offset.
      *  \param theOffset Offset value.
+     *  \param theJoinByPipes To join offset surfaces by pipes or by intersection.
      *  \return New GEOM_Object, containing the offset object.
      */
-    GEOM_Object OffsetShapeCopy (in GEOM_Object theObject, in double theOffset);
+    GEOM_Object OffsetShapeCopy (in GEOM_Object theObject,
+                                 in double      theOffset,
+                                 in boolean     theJoinByPipes);
 
     /*!
      *  \brief Create new object as projection of the given one on a 2D surface.

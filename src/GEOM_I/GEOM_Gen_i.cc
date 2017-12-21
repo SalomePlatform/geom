@@ -313,6 +313,8 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr   theStudy,
       aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_GROUP_SOLID");
       aNamePrefix = "Group_Of_Solids_";
       break;
+    default:
+      aNamePrefix = "Group_";
     }
   } else if ( mytype == GEOM_MARKER ) {
     aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_LCS");
@@ -2548,7 +2550,7 @@ GEOM::GEOM_Object_ptr GEOM_Gen_i::AddSubShape (GEOM::GEOM_Object_ptr   theMainSh
   if (aMainShape.IsNull()) return GEOM::GEOM_Object::_nil();
 
   Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger(1, theIndices.length());
-  for(Standard_Integer i = 0; i<theIndices.length(); i++) anArray->SetValue(i+1, theIndices[i]);
+  for(CORBA::ULong i = 0; i<theIndices.length(); i++) anArray->SetValue(i+1, theIndices[i]);
 
   Handle(::GEOM_Object) anObject = _impl->AddSubShape(aMainShape, anArray, true);
   if(anObject.IsNull()) return GEOM::GEOM_Object::_nil();
@@ -2933,7 +2935,7 @@ void GEOM_Gen_i::Move( const GEOM::object_list& what,
     }
   }
 
-  for ( int i = 0; i < what.length(); i++ ) {
+  for ( CORBA::ULong i = 0; i < what.length(); i++ ) {
     SALOMEDS::SObject_var sobj = what[i];
     if ( CORBA::is_nil( sobj ) ) continue; // skip bad object
     // insert the object to the use case tree
@@ -2954,7 +2956,7 @@ SALOMEDS::TMPFile* GEOM_Gen_i::GetDependencyTree( SALOMEDS::Study_ptr theStudy,
   GEOMUtils::TreeModel tree;
 
   std::string entry;
-  for ( int i = 0; i < theObjectEntries.length(); i++ ) {
+  for ( CORBA::ULong i = 0; i < theObjectEntries.length(); i++ ) {
     // process objects one-by-one
     entry = theObjectEntries[i].in();
     GEOM::GEOM_BaseObject_var anObj = GetObject( theStudy->StudyId(), entry.c_str() );
@@ -2997,7 +2999,7 @@ void GEOM_Gen_i::getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo,
   GEOMUtils::NodeLinks anEntries;
   GEOMUtils::LevelInfo aLevelMap;
   if ( level > 0 ) {
-    if ( level-1 >= upLevelList.size() ) {
+    if ( level-1 >= (int)upLevelList.size() ) {
       // create a new map
       upLevelList.push_back( aLevelMap );
     } else {
@@ -3011,7 +3013,7 @@ void GEOM_Gen_i::getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo,
   // get objects on that the current one depends
   GEOM::ListOfGBO_var depList = gbo->GetDependency();
   std::string aDepEntry;
-  for( int j = 0; j < depList->length(); j++ ) {
+  for( CORBA::ULong j = 0; j < depList->length(); j++ ) {
     if ( depList[j]->_is_nil() )
       continue;
     aDepEntry = depList[j]->GetEntry();
@@ -3067,7 +3069,7 @@ void GEOM_Gen_i::getDownwardDependency( GEOM::GEOM_BaseObject_ptr gbo,
         continue;
       std::string aGoEntry = geomObj->GetEntry();
       // go through dependencies of current object to check whether it depends on the given object
-      for( int i = 0; i < depList->length(); i++ ) {
+      for( CORBA::ULong i = 0; i < depList->length(); i++ ) {
         if ( depList[i]->_is_nil() )
           continue;
         if ( depList[i]->_is_equivalent( gbo ) ) {
@@ -3081,7 +3083,7 @@ void GEOM_Gen_i::getDownwardDependency( GEOM::GEOM_BaseObject_ptr gbo,
           GEOMUtils::NodeLinks anEntries;
           GEOMUtils::LevelInfo aLevelMap;
           anEntries.push_back( aGboEntry );
-          if ( level >= downLevelList.size() ) {
+          if ( level >= (int)downLevelList.size() ) {
             downLevelList.push_back( aLevelMap );
           } else {
             aLevelMap = downLevelList.at(level);
@@ -3105,13 +3107,13 @@ void GEOM_Gen_i::getDownwardDependency( GEOM::GEOM_BaseObject_ptr gbo,
 // purpose  : Fills 3 lists that is used to clean study of redundant objects
 //==============================================================================
 void GEOM_Gen_i::GetEntriesToReduceStudy(SALOMEDS::Study_ptr theStudy,
-                                        GEOM::string_array& theSelectedEntries,
-                                        GEOM::string_array& theParentEntries,
-                                        GEOM::string_array& theSubEntries,
-                                        GEOM::string_array& theOtherEntries)
+                                         GEOM::string_array& theSelectedEntries,
+                                         GEOM::string_array& theParentEntries,
+                                         GEOM::string_array& theSubEntries,
+                                         GEOM::string_array& theOtherEntries)
 {
   std::set<std::string> aSelected, aParents, aChildren, anOthers;
-  for ( int i = 0; i < theSelectedEntries.length(); i++ ) {
+  for ( CORBA::ULong i = 0; i < theSelectedEntries.length(); i++ ) {
     aSelected.insert( CORBA::string_dup( theSelectedEntries[i] ) );
   }
 
@@ -3237,7 +3239,7 @@ void GEOM_Gen_i::includeParentDependencies(GEOM::GEOM_BaseObject_ptr geomObj,
     return;
   // go through dependencies of current object to check whether it depends on the given object
   std::string aDepEntry;
-  for( int i = 0; i < depList->length(); i++ ) {
+  for( CORBA::ULong i = 0; i < depList->length(); i++ ) {
     aDepEntry = depList[i]->GetEntry();
     if ( depList[i]->_is_nil() ||
          aDepEntry == anEntry ||             // skip self-depending

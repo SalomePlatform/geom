@@ -74,7 +74,7 @@ CORBA::Boolean XAOPlugin_IOperations_i::ExportXAO( GEOM::GEOM_Object_ptr shape,
   Handle(GEOM_Object) reference = GetObjectImpl( shape );
 
   // Get the reference groups
-  int ind = 0;
+  CORBA::ULong ind = 0;
   std::list<Handle(GEOM_Object)> groupsObj;
   for (; ind < groups.length(); ind++)
   {

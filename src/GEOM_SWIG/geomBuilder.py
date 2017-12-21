@@ -9228,14 +9228,15 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             theOffset, Parameters = ParseParameters(theOffset)
             if theCopy:
-                anObj = self.TrsfOp.OffsetShapeCopy(theObject, theOffset)
+                anObj = self.TrsfOp.OffsetShapeCopy(theObject, theOffset, True)
             else:
-                anObj = self.TrsfOp.OffsetShape(theObject, theOffset)
+                anObj = self.TrsfOp.OffsetShape(theObject, theOffset, True)
             RaiseIfFailed("Offset", self.TrsfOp)
             anObj.SetParameters(Parameters)
             return anObj
 
-        ## Create new object as offset of the given one.
+        ## Create new object as offset of the given one. Gap between two adjacent
+        #  offset surfaces is filled by a pipe.
         #  @param theObject The base object for the offset.
         #  @param theOffset Offset value.
         #  @param theName Object name; when specified, this parameter is used
@@ -9244,11 +9245,13 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @return New GEOM.GEOM_Object, containing the offset object.
         #
+        #  @sa MakeOffsetIntersectionJoin
         #  @ref tui_offset "Example"
         @ManageTransactions("TrsfOp")
         def MakeOffset(self, theObject, theOffset, theName=None):
             """
-            Create new object as offset of the given one.
+            Create new object as offset of the given one. Gap between adjacent
+            offset surfaces is filled by a pipe.
 
             Parameters:
                 theObject The base object for the offset.
@@ -9267,7 +9270,48 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             # Example: see GEOM_TestAll.py
             theOffset, Parameters = ParseParameters(theOffset)
-            anObj = self.TrsfOp.OffsetShapeCopy(theObject, theOffset)
+            anObj = self.TrsfOp.OffsetShapeCopy( theObject, theOffset, True )
+            RaiseIfFailed("OffsetShapeCopy", self.TrsfOp)
+            anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName, "offset")
+            return anObj
+
+        ## Create new object as offset of the given one. Gap between adjacent
+        #  offset surfaces is filled by extending and intersecting them.
+        #  @param theObject The base object for the offset.
+        #  @param theOffset Offset value.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing the offset object.
+        #
+        #  @sa MakeOffset
+        #  @ref tui_offset "Example"
+        @ManageTransactions("TrsfOp")
+        def MakeOffsetIntersectionJoin(self, theObject, theOffset, theName=None):
+            """
+            Create new object as offset of the given one. Gap between adjacent
+            offset surfaces is filled by extending and intersecting them.
+
+            Parameters:
+                theObject The base object for the offset.
+                theOffset Offset value.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the offset object.
+
+            Example of usage:
+                 box = geompy.MakeBox(20, 20, 20, 200, 200, 200)
+                 # create a new box extended by 70
+                 offset = geompy.MakeOffsetIntersectionJoin(box, 70.)
+            """
+            # Example: see GEOM_TestAll.py
+            theOffset, Parameters = ParseParameters( theOffset )
+            anObj = self.TrsfOp.OffsetShapeCopy( theObject, theOffset, False )
             RaiseIfFailed("OffsetShapeCopy", self.TrsfOp)
             anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "offset")

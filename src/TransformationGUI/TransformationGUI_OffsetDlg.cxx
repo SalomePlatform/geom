@@ -58,26 +58,24 @@ TransformationGUI_OffsetDlg::TransformationGUI_OffsetDlg( GeometryGUI* theGeomet
   mainFrame()->RadioButton2->close();
   mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
   mainFrame()->RadioButton3->close();
- 
+
   GroupPoints = new DlgRef_1Sel1Spin1Check( centralWidget() );
   GroupPoints->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
   GroupPoints->TextLabel1->setText( tr( "GEOM_OBJECTS" ) );
   GroupPoints->TextLabel2->setText( tr( "GEOM_OFFSET" ) );
-  GroupPoints->CheckButton1->setText( tr( "GEOM_CREATE_COPY" ) );
-
-  // san -- modification of an exisitng object by offset is not allowed
-  GroupPoints->CheckButton1->hide();
+  GroupPoints->CheckButton1->setText( tr( "GEOM_JOIN_BY_PIPES" ) );
+  GroupPoints->CheckButton1->setChecked( true );
 
   GroupPoints->PushButton1->setIcon( image1 );
-  
+
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
   layout->addWidget( GroupPoints );
-  
+
   /***************************************************************/
 
   setHelpFileName( "offset_operation_page.html" );
-  
+
   Init();
 }
 
@@ -97,37 +95,33 @@ TransformationGUI_OffsetDlg::~TransformationGUI_OffsetDlg()
 // purpose  :
 //=================================================================================
 void TransformationGUI_OffsetDlg::Init()
-{  
+{
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
   GroupPoints->LineEdit1->setReadOnly( true );
 
   myObjects.clear();
-  
+
   /* Get setting of step value from file configuration */
   double step = 1;
-   
+
   /* min, max, step and decimals for spin boxes & initial values */
   initSpinBox( GroupPoints->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" );
   GroupPoints->SpinBox_DX->setValue( 1e-05 );
-  
-  // Activate Create a Copy mode
-  GroupPoints->CheckButton1->setChecked( true );
-  CreateCopyModeChanged();
 
   mainFrame()->GroupBoxPublish->show();
 
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
   connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
-  
+
   connect( GroupPoints->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
-  connect( myGeomGUI->getApp()->selectionMgr(), 
+  connect( myGeomGUI->getApp()->selectionMgr(),
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   connect( GroupPoints->SpinBox_DX,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox() ) );
-  connect( GroupPoints->CheckButton1, SIGNAL( toggled( bool ) ),        this, SLOT( CreateCopyModeChanged() ) );
-  
+  connect( GroupPoints->CheckButton1, SIGNAL( toggled( bool ) ),        this, SLOT( JoinModeChanged() ) );
+
   initName( tr( "GEOM_OFFSET" ) );
 
   globalSelection( GEOM_ALLSHAPES );
@@ -271,10 +265,10 @@ bool TransformationGUI_OffsetDlg::execute( ObjectList& objects )
   
   GEOM::GEOM_ITransformOperations_var anOper = GEOM::GEOM_ITransformOperations::_narrow(getOperation());
 
-  if ( GroupPoints->CheckButton1->isChecked() || IsPreview() ) {
+  if ( true /*GroupPoints->CheckButton1->isChecked() || IsPreview()*/ ) {
     for ( int i = 0; i < myObjects.count(); i++ ) {
       
-      anObj = anOper->OffsetShapeCopy( myObjects[i].get(), GetOffset() );
+      anObj = anOper->OffsetShapeCopy( myObjects[i].get(), GetOffset(), GetIsJoinByPipes() );
       if ( !anObj->_is_nil() ) {
         if(!IsPreview()) {
           anObj->SetParameters(GroupPoints->SpinBox_DX->text().toLatin1().constData());
@@ -285,7 +279,7 @@ bool TransformationGUI_OffsetDlg::execute( ObjectList& objects )
   }
   else {
     for ( int i = 0; i < myObjects.count(); i++ ) {
-      anObj = anOper->OffsetShape( myObjects[i].get(), GetOffset() );
+      anObj = anOper->OffsetShape( myObjects[i].get(), GetOffset(), GetIsJoinByPipes()  );
       if ( !anObj->_is_nil() )
         objects.push_back( anObj._retn() );
     }
@@ -320,13 +314,24 @@ double TransformationGUI_OffsetDlg::GetOffset() const
   return GroupPoints->SpinBox_DX->value();
 }
 
+//=======================================================================
+//function : GetIsJoinByPipes
+//purpose  : 
+//=======================================================================
+
+bool TransformationGUI_OffsetDlg::GetIsJoinByPipes() const
+{
+  return GroupPoints->CheckButton1->isChecked();
+}
+
 //=================================================================================
-// function :  CreateCopyModeChanged()
+// function :  JoinModeChanged()
 // purpose  :
 //=================================================================================
-void TransformationGUI_OffsetDlg::CreateCopyModeChanged()
+void TransformationGUI_OffsetDlg::JoinModeChanged()
 {
-  mainFrame()->GroupBoxName->setEnabled( GroupPoints->CheckButton1->isChecked() );
+  processPreview();
+  //mainFrame()->GroupBoxName->setEnabled( GroupPoints->CheckButton1->isChecked() );
 }
 
 //=================================================================================

@@ -609,9 +609,10 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorPointCopy
  *  OffsetShape
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::OffsetShape
-                                             (GEOM::GEOM_Object_ptr theObject,
-                                              CORBA::Double theOffset)
+GEOM::GEOM_Object_ptr
+GEOM_ITransformOperations_i::OffsetShape (GEOM::GEOM_Object_ptr theObject,
+                                          CORBA::Double         theOffset,
+                                          CORBA::Boolean        theJoinByPipes)
 {
   GEOM::GEOM_Object_var aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
 
@@ -631,7 +632,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::OffsetShape
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Create the offset shape
-  GetOperations()->OffsetShape(aBasicObject, theOffset);
+  GetOperations()->OffsetShape( aBasicObject, theOffset, theJoinByPipes );
 
   // Update GUI.
   UpdateGUIForObject(theObject);
@@ -644,9 +645,10 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::OffsetShape
  *  OffsetShapeCopy
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::OffsetShapeCopy
-                                             (GEOM::GEOM_Object_ptr theObject,
-                                              CORBA::Double theOffset)
+GEOM::GEOM_Object_ptr
+GEOM_ITransformOperations_i::OffsetShapeCopy (GEOM::GEOM_Object_ptr theObject,
+                                              CORBA::Double         theOffset,
+                                              CORBA::Boolean        theJoinByPipes)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -658,7 +660,8 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::OffsetShapeCopy
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Create the offset shape
-  Handle(::GEOM_Object) anObject = GetOperations()->OffsetShapeCopy(aBasicObject, theOffset);
+  Handle(::GEOM_Object) anObject =
+    GetOperations()->OffsetShapeCopy(aBasicObject, theOffset, theJoinByPipes);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

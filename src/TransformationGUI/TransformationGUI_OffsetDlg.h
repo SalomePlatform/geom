@@ -57,6 +57,7 @@ private:
   void                               Init();
   void                               enterEvent( QEvent* );
   double                             GetOffset() const;
+  bool                               GetIsJoinByPipes() const;
     
 private:
   QList<GEOM::GeomObjPtr>            myObjects;
@@ -70,7 +71,7 @@ private slots:
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ValueChangedInSpinBox();
-  void                               CreateCopyModeChanged();
+  void                               JoinModeChanged();
 };
 
 #endif // TRANSFORMATIONGUI_OFFSETDLG_H

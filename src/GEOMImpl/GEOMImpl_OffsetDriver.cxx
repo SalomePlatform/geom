@@ -86,11 +86,20 @@ Standard_Integer GEOMImpl_OffsetDriver::Execute(Handle(TFunction_Logbook)& log) 
     StdFail_NotDone::Raise(aMsg.ToCString());
   }
 
-  if (aType == OFFSET_SHAPE || aType == OFFSET_SHAPE_COPY) {
-    BRepOffsetAPI_MakeOffsetShape MO (aShapeBase,
-                                      aCI.GetValue(),
-                                      aTol);
-    if (MO.IsDone()) {
+  if ( aType == OFFSET_SHAPE || aType == OFFSET_SHAPE_COPY )
+  {
+    BRepOffsetAPI_MakeOffsetShape MO;
+    BRepOffset_Mode aMode = BRepOffset_Skin;
+    Standard_Boolean anIntersection = Standard_False, aSelfInter = Standard_False;
+    MO.PerformByJoin( aShapeBase,
+                      aCI.GetValue(),
+                      aTol,
+                      aMode,
+                      anIntersection,
+                      aSelfInter,
+                      aCI.GetJoinByPipes() ? GeomAbs_Arc : GeomAbs_Intersection );
+
+    if ( MO.IsDone() ) {
       aShape = MO.Shape();
       if ( !GEOMUtils::CheckShape(aShape, true) && !GEOMUtils::FixShapeTolerance(aShape) )
         Standard_ConstructionError::Raise("Boolean operation aborted : non valid shape result");

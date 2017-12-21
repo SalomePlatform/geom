@@ -7817,6 +7817,13 @@ Do you want to create new material?</translation>
     </message>
 </context>
 <context>
+    <name>TransformationGUI_OffsetDlg</name>
+    <message>
+        <source>GEOM_JOIN_BY_PIPES</source>
+        <translation>Join by pipes</translation>
+    </message>
+</context>
+<context>
     <name>OperationGUI_ExtractionDlg</name>
     <message>
         <source>GEOM_EXTRACT_TITLE</source>
