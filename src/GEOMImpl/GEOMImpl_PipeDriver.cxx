@@ -119,12 +119,12 @@ static void StoreGroups(GEOMImpl_IPipe                   *theCI,
 
 // after OCCT improvement
 static bool DoGroups1(const TopoDS_Shape          &theProfile,
-		      BRepOffsetAPI_MakePipeShell &theSweep,
-		      TopTools_SequenceOfShape    *theGroups);
+                      BRepOffsetAPI_MakePipeShell &theSweep,
+                      TopTools_SequenceOfShape    *theGroups);
 
 static bool CreateGroups1(const TopoDS_Shape          &theProfile,
-			  BRepOffsetAPI_MakePipeShell &theSweep,
-			  GEOMImpl_IPipe              *theCI);
+                          BRepOffsetAPI_MakePipeShell &theSweep,
+                          GEOMImpl_IPipe              *theCI);
 
 //=======================================================================
 //function : GetID
@@ -1071,7 +1071,7 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
           // Make groups.
           TopTools_SequenceOfShape aGroups[5];
 
-	  TopoDS_Shape aProfile = aTmpSeqBases.Value(1);
+          TopoDS_Shape aProfile = aTmpSeqBases.Value(1);
           if (!DoGroups1(aProfile, aBuilder, aGroups)) {
             Standard_ConstructionError::Raise("Generate groups failure");
           }
@@ -1134,7 +1134,7 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
         // Make groups.
         TopTools_SequenceOfShape aGroups[5];
 
-	TopoDS_Shape aProfile = aTmpSeqBases.Value(1);
+        TopoDS_Shape aProfile = aTmpSeqBases.Value(1);
         if (!DoGroups1(aProfile, aBuilder, aGroups)) {
           Standard_ConstructionError::Raise("Generate groups failure");
         }
@@ -1282,13 +1282,13 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
           // Make groups.
           TopTools_SequenceOfShape aSeqGroups[5];
 
-	  TopoDS_Shape aProfile = usedBases.Value(1);
+          TopoDS_Shape aProfile = usedBases.Value(1);
           if (!DoGroups1(aProfile, aBuilder, aSeqGroups)) {
             Standard_ConstructionError::Raise("Generate groups failure");
           }
 
           // Fill the groups.
-          Handle(TColStd_HArray1OfInteger) aGroupIds[5];
+          //Handle(TColStd_HArray1OfInteger) aGroupIds[5];
           TopTools_IndexedMapOfShape       anIndices;
           const TopoDS_Shape               aResult = aBuilder.Shape();
 
@@ -2748,8 +2748,8 @@ static bool CreateDownUpGroups(BRepPrimAPI_MakeSweep    *theSweep,
 //purpose  : auxiliary for CreateGroups1()
 //=======================================================================
 bool DoGroups1 (const TopoDS_Shape          &theProfile,
-		BRepOffsetAPI_MakePipeShell &theSweep,
-		TopTools_SequenceOfShape    *theGroups)
+                BRepOffsetAPI_MakePipeShell &theSweep,
+                TopTools_SequenceOfShape    *theGroups)
 {
   Standard_Boolean isDoSides = Standard_False;
 
@@ -2792,11 +2792,11 @@ bool DoGroups1 (const TopoDS_Shape          &theProfile,
               }
             } else if (aSideShape.ShapeType() == TopAbs_WIRE) {
               if (aMapFence.Add(aSideShape)) {
-		TopExp_Explorer anExpWE (aSideShape, TopAbs_EDGE);
-		for (; anExpWE.More(); anExpWE.Next()) {
-		  theGroups[anIdSide].Append(anExpWE.Current());
-		}
-	      }
+                TopExp_Explorer anExpWE (aSideShape, TopAbs_EDGE);
+                for (; anExpWE.More(); anExpWE.Next()) {
+                  theGroups[anIdSide].Append(anExpWE.Current());
+                }
+              }
             } else {
               // Only edges can be in Side1 and Side2 groups.
               return false;
@@ -2837,10 +2837,10 @@ bool DoGroups1 (const TopoDS_Shape          &theProfile,
             }
           } else if (anOtherShape.ShapeType() == TopAbs_SHELL) {
             if (aMapFence.Add(anOtherShape)) {
-	      TopExp_Explorer anExpSHF (anOtherShape, TopAbs_FACE);
-	      for (; anExpSHF.More(); anExpSHF.Next()) {
-		theGroups[GROUP_OTHER].Append(anExpSHF.Current());
-	      }
+              TopExp_Explorer anExpSHF (anOtherShape, TopAbs_FACE);
+              for (; anExpSHF.More(); anExpSHF.Next()) {
+                theGroups[GROUP_OTHER].Append(anExpSHF.Current());
+              }
             }
           } else {
             // Only faces can be in Other group.
@@ -2859,8 +2859,8 @@ bool DoGroups1 (const TopoDS_Shape          &theProfile,
 //purpose  : auxiliary for Execute()
 //=======================================================================
 bool CreateGroups1 (const TopoDS_Shape          &theProfile,
-		    BRepOffsetAPI_MakePipeShell &theSweep,
-		    GEOMImpl_IPipe              *theCI)
+                    BRepOffsetAPI_MakePipeShell &theSweep,
+                    GEOMImpl_IPipe              *theCI)
 {
   if (!theCI->GetGenerateGroups()) {
     // Nothing to do.
@@ -2896,8 +2896,8 @@ bool CreateGroups1 (const TopoDS_Shape          &theProfile,
 //purpose  : auxiliary for CreateGroups()
 //=======================================================================
 static bool DoGroups2(const TopoDS_Shape             &theProfile,
-		      const TopoDS_Shape             &thePath,
-		            BRepOffsetAPI_MakePipe   &theSweep,
+                      const TopoDS_Shape             &thePath,
+                            BRepOffsetAPI_MakePipe   &theSweep,
                             TopTools_SequenceOfShape *theGroups)
 {
   Standard_Boolean isDoSides = Standard_False;
@@ -2984,9 +2984,9 @@ static bool DoGroups2(const TopoDS_Shape             &theProfile,
 //purpose  : auxiliary for Execute()
 //=======================================================================
 static bool CreateGroups2(const TopoDS_Shape     &theProfile,
-			  const TopoDS_Shape     &thePath,
-			  BRepOffsetAPI_MakePipe &theSweep,
-			  GEOMImpl_IPipe         *theCI)
+                          const TopoDS_Shape     &thePath,
+                          BRepOffsetAPI_MakePipe &theSweep,
+                          GEOMImpl_IPipe         *theCI)
 {
   if (!theCI->GetGenerateGroups()) {
     // Nothing to do.

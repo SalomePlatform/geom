@@ -119,7 +119,7 @@ void GEOMAlgo_VertexSolid::Perform()
 //=======================================================================
 void GEOMAlgo_VertexSolid::BuildResult()
 {
-  Standard_Integer i, iBeg, iEnd, aNbVV, aNbVE, aNbVF, j, iFound, aNbRanges;
+  Standard_Integer i, iBeg, iEnd, aNbVV, aNbVE, aNbVF, j, iFound;//, aNbRanges;
   Standard_Real aTol;
   TopAbs_State aSt;
   TopAbs_ShapeEnum aType;
@@ -145,7 +145,7 @@ void GEOMAlgo_VertexSolid::BuildResult()
   Handle(IntTools_Context) aCtx=myDSFiller->Context();
   BRepClass3d_SolidClassifier& aSC=aCtx->SolidClassifier(aSolid);
   //
-  aNbRanges=aDS.NbRanges();
+  //aNbRanges=aDS.NbRanges();
   const BOPDS_IndexRange& aRange=aDS.Range(myRank);
   aRange.Indices(iBeg, iEnd);
   //
@@ -165,9 +165,9 @@ void GEOMAlgo_VertexSolid::BuildResult()
     for (j=0; j<aNbVV; ++j) {
       BOPDS_InterfVV& aVV=aVVs(j);
       if (aVV.Contains(i)) {
-	myLSON.Append(aV);
-	iFound=1;
-	break;
+        myLSON.Append(aV);
+        iFound=1;
+        break;
       }
     }
     if (iFound) {
@@ -178,9 +178,9 @@ void GEOMAlgo_VertexSolid::BuildResult()
     for (j=0; j<aNbVE; ++j) {
       BOPDS_InterfVE& aVE=aVEs(j);
       if (aVE.Contains(i)) {
-	myLSON.Append(aV);
-	iFound=1;
-	break;
+        myLSON.Append(aV);
+        iFound=1;
+        break;
       }
     }
     if (iFound) {
@@ -191,9 +191,9 @@ void GEOMAlgo_VertexSolid::BuildResult()
     for (j=0; j<aNbVF; ++j) {
       BOPDS_InterfVF& aVF=aVFs(j);
       if (aVF.Contains(i)) {
-	myLSON.Append(aV);
-	iFound=1;
-	break;
+        myLSON.Append(aV);
+        iFound=1;
+        break;
       }
     }
     if (iFound) {

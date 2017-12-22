@@ -736,6 +736,7 @@ GEOMImpl_IMeasureOperations::ShapeKind GEOMImpl_IMeasureOperations::KindOfShape
       theDoubles->Append(aP.Z());
     }
     break;
+  default:;
   }
 
   SetErrorCode(OK);
@@ -1600,7 +1601,7 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
 //=============================================================================
 bool GEOMImpl_IMeasureOperations::CheckSelfIntersectionsFast
                          (Handle(GEOM_Object) theShape,
-			  float theDeflection, double theTolerance,
+                          float theDeflection, double theTolerance,
                           Handle(TColStd_HSequenceOfInteger)& theIntersections)
 {
   SetErrorCode(KO);
@@ -1881,7 +1882,7 @@ TCollection_AsciiString GEOMImpl_IMeasureOperations::WhatIs (Handle(GEOM_Object)
           aListOfShape.Append(s);
           nbTypes[s.ShapeType()]++;
           if ((sp.ShapeType() == TopAbs_COMPOUND) || (sp.ShapeType() == TopAbs_COMPSOLID)) {
-	    nbFlatType[s.ShapeType()]++;
+            nbFlatType[s.ShapeType()]++;
           }
         }
       }
@@ -1900,17 +1901,17 @@ TCollection_AsciiString GEOMImpl_IMeasureOperations::WhatIs (Handle(GEOM_Object)
     if ((aShape.ShapeType() == TopAbs_COMPOUND) || (aShape.ShapeType() == TopAbs_COMPSOLID)){
       Astr = Astr + " --------------------- \n Flat content : \n";
       if (nbFlatType[TopAbs_VERTEX] > 0)
-	Astr = Astr + " VERTEX : " + TCollection_AsciiString(nbFlatType[TopAbs_VERTEX]) + "\n";
+        Astr = Astr + " VERTEX : " + TCollection_AsciiString(nbFlatType[TopAbs_VERTEX]) + "\n";
       if (nbFlatType[TopAbs_EDGE] > 0)
-	Astr = Astr + " EDGE : " + TCollection_AsciiString(nbFlatType[TopAbs_EDGE]) + "\n";
+        Astr = Astr + " EDGE : " + TCollection_AsciiString(nbFlatType[TopAbs_EDGE]) + "\n";
       if (nbFlatType[TopAbs_WIRE] > 0)
-	Astr = Astr + " WIRE : " + TCollection_AsciiString(nbFlatType[TopAbs_WIRE]) + "\n";
+        Astr = Astr + " WIRE : " + TCollection_AsciiString(nbFlatType[TopAbs_WIRE]) + "\n";
       if (nbFlatType[TopAbs_FACE] > 0)
-	Astr = Astr + " FACE : " + TCollection_AsciiString(nbFlatType[TopAbs_FACE]) + "\n";
+        Astr = Astr + " FACE : " + TCollection_AsciiString(nbFlatType[TopAbs_FACE]) + "\n";
       if (nbFlatType[TopAbs_SHELL] > 0)
-	Astr = Astr + " SHELL : " + TCollection_AsciiString(nbFlatType[TopAbs_SHELL]) + "\n";
+        Astr = Astr + " SHELL : " + TCollection_AsciiString(nbFlatType[TopAbs_SHELL]) + "\n";
       if (nbFlatType[TopAbs_SOLID] > 0)
-	Astr = Astr + " SOLID : " + TCollection_AsciiString(nbFlatType[TopAbs_SOLID]) + "\n";
+        Astr = Astr + " SOLID : " + TCollection_AsciiString(nbFlatType[TopAbs_SOLID]) + "\n";
     }
   }
   catch (Standard_Failure& aFail) {

@@ -123,9 +123,9 @@ namespace {
     else {
       TopoDS_Iterator It(S, Standard_True, Standard_True);
       for (; It.More(); It.Next()) {
-	TopoDS_Shape SS = It.Value();
-	if (M.Add(SS))
-	  AddFlatSubShapes(SS, L, M);
+        TopoDS_Shape SS = It.Value();
+        if (M.Add(SS))
+          AddFlatSubShapes(SS, L, M);
       }
     }
   }
@@ -1451,11 +1451,10 @@ GEOMImpl_IShapesOperations::GetExistingSubObjects(Handle(GEOM_Object)    theShap
       bool isGroup    = anObj->IsKind(STANDARD_TYPE(GEOM_Object)) && anObj->GetType() == GEOM_GROUP;
       bool isSubShape = anObj->IsKind(STANDARD_TYPE(GEOM_Object)) && anObj->GetType() != GEOM_GROUP;
       bool isField    = anObj->IsKind(STANDARD_TYPE(GEOM_Field));
-      if (theTypes & Groups    && isGroup ||
-          theTypes & SubShapes && isSubShape ||
-          theTypes & Fields    && isField) {
+      if ((theTypes & Groups    && isGroup    ) ||
+          (theTypes & SubShapes && isSubShape ) ||
+          (theTypes & Fields    && isField    ))
         aSeq->Append(anObj);
-      }
     }
     delete [] anEntryStr;
   }
@@ -1501,11 +1500,11 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
     for (; It.More(); It.Next()) {
       TopoDS_Shape SS = It.Value();
       if (mapShape.Add(SS)) {
-	if (theShapeType == TopAbs_FLAT) {
+        if (theShapeType == TopAbs_FLAT) {
           AddFlatSubShapes(SS, listShape, mapShape);
-	}
+        }
         else if (theShapeType == TopAbs_SHAPE || theShapeType == SS.ShapeType()) {
-	  listShape.Append(SS);
+          listShape.Append(SS);
         }
         // VSR: for EXPLODE_NEW_INCLUDE_MAIN and EXPLODE_OLD_INCLUDE_MAIN:
         // it seems it is necessary to add top-level shape if theShapeType == TopAbs_COMPOUND
@@ -1627,9 +1626,9 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::SubShapeAllIDs
     for (; It.More(); It.Next()) {
       TopoDS_Shape SS = It.Value();
       if (mapShape.Add(SS)) {
-	if (theShapeType == TopAbs_FLAT) {
+        if (theShapeType == TopAbs_FLAT) {
           AddFlatSubShapes(SS, listShape, mapShape);
-	}
+        }
         else if (theShapeType == TopAbs_SHAPE || theShapeType == SS.ShapeType()) {
           listShape.Append(SS);
         }
@@ -2436,7 +2435,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetSharedShapes
       for (; itSel.More(); itSel.Next()) {
         const TopoDS_Shape& aSS = itSel.Value();
         if (mapShape.Add(aSS) )
-	  aShared.Append(aSS);
+          aShared.Append(aSS);
       }
     }
   }
@@ -4464,7 +4463,6 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
 
   if (aShapeResult.IsNull() == Standard_False) {
     TopoDS_Iterator  anIt(aShapeResult);
-    Standard_Boolean isFirst = Standard_True;
 
     for (; anIt.More(); anIt.Next()) {
       const TopoDS_Shape &aPart = anIt.Value();

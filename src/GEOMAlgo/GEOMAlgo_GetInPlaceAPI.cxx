@@ -321,7 +321,7 @@ Standard_Boolean GEOMAlgo_GetInPlaceAPI::GetInPlaceByHistory
   }
 
   // try to find in history
-  TDF_Label aHistoryLabel = theWhereFunction->GetHistoryEntry(Standard_False);
+  //TDF_Label aHistoryLabel = theWhereFunction->GetHistoryEntry(Standard_False);
 
   // search in history for all argument shapes
   Standard_Boolean isFound = Standard_False;

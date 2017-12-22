@@ -281,8 +281,8 @@ int GEOMImpl_IInsertOperations::LoadTexture(const TCollection_AsciiString& theTe
   std::list<std::string>::const_iterator it;
   for (it = lines.begin(); it != lines.end(); ++it) {
     std::string line = *it;
-    int lenline = (line.size()/8 + (line.size()%8 ? 1 : 0)) * 8;
-    for (int i = 0; i < lenline/8; i++) {
+    size_t lenline = (line.size()/8 + (line.size()%8 ? 1 : 0)) * 8;
+    for (size_t i = 0; i < lenline/8; i++) {
       unsigned char byte = 0;
       for (int j = 0; j < 8; j++)
         byte = (byte << 1) + ( i*8+j < line.size() && line[i*8+j] != '0' ? 1 : 0 );

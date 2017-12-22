@@ -908,9 +908,9 @@ void GEOMAlgo_Gluer::MakeEdge(const TopoDS_Edge& aE,
     Standard_Real aTol;
     BRep_Builder aBB;
     TopoDS_Edge E;
-    TopAbs_Orientation anOrE;
+    //TopAbs_Orientation anOrE;
     //
-    anOrE=aE.Orientation();
+    //anOrE=aE.Orientation();
     aTol=BRep_Tool::Tolerance(aE);
     //
     E=aEx;

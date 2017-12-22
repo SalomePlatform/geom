@@ -254,10 +254,6 @@ GetCreationInformation(std::string&             theOperationName,
       for ( int i = 1, nb = aCI.GetLength(); i <= nb; ++i )
         theParams[0] << aCI.GetPntOrComp( i ) << " ";
 
-      const Standard_Integer aNbMax  = aCI.GetNbMax();
-      const Standard_Integer aDegMax = aCI.GetDegMax();
-      const Standard_Real    aDMax   = aCI.GetDMax();
-
       AddParam(theParams, "Max nbr of Bezier pieces", aCI.GetNbMax());
       AddParam(theParams, "Max BSpline surface degree", aCI.GetDegMax());
       AddParam(theParams, "3D tolerance of initial approximation", aCI.GetDMax());

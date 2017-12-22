@@ -2064,7 +2064,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::OffsetShape (GEOM::GEOM_Object_ptr theObjec
   beginService( " GEOM_Superv_i::OffsetShape" );
   MESSAGE("GEOM_Superv_i::OffsetShape");
   getTransfOp();
-  GEOM::GEOM_Object_ptr anObj = myTransfOp->OffsetShape(theObject, theOffset);
+  GEOM::GEOM_Object_ptr anObj = myTransfOp->OffsetShape(theObject, theOffset, true);
   endService( " GEOM_Superv_i::OffsetShape" );
   return anObj;
 }
@@ -2078,7 +2078,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::OffsetShapeCopy (GEOM::GEOM_Object_ptr theO
   beginService( " GEOM_Superv_i::OffsetShapeCopy" );
   MESSAGE("GEOM_Superv_i::OffsetShapeCopy");
   getTransfOp();
-  GEOM::GEOM_Object_ptr anObj = myTransfOp->OffsetShapeCopy(theObject, theOffset);
+  GEOM::GEOM_Object_ptr anObj = myTransfOp->OffsetShapeCopy(theObject, theOffset, true);
   endService( " GEOM_Superv_i::OffsetShapeCopy" );
   return anObj;
 }

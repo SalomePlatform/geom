@@ -2815,7 +2815,7 @@ void GeometryGUI::preferencesChanged( const QString& section, const QString& par
              param == QString("scalar_bar_height") ||
              param == QString("scalar_bar_text_height") ||
              param == QString("scalar_bar_nb_intervals")) {
-      if( SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( getApp()->activeStudy() ) )
+      if( /*SalomeApp_Study* aStudy = */dynamic_cast<SalomeApp_Study*>( getApp()->activeStudy() ) )
       {
         updateFieldColorScale();
       }

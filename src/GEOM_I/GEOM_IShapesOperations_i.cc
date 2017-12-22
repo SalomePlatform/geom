@@ -323,7 +323,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeFaceWithConstraints
 
   //Get the shapes
   std::list<Handle(::GEOM_Object)> aConstraints;
-  for( int ind = 0; ind < theConstraints.length(); ind++ ) {
+  for( CORBA::ULong ind = 0; ind < theConstraints.length(); ind++ ) {
     Handle(::GEOM_Object) anObject = GetObjectImpl( theConstraints[ind] );
     aConstraints.push_back(anObject);
   }
@@ -906,7 +906,6 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::MakeSubShapes (GEOM::GEOM_Object_ptr t
                                                          const GEOM::ListOfLong& theIndices)
 {
   GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
-  Standard_Integer i;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
@@ -918,7 +917,7 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::MakeSubShapes (GEOM::GEOM_Object_ptr t
   if (aShape.IsNull()) return aSeq._retn();
 
   Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger (1, theIndices.length());
-  for (i = 0; i < theIndices.length(); i++)
+  for (CORBA::ULong i = 0; i < theIndices.length(); i++)
     anArray->SetValue(i+1, theIndices[i]);
 
   Handle(TColStd_HSequenceOfTransient) aHSeq = GetOperations()->MakeSubShapes(aShape, anArray);
@@ -927,7 +926,7 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::MakeSubShapes (GEOM::GEOM_Object_ptr t
 
   Standard_Integer aLength = aHSeq->Length();
   aSeq->length(aLength);
-  for (i = 0; i < aLength; i++)
+  for (int i = 0; i < aLength; i++)
     aSeq[i] = GetObject(Handle(::GEOM_Object)::DownCast(aHSeq->Value(i+1)));
 
   return aSeq._retn();

@@ -175,9 +175,9 @@ Standard_Integer GEOMImpl_OffsetDriver::Execute(Handle(TFunction_Logbook)& log) 
       }
 
       // Create a hollowed solid.
-      BRepOffsetAPI_MakeThickSolid aMkSolid
-                  (aShapeBase, aFacesToRm, anOffset, aTol, BRepOffset_Skin,
-                   Standard_False, Standard_False, GeomAbs_Intersection);
+      BRepOffsetAPI_MakeThickSolid aMkSolid;
+      aMkSolid.MakeThickSolidByJoin (aShapeBase, aFacesToRm, anOffset, aTol, BRepOffset_Skin,
+                                     Standard_False, Standard_False, GeomAbs_Intersection);
 
       if (aMkSolid.IsDone()) {
         aShape = aMkSolid.Shape();

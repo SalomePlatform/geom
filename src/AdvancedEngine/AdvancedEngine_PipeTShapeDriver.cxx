@@ -312,7 +312,7 @@ TopoDS_Shape AdvancedEngine_PipeTShapeDriver::MakePipeTShape (const double r1, c
 
   gp_Pnt aP0 (0, 0, 0);
   gp_Pnt aP1 (-l1, 0, 0);
-  gp_Vec aVX = gp::DX(), aVY = gp::DY(), aVZ = gp::DZ();
+  gp_Vec aVX = gp::DX(), aVZ = gp::DZ();
   gp_Ax2 anAxes1 (aP1, aVX, aVZ);
   gp_Ax2 anAxes2 (aP0, aVZ, aVX);
 

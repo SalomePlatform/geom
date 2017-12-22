@@ -936,7 +936,7 @@ GEOM::ListOfBool* GEOM_IMeasureOperations_i::AreCoordsInside (GEOM::GEOM_Object_
   //Set a not done flag
   GetOperations()->SetNotDone();
   
-  unsigned int nb_points = theCoords.length()/3;
+  int nb_points = theCoords.length()/3;
 
   GEOM::ListOfBool_var aResults = new GEOM::ListOfBool;
   aResults->length(nb_points);
@@ -947,8 +947,8 @@ GEOM::ListOfBool* GEOM_IMeasureOperations_i::AreCoordsInside (GEOM::GEOM_Object_
   for (int i = 0; i < 3*nb_points; i++)
     tmp[i] = theCoords[i];
   std::vector<bool> res = GetOperations()->AreCoordsInside(aShape, tmp, tolerance);
-  for (int i = 0; i < nb_points; i++)
-    aResults[i] = i < res.size() ? res[i] : false;
+  for (int i = 0, resSize = res.size();  i < nb_points; i++)
+    aResults[i] = i < resSize ? res[i] : false;
   return aResults._retn();
 }
 

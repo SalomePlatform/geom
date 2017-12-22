@@ -317,7 +317,7 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(Handle(TFunction_Logbook)& log)
 
     Handle(TColStd_HSequenceOfTransient) aConstraints = IF.GetShapes();
 
-    for ( unsigned int ind = 1; ind <= aConstraints->Length(); ind++ ) {
+    for ( int ind = 1; ind <= aConstraints->Length(); ind++ ) {
       TopoDS_Edge E;
       TopoDS_Face F;
       Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast( aConstraints->Value(ind) );
@@ -396,7 +396,7 @@ GetCreationInformation(std::string&             theOperationName,
   }
   case FILLING_ON_CONSTRAINTS:
   {
-	theOperationName = "FACE";
+        theOperationName = "FACE";
     AddParam( theParams, "Edges/Faces", aCI.GetShapes() );
     break;
   }

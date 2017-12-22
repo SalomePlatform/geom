@@ -65,7 +65,7 @@ static
 void GEOMAlgo_Gluer2::Detect()
 {
   Standard_Boolean bCheckGeometry;
-  Standard_Integer iErr, aNbSD;
+  Standard_Integer iErr;
   TopTools_ListIteratorOfListOfShape aItLS;
   TopTools_DataMapIteratorOfDataMapOfShapeListOfShape aItDMSLS;
   //GEOMAlgo_GlueDetector aDetector;
@@ -106,7 +106,6 @@ void GEOMAlgo_Gluer2::Detect()
   for (; aItDMSLS.More(); aItDMSLS.Next()) {
     const TopoDS_Shape& aSkey=aItDMSLS.Key();
     const TopTools_ListOfShape& aLSD=aItDMSLS.Value();
-    aNbSD=aLSD.Extent();
     myImagesDetected.Bind(aSkey, aLSD);
   }
   //

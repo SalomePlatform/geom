@@ -210,7 +210,7 @@ CORBA::Long GEOM_IInsertOperations_i::AddTexture(CORBA::Long theWidth, CORBA::Lo
   if ( theTexture.length() > 0 ) {
     aTexture = new TColStd_HArray1OfByte (1, theTexture.length());
 
-    for ( int i = 0; i < theTexture.length(); i++ )
+    for ( CORBA::ULong i = 0; i < theTexture.length(); i++ )
       aTexture->SetValue( i+1, (Standard_Byte)theTexture[i] );
   }
   return GetOperations()->AddTexture( theWidth, theHeight, aTexture );

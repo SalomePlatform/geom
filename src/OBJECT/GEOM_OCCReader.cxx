@@ -484,6 +484,7 @@ void GEOM_OCCReader::DrawIso(GeomAbs_IsoType T,
           case GeomAbs_Hyperbola :
           case GeomAbs_BezierCurve :
           case GeomAbs_BSplineCurve :
+          case GeomAbs_OffsetCurve:
           case GeomAbs_OtherCurve :
             for (j = 1; j <= myDiscret/2; j++) {
 
@@ -558,9 +559,8 @@ void GEOM_OCCReader::PlotIso (BRepAdaptor_Surface& S,
 
 void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
                                          vtkPoints* Pts,
-                                         vtkCellArray* Cells) {
-  
-  
+                                         vtkCellArray* Cells)
+{
   Handle(Poly_PolygonOnTriangulation) aEdgePoly;
   Standard_Integer i = 1;
   Handle(Poly_Triangulation) T;
@@ -786,11 +786,12 @@ void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
 //=======================================================================
 
 void GEOM_OCCReader::TransferVertexWData(const TopoDS_Vertex& aVertex,
-                                         vtkPoints* Pts,
-                                         vtkCellArray* Cells) {
-#define ZERO_COORD coord[0] = 0.0; coord[1] = 0.0; coord[2] = 0.0
+                                         vtkPoints*           Pts,
+                                         vtkCellArray*        Cells)
+{
+#define ZERO_COORD coord[0] = coord[1] = coord[2] = 0.0
   
-  gp_Pnt P = BRep_Tool::Pnt( aVertex );
+  // gp_Pnt P = BRep_Tool::Pnt( aVertex ); ??????????????????????????
   float delta = 1, coord[3];
   vtkIdType pts[2];
   // insert pt

@@ -727,7 +727,7 @@ GEOMGUI_DimensionProperty::operator QString() const
 
     aStringValues.remove("\\");
 
-    int it = 0;
+    size_t it = 0;
     for ( ; it < aPacked.size(); ++it )
     {
       int aNextPos = aStringValues.indexOf("(.*)");

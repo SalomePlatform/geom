@@ -284,8 +284,6 @@ bool AdvancedEngine_IOperations::MakeGroups(Handle(GEOM_Object) theShape, int sh
     return false;
   }
 
-  gp_Trsf aTrsfInv = aTrsf.Inverted();
-
 //   int expectedGroups = 0;
 //   if (shapeType == TSHAPE_BASIC)
 //     if (Abs(theR2+theW2-theR1-theW1) <= Precision::Approximation())
@@ -620,6 +618,7 @@ bool AdvancedEngine_IOperations::MakeGroups(Handle(GEOM_Object) theShape, int sh
     if (aGroup.IsNull())
       continue;
 
+    gp_Trsf aTrsfInv = aTrsf.Inverted();
     TopoDS_Shape aGroupShape = aGroup->GetValue();
     BRepBuilderAPI_Transform aTransformationShapeInv (aGroupShape, aTrsfInv, Standard_False);
     TopoDS_Shape aGroupShapeTrsfInv = aTransformationShapeInv.Shape();

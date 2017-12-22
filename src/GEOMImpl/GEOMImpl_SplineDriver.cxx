@@ -374,11 +374,11 @@ GetCreationInformation(std::string&             theOperationName,
       {
         Handle(TColStd_HArray1OfReal) coords = aCI.GetCoordinates();
         GEOM_Param& pntParam = AddParam( theParams, "Points");
-        pntParam << ( coords->Length() ) / 3 << " points: ";
-        for ( int i = coords->Lower(), nb = coords->Upper(); i <= nb; )
-          pntParam << "( " << coords->Value( i++ )
-                   << ", " << coords->Value( i++ )
-                   << ", " << coords->Value( i++ ) << " ) ";
+        pntParam << ( coords->Length() / 3 ) << " points: ";
+        for ( int i = coords->Lower(), nb = coords->Upper(); i <= nb; i += 3 )
+          pntParam << "( " << coords->Value( i+0 )
+                   << ", " << coords->Value( i+1 )
+                   << ", " << coords->Value( i+2 ) << " ) ";
       }
       else
       {

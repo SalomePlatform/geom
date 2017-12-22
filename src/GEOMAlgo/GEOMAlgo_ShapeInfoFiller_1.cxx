@@ -559,7 +559,7 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
                                            const gp_Cylinder& aCyl)
      
 {
-  Standard_Integer i, aNbV, aNbE, aNbCE, aNbSE;
+  Standard_Integer aNbV, aNbE, aNbCE, aNbSE;
   Standard_Real aT0, aT1, aHeight;
   gp_Pnt aPC[3], aPc;
   TopoDS_Edge aE;
@@ -578,7 +578,6 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
     const gp_Dir& aDir=aAx1.Direction();
     const gp_Pnt& aPLoc=aAx1.Location();
     //
-    i=0;
     aNbCE=0;
     aNbSE=0;
     aExp.Init(aF, TopAbs_EDGE);
@@ -795,7 +794,7 @@ Standard_Boolean  GEOMAlgo_ShapeInfoFiller::TreatStepSphere
 {
   Standard_Boolean bRet, bIsAllowedType, bOnlyClosed, bIsEqual;
   Standard_Integer j;
-  Standard_Real aTolAng, aTol;
+  Standard_Real aTol;
   Standard_Real aVolume, aVolumeS, dV, aArea, aAreaS, dA;
   gp_Sphere aSphere[2];
   GeomAbs_SurfaceType aST;
@@ -805,7 +804,6 @@ Standard_Boolean  GEOMAlgo_ShapeInfoFiller::TreatStepSphere
   //
   bRet=Standard_False;
   aTol=Precision::Confusion();
-  aTolAng=Precision::Angular();
   //
   aExp.Init(aSd, TopAbs_FACE);
   for (j=0; aExp.More(); aExp.Next(), ++j) {
