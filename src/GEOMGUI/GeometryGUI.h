@@ -29,8 +29,6 @@
 
 #include "GEOM_GEOMGUI.hxx"
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <SalomeApp_Module.h>
 
 #include <GEOM_Client.hxx>

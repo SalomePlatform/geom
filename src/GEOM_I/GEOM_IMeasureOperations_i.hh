@@ -141,7 +141,7 @@ class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
   CORBA::Double GetAngleBtwVectors (GEOM::GEOM_Object_ptr theShape1,
                                     GEOM::GEOM_Object_ptr theShape2);
 
-  // Methods for recieving radiuses of curvature of curves and surfaces
+  // Methods for receiving radiuses of curvature of curves and surfaces
   // in the given point
   CORBA::Double CurveCurvatureByParam (GEOM::GEOM_Object_ptr theCurve,
                                        CORBA::Double theParam);

@@ -53,7 +53,7 @@ class ShHealOper_Tool
   // Constructor initialized by shape from which faces will be removed.
 
   Standard_EXPORT virtual void Init(const TopoDS_Shape& theShape);
-  //Method for initalization by whole shape.
+  //Method for initialization by whole shape.
   
   inline const TopoDS_Shape& GetResultShape() const
   {

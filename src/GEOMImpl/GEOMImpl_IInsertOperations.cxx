@@ -40,8 +40,6 @@
 #include <GEOM_PythonDump.hxx>
 #include "GEOM_ISubShape.hxx"
 
-#include <Basics_OCCTVersion.hxx>
-
 #include "utilities.h"
 #include <OpUtil.hxx>
 #include <Utils_ExceptHandlers.hxx>
@@ -130,9 +128,8 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::MakeCopy (Handle(GEOM_Object) th
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -284,8 +281,8 @@ int GEOMImpl_IInsertOperations::LoadTexture(const TCollection_AsciiString& theTe
   std::list<std::string>::const_iterator it;
   for (it = lines.begin(); it != lines.end(); ++it) {
     std::string line = *it;
-    int lenline = (line.size()/8 + (line.size()%8 ? 1 : 0)) * 8;
-    for (int i = 0; i < lenline/8; i++) {
+    size_t lenline = (line.size()/8 + (line.size()%8 ? 1 : 0)) * 8;
+    for (size_t i = 0; i < lenline/8; i++) {
       unsigned char byte = 0;
       for (int j = 0; j < 8; j++)
         byte = (byte << 1) + ( i*8+j < line.size() && line[i*8+j] != '0' ? 1 : 0 );
@@ -398,9 +395,8 @@ bool GEOMImpl_IInsertOperations::TransferData
       return false;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return false;
   }
 

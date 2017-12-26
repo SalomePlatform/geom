@@ -189,7 +189,7 @@ Standard_Boolean ShHealOper_EdgeDivide::build(const Handle(TColStd_HSequenceOfRe
     has2d = Standard_False,
     hasPCurves = Standard_False;
 
-  //computation of the split values in dependance from specified mode and values.
+  //computation of the split values in dependence from specified mode and values.
   if(!computeValues(theValues, has3d,has2d,hasPCurves)) {
     myErrorStatus = ShHealOper_InvalidParameters;
     return Standard_False;
@@ -214,7 +214,7 @@ Standard_Boolean ShHealOper_EdgeDivide::build(const Handle(TColStd_HSequenceOfRe
     return Standard_False;
   }
 
-  //split 3d curve and pcurve for each face reffering to edge.
+  //split 3d curve and pcurve for each face referring to edge.
   Standard_Boolean isDone = Standard_True;
   if(hasPCurves) {
     const TopTools_ListOfShape& lfaces  = myMapEdgesFace.FindFromKey(myEdge);

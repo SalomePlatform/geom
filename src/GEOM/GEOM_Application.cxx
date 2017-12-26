@@ -22,7 +22,7 @@
 
 #include <GEOM_Application.hxx>
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOM_Application, TDocStd_Application)
+IMPLEMENT_STANDARD_RTTIEXT(GEOM_Application, TDocStd_Application)
 
 //=======================================================================
 //function : GEOM_Application
@@ -41,22 +41,6 @@ GEOM_Application::GEOM_Application()
 GEOM_Application::~GEOM_Application() 
 {
 }
-
-#if OCC_VERSION_LARGE <= 0x07000000
-//=======================================================================
-//function : Formats
-//purpose  : 
-//=======================================================================
-
-void GEOM_Application::Formats(TColStd_SequenceOfExtendedString& Formats) 
-{  
-  Formats.Append(TCollection_ExtendedString ("SALOME_GEOM"));
-#if OCC_VERSION_MAJOR > 6
-  Formats.Append(TCollection_ExtendedString ("BinOcaf"));
-#endif
-}
-#endif
-
 
 //=======================================================================
 //function : ResourcesName

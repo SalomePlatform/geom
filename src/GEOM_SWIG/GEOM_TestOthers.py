@@ -818,7 +818,7 @@ def TestOtherOperations (geompy, math):
     for aface in afaces:
       ssname = "Reflection of face " + repr(ifa) + " of box " + repr(ibb) + " (by history)"
       if ibb == 6 and (ifa == 2 or ifa == 4):
-        # use IDL interface directly to avoid error message appearence in Python console
+        # use IDL interface directly to avoid error message appearance in Python console
         refl_box_face = geompy.ShapesOp.GetInPlaceByHistory(part, aface)
         if refl_box_face is not None:
           geompy.addToStudyInFather(part, refl_box_face, ssname)

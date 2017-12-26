@@ -32,14 +32,14 @@ public:
   ~BREPPlugin_ExportDriver() {};
 
   static const Standard_GUID& GetID();
-  virtual Standard_Integer   Execute(LOGBOOK& log) const;
-  virtual void Validate(LOGBOOK&) const {}
-  Standard_Boolean MustExecute(const LOGBOOK&) const { return Standard_True; }
+  virtual Standard_Integer   Execute(Handle(TFunction_Logbook)& log) const;
+  virtual void Validate(Handle(TFunction_Logbook)&) const {}
+  Standard_Boolean MustExecute(const Handle(TFunction_Logbook)&) const { return Standard_True; }
 
   virtual bool                 GetCreationInformation( std::string& theOperationName,
 						       std::vector<GEOM_Param>& params );
 
-  OCCT_DEFINE_STANDARD_RTTIEXT(BREPPlugin_ExportDriver,GEOM_BaseDriver)
+  DEFINE_STANDARD_RTTIEXT(BREPPlugin_ExportDriver,GEOM_BaseDriver)
 };
 
 #endif // _BREPPlugin_ExportDriver_HXX

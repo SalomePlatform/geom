@@ -97,7 +97,7 @@ void BrepGeometry::setTopoDS_Shape(const TopoDS_Shape& shape)
 
 void BrepGeometry::initIds()
 {
-    // intialization of Ids
+    // initialization of Ids
     initListIds(TopAbs_VERTEX, m_vertices);
     initListIds(TopAbs_EDGE, m_edges);
     initListIds(TopAbs_FACE, m_faces);

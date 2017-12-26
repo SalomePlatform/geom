@@ -133,10 +133,10 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Boolean isPublished,
 	  anAttrStr = SALOMEDS::AttributeString::_narrow(anAttr);
 	  SALOMEDS::ListOfListOfStrings_var aSections = aStudy->ParseVariables(anAttrStr->Value());
 	  ObjectStates* aStates = new ObjectStates();
-	  for(int i = 0; i < aSections->length(); i++) {
+	  for( CORBA::ULong i = 0; i < aSections->length(); i++) {
 	    TState aState;
 	    SALOMEDS::ListOfStrings aListOfVars = aSections[i];
-	    for(int j = 0; j < aListOfVars.length(); j++) {
+	    for( CORBA::ULong j = 0; j < aListOfVars.length(); j++) {
 	      bool isVar = aStudy->IsVariable(aListOfVars[j].in());
 	      TVariable aVar = TVariable( (char*)aListOfVars[j].in(), isVar );
 	      aState.push_back(aVar);
@@ -281,7 +281,7 @@ char* GEOM_Gen_i::GetDumpName (const char* theStudyEntry)
 {
   const char* name = _impl->GetDumpName( theStudyEntry );
   if ( name && strlen( name ) > 0 )
-    return strdup( name );
+    return CORBA::string_dup( name );
 
   return NULL;
 }

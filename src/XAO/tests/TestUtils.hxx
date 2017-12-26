@@ -30,9 +30,19 @@ namespace XAO
     public:
         static std::string getTestFilePath(const std::string& fileName)
         {
-            std::string dataDir = getenv("GEOM_SRC_DIR");
-            dataDir += "/src/XAO/tests/data/";
-            dataDir += fileName;
+            std::string dataDir = "";
+            char* geomSrcDir = getenv("XAO_DATA_DIR");
+	    if (geomSrcDir != NULL)
+	    {
+		dataDir = geomSrcDir;
+#if defined _WIN32 || defined __CYGWIN__
+		dataDir += "\\";
+#else
+		dataDir += "/";
+#endif
+		dataDir += fileName;
+	    }
+
             return dataDir;
         }
 

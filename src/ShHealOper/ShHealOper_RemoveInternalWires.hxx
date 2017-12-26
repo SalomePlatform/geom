@@ -27,7 +27,6 @@
 #ifndef ShHealOper_RemoveInternalWires_HeaderFile
 #define ShHealOper_RemoveInternalWires_HeaderFile
 
-#include <MMgt_TShared.hxx>
 #include <ShHealOper_Tool.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopTools_SequenceOfShape.hxx>
@@ -48,10 +47,10 @@ class ShHealOper_RemoveInternalWires : public ShHealOper_Tool
 
   /// Copy constructor
   Standard_EXPORT ShHealOper_RemoveInternalWires (const TopoDS_Shape& theShape);
-  //Method for initalization by whole shape.
+  //Method for initialization by whole shape.
   
   Standard_EXPORT virtual void Init(const TopoDS_Shape& theShape);
-  //Method for initalization by whole shape.
+  //Method for initialization by whole shape.
   
   Standard_EXPORT Standard_Boolean Remove();
   //Removes all internal wires from all faces of the shape

@@ -225,7 +225,7 @@ void GEOMBase_Skeleton::LineEditReturnPressed()
     return;
 
   /* User name of object input management                          */
-  /* If successfull the selection is changed and signal emitted... */
+  /* If successful the selection is changed and signal emitted... */
   /* so SelectionIntoArgument() is automatically called.           */
   const QString objectUserName = myEditCurrentArgument->text();
   QWidget* thisWidget = (QWidget*)this;

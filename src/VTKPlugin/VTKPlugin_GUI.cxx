@@ -88,7 +88,7 @@ bool VTKPlugin_GUI::OnGUIEvent( const QString& theCommandID, SUIT_Desktop* paren
     getGeometryGUI()->getApp()->putInfo( tr("GEOM_PRP_COMMAND").arg( theCommandID ) );
   }
 
-  return true;
+  return true; // ???????????
 }
 
 //=======================================================================
@@ -121,10 +121,10 @@ bool VTKPlugin_GUI::exportVTK( SUIT_Desktop* parent )
 
     double deflection = 0.;
     QString fileName = VTKPlugin_ExportDlg::getFileName( io,
-							 tr( "VTK_FILES" ),
-							 tr( "EXPORT_TITLE" ),
-							 parent,
-							 deflection );
+                                                         tr( "VTK_FILES" ),
+                                                         tr( "EXPORT_TITLE" ),
+                                                         parent,
+                                                         deflection );
 
     if ( fileName.isEmpty() )
       return false;
@@ -142,15 +142,15 @@ bool VTKPlugin_GUI::exportVTK( SUIT_Desktop* parent )
       
       if ( vtkOp->IsDone() )
       {
-	transaction.commit();
+        transaction.commit();
       }
       else
       {
-	transaction.abort();
-	SUIT_MessageBox::critical( parent,
-				   tr( "GEOM_ERROR" ),
-				   tr( "GEOM_PRP_ABORT" ) + "\n" + tr( vtkOp->GetErrorCode() ) );
-	return false;
+        transaction.abort();
+        SUIT_MessageBox::critical( parent,
+                                   tr( "GEOM_ERROR" ),
+                                   tr( "GEOM_PRP_ABORT" ) + "\n" + tr( vtkOp->GetErrorCode() ) );
+        return false;
       }
     }
     catch ( const SALOME::SALOME_Exception& e )
@@ -164,8 +164,8 @@ bool VTKPlugin_GUI::exportVTK( SUIT_Desktop* parent )
   if ( !ok )
   {
     SUIT_MessageBox::warning( parent,
-			      tr( "WRN_WARNING" ),
-			      tr( "GEOM_WRN_NO_APPROPRIATE_SELECTION" ) );
+                              tr( "WRN_WARNING" ),
+                              tr( "GEOM_WRN_NO_APPROPRIATE_SELECTION" ) );
   }
   return ok;
 }

@@ -105,10 +105,12 @@ class GEOMImpl_ITransformOperations : public GEOM_IOperations
                                                        Handle(GEOM_Object) thePoint);
 
   Standard_EXPORT Handle(GEOM_Object) OffsetShape (Handle(GEOM_Object) theObject,
-                                                   double theOffset);
+                                                   double              theOffset,
+                                                   bool                theJoinByPipes);
 
   Standard_EXPORT Handle(GEOM_Object) OffsetShapeCopy (Handle(GEOM_Object) theObject,
-                                                       double theOffset);
+                                                       double              theOffset,
+                                                       bool                theJoinByPipes);
 
   Standard_EXPORT Handle(GEOM_Object) ProjectShapeCopy (Handle(GEOM_Object) theSource,
                                                         Handle(GEOM_Object) theTarget);

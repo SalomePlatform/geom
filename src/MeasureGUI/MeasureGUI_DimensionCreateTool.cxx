@@ -687,7 +687,7 @@ Handle(AIS_DiameterDimension) MeasureGUI_DimensionCreateTool::Diameter( const GE
   Handle(AIS_DiameterDimension) aDimension = new AIS_DiameterDimension( aRuledCirc, aPln );
 
   // if flyout is extended in tangent direction to circle, the default flyout value is used
-  // if flyout is extended in plane of circle, the zero flyout value is choosen initially
+  // if flyout is extended in plane of circle, the zero flyout value is chosen initially
   Standard_Real aFlyout = aCircN.IsParallel( aPln.Axis().Direction(), Precision::Angular() ) ? 0.0 : Settings.DefaultFlyout;
 
   aDimension->SetFlyout(aFlyout);
@@ -929,7 +929,7 @@ void MeasureGUI_DimensionCreateTool::PositionLength( const Bnd_Box& theBnd,
 //            flyout plane to best match the current view projection (if any)
 //            The points are aligned to XOY, YOZ, ZOX planes.
 //            The flyout takes into account bounding box of main shape of face normal
-//            vector. The flyouts tangetial to the circle plane are directed in 
+//            vector. The flyouts tangential to the circle plane are directed in 
 //            accordance with the face normal (if not-null), otherwise the flyouts
 //            are turned to direct to the closest border of bounding box.
 //=================================================================================

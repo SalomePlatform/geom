@@ -316,7 +316,7 @@ bool RepairGUI_LimitToleranceDlg::execute(ObjectList& objects)
 //================================================================
 // Function : onAccept
 // Purpose  : This method should be called from dialog's slots onOk() and onApply()
-//            It perfroms user input validation, then it
+//            It performs user input validation, then it
 //            performs a proper operation and manages transactions, etc.
 //================================================================
 bool RepairGUI_LimitToleranceDlg::onAcceptLocal()

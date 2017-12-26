@@ -1029,7 +1029,7 @@ void GroupGUI_GroupDlg::activateSelection()
   // local selection
   if (!myMainObj->_is_nil() &&
       !myEditCurrentArgument &&
-      myIsShapeType) // check if shape type is already choosen by user
+      myIsShapeType) // check if shape type is already chosen by user
   {
     GEOM_Displayer* aDisplayer = getDisplayer();
 

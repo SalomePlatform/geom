@@ -467,7 +467,7 @@ void GEOMToolsGUI::OnEditDelete()
 
   _PTR(StudyBuilder) aStudyBuilder (aStudy->NewBuilder());
   GEOM_Displayer disp;
-  disp.SetUpdateColorScale( false ); // IPAL54049
+  bool toUpdateColorScale = disp.SetUpdateColorScale( false ); // IPAL54049
 
   if ( isComponentSelected ) {
     // GEOM component is selected: delete all objects recursively
@@ -519,6 +519,7 @@ void GEOMToolsGUI::OnEditDelete()
     }
   }
 
+  disp.SetUpdateColorScale( toUpdateColorScale ); // IPAL54049
   selected.Clear();
   aSelMgr->setSelectedObjects( selected );
   getGeometryGUI()->updateObjBrowser();

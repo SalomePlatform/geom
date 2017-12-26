@@ -597,7 +597,7 @@ STEPPlugin_ImportDriver::STEPPlugin_ImportDriver()
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer STEPPlugin_ImportDriver::Execute(LOGBOOK& log) const
+Standard_Integer STEPPlugin_ImportDriver::Execute(Handle(TFunction_Logbook)& log) const
 {
   if( Label().IsNull() ) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction( Label() );
@@ -787,9 +787,8 @@ Standard_Integer STEPPlugin_ImportDriver::Execute(LOGBOOK& log) const
       aResShape.Nullify();
     }
   }
-  catch( Standard_Failure ) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    anError = aFail->GetMessageString();
+  catch( Standard_Failure& aFail ) {
+    anError = aFail.GetMessageString();
     aResShape.Nullify();
   }
 
@@ -800,11 +799,7 @@ Standard_Integer STEPPlugin_ImportDriver::Execute(LOGBOOK& log) const
 
   aFunction->SetValue( aResShape );
 
-#if OCC_VERSION_MAJOR < 7
-  log.SetTouched(Label());
-#else
   log->SetTouched(Label());
-#endif
 
   return 1;
 }
@@ -876,11 +871,10 @@ STEPPlugin_ImportDriver::GetValue( const TCollection_AsciiString& theFileName,
       theError = theFileName + " reading failed";
     }
   }
-  catch( Standard_Failure ) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    theError = aFail->GetMessageString();
+  catch( Standard_Failure& aFail ) {
+    theError = aFail.GetMessageString();
   }
   return aValue;
 }
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT( STEPPlugin_ImportDriver, GEOM_BaseDriver );
+IMPLEMENT_STANDARD_RTTIEXT( STEPPlugin_ImportDriver, GEOM_BaseDriver );

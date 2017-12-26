@@ -50,7 +50,7 @@
 
 #include <gp_Pnt.hxx>
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT(BlockFix_PeriodicSurfaceModifier, BRepTools_Modification);
+IMPLEMENT_STANDARD_RTTIEXT(BlockFix_PeriodicSurfaceModifier, BRepTools_Modification);
 
 //=======================================================================
 //function : BlockFix_PeriodicSurfaceModifier()
@@ -81,7 +81,7 @@ void BlockFix_PeriodicSurfaceModifier::SetTolerance(const Standard_Real Tol)
 
 //=======================================================================
 //function : ModifySurface
-//purpose  : auxilary
+//purpose  : auxiliary
 //=======================================================================
 static Standard_Boolean ModifySurface(const TopoDS_Face& aFace,
                                       const Handle(Geom_Surface)& aSurface,

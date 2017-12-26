@@ -92,7 +92,7 @@ Standard_Boolean GEOMAlgo_GetInPlace::CheckCoincidence(const TopoDS_Shape& aS1,
 {
   Standard_Boolean bOk;
   Standard_Integer iErr;
-  Standard_Real aTol2;
+  //Standard_Real aTol2;
   TopAbs_ShapeEnum aType1, aType2;
   TopAbs_State aState;
   gp_Pnt aP1, aP2;
@@ -101,7 +101,7 @@ Standard_Boolean GEOMAlgo_GetInPlace::CheckCoincidence(const TopoDS_Shape& aS1,
   //
   iErr=0;
   bOk=Standard_False;
-  aTol2=myTolerance*myTolerance;
+  //aTol2=myTolerance*myTolerance;
   aType1=aS1.ShapeType();
   aType2=aS2.ShapeType();
   //

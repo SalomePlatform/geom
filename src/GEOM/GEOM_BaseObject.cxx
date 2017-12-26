@@ -293,7 +293,7 @@ TCollection_AsciiString GEOM_BaseObject::GetName()
     aName = aNameAttr->Get();
   // do not return pointer of local variable
   // return aName.ToCString();
-  // the following code could lead to memory leak, so take care about recieved pointer
+  // the following code could lead to memory leak, so take care about received pointer
   return aName;
 }
 
@@ -486,4 +486,4 @@ TDF_Label GEOM_BaseObject::GetFreeLabel()
   return _label.FindChild(FREE_LABEL);
 }
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOM_BaseObject, Standard_Transient );
+IMPLEMENT_STANDARD_RTTIEXT(GEOM_BaseObject, Standard_Transient );

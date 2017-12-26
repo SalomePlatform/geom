@@ -46,8 +46,6 @@
 #include <GEOM_Function.hxx>
 #include <GEOM_PythonDump.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
 #include "utilities.h"
 #include <OpUtil.hxx>
 #include <Utils_ExceptHandlers.hxx>
@@ -135,9 +133,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateTwoPoints
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -186,9 +183,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateDXDYDZ
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -240,9 +236,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateTwoPointsCopy
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -293,9 +288,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateDXDYDZCopy
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -346,9 +340,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateVector
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -397,9 +390,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateVectorCopy
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -456,9 +448,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateVectorDistance
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -517,9 +508,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Translate1D
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -580,9 +570,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Translate2D (Handle(GEOM_Obje
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -776,9 +765,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorPlane
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -827,9 +815,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorPlaneCopy
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -879,9 +866,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorPoint
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -930,9 +916,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorPointCopy
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -982,9 +967,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorAxis
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1033,9 +1017,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorAxisCopy
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1053,8 +1036,10 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorAxisCopy
  *  OffsetShape
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShape
-                              (Handle(GEOM_Object) theObject, double theOffset)
+Handle(GEOM_Object)
+GEOMImpl_ITransformOperations::OffsetShape (Handle(GEOM_Object) theObject,
+                                            double              theOffset,
+                                            bool                theJoinByPipes)
 {
   SetErrorCode(KO);
 
@@ -1072,8 +1057,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShape
   if (aFunction->GetDriverGUID() != GEOMImpl_OffsetDriver::GetID()) return NULL;
 
   GEOMImpl_IOffset aTI (aFunction);
-  aTI.SetShape(anOriginal);
-  aTI.SetValue(theOffset);
+  aTI.SetShape( anOriginal );
+  aTI.SetValue( theOffset );
+  aTI.SetJoinByPipes( theJoinByPipes );
 
   //Compute the offset
   try {
@@ -1083,9 +1069,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShape
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1102,8 +1087,10 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShape
  *  OffsetShapeCopy
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShapeCopy
-                              (Handle(GEOM_Object) theObject, double theOffset)
+Handle(GEOM_Object)
+GEOMImpl_ITransformOperations::OffsetShapeCopy( Handle(GEOM_Object) theObject,
+                                                double              theOffset,
+                                                bool                theJoinByPipes)
 {
   SetErrorCode(KO);
 
@@ -1124,8 +1111,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShapeCopy
   if (aFunction->GetDriverGUID() != GEOMImpl_OffsetDriver::GetID()) return NULL;
 
   GEOMImpl_IOffset aTI (aFunction);
-  aTI.SetShape(anOriginal);
-  aTI.SetValue(theOffset);
+  aTI.SetShape( anOriginal );
+  aTI.SetValue( theOffset );
+  aTI.SetJoinByPipes( theJoinByPipes );
 
   //Compute the offset
   try {
@@ -1135,9 +1123,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShapeCopy
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1205,9 +1192,8 @@ GEOMImpl_ITransformOperations::ProjectShapeCopy (Handle(GEOM_Object) theSource,
         return NULL;
       }
     }
-    catch (Standard_Failure) {
-      Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-      SetErrorCode(aFail->GetMessageString());
+    catch (Standard_Failure& aFail) {
+      SetErrorCode(aFail.GetMessageString());
       return NULL;
     }
   }
@@ -1271,9 +1257,8 @@ Standard_Real GEOMImpl_ITransformOperations::ProjectPointOnWire
       return aResult;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return aResult;
   }
 
@@ -1333,9 +1318,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShape
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1392,9 +1376,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShapeCopy
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1461,9 +1444,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShapeAlongAxes (Handle(G
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1524,9 +1506,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionShape
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1581,9 +1562,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionShapeCopy
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1641,9 +1621,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionAlongPath
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1702,9 +1681,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate (Handle(GEOM_Object) t
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1755,9 +1733,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::RotateCopy (Handle(GEOM_Objec
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1809,9 +1786,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate1D (Handle(GEOM_Object)
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1868,9 +1844,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate1D (Handle(GEOM_Object)
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1930,9 +1905,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate2D (Handle(GEOM_Object)
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -1994,9 +1968,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate2D (Handle(GEOM_Object)
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -2055,9 +2028,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::RotateThreePoints (Handle(GEO
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -2110,9 +2082,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::RotateThreePointsCopy (Handle
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -2254,9 +2225,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TransformLikeOtherCopy
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -2322,9 +2292,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MakeProjectionOnCylinder
       return aResult;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return aResult;
   }
 

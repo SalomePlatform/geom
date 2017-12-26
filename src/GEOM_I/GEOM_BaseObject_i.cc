@@ -51,7 +51,7 @@
 
 GEOM_BaseObject_i::GEOM_BaseObject_i (PortableServer::POA_ptr thePOA,
                                       GEOM::GEOM_Gen_ptr      theEngine,
-                                      HANDLE_NAMESPACE(GEOM_BaseObject) theImpl)
+                                      Handle(::GEOM_BaseObject) theImpl)
   : SALOME::GenericObj_i( thePOA ), _engine(theEngine), _impl(theImpl)
 {
 }
@@ -170,7 +170,7 @@ GEOM::ListOfGBO* GEOM_BaseObject_i::GetDependency()
   TCollection_AsciiString anEntry;
 
   for (int i = 1; i<=aLength; i++) {
-    HANDLE_NAMESPACE(GEOM_BaseObject) anObj = HANDLE_NAMESPACE(GEOM_BaseObject)::DownCast(aSeq->Value(i));
+    Handle(::GEOM_BaseObject) anObj = Handle(::GEOM_BaseObject)::DownCast(aSeq->Value(i));
     if (anObj.IsNull()) continue;
     TDF_Tool::Entry(anObj->GetEntry(), anEntry);
     GEOM::GEOM_BaseObject_var obj = _engine->GetObject((char*) anEntry.ToCString());
@@ -200,7 +200,7 @@ GEOM::ListOfGBO* GEOM_BaseObject_i::GetLastDependency()
   TCollection_AsciiString anEntry;
 
   for (int i = 1; i<=aLength; i++) {
-     HANDLE_NAMESPACE(GEOM_BaseObject) anObj = HANDLE_NAMESPACE(GEOM_BaseObject)::DownCast(aSeq->Value(i));
+     Handle(::GEOM_BaseObject) anObj = Handle(::GEOM_BaseObject)::DownCast(aSeq->Value(i));
      if (anObj.IsNull()) continue;
      GEOM::GEOM_BaseObject_var obj = _engine->GetObject(anObj->GetEntryString().ToCString());
      aList[i-1] = GEOM::GEOM_BaseObject::_duplicate( obj );
@@ -265,8 +265,8 @@ GEOM::CreationInformationSeq* GEOM_BaseObject_i::GetCreationInformation()
   int nbI = 0;
   for ( int i = 1; i <= nbFun; ++i )
   {
-    HANDLE_NAMESPACE(GEOM_BaseDriver) driver =
-      HANDLE_NAMESPACE(GEOM_BaseDriver)::DownCast( _impl->GetCreationDriver( i ));
+    Handle(::GEOM_BaseDriver) driver =
+      Handle(::GEOM_BaseDriver)::DownCast( _impl->GetCreationDriver( i ));
     if ( !driver.IsNull() )
     {
       std::vector<GEOM_Param> params;

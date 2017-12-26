@@ -255,7 +255,7 @@ def MakeRotation(g, pt, ve, angle):
 
 def MakeMirrorByPoint(s, point):
     """
-    Creates a symmetric object by point symetry
+    Creates a symmetric object by point symmetry
     """
     return fkl
 
@@ -263,7 +263,7 @@ def MakeMirrorByPoint(s, point):
 
 def MakeMirrorByLine(s, line):
     """
-    Creates a symmetric object by line symetry
+    Creates a symmetric object by line symmetry
     """
     return fkl
 
@@ -271,7 +271,7 @@ def MakeMirrorByLine(s, line):
 
 def MakeMirrorByPlane(s, pt, ve):
     """
-    Creates a symmetric object by plane symetry defined by a point and a normal vector
+    Creates a symmetric object by plane symmetry defined by a point and a normal vector
     """
     p = plane(pt, ve)
     r = geompy.MakeMirrorByplane(s, p)
@@ -301,7 +301,7 @@ def mergePointsNearBy(l, v):
     """
     return fkl
 
-# Acces operators
+# Access operators
 # ---------------
 
 def getCoords(v):

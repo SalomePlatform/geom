@@ -200,7 +200,7 @@ Handle(TColStd_HSequenceOfInteger)
   // Default value=3
   aFinder.SetNbPntsMin(3);
   // Sets the maximal number of inner points for edges or faces.
-  // It is usefull for the cases when this number is very big (e.g =2000) to improve
+  // It is useful for the cases when this number is very big (e.g =2000) to improve
   // the performance. If this value =0, all inner points will be taken into account.
   // Default value=0
   aFinder.SetNbPntsMax(0);
@@ -312,7 +312,7 @@ TopoDS_Shape AdvancedEngine_PipeTShapeDriver::MakePipeTShape (const double r1, c
 
   gp_Pnt aP0 (0, 0, 0);
   gp_Pnt aP1 (-l1, 0, 0);
-  gp_Vec aVX = gp::DX(), aVY = gp::DY(), aVZ = gp::DZ();
+  gp_Vec aVX = gp::DX(), aVZ = gp::DZ();
   gp_Ax2 anAxes1 (aP1, aVX, aVZ);
   gp_Ax2 anAxes2 (aP0, aVZ, aVX);
 
@@ -400,7 +400,7 @@ TopoDS_Shape AdvancedEngine_PipeTShapeDriver::MakeQuarterPipeTShape (const doubl
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer AdvancedEngine_PipeTShapeDriver::Execute(LOGBOOK& log) const
+Standard_Integer AdvancedEngine_PipeTShapeDriver::Execute(Handle(TFunction_Logbook)& log) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
@@ -623,11 +623,7 @@ Standard_Integer AdvancedEngine_PipeTShapeDriver::Execute(LOGBOOK& log) const
 
   aFunction->SetValue(aShape);
 
-#if OCC_VERSION_MAJOR < 7
-  log.SetTouched(Label());
-#else
   log->SetTouched(Label());
-#endif
 
   return 1;
 }
@@ -688,4 +684,4 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT (AdvancedEngine_PipeTShapeDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (AdvancedEngine_PipeTShapeDriver,GEOM_BaseDriver);

@@ -408,7 +408,7 @@ GEOMImpl_ShapeDriver::GEOMImpl_ShapeDriver()
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer GEOMImpl_ShapeDriver::Execute(LOGBOOK& log) const
+Standard_Integer GEOMImpl_ShapeDriver::Execute(Handle(TFunction_Logbook)& log) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
@@ -744,7 +744,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(LOGBOOK& log) const
     unsigned int ind, nbshapes = aShapes->Length();
     
     // add faces
-    BOPCol_ListOfShape aLS;
+    TopTools_ListOfShape aLS;
     for (ind = 1; ind <= nbshapes; ind++) {
       Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast(aShapes->Value(ind));
       TopoDS_Shape aShape_i = aRefShape->GetValue();
@@ -770,11 +770,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(LOGBOOK& log) const
     aMV.SetArguments(aLS);
     aMV.SetIntersect(aCI.GetIsIntersect());
     aMV.Perform();
-#if OCC_VERSION_LARGE > 0x07010001
     if (aMV.HasErrors()) return 0;
-#else
-    if (aMV.ErrorStatus()) return 0;
-#endif
 
     aShape = aMV.Shape();
   }
@@ -1083,11 +1079,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(LOGBOOK& log) const
 
   aFunction->SetValue(aShape);
 
-#if OCC_VERSION_MAJOR < 7
-  log.SetTouched(Label());
-#else
   log->SetTouched(Label());
-#endif
 
   if (!aWarning.IsEmpty())
     Standard_Failure::Raise(aWarning.ToCString());
@@ -2034,7 +2026,7 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_ShapeDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_ShapeDriver,GEOM_BaseDriver);
 
 //modified by NIZNHY-PKV Wed Dec 28 13:48:31 2011f
 #include <TopoDS_Iterator.hxx>

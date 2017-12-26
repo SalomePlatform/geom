@@ -27,7 +27,7 @@
 
 #include "GEOM_InteractiveObject.hxx"
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOM_InteractiveObject, SALOME_InteractiveObject)
+IMPLEMENT_STANDARD_RTTIEXT(GEOM_InteractiveObject, SALOME_InteractiveObject)
 
 GEOM_InteractiveObject::GEOM_InteractiveObject()
   : SALOME_InteractiveObject()

@@ -55,8 +55,6 @@
 #include <DependencyTree_Selector.h>
 #endif
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <SALOME_ListIO.hxx>
 
 #include <SALOMEDS_SObject.hxx>
@@ -530,7 +528,7 @@ void GEOMToolsGUI::OnDiscloseConcealChildren( bool show )
         }
 
         SUIT_OverrideCursor wc;
-        disp->SetUpdateColorScale( false ); // IPAL54049
+        bool toUpdateColorScale = disp->SetUpdateColorScale( false ); // IPAL54049
         for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
           Handle(SALOME_InteractiveObject) IObject = It.Value();
 
@@ -544,7 +542,7 @@ void GEOMToolsGUI::OnDiscloseConcealChildren( bool show )
             }
           } // if ( obj )
         } // iterator
-        disp->SetUpdateColorScale( true );
+        disp->SetUpdateColorScale( toUpdateColorScale );
       }
     }
     app->updateObjectBrowser( false );
@@ -597,7 +595,7 @@ void GEOMToolsGUI::OnUnpublishObject() {
           return;
         }
         SUIT_OverrideCursor wc;
-        disp->SetUpdateColorScale( false ); // IPAL54049
+        bool toUpdateColorScale = disp->SetUpdateColorScale( false ); // IPAL54049
         for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
           Handle(SALOME_InteractiveObject) IObject = It.Value();
 
@@ -616,14 +614,13 @@ void GEOMToolsGUI::OnUnpublishObject() {
             }
           } // if ( obj )
         } // iterator
-        disp->SetUpdateColorScale( true ); // IPAL54049
+        disp->SetUpdateColorScale( toUpdateColorScale ); // IPAL54049
         aSelMgr->clearSelected();
       }
     }
     app->updateObjectBrowser( false );
     app->updateActions();
   }
- 
 }
 
 void GEOMToolsGUI::OnPublishObject() {

@@ -60,7 +60,7 @@ GEOMImpl_OffsetDriver::GEOMImpl_OffsetDriver()
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer GEOMImpl_OffsetDriver::Execute(LOGBOOK& log) const
+Standard_Integer GEOMImpl_OffsetDriver::Execute(Handle(TFunction_Logbook)& log) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
@@ -86,11 +86,20 @@ Standard_Integer GEOMImpl_OffsetDriver::Execute(LOGBOOK& log) const
     StdFail_NotDone::Raise(aMsg.ToCString());
   }
 
-  if (aType == OFFSET_SHAPE || aType == OFFSET_SHAPE_COPY) {
-    BRepOffsetAPI_MakeOffsetShape MO (aShapeBase,
-                                      aCI.GetValue(),
-                                      aTol);
-    if (MO.IsDone()) {
+  if ( aType == OFFSET_SHAPE || aType == OFFSET_SHAPE_COPY )
+  {
+    BRepOffsetAPI_MakeOffsetShape MO;
+    BRepOffset_Mode aMode = BRepOffset_Skin;
+    Standard_Boolean anIntersection = Standard_False, aSelfInter = Standard_False;
+    MO.PerformByJoin( aShapeBase,
+                      aCI.GetValue(),
+                      aTol,
+                      aMode,
+                      anIntersection,
+                      aSelfInter,
+                      aCI.GetJoinByPipes() ? GeomAbs_Arc : GeomAbs_Intersection );
+
+    if ( MO.IsDone() ) {
       aShape = MO.Shape();
       if ( !GEOMUtils::CheckShape(aShape, true) && !GEOMUtils::FixShapeTolerance(aShape) )
         Standard_ConstructionError::Raise("Boolean operation aborted : non valid shape result");
@@ -166,9 +175,9 @@ Standard_Integer GEOMImpl_OffsetDriver::Execute(LOGBOOK& log) const
       }
 
       // Create a hollowed solid.
-      BRepOffsetAPI_MakeThickSolid aMkSolid
-                  (aShapeBase, aFacesToRm, anOffset, aTol, BRepOffset_Skin,
-                   Standard_False, Standard_False, GeomAbs_Intersection);
+      BRepOffsetAPI_MakeThickSolid aMkSolid;
+      aMkSolid.MakeThickSolidByJoin (aShapeBase, aFacesToRm, anOffset, aTol, BRepOffset_Skin,
+                                     Standard_False, Standard_False, GeomAbs_Intersection);
 
       if (aMkSolid.IsDone()) {
         aShape = aMkSolid.Shape();
@@ -180,11 +189,7 @@ Standard_Integer GEOMImpl_OffsetDriver::Execute(LOGBOOK& log) const
 
   aFunction->SetValue(aShape);
 
-#if OCC_VERSION_MAJOR < 7
-  log.SetTouched(Label());
-#else
   log->SetTouched(Label());
-#endif
 
   return 1;
 }
@@ -232,4 +237,4 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_OffsetDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_OffsetDriver,GEOM_BaseDriver);

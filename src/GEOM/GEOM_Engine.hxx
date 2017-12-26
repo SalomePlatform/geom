@@ -27,8 +27,6 @@
 #include "GEOM_Object.hxx"
 #include "GEOM_DataMapOfAsciiStringTransient.hxx"
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <TColStd_DataMapOfIntegerTransient.hxx>
 
 #include <Resource_DataMapOfAsciiStringAsciiString.hxx>
@@ -91,11 +89,11 @@ typedef std::map<int, std::list<TDF_Label> > TFreeLabelsList;
 
 class GEOM_Engine
 {
- public:
+public:
   Standard_EXPORT GEOM_Engine();
   Standard_EXPORT virtual ~GEOM_Engine();
 
-  //Retuns the engine    
+  //Returns the engine
   Standard_EXPORT static GEOM_Engine* GetEngine();   
 
   //Returns the OCAF document by its ID, if document doesn't exists it will be created
@@ -166,10 +164,10 @@ class GEOM_Engine
                                    const TCollection_AsciiString&            anEntry,
                                    Resource_DataMapOfAsciiStringAsciiString& aNameToEntry);
 
- protected:
+protected:
   Standard_EXPORT static void SetEngine(GEOM_Engine* theEngine);       
   
- private:
+private:
 
   Handle(GEOM_Application)  _OCAFApp;
   Handle(TDocStd_Document) _document;

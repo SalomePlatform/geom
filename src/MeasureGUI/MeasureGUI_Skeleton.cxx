@@ -173,7 +173,7 @@ void MeasureGUI_Skeleton::ClickOnHelp()
 void MeasureGUI_Skeleton::LineEditReturnPressed()
 {
   /* User name of object input management                          */
-  /* If successfull the selection is changed and signal emitted... */
+  /* If successful the selection is changed and signal emitted... */
   /* so SelectionIntoArgument() is automatically called.           */
   
   if ( mySelEdit ) {

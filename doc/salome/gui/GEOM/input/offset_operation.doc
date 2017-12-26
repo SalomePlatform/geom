@@ -7,7 +7,12 @@
 
 \n This operation translates each point of an \b Object (a set of
 Objects) along a local normal by a given \b Offset distance (signed
-number, negative value meaning inner offset).
+number, negative value meaning inner offset). Gaps between translated 
+adjacent surfaces are filled in either of two ways: 
+- if <b>Join by pipes</b> is activated, they are filled with pipes;
+- else the surfaces are extended and intersected, so that sharp edges
+  are preserved.
+
 \n \b Offset operation is applicable to faces, shells and solids.
 \n \ref restore_presentation_parameters_page "Advanced options".
 
@@ -16,9 +21,12 @@ number, negative value meaning inner offset).
 
 \n <b>Example:</b>
 
-\image html offsetsn.png "The box and its offset surface"
+\image html offsetsn.png "The box and its offset surface (Join by pipes activated)"
 
-\n <b>TUI Command:</b> <em>geompy.MakeOffset(Shape, Offset),</em>
+\n <b>TUI Command:</b> 
+- Gaps filled by pipes: <em>geompy.MakeOffset(Shape, Offset),</em>
+- Gaps filled by intersection: <em>geompy.MakeOffsetIntersectionJoin(Shape, Offset),</em>
+
 where Shape is a shape(s) which has to be an offset, Offset is a value of
 the offset.
 \n <b>Arguments:</b> Name + Object (face(s), shell(s), solid(s)) +

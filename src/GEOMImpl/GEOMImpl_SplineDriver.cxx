@@ -128,7 +128,7 @@ GEOMImpl_SplineDriver::GEOMImpl_SplineDriver()
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer GEOMImpl_SplineDriver::Execute(LOGBOOK& log) const
+Standard_Integer GEOMImpl_SplineDriver::Execute(Handle(TFunction_Logbook)& log) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
@@ -325,11 +325,7 @@ Standard_Integer GEOMImpl_SplineDriver::Execute(LOGBOOK& log) const
 
   aFunction->SetValue(aShape);
 
-#if OCC_VERSION_MAJOR < 7
-  log.SetTouched(Label());
-#else
   log->SetTouched(Label());
-#endif
 
   return 1;
 }
@@ -378,11 +374,11 @@ GetCreationInformation(std::string&             theOperationName,
       {
         Handle(TColStd_HArray1OfReal) coords = aCI.GetCoordinates();
         GEOM_Param& pntParam = AddParam( theParams, "Points");
-        pntParam << ( coords->Length() ) / 3 << " points: ";
-        for ( int i = coords->Lower(), nb = coords->Upper(); i <= nb; )
-          pntParam << "( " << coords->Value( i++ )
-                   << ", " << coords->Value( i++ )
-                   << ", " << coords->Value( i++ ) << " ) ";
+        pntParam << ( coords->Length() / 3 ) << " points: ";
+        for ( int i = coords->Lower(), nb = coords->Upper(); i <= nb; i += 3 )
+          pntParam << "( " << coords->Value( i+0 )
+                   << ", " << coords->Value( i+1 )
+                   << ", " << coords->Value( i+2 ) << " ) ";
       }
       else
       {
@@ -401,4 +397,4 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_SplineDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_SplineDriver,GEOM_BaseDriver);

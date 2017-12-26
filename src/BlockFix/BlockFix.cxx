@@ -87,7 +87,7 @@
 
 //=======================================================================
 //function : FixResult
-//purpose  : auxilary
+//purpose  : auxiliary
 //=======================================================================
 static void FixResult(const TopoDS_Shape& result,
                       Handle(ShapeBuild_ReShape)& Context,

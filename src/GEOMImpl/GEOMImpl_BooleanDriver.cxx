@@ -114,7 +114,7 @@ GEOMImpl_BooleanDriver::GEOMImpl_BooleanDriver()
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer GEOMImpl_BooleanDriver::Execute(LOGBOOK& log) const
+Standard_Integer GEOMImpl_BooleanDriver::Execute(Handle(TFunction_Logbook)& log) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
@@ -145,24 +145,16 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(LOGBOOK& log) const
         if (isCheckSelfInte) {
           BOPAlgo_CheckerSI aCSI;  // checker of self-interferences
           aCSI.SetLevelOfCheck(BOP_SELF_INTERSECTIONS_LEVEL);
-          BOPCol_ListOfShape aList1, aList2;
+          TopTools_ListOfShape aList1, aList2;
           aList1.Append(aShape1);
           aList2.Append(aShape2);
           aCSI.SetArguments(aList1);
           aCSI.Perform();
-#if OCC_VERSION_LARGE > 0x07010001
           if (aCSI.HasErrors() || aCSI.DS().Interferences().Extent() > 0)
-#else
-          if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0)
-#endif
             StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
           aCSI.SetArguments(aList2);
           aCSI.Perform();
-#if OCC_VERSION_LARGE > 0x07010001
           if (aCSI.HasErrors() || aCSI.DS().Interferences().Extent() > 0)
-#else
-          if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0)
-#endif
             StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
         }
 
@@ -209,15 +201,11 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(LOGBOOK& log) const
 
           if (isCheckSelfInte) {
             aCSI.SetLevelOfCheck(BOP_SELF_INTERSECTIONS_LEVEL);
-            BOPCol_ListOfShape aList1;
+            TopTools_ListOfShape aList1;
             aList1.Append(aShape);
             aCSI.SetArguments(aList1);
             aCSI.Perform();
-#if OCC_VERSION_LARGE > 0x07010001
             if (aCSI.HasErrors() || aCSI.DS().Interferences().Extent() > 0) {
-#else
-            if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0) {
-#endif
               StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
             }
           }
@@ -237,15 +225,11 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(LOGBOOK& log) const
               StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
 
             if (isCheckSelfInte) {
-              BOPCol_ListOfShape aList2;
+              TopTools_ListOfShape aList2;
               aList2.Append(aShape2);
               aCSI.SetArguments(aList2);
               aCSI.Perform();
-#if OCC_VERSION_LARGE > 0x07010001
 	      if (aCSI.HasErrors() || aCSI.DS().Interferences().Extent() > 0) {
-#else
-	      if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0) {
-#endif
                 StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
               }
             }
@@ -282,15 +266,11 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(LOGBOOK& log) const
 
         if (isCheckSelfInte) {
           aCSI.SetLevelOfCheck(BOP_SELF_INTERSECTIONS_LEVEL);
-          BOPCol_ListOfShape aList1;
+          TopTools_ListOfShape aList1;
           aList1.Append(aShape);
           aCSI.SetArguments(aList1);
           aCSI.Perform();
-#if OCC_VERSION_LARGE > 0x07010001
 	  if (aCSI.HasErrors() || aCSI.DS().Interferences().Extent() > 0) {
-#else
-	  if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0) {
-#endif
             StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
           }
         }
@@ -316,15 +296,11 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(LOGBOOK& log) const
             StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
 
           if (isCheckSelfInte) {
-            BOPCol_ListOfShape aList2;
+            TopTools_ListOfShape aList2;
             aList2.Append(aTool);
             aCSI.SetArguments(aList2);
             aCSI.Perform();
-#if OCC_VERSION_LARGE > 0x07010001
 	    if (aCSI.HasErrors() || aCSI.DS().Interferences().Extent() > 0) {
-#else
-	    if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0) {
-#endif
               StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
             }
           }
@@ -347,11 +323,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(LOGBOOK& log) const
 
   aFunction->SetValue(aShape);
 
-#if OCC_VERSION_MAJOR < 7
-  log.SetTouched(Label());
-#else
   log->SetTouched(Label());
-#endif
 
   return 1;
 }
@@ -382,7 +354,7 @@ TopoDS_Shape GEOMImpl_BooleanDriver::makeCompoundShellFromFaces
     }
   }
 
-  BOPCol_ListOfShape aListShapes;
+  TopTools_ListOfShape aListShapes;
   BOPTools_AlgoTools::MakeConnexityBlocks(aFaces, TopAbs_EDGE, TopAbs_FACE, aListShapes);
 
   if (aListShapes.IsEmpty())
@@ -390,7 +362,7 @@ TopoDS_Shape GEOMImpl_BooleanDriver::makeCompoundShellFromFaces
 
   TopoDS_Compound aResult;
   B.MakeCompound(aResult);
-  BOPCol_ListIteratorOfListOfShape anIter(aListShapes);
+  TopTools_ListIteratorOfListOfShape anIter(aListShapes);
 
   for (; anIter.More(); anIter.Next()) {
     TopoDS_Shell aShell;
@@ -450,16 +422,14 @@ TopoDS_Shape GEOMImpl_BooleanDriver::performOperation
           TopoDS_Shape aStepResult = BO.Shape();
 
           // check result of this step: if it is a compound (boolean operations
-          // allways return a compound), we add all sub-shapes of it.
+          // always return a compound), we add all sub-shapes of it.
           // This allows to avoid adding empty compounds,
           // resulting from COMMON on two non-intersecting shapes.
           if (aStepResult.ShapeType() == TopAbs_COMPOUND) {
-#if OCC_VERSION_MAJOR >= 7
             if ((aValue1.ShapeType() == TopAbs_FACE || aValue1.ShapeType() == TopAbs_SHELL) &&
                 (aValue2.ShapeType() == TopAbs_FACE || aValue2.ShapeType() == TopAbs_SHELL)) {
               aStepResult = makeCompoundShellFromFaces(aStepResult);
             }
-#endif
             TopoDS_Iterator aCompIter (aStepResult);
             for (; aCompIter.More(); aCompIter.Next()) {
               // add shape in a result
@@ -513,16 +483,14 @@ TopoDS_Shape GEOMImpl_BooleanDriver::performOperation
       }
       if (isCompound) {
         // check result of this step: if it is a compound (boolean operations
-        // allways return a compound), we add all sub-shapes of it.
+        // always return a compound), we add all sub-shapes of it.
         // This allows to avoid adding empty compounds,
         // resulting from CUT of parts
         if (aCut.ShapeType() == TopAbs_COMPOUND) {
-#if OCC_VERSION_MAJOR >= 7
           if (itSub1.Value().ShapeType() == TopAbs_FACE ||
               itSub1.Value().ShapeType() == TopAbs_SHELL) {
             aCut = makeCompoundShellFromFaces(aCut);
           }
-#endif
           TopoDS_Iterator aCompIter (aCut);
           for (; aCompIter.More(); aCompIter.Next()) {
             // add shape in a result
@@ -550,7 +518,6 @@ TopoDS_Shape GEOMImpl_BooleanDriver::performOperation
 
   // perform FUSE operation
   else if (theType == BOOLEAN_FUSE) {
-#if OCC_VERSION_MAJOR >= 7
     Standard_Boolean isFaces = Standard_False;
     TopTools_ListOfShape listShape1, listShape2;
     GEOMUtils::AddSimpleShapes(theShape1, listShape1);
@@ -568,7 +535,6 @@ TopoDS_Shape GEOMImpl_BooleanDriver::performOperation
         }
       }
     }
-#endif
 
     // Perform
     BRepAlgoAPI_Fuse BO (theShape1, theShape2);
@@ -576,10 +542,8 @@ TopoDS_Shape GEOMImpl_BooleanDriver::performOperation
       StdFail_NotDone::Raise("Fuse operation can not be performed on the given shapes");
     }
     aShape = BO.Shape();
-#if OCC_VERSION_MAJOR >= 7
     if (isFaces)
       aShape = makeCompoundShellFromFaces(aShape);
-#endif
   }
 
   // perform SECTION operation
@@ -620,7 +584,7 @@ TopoDS_Shape GEOMImpl_BooleanDriver::performOperation
           TopoDS_Shape aStepResult = BO.Shape();
 
           // check result of this step: if it is a compound (boolean operations
-          // allways return a compound), we add all sub-shapes of it.
+          // always return a compound), we add all sub-shapes of it.
           // This allows to avoid adding empty compounds,
           // resulting from SECTION on two non-intersecting shapes.
           if (aStepResult.ShapeType() == TopAbs_COMPOUND) {
@@ -739,4 +703,4 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_BooleanDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_BooleanDriver,GEOM_BaseDriver);

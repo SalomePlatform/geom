@@ -42,7 +42,7 @@ class SUIT_ViewWindow;
 /*!
  * \class MeasureGUI_AnnotationInteractor
  * \brief Class implementing logical layer for interactive dragging of annotation
- *        labels. It includes two components: listener for GUI events occuring
+ *        labels. It includes two components: listener for GUI events occurring
  *        inside of OCCT 3D viewer and processor for hooked events to perform
  *        interactive modification of the selected annotation within current
  *        AIS context.

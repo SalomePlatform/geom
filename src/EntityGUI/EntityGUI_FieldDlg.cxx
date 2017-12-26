@@ -1634,7 +1634,7 @@ void EntityGUI_FieldDlg::activateSelection()
   // local selection
   if (!myShape->_is_nil() &&
       !myEditCurrentArgument &&
-      myShapeIDs.size() > 1 ) // shape type is already choosen by user
+      myShapeIDs.size() > 1 ) // shape type is already chosen by user
   {
     GEOM_Displayer*   aDisplayer = getDisplayer();
     CORBA::String_var aMainEntry = myShape->GetStudyEntry();

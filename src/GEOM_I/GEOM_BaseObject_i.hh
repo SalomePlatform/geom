@@ -37,7 +37,7 @@
 class GEOM_I_EXPORT GEOM_BaseObject_i : public virtual POA_GEOM::GEOM_BaseObject, public virtual SALOME::GenericObj_i
 {
  public:
-  GEOM_BaseObject_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, HANDLE_NAMESPACE(GEOM_BaseObject) theImpl);
+  GEOM_BaseObject_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, Handle(::GEOM_BaseObject) theImpl);
   ~GEOM_BaseObject_i();
 
   virtual char* GetEntry();
@@ -66,7 +66,7 @@ class GEOM_I_EXPORT GEOM_BaseObject_i : public virtual POA_GEOM::GEOM_BaseObject
 
   virtual GEOM::CreationInformationSeq* GetCreationInformation();
 
-  HANDLE_NAMESPACE(GEOM_BaseObject) GetImpl() { return _impl; }
+  Handle(::GEOM_BaseObject) GetImpl() { return _impl; }
 
  protected:
 
@@ -74,7 +74,7 @@ class GEOM_I_EXPORT GEOM_BaseObject_i : public virtual POA_GEOM::GEOM_BaseObject
 
  private:
 
-  HANDLE_NAMESPACE(GEOM_BaseObject) _impl;
+  Handle(::GEOM_BaseObject) _impl;
 };
 
 #endif

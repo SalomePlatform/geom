@@ -30,8 +30,6 @@
 
 #include <GEOMUtils.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
 // Open CASCADE Includes
 #include <AIS_InteractiveContext.hxx>
 #include <BRepAdaptor_Surface.hxx>
@@ -67,22 +65,14 @@
 #include <gp_Dir.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Vec.hxx>
-
-#if OCC_VERSION_LARGE > 0x06070200
 #include <Prs3d_VertexDrawMode.hxx>
-#endif
-
-#if OCC_VERSION_MAJOR < 7
-  #include <StdPrs_WFDeflectionShape.hxx>
-#else
-  #include <StdPrs_WFShape.hxx>
-#endif
+#include <StdPrs_WFShape.hxx>
 
 #include <SalomeApp_Tools.h>
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOM_AISShape, SALOME_AISShape)
+IMPLEMENT_STANDARD_RTTIEXT(GEOM_AISShape, SALOME_AISShape)
 
 GEOM_AISShape::TopLevelDispMode GEOM_AISShape::myTopLevelDm = GEOM_AISShape::TopKeepCurrent;
 Quantity_Color GEOM_AISShape::myTopLevelColor;
@@ -107,15 +97,11 @@ static void getEntityOwners( const Handle(AIS_InteractiveObject)&  theObj,
     Handle(SelectMgr_Selection) sel = theObj->Selection( m );
 
     for ( sel->Init(); sel->More(); sel->Next() ) {
-#if OCC_VERSION_LARGE > 0x06080100
       const Handle(SelectMgr_SensitiveEntity) aHSenEntity = sel->Sensitive();
       if( aHSenEntity.IsNull() )
         continue;
 
       Handle(SelectBasics_SensitiveEntity) entity = aHSenEntity->BaseSensitive();
-#else
-      Handle(SelectBasics_SensitiveEntity) entity = sel->Sensitive();
-#endif
       if ( entity.IsNull() )
         continue;
       Handle(SelectMgr_EntityOwner) owner =
@@ -221,7 +207,7 @@ Standard_CString GEOM_AISShape::getName()
 void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
                             const Handle(Prs3d_Presentation)&           aPrs,
                             const Standard_Integer                      aMode)
-{  
+{ 
   if (IsInfinite()) aPrs->SetInfiniteState(Standard_True); //pas de prise en compte lors du FITALL
 
   Handle(AIS_InteractiveContext) anIC = GetContext();
@@ -234,10 +220,8 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
   bool anIsColorField = anIsField && myFieldDataType != GEOM::FDT_String;
   bool anIsTextField = anIsField && myFieldDataType == GEOM::FDT_String;
 
-#if OCC_VERSION_LARGE > 0x06070200
   if (isShowVertices())
     myDrawer->SetVertexDrawMode(Prs3d_VDM_All);
-#endif
 
   //   StdSelect_DisplayMode d = (StdSelect_DisplayMode) aMode;
   bool isTopLev = isTopLevel() && switchTopLevel();
@@ -254,11 +238,7 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
       if( !isTopLev && anIsColorField && myFieldDimension == 1 )
         drawField( aPrs, false, aMode == CustomHighlight );
       else
-#if OCC_VERSION_MAJOR < 7
-        StdPrs_WFDeflectionShape::Add(aPrs,myshape,myDrawer);      
-#else
         StdPrs_WFShape::Add(aPrs,myshape,myDrawer);
-#endif
       break;
     }
     case Shading:
@@ -278,11 +258,8 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
     }
     case TexturedShape:
     {
-#ifdef USE_TEXTURED_SHAPE
-        AIS_TexturedShape::Compute(aPresentationManager, aPrs, aMode);
-#else
-        AIS_Shape::Compute(aPresentationManager, aPrs, aMode);
-#endif
+      shadingMode(aPresentationManager, aPrs, Shading);
+      break;
     }
   }
   if (isShowVectors())
@@ -437,11 +414,7 @@ void GEOM_AISShape::shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPre
   {
     // PAL12113: AIS_Shape::Compute() works correctly with shapes containing no faces
     //StdPrs_ShadedShape::Add(aPrs,myshape,myDrawer);
-#ifdef USE_TEXTURED_SHAPE
-    AIS_TexturedShape::Compute(aPresentationManager, aPrs, aMode);
-#else
-    AIS_Shape::Compute(aPresentationManager, aPrs, aMode);
-#endif
+    SALOME_AISShape::Compute(aPresentationManager, aPrs, aMode);
   }
 }
 
@@ -604,6 +577,7 @@ void GEOM_AISShape::drawField( const Handle(Prs3d_Presentation)& thePrs,
       else
       {
         Quantity_Color aColor( aQColor.redF(), aQColor.greenF(), aQColor.blueF(), Quantity_TOC_RGB );
+        SetCustomColor( aSubShape, aColor );
         if( myFieldDimension == 0 )
         {
           TopoDS_Vertex aVertexShape = TopoDS::Vertex( aSubShape );
@@ -630,22 +604,25 @@ void GEOM_AISShape::drawField( const Handle(Prs3d_Presentation)& thePrs,
             myDrawer->WireAspect()->SetWidth( myOwnWidth );
           else
             myDrawer->WireAspect()->SetWidth( myOwnWidth + 4 );
-#if OCC_VERSION_MAJOR < 7
-          StdPrs_WFDeflectionShape::Add( thePrs, aSubShape, myDrawer );
-#else
+          /*
           StdPrs_WFShape::Add( thePrs, aSubShape, myDrawer );
-#endif
+          */
         }
         else if( myFieldDimension == 2 ||
                  myFieldDimension == 3 ||
                  myFieldDimension == -1 )
         {
-          myDrawer->ShadingAspect()->SetColor( aColor );
-          StdPrs_ShadedShape::Add( thePrs, aSubShape, myDrawer );
+          //Handle(Prs3d_ShadingAspect) anAspect = new Prs3d_ShadingAspect();
+          //anAspect->SetColor( aColor );
+          //myDrawer->SetShadingAspect( anAspect );
+          //StdPrs_ShadedShape::Add( thePrs, aSubShape, myDrawer );
         }
       }
     }
   }
+
+  SALOME_AISShape::Compute( Handle(PrsMgr_PresentationManager3d)(),
+                            thePrs, AIS_Shaded );
 }
 
 void GEOM_AISShape::drawName( const Handle(Prs3d_Presentation)& thePrs )

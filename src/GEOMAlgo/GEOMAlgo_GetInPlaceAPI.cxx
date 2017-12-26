@@ -187,7 +187,7 @@ Standard_Integer GEOMAlgo_GetInPlaceAPI::GetInPlaceOld
           if (aWhereDistance.IsDone() && aWhatDistance.IsDone() &&
               fabs(aWhereDistance.Value() - aWhatDistance.Value()) <= aTolConf)
           {
-            // 0020162: "EDF 961 GEOM : Getinplace is getting additionnal orthogonal faces"
+            // 0020162: "EDF 961 GEOM : Getinplace is getting additional orthogonal faces"
             // aVertex must be projected to the same point on Where and on What
             gp_Pnt pOnWhat  = aWhatDistance.PointOnShape2(1);
             gp_Pnt pOnWhere = aWhereDistance.PointOnShape2(1);
@@ -321,7 +321,7 @@ Standard_Boolean GEOMAlgo_GetInPlaceAPI::GetInPlaceByHistory
   }
 
   // try to find in history
-  TDF_Label aHistoryLabel = theWhereFunction->GetHistoryEntry(Standard_False);
+  //TDF_Label aHistoryLabel = theWhereFunction->GetHistoryEntry(Standard_False);
 
   // search in history for all argument shapes
   Standard_Boolean isFound = Standard_False;

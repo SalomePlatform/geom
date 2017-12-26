@@ -164,7 +164,7 @@ TopoDS_Shape AdvancedEngine_SmoothingSurfaceDriver::MakeSmoothingSurfaceUnClosed
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer AdvancedEngine_SmoothingSurfaceDriver::Execute(LOGBOOK& log) const
+Standard_Integer AdvancedEngine_SmoothingSurfaceDriver::Execute(Handle(TFunction_Logbook)& log) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
@@ -222,11 +222,7 @@ Standard_Integer AdvancedEngine_SmoothingSurfaceDriver::Execute(LOGBOOK& log) co
 
   aFunction->SetValue(aShape);
 
-#if OCC_VERSION_MAJOR < 7
-  log.SetTouched(Label());
-#else
   log->SetTouched(Label());
-#endif
 
   return 1;
 }
@@ -258,10 +254,6 @@ GetCreationInformation(std::string&             theOperationName,
       for ( int i = 1, nb = aCI.GetLength(); i <= nb; ++i )
         theParams[0] << aCI.GetPntOrComp( i ) << " ";
 
-      const Standard_Integer aNbMax  = aCI.GetNbMax();
-      const Standard_Integer aDegMax = aCI.GetDegMax();
-      const Standard_Real    aDMax   = aCI.GetDMax();
-
       AddParam(theParams, "Max nbr of Bezier pieces", aCI.GetNbMax());
       AddParam(theParams, "Max BSpline surface degree", aCI.GetDegMax());
       AddParam(theParams, "3D tolerance of initial approximation", aCI.GetDMax());
@@ -274,4 +266,4 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT (AdvancedEngine_SmoothingSurfaceDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (AdvancedEngine_SmoothingSurfaceDriver,GEOM_BaseDriver);

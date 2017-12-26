@@ -33,7 +33,7 @@ ENDIF(WIN32)
 STRING(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UC)
 
 SET(${PROJECT_NAME_UC}_MAJOR_VERSION 8)
-SET(${PROJECT_NAME_UC}_MINOR_VERSION 3)
+SET(${PROJECT_NAME_UC}_MINOR_VERSION 4)
 SET(${PROJECT_NAME_UC}_PATCH_VERSION 0)
 SET(${PROJECT_NAME_UC}_VERSION
   ${${PROJECT_NAME_UC}_MAJOR_VERSION}.${${PROJECT_NAME_UC}_MINOR_VERSION}.${${PROJECT_NAME_UC}_PATCH_VERSION})
@@ -86,7 +86,7 @@ MARK_AS_ADVANCED(SALOME_BUILD_GUI SALOME_GEOM_USE_OPENCV SALOME_GEOM_USE_VTK)
 # Prerequisites
 # =============
 # Find "big" prerequisites first - they reference themselves many others
-#   -> this can help finding the smaller prerequisites and detect conficts.
+#   -> this can help find the smaller prerequisites and detect conflicts.
 # In our case KERNEL has already loaded many prereq:
 
 ##

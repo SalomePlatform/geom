@@ -78,11 +78,7 @@
 #include <BRepBndLib.hxx>
 //
 #include <IntTools_Tools.hxx>
-#if OCC_VERSION_LARGE > 0x06070100
 #include <IntTools_Context.hxx>
-#else
-#include <BOPInt_Context.hxx>
-#endif
 #include <BOPTools_AlgoTools.hxx>
 #include <BOPTools_AlgoTools3D.hxx>
 #include <BOPTools_AlgoTools2D.hxx>
@@ -514,7 +510,12 @@ void GEOMAlgo_Gluer::MakeSolids()
   myResult=aCmp;
   //
   if (aMS.Extent()) {
+#if OCC_VERSION_LARGE > 0x07020001
+    TopTools_IndexedMapOfShape aMapToAvoid;
+    BOPTools_AlgoTools::CorrectCurveOnSurface(myResult, aMapToAvoid, 0.0001);
+#else
     BOPTools_AlgoTools::CorrectCurveOnSurface(myResult, 0.0001);
+#endif
   }
 }
 //=======================================================================
@@ -907,9 +908,9 @@ void GEOMAlgo_Gluer::MakeEdge(const TopoDS_Edge& aE,
     Standard_Real aTol;
     BRep_Builder aBB;
     TopoDS_Edge E;
-    TopAbs_Orientation anOrE;
+    //TopAbs_Orientation anOrE;
     //
-    anOrE=aE.Orientation();
+    //anOrE=aE.Orientation();
     aTol=BRep_Tool::Tolerance(aE);
     //
     E=aEx;

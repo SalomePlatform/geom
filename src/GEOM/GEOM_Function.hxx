@@ -36,8 +36,6 @@
 #include <TDataStd_ListOfExtendedString.hxx>
 #include <TopoDS_Shape.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
 class GEOM_Function;
 DEFINE_STANDARD_HANDLE (GEOM_Function, Standard_Transient);
 
@@ -174,7 +172,7 @@ public:
   //Returns true if the last method succided
   Standard_EXPORT bool IsDone() { return _isDone; }
 
-  //Retuns true if this function is the last one in the study
+  //Returns true if this function is the last one in the study
   Standard_EXPORT bool IsLastFuntion();
 
   //Returns a sequence of the external dependencies of this function
@@ -197,7 +195,7 @@ public:
   //Returns top label of this function's naming tree
   Standard_EXPORT TDF_Label GetNamingEntry (const Standard_Boolean create = Standard_True);
 
-  OCCT_DEFINE_STANDARD_RTTIEXT(GEOM_Function,Standard_Transient)
+  DEFINE_STANDARD_RTTIEXT(GEOM_Function,Standard_Transient)
 
   private:
 

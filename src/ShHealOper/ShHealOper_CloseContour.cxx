@@ -136,7 +136,7 @@ void ShHealOper_CloseContour::build(Handle(ShapeExtend_WireData)& theSewd)
   //checks that all specified edges belong the one face or not.
   Standard_Boolean isOneFace = checkOneFace(theSewd,aCommonFaces);
 
-  //add edge or increase max tolerance in dependance on specified VertexMode.
+  //add edge or increase max tolerance in dependence on specified VertexMode.
   //if all edges belong the one face that gap will be closed in the 2D by line
   //else gap will be closed in the 3D by line.
   myDone = fixGaps(theSewd,aCommonFaces);

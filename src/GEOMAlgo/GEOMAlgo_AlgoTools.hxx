@@ -26,16 +26,10 @@
 #ifndef _GEOMAlgo_AlgoTools_HeaderFile
 #define _GEOMAlgo_AlgoTools_HeaderFile
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <Standard.hxx>
 #include <Standard_Macro.hxx>
 #include <Standard_Boolean.hxx>
-#if OCC_VERSION_LARGE > 0x06070100
 #include <IntTools_Context.hxx>
-#else
-#include <BOPInt_Context.hxx>
-#endif
 #include <Standard_Integer.hxx>
 
 #include <gp_Pnt.hxx>
@@ -92,34 +86,19 @@ class GEOMAlgo_AlgoTools  {
     static  Standard_Integer RefineSDShapes
       (GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape& aMSD,
        const Standard_Real aTol,
-#if OCC_VERSION_LARGE > 0x06070100
-       const Handle(IntTools_Context)& aCtx
-#else
-       const Handle(BOPInt_Context)& aCtx
-#endif
-       ) ;
+       const Handle(IntTools_Context)& aCtx) ;
 
   Standard_EXPORT
     static  Standard_Integer FindSDShapes(const TopTools_ListOfShape& aLE,
 					  const Standard_Real aTol,
 					  TopTools_IndexedDataMapOfShapeListOfShape& aMEE,
-#if OCC_VERSION_LARGE > 0x06070100
-					  const Handle(IntTools_Context)& aCtx
-#else
-					  const Handle(BOPInt_Context)& aCtx
-#endif
-					  ) ;
+					  const Handle(IntTools_Context)& aCtx) ;
   Standard_EXPORT
     static  Standard_Integer FindSDShapes(const TopoDS_Shape& aE1,
 					  const TopTools_ListOfShape& aLE,
 					  const Standard_Real aTol,
 					  TopTools_ListOfShape& aLESD,
-#if OCC_VERSION_LARGE > 0x06070100
-					  const Handle(IntTools_Context)& aCtx
-#else
-					  const Handle(BOPInt_Context)& aCtx
-#endif
-					  ) ;
+					  const Handle(IntTools_Context)& aCtx) ;
 
   Standard_EXPORT
     static  void PointOnShape(const TopoDS_Shape& aS,
@@ -146,12 +125,7 @@ class GEOMAlgo_AlgoTools  {
     static  Standard_Boolean ProjectPointOnShape(const gp_Pnt& aP1,
 						 const TopoDS_Shape& aS,
 						 gp_Pnt& aP2,
-#if OCC_VERSION_LARGE > 0x06070100
-						 const Handle(IntTools_Context)& aCtx
-#else
-						 const Handle(BOPInt_Context)& aCtx
-#endif
-						 ) ;
+						 const Handle(IntTools_Context)& aCtx) ;
 
   Standard_EXPORT
     static void CorrectTolerances(const TopoDS_Shape& aShape,
@@ -169,12 +143,7 @@ class GEOMAlgo_AlgoTools  {
   Standard_EXPORT
     static Standard_Boolean IsSplitToReverse1 (const TopoDS_Edge& aEF1,
 					       const TopoDS_Edge& aEF2,
-#if OCC_VERSION_LARGE > 0x06070100
-					       const Handle(IntTools_Context)& aCtx
-#else
-					       const Handle(BOPInt_Context)& aCtx
-#endif
-					       ) ;
+					       const Handle(IntTools_Context)& aCtx) ;
   Standard_EXPORT
     static void RefinePCurveForEdgeOnFace(const TopoDS_Edge& aE,
 					  const TopoDS_Face& aF,
@@ -191,42 +160,22 @@ class GEOMAlgo_AlgoTools  {
   Standard_EXPORT
     static Standard_Boolean IsSplitToReverse(const TopoDS_Edge& theSplit,
 					     const TopoDS_Edge& theEdge,
-#if OCC_VERSION_LARGE > 0x06070100
-					     const Handle(IntTools_Context)& theCtx
-#else
-					     const Handle(BOPInt_Context)& theCtx
-#endif
-					     ) ;
+					     const Handle(IntTools_Context)& theCtx) ;
   
   Standard_EXPORT
     static Standard_Boolean IsSplitToReverse  (const TopoDS_Face& theFSp,
 					       const TopoDS_Face& theFSr,
-#if OCC_VERSION_LARGE > 0x06070100
-					       const Handle(IntTools_Context)& theCtx
-#else
-					       const Handle(BOPInt_Context)& theCtx
-#endif
-					       ) ;
+					       const Handle(IntTools_Context)& theCtx) ;
   
   Standard_EXPORT
     static Standard_Boolean IsSplitToReverse  (const TopoDS_Shape& theSp,
 					       const TopoDS_Shape& theSr,
-#if OCC_VERSION_LARGE > 0x06070100
-					       const Handle(IntTools_Context)& theCtx
-#else
-					       const Handle(BOPInt_Context)& theCtx
-#endif
-					       ) ;
+					       const Handle(IntTools_Context)& theCtx) ;
   Standard_EXPORT
     static Standard_Integer BuildPCurveForEdgeOnFace  (const TopoDS_Edge& aEold,
 						       const TopoDS_Edge& aEnew,
 						       const TopoDS_Face& aF,
-#if OCC_VERSION_LARGE > 0x06070100
-						       const Handle(IntTools_Context)& aCtx
-#else
-						       const Handle(BOPInt_Context)& aCtx
-#endif
-						       ) ;
+						       const Handle(IntTools_Context)& aCtx) ;
 
 //
   Standard_EXPORT

@@ -103,7 +103,7 @@ bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
     if (myPRedo->init(theType, theIntParam)) {
       // Construct undo for RemoveSection command.
       // If the last section is removed, one AddSection command is enough.
-      // If not last section is removed, two commands are requred: AddSection
+      // If not last section is removed, two commands are required: AddSection
       // and MoveSection.
       const int aLastIndex = theCurve->getNbSections() - 1;
 

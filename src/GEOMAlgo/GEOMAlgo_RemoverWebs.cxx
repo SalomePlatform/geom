@@ -26,8 +26,6 @@
 #include <GEOMAlgo_RemoverWebs.hxx>
 #include <GEOMAlgo_ShapeAlgo.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <TopoDS_Iterator.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Solid.hxx>
@@ -37,17 +35,12 @@
 
 #include <BRepClass3d_SolidClassifier.hxx>
 
-#if OCC_VERSION_LARGE > 0x06070100
 #include <IntTools_Context.hxx>
-#else
-#include <BOPInt_Context.hxx>
-#endif
 
 #include <BOPAlgo_BuilderSolid.hxx>
 
-#include <BOPTools.hxx>
 #include <BOPTools_AlgoTools.hxx>
-#include <BOPCol_MapOfShape.hxx>
+#include <TopTools_MapOfShape.hxx>
 
 //=======================================================================
 //function : 
@@ -108,11 +101,7 @@ void GEOMAlgo_RemoverWebs::Perform()
   if (!myContext.IsNull()) {
     myContext.Nullify();
   }
-#if OCC_VERSION_LARGE > 0x06070100
   myContext=new IntTools_Context;
-#else
-  myContext=new BOPInt_Context;
-#endif
   //
   BuildSolid();
   //
@@ -129,11 +118,11 @@ void GEOMAlgo_RemoverWebs::BuildSolid()
   TopoDS_Iterator aIt1, aIt2;
   TopoDS_Shape aShape;
   BRep_Builder aBB;
-  BOPCol_MapOfShape aMFence;
-  BOPCol_IndexedMapOfShape aMSI;
-  BOPCol_IndexedDataMapOfShapeListOfShape aMFS;
-  BOPCol_ListOfShape aSFS;
-  BOPCol_ListIteratorOfListOfShape aItLS;
+  TopTools_MapOfShape aMFence;
+  TopTools_IndexedMapOfShape aMSI;
+  TopTools_IndexedDataMapOfShapeListOfShape aMFS;
+  TopTools_ListOfShape aSFS;
+  TopTools_ListIteratorOfListOfShape aItLS;
   BOPAlgo_BuilderSolid aSB;
   //
   //modified by NIZNHY-PKV Thu Jul 11 06:54:51 2013f
@@ -154,7 +143,7 @@ void GEOMAlgo_RemoverWebs::BuildSolid()
   //
   aNbR=aMFence.Extent();
   if (aNbS!=aNbR) {
-    BOPCol_MapIteratorOfMapOfShape aItMS;
+    TopTools_MapIteratorOfMapOfShape aItMS;
     //
     BOPTools_AlgoTools::MakeContainer(TopAbs_COMPOUND, aShape);  
     //
@@ -169,7 +158,7 @@ void GEOMAlgo_RemoverWebs::BuildSolid()
   aNbF2=0;
   //
   // 1. aSFS: Faces 
-  BOPTools::MapShapesAndAncestors(aShape, TopAbs_FACE, TopAbs_SOLID, aMFS);
+  TopExp::MapShapesAndAncestors(aShape, TopAbs_FACE, TopAbs_SOLID, aMFS);
   //
   aNbF=aMFS.Extent();
   for (i=1; i<=aNbF; ++i) {
@@ -185,7 +174,7 @@ void GEOMAlgo_RemoverWebs::BuildSolid()
       aSFS.Append(aFi);
     }
     else {
-      const BOPCol_ListOfShape& aLSx=aMFS(i);
+      const TopTools_ListOfShape& aLSx=aMFS(i);
       aNbSx=aLSx.Extent();
       if (aNbSx==1) {
         aSFS.Append(aFx);
@@ -225,17 +214,13 @@ void GEOMAlgo_RemoverWebs::BuildSolid()
   aSB.SetContext(myContext);
   aSB.SetShapes(aSFS);
   aSB.Perform();
-#if OCC_VERSION_LARGE > 0x07010001
   iErr=aSB.HasErrors();
-#else
-  iErr=aSB.ErrorStatus();
-#endif  
   if (iErr) {
     myErrorStatus=20; // SolidBuilder failed
     return;
   }
   //
-  const BOPCol_ListOfShape& aLSR=aSB.Areas();
+  const TopTools_ListOfShape& aLSR=aSB.Areas();
   // 
   // 4 Add the internals
   if (aNbSI) {
@@ -253,19 +238,15 @@ void GEOMAlgo_RemoverWebs::BuildSolid()
 //function : AddInternalShapes
 //purpose  : 
 //=======================================================================
-void GEOMAlgo_RemoverWebs::AddInternalShapes(const BOPCol_ListOfShape& aLSR,
-                                             const BOPCol_IndexedMapOfShape& aMSI)
+void GEOMAlgo_RemoverWebs::AddInternalShapes(const TopTools_ListOfShape& aLSR,
+                                             const TopTools_IndexedMapOfShape& aMSI)
 {
   Standard_Integer i, aNbSI;
   TopAbs_State aState;  
   TopoDS_Solid aSd;
   BRep_Builder aBB;
-  BOPCol_ListIteratorOfListOfShape aItLS;
-#if OCC_VERSION_LARGE > 0x06070100
+  TopTools_ListIteratorOfListOfShape aItLS;
   Handle(IntTools_Context) aCtx=new IntTools_Context;
-#else
-  Handle(BOPInt_Context) aCtx=new BOPInt_Context;
-#endif
   //
   aNbSI=aMSI.Extent();
   for (i=1; i<=aNbSI; ++i) {

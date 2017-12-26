@@ -45,12 +45,8 @@ class SALOME_OCCViewType;
 #include <LightApp_Displayer.h>
 #include <LightApp_Study.h>
 #include <Aspect_TypeOfMarker.hxx>
-#if OCC_VERSION_MAJOR >= 7
-  #include <AIS_ColorScale.hxx>
-#endif
 #include <TCollection_AsciiString.hxx>
 #include <TColStd_MapOfInteger.hxx>
-#include <Basics_OCCTVersion.hxx>
 #include <QList>
 
 #include <list>
@@ -196,7 +192,7 @@ public:
   virtual void  BeforeErase  ( SALOME_View*, const SALOME_OCCPrs* );
   virtual void  AfterErase   ( SALOME_View*, const SALOME_OCCPrs* );
 
-  /* This methos is used for activisation/deactivisation of objects to be displayed*/
+  /* This methods is used for activisation/deactivisation of objects to be displayed*/
   void          SetToActivate( const bool );
   bool          ToActivate() const;
 
@@ -229,8 +225,8 @@ public:
                                                 SALOME_View* = 0);
 
   /* Update visibility and parameters of the currently selected field step's color scale */
-  void UpdateColorScale( const bool theIsRedisplayFieldSteps = false, const bool updateViewer = true );
-  void SetUpdateColorScale(bool toUpdate) { myUpdateColorScale = toUpdate; } // IPAL54049
+  void UpdateColorScale();
+  bool SetUpdateColorScale(bool);
 
 protected:
   /* internal methods */
@@ -277,20 +273,6 @@ protected:
                                   double& theFieldStepRangeMin,
                                   double& theFieldStepRangeMax );
 
-#if OCC_VERSION_MAJOR < 7
-  // Note: the method is copied from Aspect_ColorScale class
-  static Standard_Integer HueFromValue( const Standard_Integer aValue,
-                                        const Standard_Integer aMin,
-                                        const Standard_Integer aMax );
-
-  // Note: the method is copied from Aspect_ColorScale class
-  static Standard_Boolean FindColor( const Standard_Real aValue, 
-                                     const Standard_Real aMin,
-                                     const Standard_Real aMax,
-                                     const Standard_Integer ColorsCount,
-                                     Quantity_Color& aColor );
-#endif
-
 protected:
   Handle(SALOME_InteractiveObject) myIO;
   TopoDS_Shape                     myShape;
@@ -304,10 +286,7 @@ protected:
   std::string                      myTexture;
   int                              myType;
   SALOME_View*                     myViewFrame;
-#if OCC_VERSION_MAJOR >= 7
-  Handle(AIS_ColorScale)           myColorScale;
-#endif
-  int                              myUpdateColorScale; // IPAL54049
+  bool                             myUpdateColorScale; // IPAL54049
 
   // Attributes
   Quantity_Color                   myShadingColor;

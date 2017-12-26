@@ -591,7 +591,7 @@ void RepairGUI_GlueDlg::clearShapeBufferLocal(GEOM::GEOM_Object_ptr theObj)
 //================================================================
 // Function : onAccept
 // Purpose  : This method should be called from dialog's slots onOk() and onApply()
-//            It perfroms user input validation, then it
+//            It performs user input validation, then it
 //            performs a proper operation and manages transactions, etc.
 //================================================================
 bool RepairGUI_GlueDlg::onAcceptLocal()

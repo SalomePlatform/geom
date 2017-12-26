@@ -34,8 +34,6 @@
 #include "GEOMAlgo_CoupleOfShapes.hxx"
 #include "GEOMAlgo_ListOfCoupleOfShapes.hxx"
 
-#include <Basics_OCCTVersion.hxx>
-
 #include "utilities.h"
 
 #include <BRep_Builder.hxx>
@@ -117,7 +115,7 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFacesWithWarnings (const TopoDS_Shape& the
       Standard_Failure::Raise(MSG_BAD_ARG_SHAPE);
       break;
     case 200:
-      Standard_Failure::Raise("Error occured during check of geometric coincidence");
+      Standard_Failure::Raise("Error occurred during check of geometric coincidence");
       break;
     default:
       {
@@ -236,7 +234,7 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFaces (const TopoDS_Shape& theShape,
       Standard_Failure::Raise("Result shape is Null");
       break;
     case 200:
-      Standard_Failure::Raise("Error occured during check of geometric coincidence");
+      Standard_Failure::Raise("Error occurred during check of geometric coincidence");
       break;
     default:
       {
@@ -739,7 +737,7 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueByList (const TopoDS_Shape& theShape,
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer GEOMImpl_GlueDriver::Execute(LOGBOOK& log) const
+Standard_Integer GEOMImpl_GlueDriver::Execute(Handle(TFunction_Logbook)& log) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
@@ -824,11 +822,7 @@ Standard_Integer GEOMImpl_GlueDriver::Execute(LOGBOOK& log) const
 
   aFunction->SetValue(aShape);
 
-#if OCC_VERSION_MAJOR < 7
-  log.SetTouched(Label());
-#else
   log->SetTouched(Label());
-#endif
 
   if (!aWrn.IsEmpty()) {
     Standard_Failure::Raise(aWrn.ToCString());
@@ -886,4 +880,4 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_GlueDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_GlueDriver,GEOM_BaseDriver);

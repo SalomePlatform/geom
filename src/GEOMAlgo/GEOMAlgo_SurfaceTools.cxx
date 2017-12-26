@@ -163,7 +163,7 @@ Standard_Boolean GEOMAlgo_SurfaceTools::IsCoaxial
 
   if (fabs(aRadius1 - aRadius2) <= aTol) {
     // Check the deflection of the middle point.
-    gp_XYZ        aMidP       = 0.5*(aDP1 + aDP2);
+    //gp_XYZ        aMidP       = 0.5*(aDP1 + aDP2);
     //Standard_Real aMidRadius1 = aMidP.Modulus();
 
     if (fabs(aRadius1 - aRadius2) <= aTol) {

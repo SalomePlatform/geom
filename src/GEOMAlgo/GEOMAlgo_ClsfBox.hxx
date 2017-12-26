@@ -71,7 +71,7 @@ class GEOMAlgo_ClsfBox : public GEOMAlgo_Clsf
   Standard_EXPORT
     virtual  Standard_Boolean CanBeON(const Handle(Geom_Surface)& aST) const;
 
-  OCCT_DEFINE_STANDARD_RTTIEXT(GEOMAlgo_ClsfBox,GEOMAlgo_Clsf)
+  DEFINE_STANDARD_RTTIEXT(GEOMAlgo_ClsfBox,GEOMAlgo_Clsf)
 
  protected:
   TopoDS_Shape myBox;

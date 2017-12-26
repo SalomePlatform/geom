@@ -532,7 +532,7 @@ void MeasureGUI_ManageDimensionsDlg::OnSelectItem()
 //=================================================================================
 void MeasureGUI_ManageDimensionsDlg::OnShowAll()
 {
-  // read propety data
+  // read property data
   SalomeApp_Application* anApp = myGeomGUI->getApp();
   if ( !anApp )
   {
@@ -581,7 +581,7 @@ void MeasureGUI_ManageDimensionsDlg::OnShowAll()
 //=================================================================================
 void MeasureGUI_ManageDimensionsDlg::OnHideAll()
 {
-  // read propety data
+  // read property data
   SalomeApp_Application* anApp = myGeomGUI->getApp();
   if ( !anApp )
   {

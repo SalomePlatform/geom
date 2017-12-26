@@ -47,7 +47,7 @@ namespace XAO
     protected:
         /**
          * Constructor.
-         * @param dimension the dimension ot the field.
+         * @param dimension the dimension of the field.
          * @param nbElements the number of elements.
          * @param nbComponents the number of components.
          * @param name the name of the field.

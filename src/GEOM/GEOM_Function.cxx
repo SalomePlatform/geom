@@ -27,8 +27,6 @@
 #include <GEOM_Solver.hxx>
 #include <GEOM_ISubShape.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
 #include "utilities.h"
 
 #include <TDF.hxx>
@@ -155,7 +153,7 @@ GEOM_Function::~GEOM_Function()
 
 //================================================================================
 /*!
- * \brief Retuns true if this function is the last one in the study
+ * \brief Returns true if this function is the last one in the study
  */
 //================================================================================
 
@@ -250,9 +248,8 @@ TopoDS_Shape GEOM_Function::GetValue()
           return aShape;
         }
       }
-      catch (Standard_Failure) {
-        Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-        MESSAGE("GEOM_Function::GetValue Error: " << aFail->GetMessageString());
+      catch (Standard_Failure& aFail) {
+        MESSAGE("GEOM_Function::GetValue Error: " << aFail.GetMessageString());
         return aShape;
       }
     }
@@ -980,4 +977,4 @@ void* GEOM_Function::GetCallBackData()
   return reinterpret_cast<void*> ( address );
 }
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT(GEOM_Function, Standard_Transient );
+IMPLEMENT_STANDARD_RTTIEXT(GEOM_Function, Standard_Transient );

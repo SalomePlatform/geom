@@ -51,7 +51,7 @@ Example::
     geompy = geomBuilder.New()
     geompy.addToStudy( wire, 'mysketch' )
 
-Additionnal examples can be found as unit tests in the source code.
+Additional examples can be found as unit tests in the source code.
 """
 
 geompyEnable = True

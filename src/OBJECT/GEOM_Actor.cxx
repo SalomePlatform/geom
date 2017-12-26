@@ -111,20 +111,21 @@ GEOM_Actor::GEOM_Actor():
   myShadingFaceSource(GEOM_ShadingFace::New(),true), 
  
   myHighlightActor(GEOM_DeviceActor::New(),true), 
-  myAppendFilter(vtkAppendPolyData::New(),true), 
-  // Use mapper as an instance of GEOM_PainterPolyDataMapper class
-  // to prevent drawing of mappers' content (due to an empty definition
-  // of GEOM_PainterPolyDataMapper::RenderPiece(...)).
-  // !!! Presentation of GEOM_Actor is drawing only with help of actors
-  // defined in this class !!!
-  myPolyDataMapper(GEOM_PainterPolyDataMapper::New(),true),
 
   myTextActor( vtkTextActor::New() ),
 
   myHighlightProp(vtkProperty::New()),
   myPreHighlightProp(vtkProperty::New()),
   myShadingFaceProp(vtkProperty::New()),
-  myShadingBackFaceProp(vtkProperty::New())
+  myShadingBackFaceProp(vtkProperty::New()),
+
+  myAppendFilter(vtkAppendPolyData::New(),true), 
+  // Use mapper as an instance of GEOM_PainterPolyDataMapper class
+  // to prevent drawing of mappers' content (due to an empty definition
+  // of GEOM_PainterPolyDataMapper::RenderPiece(...)).
+  // !!! Presentation of GEOM_Actor is drawing only with help of actors
+  // defined in this class !!!
+  myPolyDataMapper(GEOM_PainterPolyDataMapper::New(),true)
 { 
 #ifdef MYDEBUG
   MESSAGE (this<< " GEOM_Actor::GEOM_Actor");

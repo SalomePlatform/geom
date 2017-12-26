@@ -38,7 +38,7 @@
 #include "RepairGUI_ShapeProcessDlg.h"  // Method PROCESS SHAPE
 #include "RepairGUI_CloseContourDlg.h"  // Method CLOSE CONTOUR
 #include "RepairGUI_RemoveIntWiresDlg.h"// Method REMOVE INTERNAL WIRES
-#include "RepairGUI_DivideEdgeDlg.h"    // Method DEVIDE EDGE
+#include "RepairGUI_DivideEdgeDlg.h"    // Method DIVIDE EDGE
 #include "RepairGUI_FreeBoundDlg.h"     // Method FREE BOUNDARIES
 #include "RepairGUI_FreeFacesDlg.h"     // Method FREE FACES
 #include "RepairGUI_GlueDlg.h"          // Method GLUE FACES

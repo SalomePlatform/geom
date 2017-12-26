@@ -63,6 +63,10 @@
       <translation>作成者</translation>
     </message>
     <message>
+      <source>XAOPLUGIN_EXPORT_SHAPEFILE</source>
+      <translation>別のファイルに形状を出力する</translation>
+    </message>
+    <message>
       <source>XAOPLUGIN_EXPORT_LGROUPS</source>
       <translation>グループ</translation>
     </message>

@@ -26,8 +26,6 @@
 
 #include "Archimede_VolumeSection.hxx"
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <stdio.h>
 
 #include <BRepBuilderAPI_MakeFace.hxx>
@@ -69,7 +67,7 @@ GEOMImpl_ArchimedeDriver::GEOMImpl_ArchimedeDriver()
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer GEOMImpl_ArchimedeDriver::Execute(LOGBOOK& log) const
+Standard_Integer GEOMImpl_ArchimedeDriver::Execute(Handle(TFunction_Logbook)& log) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
@@ -138,11 +136,7 @@ Standard_Integer GEOMImpl_ArchimedeDriver::Execute(LOGBOOK& log) const
 
   aFunction->SetValue(tirant);
 
-#if OCC_VERSION_MAJOR < 7
-  log.SetTouched(Label());
-#else
   log->SetTouched(Label());
-#endif
 
   return 1;
 }
@@ -174,4 +168,4 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_ArchimedeDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_ArchimedeDriver,GEOM_BaseDriver);

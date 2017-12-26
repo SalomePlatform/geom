@@ -60,7 +60,7 @@ public:
                              GEOMAlgo_GetInPlace &theGIP);
 
   /*!
-   *  \brief Old implementation of GetInPlace algoritm.
+   *  \brief Old implementation of GetInPlace algorithm.
    *  This method searches among sub shapes of the shape theWhere parts that are
    *  coincident with the shape theWhat. The result list of shape is returned as
    *  an output parameter. It returns the error code with the following possible

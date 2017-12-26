@@ -60,7 +60,7 @@ def MakeComplexSect(pnt,vec,rmax,rmin,nb):
 
 
 #=======================================================
-#       Create simple path and recieve points
+#       Create simple path and receive points
 #              for section creation
 #=======================================================
 WirePath = geompy.MakeSketcher("Sketcher:F 0 0:T 60 0:T 40 0:R 0:C 100 90:",

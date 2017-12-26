@@ -32,17 +32,15 @@
 #include <Standard.hxx>
 #include <Standard_DefineHandle.hxx>
 #include <Standard_Integer.hxx>
-#include <MMgt_TShared.hxx>
+#include <Standard_Transient.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
-DEFINE_STANDARD_HANDLE(GEOMAlgo_HAlgo, MMgt_TShared);
+DEFINE_STANDARD_HANDLE(GEOMAlgo_HAlgo, Standard_Transient);
 
 //=======================================================================
 //class    : GEOMAlgo_HAlgo
 //purpose  :
 //=======================================================================
-class GEOMAlgo_HAlgo : public MMgt_TShared
+class GEOMAlgo_HAlgo : public Standard_Transient
 {
  public:
   Standard_EXPORT
@@ -60,7 +58,7 @@ class GEOMAlgo_HAlgo : public MMgt_TShared
   Standard_EXPORT
     Standard_Integer WarningStatus() const;
 
-  OCCT_DEFINE_STANDARD_RTTIEXT(GEOMAlgo_HAlgo,MMgt_TShared)
+  DEFINE_STANDARD_RTTIEXT(GEOMAlgo_HAlgo, Standard_Transient)
 
  protected:
   Standard_EXPORT

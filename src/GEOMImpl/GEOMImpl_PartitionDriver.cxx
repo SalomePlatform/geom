@@ -44,11 +44,9 @@
 #include <Standard_NullObject.hxx>
 #include <StdFail_NotDone.hxx>
 #include <BOPAlgo_CheckerSI.hxx>
-#if OCC_VERSION_LARGE > 0x07010001
 #include <BOPAlgo_Alerts.hxx>
-#endif
-#include <BOPCol_IndexedDataMapOfShapeListOfShape.hxx>
-#include <BOPCol_ListOfShape.hxx>
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
+#include <TopTools_ListOfShape.hxx>
 #include <BOPDS_DS.hxx>
 
 // Depth of self-intersection check (see BOPAlgo_CheckerSI::SetLevelOfCheck() for more details)
@@ -103,17 +101,13 @@ static void PrepareShapes (const TopoDS_Shape&   theShape,
 static void CheckSelfIntersection(const TopoDS_Shape &theShape)
 {
   BOPAlgo_CheckerSI aCSI;  // checker of self-interferences
-  BOPCol_ListOfShape aList;
+  TopTools_ListOfShape aList;
 
   aList.Append(theShape);
   aCSI.SetLevelOfCheck(BOP_SELF_INTERSECTIONS_LEVEL);
   aCSI.SetArguments(aList);
   aCSI.Perform();
-#if OCC_VERSION_LARGE > 0x07010001
   if (aCSI.HasErrors() || aCSI.DS().Interferences().Extent() > 0) {
-#else
-  if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0) {
-#endif
     StdFail_NotDone::Raise("Partition operation will not be performed, because argument shape is self-intersected");
   }
 }
@@ -122,7 +116,7 @@ static void CheckSelfIntersection(const TopoDS_Shape &theShape)
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer GEOMImpl_PartitionDriver::Execute(LOGBOOK& log) const
+Standard_Integer GEOMImpl_PartitionDriver::Execute(Handle(TFunction_Logbook)& log) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
@@ -417,11 +411,7 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(LOGBOOK& log) const
   aShape = PS.Shape();
   if (aShape.IsNull()) {
     // Mantis issue 22009
-#if OCC_VERSION_LARGE > 0x07010001
     if (PS.HasError(STANDARD_TYPE(BOPAlgo_AlertTooFewArguments)) && PS.Tools().Extent() == 0 && PS.Arguments().Extent() == 1)
-#else
-    if (PS.ErrorStatus() == 100 && PS.Tools().Extent() == 0 && PS.Arguments().Extent() == 1)
-#endif      
       aShape = PS.Arguments().First();
     else
       return 0;
@@ -446,7 +436,7 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(LOGBOOK& log) const
   TopExp::MapShapes(aShape, aResIndices);
 
   // Map: source_shape/images of source_shape in Result
-  const BOPCol_IndexedDataMapOfShapeListOfShape& aMR = PS.ImagesResult();
+  const TopTools_IndexedDataMapOfShapeListOfShape& aMR = PS.ImagesResult();
   //const TopTools_IndexedDataMapOfShapeListOfShape& aMR = PS.ImagesResult();
 
   // history for all argument shapes
@@ -478,13 +468,13 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(LOGBOOK& log) const
       //
       if (!aMR.Contains(anEntity)) continue;
 
-      const BOPCol_ListOfShape& aModified = aMR.FindFromKey(anEntity);
+      const TopTools_ListOfShape& aModified = aMR.FindFromKey(anEntity);
       //const TopTools_ListOfShape& aModified = aMR.FindFromKey(anEntity);
       Standard_Integer nbModified = aModified.Extent();
 
       if (nbModified > 0) { // Mantis issue 0021182
         int ih = 1;
-        BOPCol_ListIteratorOfListOfShape itM (aModified);
+        TopTools_ListIteratorOfListOfShape itM (aModified);
         for (; itM.More() && nbModified > 0; itM.Next(), ++ih) {
           if (!aResIndices.Contains(itM.Value())) {
             nbModified = 0;
@@ -497,7 +487,7 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(LOGBOOK& log) const
           TDataStd_IntegerArray::Set(aWhatHistoryLabel, 1, nbModified);
 
         int ih = 1;
-        BOPCol_ListIteratorOfListOfShape itM (aModified);
+        TopTools_ListIteratorOfListOfShape itM (aModified);
         //TopTools_ListIteratorOfListOfShape itM (aModified);
         for (; itM.More(); itM.Next(), ++ih) {
           int id = aResIndices.FindIndex(itM.Value());
@@ -507,11 +497,7 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(LOGBOOK& log) const
     }
   }
 
-#if OCC_VERSION_MAJOR < 7
-  log.SetTouched(Label());
-#else
   log->SetTouched(Label());
-#endif
 
   return 1;
 }
@@ -569,4 +555,4 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_PartitionDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_PartitionDriver,GEOM_BaseDriver);

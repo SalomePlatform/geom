@@ -69,7 +69,7 @@ VTKPlugin_ExportDriver::VTKPlugin_ExportDriver()
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer VTKPlugin_ExportDriver::Execute(LOGBOOK& log) const
+Standard_Integer VTKPlugin_ExportDriver::Execute(Handle(TFunction_Logbook)& log) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction( Label() );
@@ -100,13 +100,13 @@ Standard_Integer VTKPlugin_ExportDriver::Execute(LOGBOOK& log) const
     aWriter->SetFileName( aFileName.ToCString() );
     aWriter->Write();
     aWriter->Delete();
-    pd->Delete(); //instanciated by the GEOM::GetData(...) method
+    pd->Delete(); //instantiated by the GEOM::GetData(...) method
 
     return 1;
   }
   catch( Standard_Failure )
   {
-    //THROW_SALOME_CORBA_EXCEPTION("Exception catched in ExportVTK", SALOME::BAD_PARAM);
+    //THROW_SALOME_CORBA_EXCEPTION("Exception caught in ExportVTK", SALOME::BAD_PARAM);
   }
   return 0;
 }
@@ -123,4 +123,4 @@ GetCreationInformation( std::string&             theOperationName,
   return false;
 }
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT( VTKPlugin_ExportDriver,GEOM_BaseDriver );
+IMPLEMENT_STANDARD_RTTIEXT( VTKPlugin_ExportDriver,GEOM_BaseDriver );

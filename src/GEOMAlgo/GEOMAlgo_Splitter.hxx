@@ -37,8 +37,8 @@
 
 #include <TopoDS_Shape.hxx>
 
-#include <BOPCol_ListOfShape.hxx>
-#include <BOPCol_MapOfShape.hxx>
+#include <TopTools_ListOfShape.hxx>
+#include <TopTools_MapOfShape.hxx>
 
 #include <BOPAlgo_Builder.hxx>
 
@@ -63,7 +63,7 @@ class GEOMAlgo_Splitter : public BOPAlgo_Builder
     void AddTool(const TopoDS_Shape& theShape);
 
   Standard_EXPORT
-    const BOPCol_ListOfShape& Tools()const;
+    const TopTools_ListOfShape& Tools()const;
 
   Standard_EXPORT
     void SetLimit(const TopAbs_ShapeEnum aLimit);
@@ -88,8 +88,8 @@ class GEOMAlgo_Splitter : public BOPAlgo_Builder
     virtual void PostTreat();
   
  protected:
-  BOPCol_ListOfShape myTools; 
-  BOPCol_MapOfShape myMapTools;        
+  TopTools_ListOfShape myTools; 
+  TopTools_MapOfShape myMapTools;        
   TopAbs_ShapeEnum myLimit;   
   Standard_Integer myLimitMode;  
 };

@@ -28,8 +28,6 @@
 #include "EntityGUI_3DSketcherDlg.h"
 #include "EntityGUI_Widgets.h"
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <GEOMBase.h>
 #include <GeometryGUI.h>
 #include <Precision.hxx>
@@ -105,7 +103,7 @@ DEFINE_STANDARD_HANDLE(AIS_Text, AIS_InteractiveObject)
 class AIS_Text:public AIS_InteractiveObject
 {
 public:
-  OCCT_DEFINE_STANDARD_RTTIEXT(AIS_Text,AIS_InteractiveObject)
+  DEFINE_STANDARD_RTTIEXT(AIS_Text,AIS_InteractiveObject)
 
   AIS_Text(){};
 
@@ -147,7 +145,7 @@ protected:
   Graphic3d_VerticalTextAlignment     aVJustification;
 };
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT(AIS_Text, AIS_InteractiveObject)
+IMPLEMENT_STANDARD_RTTIEXT(AIS_Text, AIS_InteractiveObject)
 
 AIS_Text::AIS_Text( const TCollection_ExtendedString& text, const gp_Pnt& position,
                           Quantity_Color    color       = Quantity_NOC_YELLOW,
@@ -1285,7 +1283,7 @@ gp_Dir EntityGUI_3DSketcherDlg::getPresentationPlane() const
       gp_Vec V = Vec1.Transformed(aTransform.Inverted());
       gp_Vec Vec3(V.X(),V.Y(),0.0);
       
-      // Express the coordinates in the refernce coordinate system (OXY)
+      // Express the coordinates in the reference coordinate system (OXY)
       Vec3.Transform(aTransform);   
       if(Abs(Vec1.CrossMagnitude(Vec3)) > Precision::Confusion())                                  
       { 
@@ -1482,7 +1480,7 @@ void EntityGUI_3DSketcherDlg::displayDimensions (bool store)
                  aLength * sin(anAngle1 * M_PI / 180. ),
                  0.0); 
     
-    // Express the coordinates in the refernce coordinate system (OXY)
+    // Express the coordinates in the reference coordinate system (OXY)
     gp_Trsf aTranform = toReferenceSystem(P0);
     P1.Transform(aTranform);    
     P2.Transform(aTranform);
@@ -1656,7 +1654,7 @@ void EntityGUI_3DSketcherDlg::displayText ( std::string theText,
 //================================================================
 // Function : createAISLengthDimension()
 // Purpose  : Method for creation of a length dimension object
-//            Returns an Handle on the AIS_LengthDimension obect
+//            Returns an Handle on the AIS_LengthDimension object
 //================================================================
 Handle(AIS_LengthDimension) EntityGUI_3DSketcherDlg::createAISLengthDimension(double theLength, 
                                                                               gp_Pnt P1, 
@@ -1694,7 +1692,7 @@ Handle(AIS_LengthDimension) EntityGUI_3DSketcherDlg::createAISLengthDimension(do
 //================================================================
 // Function : createAISAngleDimension()
 // Purpose  : Method for creation of an angle dimension object
-//            Returns an Handle on the AIS_AngleDimension obect
+//            Returns an Handle on the AIS_AngleDimension object
 //================================================================
 Handle(AIS_AngleDimension) EntityGUI_3DSketcherDlg::createAISAngleDimension(double theAngle, 
                                                                             gp_Pnt P0, 

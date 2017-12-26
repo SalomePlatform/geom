@@ -632,7 +632,7 @@ void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Face& aF,
       for (; aIt.More(); aIt.Next()) {
         iCnt=aIt.Value();
         if (iCnt>1) {
-          // take the first having occured inner link
+          // take the first having occurred inner link
           // and discretize it
           const GEOMAlgo_PassKey& aPK=aIt.Key();
           //

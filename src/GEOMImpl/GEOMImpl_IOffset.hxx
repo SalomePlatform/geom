@@ -29,6 +29,7 @@
 #define OFF_ARG_VALUE 2
 #define OFF_ARG_IDS   3
 #define OFF_ARG_PARAM 4
+#define OFF_ARG_JOIN  5
 
 class GEOMImpl_IOffset
 {
@@ -47,6 +48,10 @@ class GEOMImpl_IOffset
   void SetParam(Standard_Boolean theParam) { _func->SetInteger(OFF_ARG_PARAM, theParam ? 1 : 0); }
 
   Standard_Boolean GetParam() { return _func->GetInteger(OFF_ARG_PARAM); }
+
+  void SetJoinByPipes(Standard_Boolean theValue) { _func->SetInteger(OFF_ARG_JOIN, theValue); }
+
+  Standard_Boolean GetJoinByPipes() { return _func->GetInteger(OFF_ARG_JOIN); }
 
   void SetFaceIDs(const Handle(TColStd_HArray1OfInteger)& theFaceIDs)
     { _func->SetIntegerArray(OFF_ARG_IDS, theFaceIDs); }

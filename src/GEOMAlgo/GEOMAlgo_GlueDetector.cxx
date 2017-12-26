@@ -219,7 +219,7 @@ void GEOMAlgo_GlueDetector::DetectVertices()
         //
         aNbVSD=aBBTree.Select(aSelector);
         if (!aNbVSD) {
-          continue;  // it shoild not be so [at least IP itself]
+          continue;  // it should not be so [at least IP itself]
         }
         //
         const TColStd_ListOfInteger& aLI=aSelector.Indices();
@@ -554,11 +554,7 @@ Standard_Integer CheckAncesstors
   //
   iRet=0;
   //
-#if OCC_VERSION_MAJOR < 7
-  pLE=const_cast<TopTools_ListOfShape*>(&aMVE.FindFromKey(aVSD));
-#else
   pLE=const_cast<TopTools_IndexedDataMapOfShapeListOfShape&>(aMVE).ChangeSeek(aVSD);
-#endif
   if (!pLE) {
     return iRet;
   }
@@ -566,11 +562,7 @@ Standard_Integer CheckAncesstors
   for (; aItLE.More(); aItLE.Next()) {
     const TopoDS_Shape& aE=aItLE.Value();
     //
-#if OCC_VERSION_MAJOR < 7
-    pLV=const_cast<TopTools_ListOfShape*>(&aMEV.FindFromKey(aE));
-#else
     pLV=const_cast<TopTools_IndexedDataMapOfShapeListOfShape&>(aMEV).ChangeSeek(aE);
-#endif
     if (!pLV) {
       continue; // it should be not so
     }
@@ -594,11 +586,7 @@ Standard_Integer CheckAncesstors
     //
     iRet=1;
     //
-#if OCC_VERSION_MAJOR < 7
-    pLVZ=const_cast<TopTools_ListOfShape*>(&aMEVZ.FindFromKey(aE));
-#else
     pLVZ=aMEVZ.ChangeSeek(aE);
-#endif
     if (!pLVZ) {
       aMEVZ.Add(aE, aLVX);
     }

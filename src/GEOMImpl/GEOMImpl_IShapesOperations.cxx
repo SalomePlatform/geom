@@ -105,6 +105,14 @@
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
+// VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+// Next macro, when defined, causes appearing of SubShapeAllIDs(), SubShapeAllSortedIDs(), GetSameIDs()
+// and other such commands in Python dump.
+// See also GEOM_Engine.cxx.
+// ---------------------------------------
+// #define DUMP_SUBSHAPE_IDS
+// ---------------------------------------
+
 namespace {
 
   void AddFlatSubShapes(const TopoDS_Shape& S, TopTools_ListOfShape& L, TopTools_MapOfShape& M)
@@ -115,9 +123,9 @@ namespace {
     else {
       TopoDS_Iterator It(S, Standard_True, Standard_True);
       for (; It.More(); It.Next()) {
-	TopoDS_Shape SS = It.Value();
-	if (M.Add(SS))
-	  AddFlatSubShapes(SS, L, M);
+        TopoDS_Shape SS = It.Value();
+        if (M.Add(SS))
+          AddFlatSubShapes(SS, L, M);
       }
     }
   }
@@ -223,9 +231,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdge
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -282,9 +289,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdgeOnCurveByLength
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -338,9 +344,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdgeWire
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -412,9 +417,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeWire
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -477,9 +481,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFace (Handle(GEOM_Object) th
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     // to provide warning
     if (!aFunction->GetValue().IsNull()) {
       isWarning = Standard_True;
@@ -546,9 +549,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceWires
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     // to provide warning
     if (!aFunction->GetValue().IsNull()) {
       isWarning = Standard_True;
@@ -632,9 +634,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceFromSurface
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -720,9 +721,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceWithConstraints
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     // to provide warning
     if (!aFunction->GetValue().IsNull()) {
       isWarning = Standard_True;
@@ -833,9 +833,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeShape
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -904,9 +903,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeSolidFromConnectedFaces
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -972,9 +970,8 @@ GEOMImpl_IShapesOperations::MakeGlueFaces (std::list< Handle(GEOM_Object) >& the
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     // to provide warning
     if (!aFunction->GetValue().IsNull()) {
       isWarning = Standard_True;
@@ -1122,9 +1119,8 @@ GEOMImpl_IShapesOperations::MakeGlueFacesByList(std::list< Handle(GEOM_Object) >
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     // to provide warning
     if (!aFunction->GetValue().IsNull()) {
       isWarning = Standard_True;
@@ -1188,9 +1184,8 @@ GEOMImpl_IShapesOperations::MakeGlueEdges (std::list< Handle(GEOM_Object) >& the
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     // to provide warning
     if (!aFunction->GetValue().IsNull()) {
       isWarning = Standard_True;
@@ -1223,7 +1218,7 @@ GEOMImpl_IShapesOperations::GetGlueShapes (std::list< Handle(GEOM_Object) >& the
   TopoDS_Shape aShape;
   TopTools_SequenceOfShape shapes;
   std::list< Handle(GEOM_Object) >::iterator s = theShapes.begin();
-  Handle(GEOM_Object) lastCreatedGO;
+  Handle(GEOM_BaseObject) lastCreatedGO;
   for ( ; s != theShapes.end(); ++s )
   {
     Handle(GEOM_Object) go = *s;
@@ -1370,9 +1365,8 @@ GEOMImpl_IShapesOperations::MakeGlueEdgesByList (std::list< Handle(GEOM_Object) 
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     // to provide warning
     if (!aFunction->GetValue().IsNull()) {
       isWarning = Standard_True;
@@ -1406,23 +1400,23 @@ GEOMImpl_IShapesOperations::GetExistingSubObjects(Handle(GEOM_Object)    theShap
   Standard_Integer types = theGroupsOnly ? Groups : Groups|SubShapes;
   Handle(TColStd_HSequenceOfTransient) results = GetExistingSubObjects(theShape, types);
 
+  Handle(GEOM_BaseObject) lastCreatedGO = GEOM::GetCreatedLast(results);
+  lastCreatedGO = GEOM::GetCreatedLast(lastCreatedGO, theShape);
+
   if (results->Length() > 0) {
-    //Make a Python command
-    TCollection_AsciiString anAsciiList;
-    for (int i = 1; i <= results->Length(); i++)
+    // Make a Python command
+    GEOM::TPythonDump pd (lastCreatedGO->GetLastFunction(), /*append=*/true);
+    pd << "[";
+    Standard_Integer i, aLen = results->Length();
+    for (i = 1; i <= aLen; i++)
     {
-      Handle(GEOM_BaseObject) obj = Handle(GEOM_BaseObject)::DownCast( results->Value(i));
-      obj->GetEntryString();
-      if ( i < results->Length() )
-        anAsciiList += ",";
+      Handle(GEOM_BaseObject) obj = Handle(GEOM_BaseObject)::DownCast(results->Value(i));
+      pd << obj << ((i < aLen) ? ", " : "");
     }
-    
-    GEOM::TPythonDump pd (theShape->GetLastFunction(), /*append=*/true);
-    pd << "[" << anAsciiList.ToCString();
     pd << "] = geompy.GetExistingSubObjects(";
     pd << theShape << ", " << (bool)theGroupsOnly << ")";
   }
-
+ 
   return results;
 }
 
@@ -1457,11 +1451,10 @@ GEOMImpl_IShapesOperations::GetExistingSubObjects(Handle(GEOM_Object)    theShap
       bool isGroup    = anObj->IsKind(STANDARD_TYPE(GEOM_Object)) && anObj->GetType() == GEOM_GROUP;
       bool isSubShape = anObj->IsKind(STANDARD_TYPE(GEOM_Object)) && anObj->GetType() != GEOM_GROUP;
       bool isField    = anObj->IsKind(STANDARD_TYPE(GEOM_Field));
-      if (theTypes & Groups    && isGroup ||
-          theTypes & SubShapes && isSubShape ||
-          theTypes & Fields    && isField) {
+      if ((theTypes & Groups    && isGroup    ) ||
+          (theTypes & SubShapes && isSubShape ) ||
+          (theTypes & Fields    && isField    ))
         aSeq->Append(anObj);
-      }
     }
     delete [] anEntryStr;
   }
@@ -1507,11 +1500,11 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
     for (; It.More(); It.Next()) {
       TopoDS_Shape SS = It.Value();
       if (mapShape.Add(SS)) {
-	if (theShapeType == TopAbs_FLAT) {
+        if (theShapeType == TopAbs_FLAT) {
           AddFlatSubShapes(SS, listShape, mapShape);
-	}
+        }
         else if (theShapeType == TopAbs_SHAPE || theShapeType == SS.ShapeType()) {
-	  listShape.Append(SS);
+          listShape.Append(SS);
         }
         // VSR: for EXPLODE_NEW_INCLUDE_MAIN and EXPLODE_OLD_INCLUDE_MAIN:
         // it seems it is necessary to add top-level shape if theShapeType == TopAbs_COMPOUND
@@ -1633,9 +1626,9 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::SubShapeAllIDs
     for (; It.More(); It.Next()) {
       TopoDS_Shape SS = It.Value();
       if (mapShape.Add(SS)) {
-	if (theShapeType == TopAbs_FLAT) {
+        if (theShapeType == TopAbs_FLAT) {
           AddFlatSubShapes(SS, listShape, mapShape);
-	}
+        }
         else if (theShapeType == TopAbs_SHAPE || theShapeType == SS.ShapeType()) {
           listShape.Append(SS);
         }
@@ -1675,6 +1668,8 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::SubShapeAllIDs
 
   Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
 
+  // VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+#ifdef DUMP_SUBSHAPE_IDS
   //Make a Python command
   GEOM::TPythonDump pd (aFunction, /*append=*/true);
   pd << "listSubShapeIDs = geompy.SubShapeAll";
@@ -1691,6 +1686,7 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::SubShapeAllIDs
     break;
   default: ;
   }
+#endif // DUMP_SUBSHAPE_IDS
 
   SetErrorCode(OK);
   return aSeq;
@@ -2132,9 +2128,8 @@ Standard_Integer GEOMImpl_IShapesOperations::NumberOfSubShapes
         nbShapes = nbTypes[theShapeType];
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return -1;
   }
 
@@ -2180,9 +2175,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::ReverseShape(Handle(GEOM_Object)
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return NULL;
   }
 
@@ -2250,9 +2244,12 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetFreeFacesIDs
   //The explode doesn't change object so no new function is required.
   Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
 
+  // VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+#ifdef DUMP_SUBSHAPE_IDS
   //Make a Python command
   GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listFreeFacesIDs = geompy.GetFreeFacesIDs(" << theShape << ")";
+#endif // DUMP_SUBSHAPE_IDS
 
   SetErrorCode(OK);
   return aSeq;
@@ -2438,7 +2435,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetSharedShapes
       for (; itSel.More(); itSel.Next()) {
         const TopoDS_Shape& aSS = itSel.Value();
         if (mapShape.Add(aSS) )
-	  aShared.Append(aSS);
+          aShared.Append(aSS);
       }
     }
   }
@@ -2712,6 +2709,8 @@ Handle(TColStd_HSequenceOfInteger)
   // The GetShapesOnBox() doesn't change object so no new function is required.
   Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast(theShape,theBox)->GetLastFunction();
 
+  // VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+#ifdef DUMP_SUBSHAPE_IDS
   // Make a Python command
   GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listShapesOnBoxIDs = geompy.GetShapesOnBoxIDs("
@@ -2719,6 +2718,7 @@ Handle(TColStd_HSequenceOfInteger)
     << theShape << ", "
     << TopAbs_ShapeEnum(theShapeType) << ", "
     << theState << ")";
+#endif // DUMP_SUBSHAPE_IDS
 
   SetErrorCode(OK);
   return aSeqOfIDs;
@@ -2907,13 +2907,16 @@ Handle(TColStd_HSequenceOfInteger)
   Handle(GEOM_Function) aFunction =
     GEOM::GetCreatedLast(theShape,theCheckShape)->GetLastFunction();
 
+  // VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+#ifdef DUMP_SUBSHAPE_IDS
   // Make a Python command
   GEOM::TPythonDump(aFunction, /*append=*/true)
-    << "listShapesOnBoxIDs = geompy.GetShapesOnShapeIDs("
+    << "listShapesOnShapeIDs = geompy.GetShapesOnShapeIDs("
     << theCheckShape << ", "
     << theShape << ", "
     << TopAbs_ShapeEnum(theShapeType) << ", "
     << theState << ")";
+#endif // DUMP_SUBSHAPE_IDS
 
   SetErrorCode(OK);
   return aSeqOfIDs;
@@ -3213,9 +3216,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeExtraction
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
 
     return NULL;
   }
@@ -3303,9 +3305,8 @@ Handle(TColStd_HSequenceOfInteger)
         VertMax = T;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
     return aSeqOfIDs;
   }
   // END: Mantis issue 0020961
@@ -3327,7 +3328,7 @@ Handle(TColStd_HSequenceOfInteger)
   // Default value=3
   aFinder.SetNbPntsMin(3);
   // Sets the maximal number of inner points for edges or faces.
-  // It is usefull for the cases when this number is very big (e.g =2000) to improve
+  // It is useful for the cases when this number is very big (e.g =2000) to improve
   // the performance. If this value =0, all inner points will be taken into account.
   // Default value=0
   aFinder.SetNbPntsMax(100);
@@ -3915,10 +3916,13 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnPlaneI
   // The GetShapesOnPlaneIDs() doesn't change object so no new function is required.
   Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast(theShape,theAx1)->GetLastFunction();
 
+  // VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+#ifdef DUMP_SUBSHAPE_IDS
   // Make a Python command
   GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listShapesOnPlane = geompy.GetShapesOnPlaneIDs"
     << "(" << theShape << "," << aShapeType << "," << theAx1 << "," << theState << ")";
+#endif // DUMP_SUBSHAPE_IDS
 
   SetErrorCode(OK);
   return aSeq;
@@ -3982,10 +3986,13 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnPlaneW
   // The GetShapesOnPlaneIDs() doesn't change object so no new function is required.
   Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast(theShape,theAx1)->GetLastFunction();
 
+  // VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+#ifdef DUMP_SUBSHAPE_IDS
   // Make a Python command
   GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listShapesOnPlane = geompy.GetShapesOnPlaneWithLocationIDs"
     << "(" << theShape << ", " << aShapeType << ", " << theAx1 << ", "<< thePnt << ", "  << theState << ")";
+#endif // DUMP_SUBSHAPE_IDS
 
   SetErrorCode(OK);
   return aSeq;
@@ -4028,11 +4035,14 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnCylind
   // The GetShapesOnCylinder() doesn't change object so no new function is required.
   Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast(theShape,theAxis)->GetLastFunction();
 
+  // VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+#ifdef DUMP_SUBSHAPE_IDS
   // Make a Python command
   GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listShapesOnCylinder = geompy.GetShapesOnCylinderIDs"
     << "(" << theShape << ", " << aShapeType << ", " << theAxis << ", "
     << theRadius << ", " << theState << ")";
+#endif // DUMP_SUBSHAPE_IDS
 
   SetErrorCode(OK);
   return aSeq;
@@ -4096,11 +4106,14 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnCylind
   Handle(GEOM_Function) aFunction =
     GEOM::GetCreatedLast(theShape, GEOM::GetCreatedLast(thePnt,theAxis))->GetLastFunction();
 
+  // VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+#ifdef DUMP_SUBSHAPE_IDS
   // Make a Python command
   GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listShapesOnCylinder = geompy.GetShapesOnCylinderWithLocationIDs"
     << "(" << theShape << ", " << aShapeType << ", " << theAxis << ", "
     << thePnt << ", " << theRadius << ", " << theState << ")";
+#endif // DUMP_SUBSHAPE_IDS
 
   SetErrorCode(OK);
   return aSeq;
@@ -4146,11 +4159,14 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnSphere
   // The GetShapesOnSphere() doesn't change object so no new function is required.
   Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast(theShape,theCenter)->GetLastFunction();
 
+  // VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+#ifdef DUMP_SUBSHAPE_IDS
   // Make a Python command
   GEOM::TPythonDump(aFunction, /*append=*/true)
-    << "listShapesOnCylinder = geompy.GetShapesOnSphereIDs"
+    << "listShapesOnSphere = geompy.GetShapesOnSphereIDs"
     << "(" << theShape << ", " << aShapeType << ", " << theCenter << ", "
     << theRadius << ", " << theState << ")";
+#endif // DUMP_SUBSHAPE_IDS
 
   SetErrorCode(OK);
   return aSeq;
@@ -4240,7 +4256,7 @@ Handle(TColStd_HSequenceOfInteger)
   // Default value=3
   aFinder.SetNbPntsMin(3);
   // Sets the maximal number of inner points for edges or faces.
-  // It is usefull for the cases when this number is very big (e.g =2000) to improve
+  // It is useful for the cases when this number is very big (e.g =2000) to improve
   // the performance. If this value =0, all inner points will be taken into account.
   // Default value=0
   aFinder.SetNbPntsMax(100);
@@ -4384,12 +4400,14 @@ Handle(TColStd_HSequenceOfInteger)
   // Make a Python command
 
   // The GetShapesOnCylinder() doesn't change object so no new function is required.
-  Handle(GEOM_Object) lastObj = GEOM::GetCreatedLast(theShape,theTopLeftPoint);
+  Handle(GEOM_BaseObject) lastObj = GEOM::GetCreatedLast(theShape,theTopLeftPoint);
   lastObj = GEOM::GetCreatedLast(lastObj,theTopRigthPoint);
   lastObj = GEOM::GetCreatedLast(lastObj,theBottomRigthPoint);
   lastObj = GEOM::GetCreatedLast(lastObj,theBottomLeftPoint);
   Handle(GEOM_Function) aFunction = lastObj->GetLastFunction();
 
+  // VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+#ifdef DUMP_SUBSHAPE_IDS
   GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listShapesOnQuadrangle = geompy.GetShapesOnQuadrangleIDs("
     << theShape << ", "
@@ -4399,6 +4417,7 @@ Handle(TColStd_HSequenceOfInteger)
     << theBottomLeftPoint << ", "
     << theBottomRigthPoint << ", "
     << theState << ")";
+#endif // DUMP_SUBSHAPE_IDS
 
   SetErrorCode(OK);
   return aSeqOfIDs;
@@ -4444,7 +4463,6 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
 
   if (aShapeResult.IsNull() == Standard_False) {
     TopoDS_Iterator  anIt(aShapeResult);
-    Standard_Boolean isFirst = Standard_True;
 
     for (; anIt.More(); anIt.Next()) {
       const TopoDS_Shape &aPart = anIt.Value();
@@ -5112,11 +5130,14 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetSameIDs
     // The GetSameIDs() doesn't change object so no new function is required.
     Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast(theShapeWhere,theShapeWhat)->GetLastFunction();
 
+  // VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+#ifdef DUMP_SUBSHAPE_IDS
   // Make a Python command
   GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listSameIDs = geompy.GetSameIDs("
     << theShapeWhere << ", "
     << theShapeWhat << ")";
+#endif // DUMP_SUBSHAPE_IDS
     return aSeq;
   } else {
     SetErrorCode(NOT_FOUND_ANY);
@@ -5172,9 +5193,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::ExtendEdge
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
 
     return NULL;
   }
@@ -5241,9 +5261,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::ExtendFace
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
 
     return NULL;
   }
@@ -5303,9 +5322,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeSurfaceFromFace
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
 
     return NULL;
   }

@@ -88,7 +88,6 @@
 
 #include <SALOMEDS_SObject.hxx>
 
-#include <Basics_OCCTVersion.hxx>
 #include <QtxFontEdit.h>
 
 // External includes
@@ -173,7 +172,7 @@ CORBA::Object_var GeometryGUI::ClientSObjectToObject (_PTR(SObject) theSObject)
       anObj = anORB->string_to_object(aValue.c_str());
     }
   } catch(...) {
-    INFOS("ClientSObjectToObject - Unknown exception was occured!!!");
+    INFOS("ClientSObjectToObject - Unknown exception has occurred!!!");
   }
   return anObj._retn();
 }
@@ -229,7 +228,7 @@ GeometryGUI::GeometryGUI() :
   myTextTreeWdg = 0;
   myAnnotationMgr = 0;
 
-  connect( Material_ResourceMgr::resourceMgr(), SIGNAL( changed() ), this, SLOT( updateMaterials() ) );
+  connect( Material_ResourceMgr::resourceMgr(), SIGNAL( changed() ), this, SLOT( updateMaterials() ), Qt::UniqueConnection );
 
   Q_INIT_RESOURCE( GEOMGUI );
 }
@@ -622,7 +621,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpFace:               // MENU BUILD - FACE
   case GEOMOp::OpShell:              // MENU BUILD - SHELL
   case GEOMOp::OpSolid:              // MENU BUILD - SOLID
-  case GEOMOp::OpCompound:           // MENU BUILD - COMPUND
+  case GEOMOp::OpCompound:           // MENU BUILD - COMPOUND
     libName = "BuildGUI";
     break;
   case GEOMOp::OpFuse:               // MENU BOOLEAN - FUSE
@@ -1860,7 +1859,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   // end of GEOM plugins loading
 
   connect( application()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ),
-          this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ) );
+           this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ), Qt::UniqueConnection );
 
   // Reset actions accelerator keys
   action(GEOMOp::OpDelete)->setEnabled( true ); // Delete: Key_Delete
@@ -1871,9 +1870,9 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
 
   LightApp_SelectionMgr* sm = getApp()->selectionMgr();
 
-  connect( sm, SIGNAL( currentSelectionChanged() ), this, SLOT( updateCreationInfo() ));
-  connect( sm, SIGNAL( currentSelectionChanged() ), this, SLOT( onAutoBringToFront() ));
-  connect( sm, SIGNAL( currentSelectionChanged() ), this, SLOT( updateFieldColorScale() ));
+  connect( sm, SIGNAL( currentSelectionChanged() ), this, SLOT( updateCreationInfo() ), Qt::UniqueConnection );
+  connect( sm, SIGNAL( currentSelectionChanged() ), this, SLOT( onAutoBringToFront() ), Qt::UniqueConnection );
+  connect( sm, SIGNAL( currentSelectionChanged() ), this, SLOT( updateFieldColorScale() ), Qt::UniqueConnection );
 
   if ( !myCreationInfoWdg )
     myCreationInfoWdg = new GEOMGUI_CreationInfoWdg( getApp() );
@@ -1910,7 +1909,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
 
   QMenu* viewMenu = menuMgr()->findMenu( STD_Application::MenuViewId );
   if ( viewMenu )
-    connect( viewMenu, SIGNAL( aboutToShow() ), this, SLOT( onViewAboutToShow() ) );
+    connect( viewMenu, SIGNAL( aboutToShow() ), this, SLOT( onViewAboutToShow() ), Qt::UniqueConnection );
 
   // 0020836 (Basic vectors and origin)
   SUIT_ResourceMgr* aResourceMgr = SUIT_Session::session()->resourceMgr();
@@ -1949,7 +1948,7 @@ bool GeometryGUI::deactivateModule( SUIT_Study* study )
   LightApp_SelectionMgr* selMrg = getApp()->selectionMgr();
 
   disconnect( selMrg, SIGNAL( currentSelectionChanged() ), this, SLOT( updateCreationInfo() ));
-  disconnect( selMrg, SIGNAL( currentSelectionChanged() ), this, SLOT( updateFieldColorScale() ));
+  //disconnect( selMrg, SIGNAL( currentSelectionChanged() ), this, SLOT( updateFieldColorScale() ));
   if ( myCreationInfoWdg ) {
     getApp()->removeDockWindow( myCreationInfoWdg->getWinID() );
     myCreationInfoWdg = 0;
@@ -2806,9 +2805,7 @@ void GeometryGUI::preferencesChanged( const QString& section, const QString& par
              param == QString("scalar_bar_height") ||
              param == QString("scalar_bar_text_height") ||
              param == QString("scalar_bar_nb_intervals")) {
-      GEOM_Displayer aDisplayer;
-      bool anIsRedisplayFieldSteps = param == QString("scalar_bar_nb_intervals");
-      aDisplayer.UpdateColorScale( anIsRedisplayFieldSteps, true );
+      updateFieldColorScale();
     }
     else if ( param == QString("dimensions_color")            ||
               param == QString("dimensions_line_width")       ||
@@ -2960,7 +2957,7 @@ void GeometryGUI::storeVisualParameters (int savePoint)
         _PTR(SObject) obj( studyDS->FindObjectID( o_it.key().toLatin1().data() ) );
         if ( !obj || !(aProps.count() > 0))
           continue;
-        // entry is "encoded" = it does NOT contain component adress, since it is a
+        // entry is "encoded" = it does NOT contain component address, since it is a
         // subject to change on next component loading
 
         std::string entry = ip->encodeEntry(o_it.key().toLatin1().data(), componentName);
@@ -3134,7 +3131,7 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
 
   for (std::vector<std::string>::iterator entIt = entries.begin(); entIt != entries.end(); ++entIt)
   {
-    // entry is a normal entry - it should be "decoded" (setting base adress of component)
+    // entry is a normal entry - it should be "decoded" (setting base address of component)
     QString entry (ip->decodeEntry(*entIt).c_str());
 
     // Check that the entry corresponds to a real object in the Study

@@ -21,7 +21,7 @@ while i <= 3 :
     ShapeListCompound.append(S)
     i = i + 1
 
-# create a compund of the given shapes
+# create a compound of the given shapes
 compound = geompy.MakeCompound(ShapeListCompound)
 
 # add object in the study

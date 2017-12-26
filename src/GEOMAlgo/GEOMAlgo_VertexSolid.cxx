@@ -27,8 +27,6 @@
 //
 #include <GEOMAlgo_VertexSolid.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <gp_Pnt.hxx>
 
 #include <TopAbs_ShapeEnum.hxx>
@@ -47,12 +45,8 @@
 #include <BRep_Tool.hxx>
 #include <BRepClass3d_SolidClassifier.hxx>
 //
-#include <BOPCol_ListOfShape.hxx>
-#if OCC_VERSION_LARGE > 0x06070100
+#include <TopTools_ListOfShape.hxx>
 #include <IntTools_Context.hxx>
-#else
-#include <BOPInt_Context.hxx>
-#endif
 //
 #include <BOPDS_DS.hxx>
 #include <BOPDS_IndexRange.hxx>
@@ -90,11 +84,7 @@ void GEOMAlgo_VertexSolid::Perform()
       myErrorStatus=10;
       return;
     }
-#if OCC_VERSION_LARGE > 0x07010001
     if(myDSFiller->HasErrors()) {
-#else
-    if(myDSFiller->ErrorStatus()) {
-#endif
       myErrorStatus=11;
       return;
     }
@@ -103,7 +93,7 @@ void GEOMAlgo_VertexSolid::Perform()
     TopTools_IndexedMapOfShape aM;
     //
     const BOPDS_DS& aDS=myDSFiller->DS();
-    const BOPCol_ListOfShape& aLS=aDS.Arguments();
+    const TopTools_ListOfShape& aLS=aDS.Arguments();
     aNbArgs=aLS.Extent();
     if (aNbArgs!=2) {
       myErrorStatus=14;
@@ -129,7 +119,7 @@ void GEOMAlgo_VertexSolid::Perform()
 //=======================================================================
 void GEOMAlgo_VertexSolid::BuildResult()
 {
-  Standard_Integer i, iBeg, iEnd, aNbVV, aNbVE, aNbVF, j, iFound, aNbRanges;
+  Standard_Integer i, iBeg, iEnd, aNbVV, aNbVE, aNbVF, j, iFound;//, aNbRanges;
   Standard_Real aTol;
   TopAbs_State aSt;
   TopAbs_ShapeEnum aType;
@@ -146,20 +136,16 @@ void GEOMAlgo_VertexSolid::BuildResult()
   BOPDS_VectorOfInterfVE& aVEs=pDS->InterfVE();
   BOPDS_VectorOfInterfVF& aVFs=pDS->InterfVF();
   //
-  const BOPCol_ListOfShape& aLS=aDS.Arguments();
+  const TopTools_ListOfShape& aLS=aDS.Arguments();
   const TopoDS_Shape& aObj=aLS.First();
   //
   const TopoDS_Shape& aTool=aLS.Last();
   const TopoDS_Solid& aSolid=(myRank==0) ? TopoDS::Solid(aTool) : TopoDS::Solid(aObj);
   //
-#if OCC_VERSION_LARGE > 0x06070100
   Handle(IntTools_Context) aCtx=myDSFiller->Context();
-#else
-  Handle(BOPInt_Context) aCtx=myDSFiller->Context();
-#endif
   BRepClass3d_SolidClassifier& aSC=aCtx->SolidClassifier(aSolid);
   //
-  aNbRanges=aDS.NbRanges();
+  //aNbRanges=aDS.NbRanges();
   const BOPDS_IndexRange& aRange=aDS.Range(myRank);
   aRange.Indices(iBeg, iEnd);
   //
@@ -175,39 +161,39 @@ void GEOMAlgo_VertexSolid::BuildResult()
     iFound=0;
     //
     // 1
-    aNbVV=aVVs.Extent();
+    aNbVV=aVVs.Length();
     for (j=0; j<aNbVV; ++j) {
       BOPDS_InterfVV& aVV=aVVs(j);
       if (aVV.Contains(i)) {
-	myLSON.Append(aV);
-	iFound=1;
-	break;
+        myLSON.Append(aV);
+        iFound=1;
+        break;
       }
     }
     if (iFound) {
       continue; 
     }
     // 2
-    aNbVE=aVEs.Extent();
+    aNbVE=aVEs.Length();
     for (j=0; j<aNbVE; ++j) {
       BOPDS_InterfVE& aVE=aVEs(j);
       if (aVE.Contains(i)) {
-	myLSON.Append(aV);
-	iFound=1;
-	break;
+        myLSON.Append(aV);
+        iFound=1;
+        break;
       }
     }
     if (iFound) {
       continue; 
     }
     // 3
-    aNbVF=aVFs.Extent();
+    aNbVF=aVFs.Length();
     for (j=0; j<aNbVF; ++j) {
       BOPDS_InterfVF& aVF=aVFs(j);
       if (aVF.Contains(i)) {
-	myLSON.Append(aV);
-	iFound=1;
-	break;
+        myLSON.Append(aV);
+        iFound=1;
+        break;
       }
     }
     if (iFound) {

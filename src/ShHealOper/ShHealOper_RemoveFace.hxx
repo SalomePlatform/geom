@@ -27,7 +27,6 @@
 #ifndef ShHealOper_RemoveFace_HeaderFile
 #define ShHealOper_RemoveFace_HeaderFile
 
-#include <MMgt_TShared.hxx>
 #include <ShHealOper_Tool.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopTools_SequenceOfShape.hxx>
@@ -50,7 +49,7 @@ class ShHealOper_RemoveFace : public ShHealOper_Tool
   Standard_EXPORT ShHealOper_RemoveFace (const TopoDS_Shape& theShape);
   // Constructor initialized by shape from which faces will be removed.
   Standard_EXPORT virtual void Init(const TopoDS_Shape& theShape);
-   //Method for initalization by whole shape.
+   //Method for initialization by whole shape.
   Standard_EXPORT Standard_Boolean Perform();
   //Removes all faces from specified shape.
   

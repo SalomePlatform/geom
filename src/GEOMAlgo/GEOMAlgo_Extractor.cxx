@@ -546,15 +546,15 @@ void GEOMAlgo_Extractor::processFOrSo(const TopoDS_Shape &theFOrSo)
   TopTools_ListOfShape aClosedSubShapes;
   TopTools_ListOfShape aNewShapes;
   TopoDS_Shape         anOuterSubShape;
-  TopAbs_ShapeEnum     aShapeType;
+  //TopAbs_ShapeEnum     aShapeType;
   TopAbs_ShapeEnum     aSubShapeType;
 
   if (theFOrSo.ShapeType() == TopAbs_FACE) {
-    aShapeType      = TopAbs_FACE;
+    //aShapeType      = TopAbs_FACE;
     aSubShapeType   = TopAbs_WIRE;
     anOuterSubShape = BRepTools::OuterWire(TopoDS::Face(theFOrSo));
   } else {
-    aShapeType      = TopAbs_SOLID;
+    //aShapeType      = TopAbs_SOLID;
     aSubShapeType   = TopAbs_SHELL;
     anOuterSubShape = BRepClass3d::OuterShell(TopoDS::Solid(theFOrSo));
   }
@@ -675,14 +675,14 @@ void GEOMAlgo_Extractor::processShOrCS(const TopoDS_Shape &theShOrCS)
   TopTools_ListOfShape aNewSubShapes;
   TopTools_ListOfShape aNewOtherShapes;
   TopAbs_ShapeEnum     aSubShapeType;
-  TopAbs_ShapeEnum     aSubSubShapeType;
+  //TopAbs_ShapeEnum     aSubSubShapeType;
 
   if (theShOrCS.ShapeType() == TopAbs_SHELL) {
     aSubShapeType    = TopAbs_FACE;
-    aSubSubShapeType = TopAbs_EDGE;
+    //aSubSubShapeType = TopAbs_EDGE;
   } else { // comp-solid
     aSubShapeType    = TopAbs_SOLID;
-    aSubSubShapeType = TopAbs_FACE;
+    //aSubSubShapeType = TopAbs_FACE;
   }
 
   for (; anIter.More(); anIter.Next()) {
@@ -1098,7 +1098,7 @@ void GEOMAlgo_Extractor::makeHistory(const TopoDS_Shape        &theShape,
       getModified(theShape, aListModif, theShape.ShapeType());
 
       Standard_Boolean       isModif = !aListModif.IsEmpty();
-      const TopAbs_ShapeEnum aType   = theShape.ShapeType();
+      //const TopAbs_ShapeEnum aType   = theShape.ShapeType();
 
       if (isModif) {
         // Add the new shapes.

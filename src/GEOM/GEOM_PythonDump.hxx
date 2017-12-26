@@ -48,10 +48,8 @@ namespace GEOM
 
     //operator TCollection_AsciiString () const;
 
-#if OCC_VERSION_MAJOR >= 7
     template <class T>
     Standard_EXPORT TPythonDump& operator<< (const Handle(T)& theObject) { return *this << theObject.get(); }
-#endif
     Standard_EXPORT TPythonDump& operator<< (bool theArg);
     Standard_EXPORT TPythonDump& operator<< (long int theArg);
     Standard_EXPORT TPythonDump& operator<< (int theArg);
@@ -69,12 +67,12 @@ namespace GEOM
 
   /*! Returns an object from two given, which has the latest entry
    */
-  Standard_EXPORT Handle(::GEOM_Object) GetCreatedLast (const Handle(::GEOM_Object)& theObj1,
-                                      const Handle(::GEOM_Object)& theObj2);
+  Standard_EXPORT Handle(::GEOM_BaseObject) GetCreatedLast (const Handle(Standard_Transient)& theObj1,
+                                                            const Handle(Standard_Transient)& theObj2);
 
   /*! Returns an object from \a theObjects, which has the latest entry
    */
-  Standard_EXPORT Handle(::GEOM_Object) GetCreatedLast (const Handle(TColStd_HSequenceOfTransient)& theObjects);
+  Standard_EXPORT Handle(::GEOM_BaseObject) GetCreatedLast (const Handle(TColStd_HSequenceOfTransient)& theObjects);
 }
 
 #endif

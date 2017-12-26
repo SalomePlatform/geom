@@ -712,7 +712,7 @@ bool RepairGUI_ShapeProcessDlg::execute( ObjectList& objects )
   }
 
   if ( !anErrorObjNames.empty() )
-    MESSAGE( "ERRORS occured while processing the following objects: " << anErrorObjNames.join( " " ).toLatin1().data() );
+    MESSAGE( "ERRORS occurred while processing the following objects: " << anErrorObjNames.join( " " ).toLatin1().data() );
     
   return anErrorObjNames.size() < myObjects->length(); // true if at least one object was OK, false if ALL objects were nil after Healing.
 }

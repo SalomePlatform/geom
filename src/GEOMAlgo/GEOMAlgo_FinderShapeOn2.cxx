@@ -68,12 +68,7 @@
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
-
-#if OCC_VERSION_LARGE > 0x06070100
 #include <IntTools_Context.hxx>
-#else
-#include <BOPInt_Context.hxx>
-#endif
 
 //=======================================================================
 //function : 
@@ -599,7 +594,7 @@ void GEOMAlgo_FinderShapeOn2::ProcessSolids()
 void GEOMAlgo_FinderShapeOn2::InnerPoints(const TopoDS_Face& aF,
                                           GEOMAlgo_ListOfPnt& aLP)
 {
-  Standard_Integer j, j1, j2, k, n[4], aNbLinks, aNx, aNb, iCnt;//, aNbMax, *pIds;
+  Standard_Integer j, j1, j2, k, n[4], aNx, aNb, iCnt;//, aNbLinks, aNbMax, *pIds;
   TopLoc_Location aLoc;
   Handle(Poly_Triangulation) aTRF;
   TColStd_MapOfInteger aMBN;
@@ -646,7 +641,6 @@ void GEOMAlgo_FinderShapeOn2::InnerPoints(const TopoDS_Face& aF,
   }
   //
   // boundary nodes aMBN
-  aNbLinks=aMPKI.Extent();
   aIt.Initialize(aMPKI);
   for (; aIt.More(); aIt.Next()) {
     iCnt=aIt.Value();

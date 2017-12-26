@@ -135,10 +135,12 @@ class GEOM_I_EXPORT GEOM_ITransformOperations_i :
                                          GEOM::GEOM_Object_ptr thePoint);
 
   GEOM::GEOM_Object_ptr OffsetShape (GEOM::GEOM_Object_ptr theObject,
-                                     CORBA::Double theOffset);
+                                     CORBA::Double         theOffset,
+                                     CORBA::Boolean        theJoinByPipes);
 
   GEOM::GEOM_Object_ptr OffsetShapeCopy (GEOM::GEOM_Object_ptr theObject,
-                                         CORBA::Double theOffset);
+                                         CORBA::Double         theOffset,
+                                         CORBA::Boolean        theJoinByPipes);
 
   GEOM::GEOM_Object_ptr ProjectShapeCopy (GEOM::GEOM_Object_ptr theSource,
                                           GEOM::GEOM_Object_ptr theTarget);

@@ -27,7 +27,6 @@
 #ifndef ShHealOper_Sewing_HeaderFile
 #define ShHealOper_Sewing_HeaderFile
 
-#include <MMgt_TShared.hxx>
 #include <ShHealOper_Tool.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopAbs_ShapeEnum.hxx>
@@ -50,10 +49,10 @@ class ShHealOper_Sewing : public ShHealOper_Tool
   
   Standard_EXPORT ShHealOper_Sewing (const TopoDS_Shape& theShape,
                                      const Standard_Real theTolerance);
-  //Constructor for initalization by shape and tolerance.
+  //Constructor for initialization by shape and tolerance.
 
   Standard_EXPORT virtual void Init(const TopoDS_Shape& theShape);
-   //Method for initalization by whole shape.
+   //Method for initialization by whole shape.
   
   Standard_EXPORT Standard_Boolean Perform();
   //Performs sewing specified whole shape.

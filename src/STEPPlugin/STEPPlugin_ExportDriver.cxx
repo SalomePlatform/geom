@@ -58,7 +58,7 @@ STEPPlugin_ExportDriver::STEPPlugin_ExportDriver()
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer STEPPlugin_ExportDriver::Execute(LOGBOOK& log) const
+Standard_Integer STEPPlugin_ExportDriver::Execute(Handle(TFunction_Logbook)& log) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction( Label() );
@@ -137,7 +137,7 @@ Standard_Integer STEPPlugin_ExportDriver::Execute(LOGBOOK& log) const
   }
   catch (Standard_Failure)
   {
-      //THROW_SALOME_CORBA_EXCEPTION("Exception catched in STEPExport", SALOME::BAD_PARAM);
+      //THROW_SALOME_CORBA_EXCEPTION("Exception caught in STEPExport", SALOME::BAD_PARAM);
   }
   return 0;
 }
@@ -154,4 +154,4 @@ GetCreationInformation( std::string&             theOperationName,
   return false;
 }
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT( STEPPlugin_ExportDriver,GEOM_BaseDriver );
+IMPLEMENT_STANDARD_RTTIEXT( STEPPlugin_ExportDriver,GEOM_BaseDriver );

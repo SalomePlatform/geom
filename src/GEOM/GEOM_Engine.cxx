@@ -34,8 +34,6 @@
 #include "GEOM_SubShapeDriver.hxx"
 #include "Sketcher_Profile.hxx"
 
-#include <Basics_OCCTVersion.hxx>
-
 #include "utilities.h"
 
 #include <Basics_Utils.hxx>
@@ -66,11 +64,9 @@
 
 #include <Resource_DataMapIteratorOfDataMapOfAsciiStringAsciiString.hxx>
 
-#if OCC_VERSION_LARGE > 0x07000000
 #include <BinDrivers.hxx>
 #include <StdDrivers_DocumentRetrievalDriver.hxx>
 #include <PCDM_StorageDriver.hxx>
-#endif
 
 #include <set>
 
@@ -89,6 +85,14 @@ static int MYDEBUG = 0;
 #else
 static int MYDEBUG = 0;
 #endif
+
+// VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+// Next macro, when defined, causes appearing of SubShapeAllIDs(), SubShapeAllSortedIDs(), GetSameIDs()
+// and other such commands in Python dump.
+// See also GEOMImpl_IShapesOperations.cxx.
+// ---------------------------------------
+// #define DUMP_SUBSHAPE_IDS
+// ---------------------------------------
 
 typedef std::map< TCollection_AsciiString, TCollection_AsciiString > TSting2StringMap;
 typedef std::map< TCollection_AsciiString, TObjectData >             TSting2ObjDataMap;
@@ -148,6 +152,8 @@ static TCollection_AsciiString GetPublishCommands
                     const std::map< int, TCollection_AsciiString > &theEntryToCmdMap,
                     const TIntToListIntMap                         &theMapRefs,
                           std::set< int >                          &thePublished);
+
+void Prettify(TCollection_AsciiString& theScript);
 
 //================================================================================
 /*!
@@ -215,11 +221,9 @@ GEOM_Engine::GEOM_Engine()
   TFunction_DriverTable::Get()->AddDriver(GEOM_Object::GetSubShapeID(), new GEOM_SubShapeDriver());
   
   _OCAFApp = new GEOM_Application();
-#if OCC_VERSION_LARGE > 0x07000000
   _OCAFApp->DefineFormat("SALOME_GEOM", "GEOM Document Version 1.0", "sgd",
                          new StdDrivers_DocumentRetrievalDriver, 0);
   BinDrivers::DefineFormat(_OCAFApp);
-#endif
   _UndoLimit = 0;
 }
 
@@ -253,11 +257,7 @@ Handle(TDocStd_Document) GEOM_Engine::GetDocument(bool force)
     aDoc = _document;
   }
   else if (force) {
-#if OCC_VERSION_MAJOR > 6
     _OCAFApp->NewDocument("BinOcaf", aDoc);
-#else
-    _OCAFApp->NewDocument("SALOME_GEOM", aDoc);
-#endif
     aDoc->SetUndoLimit(_UndoLimit);
     _document = aDoc;
   }
@@ -393,9 +393,8 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object)              th
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    MESSAGE("GEOM_Engine::AddSubShape Error: " << aFail->GetMessageString());
+  catch (Standard_Failure& aFail) {
+    MESSAGE("GEOM_Engine::AddSubShape Error: " << aFail.GetMessageString());
     return NULL;
   }
 
@@ -470,7 +469,7 @@ bool GEOM_Engine::RemoveObject(Handle(GEOM_BaseObject)& theObject)
   if ( _freeLabels.empty() || _freeLabels.back() != aLabel )
     _freeLabels.push_back(aLabel);
 
-  // we can't explicitely delete theObject. At least prevent its functioning
+  // we can't explicitly delete theObject. At least prevent its functioning
   // as an alive object when aLabel is reused for a new object
   theObject->_label = aLabel.Root();
   theObject->_ior.Clear();
@@ -527,12 +526,10 @@ bool GEOM_Engine::Load(const char* theFileName)
     return false;
   }
 
-#if OCC_VERSION_MAJOR > 6
   // Replace old document format by the new one.
   if (aDoc->StorageFormat().IsEqual("SALOME_GEOM")) {
     aDoc->ChangeStorageFormat("BinOcaf");
   }
-#endif
 
   aDoc->SetUndoLimit(_UndoLimit);
 
@@ -611,7 +608,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(std::vector<TObjectData>& theObj
   // a map containing copies of TObjectData from theObjectData
   TSting2ObjDataMap    aEntry2ObjData;
   // contains pointers to TObjectData of either aEntry2ObjData or theObjectData; the latter
-  // occures when several StudyEntries correspond to one Entry
+  // occurs when several StudyEntries correspond to one Entry
   TSting2ObjDataPtrMap aStEntry2ObjDataPtr;
 
   //Resource_DataMapOfAsciiStringAsciiString aEntry2StEntry, aStEntry2Entry, theObjectNames;
@@ -810,6 +807,11 @@ TCollection_AsciiString GEOM_Engine::DumpPython(std::vector<TObjectData>& theObj
     globalVars.Insert( 1, "\n\tglobal " );
     aScript.Insert( posToInsertGlobalVars, globalVars );
   }
+
+  // VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
+#ifndef DUMP_SUBSHAPE_IDS
+  Prettify(aScript);
+#endif
 
   return aScript;
 }
@@ -1780,7 +1782,7 @@ void PublishObject (TObjectData&                              theObjectData,
 
     // store aCreationCommand before publishing commands
     int tag = GetTag(theObjectData._entry);
-    theEntryToCmdMap.insert( std::make_pair( tag + 2*theEntry2ObjData.size(), aCreationCommand ));
+    theEntryToCmdMap.insert( std::make_pair( tag + -2*theEntry2ObjData.size(), aCreationCommand ));
   }
 
   // make a command
@@ -1843,6 +1845,43 @@ TCollection_AsciiString GetPublishCommands
   }
 
   return aResult;
+}
+
+void Prettify(TCollection_AsciiString& theScript)
+{
+  TCollection_AsciiString output;
+  static std::list<TCollection_AsciiString> ToRemove;
+  if (ToRemove.empty()) {
+    ToRemove.push_back("geompy.SubShapeAllIDs");
+    ToRemove.push_back("geompy.SubShapeAllSortedCentresIDs");
+    ToRemove.push_back("geompy.SubShapeAllSortedIDs");
+    ToRemove.push_back("geompy.GetFreeFacesIDs");
+    ToRemove.push_back("geompy.GetShapesOnBoxIDs");
+    ToRemove.push_back("geompy.GetShapesOnShapeIDs");
+    ToRemove.push_back("geompy.GetShapesOnPlaneIDs");
+    ToRemove.push_back("geompy.GetShapesOnPlaneWithLocationIDs");
+    ToRemove.push_back("geompy.GetShapesOnCylinderIDs");
+    ToRemove.push_back("geompy.GetShapesOnCylinderWithLocationIDs");
+    ToRemove.push_back("geompy.GetShapesOnSphereIDs");
+    ToRemove.push_back("geompy.GetShapesOnQuadrangleIDs");
+    ToRemove.push_back("geompy.GetSameIDs");
+  }
+
+  int start = 1;
+  while (start <= theScript.Length()) {
+    int end = theScript.Location("\n", start, theScript.Length());
+    if (end == -1) end = theScript.Length();
+    TCollection_AsciiString line = theScript.SubString(start, end);
+    bool found = false;
+    for (std::list<TCollection_AsciiString>::const_iterator it = ToRemove.begin(); it != ToRemove.end() && !found; ++it)
+      found = line.Search( *it ) != -1;
+    if (!found)
+      output += line;
+    start = end + 1;
+  }
+  theScript = output;
+
+  //OK @@@@@@@@@@@@@@@@@@@@@@@@@@@
 }
 
 //================================================================================

@@ -33,7 +33,7 @@ The result of each operation will be a GEOM_Object.
 
 <b>Arguments:</b>
 - \b Radius - Radius of the disk
-- \b Orientation - Plane on wich the disk will be built
+- \b Orientation - Plane on which the disk will be built
 - \b Pattern - Division pattern
 
 \image html divided_disk_dlg.png

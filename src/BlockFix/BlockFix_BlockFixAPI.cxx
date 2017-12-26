@@ -30,13 +30,11 @@
 #include <BlockFix_UnionFaces.hxx>
 #include <BlockFix_UnionEdges.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <ShapeUpgrade_RemoveLocations.hxx>
 
 #include <Precision.hxx>
 
-OCCT_IMPLEMENT_STANDARD_RTTIEXT(BlockFix_BlockFixAPI, MMgt_TShared);
+IMPLEMENT_STANDARD_RTTIEXT(BlockFix_BlockFixAPI, Standard_Transient);
 
 //=======================================================================
 //function : BlockFix_BlockFixAPI
