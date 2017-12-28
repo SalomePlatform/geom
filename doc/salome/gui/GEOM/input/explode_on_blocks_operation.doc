@@ -16,7 +16,7 @@ from a compound.
 \n <b>TUI Command:</b> <em>geompy.MakeBlockExplode(Compound,
 MinNbFaces, MaxNbFaces),</em> where \em Compound is a compound to be
 exploded into the blocks, \em MinNbFaces, \em MaxNbFaces are correspondingly
-the minimal and  the maximal number of faces of the resulting blocks.
+the minimal and the maximal number of faces of the resulting blocks.
 \n <b>Arguments:</b> 1 compound + 2 integers (min. and max. number of
 faces in the block to be extracted).
 

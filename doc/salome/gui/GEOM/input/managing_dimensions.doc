@@ -12,7 +12,7 @@ It can be accessed from the main menu via <b>Measures -> Dimensions -> Manage Di
 
 <b>List of Dimensions</b>
 
-This dialog provides the list of dimensions shown in the view for the selected geometrical <b>Object</b>. The list items are sorted by  dimension type: <b>Distance</b>, <b>Diameter</b> and <b>Angle</b>. 
+This dialog provides the list of dimensions shown in the view for the selected geometrical <b>Object</b>. The list items are sorted by dimension type: <b>Distance</b>, <b>Diameter</b> and <b>Angle</b>. 
 
 It is possible to show/hide a dimension in the view by checking on/off the box to the left of its name. 
 
@@ -40,7 +40,7 @@ The following dimensions can be shown:
 </ul>
 </li>
 
-<li> <b>Diameter </b> of an an arc, a circular edge or face, a sphere, a cylinder, a cone or a  torus.</li> 
+<li> <b>Diameter </b> of an an arc, a circular edge or face, a sphere, a cylinder, a cone or a torus.</li> 
 
 <li> <b>Angle.</b> The angle dimension can be defined in one of two possible ways :  </li>
 

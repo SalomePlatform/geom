@@ -10437,7 +10437,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Parameters:
                 theInit Shape to remove material from. It must be a solid or a compound made of a single solid.
                 theBase Closed edge or wire defining the base shape to be extruded.
-                theH Prism dimension along the normal  to theBase
+                theH Prism dimension along the normal to theBase
                 theAngle Draft angle in degrees.
                 theInvert If true material changes the direction.
                 theName Object name; when specified, this parameter is used
@@ -10477,7 +10477,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Parameters:
                 theInit Shape to add material to. It must be a solid or a compound made of a single solid.
                 theBase Closed edge or wire defining the base shape to be extruded.
-                theH Prism dimension along the normal  to theBase
+                theH Prism dimension along the normal to theBase
                 theAngle Draft angle in degrees.
                 theInvert If true material changes the direction.
                 theName Object name; when specified, this parameter is used
@@ -11817,7 +11817,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## @{
 
         ## Create a quadrangle face from four edges. Order of Edges is not
-        #  important. It is  not necessary that edges share the same vertex.
+        #  important. It is not necessary that edges share the same vertex.
         #  @param E1,E2,E3,E4 Edges for the face bound.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
@@ -11830,7 +11830,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         def MakeQuad(self, E1, E2, E3, E4, theName=None):
             """
             Create a quadrangle face from four edges. Order of Edges is not
-            important. It is  not necessary that edges share the same vertex.
+            important. It is not necessary that edges share the same vertex.
 
             Parameters:
                 E1,E2,E3,E4 Edges for the face bound.
@@ -11935,7 +11935,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             return anObj
 
         ## Create a hexahedral solid, bounded by the six given faces. Order of
-        #  faces is not important. It is  not necessary that Faces share the same edge.
+        #  faces is not important. It is not necessary that Faces share the same edge.
         #  @param F1,F2,F3,F4,F5,F6 Faces for the hexahedral solid.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
@@ -11949,7 +11949,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         def MakeHexa(self, F1, F2, F3, F4, F5, F6, theName=None):
             """
             Create a hexahedral solid, bounded by the six given faces. Order of
-            faces is not important. It is  not necessary that Faces share the same edge.
+            faces is not important. It is not necessary that Faces share the same edge.
 
             Parameters:
                 F1,F2,F3,F4,F5,F6 Faces for the hexahedral solid.

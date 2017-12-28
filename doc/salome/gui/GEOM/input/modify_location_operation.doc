@@ -22,9 +22,9 @@ System in the center of it is to the left .
 
 \image html image30.png
 
-\n The second algorithm  modifies the location of the \b Object(s) using \b Start
+\n The second algorithm modifies the location of the \b Object(s) using \b Start
 and \b End \b LCS, although the final position of the object will not
-coincide with the center of  either of the two systems. In this method
+coincide with the center of either of the two systems. In this method
 the object is shifted from its initial position by the value of the
 remainder after subtraction of the coordinates of the <b>Start LCS</b> from
 the coordinates of the <b>End LCS</b>.
@@ -53,7 +53,7 @@ translated cube at the position (-100;0;0)
 \image html image4.png
 
 The third algorithm modifies the location of the \b Object(s) using the <b>Path object</b> (Wire or Edge)
-and the \b Distance parameter (ranging from 0 to 1) defining  how far the object will move along the path.
+and the \b Distance parameter (ranging from 0 to 1) defining how far the object will move along the path.
 \n <b>Create a copy</b> checkbox allows to keep the initial object,
 otherwise it will be removed.
 \n <b>Select Unpublished edges</b> checkbox allows to select sub-shape edges on

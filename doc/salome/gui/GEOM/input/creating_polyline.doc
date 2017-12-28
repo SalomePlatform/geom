@@ -9,7 +9,7 @@ To create a <b>2D Polyline</b> select in the main menu  <b>New Entity -> Basic -
 \image html polyline_dlg.png
 
 A polyline represents a section or a set of sections. Each section is constructed from a sequence of 2D points
-connected  by either linear segments or an interpolation curve. Every section has its own attributes:
+connected by either linear segments or an interpolation curve. Every section has its own attributes:
 - \b Name, 
 - \b Type (Polyline or Spline),
 - \b Closed flag.

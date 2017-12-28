@@ -9,7 +9,7 @@ There are 2 algorithms to create a \b Line in the 3D space.
 The Result of each operation will be a GEOM_Object (edge).
 
 \n Firstly you can define a \b Line by \b Point1 and \b Point2,
-which are the points through  which the \b Line passes.
+which are the points through which the \b Line passes.
 \n <b>TUI Command:</b> <em>geompy.MakeLineTwoPnt(Point1, Point2)</em>
 \n <b>Arguments:</b> Name + 2 vertices.
 
@@ -30,7 +30,7 @@ which are the points through  which the \b Line passes.
 \b NB! There is another way to create a line, which is currently
 accessible only via \b TUI commands.
 
-You can define a line  passing through the given \b Point and parallel
+You can define a line passing through the given \b Point and parallel
 to the given \b Vector.
 \n <b>TUI Command:</b> <em>geompy.MakeLine(Point, Vector)</em>
 

@@ -2120,7 +2120,7 @@ QString EntityGUI_SketcherDlg::GetNewCommand( QString& theParameters )
   QString myNewCommand = ":";
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   int aPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
-  int DigNum = qAbs(aPrecision);                   // options for the format of numbers in  myNewCommand
+  int DigNum = qAbs(aPrecision);                   // options for the format of numbers in myNewCommand
   char Format = 'f';
   if ( aPrecision < 0 )                            // f --> DigNum is the number of digits after the decimal point
     Format = 'g';                                  // g --> DigNum is the maximum number of significant digits 
@@ -2319,7 +2319,7 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
   MESSAGE("EntityGUI_SketcherDlg::execute")
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   int aPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
-  int DigNum = qAbs(aPrecision);                   // options for the format of numbers in  myNewCommand
+  int DigNum = qAbs(aPrecision);                   // options for the format of numbers in myNewCommand
   char Format = 'f';
   if ( aPrecision < 0 )                            // f --> DigNum is the number of digits after the decimal point
     Format = 'g';                                  // g --> DigNum is the maximum number of significant digits 

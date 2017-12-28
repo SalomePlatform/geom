@@ -8,7 +8,7 @@ To create a <b>Local Coordinate System</b> in the <b>Main Menu</b> select <b>New
 \n Firstly, you can define the values of X, Y, and Z coordinates of origin and the directions of X and Y axes directly in the menu.
 \n <b>TUI command:</b> <em>geompy.MakeMarker(OX, OY, OZ, XDX, XDY, XDZ,
 YDX, YDY, YDZ)</em>, where OX, OY, OZ are coordinates of the origin of
-LCS, XDX, XDY, XDZ is a vector of OX  direction of the LCS and YDX,
+LCS, XDX, XDY, XDZ is a vector of OX direction of the LCS and YDX,
 YDY, YDZ is a a vector of OY direction of the LCS.
 \n <b>Arguments:</b> Name + Coordinates of origin, X axis direction, Y axis direction.
 

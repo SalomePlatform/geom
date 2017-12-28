@@ -40,7 +40,7 @@ further analysis (see below).
 
 \note The result quality depends on the quality of triangulation. Changing the value of the deflection coefficient
 parameter can strongly affect the result. However, small values of the deflection coefficient might lead to
-some performance loss of the algorithm, as number of triangles of the tesselation mesh depends on this parameter.
+some performance loss of the algorithm, as number of triangles of the tessellation mesh depends on this parameter.
 
 Press <b>Apply and Close</b> or \b Apply button to store the selected sub-shapes in the study for further analysis.
 The selection will be published as a compound containing intersected sub-shapes from both source objects.

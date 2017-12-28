@@ -45,7 +45,7 @@ This operation allows quickly detecting self-interferences of the given shape us
 The algorithm works on the face level, i.e. it computes only face-to-face intersections. No additional intersection types are computed.
 
 This can be useful to detect all intersections between subshapes of type "surface" in an assembly.
-The result quality will depend on the tesselation quality. However, small deflection values can significantly decrease the performance of the algorithm.
+The result quality will depend on the tessellation quality. However, small deflection values can significantly decrease the performance of the algorithm.
 Nevertheless, the performance of Fast Intersect algorithm is much higher than that of the topological intersection.
 
 \image html measures13.png
@@ -53,7 +53,7 @@ Nevertheless, the performance of Fast Intersect algorithm is much higher than th
 In this dialog:
 
 - \b Object - the checked object. \b Selection button allows picking it in the viewer or in the object browser.
-- <b>Deflection coefficient</b> -  a linear deflection coefficient that defines the tesselation quality. If theDeflection <= 0, default deflection 0.001 is used.
+- <b>Deflection coefficient</b> -  a linear deflection coefficient that defines the tessellation quality. If theDeflection <= 0, default deflection 0.001 is used.
 - <b>Detect gaps with tolerance</b> specifies the distance between shapes used for detecting gaps:
      - if theTolerance <= 0, the algorithm detects intersections;
      - if theTolerance > 0, the algorithm detects gapss. 
@@ -67,7 +67,7 @@ If no interferences are selected, all of them are published in the study. Each i
 \n <b>TUI Command:</b> <em>geompy.CheckSelfIntersectionsFast(theShape, theDeflection, theTolerance),</em> \n
 where: \n
 \em theShape is the shape checked for validity. \n
-\em theDeflection that specifies the quality of tesselation. 
+\em theDeflection that specifies the quality of tessellation. 
 \em theTolerance Specifies the distance between shapes used for detecting gaps.
 
 See also a \ref tui_check_self_intersections_fast_page "TUI example".
