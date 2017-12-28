@@ -56,7 +56,7 @@ class ShHealOper_EdgeDivide : public ShHealOper_Tool
                                            const Standard_Boolean theDivideParamMode = Standard_True);
   //Performs spitting of the specified edge in the accoradnce to
   //specified mode and value.
-  //If theDivideParamMode is equal to true edge will be splitted by parameter.
+  //If theDivideParamMode is equal to true edge will be split by parameter.
   //Else edge will be spliited by length (default true).
   //theValue is coefficient for splitting from 0 to 1.
 

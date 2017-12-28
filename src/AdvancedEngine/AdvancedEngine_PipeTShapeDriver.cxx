@@ -338,13 +338,13 @@ TopoDS_Shape AdvancedEngine_PipeTShapeDriver::MakePipeTShape (const double r1, c
   // Remove small radius main pipe
   BRepAlgoAPI_Cut cut1 (fuse1.Shape(), C1Int.Shape());
   if (!cut1.IsDone()) {
-    StdFail_NotDone::Raise("Coudn't cut cylinders");
+    StdFail_NotDone::Raise("Couldn't cut cylinders");
   }
 
   // Remove small radius incident pipe => Te
   BRepAlgoAPI_Cut Te (cut1.Shape(), C2Int.Shape());
   if (!Te.IsDone()) {
-    StdFail_NotDone::Raise("Coudn't cut cylinders");
+    StdFail_NotDone::Raise("Couldn't cut cylinders");
   }
 
   TopoDS_Shape aShape = Te.Shape();

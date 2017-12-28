@@ -124,7 +124,7 @@
 // Below macro, when uncommented, switches on simplified (more performant) algorithm
 // of auto-color picking up
 #define SIMPLE_AUTOCOLOR
-// Below macro, when defined, switches on automatic layouting of OCC and Dependecy views
+// Below macro, when defined, switches on automatic layouting of OCC and Dependency views
 // on Show Dependencies operation
 #define LAYOUT_DEPVIEW
 

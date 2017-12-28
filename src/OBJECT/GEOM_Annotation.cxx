@@ -209,7 +209,7 @@ void GEOM_Annotation::SetAttachPoint( const gp_Pnt& thePoint )
 
 // =======================================================================
 // function : SetHilightShape
-// purpose  : Sets shape (annotated shape) that will be used for hilighting.
+// purpose  : Sets shape (annotated shape) that will be used for highlighting.
 // =======================================================================
 void GEOM_Annotation::SetHilightShape( const TopoDS_Shape& theShape )
 {

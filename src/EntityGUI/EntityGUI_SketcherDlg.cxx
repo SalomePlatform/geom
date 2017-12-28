@@ -627,7 +627,7 @@ void EntityGUI_SketcherDlg::RectClicked()
 {
   InitClick();
   
-  // Connect the selction manager (disconnected in InitClick())
+  // Connect the selection manager (disconnected in InitClick())
   connect( myGeometryGUI->getApp()->selectionMgr(),
        SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   

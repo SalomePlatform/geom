@@ -508,7 +508,7 @@ public:
 
 /*!
   \brief Initialize GEOM module's engine
-  \return \c true if initialization succeedes or \c false otherwise
+  \return \c true if initialization succeeds or \c false otherwise
 */
 bool GEOM_Swig::initGeomGen()
 {

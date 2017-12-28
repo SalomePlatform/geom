@@ -122,10 +122,10 @@ public:
   //! Returns attachment point of extension line.
   const gp_Pnt& GetAttachPoint() const { return myAttach; }
 
-  //! Sets shape (annotated shape) that will be used for hilighting.
+  //! Sets shape (annotated shape) that will be used for highlighting.
   Standard_EXPORT void SetHilightShape( const TopoDS_Shape& theShape );
 
-  //! Returns the hilighting shape.
+  //! Returns the highlighting shape.
   const TopoDS_Shape HilightShape() const { return myShape; }
 
 public:
@@ -283,10 +283,10 @@ private:
   gp_Pnt myStartPosition; //!< Position before starting dragging operation.
   Standard_Boolean myIsScreenFixed; //!< Flag indicating whether "screen fixed" positioning mode is turned on or off.
   Standard_Boolean myIsAutoHide; //!< Flag indicating whether "auto-hiding" option is turned on.
-  Standard_Boolean myIsDepthCulling; //!< Flag indiciating whether the "depth culling" is turned on.
+  Standard_Boolean myIsDepthCulling; //!< Flag indicating whether the "depth culling" is turned on.
   HighlightMode myHilightMode; //!< Highlight mode for presentation.
   TCollection_ExtendedString myText; //!< Text string of the label presentation.
-  TopoDS_Shape myShape; //!< Hilighting shape.
+  TopoDS_Shape myShape; //!< Highlighting shape.
 
 private:
 

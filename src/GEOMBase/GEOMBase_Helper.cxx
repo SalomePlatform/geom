@@ -967,7 +967,7 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, b
 
 //================================================================
 // Function : showError
-// Purpose  : Shows a message box with infromation about an error taken from getOperation()->GetErrorCode()
+// Purpose  : Shows a message box with information about an error taken from getOperation()->GetErrorCode()
 //================================================================
 void GEOMBase_Helper::showError()
 {

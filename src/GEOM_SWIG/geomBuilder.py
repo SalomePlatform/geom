@@ -4289,7 +4289,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theBase Base shape to be extruded.
         #  @param thePath Path shape to extrude the base shape along it.
         #  @param theVec Vector defines a constant binormal direction to keep the
-        #                same angle beetween the direction and the sections
+        #                same angle between the direction and the sections
         #                along the sweep surface.
         #  @param IsGenerateGroups flag that tells if it is necessary to
         #         create groups. It is equal to False by default.
@@ -4318,7 +4318,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 theBase Base shape to be extruded.
                 thePath Path shape to extrude the base shape along it.
                 theVec Vector defines a constant binormal direction to keep the
-                       same angle beetween the direction and the sections
+                       same angle between the direction and the sections
                        along the sweep surface.
                 IsGenerateGroups flag that tells if it is necessary to
                                  create groups. It is equal to False by default.
@@ -11462,7 +11462,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
         ## Detect self-intersections of the given shape with algorithm based on mesh intersections.
         #  @param theShape Shape to check.
-        #  @param theDeflection Linear deflection coefficient that specifies quality of tesselation:
+        #  @param theDeflection Linear deflection coefficient that specifies quality of tessellation:
         #         - if \a theDeflection <= 0, default deflection 0.001 is used
         #  @param theTolerance Specifies a distance between sub-shapes used for detecting gaps:
         #         - if \a theTolerance <= 0, algorithm detects intersections (default behavior)
@@ -11477,7 +11477,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
             Parameters:
                 theShape Shape to check.
-                theDeflection Linear deflection coefficient that specifies quality of tesselation:
+                theDeflection Linear deflection coefficient that specifies quality of tessellation:
                     - if theDeflection <= 0, default deflection 0.001 is used
                 theTolerance Specifies a distance between shapes used for detecting gaps:
                     - if theTolerance <= 0, algorithm detects intersections (default behavior)
@@ -11491,20 +11491,20 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             RaiseIfFailed("CheckSelfIntersectionsFast", self.MeasuOp)
             return IsValid
 
-        ## Check boolean and partition operations agruments.
-        #  @param theShape the agrument of an operation to be checked
-        #  @return TRUE if the agrument is valid for a boolean or partition
+        ## Check boolean and partition operations arguments.
+        #  @param theShape the argument of an operation to be checked
+        #  @return TRUE if the argument is valid for a boolean or partition
         #          operation; FALSE otherwise.
         @ManageTransactions("MeasuOp")
         def CheckBOPArguments(self, theShape):
             """
-            Check boolean and partition operations agruments.
+            Check boolean and partition operations arguments.
 
             Parameters:
-                theShape the agrument of an operation to be checked
+                theShape the argument of an operation to be checked
 
             Returns:
-                TRUE if the agrument is valid for a boolean or partition
+                TRUE if the argument is valid for a boolean or partition
                 operation; FALSE otherwise.
             """
             return self.MeasuOp.CheckBOPArguments(theShape)
@@ -11515,7 +11515,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theTolerance Specifies a distance between shapes used for detecting gaps:
         #         - if \a theTolerance <= 0, algorithm detects intersections (default behavior)
         #         - if \a theTolerance > 0, algorithm detects gaps
-        #  @param theDeflection Linear deflection coefficient that specifies quality of tesselation:
+        #  @param theDeflection Linear deflection coefficient that specifies quality of tessellation:
         #         - if \a theDeflection <= 0, default deflection 0.001 is used
         #  @return TRUE, if there are intersections (gaps) between source shapes
         #  @return List of sub-shapes IDs from 1st shape that localize intersection.
@@ -11533,7 +11533,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 theTolerance Specifies a distance between shapes used for detecting gaps:
                     - if theTolerance <= 0, algorithm detects intersections (default behavior)
                     - if theTolerance > 0, algorithm detects gaps
-                theDeflection Linear deflection coefficient that specifies quality of tesselation:
+                theDeflection Linear deflection coefficient that specifies quality of tessellation:
                     - if theDeflection <= 0, default deflection 0.001 is used
  
             Returns:

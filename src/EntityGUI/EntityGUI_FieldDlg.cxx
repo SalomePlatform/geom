@@ -485,7 +485,7 @@ void EntityGUI_FieldDlg::StepTable::setEditable (bool isEditable,
 
 //=======================================================================
 // name    : EntityGUI_FieldDlg::StepTable::isEditable
-// Purpose : Verify wheter cell is editable
+// Purpose : Verify whether cell is editable
 //=======================================================================
 bool EntityGUI_FieldDlg::StepTable::isEditable (int row, int col) const
 {

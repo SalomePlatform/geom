@@ -77,7 +77,7 @@ static QString getParentComponent( _PTR( SObject ) obj )
 
 //=====================================================================================
 // function : inUse
-// purpose  : check if the object(s) passed as the the second arguments are used
+// purpose  : check if the object(s) passed as the second arguments are used
 //            by the other objects in the study
 //=====================================================================================
 static bool inUse( _PTR(Study) study, const QString& component, const QMap<QString,QString>& objects )

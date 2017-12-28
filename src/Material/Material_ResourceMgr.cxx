@@ -101,10 +101,10 @@ Material_ResourceMgr* Material_ResourceMgr::resourceMgr()
 }
 
 /*!
-  \brief Get list of avaiable materials
+  \brief Get list of available materials
   \param theType material type
   \param theSort if \c true (default), returns a list of materials sorted by name
-  \return list of avaiable materials names
+  \return list of available materials names
 */
 QStringList Material_ResourceMgr::materials( MaterialType theType, bool theSort )
 {

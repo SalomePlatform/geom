@@ -116,7 +116,7 @@ Standard_Integer GEOMImpl_ArchimedeDriver::Execute(Handle(TFunction_Logbook)& lo
     double volume = VOL.CalculateVolume(Zmax) * aWaterDensity;
 
     char msg[100] = "";
-    sprintf(msg, "shape sinks to the bottom : Weigth max = %.1f", volume);
+    sprintf(msg, "shape sinks to the bottom : Weight max = %.1f", volume);
 
     StdFail_NotDone::Raise(msg);
   }

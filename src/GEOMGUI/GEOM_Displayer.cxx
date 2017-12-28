@@ -1672,7 +1672,7 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
 //=================================================================
 /*!
  *  GEOM_Displayer::BuildPrs
- *  Build presentation accordint to the current viewer type
+ *  Build presentation according to the current viewer type
  */
 //=================================================================
 SALOME_Prs* GEOM_Displayer::BuildPrs( GEOM::GEOM_Object_ptr theObj )
@@ -1701,7 +1701,7 @@ SALOME_Prs* GEOM_Displayer::BuildPrs( GEOM::GEOM_Object_ptr theObj )
 //=================================================================
 /*!
  *  GEOM_Displayer::BuildPrs
- *  Build presentation accordint to the current viewer type
+ *  Build presentation according to the current viewer type
  */
 //=================================================================
 SALOME_Prs* GEOM_Displayer::BuildPrs( const TopoDS_Shape& theShape )

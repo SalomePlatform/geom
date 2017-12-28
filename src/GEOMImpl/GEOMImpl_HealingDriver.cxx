@@ -63,7 +63,7 @@
 
 //=======================================================================
 //function :  raiseNotDoneExeption
-//purpose  :  global function: forms error message and raises exeption
+//purpose  :  global function: forms error message and raises exception
 //=======================================================================
 void raiseNotDoneExeption( const int theErrorStatus )
 {

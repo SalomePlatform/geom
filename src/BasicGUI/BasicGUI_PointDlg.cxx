@@ -683,7 +683,7 @@ void BasicGUI_PointDlg::CheckBoxClicked()
 
 
 //=================================================================================
-// funcion  : getParameter()
+// function  : getParameter()
 // purpose  :
 //=================================================================================
 double BasicGUI_PointDlg::getParameter() const
@@ -693,7 +693,7 @@ double BasicGUI_PointDlg::getParameter() const
 
 
 //=================================================================================
-// funcion  : getUParameter()
+// function  : getUParameter()
 // purpose  :
 //=================================================================================
 double BasicGUI_PointDlg::getUParameter() const
@@ -703,7 +703,7 @@ double BasicGUI_PointDlg::getUParameter() const
 
 
 //=================================================================================
-// funcion  : getVParameter()
+// function  : getVParameter()
 // purpose  :
 //=================================================================================
 double BasicGUI_PointDlg::getVParameter() const

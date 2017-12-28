@@ -842,7 +842,7 @@ GEOM::string_array* RepairGUI_ShapeProcessDlg::getParameters( const GEOM::string
   for ( i = 0, j = 0; i < theOperators.length(); i++ )
     j += myValMap[ QString( theOperators[i].in() ) ].size();
   
-  // set the new length of paremeters
+  // set the new length of parameters
   aParams->length( j );
 
   // fill the parameters

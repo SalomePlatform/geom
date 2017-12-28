@@ -20,7 +20,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-//NOTE: This is an intreface to a function for the Archimede operation.
+//NOTE: This is an interface to a function for the Archimede operation.
 //
 #include "GEOM_Function.hxx"
 

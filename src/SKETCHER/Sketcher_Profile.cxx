@@ -594,8 +594,8 @@ void Sketcher_Profile::ShapeFunctor::addSegmentAbsolute( const TCollection_Ascii
 
 /*!
   \brief Add segment by relativ coordinates
-  \param dx dX value specifing segment end
-  \param dy dY value specifing segment end
+  \param dx dX value specifying segment end
+  \param dy dY value specifying segment end
   \internal
 */
 void Sketcher_Profile::ShapeFunctor::addSegmentRelative( const TCollection_AsciiString& dx,
@@ -801,8 +801,8 @@ void Sketcher_Profile::ShapeFunctor::addArcAbsolute( const TCollection_AsciiStri
 
 /*!
   \brief Add arc along current direction vector by specified relative coordinates
-  \param dx dX value specifing arc end
-  \param dy dY value specifing arc end
+  \param dx dX value specifying arc end
+  \param dy dY value specifying arc end
   \internal
 */
 void Sketcher_Profile::ShapeFunctor::addArcRelative( const TCollection_AsciiString& dx,
@@ -867,8 +867,8 @@ void Sketcher_Profile::ShapeFunctor::addArcRadiusAbsolute( const TCollection_Asc
 
 /*!
   \brief Add arc with given radius by specified relative coordinates
-  \param dx dX value specifing arc end
-  \param dy dY value specifing arc end
+  \param dx dX value specifying arc end
+  \param dy dY value specifying arc end
   \param radius arc radius
   \param flag reverse direction flag
   \internal
@@ -958,8 +958,8 @@ void Sketcher_Profile::ShapeFunctor::addArcCenterAbsolute( const TCollection_Asc
 
 /*!
   \brief Add arc with given center by specified relative coordinates
-  \param dx dX value specifing arc end
-  \param dy dY value specifing arc end
+  \param dx dX value specifying arc end
+  \param dy dY value specifying arc end
   \param xc X coordinate of arc center
   \param yc Y coordinate of arc center
   \param flag1 reverse direction flag
@@ -1351,8 +1351,8 @@ void Sketcher_Profile::DumpFunctor::addSegmentAbsolute( const TCollection_AsciiS
 
 /*!
   \brief Add segment by relativ coordinates
-  \param dx dX value specifing segment end
-  \param dy dY value specifing segment end
+  \param dx dX value specifying segment end
+  \param dy dY value specifying segment end
   \internal
 */
 void Sketcher_Profile::DumpFunctor::addSegmentRelative( const TCollection_AsciiString& dx,
@@ -1531,8 +1531,8 @@ void Sketcher_Profile::DumpFunctor::addArcAbsolute( const TCollection_AsciiStrin
 
 /*!
   \brief Add arc along current direction vector by specified relative coordinates
-  \param dx dX value specifing arc end
-  \param dy dY value specifing arc end
+  \param dx dX value specifying arc end
+  \param dy dY value specifying arc end
   \internal
 */
 void Sketcher_Profile::DumpFunctor::addArcRelative( const TCollection_AsciiString& dx,
@@ -1561,8 +1561,8 @@ void Sketcher_Profile::DumpFunctor::addArcRadiusAbsolute( const TCollection_Asci
 
 /*!
   \brief Add arc with given radius by specified relative coordinates
-  \param dx dX value specifing arc end
-  \param dy dY value specifing arc end
+  \param dx dX value specifying arc end
+  \param dy dY value specifying arc end
   \param radius arc radius
   \param flag reverse direction flag
   \internal
@@ -1599,8 +1599,8 @@ void Sketcher_Profile::DumpFunctor::addArcCenterAbsolute( const TCollection_Asci
 
 /*!
   \brief Add arc with given center by specified relative coordinates
-  \param dx dX value specifing arc end
-  \param dy dY value specifing arc end
+  \param dx dX value specifying arc end
+  \param dy dY value specifying arc end
   \param xc X coordinate of arc center
   \param yc Y coordinate of arc center
   \param flag1 reverse direction flag

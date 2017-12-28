@@ -134,7 +134,7 @@ protected:
   // should be published in a study.
 
   void showError();
-  // Shows a message box with infromation about an error taken from getOperation()->GetErrorCode()
+  // Shows a message box with information about an error taken from getOperation()->GetErrorCode()
   void showError( const QString& msg );
   // Shows a error message followed by <msg>
 

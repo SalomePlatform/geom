@@ -67,7 +67,7 @@
 */
 
 /*!
-  \brief Contructor
+  \brief Constructor
  */
 GEOMToolsGUI_MaterialList::GEOMToolsGUI_MaterialList( QWidget* parent )
   : QListWidget( parent )

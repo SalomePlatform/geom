@@ -261,7 +261,7 @@ Standard_Boolean ShHealOper_EdgeDivide::computeValues(const Handle(TColStd_HSequ
   
   Standard_Real aFirst =0.,aLast=0.;
 
-  //computation of the split values if edge should be splitted by parameter.
+  //computation of the split values if edge should be split by parameter.
   if(myDivideParamMode) {
     BRep_Tool::Range(myEdge,aFirst,aLast);
     Handle(Geom_Curve) aCurve = BRep_Tool::Curve(myEdge,aFirst,aLast);
@@ -275,7 +275,7 @@ Standard_Boolean ShHealOper_EdgeDivide::computeValues(const Handle(TColStd_HSequ
     }
   }
   else {
-     //computation of the split values if edge should be splitted by length.
+     //computation of the split values if edge should be split by length.
     ShapeAnalysis_Edge sae;
     Handle(Geom_Curve) aCurve;
     Standard_Real aCurLen =0.;

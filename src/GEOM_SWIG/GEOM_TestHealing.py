@@ -21,7 +21,7 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-#  GEOM_SWIG : binding of C++ implementaion with Python
+#  GEOM_SWIG : binding of C++ implementation with Python
 #  File   : GEOM_TestHealing.py
 #  Author : Julia DOROVSKIKH
 #  Module : GEOM

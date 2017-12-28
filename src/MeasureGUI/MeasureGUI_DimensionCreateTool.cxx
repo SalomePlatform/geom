@@ -1076,7 +1076,7 @@ void MeasureGUI_DimensionCreateTool::ChooseLengthFlyoutsFromBnd( SeqOfDirs& theD
   {
     const gp_Pln& aPlane = aPlaneIt.Value();
 
-    // transform bounding box to orthogonal coordiantes relative to
+    // transform bounding box to orthogonal coordinates relative to
     // dimension points P1, P2 (x-axis) and plane direction (z-axis),
     // where y coordinates will correspond to flyout direction against
     // the dimension point line
