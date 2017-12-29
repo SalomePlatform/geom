@@ -37,7 +37,7 @@
 
 //=================================================================================
 // class    : TransformationGUI_OffsetDlg()
-// purpose  : Constructs a TransformationGUI_OffsetDlg which is a child of 'parent', with the 
+// purpose  : Constructs a TransformationGUI_OffsetDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
@@ -85,7 +85,7 @@ TransformationGUI_OffsetDlg::TransformationGUI_OffsetDlg( GeometryGUI* theGeomet
 // purpose  : Destroys the object and frees any allocated resources
 //=================================================================================
 TransformationGUI_OffsetDlg::~TransformationGUI_OffsetDlg()
-{  
+{
   /* no need to delete child widgets, Qt does it all for us */
 }
 
@@ -148,9 +148,9 @@ void TransformationGUI_OffsetDlg::ClickOnOk()
 //=================================================================================
 bool TransformationGUI_OffsetDlg::ClickOnApply()
 {
-  if ( !onAccept( GroupPoints->CheckButton1->isChecked() ) )
+  if ( !onAccept( /*copy=*/true ))
     return false;
-  
+
   initName();
   return true;
 }
@@ -182,7 +182,7 @@ void TransformationGUI_OffsetDlg::SelectionIntoArgument()
 void TransformationGUI_OffsetDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  
+
   if ( send == GroupPoints->PushButton1 ) {
     GroupPoints->PushButton1->setDown(true);
     myEditCurrentArgument = GroupPoints->LineEdit1;
@@ -210,7 +210,7 @@ void TransformationGUI_OffsetDlg::enterEvent( QEvent* )
 void TransformationGUI_OffsetDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect( myGeomGUI->getApp()->selectionMgr(), 
+  connect( myGeomGUI->getApp()->selectionMgr(),
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   globalSelection( GEOM_ALLSHAPES );
   myEditCurrentArgument = GroupPoints->LineEdit1;
@@ -260,14 +260,14 @@ bool TransformationGUI_OffsetDlg::isValid( QString& msg )
 bool TransformationGUI_OffsetDlg::execute( ObjectList& objects )
 {
   bool res = false;
-  
+
   GEOM::GEOM_Object_var anObj;
-  
+
   GEOM::GEOM_ITransformOperations_var anOper = GEOM::GEOM_ITransformOperations::_narrow(getOperation());
 
   if ( true /*GroupPoints->CheckButton1->isChecked() || IsPreview()*/ ) {
     for ( int i = 0; i < myObjects.count(); i++ ) {
-      
+
       anObj = anOper->OffsetShapeCopy( myObjects[i].get(), GetOffset(), GetIsJoinByPipes() );
       if ( !anObj->_is_nil() ) {
         if(!IsPreview()) {
@@ -285,7 +285,7 @@ bool TransformationGUI_OffsetDlg::execute( ObjectList& objects )
     }
   }
   res = true;
-    
+
   return res;
 }
 
@@ -316,7 +316,7 @@ double TransformationGUI_OffsetDlg::GetOffset() const
 
 //=======================================================================
 //function : GetIsJoinByPipes
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 bool TransformationGUI_OffsetDlg::GetIsJoinByPipes() const

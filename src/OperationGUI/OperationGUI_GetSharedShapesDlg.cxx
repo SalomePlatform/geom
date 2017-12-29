@@ -45,7 +45,7 @@ namespace
   GEOM::shape_type maxShapeType(const GEOM::ListOfGO& objs)
   {
     GEOM::shape_type r = GEOM::SHAPE;
-    for ( int i = 0; i < objs.length(); i++ ) {
+    for ( CORBA::ULong i = 0; i < objs.length(); i++ ) {
       GEOM::shape_type t = objs[i]->GetShapeType();
       if ( t == GEOM::COMPOUND || t == GEOM::COMPSOLID )
         t = objs[i]->GetMaxShapeType();
@@ -412,7 +412,7 @@ QList<GEOM::GeomObjPtr> OperationGUI_GetSharedShapesDlg::getSourceObjects()
 {
   QList<GEOM::GeomObjPtr> res;
   GEOM::ListOfGO aListPtr(myListShapes);
-  for (int i = 0; i < aListPtr.length(); i++) {
+  for (CORBA::ULong i = 0; i < aListPtr.length(); i++) {
     GEOM::GeomObjPtr aGeomObjPtr(aListPtr[i]);
     res << aGeomObjPtr;
   }
