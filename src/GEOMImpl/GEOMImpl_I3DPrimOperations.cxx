@@ -1878,7 +1878,7 @@ Handle(TColStd_HSequenceOfTransient)
   try {
     OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
-      SetErrorCode("Pipe with defferent section driver failed");
+      SetErrorCode("Pipe with different section driver failed");
       return NULL;
     }
   }

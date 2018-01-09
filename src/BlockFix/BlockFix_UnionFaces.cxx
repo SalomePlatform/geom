@@ -696,7 +696,7 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
         aContext->Replace(aContext->Apply(aFace),aResult);
 
         ShapeFix_Face sff (aResult);
-        //Intializing by tolerances
+        //Initializing by tolerances
         sff.SetPrecision(myTolerance);
         sff.SetMinTolerance(tol);
         Standard_Real MaxTol = DefineMaxTolerance(aResult);
