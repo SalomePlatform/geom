@@ -74,7 +74,7 @@ private:
 
   QWidget*                           getControl( const QString&  );
   void                               setValue( QWidget*, const QString& ); // initialize the given control in the proper way
-  // (analize its class and convert the value string)
+  // (analyze its class and convert the value string)
   QString                            getValue( QWidget* ) const; // retrieve value of the control in the proper way
   QString                            getText( QWidget* ) const; // retrieve text of the control (for spin-boxes only)
 

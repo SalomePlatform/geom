@@ -145,10 +145,10 @@ void GEOMBase_Helper::display( GEOM::GEOM_Object_ptr object, const bool updateVi
 {
   // Unset color of shape ( this color may be set during preview displaying )
   // Default color will be used
-//   getDisplayer()->UnsetColor();
+  //   getDisplayer()->UnsetColor();
   getDisplayer()->UnsetWidth();
-  
-  MESSAGE("GEOMBase_Helper::display myTexture = "<<getDisplayer()->GetTexture())
+
+  MESSAGE("GEOMBase_Helper::display myTexture = "<<getDisplayer()->GetTexture());
 
   // Enable activisation of selection
   getDisplayer()->SetToActivate( true );
@@ -179,9 +179,11 @@ void GEOMBase_Helper::erase( GEOM::GEOM_Object_ptr object, const bool updateView
 {
   if ( !object->_is_nil() ) {
     QString entry = getEntry( object );
-    getDisplayer()->Erase( new SALOME_InteractiveObject(
-      entry.toLatin1().constData(), 
-      "GEOM", strdup( GEOMBase::GetName( object ).toLatin1().constData() ) ), true, updateView );
+    QString name  = GEOMBase::GetName( object );
+    getDisplayer()->Erase ( new SALOME_InteractiveObject(entry.toLatin1().constData(),
+                                                         "GEOM",
+                                                         name.toLatin1().constData() ),
+                            true, updateView );
   }
 }
 
@@ -219,8 +221,12 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
     getDisplayer()->SetToActivate( true );
 
     QString entry = getEntry( object );
-    getDisplayer()->Redisplay(new SALOME_InteractiveObject
-                              (entry.toLatin1().constData(), "GEOM", strdup(GEOMBase::GetName(object).toLatin1().constData())), false);
+    QString  name = GEOMBase::GetName( object );
+    getDisplayer()->Redisplay
+      (new SALOME_InteractiveObject (entry.toLatin1().constData(),
+                                     "GEOM",
+                                     name.toLatin1().constData()),
+       false);
   }
 
   if ( withChildren ) {
@@ -237,8 +243,12 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
           if ( !CORBA::is_nil( aChild ) ) {
             if ( !aChild->_is_nil() ) {
               QString entry = getEntry( aChild );
-              getDisplayer()->Redisplay( new SALOME_InteractiveObject(
-                entry.toLatin1().constData(), "GEOM", strdup( GEOMBase::GetName( aChild ).toLatin1().constData() ) ), false );
+              QString  name = GEOMBase::GetName( aChild );
+              getDisplayer()->Redisplay
+                ( new SALOME_InteractiveObject( entry.toLatin1().constData(),
+                                                "GEOM",
+                                                name.toLatin1().constData() ),
+                  false );
             }
           }
         }
@@ -267,7 +277,7 @@ void GEOMBase_Helper::displayPreview( const bool   display,
     erasePreview( update );
     return;
   }
-  
+
   isPreview = true;
   QString msg;
   if ( !isValid( msg ) )
@@ -283,20 +293,20 @@ void GEOMBase_Helper::displayPreview( const bool   display,
   try {
     SUIT_OverrideCursor wc;
     ObjectList objects;
- 
+
     if ( !isWaitCursorEnabled() )
       wc.suspend();
-    
+
     if ( !execute( objects ) || !getOperation()->IsDone() ) {
       wc.suspend();
     }
     else {
       for ( ObjectList::iterator it = objects.begin(); it != objects.end(); ++it )
       {
-            GEOM::GEOM_Object_var obj=*it;
+        GEOM::GEOM_Object_var obj = *it;
         displayPreview( obj, true, activate, false, lineWidth, displayMode, color );
         if ( toRemoveFromEngine )
-              obj->UnRegister();
+          obj->UnRegister();
       }
     }
   }
@@ -322,7 +332,7 @@ void GEOMBase_Helper::displayPreview( GEOM::GEOM_Object_ptr object,
                                       const int             displayMode,
                                       const int             color )
 {
-  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();    
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
 
   // Set color for preview shape
   getDisplayer()->SetColor( color == -1 ? Quantity_NOC_VIOLET : color );
@@ -344,7 +354,7 @@ void GEOMBase_Helper::displayPreview( GEOM::GEOM_Object_ptr object,
   SALOME_Prs* aPrs = getDisplayer()->BuildPrs( object );
   if ( aPrs == 0 || aPrs->IsNull() )
     return;
-    
+
   // Make preview not clippable
   aPrs->SetClippable (false);
 
@@ -375,17 +385,17 @@ void GEOMBase_Helper::displayPreview( const SALOME_Prs* prs,
 
   if ( myViewWindow == 0 )
     return;
-  
+
   // Display prs
   SUIT_ViewManager* aViewManager = myViewWindow->getViewManager();
   if ( aViewManager->getType() == OCCViewer_Viewer::Type() ||
        aViewManager->getType() == SVTK_Viewer::Type() )
-    {
-      SUIT_ViewModel* aViewModel = aViewManager->getViewModel();
-      SALOME_View* aView = dynamic_cast<SALOME_View*>(aViewModel);
-      if (aView)
-        aView->Display( getDisplayer(), prs );
-    }
+  {
+    SUIT_ViewModel* aViewModel = aViewManager->getViewModel();
+    SALOME_View* aView = dynamic_cast<SALOME_View*>(aViewModel);
+    if (aView)
+      aView->Display( getDisplayer(), prs );
+  }
 
   // Add prs to the preview list
   myPreview.push_back( (SALOME_Prs*)prs );
@@ -478,8 +488,11 @@ void GEOMBase_Helper::localSelection( const ObjectList& theObjs, const std::list
       continue;
     QString anEntry = getEntry( anObj );
     if ( anEntry != "" )
-      aListOfIO.Append( new SALOME_InteractiveObject(
-        anEntry.toLatin1().constData(), "GEOM", strdup( GEOMBase::GetName( anObj ).toLatin1().constData() ) ) );
+    {
+      QString aName = GEOMBase::GetName( anObj );
+      aListOfIO.Append( new SALOME_InteractiveObject( anEntry.toLatin1().constData(),
+                                                      "GEOM", aName.toLatin1().constData() ));
+    }
   }
 
   getDisplayer()->LocalSelection( aListOfIO, modes );
@@ -670,11 +683,11 @@ SalomeApp_Study* GEOMBase_Helper::getStudy() const
   SUIT_Application* anApp = 0;
   QListIterator<SUIT_Application*> it( anAppList );
   while ( it.hasNext() )
-    {
-      anApp = it.next();
-      if ( anApp && anApp->desktop() == aDesktop )
-        break;
-    }
+  {
+    anApp = it.next();
+    if ( anApp && anApp->desktop() == aDesktop )
+      break;
+  }
 
   return dynamic_cast<SalomeApp_Study*>(anApp->activeStudy());
 }
@@ -727,7 +740,7 @@ bool GEOMBase_Helper::openCommand()
   if ( !getStudy() || hasCommand() )
   {
     MESSAGE("Getting out from openCommand()")
-    return res;
+      return res;
   }
 
   GEOM::GEOM_IOperations_var anOp = GEOM::GEOM_IOperations::_narrow( getOperation() );
@@ -739,7 +752,7 @@ bool GEOMBase_Helper::openCommand()
   else
   {
     MESSAGE("anOp->_is_nil() = true")
-  }
+      }
 
   return res;
 }
@@ -809,10 +822,10 @@ bool GEOMBase_Helper::checkViewWindow()
     QList<SUIT_ViewWindow*> aViewWindowsList = SUIT_Session::session()->activeApplication()->desktop()->windows();
     QListIterator<SUIT_ViewWindow*> it( aViewWindowsList );
     while ( it.hasNext() )
-      {
-        if ( myViewWindow == it.next() )
-          return true;
-      }
+    {
+      if ( myViewWindow == it.next() )
+        return true;
+    }
   }
   myViewWindow = 0;
   return false;
@@ -827,10 +840,10 @@ bool GEOMBase_Helper::checkViewWindow()
 bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, bool erasePreviewFlag )
 {
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
-  if ( !appStudy ) 
+  if ( !appStudy )
   {
     MESSAGE("appStudy is empty")
-    return false;
+      return false;
   }
   _PTR(Study) aStudy = appStudy->studyDS();
 
@@ -849,7 +862,7 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, b
     showError( msg );
     return false;
   }
-  
+
   if(erasePreviewFlag)
     erasePreview( false );
 
@@ -877,21 +890,21 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, b
             QString aName = getObjectName(obj);
             if (aName.isEmpty()) {
               aName = getNewObjectName(currObj);
-                    if ( nbObjs > 1 ) {
-                            if (aName.isEmpty())
-                              aName = getPrefix(obj);
-                              if (nbObjs <= 30) {
-                                // Try to find a unique name
-                                aName = GEOMBase::GetDefaultName(aName, extractPrefix());
-                              } else {
-                                // Don't check name uniqueness in case of numerous objects
-                                aName = aName + "_" + QString::number(aNumber++);
-                              }
-                    } else {
-                            // PAL6521: use a prefix, if some dialog box doesn't reimplement getNewObjectName()
-                            if ( aName.isEmpty() )
-                              aName = GEOMBase::GetDefaultName( getPrefix( obj ) );
-                    }
+              if ( nbObjs > 1 ) {
+                if (aName.isEmpty())
+                  aName = getPrefix(obj);
+                if (nbObjs <= 30) {
+                  // Try to find a unique name
+                  aName = GEOMBase::GetDefaultName(aName, extractPrefix());
+                } else {
+                  // Don't check name uniqueness in case of numerous objects
+                  aName = aName + "_" + QString::number(aNumber++);
+                }
+              } else {
+                // PAL6521: use a prefix, if some dialog box doesn't reimplement getNewObjectName()
+                if ( aName.isEmpty() )
+                  aName = GEOMBase::GetDefaultName( getPrefix( obj ) );
+              }
             }
             anEntryList << addInStudy( obj, aName.toLatin1().constData() );
             // updateView=false
@@ -941,18 +954,18 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, b
     SalomeApp_Tools::QtCatchCorbaException( e );
     abortCommand();
     MESSAGE("Exception caught")
-  }
+      }
 
   updateViewer();
 
   MESSAGE("result ="<<result)
-  return result;
+    return result;
 }
 
 
 //================================================================
 // Function : showError
-// Purpose  : Shows a message box with infromation about an error taken from getOperation()->GetErrorCode()
+// Purpose  : Shows a message box with information about an error taken from getOperation()->GetErrorCode()
 //================================================================
 void GEOMBase_Helper::showError()
 {
@@ -1068,15 +1081,15 @@ QString GEOMBase_Helper::getPrefix( GEOM::GEOM_Object_ptr theObj ) const
 
   switch ( aType )
   {
-    case GEOM::VERTEX   : return QObject::tr( "GEOM_VERTEX" );
-    case GEOM::EDGE     : return QObject::tr( "GEOM_EDGE" );
-    case GEOM::WIRE     : return QObject::tr( "GEOM_WIRE" );
-    case GEOM::FACE     : return QObject::tr( "GEOM_FACE" );
-    case GEOM::SHELL    : return QObject::tr( "GEOM_SHELL" );
-    case GEOM::SOLID    : return QObject::tr( "GEOM_SOLID" );
-    case GEOM::COMPSOLID: return QObject::tr( "GEOM_COMPOUNDSOLID" );
-    case GEOM::COMPOUND : return QObject::tr( "GEOM_COMPOUND" );
-    default : return "";
+  case GEOM::VERTEX   : return QObject::tr( "GEOM_VERTEX" );
+  case GEOM::EDGE     : return QObject::tr( "GEOM_EDGE" );
+  case GEOM::WIRE     : return QObject::tr( "GEOM_WIRE" );
+  case GEOM::FACE     : return QObject::tr( "GEOM_FACE" );
+  case GEOM::SHELL    : return QObject::tr( "GEOM_SHELL" );
+  case GEOM::SOLID    : return QObject::tr( "GEOM_SOLID" );
+  case GEOM::COMPSOLID: return QObject::tr( "GEOM_COMPOUNDSOLID" );
+  case GEOM::COMPOUND : return QObject::tr( "GEOM_COMPOUND" );
+  default : return "";
   }
 }
 
@@ -1147,7 +1160,7 @@ GEOM::GEOM_Object_ptr GEOMBase_Helper::findObjectInFather (GEOM::GEOM_Object_ptr
   }
   if (inStudy)
     return aReturnObject._retn();
-  
+
   return GEOM::GEOM_Object::_nil();
 }
 
@@ -1160,7 +1173,7 @@ GEOM::GEOM_Object_ptr GEOMBase_Helper::findObjectInFather( GEOM::GEOM_Object_ptr
                                                            int theIndex )
 {
   GEOM::GEOM_Object_var object;
-  
+
   SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
   if ( study ) {
     _PTR(Study) studyDS = study->studyDS();
@@ -1182,7 +1195,7 @@ GEOM::GEOM_Object_ptr GEOMBase_Helper::findObjectInFather( GEOM::GEOM_Object_ptr
       }
     }
   }
-  
+
   return object._retn();
 }
 
@@ -1213,7 +1226,7 @@ QList<GEOM::GeomObjPtr> GEOMBase_Helper::getSourceObjects()
 // Returns valid object if only one object of the specified type is selected
 // (no matter global or local selection is activated). If \a type is TopAbs_SHAPE,
 // geometrical object of any valid type is expected.
-// 
+//
 // \param type type of the object to be obtained from selection
 // \return selected geometrical object or nil object if selection is not satisfactory
 //================================================================
@@ -1232,7 +1245,7 @@ GEOM::GeomObjPtr GEOMBase_Helper::getSelected( TopAbs_ShapeEnum type )
 // (no matter global or local selection is activated). The list of allowed
 // shape types is passed via \a types. If \a types includes TopAbs_SHAPE,
 // geometrical object of any valid type is expected.
-// 
+//
 // \param types list of allowed shape types for the objects to be obtained from selection
 // \return selected geometrical object or nil object if selection is not satisfactory
 //================================================================
@@ -1252,7 +1265,7 @@ GEOM::GeomObjPtr GEOMBase_Helper::getSelected( const QList<TopAbs_ShapeEnum>& ty
 //
 // The \a type parameter specifies allowed type of the object(s) being selected.
 // The \a count parameter specifies exact number of the objects to be retrieved from selection.
-// The \a strict parameter specifies policy being applied to the selection. 
+// The \a strict parameter specifies policy being applied to the selection.
 // If \a count < 0, then any number of the selected objects is valid (including 0).
 // In this case, if \a strict is \c true (default), all selected objects should satisfy
 // the specified \a type.
@@ -1260,7 +1273,7 @@ GEOM::GeomObjPtr GEOMBase_Helper::getSelected( const QList<TopAbs_ShapeEnum>& ty
 // In this case, if \a strict is \c true (default), function returns empty list if total number of selected
 // objects does not correspond to the \a count parameter. Otherwise (if \a strict is \c false),
 // function returns valid list of objects if at least \a count objects satisfy specified \a type.
-// 
+//
 // \param type type of the object(s) to be obtained from selection
 // \param count number of items to be retrieved from selection
 // \param strict selection policy
@@ -1291,7 +1304,7 @@ static bool typeInList( TopAbs_ShapeEnum type, const QList<TopAbs_ShapeEnum>& ty
 //
 // The \a types parameter specifies allowed types of the object(s) being selected.
 // The \a count parameter specifies exact number of the objects to be retrieved from selection.
-// The \a strict parameter specifies policy being applied to the selection. 
+// The \a strict parameter specifies policy being applied to the selection.
 // If \a count < 0, then any number of the selected objects is valid (including 0).
 // In this case, if \a strict is \c true (default), all selected objects should satisfy
 // the specified \a type.
@@ -1299,7 +1312,7 @@ static bool typeInList( TopAbs_ShapeEnum type, const QList<TopAbs_ShapeEnum>& ty
 // In this case, if \a strict is \c true (default), function returns empty list if total number of selected
 // objects does not correspond to the \a count parameter. Otherwise (if \a strict is \c false),
 // function returns valid list of objects if at least \a count objects satisfy specified \a type.
-// 
+//
 // \param types list of allowed shape types for the objects to be obtained from selection
 // \param count number of items to be retrieved from selection
 // \param strict selection policy

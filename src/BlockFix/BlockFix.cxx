@@ -95,7 +95,7 @@ static void FixResult(const TopoDS_Shape& result,
 {
   for (TopExp_Explorer ex_f(result,TopAbs_FACE); ex_f.More(); ex_f.Next()) {
     TopoDS_Shape aShape = Context->Apply(ex_f.Current().Oriented(TopAbs_FORWARD));
-    // face coud not be dropped or splitted on this step
+    // face could not be dropped or split on this step
     TopoDS_Face aFace = TopoDS::Face(aShape);
     TopLoc_Location L;
     Handle(Geom_Surface) Surf = BRep_Tool::Surface(aFace,L);

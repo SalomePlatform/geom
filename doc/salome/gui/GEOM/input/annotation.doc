@@ -3,7 +3,7 @@
 \page annotation_page Shape annotation
 
 <b> Annotation </b> functionality allows showing in the viewer special user-defined text label connected to corresponding part of a CAD model with a line.
-Annotation text is always parallel to the screen and horizontal. It is is not zoomed or rotated when a 3D scene is zoomed or rotated by the user.
+Annotation text is always parallel to the screen and horizontal. It is not zoomed or rotated when a 3D scene is zoomed or rotated by the user.
 The annotation text is defined using UTF-8 encoding and thus support any Unicode characters.
 
 There are several algorithms for the annotation position calculation during the scene manipulations (panning, zooming, rotation):

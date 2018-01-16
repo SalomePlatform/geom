@@ -327,11 +327,11 @@ GEOM::GEOM_Object_ptr GroupGUI_BooleanDlg::getFather(GEOM::GEOM_Object_ptr theOb
 QList<GEOM::GeomObjPtr> GroupGUI_BooleanDlg::getSourceObjects()
 {
   QList<GEOM::GeomObjPtr> res;
-  for (int i = 0; i < myListShapes.length(); i++) {
+  for ( CORBA::ULong i = 0; i < myListShapes.length(); i++) {
     GEOM::GeomObjPtr aGeomObjPtr(myListShapes[i]);
     res << aGeomObjPtr;
   }
-  for (int i = 0; i < myListTools.length(); i++) {
+  for ( CORBA::ULong i = 0; i < myListTools.length(); i++) {
     GEOM::GeomObjPtr aGeomObjPtr(myListTools[i]);
     res << aGeomObjPtr;
   }

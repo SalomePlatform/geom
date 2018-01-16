@@ -4,7 +4,7 @@
 
 A primitive called \b Rectangle is a rectangular face of certain dimensions and orientation
 
-To create a \b Rectangle  in the <b>Main Menu</b> select <b>New Entity - >
+To create a \b Rectangle in the <b>Main Menu</b> select <b>New Entity - >
 Primitives - > Rectangle</b>
 
 \n There are 2 algorithms to create a \b Rectangle in the 3D space. 
@@ -15,7 +15,7 @@ of coordinates defining its boundaries by the height and the width and its axis 
 radio buttons (OXY, OYZ or OZX).This 
 means that the \b Rectangle will lie in "OXY", "OYZ" or "OZX" plane correspondingly.
 \n <b>TUI Command:</b> <em>geompy.MakeFaceHW(Height, Width, Orientation)</em>
-\n <b>Arguments:</b> Name + 3 values (Dimensions at origin: heigth, width and
+\n <b>Arguments:</b> Name + 3 values (Dimensions at origin: height, width and
 orientation).
 
 

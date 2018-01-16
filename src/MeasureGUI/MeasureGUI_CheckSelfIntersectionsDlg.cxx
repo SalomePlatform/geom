@@ -89,7 +89,7 @@ MeasureGUI_CheckSelfIntersectionsDlg::MeasureGUI_CheckSelfIntersectionsDlg (Geom
   mainFrame()->RadioButton3->close();
 
   /***************************************************************/
-  /* SIMPLE SELF-INTERSECTION constructor
+  // SIMPLE SELF-INTERSECTION constructor
   /***************************************************************/
   mySimpleGrp             = new QGroupBox(tr("GEOM_CHECK_INFOS"));
   QLabel    *anObjLbl    = new QLabel(tr("GEOM_OBJECT"));
@@ -139,7 +139,7 @@ MeasureGUI_CheckSelfIntersectionsDlg::MeasureGUI_CheckSelfIntersectionsDlg (Geom
   aGrpLayout1->addWidget(myShapeList1,     6, 2);
 
   /***************************************************************/
-  /* FAST SELF-INTERSECTION constructor
+  // FAST SELF-INTERSECTION constructor
   /***************************************************************/
   
   myFastGrp               = new QGroupBox(tr("GEOM_CHECK_INFOS"), centralWidget());
@@ -268,7 +268,7 @@ void MeasureGUI_CheckSelfIntersectionsDlg::Init()
   /***************************************************************/
 
   connect(this,               SIGNAL(constructorsClicked(int)), 
-	  this,               SLOT(ConstructorsClicked(int)));
+          this,               SLOT(ConstructorsClicked(int)));
   connect(myGeomGUI,          SIGNAL(SignalDeactivateActiveDialog()),
           this,               SLOT(DeactivateActiveDialog()));
   connect(myGeomGUI,          SIGNAL(SignalCloseAllDialogs()),
@@ -527,19 +527,19 @@ void MeasureGUI_CheckSelfIntersectionsDlg::SelectionIntoArgument()
 
   if ( getConstructorId() == 0 ) {
     typesLst << TopAbs_COMPOUND
-	     << TopAbs_COMPSOLID
-	     << TopAbs_SOLID
-	     << TopAbs_SHELL
-	     << TopAbs_FACE
-	     << TopAbs_WIRE
-	     << TopAbs_EDGE
-	     << TopAbs_VERTEX
-	     << TopAbs_SHAPE;
+             << TopAbs_COMPSOLID
+             << TopAbs_SOLID
+             << TopAbs_SHELL
+             << TopAbs_FACE
+             << TopAbs_WIRE
+             << TopAbs_EDGE
+             << TopAbs_VERTEX
+             << TopAbs_SHAPE;
   } else {
     typesLst << TopAbs_FACE
-	     << TopAbs_SHELL
-	     << TopAbs_SOLID
-	     << TopAbs_COMPOUND;
+             << TopAbs_SHELL
+             << TopAbs_SOLID
+             << TopAbs_COMPOUND;
   }
 
   // Clear the dialog.
@@ -672,11 +672,11 @@ void MeasureGUI_CheckSelfIntersectionsDlg::onSubShapesListSelectionChanged()
     foreach(int idx, aIds) {
       aSubShape = anIndices.FindKey(idx);
       try {
-	SALOME_Prs* aPrs = !aSubShape.IsNull() ? getDisplayer()->BuildPrs(aSubShape) : 0;
-	if (aPrs) displayPreview(aPrs, true);
+        SALOME_Prs* aPrs = !aSubShape.IsNull() ? getDisplayer()->BuildPrs(aSubShape) : 0;
+        if (aPrs) displayPreview(aPrs, true);
       }
       catch (const SALOME::SALOME_Exception& e) {
-	SalomeApp_Tools::QtCatchCorbaException(e);
+        SalomeApp_Tools::QtCatchCorbaException(e);
       }
     }
   }

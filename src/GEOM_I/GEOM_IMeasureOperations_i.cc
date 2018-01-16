@@ -826,7 +826,7 @@ CORBA::Boolean GEOM_IMeasureOperations_i::CheckBOPArguments
   bool isGood = false;
 
   if (!aShape.IsNull()) {
-    // Check BOP agruments
+    // Check BOP arguments
     isGood = GetOperations()->CheckBOPArguments(aShape);
   }
 

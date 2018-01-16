@@ -475,7 +475,7 @@ void MeasureGUI_CheckShapeDlg::onErrorsListSelectionChanged()
 
   myGrp->ListBox2->clear();
 
-  if (aCurItem < aErrs.length()) {
+  if (aCurItem < (int)aErrs.length()) {
     GEOM::GEOM_IMeasureOperations::ShapeError aErr = aErrs[aCurItem];
     GEOM::ListOfLong aObjLst = aErr.incriminated;
     QStringList aSubShapeList;

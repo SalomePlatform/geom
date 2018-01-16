@@ -297,8 +297,8 @@ bool EntityGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWi
 bool EntityGUI::OnMouseRelease( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* theViewWindow )
 {
   ((OCCViewer_ViewWindow*)theViewWindow)->setSketcherStyle(false);
-  QDialog* aDlg = getGeometryGUI()->GetActiveDialogBox();
 #ifdef WITH_OPENCV
+  QDialog* aDlg = getGeometryGUI()->GetActiveDialogBox();
   if ( aDlg && ( QString( aDlg->metaObject()->className() ).compare( "EntityGUI_FeatureDetectorDlg" ) == 0 ) &&
        theViewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() &&
        pe->modifiers() != Qt::ControlModifier ) 

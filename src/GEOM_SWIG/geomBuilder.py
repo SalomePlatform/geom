@@ -4367,7 +4367,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #  @param theBase Base shape to be extruded.
         #  @param thePath Path shape to extrude the base shape along it.
         #  @param theVec Vector defines a constant binormal direction to keep the
-        #                same angle beetween the direction and the sections
+        #                same angle between the direction and the sections
         #                along the sweep surface.
         #  @param IsGenerateGroups flag that tells if it is necessary to
         #         create groups. It is equal to False by default.
@@ -4396,7 +4396,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                 theBase Base shape to be extruded.
                 thePath Path shape to extrude the base shape along it.
                 theVec Vector defines a constant binormal direction to keep the
-                       same angle beetween the direction and the sections
+                       same angle between the direction and the sections
                        along the sweep surface.
                 IsGenerateGroups flag that tells if it is necessary to
                                  create groups. It is equal to False by default.
@@ -10515,7 +10515,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             Parameters:
                 theInit Shape to remove material from. It must be a solid or a compound made of a single solid.
                 theBase Closed edge or wire defining the base shape to be extruded.
-                theH Prism dimension along the normal  to theBase
+                theH Prism dimension along the normal to theBase
                 theAngle Draft angle in degrees.
                 theInvert If true material changes the direction.
                 theName Object name; when specified, this parameter is used
@@ -10555,7 +10555,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             Parameters:
                 theInit Shape to add material to. It must be a solid or a compound made of a single solid.
                 theBase Closed edge or wire defining the base shape to be extruded.
-                theH Prism dimension along the normal  to theBase
+                theH Prism dimension along the normal to theBase
                 theAngle Draft angle in degrees.
                 theInvert If true material changes the direction.
                 theName Object name; when specified, this parameter is used
@@ -11540,7 +11540,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
 
         ## Detect self-intersections of the given shape with algorithm based on mesh intersections.
         #  @param theShape Shape to check.
-        #  @param theDeflection Linear deflection coefficient that specifies quality of tesselation:
+        #  @param theDeflection Linear deflection coefficient that specifies quality of tessellation:
         #         - if \a theDeflection <= 0, default deflection 0.001 is used
         #  @param theTolerance Specifies a distance between sub-shapes used for detecting gaps:
         #         - if \a theTolerance <= 0, algorithm detects intersections (default behavior)
@@ -11555,7 +11555,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
 
             Parameters:
                 theShape Shape to check.
-                theDeflection Linear deflection coefficient that specifies quality of tesselation:
+                theDeflection Linear deflection coefficient that specifies quality of tessellation:
                     - if theDeflection <= 0, default deflection 0.001 is used
                 theTolerance Specifies a distance between shapes used for detecting gaps:
                     - if theTolerance <= 0, algorithm detects intersections (default behavior)
@@ -11569,20 +11569,20 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("CheckSelfIntersectionsFast", self.MeasuOp)
             return IsValid
 
-        ## Check boolean and partition operations agruments.
-        #  @param theShape the agrument of an operation to be checked
-        #  @return TRUE if the agrument is valid for a boolean or partition
+        ## Check boolean and partition operations arguments.
+        #  @param theShape the argument of an operation to be checked
+        #  @return TRUE if the argument is valid for a boolean or partition
         #          operation; FALSE otherwise.
         @ManageTransactions("MeasuOp")
         def CheckBOPArguments(self, theShape):
             """
-            Check boolean and partition operations agruments.
+            Check boolean and partition operations arguments.
 
             Parameters:
-                theShape the agrument of an operation to be checked
+                theShape the argument of an operation to be checked
 
             Returns:
-                TRUE if the agrument is valid for a boolean or partition
+                TRUE if the argument is valid for a boolean or partition
                 operation; FALSE otherwise.
             """
             return self.MeasuOp.CheckBOPArguments(theShape)
@@ -11593,7 +11593,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #  @param theTolerance Specifies a distance between shapes used for detecting gaps:
         #         - if \a theTolerance <= 0, algorithm detects intersections (default behavior)
         #         - if \a theTolerance > 0, algorithm detects gaps
-        #  @param theDeflection Linear deflection coefficient that specifies quality of tesselation:
+        #  @param theDeflection Linear deflection coefficient that specifies quality of tessellation:
         #         - if \a theDeflection <= 0, default deflection 0.001 is used
         #  @return TRUE, if there are intersections (gaps) between source shapes
         #  @return List of sub-shapes IDs from 1st shape that localize intersection.
@@ -11611,7 +11611,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                 theTolerance Specifies a distance between shapes used for detecting gaps:
                     - if theTolerance <= 0, algorithm detects intersections (default behavior)
                     - if theTolerance > 0, algorithm detects gaps
-                theDeflection Linear deflection coefficient that specifies quality of tesselation:
+                theDeflection Linear deflection coefficient that specifies quality of tessellation:
                     - if theDeflection <= 0, default deflection 0.001 is used
  
             Returns:
@@ -11895,7 +11895,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         ## @{
 
         ## Create a quadrangle face from four edges. Order of Edges is not
-        #  important. It is  not necessary that edges share the same vertex.
+        #  important. It is not necessary that edges share the same vertex.
         #  @param E1,E2,E3,E4 Edges for the face bound.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
@@ -11908,7 +11908,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         def MakeQuad(self, E1, E2, E3, E4, theName=None):
             """
             Create a quadrangle face from four edges. Order of Edges is not
-            important. It is  not necessary that edges share the same vertex.
+            important. It is not necessary that edges share the same vertex.
 
             Parameters:
                 E1,E2,E3,E4 Edges for the face bound.
@@ -12013,7 +12013,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             return anObj
 
         ## Create a hexahedral solid, bounded by the six given faces. Order of
-        #  faces is not important. It is  not necessary that Faces share the same edge.
+        #  faces is not important. It is not necessary that Faces share the same edge.
         #  @param F1,F2,F3,F4,F5,F6 Faces for the hexahedral solid.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
@@ -12027,7 +12027,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         def MakeHexa(self, F1, F2, F3, F4, F5, F6, theName=None):
             """
             Create a hexahedral solid, bounded by the six given faces. Order of
-            faces is not important. It is  not necessary that Faces share the same edge.
+            faces is not important. It is not necessary that Faces share the same edge.
 
             Parameters:
                 F1,F2,F3,F4,F5,F6 Faces for the hexahedral solid.

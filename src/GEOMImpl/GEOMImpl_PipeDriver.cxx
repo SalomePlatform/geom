@@ -569,7 +569,7 @@ static void FindNextPairOfFaces(const TopoDS_Shape& aCurFace,
     bool stat =  FillForOtherEdges(F1other,E1,V1,FF);
     if (!stat) {
       if (aCI) delete aCI;
-      Standard_ConstructionError::Raise("FindNextPairOfFaces: Can not mapping other egdes");
+      Standard_ConstructionError::Raise("FindNextPairOfFaces: Can not map other edges");
     }
 
     FindNextPairOfFaces(F1other, aMapEdgeFaces1, aMapEdgeFaces2, FF, aCI);
@@ -919,7 +919,7 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
       }
     }
     if (nbEdges<Edges.Length()) {
-        // one of edges was splitted => we have to update WirePath
+        // one of edges was split => we have to update WirePath
         BRep_Builder B;
         TopoDS_Wire W;
         B.MakeWire(W);
@@ -1824,7 +1824,7 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
         bool stat =  FillForOtherEdges(FS1,E1,V11,FF);
         if (!stat) {
           if (aCI) delete aCI;
-          Standard_ConstructionError::Raise("FindForOtherEdges: Can not mapping other egdes");
+          Standard_ConstructionError::Raise("FindForOtherEdges: Can not map other edges");
         }
 
       }

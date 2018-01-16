@@ -3,7 +3,7 @@
 \page display_mode_page Display Mode
 
 \n This option is relevant for viewing 3D objects. Wireframe mode means
-that you can see only  edges of the object, while its shells remain
+that you can see only edges of the object, while its shells remain
 transparent. Shading mode means that the shells are filled with color.
 
 \n To change the display mode right-click on this geometrical object

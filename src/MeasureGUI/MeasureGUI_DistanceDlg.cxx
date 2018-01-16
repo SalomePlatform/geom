@@ -204,7 +204,7 @@ void MeasureGUI_DistanceDlg::enterEvent(QEvent*)
 //=================================================================================
 void MeasureGUI_DistanceDlg::SolutionSelected (int i)
 {
-  if (i < 0 || myDbls->length() < (i+1)*6) {
+  if (i < 0 || (int)myDbls->length() < (i+1)*6) {
     myGrp->LineEdit3->setText("");
     myGrp->LineEdit4->setText("");
     myGrp->LineEdit5->setText("");
@@ -341,7 +341,7 @@ SALOME_Prs* MeasureGUI_DistanceDlg::buildPrs()
   int currSol = myGrp->ComboBox1->currentIndex();
 
   if (!myObj1 || !myObj2 ||
-      currSol == -1 || (currSol+1)*6 > myDbls->length() ||
+      currSol == -1 || (currSol+1)*6 > (int)myDbls->length() ||
       vw->getViewManager()->getType() != OCCViewer_Viewer::Type())
     return 0;
 

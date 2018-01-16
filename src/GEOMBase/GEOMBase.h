@@ -66,7 +66,7 @@ public :
                                                  const bool shapesOnly = false );
   static QString      GetShapeTypeString( const TopoDS_Shape& shape );
 
-  /* Convertions */
+  /* Conversions */
   static Handle(GEOM_AISShape)
                       ConvertIOinGEOMAISShape( const Handle(SALOME_InteractiveObject)& IO,
                                                bool onlyInActiveView = false );

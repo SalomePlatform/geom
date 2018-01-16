@@ -27,7 +27,7 @@ The resulting shape inherits the sub-shapes and the colour of Box_1.
 
 \image html restore-ss-viewer-cut.png "The resulting shape"
 
-Second, we examine the case when the  resulting shape is composed from multiple arguments
+Second, we examine the case when the resulting shape is composed from multiple arguments
 (after all Boolean operations, except for Cut, or after the partition with
 several object shapes, or if the resulting shape is a compound).
 

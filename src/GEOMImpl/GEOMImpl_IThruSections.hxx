@@ -20,7 +20,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-//NOTE: This is an intreface to a function for the Pipe creation.
+//NOTE: This is an interface to a function for the Pipe creation.
 //
 #include "GEOM_Function.hxx"
 #include <TColStd_HSequenceOfTransient.hxx>

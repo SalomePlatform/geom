@@ -1832,7 +1832,7 @@ TopoDS_Shape AdvancedEngine_IOperations::MakeThicknessReduction (gp_Ax2 theAxes,
     StdFail_NotDone::Raise("Cannot build cones of thickness reduction");
   BRepAlgoAPI_Cut cut1 (ConeExt.Shape(), ConeInt.Shape());
   if (!cut1.IsDone())
-    StdFail_NotDone::Raise("Coudn't build transition part of thickness reduction");
+    StdFail_NotDone::Raise("Couldn't build transition part of thickness reduction");
   TopoDS_Shape aReduction = cut1.Shape();
 
   // Build the thin part, if required
@@ -1846,7 +1846,7 @@ TopoDS_Shape AdvancedEngine_IOperations::MakeThicknessReduction (gp_Ax2 theAxes,
       StdFail_NotDone::Raise("Cannot build cylinders of thickness reduction");
     BRepAlgoAPI_Cut cut2 (CExt.Shape(), CInt.Shape());
     if (!cut2.IsDone())
-      StdFail_NotDone::Raise("Coudn't build thin part of thickness reduction");
+      StdFail_NotDone::Raise("Couldn't build thin part of thickness reduction");
     aThinPart = cut2.Shape();
   }
 

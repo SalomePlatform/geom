@@ -64,9 +64,9 @@
 // class    : MeasureGUI_ShapeStatisticsDlg()
 //===========================================================================
 MeasureGUI_ShapeStatisticsDlg::MeasureGUI_ShapeStatisticsDlg( QWidget* parent, TopoDS_Shape aShape, TopAbs_ShapeEnum aSubShapeType )
-  : GEOMBase_Helper( SUIT_Session::session()->activeApplication()->desktop() ),
-    QDialog( parent ),
-    myHistogram ( 0 )
+: GEOMBase_Helper( SUIT_Session::session()->activeApplication()->desktop() ),
+  QDialog( parent ),
+  myHistogram ( 0 )
 {
   myShapes.push_back( aShape );
 
@@ -105,9 +105,9 @@ MeasureGUI_ShapeStatisticsDlg::MeasureGUI_ShapeStatisticsDlg( QWidget* parent, T
   myCBTypes = new QtxComboBox( this );
   myCBTypes->setCleared( true );
   if ( aSubShapeType != TopAbs_SHAPE ) {
-    fillTypes( aSubShapeType == TopAbs_EDGE, 
-	       aSubShapeType == TopAbs_FACE, 
-	       aSubShapeType == TopAbs_SOLID );
+    fillTypes( aSubShapeType == TopAbs_EDGE,
+               aSubShapeType == TopAbs_FACE,
+               aSubShapeType == TopAbs_SOLID );
     myCBTypes->setEnabled( false );
   }
 
@@ -136,7 +136,7 @@ MeasureGUI_ShapeStatisticsDlg::MeasureGUI_ShapeStatisticsDlg( QWidget* parent, T
   QLabel* maxLabel = new QLabel( tr( "GEOM_SHAPE_STATISTICS_MAX" ), this );
   myMax = new QLineEdit( this );
   myMax->setValidator( aValid );
-  
+
   QPushButton* buttonCompute = new QPushButton( tr( "GEOM_SHAPE_STATISTICS_COMPUTE" ), this );
   connect( buttonCompute, SIGNAL( clicked() ), this, SLOT( clickOnCompute() ) );
 
@@ -208,10 +208,10 @@ GEOM::GEOM_IOperations_ptr MeasureGUI_ShapeStatisticsDlg::createOperation()
   return getGeomEngine()->GetIGroupOperations();
 }
 
-#define RETURN_WITH_MSG(a, b) \
-  if (!(a)) { \
-    theMessage += (b); \
-    return false; \
+#define RETURN_WITH_MSG(a, b)                   \
+  if (!(a)) {                                   \
+    theMessage += (b);                          \
+    return false;                               \
   }
 
 //================================================================
@@ -333,9 +333,9 @@ TopAbs_ShapeEnum MeasureGUI_ShapeStatisticsDlg::currentType()
 bool MeasureGUI_ShapeStatisticsDlg::isValid(QString& theMessage)
 {
   if ( myScalarRangeBox->isChecked() ) {
-    RETURN_WITH_MSG( !myMin->text().isEmpty(), tr("GEOM_SHAPE_STATISTICS_MIN_ERROR") )
-    RETURN_WITH_MSG( !myMax->text().isEmpty(), tr("GEOM_SHAPE_STATISTICS_MAX_ERROR") )
-    RETURN_WITH_MSG( myMin->text().toDouble() <= myMax->text().toDouble(), tr("GEOM_SHAPE_STATISTICS_MIN_MAX_ERROR") )
+    RETURN_WITH_MSG( !myMin->text().isEmpty(), tr("GEOM_SHAPE_STATISTICS_MIN_ERROR") );
+    RETURN_WITH_MSG( !myMax->text().isEmpty(), tr("GEOM_SHAPE_STATISTICS_MAX_ERROR") );
+    RETURN_WITH_MSG( myMin->text().toDouble() <= myMax->text().toDouble(), tr("GEOM_SHAPE_STATISTICS_MIN_MAX_ERROR") );
   }
   return true;
 }
@@ -359,7 +359,7 @@ void MeasureGUI_ShapeStatisticsDlg::clickOnPlot()
     aRange.max = -1.0; // flag that range is empty
   }
 
-  GEOMUtils::Distribution aShapesDistr = 
+  GEOMUtils::Distribution aShapesDistr =
     GEOMUtils::ComputeDistribution( myShapes, currentType(), myNbIntervals->value(), aRange );
 
   QList<double> xVals, yVals;
@@ -444,7 +444,7 @@ void MeasureGUI_ShapeStatisticsDlg::clickOnCreateGroups()
 
 //=================================================================================
 // function : execute(ObjectList& objects)
-// purpose  : 
+// purpose  :
 //=================================================================================
 bool MeasureGUI_ShapeStatisticsDlg::execute(ObjectList& objects)
 {
@@ -472,7 +472,7 @@ bool MeasureGUI_ShapeStatisticsDlg::execute(ObjectList& objects)
   QString aTypePrefix = myCBTypes->currentText().replace(' ', '_');
   QString objIOR, aMin, aMax, aGroupName;
 
-  GEOMUtils::Distribution aShapesDistr = 
+  GEOMUtils::Distribution aShapesDistr =
     GEOMUtils::ComputeDistribution( myShapes, currentType(), myNbIntervals->value(), aRange );
 
   int nbGroups = 0;
@@ -487,7 +487,7 @@ bool MeasureGUI_ShapeStatisticsDlg::execute(ObjectList& objects)
       int ii = 0;
       std::list<long>::const_iterator id_it;
       for ( id_it = idList.begin(); id_it != idList.end(); id_it++ ) {
-	aNewList[ii++] = *id_it;
+        aNewList[ii++] = *id_it;
       }
 
       // Create an empty group
@@ -495,12 +495,12 @@ bool MeasureGUI_ShapeStatisticsDlg::execute(ObjectList& objects)
       aGroup = anOper->CreateGroup( myMainObj.get(), currentType() );
 
       if (CORBA::is_nil(aGroup) || !anOper->IsDone())
-	return false;
+        return false;
 
       // Add sub-shapes into group
       anOper->UnionIDs(aGroup, aNewList);
       if (!anOper->IsDone())
-	return false;
+        return false;
 
       // publish group
       aMin = DlgRef::PrintDoubleValue( (*it).min, aPrecision );

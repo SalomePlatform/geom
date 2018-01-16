@@ -109,7 +109,7 @@ AdvancedGUI_SmoothingSurfaceDlg::~AdvancedGUI_SmoothingSurfaceDlg()
 void AdvancedGUI_SmoothingSurfaceDlg::Init()
 {
   // Get setting of step value from file configuration
-  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  //SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
 
   initSpinBox(myDMaxSpin, 0., COORD_MAX, 0.00001, "parametric_precision" );
 

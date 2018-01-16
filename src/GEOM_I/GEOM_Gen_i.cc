@@ -915,7 +915,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapesO (GEOM::GEOM_Object_ptr   theObject
   CORBA::String_var anIORo = _orb->object_to_string(theObject);
   SALOMEDS::SObject_var aSO = aStudy->FindObjectIOR(anIORo.in());
   //PTv, IMP 0020001, The salome object <aSO>
-  // is not obligatory in case of invokation from script
+  // is not obligatory in case of invocation from script
   // if (CORBA::is_nil(aSO))
   //  return aParts._retn();
 
@@ -944,7 +944,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapesO (GEOM::GEOM_Object_ptr   theO
   CORBA::String_var anIORo = _orb->object_to_string(theObject);
   SALOMEDS::SObject_var aSO = getStudyServant()->FindObjectIOR(anIORo.in());
   //PTv, IMP 0020001, The salome object <aSO>
-  // is not obligatory in case of invokation from script
+  // is not obligatory in case of invocation from script
   // if (CORBA::is_nil(aSO))
   //  return aParts._retn();
 
@@ -1027,7 +1027,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(GEOM::GEOM_Object_ptr   theObject,
   GEOM::ListOfGO_var aParts = new GEOM::ListOfGO;
   SALOMEDS::Study_var aStudy = getStudyServant();
   //PTv, IMP 0020001, The salome object <theSObject>
-  //     is not obligatory in case of invokation from script
+  //     is not obligatory in case of invocation from script
   if (CORBA::is_nil(aStudy) || CORBA::is_nil(theObject) /*|| CORBA::is_nil(theSObject)*/)
     return aParts._retn();
 
@@ -1620,7 +1620,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapes(GEOM::GEOM_Object_ptr   theObj
   GEOM::ListOfGO_var aParts = new GEOM::ListOfGO;
   SALOMEDS::Study_var aStudy = getStudyServant();
   //PTv, IMP 0020001, The salome object <theSObject>
-  //     is not obligatory in case of invokation from script
+  //     is not obligatory in case of invocation from script
   if (CORBA::is_nil(aStudy) || CORBA::is_nil(theObject) /*|| CORBA::is_nil(theSObject)*/)
     return aParts._retn();
 

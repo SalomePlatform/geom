@@ -47,7 +47,7 @@ class ShHealOper_CloseContour : public ShHealOper_Tool
   Standard_EXPORT ShHealOper_CloseContour() : ShHealOper_Tool() {}
 
   Standard_EXPORT ShHealOper_CloseContour (const TopoDS_Shape& theShape);
-  //Initalizes by whole shape.
+  //Initializes by whole shape.
 
   Standard_EXPORT virtual void Init(const TopoDS_Shape& theShape);
    //Method for initialization by whole shape.

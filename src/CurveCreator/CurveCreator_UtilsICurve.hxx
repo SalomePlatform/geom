@@ -58,7 +58,7 @@ public:
                                             CurveCreator_ICurve* theCurve );
 
   /**
-   * Returns whethe the container has the value
+   * Returns whether the container has the value
    * \param theList a container of values
    * \param theValue a value
    */

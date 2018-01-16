@@ -386,7 +386,7 @@ module GEOM
      *
      *  This function is useful for the compounds only; for simple shapes it
      *  exactly the same value as GetShapeType().
-     *  Note, that compounds are procesed recursively.
+     *  Note, that compounds are processed recursively.
      *
      *  \sa GetShapeType(), GetTopologyType(), GetMaxShapeType()
      */
@@ -397,7 +397,7 @@ module GEOM
      *
      *  This function is useful for the compounds only; for simple shapes it
      *  exactly the same value as GetShapeType().
-     *  Note, that compounds are procesed recursively.
+     *  Note, that compounds are processed recursively.
      *
      *  \sa GetShapeType(), GetTopologyType(), GetMinShapeType()
      */
@@ -1721,7 +1721,7 @@ module GEOM
 
 
     /*!
-     *  \brief Add / Remove material to / from  a solid by extrusion of the base shape on the given distance.
+     *  \brief Add / Remove material to / from a solid by extrusion of the base shape on the given distance.
      *  \param theInitShape Initial shape on which to perform the feature.It has to be a solid or 
      *   a compound made of a single solid
      *  \param theBase Edge or wire defining the base shape to be extruded. 
@@ -1811,7 +1811,7 @@ module GEOM
      *
      *  The path shape can be a wire or an edge.
      *  the several profiles can be specified in the several locations of path.
-     *  \param theSeqBases - list of  Bases shape to be extruded.
+     *  \param theSeqBases - list of Bases shape to be extruded.
      *  \param theLocations - list of locations on the path corresponding
      *                        specified list of the Bases shapes. Number of locations
      *                        should be equal to number of bases or list of locations can be empty.
@@ -1845,7 +1845,7 @@ module GEOM
      *
      *  The path shape can be a shell or a face.
      *  the several profiles can be specified in the several locations of path.
-     *  \param theSeqBases - list of  Bases shape to be extruded.
+     *  \param theSeqBases - list of Bases shape to be extruded.
      *  \param theSeqSubBases - list of corresponding sub-shapes of section shapes.
      *  \param theLocations - list of locations on the path corresponding
      *                        specified list of the Bases shapes. Number of locations
@@ -1893,7 +1893,7 @@ module GEOM
      *  \param theBase Base shape to be extruded.
      *  \param thePath Path shape to extrude the base shape along it.
      *  \param theVec Vector defines a constant binormal direction to keep the
-     *                same angle beetween the Direction and the sections
+     *                same angle between the Direction and the sections
      *                along the sweep surface.
      *  \param IsGenerateGroups flag that tells if it is necessary to
      *         return groups (true) or not (false).
@@ -2830,7 +2830,7 @@ module GEOM
 
     /*!
      *  \brief Create a quadrangle face from four edges. Order of Edges is not
-     *  important. It is  not necessary that edges share the same vertex.
+     *  important. It is not necessary that edges share the same vertex.
      *  \param theEdge1,theEdge2,theEdge3,theEdge4 Edges for the face bound.
      *  \return New GEOM_Object, containing the created face.
      */
@@ -2865,7 +2865,7 @@ module GEOM
      *  \brief Create a hexahedral solid, bounded by the six given faces. Order of
      *  faces is not important. 
      *
-     *  It is  not necessary that Faces share the same edge.
+     *  It is not necessary that Faces share the same edge.
      *  \param theFace1,theFace2,theFace3,theFace4,theFace5,theFace6 Faces for the hexahedral solid.
      *  \return New GEOM_Object, containing the created solid.
      */
@@ -4174,8 +4174,8 @@ module GEOM
     SALOMEDS::TMPFile GetTexture(in long theID, out long theWidth, out long theHeight);
 
     /*!
-     * \brief Get list of all avaiable texture IDs
-     * \return list of all texture IDs avaiable for the current study
+     * \brief Get list of all available texture IDs
+     * \return list of all texture IDs available for the current study
      */
     ListOfLong GetAllTextures();
 
@@ -4534,7 +4534,7 @@ module GEOM
     /*!
      *  \brief Detect self-intersections of the given shape with algorithm based on mesh intersections.
      *  \param theShape Shape to check validity of.
-     *  \param theDeflection Linear deflection coefficient that specifies quality of tesselation.
+     *  \param theDeflection Linear deflection coefficient that specifies quality of tessellation.
      *  \param theTolerance Specifies a distance between sub-shapes used for detecting gaps:
      *                       - if \a theTolerance <= 0, algorithm detects intersections
      *                       - if \a theTolerance > 0, algorithm detects gaps
@@ -4547,9 +4547,9 @@ module GEOM
 					out ListOfLong theIntersections);
 
     /*!
-     *  \brief Check boolean and partition operations agruments.
-     *  \param theShape the agrument of an operation to be checked.
-     *  \return TRUE if the agrument is valid for a boolean or partition
+     *  \brief Check boolean and partition operations arguments.
+     *  \param theShape the argument of an operation to be checked.
+     *  \return TRUE if the argument is valid for a boolean or partition
      *          operation; FALSE otherwise.
      */
     boolean CheckBOPArguments (in GEOM_Object theShape);
@@ -4561,7 +4561,7 @@ module GEOM
      *  \param theTolerance Specifies a distance between shapes used for detecting gaps:
      *                       - if \a theTolerance <= 0, algorithm detects intersections
      *                       - if \a theTolerance > 0, algorithm detects gaps
-     *  \param theDeflection Linear deflection coefficient that specifies quality of tesselation:
+     *  \param theDeflection Linear deflection coefficient that specifies quality of tessellation:
      *                       - if \a theDeflection <= 0, default deflection 0.001 is used
      *  \param theIntersections1 Output: contains list of sub-shapes IDs from 1st shape that localize intersection
      *  \param theIntersections2 Output: contains list of sub-shapes IDs from 2nd shape that localize intersection
@@ -4699,7 +4699,7 @@ module GEOM
   interface GEOM_IGroupOperations : GEOM_IOperations
   {
     /*!
-     *  \brief Creates a new group which will store  sub-shapes of theMainShape
+     *  \brief Creates a new group which will store sub-shapes of theMainShape
      *  \param theMainShape is a GEOM_Object on which the group is selected
      *  \param theShapeType defines a shape type of the group
      *  \return a newly created GEOM group
@@ -5022,7 +5022,7 @@ module GEOM
     
     /*!
      *  \brief Returns a GEOM_Object defined by its IOR
-     *  \param theIOR a string containg an IOR of the requested GEOM_Object
+     *  \param theIOR a string containing an IOR of the requested GEOM_Object
      */
     GEOM_Object GetIORFromString (in string theIOR);
 

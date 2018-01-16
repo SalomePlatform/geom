@@ -15,7 +15,7 @@ Radius)</em>
 \n <b>Arguments:</b> Name + 1 vertex (for the center) + 1 edge (for
 the direction) + Radius.
 
-\note By default it is presumed that the <b>Center Point</b> is located at the  Origin of the global
+\note By default it is presumed that the <b>Center Point</b> is located at the Origin of the global
 coordinate system, and the  \b Vector corresponds to OZ axis of the global
 coordinate system.
 

@@ -657,7 +657,7 @@ static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
       break;
     }
     if(NeedUnion) {
-      MESSAGE ("can not make analitical union => make approximation");
+      MESSAGE ("can not make analytical union => make approximation");
       TopoDS_Edge E = GlueEdgesWithPCurves(aChain, VF, VL);
       aChain.SetValue(1,E);
     }

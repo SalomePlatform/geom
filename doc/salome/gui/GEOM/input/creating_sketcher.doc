@@ -2,7 +2,7 @@
 
 \page create_sketcher_page 2D Sketcher
 
-The 2D Sketcher allows drawing  arbitrary 2D shapes. 
+The 2D Sketcher allows drawing arbitrary 2D shapes. 
 
 To create a <b>2D Sketch</b> select in the main menu  <b>New Entity -> Basic -> 2D Sketch</b>. 
 
@@ -73,7 +73,7 @@ If an \b ark radio button is chosen, \b Point or \b Direction define the locatio
 
 \image html 2dsketch12.png
 
-- \b Radius radio-button allows creating a more limited arc segment by defining a custom  ark radius, which must be greater than half of the distance between the last point and the end point of the arc. 
+- \b Radius radio-button allows creating a more limited arc segment by defining a custom ark radius, which must be greater than half of the distance between the last point and the end point of the arc. 
 	
 \image html 2dsketch8.png
 

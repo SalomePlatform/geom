@@ -238,7 +238,7 @@ void GEOMToolsGUI_TransparencyDlg::SliderHasMoved(int value)
 //=================================================================================
 // function : SetTransparency()
 // purpose  : Called when value of slider change
-//          : or the first time as initilisation
+//          : or the first time as initialisation
 //=================================================================================
 void GEOMToolsGUI_TransparencyDlg::SetTransparency()
 {

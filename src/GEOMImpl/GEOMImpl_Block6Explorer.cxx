@@ -915,7 +915,7 @@ void GEOMImpl_Block6Explorer::InitByTwoFaces (const TopoDS_Shape& theFace1,
   }
 
   // 1.2. Ordered vertices and edges of the second face we temporarily store
-  // in arrays, to find for them rigth location in <myVertices> on the Step 2.
+  // in arrays, to find for them the right location in <myVertices> in Step 2.
 
   // declare arrays
   TopTools_Array1OfShape aVertis2(1,4); // ordered vertices of the second face

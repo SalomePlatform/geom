@@ -47,7 +47,7 @@ class ShHealOper_ShapeProcess : public ShHealOper_Tool
 
   /// Empty constructor
   Standard_EXPORT ShHealOper_ShapeProcess();
-  //Constuctor initializes by defaults parameters 
+  //Constructor initializes by defaults parameters 
   // (name of resource file - ShHealing, prefix - ShapeProcess, 
   // SaveHistory = Standard_False, level = TopAbs_FACE)
 
@@ -55,7 +55,7 @@ class ShHealOper_ShapeProcess : public ShHealOper_Tool
   Standard_EXPORT ShHealOper_ShapeProcess 
     (const TCollection_AsciiString& theNameResource,
      const TCollection_AsciiString& thePrefix = "ShapeProcess");
-  //Constuctor initializes by specified name of resource file and prefix
+  //Constructor initializes by specified name of resource file and prefix
   
   Standard_EXPORT void Perform(const TopoDS_Shape& theOldShape, 
                                            TopoDS_Shape& theNewShape);

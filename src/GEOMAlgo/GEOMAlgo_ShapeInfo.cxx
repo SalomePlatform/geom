@@ -429,7 +429,7 @@ void GEOMAlgo_ShapeInfo::Dump()const
     break;
     //
   default:
-    printf(" * not implememted yet\n");
+    printf(" * not implemented yet\n");
     break;
   }
 }

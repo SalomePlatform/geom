@@ -336,7 +336,7 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFaces
   aGA.SetTolerance(theTolerance);
   aGA.SetKeepNonSolids(doKeepNonSolids);
 
-  // 2. Detect interferred shapes
+  // 2. Detect interfered shapes
   aGA.Detect();
 
   //Standard_Integer iWrnDetect = aGA.WarningStatus();
@@ -451,7 +451,7 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueWithWarnings (const TopoDS_Shape& theShape
   aGA.SetTolerance(theTolerance);
   aGA.SetKeepNonSolids(doKeepNonSolids);
 
-  // 2. Detect interferred shapes
+  // 2. Detect interfered shapes
   aGA.Detect();
 
   //modified by NIZNHY-PKV Tue Mar 13 14:07:12 2012f
@@ -609,7 +609,7 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueByList (const TopoDS_Shape& theShape,
   aGA.SetTolerance(theTolerance);
   aGA.SetKeepNonSolids(doKeepNonSolids);
 
-  // 2. Detect interferred shapes
+  // 2. Detect interfered shapes
   aGA.Detect();
 
   //modified by NIZNHY-PKV Tue Mar 13 14:07:12 2012f

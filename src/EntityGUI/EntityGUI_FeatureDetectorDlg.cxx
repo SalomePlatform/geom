@@ -450,7 +450,7 @@ void EntityGUI_FeatureDetectorDlg::SelectionIntoArgument()
       myDetector->SetPath( theImgFileName.toStdString() );
       height            =  myDetector->GetImgHeight();
       width             =  myDetector->GetImgWidth();
-      pictureLeft       = -0.5 * width;              // X coordinate of the top left  corner of the background image in the view
+      pictureLeft       = -0.5 * width;              // X coordinate of the top left corner of the background image in the view
       pictureTop        =  0.5 * height;             // Y coordinate of both top corners
       
     } 

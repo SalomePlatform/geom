@@ -13,7 +13,7 @@ water-line of the object plunged into the water (in Z direction).
 \n <b>TUI Command:</b>
 <em>geompy.Archimede(Shape,Weight,WaterDensity,MeshingDeflection),</em>
  where \em Shape is a shape to put into the water, \em Weight is a weight of
-the shape, \em WaterDensity  is density of water, \em MeshingDeflection is a
+the shape, \em WaterDensity is density of water, \em MeshingDeflection is a
 deflection of the mesh, using to compute the section.
 \n <b>Arguments:</b> Name + 1 shape  + 3 values (Weight, Water Density
 & Meshing Deflection).

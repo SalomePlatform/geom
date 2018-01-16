@@ -20,7 +20,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-//NOTE: This is an intreface to a function for the Arc creation.
+//NOTE: This is an interface to a function for the Arc creation.
 //
 #include "GEOM_Function.hxx"
 

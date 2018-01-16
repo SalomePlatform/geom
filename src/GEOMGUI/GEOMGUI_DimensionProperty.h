@@ -135,14 +135,14 @@ public:
     /*!
      * \brief Inits property fields from the passed length object.
      * \param theIO [in] the interactive presentation.
-     * \param theLCS [in] the local coordiante system of parent object.
+     * \param theLCS [in] the local coordinate system of parent object.
      */
     void Init( const Handle(AIS_LengthDimension)& theIO, const gp_Ax3& theLCS );
 
     /*!
      * \brief Updates length object properties from the fields.
      * \param theIO [in/out] the interactive presentation.
-     * \param theLCS [in] the local coordiante system of parent object.
+     * \param theLCS [in] the local coordinate system of parent object.
      */
     void Update( Handle(AIS_LengthDimension)& theIO, const gp_Ax3& theLCS );
 
@@ -160,7 +160,7 @@ public:
     void FromValues(int& theIt, const std::vector<double>& theValues);
 
     /*!
-     * \brief Overload comparsion.
+     * \brief Overload comparison.
      */
     bool operator == (const Length &theOther) const;
     bool operator != (const Length &theOther) const { return !(operator == (theOther)); }
@@ -203,14 +203,14 @@ public:
     /*!
      * \brief Inits property fields from the passed length object.
      * \param theIO [in] the interactive presentation.
-     * \param theLCS [in] the local coordiante system of parent object.
+     * \param theLCS [in] the local coordinate system of parent object.
      */
     void Init( const Handle(AIS_DiameterDimension)& theIO, const gp_Ax3& theLCS );
 
     /*!
      * \brief Updates length object properties from the fields.
      * \param theIO [in/out] the interactive presentation.
-     * \param theLCS [in] the local coordiante system of parent object.
+     * \param theLCS [in] the local coordinate system of parent object.
      */
     void Update( Handle(AIS_DiameterDimension)& theIO, const gp_Ax3& theLCS );
 
@@ -228,7 +228,7 @@ public:
     void FromValues(int& theIt, const std::vector<double>& theValues);
 
     /*!
-     * \brief Overload comparsion.
+     * \brief Overload comparison.
      */
     bool operator == (const Diameter &theOther) const;
     bool operator != (const Diameter &theOther) const { return !(operator == (theOther)); }
@@ -273,14 +273,14 @@ public:
     /*!
      * \brief Inits property fields from the passed length object.
      * \param theIO [in] the interactive presentation.
-     * \param theLCS [in] the local coordiante system of parent object.
+     * \param theLCS [in] the local coordinate system of parent object.
      */
     void Init( const Handle(AIS_AngleDimension)& theIO, const gp_Ax3& theLCS );
 
     /*!
      * \brief Updates length object properties from the fields.
      * \param theIO [in/out] the interactive presentation.
-     * \param theLCS [in] the local coordiante system of parent object.
+     * \param theLCS [in] the local coordinate system of parent object.
      */
     void Update( Handle(AIS_AngleDimension)& theIO, const gp_Ax3& theLCS );
 
@@ -298,7 +298,7 @@ public:
     void FromValues(int& theIt, const std::vector<double>& theValues);
 
     /*!
-     * \brief Overload comparsion.
+     * \brief Overload comparison.
      */
     bool operator == (const Angle &theOther) const;
     bool operator != (const Angle &theOther) const { return !(operator == (theOther)); }
@@ -352,12 +352,12 @@ public:
   operator QString() const;
 
   /*!
-   * \brief Overload comparsion.
+   * \brief Overload comparison.
    */
   bool operator == (const GEOMGUI_DimensionProperty &theOther) const;
 
   /*!
-   * \brief Overload comparsion.
+   * \brief Overload comparison.
    */
   bool operator != (const GEOMGUI_DimensionProperty &theOther) const
   {

@@ -78,21 +78,21 @@
      <item row="3" column="0">
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>Big pipe  height</string>
+        <string>Big pipe height</string>
        </property>
       </widget>
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Small pipe  radius</string>
+        <string>Small pipe radius</string>
        </property>
       </widget>
      </item>
      <item row="4" column="0">
       <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>Small  pipe height</string>
+        <string>Small pipe height</string>
        </property>
       </widget>
      </item>

@@ -91,7 +91,7 @@ Standard_Boolean GEOMImpl_PolylineDumper::Dump
     aPD << theObject << " = pl.result(";
 
     if (myWorkingPlane.IsNull()) {
-      // Add coodinates of working plane.
+      // Add coordinates of working plane.
       Standard_Integer i;
 
       aPD << "[";
