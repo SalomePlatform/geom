@@ -3525,10 +3525,10 @@ bool GeometryGUI::renameObject( const QString& entry, const QString& name)
     if ( obj->FindAttribute(anAttr, "AttributeName") ) {
       _PTR(AttributeName) aName (anAttr);
 
-      aName->SetValue( name.toLatin1().data() ); // rename the SObject
+      aName->SetValue( name.toUtf8().data() ); // rename the SObject
       GEOM::GEOM_Object_var anObj = GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(obj));
       if (!CORBA::is_nil(anObj)) {
-        anObj->SetName( name.toLatin1().data() );  // Rename the corresponding GEOM_Object
+        anObj->SetName( name.toUtf8().data() );  // Rename the corresponding GEOM_Object
         emit SignalDependencyTreeRenameObject( anObj->GetEntry() );
         emit SignalTextTreeRenameObject( entry );
       }
