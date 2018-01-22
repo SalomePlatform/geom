@@ -53,7 +53,7 @@ GEOMToolsGUI_LineWidthDlg::GEOMToolsGUI_LineWidthDlg (QWidget* parent, const QSt
   setObjectName("GEOMToolsGUI_LineWidthDlg");
   setModal(true);
 
-  setWindowTitle(tr(title.toLatin1().constData()));
+  setWindowTitle(tr(title.toUtf8().constData()));
   setSizeGripEnabled(true);
   QGridLayout* MyDialogLayout = new QGridLayout(this);
   MyDialogLayout->setSpacing(6);

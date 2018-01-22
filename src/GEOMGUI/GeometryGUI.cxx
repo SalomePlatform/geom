@@ -276,7 +276,7 @@ GEOMGUI* GeometryGUI::getLibrary( const QString& libraryName )
       while ( it.hasPrevious() ) {
         QFileInfo fi( Qtx::addSlash( it.previous() ) + libraryName );
         if ( fi.exists() ) {
-          OSD_SharedLibrary aSharedLibrary( fi.fileName().toLatin1().constData() );
+          OSD_SharedLibrary aSharedLibrary( fi.fileName().toUtf8().constData() );
           bool res = aSharedLibrary.DlOpen( OSD_RTLD_LAZY );
           if ( !res ) {
             MESSAGE( "Can't open library : " << aSharedLibrary.DlError() );
@@ -327,7 +327,7 @@ GEOMPluginGUI* GeometryGUI::getPluginLibrary( const QString& libraryName )
       while ( it.hasPrevious() ) {
         QFileInfo fi( Qtx::addSlash( it.previous() ) + libraryName );
         if ( fi.exists() ) {
-          OSD_SharedLibrary aSharedLibrary( fi.fileName().toLatin1().constData() );
+          OSD_SharedLibrary aSharedLibrary( fi.fileName().toUtf8().constData() );
           bool res = aSharedLibrary.DlOpen( OSD_RTLD_LAZY );
           if ( !res ) {
             MESSAGE( "Can't open library : " << aSharedLibrary.DlError() );
@@ -2954,13 +2954,13 @@ void GeometryGUI::storeVisualParameters (int savePoint)
         const PropMap& aProps = o_it.value();
 
         //Check that object exists in the study
-        _PTR(SObject) obj( studyDS->FindObjectID( o_it.key().toLatin1().data() ) );
+        _PTR(SObject) obj( studyDS->FindObjectID( o_it.key().toUtf8().data() ) );
         if ( !obj || !(aProps.count() > 0))
           continue;
         // entry is "encoded" = it does NOT contain component address, since it is a
         // subject to change on next component loading
 
-        std::string entry = ip->encodeEntry(o_it.key().toLatin1().data(), componentName);
+        std::string entry = ip->encodeEntry(o_it.key().toUtf8().data(), componentName);
 
         _PTR(GenericAttribute) anAttr;
         if (!obj->FindAttribute(anAttr, "AttributeIOR"))
@@ -3068,7 +3068,7 @@ void GeometryGUI::storeVisualParameters (int savePoint)
 
         if ( vType == SOCC_Viewer::Type() && aAnnotationMgr ) {
           std::string anAnnotationInfo = GetAnnotationMgr()->getDisplayedIndicesInfo(
-                                            o_it.key().toLatin1().data(), dynamic_cast<SOCC_Viewer*>(aView) ).toStdString();
+                                            o_it.key().toUtf8().data(), dynamic_cast<SOCC_Viewer*>(aView) ).toStdString();
           if (!anAnnotationInfo.empty()) {
             param = occParam + "ShapeAnnotationVisibleItems";
             ip->setParameter(entry, param.toStdString(), anAnnotationInfo);
@@ -3086,19 +3086,19 @@ void GeometryGUI::storeVisualParameters (int savePoint)
   QSet<QString>::ConstIterator aEntryIt = anEntriesToStoreShared.constBegin();
   for ( ; aEntryIt != anEntriesToStoreShared.constEnd(); ++aEntryIt )
   {
-    std::string aStudyEntry = (*aEntryIt).toLatin1().data();
+    std::string aStudyEntry = (*aEntryIt).toUtf8().data();
     std::string aStoreEntry = ip->encodeEntry( aStudyEntry, componentName );
 
     // store dimension parameters
     GEOMGUI_DimensionProperty aDimensions( aStudyEntry );
     if ( aDimensions.GetNumber() != 0 ) {
-      ip->setParameter( aStoreEntry, aDimensionParam.toStdString(), ((QString)aDimensions).toLatin1().data() );
+      ip->setParameter( aStoreEntry, aDimensionParam.toStdString(), ((QString)aDimensions).toUtf8().data() );
     }
 
     _PTR(SObject) aObj( studyDS->FindObjectID( aStudyEntry ) );
     const Handle(GEOMGUI_AnnotationAttrs) aShapeAnnAttr = GEOMGUI_AnnotationAttrs::FindAttributes( aObj );
     if ( !aShapeAnnAttr.IsNull() ) {
-      ip->setParameter( aStoreEntry, aAnnotationParam.toStdString(), aShapeAnnAttr->ExportAsPropertyString().toLatin1().data() );
+      ip->setParameter( aStoreEntry, aAnnotationParam.toStdString(), aShapeAnnAttr->ExportAsPropertyString().toUtf8().data() );
     }
   }
 }
@@ -3136,7 +3136,7 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
 
     // Check that the entry corresponds to a real object in the Study
     // as the object may be deleted or modified after the visual state is saved.
-    _PTR(SObject) so = studyDS->FindObjectID(entry.toLatin1().data());
+    _PTR(SObject) so = studyDS->FindObjectID(entry.toUtf8().data());
     if (!so) continue; //Skip the not existent entry
 
     std::vector<std::string> paramNames = ip->getAllParameterNames( *entIt );
@@ -3180,7 +3180,7 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
         if ( aParamNameStr == GEOM::propertyName( GEOM::Dimensions ) )
         {
           GEOMGUI_DimensionProperty aDimensionProp( aValuesStr );
-          aDimensionProp.SaveToAttribute( entry.toLatin1().data() );
+          aDimensionProp.SaveToAttribute( entry.toUtf8().data() );
         }
         else if ( aParamNameStr == GEOM::propertyName( GEOM::ShapeAnnotations ) )
         {
@@ -3519,7 +3519,7 @@ bool GeometryGUI::renameObject( const QString& entry, const QString& name)
     return result;
   }
 
-  _PTR(SObject) obj ( aStudy->FindObjectID(qPrintable(entry)) );
+  _PTR(SObject) obj ( aStudy->FindObjectID(qUtf8Printable(entry)) );
   _PTR(GenericAttribute) anAttr;
   if ( obj ) {
     if ( obj->FindAttribute(anAttr, "AttributeName") ) {

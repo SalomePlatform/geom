@@ -442,7 +442,7 @@ bool TransformationGUI_ScaleDlg::execute (ObjectList& objects)
           anObj = anOper->ScaleShapeCopy(myObjects[i].get(), myPoint.get(), SpinBox_FX->value());
           if (!anObj->_is_nil()) {
             if(!IsPreview()) 
-              anObj->SetParameters(SpinBox_FX->text().toLatin1().constData());
+              anObj->SetParameters(SpinBox_FX->text().toUtf8().constData());
             objects.push_back(anObj._retn());
           }
         }
@@ -472,7 +472,7 @@ bool TransformationGUI_ScaleDlg::execute (ObjectList& objects)
               aParameters<<SpinBox_FX->text();
               aParameters<<SpinBox_FY->text();
               aParameters<<SpinBox_FZ->text();
-              anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+              anObj->SetParameters(aParameters.join(":").toUtf8().constData());
             }
             objects.push_back(anObj._retn());
         }

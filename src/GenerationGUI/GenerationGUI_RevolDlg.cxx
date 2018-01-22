@@ -329,7 +329,7 @@ bool GenerationGUI_RevolDlg::execute (ObjectList& objects)
       if (!IsPreview()) {
         QStringList aParameters;
         aParameters << GroupPoints->SpinBox_DX->text();
-        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+        anObj->SetParameters(aParameters.join(":").toUtf8().constData());
       }
       objects.push_back(anObj._retn());
     }

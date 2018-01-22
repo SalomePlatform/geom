@@ -269,7 +269,7 @@ bool GEOMGUI_Selection::isVisible( const int index ) const
   GEOM::GEOM_Object_var obj = getObject( index );
   SALOME_View* view = GEOM_Displayer::GetActiveView();
   if ( !CORBA::is_nil( obj ) && view ) {
-    Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( entry( index ).toLatin1().constData(), "GEOM", "TEMP_IO" );
+    Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( entry( index ).toUtf8().constData(), "GEOM", "TEMP_IO" );
     res = view->isVisible( io );
   }
 
@@ -342,7 +342,7 @@ QString GEOMGUI_Selection::displayMode( const int index ) const
 
   SALOME_View* view = GEOM_Displayer::GetActiveView();
   if ( view /*fix for 9320==>*/&& ( viewType == OCCViewer_Viewer::Type() || viewType == SVTK_Viewer::Type() ) ) {
-    SALOME_Prs* prs = view->CreatePrs( entry( index ).toLatin1().constData() );
+    SALOME_Prs* prs = view->CreatePrs( entry( index ).toUtf8().constData() );
     if ( prs ) {
       if ( viewType == OCCViewer_Viewer::Type() ) { // assuming OCC
         SOCC_Prs* occPrs = (SOCC_Prs*) prs;
@@ -408,7 +408,7 @@ bool GEOMGUI_Selection::isVectorsMode( const int index ) const
   SALOME_View* view = GEOM_Displayer::GetActiveView();
   QString viewType = activeViewType();
   if ( view && ( viewType == OCCViewer_Viewer::Type() || viewType == SVTK_Viewer::Type() ) ) {
-    SALOME_Prs* prs = view->CreatePrs( entry( index ).toLatin1().constData() );
+    SALOME_Prs* prs = view->CreatePrs( entry( index ).toUtf8().constData() );
     if ( prs ) {
       if ( viewType == OCCViewer_Viewer::Type() ) { // assuming OCC
         SOCC_Prs* occPrs = (SOCC_Prs*) prs;
@@ -455,7 +455,7 @@ bool GEOMGUI_Selection::isVerticesMode( const int index ) const
   SALOME_View* view = GEOM_Displayer::GetActiveView();
   QString viewType = activeViewType();
   if ( view && ( viewType == OCCViewer_Viewer::Type() || viewType == SVTK_Viewer::Type() ) ) {
-    SALOME_Prs* prs = view->CreatePrs( entry( index ).toLatin1().constData() );
+    SALOME_Prs* prs = view->CreatePrs( entry( index ).toUtf8().constData() );
     if ( prs ) {
       if ( viewType == OCCViewer_Viewer::Type() ) { // assuming OCC
         SOCC_Prs* occPrs = (SOCC_Prs*) prs;
@@ -502,7 +502,7 @@ bool GEOMGUI_Selection::isNameMode( const int index ) const
   SALOME_View* view = GEOM_Displayer::GetActiveView();
   QString viewType = activeViewType();
   if ( view && ( viewType == OCCViewer_Viewer::Type() || viewType == SVTK_Viewer::Type() ) ) {
-    SALOME_Prs* prs = view->CreatePrs( entry( index ).toLatin1().constData() );
+    SALOME_Prs* prs = view->CreatePrs( entry( index ).toUtf8().constData() );
     if ( prs ) {
       if ( viewType == OCCViewer_Viewer::Type() ) { // assuming OCC
         SOCC_Prs* occPrs = (SOCC_Prs*) prs;
@@ -716,7 +716,7 @@ bool GEOMGUI_Selection::topLevel( const int index ) const
   SALOME_View* view = GEOM_Displayer::GetActiveView();
   QString viewType = activeViewType();
   if ( view && viewType == OCCViewer_Viewer::Type() ) {
-    SALOME_Prs* prs = view->CreatePrs( entry( index ).toLatin1().constData() );
+    SALOME_Prs* prs = view->CreatePrs( entry( index ).toUtf8().constData() );
     if ( prs ) {
       if ( viewType == OCCViewer_Viewer::Type() ) { // assuming OCC
         SOCC_Prs* occPrs = (SOCC_Prs*) prs;
@@ -752,7 +752,7 @@ bool GEOMGUI_Selection::isPhysicalMaterial( const int idx ) const
   SALOME_View* view = GEOM_Displayer::GetActiveView();
   QString viewType = activeViewType();
   if ( view ) {
-    SALOME_Prs* prs = view->CreatePrs( entry( idx ).toLatin1().constData() );
+    SALOME_Prs* prs = view->CreatePrs( entry( idx ).toUtf8().constData() );
     if ( prs ) {
       if ( viewType == OCCViewer_Viewer::Type() ) { // assuming OCC
         SOCC_Prs* occPrs = (SOCC_Prs*) prs;

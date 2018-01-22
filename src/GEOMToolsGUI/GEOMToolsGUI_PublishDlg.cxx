@@ -145,7 +145,7 @@ GEOMToolsGUI_PublishDlg::~GEOMToolsGUI_PublishDlg()
 	    QTreeWidgetItemIterator it( myTreeWidget );
 	    while ( *it ) {
 	      QString entry = myEntryToItem.key( *it );
-	      _PTR(SObject) SO ( aStudy->FindObjectID( qPrintable( entry ) ) );
+	      _PTR(SObject) SO ( aStudy->FindObjectID( qUtf8Printable( entry ) ) );
 	      if ( SO ) {
 	        GEOM::GEOM_Object_var aGeomObject = GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( SO ) );
 	        if ( CORBA::is_nil( aGeomObject ) ) continue;
@@ -232,7 +232,7 @@ QTreeWidgetItem* GEOMToolsGUI_PublishDlg::findParentItem(SalomeApp_DataObject* t
     if( !(aResult = myEntryToItem.value(targetEntry)) ) {
       if( aParrent != myGeomRoot ) {
         QString aName;
-        _PTR(SObject) aSO ( SalomeApp_Application::getStudy()->FindObjectID(qPrintable(aParrent->entry())));
+        _PTR(SObject) aSO ( SalomeApp_Application::getStudy()->FindObjectID(qUtf8Printable(aParrent->entry())));
         _PTR(GenericAttribute) anAttr;
         if ( aSO->FindAttribute(anAttr, "AttributeName") ) {
           _PTR(AttributeName) anAttrName (anAttr);
@@ -270,7 +270,7 @@ void GEOMToolsGUI_PublishDlg::buildTree(SalomeApp_DataObject* theItem) {
 
     //If object hasn't "AttributeDrawable" => it visible
     bool isDrawable = true;
-    _PTR(SObject) SO ( SalomeApp_Application::getStudy()->FindObjectID(qPrintable(theItem->entry())));
+    _PTR(SObject) SO ( SalomeApp_Application::getStudy()->FindObjectID(qUtf8Printable(theItem->entry())));
     _PTR(GenericAttribute) anAttr;
     if ( SO && SO->FindAttribute(anAttr, "AttributeDrawable") ) {
       _PTR(AttributeDrawable) aDrw (anAttr);
@@ -323,7 +323,7 @@ void GEOMToolsGUI_PublishDlg::clickOnApply() {
     QTreeWidgetItem* item = toProcess[i];
     if(item) {
       QString entry = myEntryToItem.key(item);
-      _PTR(SObject) SO ( aStudy->FindObjectID(qPrintable(entry)) );
+      _PTR(SObject) SO ( aStudy->FindObjectID(qUtf8Printable(entry)) );
       if(!SO) continue;
       _PTR(AttributeDrawable) aDrw = aBuilder->FindOrCreateAttribute( SO, "AttributeDrawable" );
       aDrw->SetDrawable( true );
@@ -446,7 +446,7 @@ void GEOMToolsGUI_PublishDlg::onItemClicked(QTreeWidgetItem* theItem, int theCol
     _PTR(Study) aStudy = appStudy->studyDS();
     if ( !aStudy ) return;
     QString entry = myEntryToItem.key( theItem );
-    _PTR(SObject) SO ( aStudy->FindObjectID( qPrintable( entry ) ) );
+    _PTR(SObject) SO ( aStudy->FindObjectID( qUtf8Printable( entry ) ) );
     if ( !SO ) return;
     GEOM::GEOM_Object_var aGeomObject = GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( SO ) );
     if ( CORBA::is_nil( aGeomObject ) ) return;

@@ -454,7 +454,7 @@ bool BlocksGUI_ExplodeDlg::execute( ObjectList& objects )
       if ( selected.contains( QString( objStr.in() ) ) )
       {
         if ( !IsPreview() )
-          (*anIter)->SetParameters(aParameters.join(":").toLatin1().constData());
+          (*anIter)->SetParameters(aParameters.join(":").toUtf8().constData());
         objects.push_back( *anIter );
       }
       else
@@ -474,7 +474,7 @@ bool BlocksGUI_ExplodeDlg::execute( ObjectList& objects )
     {
       GEOM::GEOM_Object_var anObj = GEOM::GEOM_Object::_duplicate( aList[i] );
       if ( !IsPreview() )
-        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+        anObj->SetParameters(aParameters.join(":").toUtf8().constData());
       objects.push_back( anObj._retn() );
     }
   }

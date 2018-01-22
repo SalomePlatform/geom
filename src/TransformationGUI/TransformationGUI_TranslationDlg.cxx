@@ -511,7 +511,7 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
           anObj = anOper->TranslateDXDYDZCopy(myObjects[i].get(), dx, dy, dz);
           if (!anObj->_is_nil()) {
             if(!IsPreview())
-              anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+              anObj->SetParameters(aParameters.join(":").toUtf8().constData());
             objects.push_back(anObj._retn());
           }
         }
@@ -522,7 +522,7 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
           anObj = anOper->TranslateDXDYDZ(myObjects[i].get(), dx, dy, dz);
           if (!anObj->_is_nil()) {
             if(!IsPreview()) {
-              anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+              anObj->SetParameters(aParameters.join(":").toUtf8().constData());
               updateAttributes(anObj, aParameters);
             }
             objects.push_back(anObj._retn());
@@ -567,7 +567,7 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
           anObj = anOper->TranslateVectorDistance(myObjects[i].get(), myVector.get(), aDistance, toCreateCopy);
           if (!anObj->_is_nil()) {
             if(!IsPreview()) {
-              anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+              anObj->SetParameters(aParameters.join(":").toUtf8().constData());
               if (!toCreateCopy)
                 updateAttributes(anObj, aParameters);
             }

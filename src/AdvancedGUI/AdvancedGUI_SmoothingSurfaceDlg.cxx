@@ -245,7 +245,7 @@ bool AdvancedGUI_SmoothingSurfaceDlg::execute (ObjectList& objects)
   {
     QStringList aParameters;
     //@@ put stringified input parameters to the string list here to store in the data model for notebook @@//
-    if ( aParameters.count() > 0 ) anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+    if ( aParameters.count() > 0 ) anObj->SetParameters(aParameters.join(":").toUtf8().constData());
   }
   
   if (res)

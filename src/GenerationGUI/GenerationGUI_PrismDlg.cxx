@@ -676,7 +676,7 @@ bool GenerationGUI_PrismDlg::execute (ObjectList& objects)
 
       if (!anObj->_is_nil() && !IsPreview()) {
         aParameters << GroupVecH->SpinBox_DX->text();
-        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+        anObj->SetParameters(aParameters.join(":").toUtf8().constData());
       }
       break;
     case 1:
@@ -709,7 +709,7 @@ bool GenerationGUI_PrismDlg::execute (ObjectList& objects)
         aParameters << GroupDXDYDZ->SpinBox_DX->text();
         aParameters << GroupDXDYDZ->SpinBox_DY->text();
         aParameters << GroupDXDYDZ->SpinBox_DZ->text();
-        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+        anObj->SetParameters(aParameters.join(":").toUtf8().constData());
       }
       break;
     }

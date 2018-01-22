@@ -387,7 +387,7 @@ bool GenerationGUI_FillingDlg::execute(ObjectList& objects)
       aParameters << GroupPoints->SpinBox3->text();
       aParameters << GroupPoints->SpinBox4->text();
       aParameters << GroupPoints->SpinBox5->text();
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+      anObj->SetParameters(aParameters.join(":").toUtf8().constData());
     }
     objects.push_back(anObj._retn());
   }

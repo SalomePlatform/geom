@@ -702,7 +702,7 @@ bool OperationGUI_FilletDlg::execute (ObjectList& objects)
   if (!anObj->_is_nil())
   {
     if (!IsPreview())
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+      anObj->SetParameters(aParameters.join(":").toUtf8().constData());
     objects.push_back(anObj._retn());
   }
 

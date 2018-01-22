@@ -383,7 +383,7 @@ bool OperationGUI_ExtrudedFeatureDlg::execute (ObjectList& objects)
       aParameters << myGroup->SpinBox_DX->text();
       if (myGroup->PushButton3->isChecked())
         aParameters << myGroup->SpinBox_DY->text();
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+      anObj->SetParameters(aParameters.join(":").toUtf8().constData());
     }
     objects.push_back(anObj._retn());
   }

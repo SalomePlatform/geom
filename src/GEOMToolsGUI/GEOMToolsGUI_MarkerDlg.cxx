@@ -373,7 +373,7 @@ void GEOMToolsGUI_MarkerDlg::browse()
   filters << tr( "Texture files (*.dat)" ) << tr( "All files (*)" );
   QString aFileName = SUIT_Session::session()->activeApplication()->getFileName( true, QString(), filters.join( ";;" ), tr( "LOAD_TEXTURE_TLT" ), this );
   if ( !aFileName.isEmpty() ) {
-    addTexture( myOperation->LoadTexture( aFileName.toLatin1().constData() ), true );
+    addTexture( myOperation->LoadTexture( aFileName.toUtf8().constData() ), true );
   }
 }
 

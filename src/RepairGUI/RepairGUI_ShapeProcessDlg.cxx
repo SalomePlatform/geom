@@ -703,7 +703,7 @@ bool RepairGUI_ShapeProcessDlg::execute( ObjectList& objects )
           aParameters << QString( aParams[i] );
 
         aParameters << getTexts( aParams );
-        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+        anObj->SetParameters(aParameters.join(":").toUtf8().constData());
 
         RepairGUI::ShowStatistics( anOper, this );
       }

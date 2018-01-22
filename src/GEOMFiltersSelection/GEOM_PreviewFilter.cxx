@@ -48,6 +48,6 @@ GEOM_PreviewFilter::~GEOM_PreviewFilter()
 bool GEOM_PreviewFilter::isOk( const SUIT_DataOwner* sOwner ) const
 {
   const LightApp_DataOwner* owner = dynamic_cast<const LightApp_DataOwner*> ( sOwner );
-  return ( owner && strstr( owner->entry().toLatin1().constData(), "TEMP" ) );
+  return ( owner && strstr( owner->entry().toUtf8().constData(), "TEMP" ) );
 }
 

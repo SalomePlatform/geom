@@ -626,7 +626,7 @@ bool GEOMBase::SelectionByNameInDialogs( QWidget* widget, const QString& objectU
   /* Create a SALOME_InteractiveObject with a SALOME::SObject */
   Handle(SALOME_InteractiveObject) IO = new SALOME_InteractiveObject( listSO[0]->GetID().c_str(),
                                                                       "GEOM",
-                                                                      objectUserName.toLatin1().constData() );
+                                                                      objectUserName.toUtf8().constData() );
 
   /* Add as a selected object       */
   /* Clear any previous selection : */
@@ -710,7 +710,7 @@ void GEOMBase::ShowErrorMessage( const QString& errorCode, const QString& commen
   if ( !errorCode.isEmpty() )
     text << QObject::tr( errorCode.toLatin1().constData() );
   if ( !comment.isEmpty() )
-    text << QObject::tr( comment.toLatin1().constData() );
+    text << QObject::tr( comment.toUtf8().constData() );
 
   SUIT_MessageBox::critical( SUIT_Session::session()->activeApplication()->desktop(),
                              QObject::tr( "GEOM_ERROR" ),
@@ -869,7 +869,7 @@ void GEOMBase::PublishSubObject( GEOM::GEOM_Object_ptr object, const QString& na
     QString fatherEntry = GetEntry( father );
     if ( entry.isEmpty() && !CORBA::is_nil( father ) && !fatherEntry.isEmpty() ) {
       QString aName = !name.isEmpty() ? name : GetName( object );
-      GeometryGUI::GetGeomGen()->AddInStudy( object, aName.toLatin1().data(), father.in() );
+      GeometryGUI::GetGeomGen()->AddInStudy( object, aName.toUtf8().data(), father.in() );
     }
   }
 }

@@ -776,7 +776,7 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   else if ( !myName.empty() ) {
     // workaround to allow selection of temporary objects
     static int tempId = 0;
-    anIO = new SALOME_InteractiveObject( QString( "TEMP_%1" ).arg( tempId++ ).toLatin1().data(), "GEOM", myName.c_str() );
+    anIO = new SALOME_InteractiveObject( QString( "TEMP_%1" ).arg( tempId++ ).toUtf8().data(), "GEOM", myName.c_str() );
     AISShape->setIO( anIO );
     AISShape->SetOwner( anIO );
   }
@@ -1047,7 +1047,7 @@ void GEOM_Displayer::updateActorProperties( GEOM_Actor* actor, bool create )
   else if ( !myName.empty() ) {
     // workaround to allow selection of temporary objects
     static int tempId = 0;
-    anIO = new SALOME_InteractiveObject( QString( "TEMP_VTK_%1" ).arg( tempId++ ).toLatin1().data(), "GEOM", myName.c_str() );
+    anIO = new SALOME_InteractiveObject( QString( "TEMP_VTK_%1" ).arg( tempId++ ).toUtf8().data(), "GEOM", myName.c_str() );
     actor->setIO( anIO );
   }
 
@@ -1742,7 +1742,7 @@ SALOME_Prs* GEOM_Displayer::buildPresentation( const QString& entry,
     if ( prs )
     {
       Handle( SALOME_InteractiveObject ) theIO = new SALOME_InteractiveObject();
-      theIO->setEntry( entry.toLatin1().constData() );
+      theIO->setEntry( entry.toUtf8().constData() );
       if ( !theIO.IsNull() )
       {
         // set interactive object
@@ -1821,7 +1821,7 @@ SALOME_Prs* GEOM_Displayer::buildSubshapePresentation(const TopoDS_Shape& aShape
     if (prs)
     {
       Handle(SALOME_InteractiveObject) theIO = new SALOME_InteractiveObject();
-      theIO->setEntry(entry.toLatin1().constData());
+      theIO->setEntry(entry.toUtf8().constData());
       if (!theIO.IsNull())
       {
         // set interactive object
@@ -2357,7 +2357,7 @@ void GEOM_Displayer::setFieldStepInfo( const GEOM::field_data_type theFieldDataT
 
 bool GEOM_Displayer::canBeDisplayed( const QString& entry, const QString& viewer_type ) const
 {
-  _PTR(SObject) anObj = getStudy()->studyDS()->FindObjectID( (const char*)entry.toLatin1() );
+  _PTR(SObject) anObj = getStudy()->studyDS()->FindObjectID( (const char*)entry.toUtf8() );
   GEOM::GEOM_Object_var aGeomObj = GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(anObj)); // enable displaying of GEOM objects
   GEOM::GEOM_FieldStep_var aFieldStepObj = GEOM::GEOM_FieldStep::_narrow(GeometryGUI::ClientSObjectToObject(anObj)); // enable displaying of GEOM field steps
   GEOM::GEOM_Gen_var aCompObj = GEOM::GEOM_Gen::_narrow(GeometryGUI::ClientSObjectToObject(anObj)); // enable displaying of whole GEOM component
@@ -2746,7 +2746,7 @@ void GEOM_Displayer::EraseWithChildren(const Handle(SALOME_InteractiveObject)& t
     if(l_obj)
       foreach ( view, views ) {
       Handle(SALOME_InteractiveObject) anIO =
-        new SALOME_InteractiveObject(qPrintable(l_obj->entry()), "GEOM", "");
+        new SALOME_InteractiveObject(qUtf8Printable(l_obj->entry()), "GEOM", "");
       Erase(anIO, false, false, view);
     }
   }

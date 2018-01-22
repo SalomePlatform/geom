@@ -332,7 +332,7 @@ QString XAOPlugin_ImportDlg::addFieldInStudy( GEOM::GEOM_Field_ptr theField, GEO
     GEOM::GEOM_FieldStep_ptr step = theField->GetStep(steps[i]);
     QString stepName = (tr("XAOPLUGIN_STEP") + " %1 %2").arg( step->GetID() ).arg( step->GetStamp() );
     SALOMEDS::SObject_wrap aSOField =
-      getGeomEngine()->AddInStudy( step, stepName.toLatin1().constData(), theField );
+      getGeomEngine()->AddInStudy( step, stepName.toUtf8().constData(), theField );
     step->UnRegister();
   }
 

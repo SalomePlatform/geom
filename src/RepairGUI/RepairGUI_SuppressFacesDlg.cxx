@@ -223,7 +223,7 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
         Handle(SALOME_InteractiveObject) anIO = anIter.Value();
         QString anEntry = anIO->getEntry();
 
-        _PTR(SObject) aSObj (aStudy->FindObjectID(anEntry.toLatin1().constData()));
+        _PTR(SObject) aSObj (aStudy->FindObjectID(anEntry.toUtf8().constData()));
         GEOM::GEOM_Object_var aGeomObj =
           GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aSObj));
         TopoDS_Shape aShape;

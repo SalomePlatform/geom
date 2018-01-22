@@ -773,7 +773,7 @@ void DependencyTree_View::getNewTreeModel( bool theUseSelectedObject, bool theUs
         GEOM::GEOM_Object_var geomObject = GEOM::GEOM_Object::_nil();
         geomObject = GEOMBase::ConvertIOinGEOMObject( io );
         QString entry = geomObject->GetEntry();
-        objectsEntry[ iter ] = entry.toLatin1().constData();
+        objectsEntry[ iter ] = entry.toUtf8().constData();
       }
     }
     else {

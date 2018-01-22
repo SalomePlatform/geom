@@ -1201,7 +1201,7 @@ bool AdvancedGUI_PipeTShapeDlg::executeNoCheck (ObjectList& objects)
     }
 
     if (aParameters.count() > 0)
-      anObj[0]->SetParameters(aParameters.join(":").toLatin1().constData());
+      anObj[0]->SetParameters(aParameters.join(":").toUtf8().constData());
   }
 
   objects.push_back(anObj[0]._retn());

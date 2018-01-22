@@ -225,9 +225,9 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
     if ( subOwner )
     {
       QString entry = subOwner->entry();
-      if ( indexesMap.IsBound( TCollection_AsciiString(entry.toLatin1().data())))
+      if ( indexesMap.IsBound( TCollection_AsciiString(entry.toUtf8().data())))
       {
-        TColStd_IndexedMapOfInteger& subIndexes = indexesMap.ChangeFind(entry.toLatin1().data());
+        TColStd_IndexedMapOfInteger& subIndexes = indexesMap.ChangeFind(entry.toUtf8().data());
         subIndexes.Add( subOwner->index() );
         //indexesMap.replace( entry, subIndexes );
       }
@@ -235,7 +235,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
       {
         TColStd_IndexedMapOfInteger subIndexes;
         subIndexes.Add( subOwner->index() );
-        indexesMap.Bind(entry.toLatin1().data(), subIndexes);
+        indexesMap.Bind(entry.toUtf8().data(), subIndexes);
       }
     }
     else // the owner is NOT a sub owner, maybe it is a DataOwner == GLOBAL selection
@@ -279,7 +279,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
           {
             // has a local selection
             Handle(AIS_Shape) aisShape = Handle(AIS_Shape)::DownCast( io );
-            if (!aisShape.IsNull() && indexesMap.IsBound(entryStr.toLatin1().data()))
+            if (!aisShape.IsNull() && indexesMap.IsBound(entryStr.toUtf8().data()))
             {
               isLocal = true;
               TopoDS_Shape shape = aisShape->Shape();
@@ -318,7 +318,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
           if (isLocal)
           {
             const TColStd_IndexedMapOfInteger& subIndexes =
-              indexesMap.ChangeFind(entryStr.toLatin1().data());
+              indexesMap.ChangeFind(entryStr.toUtf8().data());
 
             const TopoDS_Shape& aSubShape = anOwner->Shape();
             int aSubShapeId = aMapOfShapes.FindIndex( aSubShape );

@@ -591,7 +591,7 @@ bool BlocksGUI_TrsfDlg::execute (ObjectList& objects)
       QStringList aParameters;
       aParameters << "" << "";
       aParameters << mySpinBox[SpinBox1]->text();
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+      anObj->SetParameters(aParameters.join(":").toUtf8().constData());
     }
     res = true;
     break;
@@ -608,7 +608,7 @@ bool BlocksGUI_TrsfDlg::execute (ObjectList& objects)
       aParameters << mySpinBox[SpinBox2U]->text();
       aParameters << "" << "";
       aParameters << mySpinBox[SpinBox2V]->text();
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+      anObj->SetParameters(aParameters.join(":").toUtf8().constData());
     }
     res = true;
     break;

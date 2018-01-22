@@ -354,7 +354,7 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
         aDimensionStyle->MakeArrows3d( Standard_True );
 
         anIO->SetDimensionAspect( aDimensionStyle );
-        anIO->SetDisplayUnits( aUnitsAngle.toLatin1().data() );
+        anIO->SetDisplayUnits( aUnitsAngle.toUtf8().data() );
         if (aUnitsAngle == "rad")
           anIO->SetDisplaySpecialSymbol(AIS_DSS_No);
 
@@ -372,7 +372,7 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
           anAngle *= 180. / M_PI;
           anAngleLabel = "GEOM_MEASURE_ANGLE_DEG";
         }
-        myGrp->TextLabel3->setText(tr(anAngleLabel.toLatin1().data()));
+        myGrp->TextLabel3->setText(tr(anAngleLabel.toUtf8().data()));
         int aPrecision = resMgr->integerValue( "Geometry", "angle_precision", 6 );
         myGrp->LineEdit3->setText(DlgRef::PrintDoubleValue(anAngle, aPrecision));
 

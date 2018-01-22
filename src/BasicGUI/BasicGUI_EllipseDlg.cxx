@@ -414,7 +414,7 @@ bool BasicGUI_EllipseDlg::execute( ObjectList& objects )
     anOper->MakeEllipse   ( myPoint.get(), myDir.get(), aMajorR, aMinorR );
   if ( !anObj->_is_nil() ) {
     if ( !IsPreview() )
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+      anObj->SetParameters(aParameters.join(":").toUtf8().constData());
     objects.push_back( anObj._retn() );
   }
   return true;

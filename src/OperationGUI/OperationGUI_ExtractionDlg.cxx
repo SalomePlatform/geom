@@ -799,7 +799,7 @@ void OperationGUI_ExtractionDlg::onListSelectionChanged()
       // Collect only displayed sub-shapes for selection in the viewer.
       QString                          anEntry = getSubShapeEntry(anIndex);
       Handle(SALOME_InteractiveObject) anIO    =
-                                      createIO(anEntry.toLatin1().data());
+                                      createIO(anEntry.toUtf8().data());
 
       anIOList.Append(anIO);
     }
@@ -815,7 +815,7 @@ void OperationGUI_ExtractionDlg::onListSelectionChanged()
         // Collect only displayed sub-shapes for selection in the viewer.
         QString                          anEntry = getSubShapeEntry(anIndex);
         Handle(SALOME_InteractiveObject) anIO    =
-                                    createIO(anEntry.toLatin1().data());
+                                    createIO(anEntry.toUtf8().data());
 
         anIOList.Append(anIO);
       }
@@ -1286,7 +1286,7 @@ void OperationGUI_ExtractionDlg::eraseSubShape(const int theId)
 {
   QString                          anEntry = getSubShapeEntry(theId);
   Handle(SALOME_InteractiveObject) anIO    =
-                                      createIO(anEntry.toLatin1().data());
+                                      createIO(anEntry.toUtf8().data());
 
   getDisplayer()->Erase(anIO, false, false);
   myMapDisplayedIDs.Remove(theId);

@@ -525,7 +525,7 @@ bool RepairGUI_DivideEdgeDlg::execute( ObjectList& objects )
       aParameters << "";
       aParameters << myValEdt->text();
       aParameters << "";
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+      anObj->SetParameters(aParameters.join(":").toUtf8().constData());
     }
     if ( !IsPreview() )
       RepairGUI::ShowStatistics( anOper, this );
