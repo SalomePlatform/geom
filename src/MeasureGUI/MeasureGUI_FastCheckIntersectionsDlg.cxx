@@ -413,10 +413,10 @@ void MeasureGUI_FastCheckIntersectionsDlg::SetEditCurrentArgument()
 // function : OnGaps()
 // purpose  :
 //=================================================================================
-void MeasureGUI_FastCheckIntersectionsDlg::OnGaps(bool cheked)
+void MeasureGUI_FastCheckIntersectionsDlg::OnGaps(bool checked)
 {
   clear();
-  myTolerance->setEnabled(cheked);
+  myTolerance->setEnabled(checked);
 }
 //=================================================================================
 // function : SelectionIntoArgument
