@@ -1432,9 +1432,9 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnQuadrangle
                                                 (GEOM::GEOM_Object_ptr theShape,
                                                  CORBA::Long           theShapeType,
                                                  GEOM::GEOM_Object_ptr theTopLeftPoint,
-                                                 GEOM::GEOM_Object_ptr theTopRigthPoint,
+                                                 GEOM::GEOM_Object_ptr theTopRightPoint,
                                                  GEOM::GEOM_Object_ptr theBottomLeftPoint,
-                                                 GEOM::GEOM_Object_ptr theBottomRigthPoint,
+                                                 GEOM::GEOM_Object_ptr theBottomRightPoint,
                                                  GEOM::shape_state     theState)
 {
   GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
@@ -1445,21 +1445,21 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnQuadrangle
   //Get the reference objects
   Handle(::GEOM_Object) aShape = GetObjectImpl(theShape);
   Handle(::GEOM_Object) aTopLeftPoint = GetObjectImpl(theTopLeftPoint);
-  Handle(::GEOM_Object) aTopRigthPoint = GetObjectImpl(theTopRigthPoint);
+  Handle(::GEOM_Object) aTopRightPoint = GetObjectImpl(theTopRightPoint);
   Handle(::GEOM_Object) aBottomLeftPoint = GetObjectImpl(theBottomLeftPoint);
-  Handle(::GEOM_Object) aBottomRigthPoint = GetObjectImpl(theBottomRigthPoint);
+  Handle(::GEOM_Object) aBottomRightPoint = GetObjectImpl(theBottomRightPoint);
 
   if (aShape.IsNull() ||
       aTopLeftPoint.IsNull() ||
-      aTopRigthPoint.IsNull() ||
+      aTopRightPoint.IsNull() ||
       aBottomLeftPoint.IsNull() ||
-      aBottomRigthPoint.IsNull())
+      aBottomRightPoint.IsNull())
     return aSeq._retn();
 
   //Get Shapes On Quadrangle
   Handle(TColStd_HSequenceOfTransient) aHSeq = GetOperations()->GetShapesOnQuadrangle
     (aShape, theShapeType,
-     aTopLeftPoint, aTopRigthPoint, aBottomLeftPoint, aBottomRigthPoint,
+     aTopLeftPoint, aTopRightPoint, aBottomLeftPoint, aBottomRightPoint,
      ShapeState(theState));
   if (!GetOperations()->IsDone() || aHSeq.IsNull())
     return aSeq._retn();
@@ -1669,9 +1669,9 @@ GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnQuadrangleIDs
                                                 (GEOM::GEOM_Object_ptr theShape,
                                                  CORBA::Long           theShapeType,
                                                  GEOM::GEOM_Object_ptr theTopLeftPoint,
-                                                 GEOM::GEOM_Object_ptr theTopRigthPoint,
+                                                 GEOM::GEOM_Object_ptr theTopRightPoint,
                                                  GEOM::GEOM_Object_ptr theBottomLeftPoint,
-                                                 GEOM::GEOM_Object_ptr theBottomRigthPoint,
+                                                 GEOM::GEOM_Object_ptr theBottomRightPoint,
                                                  GEOM::shape_state     theState)
 {
   GEOM::ListOfLong_var aSeq = new GEOM::ListOfLong;
@@ -1682,21 +1682,21 @@ GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnQuadrangleIDs
   //Get the reference objects
   Handle(::GEOM_Object) aShape = GetObjectImpl(theShape);
   Handle(::GEOM_Object) aTopLeftPoint = GetObjectImpl(theTopLeftPoint);
-  Handle(::GEOM_Object) aTopRigthPoint = GetObjectImpl(theTopRigthPoint);
+  Handle(::GEOM_Object) aTopRightPoint = GetObjectImpl(theTopRightPoint);
   Handle(::GEOM_Object) aBottomLeftPoint = GetObjectImpl(theBottomLeftPoint);
-  Handle(::GEOM_Object) aBottomRigthPoint = GetObjectImpl(theBottomRigthPoint);
+  Handle(::GEOM_Object) aBottomRightPoint = GetObjectImpl(theBottomRightPoint);
 
   if (aShape.IsNull() ||
       aTopLeftPoint.IsNull() ||
-      aTopRigthPoint.IsNull() ||
+      aTopRightPoint.IsNull() ||
       aBottomLeftPoint.IsNull() ||
-      aBottomRigthPoint.IsNull() )
+      aBottomRightPoint.IsNull() )
     return aSeq._retn();
 
   //Get Shapes On Quadrangle
   Handle(TColStd_HSequenceOfInteger) aHSeq = GetOperations()->GetShapesOnQuadrangleIDs
     (aShape, theShapeType,
-     aTopLeftPoint, aTopRigthPoint, aBottomLeftPoint, aBottomRigthPoint,
+     aTopLeftPoint, aTopRightPoint, aBottomLeftPoint, aBottomRightPoint,
      ShapeState(theState));
   if (!GetOperations()->IsDone() || aHSeq.IsNull())
     return aSeq._retn();

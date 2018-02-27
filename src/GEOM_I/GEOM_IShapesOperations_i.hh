@@ -201,9 +201,9 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
   GEOM::ListOfGO* GetShapesOnQuadrangle (GEOM::GEOM_Object_ptr theShape,
                                          CORBA::Long           theShapeType,
                                          GEOM::GEOM_Object_ptr theTopLeftPoint,
-                                         GEOM::GEOM_Object_ptr theTopRigthPoint,
+                                         GEOM::GEOM_Object_ptr theTopRightPoint,
                                          GEOM::GEOM_Object_ptr theBottomLeftPoint,
-                                         GEOM::GEOM_Object_ptr theBottomRigthPoint,
+                                         GEOM::GEOM_Object_ptr theBottomRightPoint,
                                          GEOM::shape_state     theState);
 
   GEOM::ListOfLong* GetShapesOnPlaneIDs (GEOM::GEOM_Object_ptr theShape,
@@ -239,9 +239,9 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
   GEOM::ListOfLong* GetShapesOnQuadrangleIDs (GEOM::GEOM_Object_ptr theShape,
                                               CORBA::Long           theShapeType,
                                               GEOM::GEOM_Object_ptr theTopLeftPoint,
-                                              GEOM::GEOM_Object_ptr theTopRigthPoint,
+                                              GEOM::GEOM_Object_ptr theTopRightPoint,
                                               GEOM::GEOM_Object_ptr theBottomLeftPoint,
-                                              GEOM::GEOM_Object_ptr theBottomRigthPoint,
+                                              GEOM::GEOM_Object_ptr theBottomRightPoint,
                                               GEOM::shape_state     theState);
 
   GEOM::ListOfGO* GetShapesOnBox (GEOM::GEOM_Object_ptr theBox,

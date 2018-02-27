@@ -2474,18 +2474,18 @@ module GEOM
      *  \param theShape Shape to find sub-shapes of.
      *  \param theShapeType Type of sub-shapes to be retrieved.
      *  \param theTopLeftPoint Top left quadrangle corner
-     *  \param theTopRigthPoint Top right quadrangle corner
+     *  \param theTopRightPoint Top right quadrangle corner
      *  \param theBottomLeftPoint Bottom left quadrangle corner
-     *  \param theBottomRigthPoint Bottom right quadrangle corner
+     *  \param theBottomRightPoint Bottom right quadrangle corner
      *  \param theState The state of the sub-shapes to find.
      *  \return List of all found sub-shapes.
      */
     ListOfGO GetShapesOnQuadrangle (in GEOM_Object theShape,
                                     in long        theShapeType,
                                     in GEOM_Object theTopLeftPoint,
-                                    in GEOM_Object theTopRigthPoint,
+                                    in GEOM_Object theTopRightPoint,
                                     in GEOM_Object theBottomLeftPoint,
-                                    in GEOM_Object theBottomRigthPoint,
+                                    in GEOM_Object theBottomRightPoint,
                                     in shape_state theState);
 
     /*!
@@ -2578,18 +2578,18 @@ module GEOM
      *  \param theShape Shape to find sub-shapes of.
      *  \param theShapeType Type of sub-shapes to be retrieved.
      *  \param theTopLeftPoint Top left quadrangle corner
-     *  \param theTopRigthPoint Top right quadrangle corner
+     *  \param theTopRightPoint Top right quadrangle corner
      *  \param theBottomLeftPoint Bottom left quadrangle corner
-     *  \param theBottomRigthPoint Bottom right quadrangle corner
+     *  \param theBottomRightPoint Bottom right quadrangle corner
      *  \param theState The state of the sub-shapes to find.
      *  \return List of IDs of all found sub-shapes.
      */
     ListOfLong GetShapesOnQuadrangleIDs (in GEOM_Object theShape,
                                          in long        theShapeType,
                                          in GEOM_Object theTopLeftPoint,
-                                         in GEOM_Object theTopRigthPoint,
+                                         in GEOM_Object theTopRightPoint,
                                          in GEOM_Object theBottomLeftPoint,
-                                         in GEOM_Object theBottomRigthPoint,
+                                         in GEOM_Object theBottomRightPoint,
                                          in shape_state theState);
 
     /*!

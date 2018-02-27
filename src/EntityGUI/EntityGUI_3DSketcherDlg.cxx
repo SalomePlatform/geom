@@ -1481,9 +1481,9 @@ void EntityGUI_3DSketcherDlg::displayDimensions (bool store)
                  0.0); 
     
     // Express the coordinates in the reference coordinate system (OXY)
-    gp_Trsf aTranform = toReferenceSystem(P0);
-    P1.Transform(aTranform);    
-    P2.Transform(aTranform);
+    gp_Trsf aTransform = toReferenceSystem(P0);
+    P1.Transform(aTransform);    
+    P2.Transform(aTransform);
     P1.Translate(Origin, P0);
     P2.Translate(Origin, P0);
     

@@ -33,14 +33,14 @@
 
 
 GEOMAlgo_FinderShapeOnQuad::GEOMAlgo_FinderShapeOnQuad(const gp_Pnt & theTopLeftPoint,
-                                                       const gp_Pnt & theTopRigthPoint,
+                                                       const gp_Pnt & theTopRightPoint,
                                                        const gp_Pnt & theBottomLeftPoint,
-                                                       const gp_Pnt & theBottomRigthPoint)
+                                                       const gp_Pnt & theBottomRightPoint)
 {
   myPoints.resize(6);
   myPoints[0] = theTopLeftPoint    ;
-  myPoints[1] = theTopRigthPoint   ;
-  myPoints[2] = theBottomRigthPoint;
+  myPoints[1] = theTopRightPoint   ;
+  myPoints[2] = theBottomRightPoint;
   myPoints[3] = theBottomLeftPoint ;
   myPoints[4] = myPoints[0];
   myPoints[5] = myPoints[1];

@@ -196,7 +196,7 @@ Standard_Boolean BlockFix_PeriodicSurfaceModifier::NewCurve2d(const TopoDS_Edge&
     Handle(Geom_Curve) C3d = BRep_Tool::Curve ( E, LC, f, l );
     Handle(Geom_Surface) S = BRep_Tool::Surface(F, LS);
 
-    //taking into accound the orientation of the seam
+    //taking into account the orientation of the seam
     C = BRep_Tool::CurveOnSurface(E,F,f,l);
     Tol = BRep_Tool::Tolerance(E);
 

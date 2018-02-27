@@ -5593,9 +5593,9 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theShape Shape to find sub-shapes of.
         #  @param theShapeType Type of sub-shapes to be retrieved (see ShapeType())
         #  @param theTopLeftPoint Point, specifying top left corner of a quadrangle
-        #  @param theTopRigthPoint Point, specifying top right corner of a quadrangle
+        #  @param theTopRightPoint Point, specifying top right corner of a quadrangle
         #  @param theBottomLeftPoint Point, specifying bottom left corner of a quadrangle
-        #  @param theBottomRigthPoint Point, specifying bottom right corner of a quadrangle
+        #  @param theBottomRightPoint Point, specifying bottom right corner of a quadrangle
         #  @param theState The state of the sub-shapes to find (see GEOM::shape_state)
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
@@ -5606,8 +5606,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @ref swig_GetShapesOnQuadrangle "Example"
         @ManageTransactions("ShapesOp")
         def GetShapesOnQuadrangle(self, theShape, theShapeType,
-                                  theTopLeftPoint, theTopRigthPoint,
-                                  theBottomLeftPoint, theBottomRigthPoint, theState, theName=None):
+                                  theTopLeftPoint, theTopRightPoint,
+                                  theBottomLeftPoint, theBottomRightPoint, theState, theName=None):
             """
             Find in theShape all sub-shapes of type theShapeType, situated relatively
             the specified quadrangle by the certain way, defined through theState parameter.
@@ -5616,9 +5616,9 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 theShape Shape to find sub-shapes of.
                 theShapeType Type of sub-shapes to be retrieved (see geompy.ShapeType)
                 theTopLeftPoint Point, specifying top left corner of a quadrangle
-                theTopRigthPoint Point, specifying top right corner of a quadrangle
+                theTopRightPoint Point, specifying top right corner of a quadrangle
                 theBottomLeftPoint Point, specifying bottom left corner of a quadrangle
-                theBottomRigthPoint Point, specifying bottom right corner of a quadrangle
+                theBottomRightPoint Point, specifying bottom right corner of a quadrangle
                 theState The state of the sub-shapes to find (see GEOM::shape_state)
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
@@ -5629,8 +5629,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             # Example: see GEOM_TestOthers.py
             aList = self.ShapesOp.GetShapesOnQuadrangle(theShape, theShapeType,
-                                                        theTopLeftPoint, theTopRigthPoint,
-                                                        theBottomLeftPoint, theBottomRigthPoint, theState)
+                                                        theTopLeftPoint, theTopRightPoint,
+                                                        theBottomLeftPoint, theBottomRightPoint, theState)
             RaiseIfFailed("GetShapesOnQuadrangle", self.ShapesOp)
             self._autoPublish(aList, theName, "shapeOnQuadrangle")
             return aList
@@ -5640,9 +5640,9 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theShape Shape to find sub-shapes of.
         #  @param theShapeType Type of sub-shapes to be retrieved (see ShapeType())
         #  @param theTopLeftPoint Point, specifying top left corner of a quadrangle
-        #  @param theTopRigthPoint Point, specifying top right corner of a quadrangle
+        #  @param theTopRightPoint Point, specifying top right corner of a quadrangle
         #  @param theBottomLeftPoint Point, specifying bottom left corner of a quadrangle
-        #  @param theBottomRigthPoint Point, specifying bottom right corner of a quadrangle
+        #  @param theBottomRightPoint Point, specifying bottom right corner of a quadrangle
         #  @param theState The state of the sub-shapes to find (see GEOM::shape_state)
         #
         #  @return List of all found sub-shapes indices.
@@ -5650,8 +5650,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @ref swig_GetShapesOnQuadrangleIDs "Example"
         @ManageTransactions("ShapesOp")
         def GetShapesOnQuadrangleIDs(self, theShape, theShapeType,
-                                     theTopLeftPoint, theTopRigthPoint,
-                                     theBottomLeftPoint, theBottomRigthPoint, theState):
+                                     theTopLeftPoint, theTopRightPoint,
+                                     theBottomLeftPoint, theBottomRightPoint, theState):
             """
             Find in theShape all sub-shapes of type theShapeType, situated relatively
             the specified quadrangle by the certain way, defined through theState parameter.
@@ -5660,9 +5660,9 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 theShape Shape to find sub-shapes of.
                 theShapeType Type of sub-shapes to be retrieved (see geompy.ShapeType)
                 theTopLeftPoint Point, specifying top left corner of a quadrangle
-                theTopRigthPoint Point, specifying top right corner of a quadrangle
+                theTopRightPoint Point, specifying top right corner of a quadrangle
                 theBottomLeftPoint Point, specifying bottom left corner of a quadrangle
-                theBottomRigthPoint Point, specifying bottom right corner of a quadrangle
+                theBottomRightPoint Point, specifying bottom right corner of a quadrangle
                 theState The state of the sub-shapes to find (see GEOM::shape_state)
 
             Returns:
@@ -5671,8 +5671,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
             # Example: see GEOM_TestOthers.py
             aList = self.ShapesOp.GetShapesOnQuadrangleIDs(theShape, theShapeType,
-                                                           theTopLeftPoint, theTopRigthPoint,
-                                                           theBottomLeftPoint, theBottomRigthPoint, theState)
+                                                           theTopLeftPoint, theTopRightPoint,
+                                                           theBottomLeftPoint, theBottomRightPoint, theState)
             RaiseIfFailed("GetShapesOnQuadrangleIDs", self.ShapesOp)
             return aList
 

@@ -56,15 +56,15 @@ public:
 
   Standard_EXPORT
     void SetCorners(const gp_Pnt &theTopLeftPoint,
-                    const gp_Pnt &theTopRigthPoint,
+                    const gp_Pnt &theTopRightPoint,
                     const gp_Pnt &theBottomLeftPoint,
-                    const gp_Pnt &theBottomRigthPoint);
+                    const gp_Pnt &theBottomRightPoint);
 
   Standard_EXPORT
     void GetCorners(gp_Pnt &theTopLeftPoint,
-                    gp_Pnt &theTopRigthPoint,
+                    gp_Pnt &theTopRightPoint,
                     gp_Pnt &theBottomLeftPoint,
-                    gp_Pnt &theBottomRigthPoint) const;
+                    gp_Pnt &theBottomRightPoint) const;
 
   Standard_EXPORT
     virtual  void Perform();

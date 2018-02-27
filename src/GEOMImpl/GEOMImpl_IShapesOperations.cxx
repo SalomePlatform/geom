@@ -4179,9 +4179,9 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnSphere
     * \param theShape - the shape to explore
     * \param theShapeType - type of sub-shape of theShape
     * \param theTopLeftPoint - top left quadrangle corner
-    * \param theTopRigthPoint - top right quadrangle corner
+    * \param theTopRightPoint - top right quadrangle corner
     * \param theBottomLeftPoint - bottom left quadrangle corner
-    * \param theBottomRigthPoint - bottom right quadrangle corner
+    * \param theBottomRightPoint - bottom right quadrangle corner
     * \param theState - required state
     * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found sub-shapes
    */
@@ -4190,25 +4190,25 @@ Handle(TColStd_HSequenceOfInteger)
   GEOMImpl_IShapesOperations::getShapesOnQuadrangleIDs (const Handle(GEOM_Object)& theShape,
                                                         const Standard_Integer     theShapeType,
                                                         const Handle(GEOM_Object)& theTopLeftPoint,
-                                                        const Handle(GEOM_Object)& theTopRigthPoint,
+                                                        const Handle(GEOM_Object)& theTopRightPoint,
                                                         const Handle(GEOM_Object)& theBottomLeftPoint,
-                                                        const Handle(GEOM_Object)& theBottomRigthPoint,
+                                                        const Handle(GEOM_Object)& theBottomRightPoint,
                                                         const GEOMAlgo_State       theState)
 {
   SetErrorCode(KO);
 
   if ( theShape.IsNull() ||
        theTopLeftPoint.IsNull() ||
-       theTopRigthPoint.IsNull() ||
+       theTopRightPoint.IsNull() ||
        theBottomLeftPoint.IsNull() ||
-       theBottomRigthPoint.IsNull() )
+       theBottomRightPoint.IsNull() )
     return NULL;
 
   TopoDS_Shape aShape = theShape->GetValue();
   TopoDS_Shape aTL = theTopLeftPoint->GetValue();
-  TopoDS_Shape aTR = theTopRigthPoint->GetValue();
+  TopoDS_Shape aTR = theTopRightPoint->GetValue();
   TopoDS_Shape aBL = theBottomLeftPoint->GetValue();
-  TopoDS_Shape aBR = theBottomRigthPoint->GetValue();
+  TopoDS_Shape aBR = theBottomRightPoint->GetValue();
 
   if (aShape.IsNull() ||
       aTL.IsNull() ||
@@ -4308,9 +4308,9 @@ Handle(TColStd_HSequenceOfInteger)
     * \param theShape - the shape to explore
     * \param theShapeType - type of sub-shape of theShape
     * \param theTopLeftPoint - top left quadrangle corner
-    * \param theTopRigthPoint - top right quadrangle corner
+    * \param theTopRightPoint - top right quadrangle corner
     * \param theBottomLeftPoint - bottom left quadrangle corner
-    * \param theBottomRigthPoint - bottom right quadrangle corner
+    * \param theBottomRightPoint - bottom right quadrangle corner
     * \param theState - required state
     * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found sub-shapes
    */
@@ -4319,9 +4319,9 @@ Handle(TColStd_HSequenceOfTransient)
     GEOMImpl_IShapesOperations::GetShapesOnQuadrangle (const Handle(GEOM_Object)& theShape,
                                                        const Standard_Integer     theShapeType,
                                                        const Handle(GEOM_Object)& theTopLeftPoint,
-                                                       const Handle(GEOM_Object)& theTopRigthPoint,
+                                                       const Handle(GEOM_Object)& theTopRightPoint,
                                                        const Handle(GEOM_Object)& theBottomLeftPoint,
-                                                       const Handle(GEOM_Object)& theBottomRigthPoint,
+                                                       const Handle(GEOM_Object)& theBottomRightPoint,
                                                        const GEOMAlgo_State       theState)
 {
   // Find indices
@@ -4329,9 +4329,9 @@ Handle(TColStd_HSequenceOfTransient)
     getShapesOnQuadrangleIDs( theShape,
                               theShapeType,
                               theTopLeftPoint,
-                              theTopRigthPoint,
+                              theTopRightPoint,
                               theBottomLeftPoint,
-                              theBottomRigthPoint,
+                              theBottomRightPoint,
                               theState);
   if ( aSeqOfIDs.IsNull() || aSeqOfIDs->IsEmpty() )
     return NULL;
@@ -4353,9 +4353,9 @@ Handle(TColStd_HSequenceOfTransient)
     << theShape << ", "
     << TopAbs_ShapeEnum(theShapeType) << ", "
     << theTopLeftPoint << ", "
-    << theTopRigthPoint << ", "
+    << theTopRightPoint << ", "
     << theBottomLeftPoint << ", "
-    << theBottomRigthPoint << ", "
+    << theBottomRightPoint << ", "
     << theState << ")";
 
   SetErrorCode(OK);
@@ -4369,9 +4369,9 @@ Handle(TColStd_HSequenceOfTransient)
     * \param theShape - the shape to explore
     * \param theShapeType - type of sub-shape of theShape
     * \param theTopLeftPoint - top left quadrangle corner
-    * \param theTopRigthPoint - top right quadrangle corner
+    * \param theTopRightPoint - top right quadrangle corner
     * \param theBottomLeftPoint - bottom left quadrangle corner
-    * \param theBottomRigthPoint - bottom right quadrangle corner
+    * \param theBottomRightPoint - bottom right quadrangle corner
     * \param theState - required state
     * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found sub-shapes
    */
@@ -4380,9 +4380,9 @@ Handle(TColStd_HSequenceOfInteger)
   GEOMImpl_IShapesOperations::GetShapesOnQuadrangleIDs (const Handle(GEOM_Object)& theShape,
                                                         const Standard_Integer     theShapeType,
                                                         const Handle(GEOM_Object)& theTopLeftPoint,
-                                                        const Handle(GEOM_Object)& theTopRigthPoint,
+                                                        const Handle(GEOM_Object)& theTopRightPoint,
                                                         const Handle(GEOM_Object)& theBottomLeftPoint,
-                                                        const Handle(GEOM_Object)& theBottomRigthPoint,
+                                                        const Handle(GEOM_Object)& theBottomRightPoint,
                                                         const GEOMAlgo_State       theState)
 {
   // Find indices
@@ -4390,9 +4390,9 @@ Handle(TColStd_HSequenceOfInteger)
     getShapesOnQuadrangleIDs( theShape,
                               theShapeType,
                               theTopLeftPoint,
-                              theTopRigthPoint,
+                              theTopRightPoint,
                               theBottomLeftPoint,
-                              theBottomRigthPoint,
+                              theBottomRightPoint,
                               theState);
   if ( aSeqOfIDs.IsNull() || aSeqOfIDs->IsEmpty() )
     return NULL;
@@ -4401,8 +4401,8 @@ Handle(TColStd_HSequenceOfInteger)
 
   // The GetShapesOnCylinder() doesn't change object so no new function is required.
   Handle(GEOM_BaseObject) lastObj = GEOM::GetCreatedLast(theShape,theTopLeftPoint);
-  lastObj = GEOM::GetCreatedLast(lastObj,theTopRigthPoint);
-  lastObj = GEOM::GetCreatedLast(lastObj,theBottomRigthPoint);
+  lastObj = GEOM::GetCreatedLast(lastObj,theTopRightPoint);
+  lastObj = GEOM::GetCreatedLast(lastObj,theBottomRightPoint);
   lastObj = GEOM::GetCreatedLast(lastObj,theBottomLeftPoint);
   Handle(GEOM_Function) aFunction = lastObj->GetLastFunction();
 
@@ -4413,9 +4413,9 @@ Handle(TColStd_HSequenceOfInteger)
     << theShape << ", "
     << TopAbs_ShapeEnum(theShapeType) << ", "
     << theTopLeftPoint << ", "
-    << theTopRigthPoint << ", "
+    << theTopRightPoint << ", "
     << theBottomLeftPoint << ", "
-    << theBottomRigthPoint << ", "
+    << theBottomRightPoint << ", "
     << theState << ")";
 #endif // DUMP_SUBSHAPE_IDS
 

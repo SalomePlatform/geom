@@ -54,14 +54,14 @@ GEOMAlgo_ClsfQuad::~GEOMAlgo_ClsfQuad()
 //purpose  :
 //=======================================================================
 void GEOMAlgo_ClsfQuad::SetCorners(const gp_Pnt &theTopLeftPoint,
-                                   const gp_Pnt &theTopRigthPoint,
+                                   const gp_Pnt &theTopRightPoint,
                                    const gp_Pnt &theBottomLeftPoint,
-                                   const gp_Pnt &theBottomRigthPoint)
+                                   const gp_Pnt &theBottomRightPoint)
 {
   myPoints.resize(6);
   myPoints[0] = theTopLeftPoint;
-  myPoints[1] = theTopRigthPoint;
-  myPoints[2] = theBottomRigthPoint;
+  myPoints[1] = theTopRightPoint;
+  myPoints[2] = theBottomRightPoint;
   myPoints[3] = theBottomLeftPoint;
   myPoints[4] = myPoints[0];
   myPoints[5] = myPoints[1];
@@ -118,15 +118,15 @@ void GEOMAlgo_ClsfQuad::SetCorners(const gp_Pnt &theTopLeftPoint,
 //purpose  :
 //=======================================================================
 void GEOMAlgo_ClsfQuad::GetCorners(gp_Pnt &theTopLeftPoint,
-                                   gp_Pnt &theTopRigthPoint,
+                                   gp_Pnt &theTopRightPoint,
                                    gp_Pnt &theBottomLeftPoint,
-                                   gp_Pnt &theBottomRigthPoint) const
+                                   gp_Pnt &theBottomRightPoint) const
 {
   if (myPoints.size() == 6) {
     theTopLeftPoint     = myPoints[0];
-    theTopRigthPoint    = myPoints[1];
+    theTopRightPoint    = myPoints[1];
     theBottomLeftPoint  = myPoints[3];
-    theBottomRigthPoint = myPoints[2];
+    theBottomRightPoint = myPoints[2];
   }
 }
 

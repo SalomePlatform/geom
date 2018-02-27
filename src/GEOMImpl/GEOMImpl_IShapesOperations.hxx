@@ -275,9 +275,9 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
     * \param theShape - the shape to explore
     * \param theShapeType - type of sub-shape of theShape
     * \param theTopLeftPoint - top left quadrangle corner
-    * \param theTopRigthPoint - top right quadrangle corner
+    * \param theTopRightPoint - top right quadrangle corner
     * \param theBottomLeftPoint - bottom left quadrangle corner
-    * \param theBottomRigthPoint - bottom right quadrangle corner
+    * \param theBottomRightPoint - bottom right quadrangle corner
     * \param theState - required state
     * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found sub-shapes
    */
@@ -285,9 +285,9 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
     GetShapesOnQuadrangle (const Handle(GEOM_Object)& theShape,
                            const Standard_Integer     theShapeType,
                            const Handle(GEOM_Object)& theTopLeftPoint,
-                           const Handle(GEOM_Object)& theTopRigthPoint,
+                           const Handle(GEOM_Object)& theTopRightPoint,
                            const Handle(GEOM_Object)& theBottomLeftPoint,
-                           const Handle(GEOM_Object)& theBottomRigthPoint,
+                           const Handle(GEOM_Object)& theBottomRightPoint,
                            const GEOMAlgo_State       theState);
 
   /*!
@@ -295,9 +295,9 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
     * \param theShape - the shape to explore
     * \param theShapeType - type of sub-shape of theShape
     * \param theTopLeftPoint - top left quadrangle corner
-    * \param theTopRigthPoint - top right quadrangle corner
+    * \param theTopRightPoint - top right quadrangle corner
     * \param theBottomLeftPoint - bottom left quadrangle corner
-    * \param theBottomRigthPoint - bottom right quadrangle corner
+    * \param theBottomRightPoint - bottom right quadrangle corner
     * \param theState - required state
     * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found sub-shapes
    */
@@ -305,9 +305,9 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
     GetShapesOnQuadrangleIDs (const Handle(GEOM_Object)& theShape,
                               const Standard_Integer     theShapeType,
                               const Handle(GEOM_Object)& theTopLeftPoint,
-                              const Handle(GEOM_Object)& theTopRigthPoint,
+                              const Handle(GEOM_Object)& theTopRightPoint,
                               const Handle(GEOM_Object)& theBottomLeftPoint,
-                              const Handle(GEOM_Object)& theBottomRigthPoint,
+                              const Handle(GEOM_Object)& theBottomRightPoint,
                               const GEOMAlgo_State       theState);
 
   Standard_EXPORT Handle(GEOM_Object) GetShapesOnCylinderOld (Handle(GEOM_Object)    theShape,
@@ -572,9 +572,9 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
    * \param theShape - the shape to explore
    * \param theShapeType - type of sub-shape of theShape
    * \param theTopLeftPoint - top left quadrangle corner
-   * \param theTopRigthPoint - top right quadrangle corner
+   * \param theTopRightPoint - top right quadrangle corner
    * \param theBottomLeftPoint - bottom left quadrangle corner
-   * \param theBottomRigthPoint - bottom right quadrangle corner
+   * \param theBottomRightPoint - bottom right quadrangle corner
    * \param theState - required state
    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found sub-shapes
    */
@@ -582,9 +582,9 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
     getShapesOnQuadrangleIDs (const Handle(GEOM_Object)& theShape,
                               const Standard_Integer     theShapeType,
                               const Handle(GEOM_Object)& theTopLeftPoint,
-                              const Handle(GEOM_Object)& theTopRigthPoint,
+                              const Handle(GEOM_Object)& theTopRightPoint,
                               const Handle(GEOM_Object)& theBottomLeftPoint,
-                              const Handle(GEOM_Object)& theBottomRigthPoint,
+                              const Handle(GEOM_Object)& theBottomRightPoint,
                               const GEOMAlgo_State       theState);
 
   /*!
