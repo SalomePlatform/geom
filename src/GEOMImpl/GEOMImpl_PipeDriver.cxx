@@ -209,17 +209,13 @@ static bool FillForOtherEdges(const TopoDS_Shape& F1,
                               const TopoDS_Shape& V1,
                               TopTools_IndexedDataMapOfShapeShape& FF)
 {
-  //cout<<"FillForOtherEdges"<<endl;
   // find other pairs for vertexes and edges
   // creating map of vertex edges for both faces
   TopTools_IndexedDataMapOfShapeListOfShape aMapVertEdge1;
   TopExp::MapShapesAndAncestors(F1, TopAbs_VERTEX, TopAbs_EDGE, aMapVertEdge1);
-  if (!FF.Contains(F1))
-    MESSAGE("    FillForOtherEdges: map FF not contains key F1");
-  if (!FF.Contains(E1))
-    MESSAGE("    FillForOtherEdges: map FF not contains key E1");
-  if (!FF.Contains(V1))
-    MESSAGE("    FillForOtherEdges: map FF not contains key V1");
+  if (!FF.Contains(F1)) MESSAGE("    FillForOtherEdges: map FF not contains key F1");
+  if (!FF.Contains(E1)) MESSAGE("    FillForOtherEdges: map FF not contains key E1");
+  if (!FF.Contains(V1)) MESSAGE("    FillForOtherEdges: map FF not contains key V1");
   const TopoDS_Shape& F2 = FF.FindFromKey(F1);
   const TopoDS_Shape& E2 = FF.FindFromKey(E1);
   const TopoDS_Shape& V2 = FF.FindFromKey(V1);
@@ -233,26 +229,18 @@ static bool FillForOtherEdges(const TopoDS_Shape& F1,
 
   ShapeAnalysis_Edge sae;
   while(1) {
-    if (!aMapVertEdge1.Contains(VS1))
-      MESSAGE ("    FillForOtherEdges: map aMapVertEdge1 not contains key VS1");
+    if (!aMapVertEdge1.Contains(VS1)) MESSAGE ("    FillForOtherEdges: map aMapVertEdge1 not contains key VS1");
     const TopTools_ListOfShape& aList1 = aMapVertEdge1.FindFromKey(VS1);
-    //TopoDS_Shape E1next;
     TopTools_ListIteratorOfListOfShape anIter1(aList1);
     if (anIter1.Value().IsSame(ES1)) {
       anIter1.Next();
     }
-    //E1next = anIter1.Value();
-    if (!aMapVertEdge2.Contains(VS2))
-      MESSAGE ("    FillForOtherEdges: map aMapVertEdge2 not contains key VS2");
+    if (!aMapVertEdge2.Contains(VS2)) MESSAGE ("    FillForOtherEdges: map aMapVertEdge2 not contains key VS2");
     const TopTools_ListOfShape& aList2 = aMapVertEdge2.FindFromKey(VS2);
-    //TopoDS_Shape E2next;
     TopTools_ListIteratorOfListOfShape anIter2(aList2);
     if (anIter2.Value().IsSame(ES2)) {
       anIter2.Next();
     }
-    //E2next = anIter2.Value();
-    //ES1 = TopoDS::Edge(E1next);
-    //ES2 = TopoDS::Edge(E2next);
     ES1 = TopoDS::Edge(anIter1.Value());
     ES2 = TopoDS::Edge(anIter2.Value());
     if (!FF.Contains(ES1)) {
@@ -287,7 +275,6 @@ static bool FillCorrespondingEdges(const TopoDS_Shape& FS1,
                                    const TopoDS_Wire& aWirePath,
                                    TopTools_IndexedDataMapOfShapeShape& FF)
 {
-  //cout<<"FillCorrespondingEdges"<<endl;
   // find corresponding edges
   TopExp_Explorer expw1(FS1,TopAbs_WIRE);
   TopoDS_Wire aWire1 = TopoDS::Wire(expw1.Current());
@@ -318,8 +305,6 @@ static bool FillCorrespondingEdges(const TopoDS_Shape& FS1,
   TopoDS_Vertex V21 = sae.LastVertex(E1);
   gp_Pnt P11 = BRep_Tool::Pnt(V11);
   gp_Pnt P21 = BRep_Tool::Pnt(V21);
-  //cout<<"P11("<<P11.X()<<","<<P11.Y()<<","<<P11.Z()<<")"<<endl;
-  //cout<<"P21("<<P21.X()<<","<<P21.Y()<<","<<P21.Z()<<")"<<endl;
   // find corresponding vertexes from created shape
   TopoDS_Vertex VN11,VN21;
   for (exp.Init(aShape, TopAbs_VERTEX); exp.More(); exp.Next()) {
@@ -370,8 +355,6 @@ static bool FillCorrespondingEdges(const TopoDS_Shape& FS1,
   TopoDS_Vertex V12,V22;
   gp_Pnt PN12 = BRep_Tool::Pnt(VN12);
   gp_Pnt PN22 = BRep_Tool::Pnt(VN22);
-  //cout<<"PN12("<<PN12.X()<<","<<PN12.Y()<<","<<PN12.Z()<<")"<<endl;
-  //cout<<"PN22("<<PN22.X()<<","<<PN22.Y()<<","<<PN22.Z()<<")"<<endl;
   TopoDS_Edge E2;
   TopExp_Explorer expe;
   for (expe.Init(FS2, TopAbs_EDGE); expe.More(); expe.Next()) {
@@ -414,8 +397,6 @@ static bool FillCorrespondingEdges(const TopoDS_Shape& FS1,
                                    const TopoDS_Vertex& aLoc2,
                                    TopTools_IndexedDataMapOfShapeShape& FF)
 {
-  //cout<<"FillCorrespondingEdges"<<endl;
-
   gp_Pnt P1 = BRep_Tool::Pnt(aLoc1);
   gp_Pnt P2 = BRep_Tool::Pnt(aLoc2);
   gp_Vec aDir(P1,P2);
@@ -435,8 +416,6 @@ static bool FillCorrespondingEdges(const TopoDS_Shape& FS1,
     TopoDS_Vertex V2 = sae.LastVertex(E1);
     gp_Pnt Ptmp1 = BRep_Tool::Pnt(V1);
     gp_Pnt Ptmp2 = BRep_Tool::Pnt(V2);
-    //cout<<"P11("<<P11.X()<<","<<P11.Y()<<","<<P11.Z()<<")"<<endl;
-    //cout<<"P21("<<P21.X()<<","<<P21.Y()<<","<<P21.Z()<<")"<<endl;
     if (P1.Distance(Ptmp1)<tol) {
       V21 = V2;
       break;
@@ -516,7 +495,6 @@ static void FindNextPairOfFaces(const TopoDS_Shape& aCurFace,
                                 TopTools_IndexedDataMapOfShapeShape& FF,
                                 GEOMImpl_IPipe* aCI)
 {
-  //cout<<"FindNextPairOfFaces"<<endl;
   TopExp_Explorer anExp;
   for (anExp.Init(aCurFace, TopAbs_EDGE); anExp.More(); anExp.Next()) {
     TopoDS_Shape E1 = anExp.Current();
@@ -524,8 +502,7 @@ static void FindNextPairOfFaces(const TopoDS_Shape& aCurFace,
       if (aCI) delete aCI;
       Standard_ConstructionError::Raise("FindNextPairOfFaces: Can not find edge in map");
     }
-    if (!FF.Contains(E1))
-      MESSAGE ("    FindNextPairOfFaces: map FF not contains key E1");
+    if (!FF.Contains(E1)) MESSAGE ("    FindNextPairOfFaces: map FF not contains key E1");
     const TopoDS_Shape& E2 = FF.FindFromKey(E1);
     TopExp_Explorer anExpV;
     anExpV.Init(E1, TopAbs_VERTEX);
@@ -535,8 +512,7 @@ static void FindNextPairOfFaces(const TopoDS_Shape& aCurFace,
       Standard_ConstructionError::Raise("FindNextPairOfFaces: Can not find vertex in map");
     }
 
-    if (!aMapEdgeFaces1.Contains(E1))
-      MESSAGE ("    FindNextPairOfFaces: map aMapEdgeFaces1 not contains key E1");
+    if (!aMapEdgeFaces1.Contains(E1)) MESSAGE ("    FindNextPairOfFaces: map aMapEdgeFaces1 not contains key E1");
     const TopTools_ListOfShape& aList1 = aMapEdgeFaces1.FindFromKey(E1);
     if (aList1.Extent()<2)
       continue;
@@ -548,11 +524,9 @@ static void FindNextPairOfFaces(const TopoDS_Shape& aCurFace,
     if (FF.Contains(F1other))
       continue;
 
-    if (!FF.Contains(aCurFace))
-      MESSAGE ("    FindNextPairOfFaces: map FF not contains key aCurFace");
+    if (!FF.Contains(aCurFace)) MESSAGE ("    FindNextPairOfFaces: map FF not contains key aCurFace");
     const TopoDS_Shape& F2 = FF.FindFromKey(aCurFace);
-    if (!aMapEdgeFaces2.Contains(E2))
-      MESSAGE ("    FindNextPairOfFaces: map aMapEdgeFaces2 not contains key E2");
+    if (!aMapEdgeFaces2.Contains(E2)) MESSAGE ("    FindNextPairOfFaces: map aMapEdgeFaces2 not contains key E2");
     const TopTools_ListOfShape& aList2 = aMapEdgeFaces2.FindFromKey(E2);
     if (aList2.Extent()<2) {
       if (aCI) delete aCI;
@@ -584,8 +558,6 @@ static void FindFirstPairFaces(const TopoDS_Shape& S1, const TopoDS_Shape& S2,
                                TopoDS_Vertex& V1, TopoDS_Vertex& V2,
                                TopoDS_Shape& FS1, TopoDS_Shape& FS2)
 {
-  //cout<<"FindFirstPairFaces"<<endl;
-
   // check if vertexes are sub-shapes of sections
   gp_Pnt P1 = BRep_Tool::Pnt(V1);
   gp_Pnt P2 = BRep_Tool::Pnt(V2);
@@ -611,13 +583,6 @@ static void FindFirstPairFaces(const TopoDS_Shape& S1, const TopoDS_Shape& S2,
       V2new = V;
     }
   }
-
-  //gp_Pnt P1new = BRep_Tool::Pnt(V1new);
-  //gp_Pnt P2new = BRep_Tool::Pnt(V2new);
-  //cout<<"  P1("<<P1.X()<<","<<P1.Y()<<","<<P1.Z()<<")"<<endl;
-  //cout<<"  P2("<<P2.X()<<","<<P2.Y()<<","<<P2.Z()<<")"<<endl;
-  //cout<<"  P1new("<<P1new.X()<<","<<P1new.Y()<<","<<P1new.Z()<<")"<<endl;
-  //cout<<"  P2new("<<P2new.X()<<","<<P2new.Y()<<","<<P2new.Z()<<")"<<endl;
 
   // replace vertexes if it is needed
   if (!V1.IsSame(V1new)) {
@@ -733,6 +698,93 @@ static TopoDS_Shape RemoveFaces(const TopoDS_Shape &theShapeFrom,
 }
 
 //=======================================================================
+//function : makeSolid
+//purpose  : auxilary for CreatePipeWithDifferentSections
+//=======================================================================
+Standard_Boolean makeSolid(
+  BRepOffsetAPI_MakePipeShell aBuilder,
+  const TopoDS_Shape& aSh1,
+  const TopoDS_Shape& aSh2,
+  TopoDS_Shape& aShape)
+{
+  Standard_Boolean isDone = Standard_True;
+  Standard_Integer nbPlanar = 0;
+  if (aSh1.ShapeType() == TopAbs_FACE && aSh2.ShapeType() == TopAbs_FACE)
+  {
+    Handle(Geom_Surface) aS = BRep_Tool::Surface(TopoDS::Face(aSh1));
+    if (aS->IsKind(STANDARD_TYPE(Geom_Plane))) {
+      nbPlanar++;
+    }
+    else if (aS->IsKind(STANDARD_TYPE(Geom_RectangularTrimmedSurface))) {
+      Handle(Geom_RectangularTrimmedSurface) aTS = Handle(Geom_RectangularTrimmedSurface)::DownCast(aS);
+      if (aTS->BasisSurface()->IsKind(STANDARD_TYPE(Geom_Plane))) {
+        nbPlanar++;
+      }
+    }
+    aS = BRep_Tool::Surface(TopoDS::Face(aSh2));
+    if (aS->IsKind(STANDARD_TYPE(Geom_Plane))) {
+      nbPlanar++;
+    }
+    else if (aS->IsKind(STANDARD_TYPE(Geom_RectangularTrimmedSurface))) {
+      Handle(Geom_RectangularTrimmedSurface) aTS = Handle(Geom_RectangularTrimmedSurface)::DownCast(aS);
+      if (aTS->BasisSurface()->IsKind(STANDARD_TYPE(Geom_Plane))) {
+        nbPlanar++;
+      }
+    }
+  }
+  if (nbPlanar < 2) {
+    TopoDS_Shape aPipe = aBuilder.Shape();
+    // make sewing for result
+    Handle(BRepBuilderAPI_Sewing) aSewing = new BRepBuilderAPI_Sewing;
+    Standard_Real aTol = Precision::Confusion();
+    aSewing->SetTolerance(aTol);
+    aSewing->SetFaceMode(Standard_True);
+    aSewing->SetFloatingEdgesMode(Standard_False);
+    aSewing->SetNonManifoldMode(Standard_False);
+    TopExp_Explorer anExp;
+    for (anExp.Init(aPipe, TopAbs_FACE); anExp.More(); anExp.Next()) {
+      aSewing->Add(anExp.Current());
+    }
+    aSewing->Add(aSh1);
+    aSewing->Add(aSh2);
+    aSewing->Perform();
+    aShape = aSewing->SewedShape();
+    if (aShape.ShapeType() == TopAbs_SHELL) {
+      // Build a solid.
+      BRepBuilderAPI_MakeSolid aMkSolid;
+      aMkSolid.Add(TopoDS::Shell(aShape));
+      if (!aMkSolid.IsDone()) {
+        isDone = Standard_False;
+      }
+      else {
+        TopoDS_Solid aSolid = aMkSolid.Solid();
+        BRepClass3d_SolidClassifier aSC(aSolid);
+        aSC.PerformInfinitePoint(Precision::Confusion());
+        if (aSC.State() == TopAbs_IN) {
+          aShape = aSolid.Reversed();
+        }
+        else {
+          aShape = aSolid;
+        }
+      }
+    }
+    else {
+      isDone = Standard_False;
+    }
+  }
+  else {
+    isDone = Standard_False;
+  }
+  if (!isDone) {
+    isDone = aBuilder.MakeSolid();
+    if (isDone) {
+      aShape = aBuilder.Shape();
+    }
+  }
+  return isDone;
+}
+
+//=======================================================================
 //function : CreatePipeWithDifferentSections
 //purpose  :
 //=======================================================================
@@ -845,7 +897,6 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
     double tol = BRep_Tool::Tolerance(edge);
     TopoDS_Vertex VF = sae.FirstVertex(edge);
     gp_Pnt PF = BRep_Tool::Pnt(VF);
-    //cout<<"PF("<<PF.X()<<","<<PF.Y()<<","<<PF.Z()<<")"<<endl;
     if (PF.Distance(PLocs.First()) > tol) {
       Standard_ConstructionError::Raise
         ("First location shapes is not coincided with first vertex of aWirePath");
@@ -981,7 +1032,6 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
       P1 = P2;
     }
     int LastLoc = 1;
-    //cout<<"Edges.Length()="<<Edges.Length()<<endl;
     for (i=2; i<=Edges.Length(); i++) {
         TopoDS_Edge edge = TopoDS::Edge(Edges.Value(i));
         double tol = BRep_Tool::Tolerance(edge);
@@ -1269,14 +1319,20 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
 
         Standard_Boolean isDone = BuildPipeShell(aBuilder);
 
-        if (isDone && NeedCreateSolid) {
-          isDone = aBuilder.MakeSolid();
+        if (isDone) {
+          if (NeedCreateSolid) {
+            TopoDS_Shape aSh1 = aSeqFaces.Value(1);
+            TopoDS_Shape aSh2 = aSeqFaces.Value(aSeqFaces.Length());
+            isDone = makeSolid(aBuilder, aSh1, aSh2, aShape);
+          }
+          else {
+            aShape = aBuilder.Shape();
+          }
         }
 
         if (!isDone) {
           Standard_ConstructionError::Raise("Pipe construction failure");
         }
-        aShape = aBuilder.Shape();
 
         if (isCreateGroups) {
           // Make groups.
@@ -1407,7 +1463,6 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
     double tol = BRep_Tool::Tolerance(edge);
     TopoDS_Vertex VF = sae.FirstVertex(edge);
     gp_Pnt PF = BRep_Tool::Pnt(VF);
-    //cout<<"PF("<<PF.X()<<","<<PF.Y()<<","<<PF.Z()<<")"<<endl;
     if (PF.Distance(PLocs.First()) > tol) {
       if (aCI) delete aCI;
       Standard_ConstructionError::Raise
@@ -1966,8 +2021,7 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
             aShell = TopoDS::Shell(aSewShape);
             GProp_GProps aSystem;
             BRepGProp::VolumeProperties(aShell, aSystem);
-            if (aSystem.Mass()<0) {
-              //cout<<"aSewShape is reversed"<<endl;
+            if (aSystem.Mass() < 0) {
               aShell.Reverse();
             }
             if (BRep_Tool::IsClosed(aShell)) {
@@ -2038,7 +2092,6 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
 //=======================================================================
 static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
 {
-  //cout<<"CreatePipeShellsWithoutPath"<<endl;
   int i,j;
   BRep_Builder B;
 
@@ -2102,7 +2155,6 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
     for (anExp.Init(aShBase2, TopAbs_FACE); anExp.More(); anExp.Next()) {
       nbf2++;
     }
-    //cout<<"nbf1="<<nbf1<<" nbf2="<<nbf2<<endl;
     if (nbf1!=nbf2) {
       if (aCI) delete aCI;
       Standard_ConstructionError::Raise("Different number of faces in the sections");
@@ -2163,7 +2215,6 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
     // auxiliary map vertex->edge for created pipe edges
     TopTools_IndexedDataMapOfShapeShape VPE;
     ShapeAnalysis_Edge sae;
-    //cout<<"FF.Extent()="<<FF.Extent()<<endl;
     int nbff = 0;
     for (j=1; j<=FF.Extent(); j++) {
       TopoDS_Shape F1 = FF.FindKey(j);
@@ -2300,26 +2351,13 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
 
         double fp,lp;
         Handle(Geom_Curve) C1 = BRep_Tool::Curve(E1,fp,lp);
-        //bool IsConicC1 = false;
-        //if (C1->IsKind(STANDARD_TYPE(Geom_Conic))) {
-        //  IsConicC1 = true;
-        //  cout<<"C1 - Geom_Conic"<<endl;
-        //}
         if (C1->IsKind(STANDARD_TYPE(Geom_Line)) || C1->IsKind(STANDARD_TYPE(Geom_Conic))) {
           C1 = new Geom_TrimmedCurve(C1,fp,lp);
         }
-        //if (IsConicC1) {
-        //  double tol = BRep_Tool::Tolerance(E1);
-        //  GeomConvert_ApproxCurve ApxC1(C1,tol,GeomAbs_C1,10,5);
-        //  C1 = ApxC1.Curve();
-        //}
         Handle(Geom_Curve) C3 = BRep_Tool::Curve(E3,fp,lp);
         if (C3->IsKind(STANDARD_TYPE(Geom_Line)) || C3->IsKind(STANDARD_TYPE(Geom_Conic))) {
           C3 = new Geom_TrimmedCurve(C3,fp,lp);
         }
-        //filebuf fic;
-        //ostream os(&fic);
-        //os.precision(15);
         Handle(Geom_BSplineCurve) CE1 =
           GeomConvert::CurveToBSplineCurve(C1,Convert_RationalC1);
         if (CE1->Degree()<3)
@@ -2475,8 +2513,7 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
         aShell = TopoDS::Shell(aSewShape);
         GProp_GProps aSystem;
         BRepGProp::VolumeProperties(aShell, aSystem);
-        if (aSystem.Mass()<0) {
-          //cout<<"aSewShape is reversed"<<endl;
+        if (aSystem.Mass() < 0) {
           aShell.Reverse();
         }
         if (BRep_Tool::IsClosed(aShell)) {
