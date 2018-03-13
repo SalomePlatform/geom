@@ -80,11 +80,10 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
                                          CurveCreator_ICurve *theCurve,
                                          const int theActionFlags,
                                          const QStringList& theCoordTitles,
-                                         Qt::WindowFlags fl,
-                                         int theLocalPointRowLimit )
+                                         Qt::WindowFlags fl )
 : QWidget(parent), myNewSectionEditor(NULL), myCurve(theCurve), mySection(0),
   myDragStarted( false ), myDragInteractionStyle( SUIT_ViewModel::STANDARD ),
-  myOCCViewer( 0 ), myLocalPointRowLimit( theLocalPointRowLimit ),
+  myOCCViewer( 0 ),
   myOld2DMode(OCCViewer_ViewWindow::No2dMode)
 {
   bool isToEnableClosed = !( theActionFlags & DisableClosedSection );
@@ -1460,16 +1459,16 @@ void CurveCreator_Widget::updateLocalPointView()
   CurveCreator_Utils::getSelectedPoints( aContext, myCurve, myLocalPoints );
   int aNbPoints = myLocalPoints.size();
 
-  bool isRowLimit = aNbPoints > myLocalPointRowLimit;
-  myLocalPointView->setVisible( getActionMode() == ModificationMode && !isRowLimit );
+  //bool isRowLimit = aNbPoints > myLocalPointRowLimit;
+  myLocalPointView->setVisible( getActionMode() == ModificationMode/* && !isRowLimit */);
 
-  if ( !isRowLimit ) {
-    bool isBlocked = myLocalPointView->blockSignals(true);
+  //if ( !isRowLimit ) {
+  bool isBlocked = myLocalPointView->blockSignals(true);
 
-    myLocalPointView->setLocalPointsToTable( myLocalPoints );
+  myLocalPointView->setLocalPointsToTable( myLocalPoints );
 
-    myLocalPointView->blockSignals( isBlocked );
-  }
+  myLocalPointView->blockSignals( isBlocked );
+  //}
 }
 
 /**

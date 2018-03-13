@@ -25,6 +25,8 @@
 #include <QItemDelegate>
 #include <QTableWidget>
 
+class CurveCreator_Widget;
+
 class CurveCreator_TableItemDelegate : public QItemDelegate
 {
 public:
@@ -39,12 +41,12 @@ public:
                                  const QModelIndex& theIndex ) const;
 };
 
-class CurveCreator_TableView : public QTableWidget
+class CURVECREATOR_EXPORT CurveCreator_TableView : public QTableWidget
 {
   Q_OBJECT
 
 public:
-  CurveCreator_TableView( CurveCreator_ICurve* theCurve, QWidget* theParent = 0,
+  CurveCreator_TableView( CurveCreator_ICurve* theCurve, CurveCreator_Widget* theParent,
                           const QStringList& theCoordTitles = QStringList() );
   ~CurveCreator_TableView() {};
 
@@ -63,12 +65,15 @@ public:
    */
   int getPointId( const int theRowId ) const;
 
-private slots:
+public slots:
   void OnHeaderClick( int );
 
 private:
+  CurveCreator_Widget* myWidget;
   CurveCreator_ICurve* myCurve;
 
+  int           myCurrentSortId;
+  Qt::SortOrder myCurrentSortOrder;
 };
 
 #endif // CURVECREATOR_TABLEVIEW_H

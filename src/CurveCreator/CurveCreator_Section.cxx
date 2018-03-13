@@ -30,16 +30,24 @@ const double POINT_CONFUSION = 1e-4;
 // function: GetDifferentPoints
 // purpose:
 //=======================================================================
-void CurveCreator_Section::GetDifferentPoints(
-  const int theDimension, Handle(TColgp_HArray1OfPnt)& thePoints) const
+Handle(TColgp_HArray1OfPnt) CurveCreator_Section::GetDifferentPoints( int theDimension ) const
 {
+  Handle(TColgp_HArray1OfPnt) points;
+
   std::vector<gp_Pnt> aTmpPoints;
+
   CurveCreator::Coordinates::const_iterator aPIt = myPoints.begin();
   CurveCreator::Coordinates::const_iterator aPItLast = myPoints.end();
-  const gp_Pnt aFirstPoint(
-    *aPIt, *(aPIt + 1), (theDimension == 2) ? 0 : *(aPIt + 2));
-  gp_Pnt aPoint = aFirstPoint;
-  aTmpPoints.push_back(aPoint);
+
+  gp_Pnt aFirstPoint;
+  gp_Pnt aPoint;
+
+  if( myPoints.size() > 0 )
+  {
+    aFirstPoint = gp_Pnt(*aPIt, *(aPIt + 1), (theDimension == 2) ? 0 : *(aPIt + 2));
+    aPoint = aFirstPoint;
+    aTmpPoints.push_back(aPoint);
+  }
 
   for (; aPIt != aPItLast; aPIt += theDimension)
   {
@@ -62,9 +70,11 @@ void CurveCreator_Section::GetDifferentPoints(
     }
   }
 
-  thePoints = new TColgp_HArray1OfPnt(1, aPointCount);
+  points = new TColgp_HArray1OfPnt(1, aPointCount);
   for (int aPI = 0; aPI < aPointCount; ++aPI)
   {
-    thePoints->SetValue(aPI + 1, aTmpPoints[aPI]);
+    points->SetValue(aPI + 1, aTmpPoints[aPI]);
   }
+
+  return points;
 }

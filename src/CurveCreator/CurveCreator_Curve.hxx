@@ -36,6 +36,7 @@ struct CurveCreator_Section;
 class CurveCreator_Displayer;
 class AIS_Shape;
 class AIS_InteractiveObject;
+class Quantity_Color;
 
 /**
  *  The CurveCreator_Curve object is represented as one or more sets of
@@ -108,7 +109,7 @@ protected:
 public: // TODO: remove public
   void getCoordinates( int theISection, int theIPoint, double& theX, double& theY, double& theZ ) const;
 protected:  // TODO: remove public
-  void redisplayCurve();
+  void redisplayCurve(bool preEraseAllObjects = true);
 
 public:
   /************   Implementation of INTERFACE methods   ************/
@@ -138,6 +139,14 @@ public:
   virtual bool clearInternal();
   //! Clear the polyline (remove all sections)
   virtual bool clear();
+
+  //! set erase-all state
+  //! if true => erase all objects from viever, else remove only the current curve
+  void SetEraseAllState(bool toEraseAll);
+
+  //! get erase-all state
+  //! if true => erase all objects from viever, else remove only the current curve
+  bool GetEraseAllState() const;
 
   //! For internal use only! Undo/Redo are not used here.
   virtual bool joinInternal( const std::list<int>& theSections );
@@ -261,7 +270,9 @@ public:
   /**
    * Get points of a section (the total points in Curve if theISection is equal to -1)..
    */
-  virtual CurveCreator::Coordinates getPoints( const int theISection = -1 ) const;
+  virtual Handle(TColgp_HArray1OfPnt) GetDifferentPoints( int theISection = -1 ) const;
+
+  CurveCreator::Coordinates getCoords( int theISection = -1 ) const;
 
 
   /**
@@ -292,7 +303,7 @@ public:
   /**
    *  Get the curve AIS object
    */
-  virtual Handle(AIS_InteractiveObject) getAISObject( const bool theNeedToBuild = false ) const;
+  virtual Handle(AIS_InteractiveObject) getAISObject( const bool theNeedToBuild = false) const;
 
 protected:
   /**
@@ -322,6 +333,9 @@ public:
   CurveCreator::Sections          mySections;   //!< curve data
   CurveCreator::Dimension         myDimension;  //!< curve dimension
   CurveCreator_Displayer*         myDisplayer;  //!< curve displayer
+  Quantity_Color myPointAspectColor;
+  Quantity_Color myCurveColor;
+  double myLineWidth;
 
 private:
 
@@ -332,6 +346,7 @@ private:
   int                             myUndoDepth;
   int                             myOpLevel;
   AIS_Shape*                      myAISShape;   //!< AIS shape
+  bool                            myEraseAll;
 };
 
 #endif
