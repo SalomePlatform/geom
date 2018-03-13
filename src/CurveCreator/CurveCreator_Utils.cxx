@@ -621,17 +621,17 @@ void CurveCreator_Utils::setSelectedPoints( Handle(AIS_InteractiveContext) theCo
   bool isFound = false;
   for( int i=0; i<aSize; i++ )
   {
-    for( aSelection->Init(); aSelection->More(); aSelection->Next() )
-    {
-      const Handle(SelectMgr_SensitiveEntity) aHSenEntity = aSelection->Sensitive();
-      if( aHSenEntity.IsNull() )
-        continue;
-      Handle(SelectBasics_SensitiveEntity) aSenEntity = aHSenEntity->BaseSensitive();
+  for( aSelection->Init(); aSelection->More(); aSelection->Next() )
+  {    
+    const Handle(SelectMgr_SensitiveEntity) aHSenEntity = aSelection->Sensitive();
+    if( aHSenEntity.IsNull() )
+      continue;
+    Handle(SelectBasics_SensitiveEntity) aSenEntity = aHSenEntity->BaseSensitive();
 
-      Handle(Select3D_SensitivePoint) aSenPnt = Handle(Select3D_SensitivePoint)::DownCast( aSenEntity );
-  
-      gp_Pnt anOwnerPnt = aSenPnt->Point();
-      Handle(SelectMgr_EntityOwner) anOwner = Handle(SelectMgr_EntityOwner)::DownCast( aSenPnt->OwnerId() );
+    Handle(Select3D_SensitivePoint) aSenPnt = Handle(Select3D_SensitivePoint)::DownCast( aSenEntity );
+
+    gp_Pnt anOwnerPnt = aSenPnt->Point();
+    Handle(SelectMgr_EntityOwner) anOwner = Handle(SelectMgr_EntityOwner)::DownCast( aSenPnt->OwnerId() );
 
       bool isIntersect = fabs( aPntsToSelect[i].X() - anOwnerPnt.X() ) < LOCAL_SELECTION_TOLERANCE &&
                          fabs( aPntsToSelect[i].Y() - anOwnerPnt.Y() ) < LOCAL_SELECTION_TOLERANCE;
