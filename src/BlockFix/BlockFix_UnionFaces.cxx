@@ -644,7 +644,7 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
           TopoDS_Wire aWireFixed = sfw->Wire();
           aContext->Replace(aWire,aWireFixed);
           // add resulting wire
-          if(isEdge3d) {
+          if (isEdge3d) {
             B.Add(aResult,aWireFixed);
           }
           else  {
@@ -655,40 +655,42 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
             ShapeAnalysis_WireOrder sawo(Standard_False, 0);
             ShapeAnalysis_Edge sae;
             Standard_Integer aLastEdge = nbEdges;
-            for(Standard_Integer j = 1; j <= nbEdges; j++) {
+            for (Standard_Integer j = 1; j <= nbEdges; j++) {
               Standard_Real f,l;
               //smh protection on NULL pcurve
               Handle(Geom2d_Curve) c2d;
-              if(!sae.PCurve(sbwd->Edge(j),aResult,c2d,f,l)) {
+              if (!sae.PCurve(sbwd->Edge(j),aResult,c2d,f,l)) {
                 aLastEdge--;
                 continue;
               }
               sawo.Add(c2d->Value(f).XY(),c2d->Value(l).XY());
             }
-            sawo.Perform();
+            if (aLastEdge > 0) {
+              sawo.Perform();
 
-            // constructind one degenerative edge
-            gp_XY aStart, anEnd, tmp;
-            Standard_Integer nbFirst = sawo.Ordered(1);
-            TopoDS_Edge anOrigE = TopoDS::Edge(sbwd->Edge(nbFirst).Oriented(TopAbs_FORWARD));
-            ShapeBuild_Edge sbe;
-            TopoDS_Vertex aDummyV;
-            TopoDS_Edge E = sbe.CopyReplaceVertices(anOrigE,aDummyV,aDummyV);
-            sawo.XY(nbFirst,aStart,tmp);
-            sawo.XY(sawo.Ordered(aLastEdge),tmp,anEnd);
+              // constructing one degenerative edge
+              gp_XY aStart, anEnd, tmp;
+              Standard_Integer nbFirst = sawo.Ordered(1);
+              TopoDS_Edge anOrigE = TopoDS::Edge(sbwd->Edge(nbFirst).Oriented(TopAbs_FORWARD));
+              ShapeBuild_Edge sbe;
+              TopoDS_Vertex aDummyV;
+              TopoDS_Edge E = sbe.CopyReplaceVertices(anOrigE,aDummyV,aDummyV);
+              sawo.XY(nbFirst,aStart,tmp);
+              sawo.XY(sawo.Ordered(aLastEdge),tmp,anEnd);
 
-            gp_XY aVec = anEnd-aStart;
-            Handle(Geom2d_Line) aLine = new Geom2d_Line(aStart,gp_Dir2d(anEnd-aStart));
+              gp_XY aVec = anEnd-aStart;
+              Handle(Geom2d_Line) aLine = new Geom2d_Line(aStart,gp_Dir2d(anEnd-aStart));
 
-            B.UpdateEdge(E,aLine,aResult,0.);
-            B.Range(E,aResult,0.,aVec.Modulus());
-            Handle(Geom_Curve) C3d;
-            B.UpdateEdge(E,C3d,0.);
-            B.Degenerated(E,Standard_True);
-            TopoDS_Wire aW;
-            B.MakeWire(aW);
-            B.Add(aW,E);
-            B.Add(aResult,aW);
+              B.UpdateEdge(E,aLine,aResult,0.);
+              B.Range(E,aResult,0.,aVec.Modulus());
+              Handle(Geom_Curve) C3d;
+              B.UpdateEdge(E,C3d,0.);
+              B.Degenerated(E,Standard_True);
+              TopoDS_Wire aW;
+              B.MakeWire(aW);
+              B.Add(aW,E);
+              B.Add(aResult,aW);
+            }
           }
         }
 
