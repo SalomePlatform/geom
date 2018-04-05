@@ -75,7 +75,7 @@ Fillet_1 = geompy.MakeFillet(Common_1, 10, geompy.ShapeType["EDGE"], [5])
 geompy.addToStudy(Fillet_1, "Fillet_1")
 
 #Chamfer applying
-Chamfer_1 = geompy.MakeChamferEdge(Fillet_1, 10, 10, 15, 49 )
+Chamfer_1 = geompy.MakeChamferEdge(Fillet_1, 10, 10, 44, 114 )
 geompy.addToStudy(Chamfer_1, "Chamfer_1")
 
 Chamfer_2 = geompy.MakeChamferEdge(Chamfer_1, 10, 10, 20, 30 )
