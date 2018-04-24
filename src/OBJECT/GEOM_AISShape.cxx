@@ -41,6 +41,7 @@
 #include <Graphic3d_AspectLine3d.hxx>
 #include <Graphic3d_AspectMarker3d.hxx>
 #include <Graphic3d_AspectText3d.hxx>
+#include <Prs3d.hxx>
 #include <Prs3d_Arrow.hxx>
 #include <Prs3d_IsoAspect.hxx>
 #include <Prs3d_ShadingAspect.hxx>
@@ -49,6 +50,7 @@
 #include <SelectMgr_IndexedMapOfOwner.hxx>
 #include <SelectMgr_Selection.hxx>
 #include <StdPrs_ShadedShape.hxx>
+#include <StdPrs_ToolTriangulatedShape.hxx>
 #include <StdSelect_BRepOwner.hxx>
 #include <StdSelect_DisplayMode.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
@@ -227,6 +229,15 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
   bool isTopLev = isTopLevel() && switchTopLevel();
   switch (aMode) {
     case Wireframe:
+    // Begin 0023271: [CEA 1823] Deflection Coefficient not taken into account in wireframe
+    {
+      StdPrs_ToolTriangulatedShape::ClearOnOwnDeflectionChange (myshape, myDrawer, Standard_True);
+
+      // After this call if type of deflection is relative
+      // computed deflection coefficient is stored as absolute.
+      Prs3d::GetDeflection (myshape, myDrawer);
+    }
+    // End 0023271
     case CustomHighlight:
     {
       if(isTopLev) {
