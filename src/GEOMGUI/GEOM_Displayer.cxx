@@ -839,10 +839,12 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   AISShape->Attributes()->SetUnFreeBoundaryAspect( anAspect );
   
   // - free boundaries color
-  anAspect = AISShape->Attributes()->FreeBoundaryAspect();
-  anAspect->SetColor( HasColor() ? (Quantity_NameOfColor)GetColor() : 
+  Handle(Prs3d_LineAspect) aFreeBoundaryAspect =
+    new Prs3d_LineAspect (Quantity_NOC_RED, Aspect_TOL_SOLID, 1.0);
+  *aFreeBoundaryAspect->Aspect() = *AISShape->Attributes()->FreeBoundaryAspect()->Aspect();
+  aFreeBoundaryAspect->SetColor( HasColor() ? (Quantity_NameOfColor)GetColor() : 
                       SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::FreeBndColor ) ).value<QColor>() ) );
-  AISShape->Attributes()->SetFreeBoundaryAspect( anAspect );
+  AISShape->Attributes()->SetFreeBoundaryAspect( aFreeBoundaryAspect );
   
   // - standalone edges color
   anAspect = AISShape->Attributes()->WireAspect();
