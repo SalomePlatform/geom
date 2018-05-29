@@ -69,7 +69,7 @@
     <parameter name="geom_preview"        value="true"  />
     <parameter name="hide_input_object"   value="true"  />
     <parameter name="material"            value="[ Default ]" />
-    <parameter name="predef_materials"    value="true" />
+    <parameter name="predef_materials"    value="false" />
     <parameter name="edge_width"          value="1" />
     <parameter name="isolines_width"      value="1" />
     <parameter name="preview_edge_width"  value="1" />

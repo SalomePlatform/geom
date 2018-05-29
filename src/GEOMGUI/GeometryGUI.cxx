@@ -2266,7 +2266,11 @@ void GeometryGUI::contextMenuPopup( const QString& client, QMenu* menu, QString&
   getApp()->selectionMgr()->selectedObjects( lst );
 
   //Add submenu for predefined materials
-  bool isPredefMat = SUIT_Session::session()->resourceMgr()->booleanValue( "Geometry", "predef_materials" );
+  // RNV: '#23552: Unable to use the contextual menu of Object Browser window' issue: 
+  //      Temporary solution: do not show 'Materials' submenu forcibly
+  //bool isPredefMat = SUIT_Session::session()->resourceMgr()->booleanValue( "Geometry", "predef_materials" );
+  bool isPredefMat = false;
+  
   if ( ( client == "OCCViewer" || client == "VTKViewer" ) && lst.Extent() > 0 ) {
     QtxPopupMgr* mgr = popupMgr();
     //get parrent for submenu
@@ -2386,8 +2390,9 @@ void GeometryGUI::createPreferences()
   int defl = addPreference( tr( "PREF_DEFLECTION" ), genGroup,
                             LightApp_Preferences::DblSpin, "Geometry", "deflection_coeff" );
 
-  addPreference( tr( "PREF_PREDEF_MATERIALS" ), genGroup,
-                 LightApp_Preferences::Bool, "Geometry", "predef_materials" );
+  // RNV: Temporary hide this preference, because of the '#23552: Unable to use the contextual menu of Object Browser window' issue
+  //addPreference( tr( "PREF_PREDEF_MATERIALS" ), genGroup,
+  //               LightApp_Preferences::Bool, "Geometry", "predef_materials" );
 
   int material = addPreference( tr( "PREF_MATERIAL" ), genGroup,
                                 LightApp_Preferences::Selector,
