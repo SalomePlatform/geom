@@ -109,11 +109,8 @@ bool BREPPlugin_GUI::importBREP( SUIT_Desktop* parent )
 {
   SalomeApp_Application* app = getGeometryGUI()->getApp();
   if ( !app ) return false;
-  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*> ( app->activeStudy() );
-  if ( !study ) return false;
 
-  SALOMEDS::Study_var dsStudy = GeometryGUI::ClientStudyToStudy( study->studyDS() );
-  GEOM::GEOM_IOperations_var op = GeometryGUI::GetGeomGen()->GetPluginOperations( dsStudy->StudyId(), "BREPPluginEngine" );
+  GEOM::GEOM_IOperations_var op = GeometryGUI::GetGeomGen()->GetPluginOperations( "BREPPluginEngine" );
   BREPOpPtr brepOp = GEOM::IBREPOperations::_narrow( op );
   if ( brepOp.isNull() ) return false;
   
@@ -133,35 +130,34 @@ bool BREPPlugin_GUI::importBREP( SUIT_Desktop* parent )
       
       try
       {
-	app->putInfo( tr( "GEOM_PRP_LOADING" ).arg( fileName ) );
-	transaction.start();
-	GEOM::ListOfGO_var result = brepOp->ImportBREP( fileName.toUtf8().constData() );
-	if ( result->length() > 0 && brepOp->IsDone() )
-	{
-	  GEOM::GEOM_Object_var main = result[0];
-	  QString publishName = GEOMBase::GetDefaultName( SUIT_Tools::file( fileName, true ) );
-	  SALOMEDS::SObject_var so = GeometryGUI::GetGeomGen()->PublishInStudy( dsStudy,
-										SALOMEDS::SObject::_nil(),
-										main.in(),
-										publishName.toUtf8().constData() );
+        app->putInfo( tr( "GEOM_PRP_LOADING" ).arg( fileName ) );
+        transaction.start();
+        GEOM::ListOfGO_var result = brepOp->ImportBREP( fileName.toUtf8().constData() );
+        if ( result->length() > 0 && brepOp->IsDone() )
+        {
+          GEOM::GEOM_Object_var main = result[0];
+          QString publishName = GEOMBase::GetDefaultName( SUIT_Tools::file( fileName, true ) );
+          SALOMEDS::SObject_var so = GeometryGUI::GetGeomGen()->PublishInStudy( SALOMEDS::SObject::_nil(),
+										                                        main.in(),
+										                                        publishName.toUtf8().constData() );
 	  
-	  entryList.append( so->GetID() );
-	  transaction.commit();
-	  GEOM_Displayer( study ).Display( main.in() );
+          entryList.append( so->GetID() );
+          transaction.commit();
+          GEOM_Displayer().Display( main.in() );
           main->UnRegister();
-	}
-	else
-	{
-	  transaction.abort();
-	  errors.append( QString( "%1 : %2" ).arg( fileName ).arg( brepOp->GetErrorCode() ) );
-	}
+        }
+        else
+        {
+          transaction.abort();
+          errors.append( QString( "%1 : %2" ).arg( fileName ).arg( brepOp->GetErrorCode() ) );
+        }
       }
       catch( const SALOME::SALOME_Exception& e )
       {
-	transaction.abort();
+        transaction.abort();
       }
     }
-    getGeometryGUI()->updateObjBrowser( true );
+    getGeometryGUI()->updateObjBrowser();
     app->browseObjects( entryList );
     
     if ( errors.count() > 0 )
@@ -182,11 +178,8 @@ bool BREPPlugin_GUI::exportBREP( SUIT_Desktop* parent )
 {
   SalomeApp_Application* app = getGeometryGUI()->getApp();
   if ( !app ) return false;
-  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*> ( app->activeStudy() );
-  if ( !study ) return false;
 
-  SALOMEDS::Study_var dsStudy = GeometryGUI::ClientStudyToStudy( study->studyDS() );
-  GEOM::GEOM_IOperations_var op = GeometryGUI::GetGeomGen()->GetPluginOperations( dsStudy->StudyId(), "BREPPluginEngine" );
+  GEOM::GEOM_IOperations_var op = GeometryGUI::GetGeomGen()->GetPluginOperations( "BREPPluginEngine" );
   BREPOpPtr brepOp = GEOM::IBREPOperations::_narrow( op );
   if ( brepOp.isNull() ) return false;
 

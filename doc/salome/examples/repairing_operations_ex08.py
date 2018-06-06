@@ -4,7 +4,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 gg = salome.ImportComponentGUI("GEOM")
 
 # create boxes
@@ -30,4 +30,4 @@ geompy.addToStudy(glue1, "Glue all edges")
 geompy.addToStudy(glue2, "Glue two edges")
 
 if salome.sg.hasDesktop():
-  salome.sg.updateObjBrowser(True)
+  salome.sg.updateObjBrowser()

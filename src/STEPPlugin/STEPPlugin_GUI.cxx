@@ -111,11 +111,8 @@ bool STEPPlugin_GUI::importSTEP( SUIT_Desktop* parent )
 {
   SalomeApp_Application* app = getGeometryGUI()->getApp();
   if ( !app ) return false;
-  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*> ( app->activeStudy() );
-  if ( !study ) return false;
 
-  SALOMEDS::Study_var dsStudy = GeometryGUI::ClientStudyToStudy( study->studyDS() );
-  GEOM::GEOM_IOperations_var op = GeometryGUI::GetGeomGen()->GetPluginOperations( dsStudy->StudyId(), "STEPPluginEngine" );
+  GEOM::GEOM_IOperations_var op = GeometryGUI::GetGeomGen()->GetPluginOperations( "STEPPluginEngine" );
   STEPOpPtr stepOp = GEOM::ISTEPOperations::_narrow( op );
   if ( stepOp.isNull() ) return false;
 
@@ -183,19 +180,18 @@ bool STEPPlugin_GUI::importSTEP( SUIT_Desktop* parent )
 	{
 	  GEOM::GEOM_Object_var main = result[0];
 	  QString publishName = GEOMBase::GetDefaultName( SUIT_Tools::file( fileName, true ) );
-	  SALOMEDS::SObject_var so = GeometryGUI::GetGeomGen()->PublishInStudy( dsStudy,
-										SALOMEDS::SObject::_nil(),
-										main.in(),
-										publishName.toUtf8().constData() );
+	  SALOMEDS::SObject_var so = GeometryGUI::GetGeomGen()->PublishInStudy( SALOMEDS::SObject::_nil(),
+										                                    main.in(),
+										                                    publishName.toUtf8().constData() );
 	  
 	  entryList.append( so->GetID() );
 	  for ( int i = 1, n = result->length(); i < n; i++ ) {
 	    GEOM::GEOM_Object_ptr group = result[i];
 	    CORBA::String_var grpName = group->GetName();
-	    GeometryGUI::GetGeomGen()->AddInStudy( dsStudy, group, grpName.in(), main );
+	    GeometryGUI::GetGeomGen()->AddInStudy( group, grpName.in(), main );
 	  }
 	  transaction.commit();
-	  GEOM_Displayer( study ).Display( main.in() );
+	  GEOM_Displayer().Display( main.in() );
           main->UnRegister();
 	}
 	else
@@ -210,7 +206,7 @@ bool STEPPlugin_GUI::importSTEP( SUIT_Desktop* parent )
       }
     }
 
-    getGeometryGUI()->updateObjBrowser( true );
+    getGeometryGUI()->updateObjBrowser();
     app->browseObjects( entryList );
           
     if ( errors.count() > 0 )
@@ -234,8 +230,7 @@ bool STEPPlugin_GUI::exportSTEP( SUIT_Desktop* parent )
   SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*> ( app->activeStudy() );
   if ( !study ) return false;
 
-  SALOMEDS::Study_var dsStudy = GeometryGUI::ClientStudyToStudy( study->studyDS() );
-  GEOM::GEOM_IOperations_var op = GeometryGUI::GetGeomGen()->GetPluginOperations( dsStudy->StudyId(), "STEPPluginEngine" );
+  GEOM::GEOM_IOperations_var op = GeometryGUI::GetGeomGen()->GetPluginOperations( "STEPPluginEngine" );
   STEPOpPtr stepOp = GEOM::ISTEPOperations::_narrow( op );
   if ( stepOp.isNull() ) return false;
 

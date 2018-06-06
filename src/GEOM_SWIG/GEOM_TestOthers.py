@@ -34,7 +34,7 @@ import GEOM
 
 def TestExportImport (geompy, shape):
 
-  print "Test Export/Import ...",
+  print("Test Export/Import ...", end=' ')
 
   tmpDir = os.getenv("TEMP")
   if tmpDir == None:
@@ -109,7 +109,7 @@ def TestExportImport (geompy, shape):
   aNewShape = geompy.RestoreShape(aStream)
   geompy.addToStudy(aNewShape, "aNewShape")
 
-  print "OK"
+  print("OK")
 
 
 def TestOtherOperations (geompy, math):
@@ -239,19 +239,19 @@ def TestOtherOperations (geompy, math):
   # NumberOf
   NumberOfFaces = geompy.NumberOfFaces(Box)
   if NumberOfFaces != 6:
-    print "Bad number of faces in BOX!"
+    print("Bad number of faces in BOX!")
 
   NumberOfEdges = geompy.NumberOfEdges(Box)
   if NumberOfEdges != 12:
-    print "Bad number of edges in BOX!"
+    print("Bad number of edges in BOX!")
 
   NumberOfSolids = geompy.NumberOfSolids(Box)
   if NumberOfSolids != 1:
-    print "Bad number of solids in BOX!"
+    print("Bad number of solids in BOX!")
 
   NumberOfShapes = geompy.NumberOfSubShapes(Box, geompy.ShapeType["SHAPE"])
   if NumberOfShapes != 34:
-    print "Bad number of shapes in BOX!"
+    print("Bad number of shapes in BOX!")
 
   # MakeBlockExplode
   Compound = geompy.MakeCompound([Box, Sphere])
@@ -274,20 +274,20 @@ def TestOtherOperations (geompy, math):
 
   IsValid = geompy.CheckCompoundOfBlocks(Compound1)
   if IsValid == 0:
-    print "The Blocks Compound is NOT VALID"
+    print("The Blocks Compound is NOT VALID")
     (NonBlocks, NonQuads) = geompy.GetNonBlocks(Compound1)
     if NonBlocks is not None:
       geompy.addToStudyInFather(Compound1, NonBlocks, "Group of non-hexahedral solids")
     if NonQuads is not None:
       geompy.addToStudyInFather(Compound1, NonQuads, "Group of non-quadrangular faces")
   else:
-    print "The Blocks Compound is VALID"
+    print("The Blocks Compound is VALID")
 
   IsValid = geompy.CheckCompoundOfBlocks(Box)
   if IsValid == 0:
-    print "The Box is NOT VALID"
+    print("The Box is NOT VALID")
   else:
-    print "The Box is VALID"
+    print("The Box is VALID")
 
   # GetSame
   Cone_ss = geompy.GetSame(Compound1, Cone)
@@ -325,10 +325,10 @@ def TestOtherOperations (geompy, math):
   # GetObjectIDs
   GetObjectIDs = geompy.GetObjectIDs(CreateGroup)
 
-  print "Group of Box's faces includes the following IDs:"
-  print "(must be ", f_ind_6, ", ", f_ind_3, " and ", f_ind_5, ")"
+  print("Group of Box's faces includes the following IDs:")
+  print("(must be ", f_ind_6, ", ", f_ind_3, " and ", f_ind_5, ")")
   for ObjectID in GetObjectIDs:
-    print " ", ObjectID
+    print(" ", ObjectID)
 
   # GetMainShape
   BoxCopy = geompy.GetMainShape(CreateGroup)
@@ -343,10 +343,10 @@ def TestOtherOperations (geompy, math):
 
   # Check
   GetObjectIDs = geompy.GetObjectIDs(CreateGroup)
-  print "Group of Box's faces includes the following IDs:"
-  print "(must be ", f_ind_6, ", ", f_ind_1, " and ", f_ind_2, ")"
+  print("Group of Box's faces includes the following IDs:")
+  print("(must be ", f_ind_6, ", ", f_ind_1, " and ", f_ind_2, ")")
   for ObjectID in GetObjectIDs:
-    print " ", ObjectID
+    print(" ", ObjectID)
 
   # Boolean Operations on Groups (Union, Intersection, Cut)
   Group_1 = geompy.CreateGroup(Box, geompy.ShapeType["FACE"])
@@ -391,7 +391,7 @@ def TestOtherOperations (geompy, math):
                      '4':"FACE", '5':"WIRE", '6':"EDGE", '7':"VERTEX", '8':"SHAPE"}
 
   GroupType = geompy.GetType(CreateGroup)
-  print "Type of elements of the created group is ", ShapeTypeString[`GroupType`]
+  print("Type of elements of the created group is ", ShapeTypeString[repr(GroupType)])
 
   # Prepare data for the following operations
   p0 = geompy.MakeVertex(0, 0, 0)
@@ -550,7 +550,7 @@ def TestOtherOperations (geompy, math):
                                        geompy.ShapeType["FACE"])
   ind = 1
   for shFace in sharedFaces:
-    geompy.addToStudy(shFace, "sharedFace_" + `ind`)
+    geompy.addToStudy(shFace, "sharedFace_" + repr(ind))
     ind = ind + 1
     pass
 
@@ -558,7 +558,7 @@ def TestOtherOperations (geompy, math):
                                              geompy.ShapeType["EDGE"])
   ind = 1
   for shEdge in sharedEdges:
-    geompy.addToStudy(shEdge, "sharedEdge_" + `ind`)
+    geompy.addToStudy(shEdge, "sharedEdge_" + repr(ind))
     ind = ind + 1
     pass
 
@@ -713,7 +713,7 @@ def TestOtherOperations (geompy, math):
   comp = geompy.MakeCompound(edges_onin_quad)
   geompy.addToStudy(comp, "Edges of F12 ONIN Quadrangle")
   if len( edges_onin_quad ) != 4:
-    print "Error in GetShapesOnQuadrangle()"
+    print("Error in GetShapesOnQuadrangle()")
 
   # GetShapesOnQuadrangleIDs
   vertices_on_quad_ids = geompy.GetShapesOnQuadrangleIDs(f12, geompy.ShapeType["VERTEX"],
@@ -728,7 +728,7 @@ def TestOtherOperations (geompy, math):
   comp = geompy.MakeCompound(edges_on_box)
   geompy.addToStudy(comp, "Edges of part ON box b0")
   if len( edges_on_box ) != 12:
-    print "Error in GetShapesOnBox()"
+    print("Error in GetShapesOnBox()")
 
   # GetShapesOnBoxIDs
   faces_on_box_ids = geompy.GetShapesOnBoxIDs(b0, part, geompy.ShapeType["FACE"],
@@ -754,7 +754,7 @@ def TestOtherOperations (geompy, math):
   comp = geompy.MakeCompound(faces_in_sh)
   geompy.addToStudy(comp, "Faces of part IN shape sh_1")
   if len(faces_in_sh) != 11:
-    print "Error in GetShapesOnShape()"
+    print("Error in GetShapesOnShape()")
 
   # GetShapesOnShapeAsCompound
   faces_in_sh_c = geompy.GetShapesOnShapeAsCompound(sh_1, part, geompy.ShapeType["FACE"],
@@ -768,7 +768,7 @@ def TestOtherOperations (geompy, math):
   geompy.UnionIDs(edges_in_sh, edges_in_sh_ids)
   geompy.addToStudyInFather(part, edges_in_sh, "Group of edges in shape sh_1")
   if len(edges_in_sh_ids) != 15:
-    print "Error in GetShapesOnShapeIDs()"
+    print("Error in GetShapesOnShapeIDs()")
 
   # Prepare arguments for GetInPlace and GetInPlaceByHistory
   box5 = geompy.MakeBoxDXDYDZ(100, 100, 100)
@@ -784,8 +784,8 @@ def TestOtherOperations (geompy, math):
   box6_faces = geompy.SubShapeAll(box6, geompy.ShapeType["FACE"])
 
   for ifa in range(6):
-    geompy.addToStudyInFather(box5, box5_faces[ifa], "Face" + `ifa + 1`)
-    geompy.addToStudyInFather(box6, box6_faces[ifa], "Face" + `ifa + 1`)
+    geompy.addToStudyInFather(box5, box5_faces[ifa], "Face" + repr(ifa + 1))
+    geompy.addToStudyInFather(box6, box6_faces[ifa], "Face" + repr(ifa + 1))
 
   # GetInPlace(theShapeWhere, theShapeWhat)
   ibb = 5
@@ -799,10 +799,10 @@ def TestOtherOperations (geompy, math):
         # there is no reflection in the result.
         if refl_box_face is not None:
           error = "Result of GetInPlace must be NULL for face "
-          error += `ifa` + " of box " + `ibb`
-          raise RuntimeError, error
+          error += repr(ifa) + " of box " + repr(ibb)
+          raise RuntimeError(error)
       else:
-        ssname = "Reflection of face " + `ifa` + " of box " + `ibb`
+        ssname = "Reflection of face " + repr(ifa) + " of box " + repr(ibb)
         geompy.addToStudyInFather(part, refl_box_face, ssname)
       ifa = ifa + 1
     ibb = ibb + 1
@@ -816,15 +816,15 @@ def TestOtherOperations (geompy, math):
   for afaces in faces_list:
     ifa = 1
     for aface in afaces:
-      ssname = "Reflection of face " + `ifa` + " of box " + `ibb` + " (by history)"
+      ssname = "Reflection of face " + repr(ifa) + " of box " + repr(ibb) + " (by history)"
       if ibb == 6 and (ifa == 2 or ifa == 4):
         # use IDL interface directly to avoid error message appearance in Python console
         refl_box_face = geompy.ShapesOp.GetInPlaceByHistory(part, aface)
         if refl_box_face is not None:
           geompy.addToStudyInFather(part, refl_box_face, ssname)
           error = "Result of GetInPlaceByHistory must be NULL for face "
-          error += `ifa` + " of box " + `ibb`
-          raise RuntimeError, error
+          error += repr(ifa) + " of box " + repr(ibb)
+          raise RuntimeError(error)
       else:
         # use geompy interface
         refl_box_face = geompy.GetInPlaceByHistory(part, aface)

@@ -675,7 +675,7 @@ QString BasicGUI_PlaneDlg::getSizeAsString() const
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BasicGUI_PlaneDlg::createOperation()
 {
-  return myGeomGUI->GetGeomGen()->GetIBasicOperations( getStudyId() );
+  return myGeomGUI->GetGeomGen()->GetIBasicOperations();
 }
 
 //=================================================================================

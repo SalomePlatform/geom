@@ -37,23 +37,23 @@ from salome.geom.geomBuilder import info, PackData, ReadTexture, EnumToLong
 try:
     # get GEOM engine and initialize GEOM with current study
     engineGeom = lcc.FindOrLoadComponent( "FactoryServer", "GEOM" )
-    geom = geomBuilder.New(salome.myStudy, engineGeom)
+    geom = geomBuilder.New(engineGeom)
 
     # export the methods of geomBuilder
     for k in dir( geom ):
-	if k[0] == '_': continue
-	globals()[k] = getattr( geom, k )
+        if k[0] == '_': continue
+        globals()[k] = getattr( geom, k )
         pass
     del k
     ShapeType = geom.ShapeType
     kind      = geom.kind
     pass
 except:
-    print "exception in geompy.py"
+    print("exception in geompy.py")
     geom = None
     pass
 
-print """
+print("""
 ===============================================================================
 WARNING:
 Usage of geompy.py is deprecated after SALOME V7.2!
@@ -65,13 +65,13 @@ replace
 -------
 
 import geompy
-geompy.init_geom(theStudy)
+geompy.init_geom()
 
 with
 ----
 
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 See also GEOM User's Guide for more details
 
@@ -80,4 +80,4 @@ The geompy.py module works correctly only in first created study.
 It does not work in second, third, etc studies!
 
 ===============================================================================
-"""
+""")

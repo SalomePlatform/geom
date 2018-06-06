@@ -34,7 +34,7 @@
 
 class GEOMImpl_IGroupOperations : public GEOM_IOperations {
  public:
-  Standard_EXPORT GEOMImpl_IGroupOperations(GEOM_Engine* theEngine, int theDocID);
+  Standard_EXPORT GEOMImpl_IGroupOperations(GEOM_Engine* theEngine);
   Standard_EXPORT ~GEOMImpl_IGroupOperations();
 
   Standard_EXPORT Handle(GEOM_Object) CreateGroup(Handle(GEOM_Object) theMainShape, TopAbs_ShapeEnum  theShapeType);

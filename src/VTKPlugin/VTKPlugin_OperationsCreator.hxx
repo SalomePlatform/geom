@@ -41,15 +41,13 @@ public:
   ~VTKPlugin_OperationsCreator();
 
   GEOM_IOperations_i* Create( PortableServer::POA_ptr thePOA,
-			      int                     theStudyId,
-			      GEOM::GEOM_Gen_ptr      theEngine,
-			      ::GEOMImpl_Gen*         theGenImpl );
+                              GEOM::GEOM_Gen_ptr      theEngine,
+                              ::GEOMImpl_Gen*         theGenImpl );
 private:
-  static VTKPlugin_IOperations* get( ::GEOMImpl_Gen*         theGenImpl,
-				      int                     theStudyId );
+  static VTKPlugin_IOperations* get(::GEOMImpl_Gen* theGenImpl);
 
 private:
-  static std::map <int, VTKPlugin_IOperations*>  _mapOfOperations;
+  static VTKPlugin_IOperations* _operation;
 
   friend class VTKPlugin_IECallBack;
 };

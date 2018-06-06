@@ -348,7 +348,7 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
       myBase = aSelectedObject;
 
       // recompute myStepU (Mantis issue 0021718)
-      GEOM::GEOM_IMeasureOperations_var anOper = getGeomEngine()->GetIMeasureOperations(getStudyId());
+      GEOM::GEOM_IMeasureOperations_var anOper = getGeomEngine()->GetIMeasureOperations();
       double Xmin, Xmax, Ymin, Ymax, Zmin, Zmax;
       anOper->GetBoundingBox(myBase.get(), true, Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
       if (anOper->IsDone()) {
@@ -615,7 +615,7 @@ void TransformationGUI_MultiTranslationDlg::ReverseStepV()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr TransformationGUI_MultiTranslationDlg::createOperation()
 {
-  return getGeomEngine()->GetITransformOperations(getStudyId());
+  return getGeomEngine()->GetITransformOperations();
 }
 
 //=================================================================================
@@ -728,8 +728,7 @@ QList<GEOM::GeomObjPtr> TransformationGUI_MultiTranslationDlg::getSourceObjects(
 // function : restoreSubShapes
 // purpose  :
 //=================================================================================
-void TransformationGUI_MultiTranslationDlg::restoreSubShapes (SALOMEDS::Study_ptr   theStudy,
-                                                              SALOMEDS::SObject_ptr theSObject)
+void TransformationGUI_MultiTranslationDlg::restoreSubShapes (SALOMEDS::SObject_ptr theSObject)
 {
   if (mainFrame()->CheckBoxRestoreSS->isChecked()) {
     // we pass here the first operation argument (object) through the list of arguments
@@ -738,7 +737,7 @@ void TransformationGUI_MultiTranslationDlg::restoreSubShapes (SALOMEDS::Study_pt
     GEOM::ListOfGO_var anArgs = new GEOM::ListOfGO;
     anArgs->length(1);
     anArgs[0] = myBase.copy();
-    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, anArgs,
+    getGeomEngine()->RestoreSubShapesSO(theSObject, anArgs,
                                         /*theFindMethod=*/GEOM::FSM_MultiTransformed,
                                         /*theInheritFirstArg=*/true,
                                         mainFrame()->CheckBoxAddPrefix->isChecked());

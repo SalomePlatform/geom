@@ -85,14 +85,14 @@ public:
   virtual void                initialize( CAM_Application* );
   virtual QString             engineIOR() const;
 
-  static Handle(TColStd_HArray1OfByte) getTexture (SalomeApp_Study*, int, int&, int&);
+  static Handle(TColStd_HArray1OfByte) getTexture (int, int&, int&);
 
   static bool                 InitGeomGen();
 
   static  GEOM::GEOM_Gen_var  GetGeomGen();
 
   static CORBA::Object_var    ClientSObjectToObject (_PTR(SObject) theSObject);
-  static SALOMEDS::Study_var  ClientStudyToStudy (_PTR(Study) theStudy);
+  static SALOMEDS::Study_var  getStudyServant();
 
   static void                 Modified( bool = true );
 
@@ -213,32 +213,31 @@ private:
 
   typedef QMap<long, Handle(TColStd_HArray1OfByte)> TextureMap;
 
-  typedef QMap<long, TextureMap> StudyTextureMap;
   typedef QMap<QString, GEOMGUI*> GUIMap;
 
   typedef QPair<QString, QString> PluginAction;
 
-  GUIMap                      myGUIMap;          // GUI libraries map
-  QDialog*                    myActiveDialogBox; // active dialog box
-  gp_Ax3                      myWorkingPlane;
-  //QMap<int,QString>           myRules;           // popup rules
-  static StudyTextureMap      myTextureMap;      // texture map
+  GUIMap                       myGUIMap;          // GUI libraries map
+  QDialog*                     myActiveDialogBox; // active dialog box
+  gp_Ax3                       myWorkingPlane;
+  //QMap<int,QString>          myRules;           // popup rules
+  static TextureMap            myTextureMap;      // texture map
 
-  QMap<int, PluginAction>      myPluginActions; // plugin actions
-  QMap<QString, QString>       myPluginLibs;    // plugin name to plugin client library
+  QMap<int, PluginAction>      myPluginActions;   // plugin actions
+  QMap<QString, QString>       myPluginLibs;      // plugin name to plugin client library
 
   QList<GEOMGUI_OCCSelector*>  myOCCSelectors;
   QList<LightApp_VTKSelector*> myVTKSelectors;
 
-  LightApp_Displayer*         myDisplayer;
-  int                         myLocalSelectionMode; //Select Only
+  LightApp_Displayer*          myDisplayer;
+  int                          myLocalSelectionMode; //Select Only
 
-  GEOMGUI_CreationInfoWdg*    myCreationInfoWdg;
+  GEOMGUI_CreationInfoWdg*     myCreationInfoWdg;
   
   GEOMGUI_TextTreeWdg*        myTextTreeWdg;
   GEOMGUI_AnnotationMgr*      myAnnotationMgr;
   
-  SALOME_ListIO               myTopLevelIOList;               
+  SALOME_ListIO                myTopLevelIOList;
 
   friend class DisplayGUI;
 };

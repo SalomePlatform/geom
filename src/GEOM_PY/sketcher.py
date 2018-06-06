@@ -48,7 +48,7 @@ Example::
 
     # Put it in the study
     from salome.geom import geomBuilder
-    geompy = geomBuilder.New(salome.myStudy)
+    geompy = geomBuilder.New()
     geompy.addToStudy( wire, 'mysketch' )
 
 Additional examples can be found as unit tests in the source code.
@@ -62,7 +62,7 @@ try:
         salome.salome_init()
         import GEOM
         from salome.geom import geomBuilder
-        geompy = geomBuilder.New(salome.myStudy)
+        geompy = geomBuilder.New()
         pass
     pass
 except:
@@ -137,11 +137,11 @@ def TEST_toString():
 
     expectedResult = "Sketcher:F 1.234 4.321:TT 2.234 5.321"
     result = mysketcher.toString()
-    print "sketcher=",mysketcher.toString()
+    print("sketcher=",mysketcher.toString())
     if result == expectedResult:
-        print "OK"
+        print("OK")
     else:
-        print "Not OK"
+        print("Not OK")
 
 def TEST_usingGeom():
     mysketcher = Sketcher()

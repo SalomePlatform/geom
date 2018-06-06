@@ -32,7 +32,7 @@
 // OCCT includes
 #include <TFunction_DriverTable.hxx>
 
-std::map <int, STLPlugin_IOperations*> STLPlugin_OperationsCreator::_mapOfOperations;
+STLPlugin_IOperations* STLPlugin_OperationsCreator::_operation;
 
 STLPlugin_OperationsCreator::STLPlugin_OperationsCreator()
 {
@@ -53,19 +53,17 @@ STLPlugin_OperationsCreator::~STLPlugin_OperationsCreator()
 }
 
 GEOM_IOperations_i* STLPlugin_OperationsCreator::Create( PortableServer::POA_ptr thePOA,
-                                                         int                     theStudyId,
                                                          GEOM::GEOM_Gen_ptr      theEngine,
                                                          ::GEOMImpl_Gen*         theGenImpl )
 {
   Unexpect aCatch( SALOME_SalomeException );
   MESSAGE( "STLPlugin_OperationsCreator::Create" );
-  return new STLPlugin_IOperations_i( thePOA, theEngine, get( theGenImpl, theStudyId ) );
+  return new STLPlugin_IOperations_i( thePOA, theEngine, get( theGenImpl ) );
 }
 
-STLPlugin_IOperations* STLPlugin_OperationsCreator::get( ::GEOMImpl_Gen* theGenImpl,
-							 int             theStudyId )
+STLPlugin_IOperations* STLPlugin_OperationsCreator::get( ::GEOMImpl_Gen* theGenImpl )
 {
-  if (_mapOfOperations.find( theStudyId ) == _mapOfOperations.end() )
-    _mapOfOperations[theStudyId] = new STLPlugin_IOperations( theGenImpl, theStudyId );
-  return _mapOfOperations[theStudyId];
+  if( !_operation )
+    _operation = new STLPlugin_IOperations( theGenImpl );
+  return _operation;
 }

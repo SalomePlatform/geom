@@ -4,7 +4,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 # create a box
 check_box = geompy.MakeBoxDXDYDZ(200, 200, 200)
@@ -16,8 +16,8 @@ listChains = geompy.Propagate(check_box)
 geompy.addToStudy(check_box, "Box")
 ii = 1
 for chain in listChains:
-    geompy.addToStudyInFather(check_box, chain, "propagation chain " + `ii`)
+    geompy.addToStudyInFather(check_box, chain, "propagation chain " + repr(ii))
     ii = ii + 1
     pass
 
-salome.sg.updateObjBrowser(True) 
+salome.sg.updateObjBrowser() 

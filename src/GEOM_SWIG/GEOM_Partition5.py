@@ -32,15 +32,15 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
-# -- Dimensions de la boite entiˆre
+# -- Dimensions de la boite entiï¿½re
 
 LX, LY, LZ = 300.0, 150.0, 150.0
 p0 = geompy.MakeVertex(0.,0.,0.)
 vy = geompy.MakeVectorDXDYDZ(0.,1.,0.)
 
-# -- D‰finition du plan de sym‰trie (O,Ox,Oz)
+# -- Dï¿½finition du plan de symï¿½trie (O,Ox,Oz)
 
 symPlane = geompy.MakePlane(p0, vy, 10.0)
 
@@ -60,7 +60,7 @@ gal = geompy.MakeTranslation(gal, gal_x, -gal_lony/2, 0.0)
 
 # -- Galerie perpendiculaire
 # -- Dimensions de la galerie perpendiculaire
-# -- La longueur est compt‰e € partir du centre
+# -- La longueur est comptï¿½e ï¿½ partir du centre
 # -- de la galerie principale
 
 gpe_long, gpe_diam = 200.0, 60.0 
@@ -72,14 +72,14 @@ gpe = geompy.MakeCylinder(
 gpe = geompy.MakeTranslation(gpe, gpe_x, 0, 0)
 
 # -- Dimensions d'une alveole
-# -- Construction d'une alv‰ole
+# -- Construction d'une alvï¿½ole
 
 alv_long, alv_diam = 60.0, 18.0
 alv01 = geompy.MakeCylinder(p0, vy, alv_diam/2, alv_long)
 alv02 = geompy.MakeMirrorByPlane(alv01, symPlane)
 alv0 = geompy.MakeCompound([alv01, alv02])
 
-# -- Construction des alv‰oles
+# -- Construction des alvï¿½oles
 
 alv_del, alv_sep = 40.0, 35.0
 alv1 = geompy.MakeTranslation(alv0, gal_x-gal_diam/2-alv_sep, 0.0, 0.0)

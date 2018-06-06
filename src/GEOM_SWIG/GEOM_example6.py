@@ -27,7 +27,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 ind = 1
 circlelist = []
@@ -42,7 +42,7 @@ while ind < 6:
     y3 = 0. * (ind+1)
     z3 = -10. * (ind+1)
 
-    print x1, y1, z1, x2, y2, z2, x3, y3, z3
+    print(x1, y1, z1, x2, y2, z2, x3, y3, z3)
 
     point1 = geompy.MakeVertex(x1, y1, z1)
     name1 = "point1_%d"%(ind)

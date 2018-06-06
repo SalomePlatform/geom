@@ -30,7 +30,7 @@
 class IGESPLUGINENGINE_EXPORT IGESPlugin_IOperations: public GEOMImpl_IBaseIEOperations
 {
 public:
-  IGESPlugin_IOperations( GEOM_Engine*, int );
+  IGESPlugin_IOperations( GEOM_Engine* );
   ~IGESPlugin_IOperations();
 
   void ExportIGES( const Handle(GEOM_Object),

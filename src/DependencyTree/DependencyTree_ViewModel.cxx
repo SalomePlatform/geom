@@ -66,8 +66,7 @@ void DependencyTree_ViewModel::onShowSelected()
   SALOME_ListIO aSelList;
   aSelMgr->selectedObjects(aSelList);
 
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-  GEOM_Displayer disp( appStudy );
+  GEOM_Displayer disp;
 
   OCCViewer_ViewManager* anOCCVM = ( OCCViewer_ViewManager* ) app->getViewManager( OCCViewer_Viewer::Type(), /*create=*/ true );
 
@@ -96,8 +95,7 @@ void DependencyTree_ViewModel::onShowOnlySelected()
   SALOME_ListIO aSelList;
   aSelMgr->selectedObjects( aSelList );
 
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-  GEOM_Displayer disp( appStudy );
+  GEOM_Displayer disp;
 
   OCCViewer_ViewManager* anOCCVM = (OCCViewer_ViewManager*) app->getViewManager( OCCViewer_Viewer::Type(), /*create=*/ true );
 

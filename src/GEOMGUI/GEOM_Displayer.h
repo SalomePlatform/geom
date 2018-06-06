@@ -72,7 +72,7 @@ class GEOMGUI_EXPORT GEOM_Displayer : public LightApp_Displayer
 
 public:
   /* Constructor */
-  GEOM_Displayer( SalomeApp_Study* app );
+  GEOM_Displayer();
   /* Destructor */
   virtual ~GEOM_Displayer();
 
@@ -262,7 +262,7 @@ protected:
   void           updateDimensions( const Handle(SALOME_InteractiveObject)&, SALOME_OCCPrs*, const gp_Ax3& );
   void           updateShapeAnnotations( const Handle(SALOME_InteractiveObject)&, SALOME_OCCPrs*, const gp_Ax3& );
 
-  PropMap getObjectProperties( SalomeApp_Study*, const QString&, SALOME_View* = 0 );
+  PropMap getObjectProperties( const QString&, SALOME_View* = 0 );
   PropMap getDefaultPropertyMap();
 
   /* Methods for reading the field step information */

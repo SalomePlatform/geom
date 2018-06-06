@@ -1765,7 +1765,7 @@ void EntityGUI_FieldDlg::highlightSubShapes()
   SALOME_ListIO aSelList;
 
   // To highlight the selected sub-shape in Object Browser, if it's already published under the main shape
-  GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations(getStudyId());
+  GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations();
   QMap<int, QString> childsMap;
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
   if (appStudy) {
@@ -1818,7 +1818,7 @@ void EntityGUI_FieldDlg::highlightSubShapes()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr EntityGUI_FieldDlg::createOperation()
 {
-  return getGeomEngine()->GetIFieldOperations(getStudyId());
+  return getGeomEngine()->GetIFieldOperations();
 }
 
 #define RETURN_WITH_MSG(a, b) \
@@ -1857,7 +1857,7 @@ bool EntityGUI_FieldDlg::isValid(QString& theMessage)
 //=================================================================================
 bool EntityGUI_FieldDlg::execute()
 {
-  SALOMEDS::Study_var aStudyDS = GeometryGUI::ClientStudyToStudy( getStudy()->studyDS() );
+  SALOMEDS::Study_var aStudyDS = GeometryGUI::getStudyServant();
   SALOMEDS::StudyBuilder_var aBuilder = aStudyDS->NewBuilder();
 
   QString aName = getNewObjectName().trimmed();
@@ -1882,7 +1882,7 @@ bool EntityGUI_FieldDlg::execute()
       return false;
     
     SALOMEDS::SObject_wrap aSO =
-      getGeomEngine()->AddInStudy( aStudyDS, myField, aName.toLatin1().constData(), myShape );
+      getGeomEngine()->AddInStudy( myField, aName.toLatin1().constData(), myShape );
     if ( !aSO->_is_nil() ) {
       myField->UnRegister();
       CORBA::String_var entry = aSO->GetID();
@@ -1918,7 +1918,7 @@ bool EntityGUI_FieldDlg::execute()
         step = myField->AddStep( tbl->getStepID(), tbl->getStamp() );
 
         SALOMEDS::SObject_wrap aSO =
-          getGeomEngine()->AddInStudy( aStudyDS, step, stepName.toLatin1().constData(), myField );
+          getGeomEngine()->AddInStudy( step, stepName.toLatin1().constData(), myField );
         if ( /*!myIsCreation &&*/ !aSO->_is_nil() ) {
           step->UnRegister();
           CORBA::String_var entry = aSO->GetID();

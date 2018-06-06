@@ -296,7 +296,7 @@ void  BuildGUI_SolidDlg::EnableNameField( bool toEnable )
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BuildGUI_SolidDlg::createOperation()
 {
-  return getGeomEngine()->GetIShapesOperations( getStudyId() );
+  return getGeomEngine()->GetIShapesOperations();
 }
 
 //=================================================================================
@@ -308,7 +308,7 @@ bool BuildGUI_SolidDlg::isValid (QString& msg)
   bool ok = !myShells.isEmpty();
 
   GEOM::MeasureOpPtr anOp;
-  anOp.take(myGeomGUI->GetGeomGen()->GetIMeasureOperations(getStudyId()));
+  anOp.take(myGeomGUI->GetGeomGen()->GetIMeasureOperations());
   if (getConstructorId() == 0 && (!GroupSolid->CheckButton1->isChecked() || myShells.count() == 1)) {
 	for (int i = 0, n = myShells.count(); i < n && ok; i++) {
 	  CORBA::String_var aRes = anOp->IsGoodForSolid(myShells[i].get());
@@ -336,7 +336,7 @@ bool BuildGUI_SolidDlg::isClosed( GEOM::GEOM_Object_ptr shell )
 
   if ( !CORBA::is_nil( shell ) ) {
     GEOM::MeasureOpPtr anOp;
-    anOp.take( myGeomGUI->GetGeomGen()->GetIMeasureOperations( getStudyId() ) );
+    anOp.take( myGeomGUI->GetGeomGen()->GetIMeasureOperations() );
 
     // Detect kind of shape and parameters
     aKind = anOp->KindOfShape(shell, anInts, aDbls);

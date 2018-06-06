@@ -32,7 +32,7 @@
 // OCCT includes
 #include <TFunction_DriverTable.hxx>
 
-std::map <int, IGESPlugin_IOperations*> IGESPlugin_OperationsCreator::_mapOfOperations;
+IGESPlugin_IOperations* IGESPlugin_OperationsCreator::_operation;
 
 IGESPlugin_OperationsCreator::IGESPlugin_OperationsCreator()
 {
@@ -54,19 +54,17 @@ IGESPlugin_OperationsCreator::~IGESPlugin_OperationsCreator()
 }
 
 GEOM_IOperations_i* IGESPlugin_OperationsCreator::Create( PortableServer::POA_ptr thePOA,
-                                                          int                     theStudyId,
                                                           GEOM::GEOM_Gen_ptr      theEngine,
                                                           ::GEOMImpl_Gen*         theGenImpl )
 {
   Unexpect aCatch( SALOME_SalomeException );
   MESSAGE( "IGESPlugin_OperationsCreator::Create" );
-  return new IGESPlugin_IOperations_i( thePOA, theEngine, get( theGenImpl, theStudyId ) );
+  return new IGESPlugin_IOperations_i( thePOA, theEngine, get( theGenImpl ) );
 }
 
-IGESPlugin_IOperations* IGESPlugin_OperationsCreator::get( ::GEOMImpl_Gen* theGenImpl,
-							   int             theStudyId )
+IGESPlugin_IOperations* IGESPlugin_OperationsCreator::get( ::GEOMImpl_Gen* theGenImpl )
 {
-  if (_mapOfOperations.find( theStudyId ) == _mapOfOperations.end() )
-    _mapOfOperations[theStudyId] = new IGESPlugin_IOperations( theGenImpl, theStudyId );
-  return _mapOfOperations[theStudyId];
+  if( !_operation )
+    _operation = new IGESPlugin_IOperations( theGenImpl );
+  return _operation;
 }

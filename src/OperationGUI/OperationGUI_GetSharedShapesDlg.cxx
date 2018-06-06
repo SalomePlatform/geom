@@ -331,7 +331,7 @@ int OperationGUI_GetSharedShapesDlg::GetType() const
 //=================================================================================
 GEOM::GEOM_IOperations_ptr OperationGUI_GetSharedShapesDlg::createOperation()
 {
-  return getGeomEngine()->GetIShapesOperations(getStudyId());
+  return getGeomEngine()->GetIShapesOperations();
 }
 
 //=================================================================================

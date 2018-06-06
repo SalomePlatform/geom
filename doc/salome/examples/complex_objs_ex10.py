@@ -4,7 +4,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 # Create Vertexes for curve
 Vertex_1 = geompy.MakeVertex(0, 0, 0)

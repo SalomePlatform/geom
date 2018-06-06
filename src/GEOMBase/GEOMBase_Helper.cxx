@@ -608,12 +608,10 @@ QString GEOMBase_Helper::addInStudy( GEOM::GEOM_Object_ptr theObj, const char* t
   if ( !aStudy || theObj->_is_nil() )
     return QString();
 
-  SALOMEDS::Study_var aStudyDS = GeometryGUI::ClientStudyToStudy(aStudy);
-
   GEOM::GEOM_Object_ptr aFatherObj = getFather( theObj );
 
   SALOMEDS::SObject_var aSO =
-    getGeomEngine()->AddInStudy(aStudyDS, theObj, theName, aFatherObj);
+    getGeomEngine()->AddInStudy(theObj, theName, aFatherObj);
 
   QString anEntry;
   if ( !aSO->_is_nil() ) {
@@ -622,7 +620,7 @@ QString GEOMBase_Helper::addInStudy( GEOM::GEOM_Object_ptr theObj, const char* t
   }
   // Each dialog is responsible for this method implementation,
   // default implementation does nothing
-  restoreSubShapes(aStudyDS, aSO);
+  restoreSubShapes(aSO);
   aSO->UnRegister();
 
   return anEntry;
@@ -632,15 +630,14 @@ QString GEOMBase_Helper::addInStudy( GEOM::GEOM_Object_ptr theObj, const char* t
 // Function : restoreSubShapes
 // Purpose  : restore tree of argument's sub-shapes under the resulting shape
 //================================================================
-void GEOMBase_Helper::restoreSubShapes (SALOMEDS::Study_ptr   /*theStudy*/,
-                                        SALOMEDS::SObject_ptr /*theSObject*/)
+void GEOMBase_Helper::restoreSubShapes (SALOMEDS::SObject_ptr /*theSObject*/)
 {
   // do nothing by default
 
   // example of implementation in particular dialog:
   // GEOM::ListOfGO anArgs;
   // anArgs.length(0); // empty list means that all arguments should be restored
-  // getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, anArgs,
+  // getGeomEngine()->RestoreSubShapesSO(theSObject, anArgs,
   //                                     /*theFindMethod=*/GEOM::FSM_GetInPlace,
   //                                     /*theInheritFirstArg=*/false);
 }
@@ -656,7 +653,7 @@ void GEOMBase_Helper::updateObjBrowser() const
     CAM_Module* module = app->module( "Geometry" );
     SalomeApp_Module* appMod = dynamic_cast<SalomeApp_Module*>( module );
     if ( appMod ) {
-      appMod->updateObjBrowser( true );
+      appMod->updateObjBrowser();
     }
   }
 }
@@ -668,18 +665,6 @@ void GEOMBase_Helper::updateObjBrowser() const
 void GEOMBase_Helper::updateViewer()
 {
   getDisplayer()->UpdateViewer();
-}
-
-//================================================================
-// Function : getStudyId
-// Purpose  : Get study Id
-//================================================================
-int GEOMBase_Helper::getStudyId() const
-{
-  int anId = -1;
-  if ( getStudy() )
-    anId = getStudy()->id();
-  return anId;
 }
 
 //================================================================
@@ -732,7 +717,7 @@ QString GEOMBase_Helper::getEntry( GEOM::GEOM_Object_ptr object ) const
 GEOM_Displayer* GEOMBase_Helper::getDisplayer()
 {
   if ( !myDisplayer )
-    myDisplayer = new GEOM_Displayer( getStudy() );
+    myDisplayer = new GEOM_Displayer();
   return myDisplayer;
 }
 
@@ -1378,7 +1363,7 @@ QList<GEOM::GeomObjPtr> GEOMBase_Helper::getSelected( const QList<TopAbs_ShapeEn
               GEOM::GeomObjPtr subShape = findObjectInFather( object.get(), idx );
               if ( !subShape ) {
                 // sub-shape is not yet published in the study
-                GEOM::ShapesOpPtr shapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
+                GEOM::ShapesOpPtr shapesOp = getGeomEngine()->GetIShapesOperations();
                 subShape.take( shapesOp->GetSubShape( object.get(), idx ) ); // take ownership!
               }
               if ( typeInList( (TopAbs_ShapeEnum)(subShape->GetShapeType()), types ) ) {

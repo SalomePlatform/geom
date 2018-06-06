@@ -329,7 +329,7 @@ public:
    /*!
    * \brief Constructor. Inits property from attribute.
    */
-  GEOMGUI_DimensionProperty( SalomeApp_Study* theStudy, const std::string& theEntry );
+  GEOMGUI_DimensionProperty( const std::string& theEntry );
 
    /*!
    * \brief Constructor. Inits property from formatted QString.
@@ -459,17 +459,15 @@ public:
 
   /*!
    * \brief Loads properties data from attribute "AttributeTableOfReal".
-   * \param theStudy [in] the study.
    * \param theEntry [in] the entry of GEOM object to operate with.
    */
-  void LoadFromAttribute( SalomeApp_Study* theStudy, const std::string& theEntry );
+  void LoadFromAttribute( const std::string& theEntry );
 
   /*!
    * \brief Saves properties data to attribute "AttributeTableOfReal".
-   * \param theStudy [in] the study.
    * \param theEntry [in] the entry of GEOM object to operate with.
    */
-  void SaveToAttribute( SalomeApp_Study* theStudy, const std::string& theEntry );
+  void SaveToAttribute( const std::string& theEntry );
 
 private:
 

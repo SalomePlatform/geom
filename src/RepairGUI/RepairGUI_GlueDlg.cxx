@@ -408,7 +408,7 @@ void RepairGUI_GlueDlg::enterEvent(QEvent*)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr RepairGUI_GlueDlg::createOperation()
 {
-  return getGeomEngine()->GetIShapesOperations(getStudyId());
+  return getGeomEngine()->GetIShapesOperations();
 }
 
 //=================================================================================
@@ -542,8 +542,7 @@ bool RepairGUI_GlueDlg::execute(ObjectList& objects)
 // function : restoreSubShapes
 // purpose  :
 //=================================================================================
-void RepairGUI_GlueDlg::restoreSubShapes(SALOMEDS::Study_ptr   theStudy,
-                                          SALOMEDS::SObject_ptr theSObject)
+void RepairGUI_GlueDlg::restoreSubShapes( SALOMEDS::SObject_ptr theSObject)
 {
   if (mainFrame()->CheckBoxRestoreSS->isChecked()) {
     GEOM::find_shape_method aFindMethod = GEOM::FSM_GetInPlace;
@@ -551,7 +550,7 @@ void RepairGUI_GlueDlg::restoreSubShapes(SALOMEDS::Study_ptr   theStudy,
       aFindMethod = GEOM::FSM_GetInPlaceByHistory;
 
     // empty list of arguments means that all arguments should be restored
-    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(),
+    getGeomEngine()->RestoreSubShapesSO( theSObject, GEOM::ListOfGO(),
                                          aFindMethod, /*theInheritFirstArg=*/true,
                                          mainFrame()->CheckBoxAddPrefix->isChecked());
   }

@@ -869,8 +869,7 @@ void GEOMBase::PublishSubObject( GEOM::GEOM_Object_ptr object, const QString& na
     QString fatherEntry = GetEntry( father );
     if ( entry.isEmpty() && !CORBA::is_nil( father ) && !fatherEntry.isEmpty() ) {
       QString aName = !name.isEmpty() ? name : GetName( object );
-      GeometryGUI::GetGeomGen()->AddInStudy( GeometryGUI::ClientStudyToStudy( studyDS ),
-                                             object, aName.toLatin1().data(), father.in() );
+      GeometryGUI::GetGeomGen()->AddInStudy( object, aName.toLatin1().data(), father.in() );
     }
   }
 }

@@ -273,7 +273,7 @@ void MeasureGUI_BndBoxDlg::SelectionIntoArgument()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr MeasureGUI_BndBoxDlg::createOperation()
 {
-  return getGeomEngine()->GetIMeasureOperations(getStudyId());
+  return getGeomEngine()->GetIMeasureOperations();
 }
 
 //=================================================================================

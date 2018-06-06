@@ -4,7 +4,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 # create vertices
 p1 = geompy.MakeVertex(0, 0, 0)
@@ -49,4 +49,4 @@ for wire in wires:
     ii = ii + 1
     pass
 
-salome.sg.updateObjBrowser(True) 
+salome.sg.updateObjBrowser() 

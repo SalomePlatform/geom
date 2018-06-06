@@ -24,7 +24,7 @@ from GEOM import IXAOOperations
 __libraryName__ = "XAOPluginEngine"
 
 def GetXAOPluginOperations(self):
-    anOp = self.GetPluginOperations(self.myStudyId, __libraryName__)
+    anOp = self.GetPluginOperations(__libraryName__)
     return anOp._narrow(IXAOOperations)
 
 ## Export a shape to XAO format

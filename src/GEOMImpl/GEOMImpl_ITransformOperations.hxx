@@ -37,7 +37,7 @@ class GEOMImpl_IRotate;
 class GEOMImpl_ITransformOperations : public GEOM_IOperations
 {
  public:
-  Standard_EXPORT GEOMImpl_ITransformOperations(GEOM_Engine* theEngine, int theDocID);
+  Standard_EXPORT GEOMImpl_ITransformOperations(GEOM_Engine* theEngine);
   Standard_EXPORT ~GEOMImpl_ITransformOperations();
 
   Standard_EXPORT Handle(GEOM_Object) TranslateTwoPoints (Handle(GEOM_Object) theObject,

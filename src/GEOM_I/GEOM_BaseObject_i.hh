@@ -42,8 +42,6 @@ class GEOM_I_EXPORT GEOM_BaseObject_i : public virtual POA_GEOM::GEOM_BaseObject
 
   virtual char* GetEntry();
 
-  virtual CORBA::Long GetStudyID();
-
   virtual CORBA::Long GetType();
 
   virtual CORBA::Long GetTick();

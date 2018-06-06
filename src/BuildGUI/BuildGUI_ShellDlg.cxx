@@ -234,7 +234,7 @@ void BuildGUI_ShellDlg::enterEvent( QEvent* )
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BuildGUI_ShellDlg::createOperation()
 {
-  return getGeomEngine()->GetIShapesOperations( getStudyId() );
+  return getGeomEngine()->GetIShapesOperations();
 }
 
 //=================================================================================

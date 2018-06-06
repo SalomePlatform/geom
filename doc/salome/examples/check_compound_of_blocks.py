@@ -4,7 +4,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 gg = salome.ImportComponentGUI("GEOM")
 
 # create boxes
@@ -19,6 +19,6 @@ tolerance = 1e-5
 glue = geompy.MakeGlueFaces(compound, tolerance)
 IsValid = geompy.CheckCompoundOfBlocks(glue)
 if IsValid == 0:
-    raise RuntimeError, "Invalid compound created"
+    raise RuntimeError("Invalid compound created")
 else:
-    print "\nCompound is valid"
+    print("\nCompound is valid")

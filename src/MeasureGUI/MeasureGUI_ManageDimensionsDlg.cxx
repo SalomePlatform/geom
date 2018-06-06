@@ -770,7 +770,7 @@ bool MeasureGUI_ManageDimensionsDlg::ClickOnApply()
                                QVariant() )
                                .value<GEOMGUI_DimensionProperty>();
 
-  mySavedPropertyState.SaveToAttribute( aStudy, myEditObject->GetStudyEntry() );
+  mySavedPropertyState.SaveToAttribute( myEditObject->GetStudyEntry() );
 
   myGeomGUI->emitDimensionsUpdated( QString( myEditObject->GetStudyEntry() ) );
 
@@ -919,7 +919,7 @@ void MeasureGUI_ManageDimensionsDlg::SetEditObject( const GEOM::GeomObjPtr& theO
     return;
   }
 
-  mySavedPropertyState.LoadFromAttribute( getStudy(), myEditObject->GetStudyEntry() );
+  mySavedPropertyState.LoadFromAttribute( myEditObject->GetStudyEntry() );
 
   // set property state for preview
   aStudy->setObjectProperty( GEOM::sharedPropertiesId(),

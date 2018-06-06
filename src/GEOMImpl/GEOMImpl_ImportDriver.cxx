@@ -69,7 +69,7 @@ Standard_Integer GEOMImpl_ImportDriver::Execute(Handle(TFunction_Logbook)& log) 
     return 0;
 
   Handle(TColStd_HSequenceOfTransient) aSeq =
-    GEOMImpl_IECallBack::GetCallBack( aFormatName )->Import( GetDocID(), aFormatName, aFileName );
+    GEOMImpl_IECallBack::GetCallBack( aFormatName )->Import( aFormatName, aFileName );
   if( aSeq.IsNull() )
     return 0;
 

@@ -30,7 +30,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 ind = 0
 boxlist = []
@@ -41,7 +41,7 @@ while ind < 5:
     x2 = 10. * (ind+1)
     y2 = 20. * (ind+1)
     z2 = 30. * (ind+1)
-    print x1, y1, z1, x2, y2, z2
+    print(x1, y1, z1, x2, y2, z2)
 
     point1 = geompy.MakeVertex(x1, y1, z1)
     name1 = "point1_%d"%(ind)

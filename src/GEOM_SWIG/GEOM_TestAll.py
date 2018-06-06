@@ -287,7 +287,7 @@ def TestAll (geompy, math):
 
     sse_id = geompy.GetSubShapeID(Prism, sse)
     if sse_id != eid:
-      print "Error: GetSubShape() or GetSubShapeID() has failed!"
+      print("Error: GetSubShape() or GetSubShapeID() has failed!")
 
   IDlist_e = []
   IDlist_e.append(geompy.GetSubShapeID(Prism, prism_edges[0]))
@@ -330,10 +330,10 @@ def TestAll (geompy, math):
   Archimede  = geompy.Archimede(Box, weight, waterdensity,
                                 meshingdeflection) #(GEOM_Object, 3 Doubles)->GEOM_Object
   mindist = geompy.MinDistanceComponents(TranslVect, Mirror) #(2 GEOM_Object)->4 Doubles
-  print "Minumal distance between TranslVect and Mirror is", mindist[0],
-  print "by components:", mindist[1], ",", mindist[2], ",", mindist[3]
+  print("Minumal distance between TranslVect and Mirror is", mindist[0], end=' ')
+  print("by components:", mindist[1], ",", mindist[2], ",", mindist[3])
   CheckShape = geompy.CheckShape(Prism)            #(GEOM_Object)->Boolean
-  print "CheckShape(Prism) = ", CheckShape
+  print("CheckShape(Prism) = ", CheckShape)
 
   #Partition objects
   Partition  = geompy.MakePartition([Box], [Plane]) #(2 Lists Of GEOM_Object)->GEOM_Object
@@ -539,11 +539,11 @@ def TestAll (geompy, math):
 
   # GetExistingSubObjects
   SubObjsAll = geompy.GetExistingSubObjects(Box, True)
-  print "For now, Box has the following created sub-objects:", SubObjsAll
+  print("For now, Box has the following created sub-objects:", SubObjsAll)
 
   # GetGroups
   SubGrpsAll = geompy.GetGroups(Box)
-  print "For now, Box has the following created groups:", SubGrpsAll
+  print("For now, Box has the following created groups:", SubGrpsAll)
 
   # SubShapeAll
   SubEdgeList = geompy.SubShapeAll(SubFace, geompy.ShapeType["EDGE"])
@@ -554,21 +554,21 @@ def TestAll (geompy, math):
 
   # SubShapeAllIDs
   SubEdgeIDsList = geompy.SubShapeAllIDs(SubFace, geompy.ShapeType["EDGE"])
-  print "IDs of edges of SubFace:", SubEdgeIDsList, "(unsorted)"
+  print("IDs of edges of SubFace:", SubEdgeIDsList, "(unsorted)")
   group = geompy.CreateGroup(SubFace, geompy.ShapeType["EDGE"])
   geompy.UnionIDs(group, SubEdgeIDsList)
   geompy.addToStudyInFather(SubFace, group, "Group of all edges")
 
   # SubShapeAllSortedCentresIDs
   SubEdgeIDsList = geompy.SubShapeAllSortedCentresIDs(SubFace, geompy.ShapeType["EDGE"])
-  print "IDs of edges of SubFace:", SubEdgeIDsList, "(sorted)"
+  print("IDs of edges of SubFace:", SubEdgeIDsList, "(sorted)")
 
   # GetSubShape and GetSubShapeID
   for ind in SubEdgeIDsList:
     edge = geompy.GetSubShape(SubFace, [ind])
     ind_e = geompy.GetSubShapeID(SubFace, edge)
     if ind_e != ind:
-      print "Error in GetSubShape or GetSubShapeID"
+      print("Error in GetSubShape or GetSubShapeID")
 
   # RestoreSubShapes
   geompy.RestoreSubShapes(Copy)
@@ -596,4 +596,4 @@ def TestAll (geompy, math):
   geompy.MakeExtraction(Box, [16], "Ext_no_vertex")
 
 
-  print "DONE"
+  print("DONE")

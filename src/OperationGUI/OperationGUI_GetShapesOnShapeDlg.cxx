@@ -288,7 +288,7 @@ void OperationGUI_GetShapesOnShapeDlg::enterEvent (QEvent*)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr OperationGUI_GetShapesOnShapeDlg::createOperation()
 {
-  return getGeomEngine()->GetIShapesOperations(getStudyId());
+  return getGeomEngine()->GetIShapesOperations();
 }
 
 //=================================================================================

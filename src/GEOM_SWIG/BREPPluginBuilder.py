@@ -24,7 +24,7 @@ from GEOM import IBREPOperations
 __libraryName__ = "BREPPluginEngine"
 
 def GetBREPPluginOperations(self):
-    anOp = self.GetPluginOperations(self.myStudyId, __libraryName__)
+    anOp = self.GetPluginOperations(__libraryName__)
     return anOp._narrow(IBREPOperations)
 
 ## Export the given shape into a file with given name in BREP format.
@@ -42,7 +42,7 @@ def ExportBREP(self, theObject, theFileName):
     anOp = GetBREPPluginOperations(self)
     anOp.ExportBREP(theObject, theFileName)
     if anOp.IsDone() == 0:
-        raise RuntimeError,  "Export : " + anOp.GetErrorCode()
+        raise RuntimeError("Export : " + anOp.GetErrorCode())
         pass
     pass
 

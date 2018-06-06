@@ -4,7 +4,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 gg = salome.ImportComponentGUI("GEOM")
 
 # create a vertex and a vector
@@ -31,7 +31,7 @@ cut_without_f_2 = geompy.SuppressFaces(cut, [f_2])
 
 # suppress the specified wire
 result = geompy.GetFreeFacesIDs(cut_without_f_2)
-print "A number of free faces is ", len(result)
+print("A number of free faces is ", len(result))
 
 # add objects in the study
 all_faces = geompy.SubShapeAllSortedCentres(cut_without_f_2, geompy.ShapeType["FACE"])

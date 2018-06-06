@@ -169,7 +169,7 @@ void EntityGUI_SurfFromFaceDlg::enterEvent (QEvent*)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr EntityGUI_SurfFromFaceDlg::createOperation()
 {
-  return myGeomGUI->GetGeomGen()->GetIShapesOperations(getStudyId());
+  return myGeomGUI->GetGeomGen()->GetIShapesOperations();
 }
 
 //=================================================================================

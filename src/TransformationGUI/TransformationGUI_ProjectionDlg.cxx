@@ -303,7 +303,7 @@ void TransformationGUI_ProjectionDlg::enterEvent (QEvent*)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr TransformationGUI_ProjectionDlg::createOperation()
 {
-  return getGeomEngine()->GetITransformOperations(getStudyId());
+  return getGeomEngine()->GetITransformOperations();
 }
 
 //=================================================================================

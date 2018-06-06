@@ -36,10 +36,9 @@ public:
   VTKPlugin_IECallBack();
   ~VTKPlugin_IECallBack();
   
-  bool Export( int                            theDocId,
-	       const Handle(GEOM_Object)      theOriginal,
-	       const TCollection_AsciiString& theFileName,
-	       const TCollection_AsciiString& theFormatName );
+  bool Export( const Handle(GEOM_Object)      theOriginal,
+               const TCollection_AsciiString& theFileName,
+               const TCollection_AsciiString& theFormatName );
 };
 
 #endif

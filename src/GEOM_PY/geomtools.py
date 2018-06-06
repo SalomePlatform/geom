@@ -38,9 +38,10 @@ from salome.kernel.logger import Logger
 from salome.kernel import termcolor
 logger = Logger("salome.geom.geomtools", color = termcolor.RED)
 
-from salome.kernel.studyedit import getActiveStudyId, getStudyEditor
+from salome.kernel.studyedit import getStudyEditor
 from salome.kernel.services import IDToObject, IDToSObject
 from salome.kernel.deprecation import is_called_by_sphinx
+from salome.geom import geomBuilder
 
 try:
     if not is_called_by_sphinx():
@@ -50,29 +51,16 @@ try:
 except:
     pass
 
-_geompys = {}
+_geompy = geomBuilder.New()
 
-## Return an object behaving exactly like geompy module, except that it is
-#  associated with the study \em studyId. If \em studyId is \b None, return
-#  a pseudo geompy object for the current study.
+## Return an object behaving exactly like geompy module.
 #  \ingroup geomtools
-def getGeompy(studyId = None):
+def getGeompy():
     """
-    Return an object behaving exactly like geompy module, except that it is
-    associated with the study `studyId`. If `studyId` is :const:`None`, return
-    a pseudo geompy object for the current study.
+    Return an object behaving exactly like geompy module.
     """
-    # We can't use geompy module because it initializes GEOM with
-    # salome.myStudy, which may not exist. So we use this trick to create
-    # a pseudo geompy module. 
     salome.salome_init()
-    if studyId is None:
-        studyId = getActiveStudyId()
-    if not _geompys.has_key(studyId):
-        from salome.geom import geomBuilder
-        study = salome.myStudyManager.GetStudyByID(studyId)
-        _geompys[studyId] = geomBuilder.New(study)
-    return _geompys[studyId]
+    return _geompy
 
 
 ModeWireFrame = 0
@@ -146,8 +134,7 @@ class GeomStudyTools:
         :param  folderName: the name of a folder in the GEOM part of the study
         """
         study   = self.editor.study
-        studyId = study._get_StudyId()
-        geompy  = getGeompy(studyId)
+        geompy  = getGeompy()
 
         if folderName is None:
             # Insert the shape in the study by the standard way
@@ -183,7 +170,6 @@ class GeomStudyTools:
         The underlying GEOM object is returned (so that it can be destroyed)
         """
         study = self.editor.study
-        studyId = study._get_StudyId()
         shape = self.getGeomObjectFromEntry(shapeStudyEntry)    
         studyObject = IDToSObject(shapeStudyEntry)
         self.editor.removeItem(studyObject,True)
@@ -337,13 +323,13 @@ def TEST_createBox():
     box = geompy.MakeBoxDXDYDZ(200, 200, 200)
     geompy.addToStudy( box, 'box' )    
     if salome.sg.hasDesktop():
-        salome.sg.updateObjBrowser(True)
+        salome.sg.updateObjBrowser()
 
 
 def TEST_getGeomObjectSelected():
     tool = GeomStudyTools()
     myGeomObject = tool.getGeomObjectSelected()
-    print myGeomObject
+    print(myGeomObject)
 
 ## This test is a simple use case that illustrates how to create a
 #  GEOM shape in a SALOME session (create the GEOM object, put in in
@@ -364,13 +350,12 @@ def TEST_createAndDeleteShape():
     import salome
     salome.salome_init()
     study   = salome.myStudy
-    studyId = salome.myStudyId
 
     from salome.geom import geomtools
-    geompy = geomtools.getGeompy(studyId)
+    geompy = geomtools.getGeompy()
     
     from salome.kernel.studyedit import getStudyEditor
-    studyEditor = getStudyEditor(studyId)
+    studyEditor = getStudyEditor()
 
     gst = geomtools.GeomStudyTools(studyEditor)
 

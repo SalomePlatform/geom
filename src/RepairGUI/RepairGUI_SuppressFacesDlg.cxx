@@ -352,7 +352,7 @@ void RepairGUI_SuppressFacesDlg::enterEvent (QEvent*)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr RepairGUI_SuppressFacesDlg::createOperation()
 {
-  return getGeomEngine()->GetIHealingOperations(getStudyId());
+  return getGeomEngine()->GetIHealingOperations();
 }
 
 //=================================================================================
@@ -414,12 +414,11 @@ void RepairGUI_SuppressFacesDlg::initSelection()
 // function : restoreSubShapes
 // purpose  :
 //=================================================================================
-void RepairGUI_SuppressFacesDlg::restoreSubShapes (SALOMEDS::Study_ptr   theStudy,
-                                                   SALOMEDS::SObject_ptr theSObject)
+void RepairGUI_SuppressFacesDlg::restoreSubShapes (SALOMEDS::SObject_ptr theSObject)
 {
   if (mainFrame()->CheckBoxRestoreSS->isChecked()) {
     // empty list of arguments means that all arguments should be restored
-    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(),
+    getGeomEngine()->RestoreSubShapesSO(theSObject, GEOM::ListOfGO(),
                                         /*theFindMethod=*/GEOM::FSM_GetInPlace,
                                         /*theInheritFirstArg=*/true,
                                         mainFrame()->CheckBoxAddPrefix->isChecked());

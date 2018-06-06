@@ -114,13 +114,11 @@ bool TransformationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
     break;
   case GEOMOp::OpReimport:       // RELOAD IMPORTED SHAPE
     {
-      SalomeApp_Study* anAppStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
-
       GEOM::GEOM_ITransformOperations_var anOp =
-        GeometryGUI::GetGeomGen()->GetITransformOperations(anAppStudy->id());
+        GeometryGUI::GetGeomGen()->GetITransformOperations();
       if (anOp->_is_nil()) return false;
 
-      GEOM_Displayer aDisp (anAppStudy);
+      GEOM_Displayer aDisp;
       SUIT_Desktop* desk = app->desktop();
       QList<SUIT_ViewWindow*> wnds = desk->windows();
 

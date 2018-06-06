@@ -93,7 +93,6 @@
 GEOMImpl_Gen::GEOMImpl_Gen()
 {
    MESSAGE("GEOMImpl_Gen::GEOMImpl_Gen");
-   _mapOfBasicOperations.clear();
 
    // Basic elements
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_PointDriver::GetID(), new GEOMImpl_PointDriver());
@@ -170,6 +169,20 @@ GEOMImpl_Gen::GEOMImpl_Gen()
    /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
 
    SetEngine(this);
+
+   _BasicOperations = new GEOMImpl_IBasicOperations( this );
+   _TransformOperations = new GEOMImpl_ITransformOperations( this );
+   _3DPrimOperations = new GEOMImpl_I3DPrimOperations( this );
+   _ShapesOperations = new GEOMImpl_IShapesOperations( this );
+   _BlocksOperations = new GEOMImpl_IBlocksOperations( this );
+   _BooleanOperations = new GEOMImpl_IBooleanOperations( this );
+   _HealingOperations = new GEOMImpl_IHealingOperations( this );
+   _CurvesOperations = new GEOMImpl_ICurvesOperations( this );
+   _LocalOperations = new GEOMImpl_ILocalOperations( this );
+   _InsertOperations = new GEOMImpl_IInsertOperations( this );
+   _MeasureOperations = new GEOMImpl_IMeasureOperations( this );
+   _GroupOperations = new GEOMImpl_IGroupOperations( this );
+   _FieldOperations = new GEOMImpl_IFieldOperations( this );
 }
 
 //=============================================================================
@@ -182,57 +195,19 @@ GEOMImpl_Gen::~GEOMImpl_Gen()
 {
   MESSAGE("GEOMImpl_Gen::~GEOMImpl_Gen");
 
-  std::map<int, GEOMImpl_IBasicOperations*>::iterator aBasicIter = _mapOfBasicOperations.begin();
-  for (; aBasicIter != _mapOfBasicOperations.end(); aBasicIter++)
-    delete (*aBasicIter).second;
-
-  std::map<int, GEOMImpl_ITransformOperations*>::iterator aTransformIter = _mapOfTransformOperations.begin();
-  for (; aTransformIter != _mapOfTransformOperations.end(); aTransformIter++)
-    delete (*aTransformIter).second;
-
-  std::map<int, GEOMImpl_I3DPrimOperations*>::iterator a3DPrimIter = _mapOf3DPrimOperations.begin();
-  for (; a3DPrimIter != _mapOf3DPrimOperations.end(); a3DPrimIter++)
-    delete (*a3DPrimIter).second;
-
-  std::map<int, GEOMImpl_IShapesOperations*>::iterator aShapesIter = _mapOfShapesOperations.begin();
-  for (; aShapesIter != _mapOfShapesOperations.end(); aShapesIter++)
-    delete (*aShapesIter).second;
-
-  std::map<int, GEOMImpl_IBlocksOperations*>::iterator aBlocksIter = _mapOfBlocksOperations.begin();
-  for (; aBlocksIter != _mapOfBlocksOperations.end(); aBlocksIter++)
-    delete (*aBlocksIter).second;
-
-  std::map<int, GEOMImpl_IBooleanOperations*>::iterator aBooleanIter = _mapOfBooleanOperations.begin();
-  for (; aBooleanIter != _mapOfBooleanOperations.end(); aBooleanIter++)
-    delete (*aBooleanIter).second;
-
-  std::map<int, GEOMImpl_IHealingOperations*>::iterator aHealingIter = _mapOfHealingOperations.begin();
-  for (; aHealingIter != _mapOfHealingOperations.end(); aHealingIter++)
-    delete (*aHealingIter).second;
-
-  std::map<int, GEOMImpl_ICurvesOperations*>::iterator aCurvesIter = _mapOfCurvesOperations.begin();
-  for (; aCurvesIter != _mapOfCurvesOperations.end(); aCurvesIter++)
-    delete (*aCurvesIter).second;
-
-  std::map<int, GEOMImpl_ILocalOperations*>::iterator aLocalIter = _mapOfLocalOperations.begin();
-  for (; aLocalIter != _mapOfLocalOperations.end(); aLocalIter++)
-    delete (*aLocalIter).second;
-
-  std::map<int, GEOMImpl_IInsertOperations*>::iterator aInsertIter = _mapOfInsertOperations.begin();
-  for (; aInsertIter != _mapOfInsertOperations.end(); aInsertIter++)
-    delete (*aInsertIter).second;
-
-  std::map<int, GEOMImpl_IMeasureOperations*>::iterator aMeasureIter = _mapOfMeasureOperations.begin();
-  for (; aMeasureIter != _mapOfMeasureOperations.end(); aMeasureIter++)
-    delete (*aMeasureIter).second;
-
-  std::map<int, GEOMImpl_IGroupOperations*>::iterator aGroupIter = _mapOfGroupOperations.begin();
-  for (; aGroupIter != _mapOfGroupOperations.end(); aGroupIter++)
-    delete (*aGroupIter).second;
-
-  std::map<int, GEOMImpl_IFieldOperations*>::iterator aFieldIter = _mapOfFieldOperations.begin();
-  for (; aFieldIter != _mapOfFieldOperations.end(); aFieldIter++)
-    delete (*aFieldIter).second;
+  delete _BasicOperations;
+  delete _TransformOperations;
+  delete _3DPrimOperations;
+  delete _ShapesOperations;
+  delete _BlocksOperations;
+  delete _BooleanOperations;
+  delete _HealingOperations;
+  delete _CurvesOperations;
+  delete _LocalOperations;
+  delete _InsertOperations;
+  delete _MeasureOperations;
+  delete _GroupOperations;
+  delete _FieldOperations;
 }
 
 //=============================================================================
@@ -240,13 +215,9 @@ GEOMImpl_Gen::~GEOMImpl_Gen()
  * GetIBasicOperations
  */
 //=============================================================================
-GEOMImpl_IBasicOperations* GEOMImpl_Gen::GetIBasicOperations(int theDocID)
+GEOMImpl_IBasicOperations* GEOMImpl_Gen::GetIBasicOperations()
 {
-  if(_mapOfBasicOperations.find(theDocID) == _mapOfBasicOperations.end()) {
-    _mapOfBasicOperations[theDocID] = new GEOMImpl_IBasicOperations(this, theDocID);
-  }
-
-  return _mapOfBasicOperations[theDocID];
+  return _BasicOperations;
 }
 
 //=============================================================================
@@ -254,13 +225,9 @@ GEOMImpl_IBasicOperations* GEOMImpl_Gen::GetIBasicOperations(int theDocID)
  * GetITransformOperations
  */
 //=============================================================================
-GEOMImpl_ITransformOperations* GEOMImpl_Gen::GetITransformOperations(int theDocID)
+GEOMImpl_ITransformOperations* GEOMImpl_Gen::GetITransformOperations()
 {
-  if(_mapOfTransformOperations.find(theDocID) == _mapOfTransformOperations.end()) {
-    _mapOfTransformOperations[theDocID] = new GEOMImpl_ITransformOperations(this, theDocID);
-  }
-
-  return _mapOfTransformOperations[theDocID];
+  return _TransformOperations;
 }
 
 //=============================================================================
@@ -268,13 +235,9 @@ GEOMImpl_ITransformOperations* GEOMImpl_Gen::GetITransformOperations(int theDocI
  * GetIBooleanOperations
  */
 //=============================================================================
-GEOMImpl_IBooleanOperations* GEOMImpl_Gen::GetIBooleanOperations(int theDocID)
+GEOMImpl_IBooleanOperations* GEOMImpl_Gen::GetIBooleanOperations()
 {
-  if(_mapOfBooleanOperations.find(theDocID) == _mapOfBooleanOperations.end()) {
-    _mapOfBooleanOperations[theDocID] = new GEOMImpl_IBooleanOperations(this, theDocID);
-  }
-
-  return _mapOfBooleanOperations[theDocID];
+  return _BooleanOperations;
 }
 
 //=============================================================================
@@ -282,13 +245,9 @@ GEOMImpl_IBooleanOperations* GEOMImpl_Gen::GetIBooleanOperations(int theDocID)
  * GetIHealingOperations
  */
 //=============================================================================
-GEOMImpl_IHealingOperations* GEOMImpl_Gen::GetIHealingOperations(int theDocID)
+GEOMImpl_IHealingOperations* GEOMImpl_Gen::GetIHealingOperations()
 {
-  if(_mapOfHealingOperations.find(theDocID) == _mapOfHealingOperations.end()) {
-    _mapOfHealingOperations[theDocID] = new GEOMImpl_IHealingOperations(this, theDocID);
-  }
-
-  return _mapOfHealingOperations[theDocID];
+  return _HealingOperations;
 }
 
 //=============================================================================
@@ -296,13 +255,9 @@ GEOMImpl_IHealingOperations* GEOMImpl_Gen::GetIHealingOperations(int theDocID)
  * GetI3DPrimOperations
  */
 //=============================================================================
-GEOMImpl_I3DPrimOperations* GEOMImpl_Gen::GetI3DPrimOperations(int theDocID)
+GEOMImpl_I3DPrimOperations* GEOMImpl_Gen::GetI3DPrimOperations()
 {
-  if(_mapOf3DPrimOperations.find(theDocID) == _mapOf3DPrimOperations.end()) {
-    _mapOf3DPrimOperations[theDocID] = new GEOMImpl_I3DPrimOperations(this, theDocID);
-  }
-
-  return _mapOf3DPrimOperations[theDocID];
+  return _3DPrimOperations;
 }
 
 //=============================================================================
@@ -310,13 +265,9 @@ GEOMImpl_I3DPrimOperations* GEOMImpl_Gen::GetI3DPrimOperations(int theDocID)
  * GetIShapesOperations
  */
 //=============================================================================
-GEOMImpl_IShapesOperations* GEOMImpl_Gen::GetIShapesOperations(int theDocID)
+GEOMImpl_IShapesOperations* GEOMImpl_Gen::GetIShapesOperations()
 {
-  if(_mapOfShapesOperations.find(theDocID) == _mapOfShapesOperations.end()) {
-    _mapOfShapesOperations[theDocID] = new GEOMImpl_IShapesOperations(this, theDocID);
-  }
-
-  return _mapOfShapesOperations[theDocID];
+  return _ShapesOperations;
 }
 
 //=============================================================================
@@ -324,13 +275,9 @@ GEOMImpl_IShapesOperations* GEOMImpl_Gen::GetIShapesOperations(int theDocID)
  * GetIBlocksOperations
  */
 //=============================================================================
-GEOMImpl_IBlocksOperations* GEOMImpl_Gen::GetIBlocksOperations(int theDocID)
+GEOMImpl_IBlocksOperations* GEOMImpl_Gen::GetIBlocksOperations()
 {
-  if(_mapOfBlocksOperations.find(theDocID) == _mapOfBlocksOperations.end()) {
-    _mapOfBlocksOperations[theDocID] = new GEOMImpl_IBlocksOperations(this, theDocID);
-  }
-
-  return _mapOfBlocksOperations[theDocID];
+  return _BlocksOperations;
 }
 
 //=============================================================================
@@ -338,13 +285,9 @@ GEOMImpl_IBlocksOperations* GEOMImpl_Gen::GetIBlocksOperations(int theDocID)
  * GetICurvesOperations
  */
 //=============================================================================
-GEOMImpl_ICurvesOperations* GEOMImpl_Gen::GetICurvesOperations(int theDocID)
+GEOMImpl_ICurvesOperations* GEOMImpl_Gen::GetICurvesOperations()
 {
-  if(_mapOfCurvesOperations.find(theDocID) == _mapOfCurvesOperations.end()) {
-    _mapOfCurvesOperations[theDocID] = new GEOMImpl_ICurvesOperations(this, theDocID);
-  }
-
-  return _mapOfCurvesOperations[theDocID];
+  return _CurvesOperations;
 }
 
 //=============================================================================
@@ -352,13 +295,9 @@ GEOMImpl_ICurvesOperations* GEOMImpl_Gen::GetICurvesOperations(int theDocID)
  * GetILocalOperations
  */
 //=============================================================================
-GEOMImpl_ILocalOperations* GEOMImpl_Gen::GetILocalOperations(int theDocID)
+GEOMImpl_ILocalOperations* GEOMImpl_Gen::GetILocalOperations()
 {
-  if(_mapOfLocalOperations.find(theDocID) == _mapOfLocalOperations.end()) {
-    _mapOfLocalOperations[theDocID] = new GEOMImpl_ILocalOperations(this, theDocID);
-  }
-
-  return _mapOfLocalOperations[theDocID];
+  return _LocalOperations;
 }
 
 //=============================================================================
@@ -366,13 +305,9 @@ GEOMImpl_ILocalOperations* GEOMImpl_Gen::GetILocalOperations(int theDocID)
  * GetIInsertOperations
  */
 //=============================================================================
-GEOMImpl_IInsertOperations* GEOMImpl_Gen::GetIInsertOperations(int theDocID)
+GEOMImpl_IInsertOperations* GEOMImpl_Gen::GetIInsertOperations()
 {
-  if(_mapOfInsertOperations.find(theDocID) == _mapOfInsertOperations.end()) {
-    _mapOfInsertOperations[theDocID] = new GEOMImpl_IInsertOperations(this, theDocID);
-  }
-
-  return _mapOfInsertOperations[theDocID];
+  return _InsertOperations;
 }
 
 //=============================================================================
@@ -380,13 +315,9 @@ GEOMImpl_IInsertOperations* GEOMImpl_Gen::GetIInsertOperations(int theDocID)
  * GetIMeasureOperations
  */
 //=============================================================================
-GEOMImpl_IMeasureOperations* GEOMImpl_Gen::GetIMeasureOperations(int theDocID)
+GEOMImpl_IMeasureOperations* GEOMImpl_Gen::GetIMeasureOperations()
 {
-  if(_mapOfMeasureOperations.find(theDocID) == _mapOfMeasureOperations.end()) {
-    _mapOfMeasureOperations[theDocID] = new GEOMImpl_IMeasureOperations(this, theDocID);
-  }
-
-  return _mapOfMeasureOperations[theDocID];
+  return _MeasureOperations;
 }
 
 //=============================================================================
@@ -394,13 +325,9 @@ GEOMImpl_IMeasureOperations* GEOMImpl_Gen::GetIMeasureOperations(int theDocID)
  * GetIGroupOperations
  */
 //=============================================================================
-GEOMImpl_IGroupOperations* GEOMImpl_Gen::GetIGroupOperations(int theDocID)
+GEOMImpl_IGroupOperations* GEOMImpl_Gen::GetIGroupOperations()
 {
-  if(_mapOfGroupOperations.find(theDocID) == _mapOfGroupOperations.end()) {
-    _mapOfGroupOperations[theDocID] = new GEOMImpl_IGroupOperations(this, theDocID);
-  }
-
-  return _mapOfGroupOperations[theDocID];
+  return _GroupOperations;
 }
 
 //=============================================================================
@@ -408,11 +335,7 @@ GEOMImpl_IGroupOperations* GEOMImpl_Gen::GetIGroupOperations(int theDocID)
  * GetIFieldOperations
  */
 //=============================================================================
-GEOMImpl_IFieldOperations* GEOMImpl_Gen::GetIFieldOperations(int theDocID)
+GEOMImpl_IFieldOperations* GEOMImpl_Gen::GetIFieldOperations()
 {
-  if(_mapOfFieldOperations.find(theDocID) == _mapOfFieldOperations.end()) {
-    _mapOfFieldOperations[theDocID] = new GEOMImpl_IFieldOperations(this, theDocID);
-  }
-
-  return _mapOfFieldOperations[theDocID];
+  return _FieldOperations;
 }

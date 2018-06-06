@@ -385,7 +385,7 @@ void PrimitiveGUI_CylinderDlg::ValueChangedInSpinBox()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr PrimitiveGUI_CylinderDlg::createOperation()
 {
-  return getGeomEngine()->GetI3DPrimOperations(getStudyId());
+  return getGeomEngine()->GetI3DPrimOperations();
 }
 
 //=================================================================================

@@ -287,7 +287,7 @@ void MeasureGUI_GetNonBlocksDlg::enterEvent (QEvent*)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr MeasureGUI_GetNonBlocksDlg::createOperation()
 {
-  return getGeomEngine()->GetIBlocksOperations(getStudyId());
+  return getGeomEngine()->GetIBlocksOperations();
 }
 
 //=================================================================================

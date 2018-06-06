@@ -286,7 +286,7 @@ void EntityGUI_PolylineDlg::GetCurveParams(GEOM::ListOfListOfDouble &theCoords,
 //=================================================================================
 GEOM::GEOM_IOperations_ptr EntityGUI_PolylineDlg::createOperation()
 {
-  return getGeomEngine()->GetICurvesOperations( getStudyId() );
+  return getGeomEngine()->GetICurvesOperations();
 }
 
 //=================================================================================
@@ -678,7 +678,7 @@ gp_Ax3 EntityGUI_PolylineDlg::WPlaneToLCS(GEOM::GeomObjPtr theGeomObj)
 
   if (aShape.ShapeType() == TopAbs_FACE) {
     GEOM::GEOM_IMeasureOperations_ptr aMeasureOp =
-      myGeomGUI->GetGeomGen()->GetIMeasureOperations(getStudyId());
+      myGeomGUI->GetGeomGen()->GetIMeasureOperations();
     double Ox, Oy, Oz, Zx, Zy, Zz, Xx, Xy, Xz;
 
     aMeasureOp->GetPosition(theGeomObj.get(), Ox, Oy, Oz, Zx, Zy, Zz, Xx, Xy, Xz);

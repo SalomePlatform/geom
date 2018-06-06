@@ -95,9 +95,9 @@ def MakeSpanner (geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh = None):
 
   nbFaces = geompy.ShapesOp.NumberOfFaces(Prism1)
   if nbFaces == 6:
-    print "Prism 1 is a hexahedral solid"
+    print("Prism 1 is a hexahedral solid")
   else:
-    print "Prism 1 is not a hexahedral solid"
+    print("Prism 1 is not a hexahedral solid")
 
   Prism1_faces = geompy.SubShapeAllSortedCentres(Prism1, geompy.ShapeType["FACE"])
   ii = 1
@@ -287,7 +287,7 @@ def MakeSpanner (geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh = None):
         try:
           Block3h = geompy.GetBlockByParts(Handle, [Face12h, Face22h])
         except RuntimeError:
-          print "ERROR: BlocksOp.GetBlockByParts() failed : ", geompy.BlocksOp.GetErrorCode()
+          print("ERROR: BlocksOp.GetBlockByParts() failed : ", geompy.BlocksOp.GetErrorCode())
         else:
           id_block3h = geompy.addToStudyInFather(Handle, Block3h, "Block 3 of Handle")
 
@@ -301,18 +301,18 @@ def MakeSpanner (geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh = None):
 
   isCompOfBlocks6 = geompy.CheckCompoundOfBlocks(Spanner)
   if isCompOfBlocks6 == 0:
-    print "Spanner is not a compound of hexahedral solids"
+    print("Spanner is not a compound of hexahedral solids")
     (NonBlocks, NonQuads) = geompy.GetNonBlocks(Spanner)
     if NonBlocks is not None:
       geompy.addToStudyInFather(Spanner, NonBlocks, "Group of non-hexahedral solids")
     if NonQuads is not None:
       geompy.addToStudyInFather(Spanner, NonQuads, "Group of non-quadrangular faces")
   else:
-    print "Spanner is a compound of hexahedral solids"
+    print("Spanner is a compound of hexahedral solids")
 
   if isBlocksTest == 1:
 
-    print "##################### Test More #####################"
+    print("##################### Test More #####################")
 
     ### Get Blocks 4 and 5 from the spanner ###
 
@@ -345,7 +345,7 @@ def MakeSpanner (geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh = None):
         id_MRot_tr = geompy.addToStudy(MRot_tr, "Multi-rotated block 5")
 
     if isMRot2D == 0:
-      print "2D Multi Transformation failed"
+      print("2D Multi Transformation failed")
 
     ### Get one face of the Gear ###
 
@@ -358,7 +358,7 @@ def MakeSpanner (geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh = None):
     id_face_g_1 = geompy.addToStudyInFather(Gear, Face_g_1, "Face of Gear by four points")
 
     edgesNb = geompy.ShapesOp.NumberOfEdges(Face_g_1)
-    print "Face of Gear has ", edgesNb, " edges"
+    print("Face of Gear has ", edgesNb, " edges")
 
     Face_g_1_tr = geompy.MakeTranslationTwoPoints(Face_g_1, p0, pth)
     id_face_g_1_tr = geompy.addToStudyInFather(Gear, Face_g_1_tr, "Face of Gear by four points, translated")
@@ -370,7 +370,7 @@ def MakeSpanner (geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh = None):
 
   if isMeshTest == 1 and smesh is not None:
 
-    print "##################### Build Mesh #####################"
+    print("##################### Build Mesh #####################")
 
 
     # ---- add a middle block of spanner handle in study
@@ -392,76 +392,76 @@ def MakeSpanner (geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh = None):
     Id_Edge1 = geompy.addToStudyInFather(FaceTop, Edge1, "Edge 1")
     Id_Edge2 = geompy.addToStudyInFather(FaceTop, Edge2, "Edge 2")
 
-    print "-------------------------- Algorithm and Hypothesis"
+    print("-------------------------- Algorithm and Hypothesis")
 
-    print "---- Init a Mesh with the Spanner"
+    print("---- Init a Mesh with the Spanner")
 
     mesh = smesh.Mesh(Spanner, "Meshed Spanner")
 
-    print "-------------------------- add hypothesis to Spanner"
+    print("-------------------------- add hypothesis to Spanner")
 
-    print "-------------------------- NumberOfSegments"
+    print("-------------------------- NumberOfSegments")
     algoReg = mesh.Segment()
     listHyp = algoReg.GetCompatibleHypothesis()
     for hyp in listHyp:
-      print hyp
-    print algoReg.GetName()
-    print algoReg.GetId()
+      print(hyp)
+    print(algoReg.GetName())
+    print(algoReg.GetId())
     algoReg.SetName("Regular_1D")
 
 
     hypNbSeg3 = algoReg.NumberOfSegments(3)
-    print hypNbSeg3.GetName()
-    print hypNbSeg3.GetId()
-    print hypNbSeg3.GetNumberOfSegments()
+    print(hypNbSeg3.GetName())
+    print(hypNbSeg3.GetId())
+    print(hypNbSeg3.GetNumberOfSegments())
     smesh.SetName(hypNbSeg3, "NumberOfSegments_3")
 
-    print "-------------------------- Quadrangle_2D"
+    print("-------------------------- Quadrangle_2D")
 
     algoQuad = mesh.Quadrangle()
     listHyp = algoQuad.GetCompatibleHypothesis()
     for hyp in listHyp:
-        print hyp
-    print algoQuad.GetName()
-    print algoQuad.GetId()
+        print(hyp)
+    print(algoQuad.GetName())
+    print(algoQuad.GetId())
     algoQuad.SetName("Quadrangle_2D")
 
-    print "-------------------------- add hypothesis to the Middle Block"
+    print("-------------------------- add hypothesis to the Middle Block")
 
-    print "-------------------------- LocalLength"
+    print("-------------------------- LocalLength")
     algoRegMb = mesh.Segment(BlockMh)
     hypLen1 = algoRegMb.LocalLength(10)
-    print hypLen1.GetName()
-    print hypLen1.GetId()
-    print hypLen1.GetLength()
+    print(hypLen1.GetName())
+    print(hypLen1.GetId())
+    print(hypLen1.GetLength())
     smesh.SetName(hypLen1, "Local_Length_10")
 
-    print "-------------------------- add hypothesis to the long edges of the Top Face of the Middle Block"
+    print("-------------------------- add hypothesis to the long edges of the Top Face of the Middle Block")
 
     algoRegE1 = mesh.Segment(Edge1)
     hypPropE1 = algoRegE1.Propagation()
-    print hypPropE1.GetName()
-    print hypPropE1.GetId()
+    print(hypPropE1.GetName())
+    print(hypPropE1.GetId())
     smesh.SetName(hypPropE1, "Propagation hypothesis")
     smesh.SetName(algoRegE1.GetSubMesh(), "SubMesh Edge 1 of Top Face")
 
     algoRegE2 = mesh.Segment(Edge2)
     hypPropE2 = algoRegE2.Propagation()
-    print hypPropE2.GetName()
-    print hypPropE2.GetId()
+    print(hypPropE2.GetName())
+    print(hypPropE2.GetId())
     smesh.SetName(hypPropE2, "Propagation hypothesis")
     smesh.SetName(algoRegE2.GetSubMesh(), "SubMesh Edge 2 of Top Face")
 
-    print "-------------------------- compute the mesh"
+    print("-------------------------- compute the mesh")
     mesh.Compute()
 
-    print "Information about the Mesh:"
-    print "Number of nodes       : ", mesh.NbNodes()
-    print "Number of edges       : ", mesh.NbEdges()
-    print "Number of faces       : ", mesh.NbFaces()
-    print "Number of triangles   : ", mesh.NbTriangles()
-    print "Number of quadrangles : ", mesh.NbQuadrangles()
-    print "Number of volumes     : ", mesh.NbVolumes()
-    print "Number of tetrahedrons: ", mesh.NbTetras()
+    print("Information about the Mesh:")
+    print("Number of nodes       : ", mesh.NbNodes())
+    print("Number of edges       : ", mesh.NbEdges())
+    print("Number of faces       : ", mesh.NbFaces())
+    print("Number of triangles   : ", mesh.NbTriangles())
+    print("Number of quadrangles : ", mesh.NbQuadrangles())
+    print("Number of volumes     : ", mesh.NbVolumes())
+    print("Number of tetrahedrons: ", mesh.NbTetras())
 
   return Spanner

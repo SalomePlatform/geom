@@ -474,7 +474,7 @@ void RepairGUI_DivideEdgeDlg::enterEvent( QEvent* )
 //=================================================================================
 GEOM::GEOM_IOperations_ptr RepairGUI_DivideEdgeDlg::createOperation()
 {
-  return getGeomEngine()->GetIHealingOperations( getStudyId() );
+  return getGeomEngine()->GetIHealingOperations();
 }
 
 //=================================================================================

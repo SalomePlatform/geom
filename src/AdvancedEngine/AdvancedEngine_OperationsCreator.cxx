@@ -33,7 +33,7 @@
 #include "Utils_ExceptHandlers.hxx"
 #include "utilities.h"
 
-std::map <int, AdvancedEngine_IOperations*>  AdvancedEngine_OperationsCreator::_mapOfOperations;
+AdvancedEngine_IOperations* AdvancedEngine_OperationsCreator::_operation;
 
 AdvancedEngine_OperationsCreator::AdvancedEngine_OperationsCreator()
 {
@@ -51,19 +51,17 @@ AdvancedEngine_OperationsCreator::~AdvancedEngine_OperationsCreator()
 }
 
 GEOM_IOperations_i* AdvancedEngine_OperationsCreator::Create (PortableServer::POA_ptr thePOA,
-                                                              int                     theStudyId,
                                                               GEOM::GEOM_Gen_ptr      theEngine,
                                                               ::GEOMImpl_Gen*         theGenImpl)
 {
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "AdvancedEngine_OperationsCreator::Create" );
-  return new AdvancedEngine_IOperations_i( thePOA, theEngine, get( theGenImpl, theStudyId ) );
+  return new AdvancedEngine_IOperations_i( thePOA, theEngine, get( theGenImpl ) );
 }
 
-AdvancedEngine_IOperations* AdvancedEngine_OperationsCreator::get( ::GEOMImpl_Gen* theGenImpl,
-								   int             theStudyId )
+AdvancedEngine_IOperations* AdvancedEngine_OperationsCreator::get( ::GEOMImpl_Gen* theGenImpl )
 {
-  if (_mapOfOperations.find( theStudyId ) == _mapOfOperations.end() )
-    _mapOfOperations[theStudyId] = new AdvancedEngine_IOperations( theGenImpl, theStudyId );
-  return _mapOfOperations[theStudyId];
+  if( !_operation )
+    _operation = new AdvancedEngine_IOperations( theGenImpl );
+  return _operation;
 }

@@ -215,7 +215,7 @@ void OperationGUI_Fillet1d2dDlg::SelectionIntoArgument()
             GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( anObj, aName );
             
             if ( aFindedObject->_is_nil()) { // Object not found in study
-              GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
+              GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations();
               anObj = aShapesOp->GetSubShape( anObj, anIndex );
             }
             else
@@ -379,7 +379,7 @@ void OperationGUI_Fillet1d2dDlg::activateSelection()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr OperationGUI_Fillet1d2dDlg::createOperation()
 {
-  return getGeomEngine()->GetILocalOperations(getStudyId());
+  return getGeomEngine()->GetILocalOperations();
 }
 
 //=================================================================================

@@ -120,7 +120,6 @@ private:
 
   GEOM_Displayer                myDisplayer;
   SalomeApp_Application*        myApp;
-  _PTR(Study)                   myStudy;
 
 };
 

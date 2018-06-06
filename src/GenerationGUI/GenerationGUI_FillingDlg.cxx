@@ -327,7 +327,7 @@ void GenerationGUI_FillingDlg::ApproxChanged()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr GenerationGUI_FillingDlg::createOperation()
 {
-  return getGeomEngine()->GetI3DPrimOperations(getStudyId());
+  return getGeomEngine()->GetI3DPrimOperations();
 }
 
 //=================================================================================

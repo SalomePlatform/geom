@@ -29,21 +29,19 @@ import time
 
 geompy = None
 
-def demidisk(study, r1, a1, roty=0, solid_thickness=0):
+def demidisk(r1, a1, roty=0, solid_thickness=0):
   if solid_thickness < 1e-7:
     with_solid = False
   else:
     with_solid = True
-
-  #geompy = geomBuilder.New(study)
   
   O = geompy.MakeVertex(0, 0, 0)
   OX = geompy.MakeVectorDXDYDZ(1, 0, 0) 
   OY = geompy.MakeVectorDXDYDZ(0, 1, 0)
   OZ = geompy.MakeVectorDXDYDZ(0, 0, 1)
   
-  v=range(8)
-  l=range(8)
+  v=list(range(8))
+  l=list(range(8))
   v0 = geompy.MakeVertex(0, 0, 0)
   v[0] = geompy.MakeVertex(0, r1/2.0, 0)
   v[1] = geompy.MakeVertex(0, r1, 0)
@@ -101,10 +99,9 @@ def demidisk(study, r1, a1, roty=0, solid_thickness=0):
   else:
     return v, l, arc1, part1
 
-def pointsProjetes(study, vref, face):
-  #geompy = geomBuilder.New(study)
+def pointsProjetes(vref, face):
   vface = geompy.ExtractShapes(face, geompy.ShapeType["VERTEX"], True)
-  vord = range(len(vref))
+  vord = list(range(len(vref)))
   plan = geompy.MakePlaneThreePnt(vref[0], vref[1], vref[-1], 10000)
   vproj = [ geompy.MakeProjection(vert, plan) for vert in vface ]
   for i,v in enumerate(vproj):
@@ -114,10 +111,9 @@ def pointsProjetes(study, vref, face):
       vord[dist[0][1]] = vface[i]
   return vord
 
-def arcsProjetes(study, vf, face):
-  #geompy = geomBuilder.New(study)
+def arcsProjetes(vf, face):
   lface = geompy.ExtractShapes(face, geompy.ShapeType["EDGE"], True)
-  lord = range(3)
+  lord = list(range(3))
   ends = [vf[1], vf[6], vf[7], vf[3]]
   for i in range(3):
     for lf in lface:
@@ -130,12 +126,12 @@ def arcsProjetes(study, vf, face):
     pass
   return lord
  
-def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
+def build_shape(r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
   """ Builds the final shape """
 
   if progressBar is not None:
     time0 = time.time()
-    print time.time() -time0
+    print(time.time() -time0)
     
   if solid_thickness < 1e-7:
     with_solid = False
@@ -143,7 +139,7 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
     with_solid = True
   
   global geompy
-  geompy = geomBuilder.New(study)
+  geompy = geomBuilder.New()
   
   O = geompy.MakeVertex(0, 0, 0)
   OX = geompy.MakeVectorDXDYDZ(1, 0, 0) 
@@ -157,17 +153,17 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
     a1 = 45.0*(1.0 -ratio)/seuilmax
 
   # --- Creation of the jonction faces
-  [faci, sect45, arc1, l1, lord90, lord45, edges, arcextru] = jonction(study, r1, r2,\
+  [faci, sect45, arc1, l1, lord90, lord45, edges, arcextru] = jonction(r1, r2,\
                                                                        h1, h2, a1)
   if progressBar is not None:
     progressBar.addSteps(2)
-    print time.time() -time0
+    print(time.time() -time0)
     
   if with_solid:
     # The same code is executed again with different external radiuses in order
     # to get the needed faces and edges to build the solid layer of the pipe
     [faci_ext, sect45_ext, arc1_ext, l1_ext, \
-     lord90_ext, lord45_ext, edges_ext, arcextru_ext] = jonction(study, r1 + solid_thickness, r2 + solid_thickness,\
+     lord90_ext, lord45_ext, edges_ext, arcextru_ext] = jonction(r1 + solid_thickness, r2 + solid_thickness,\
                                                                  h1, h2, a1)
     faces_jonction_ext = []
     for i,l in enumerate(lord90):
@@ -179,7 +175,7 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
    
   if progressBar is not None:
     progressBar.addSteps(4)
-    print time.time() -time0
+    print(time.time() -time0)
     
   # --- extrusion droite des faces de jonction, pour reconstituer les demi cylindres
   if with_solid:    
@@ -188,7 +184,7 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
     
   if progressBar is not None:
     progressBar.addSteps(1)
-    print time.time() -time0
+    print(time.time() -time0)
     
   extru1 = geompy.MakePrismVecH(sect45, OX, h1+10)
 
@@ -200,7 +196,7 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
 
   if progressBar is not None:
     progressBar.addSteps(1)
-    print time.time() -time0
+    print(time.time() -time0)
     
   # --- partition et coupe
 
@@ -212,7 +208,7 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
 
   if progressBar is not None:
     progressBar.addSteps(1)
-    print time.time() -time0
+    print(time.time() -time0)
     
   box = geompy.MakeBox(0, -2*(r1+h1), -2*(r1+h1), 2*(r1+h1), 2*(r1+h1), 2*(r1+h1))
   rot = geompy.MakeRotation(box, OY, 45*math.pi/180.0)
@@ -222,7 +218,7 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
   
   if progressBar is not None:
     progressBar.addSteps(9)
-    print time.time() -time0
+    print(time.time() -time0)
 
   faces_coupe = faci[:5]
   if with_solid:
@@ -233,7 +229,7 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
 
   if progressBar is not None:
     progressBar.addSteps(3)
-    print time.time() -time0
+    print(time.time() -time0)
 
   box = geompy.MakeBox(-1, -(r1+r2+2*solid_thickness), -1, h1, r1+r2+2*solid_thickness, h2)
   
@@ -242,11 +238,11 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
   
   if progressBar is not None:
     progressBar.addSteps(5)
-    print time.time() -time0
+    print(time.time() -time0)
     
   # --- Partie inférieure
   
-  v3, l3, arc3, part3 = demidisk(study, r1, a1, 180.0, solid_thickness)
+  v3, l3, arc3, part3 = demidisk(r1, a1, 180.0, solid_thickness)
   extru3 = geompy.MakePrismVecH(part3, OX, h1)
 
   # --- Symétrie
@@ -259,16 +255,15 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
 
   if progressBar is not None:
     progressBar.addSteps(1)
-    print time.time() -time0
+    print(time.time() -time0)
       
   return final
 
 
-def jonction(study, r1, r2, h1, h2, a1):
+def jonction(r1, r2, h1, h2, a1):
   """ Builds the jonction faces and
   returns what is needed to build the whole pipe
   """
-  #geompy = geomBuilder.New(study)
   
   O = geompy.MakeVertex(0, 0, 0)
   OX = geompy.MakeVectorDXDYDZ(1, 0, 0) 
@@ -276,8 +271,8 @@ def jonction(study, r1, r2, h1, h2, a1):
   OZ = geompy.MakeVectorDXDYDZ(0, 0, 1)
   
   # --- sections droites des deux demi cylindres avec le partionnement
-  v1, l1, arc1, part1 = demidisk(study, r1, a1, 0.)
-  v2, l2, arc2, part2 = demidisk(study, r2, a1, 90.0)
+  v1, l1, arc1, part1 = demidisk(r1, a1, 0.)
+  v2, l2, arc2, part2 = demidisk(r2, a1, 90.0)
  
   # --- extrusion des sections --> demi cylindres de travail, pour en extraire les sections utilisées au niveau du Té
   #     et enveloppe cylindrique du cylindre principal
@@ -299,13 +294,13 @@ def jonction(study, r1, r2, h1, h2, a1):
 
   # --- liste ordonnée des points projetés sur les deux sections
 
-  vord45 = pointsProjetes(study, v1, sect45)
-  vord90 = pointsProjetes(study, v2, sect90)
+  vord45 = pointsProjetes(v1, sect45)
+  vord90 = pointsProjetes(v2, sect90)
 
   # --- identification des projections des trois arcs de cercle, sur les deux sections.
   
-  lord45 = arcsProjetes(study, vord45, sect45)
-  lord90 = arcsProjetes(study, vord90, sect90)
+  lord45 = arcsProjetes(vord45, sect45)
+  lord90 = arcsProjetes(vord90, sect90)
  
   # --- abaissement des quatre points centraux de la section du cylindre secondaire
   
@@ -390,19 +385,18 @@ def jonction(study, r1, r2, h1, h2, a1):
 def test_t_shape_builder():
   """For testing purpose"""
   salome.salome_init()
-  theStudy = salome.myStudy
-  geompy = geomBuilder.New(theStudy)
+  geompy = geomBuilder.New()
   for r1 in [1., 100.]:
     for r2 in [0.9*r1, 0.5*r1, 0.1*r1, 0.05*r1]:
       for thickness in [r1/100., r1/10., r1/2.]:
-        print r1, r2, thickness
+        print(r1, r2, thickness)
         h1 = r1 * 2.0
         h2 = h1
         try:
-          res = build_shape(theStudy, r1, r2, h1, h2, thickness)
+          res = build_shape(r1, r2, h1, h2, thickness)
           geompy.addToStudy(res, "res_%f_%f_%f"%(r1,r2, thickness))
         except:
-          print "problem with res_%f_%f_%f"%(r1,r2, thickness)
+          print("problem with res_%f_%f_%f"%(r1,r2, thickness))
   
 if __name__=="__main__":
   """For testing purpose"""

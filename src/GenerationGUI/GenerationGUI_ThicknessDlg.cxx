@@ -376,7 +376,7 @@ void GenerationGUI_ThicknessDlg::ValueChangedInSpinBox()
 //==============================================================================
 GEOM::GEOM_IOperations_ptr GenerationGUI_ThicknessDlg::createOperation()
 {
-  return getGeomEngine()->GetI3DPrimOperations(getStudyId());
+  return getGeomEngine()->GetI3DPrimOperations();
 }
 
 //==============================================================================

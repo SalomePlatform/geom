@@ -45,12 +45,11 @@ IGESPlugin_IECallBack::~IGESPlugin_IECallBack()
  *  Export
  */
 //=============================================================================
-bool IGESPlugin_IECallBack::Export( int                            theDocId,
-				    const Handle(GEOM_Object)      theOriginal,
-				    const TCollection_AsciiString& theFileName,
-				    const TCollection_AsciiString& theFormatName )
+bool IGESPlugin_IECallBack::Export( const Handle(GEOM_Object)      theOriginal,
+                                    const TCollection_AsciiString& theFileName,
+                                    const TCollection_AsciiString& theFormatName )
 {
-  IGESPlugin_IOperations* aPluginOperations = IGESPlugin_OperationsCreator::get( GetEngine(), theDocId );
+  IGESPlugin_IOperations* aPluginOperations = IGESPlugin_OperationsCreator::get( GetEngine() );
   TCollection_AsciiString aVersion = ( theFormatName == "IGES_5_3" ) ? "5.3" : "5.1";
   aPluginOperations->ExportIGES( theOriginal, theFileName, aVersion );
   return true;
@@ -62,11 +61,10 @@ bool IGESPlugin_IECallBack::Export( int                            theDocId,
  */
 //=============================================================================
 Handle(TColStd_HSequenceOfTransient)
-IGESPlugin_IECallBack::Import( int                            theDocId,
-			       const TCollection_AsciiString& theFormatName,
-			       const TCollection_AsciiString& theFileName )
+IGESPlugin_IECallBack::Import( const TCollection_AsciiString& theFormatName,
+                               const TCollection_AsciiString& theFileName )
 {
-  IGESPlugin_IOperations* aPluginOperations = IGESPlugin_OperationsCreator::get( GetEngine(), theDocId );
+  IGESPlugin_IOperations* aPluginOperations = IGESPlugin_OperationsCreator::get( GetEngine() );
   bool anIsIgnoreUnits = ( theFormatName == "IGES_SCALE" ) ? true : false;
   return aPluginOperations->ImportIGES( theFileName, anIsIgnoreUnits );
 }
@@ -77,11 +75,10 @@ IGESPlugin_IECallBack::Import( int                            theDocId,
  */
 //=============================================================================
 TCollection_AsciiString
-IGESPlugin_IECallBack::ReadValue( int                            theDocId,
-				  const TCollection_AsciiString& theFileName,
-				  const TCollection_AsciiString& theFormatName,
-				  const TCollection_AsciiString& theParameterName )
+IGESPlugin_IECallBack::ReadValue( const TCollection_AsciiString& theFileName,
+                                  const TCollection_AsciiString& theFormatName,
+                                  const TCollection_AsciiString& theParameterName )
 {
-  IGESPlugin_IOperations* aPluginOperations = IGESPlugin_OperationsCreator::get( GetEngine(), theDocId );
+  IGESPlugin_IOperations* aPluginOperations = IGESPlugin_OperationsCreator::get( GetEngine() );
   return aPluginOperations->ReadValue( theFileName, theParameterName );
 }

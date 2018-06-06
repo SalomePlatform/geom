@@ -178,7 +178,7 @@ char* GEOM_Object_i::GetSubShapeName(CORBA::Long subID)
   {
     TCollection_AsciiString anEntry = anIt.Value();
     Handle(::GEOM_BaseObject) anObj =
-      GEOM_Engine::GetEngine()->GetObject( _impl->GetDocID(), anEntry.ToCString(), false );
+      GEOM_Engine::GetEngine()->GetObject( anEntry.ToCString(), false );
     if ( anObj.IsNull() ) continue;
 
     TCollection_AsciiString aSubName = anObj->GetName();
@@ -395,7 +395,7 @@ GEOM::GEOM_Object_ptr GEOM_Object_i::GetMainShape()
     TCollection_AsciiString anEntry;
     TDF_Tool::Entry(aLabel, anEntry);
     return GEOM::GEOM_Object::_narrow
-      ( _engine->GetObject(_impl->GetDocID(), anEntry.ToCString()) );
+      ( _engine->GetObject( anEntry.ToCString()) );
   }
 
   return obj._retn();
@@ -414,7 +414,7 @@ bool GEOM_Object_i::IsSame(GEOM::GEOM_BaseObject_ptr other)
   if ( !CORBA::is_nil( shapePtr ) ) {
     CORBA::String_var entry = shapePtr->GetEntry();
     Handle(::GEOM_Object) otherObject = Handle(::GEOM_Object)::DownCast
-      ( GEOM_Engine::GetEngine()->GetObject( shapePtr->GetStudyID(), entry, false ));
+      ( GEOM_Engine::GetEngine()->GetObject( entry, false ));
     if ( !otherObject.IsNull() ) {
       TopoDS_Shape thisShape  = _impl->GetValue();
       TopoDS_Shape otherShape = otherObject->GetValue();

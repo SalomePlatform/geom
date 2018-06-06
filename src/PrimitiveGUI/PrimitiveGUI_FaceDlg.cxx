@@ -409,7 +409,7 @@ void PrimitiveGUI_FaceDlg::enterEvent( QEvent* )
 //=================================================================================
 GEOM::GEOM_IOperations_ptr PrimitiveGUI_FaceDlg::createOperation()
 {
-  return myGeomGUI->GetGeomGen()->GetI3DPrimOperations( getStudyId() );
+  return myGeomGUI->GetGeomGen()->GetI3DPrimOperations();
 }
 
 //=================================================================================

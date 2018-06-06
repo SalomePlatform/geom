@@ -35,13 +35,13 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 geomgui = salome.ImportComponentGUI("GEOM") 
 import salome_ComponentGUI
 def addToStudy(shape, name):
     i = geompy.addToStudy(shape, name)
-    salome.sg.updateObjBrowser(False)
+    salome.sg.updateObjBrowser()
     if not isinstance(geomgui, type(salome_ComponentGUI)):
         geomgui.createAndDisplayGO(i)
     return i

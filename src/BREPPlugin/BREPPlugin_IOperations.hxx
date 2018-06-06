@@ -30,7 +30,7 @@
 class BREPPLUGINENGINE_EXPORT BREPPlugin_IOperations: public GEOMImpl_IBaseIEOperations
 {
 public:
-  BREPPlugin_IOperations( GEOM_Engine*, int );
+  BREPPlugin_IOperations( GEOM_Engine* );
   ~BREPPlugin_IOperations();
 
   void ExportBREP( const Handle(GEOM_Object),

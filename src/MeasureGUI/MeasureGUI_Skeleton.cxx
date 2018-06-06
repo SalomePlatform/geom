@@ -363,7 +363,7 @@ bool MeasureGUI_Skeleton::isValid( QString& )
 GEOM_Displayer* MeasureGUI_Skeleton::getDisplayer()
 {
   if ( !myDisplayer )
-    myDisplayer = new GEOM_Displayer( getStudy() );
+    myDisplayer = new GEOM_Displayer();
   return myDisplayer;
 }
 
@@ -373,7 +373,7 @@ GEOM_Displayer* MeasureGUI_Skeleton::getDisplayer()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr MeasureGUI_Skeleton::createOperation()
 {
-  return getGeomEngine()->GetIMeasureOperations( getStudyId() );
+  return getGeomEngine()->GetIMeasureOperations();
 }
 
 //=================================================================================

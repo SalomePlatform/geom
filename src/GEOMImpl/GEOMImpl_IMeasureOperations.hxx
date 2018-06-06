@@ -41,7 +41,7 @@ class GEOM_Object;
 
 class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
  public:
-  Standard_EXPORT GEOMImpl_IMeasureOperations(GEOM_Engine* theEngine, int theDocID);
+  Standard_EXPORT GEOMImpl_IMeasureOperations(GEOM_Engine* theEngine);
   Standard_EXPORT ~GEOMImpl_IMeasureOperations();
 
   enum ShapeKind {

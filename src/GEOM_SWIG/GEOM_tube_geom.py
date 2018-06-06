@@ -34,7 +34,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 #
 # base de l'assemblage
@@ -159,7 +159,7 @@ weldId = geompy.addToStudy(weld,"weld")
 #
 assemblage = geompy.Partition([base ,weld ,trav])
 assemblageId = geompy.addToStudy(assemblage, "assemblage")
-salome.sg.updateObjBrowser(True)
+salome.sg.updateObjBrowser()
 #
 # Display
 #

@@ -526,7 +526,7 @@ void GenerationGUI_PrismDlg::ValueChangedInSpinBox()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr GenerationGUI_PrismDlg::createOperation()
 {
-  return getGeomEngine()->GetI3DPrimOperations(getStudyId());
+  return getGeomEngine()->GetI3DPrimOperations();
 }
 
 //=================================================================================

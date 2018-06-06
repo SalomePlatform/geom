@@ -1200,7 +1200,7 @@ bool OperationGUI_ExtractionDlg::isValid(QString &)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr OperationGUI_ExtractionDlg::createOperation()
 {
-  return getGeomEngine()->GetIShapesOperations(getStudyId());
+  return getGeomEngine()->GetIShapesOperations();
 }
 
 //=================================================================================

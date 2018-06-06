@@ -249,7 +249,7 @@ void RepairGUI_ChangeOrientationDlg::enterEvent( QEvent* )
 //=================================================================================
 GEOM::GEOM_IOperations_ptr RepairGUI_ChangeOrientationDlg::createOperation()
 {
-  return getGeomEngine()->GetIHealingOperations( getStudyId() );
+  return getGeomEngine()->GetIHealingOperations();
 }
 
 

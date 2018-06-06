@@ -509,7 +509,7 @@ void GroupGUI_GroupDlg::onGetInPlace()
       SUIT_OverrideCursor wc;
       myEditCurrentArgument->setText(GEOMBase::GetName(anObj));
       GEOM::GEOM_IShapesOperations_var aShapesOp =
-        getGeomEngine()->GetIShapesOperations(getStudyId());
+        getGeomEngine()->GetIShapesOperations();
       if (subSelectionWay() == GET_IN_PLACE) {
         GEOM::GEOM_Object_var aGetInPlaceObj = aShapesOp->GetInPlace(myMainObj, anObj);
         setInPlaceObj(aGetInPlaceObj);
@@ -542,8 +542,8 @@ void GroupGUI_GroupDlg::setInPlaceObj(GEOM::GEOM_Object_var theObj, const bool i
   // build map of indices
   myMain2InPlaceIndices.Clear();
   if (!myInPlaceObj->_is_nil()) {
-    GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
-    GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations(getStudyId());
+    GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations();
+    GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations();
 
     GEOM::ListOfGO_var aSubObjects = aShapesOp->MakeExplode(myInPlaceObj, getShapeType(), false);
     for ( int i = 0; i < aSubObjects->length(); i++ )
@@ -696,7 +696,7 @@ void GroupGUI_GroupDlg::selectAllSubShapes()
     return;
 
   GEOM::ListOfLong_var aSubShapes;
-  GEOM::GEOM_IShapesOperations_var aShOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+  GEOM::GEOM_IShapesOperations_var aShOp = getGeomEngine()->GetIShapesOperations();
   aSubShapes = aShOp->SubShapeAllIDs(myMainObj, getShapeType(), false);
   if (aSubShapes->length() > 0) {
     if (subSelectionWay() == ALL_SUBSHAPES)
@@ -1171,7 +1171,7 @@ void GroupGUI_GroupDlg::updateState (bool isAdd)
                           myIsShapeType &&
                           getShapeType() != TopAbs_VERTEX);
   // manage of 'Plot' button access
-  GEOM::GEOM_IShapesOperations_var aShOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
+  GEOM::GEOM_IShapesOperations_var aShOp = getGeomEngine()->GetIShapesOperations();
   GEOM::ListOfLong_var aSubShapes = aShOp->SubShapeAllIDs( myMainObj, getShapeType(), false );
   bool hasCurrentEntities = aSubShapes->length() > 0;
 #ifndef DISABLE_PLOT2DVIEWER
@@ -1252,7 +1252,7 @@ void GroupGUI_GroupDlg::highlightSubShapes()
   SALOME_ListIO aSelList;
 
   // To highlight the selected sub-shape in Object Browser, if it's already published under the main shape
-  GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations(getStudyId());
+  GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations();
   QMap<int, QString> childsMap;
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
   if (appStudy) {
@@ -1311,7 +1311,7 @@ void GroupGUI_GroupDlg::highlightSubShapes()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr GroupGUI_GroupDlg::createOperation()
 {
-  return getGeomEngine()->GetIGroupOperations(getStudyId());
+  return getGeomEngine()->GetIGroupOperations();
 }
 
 #define RETURN_WITH_MSG(a, b) \

@@ -450,7 +450,7 @@ void TransformationGUI_TranslationDlg::ValueChangedInSpinBox()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr TransformationGUI_TranslationDlg::createOperation()
 {
-  return getGeomEngine()->GetITransformOperations(getStudyId());
+  return getGeomEngine()->GetITransformOperations();
 }
 
 //=================================================================================
@@ -604,8 +604,7 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
 // function : restoreSubShapes
 // purpose  :
 //=================================================================================
-void TransformationGUI_TranslationDlg::restoreSubShapes (SALOMEDS::Study_ptr   theStudy,
-                                                         SALOMEDS::SObject_ptr theSObject)
+void TransformationGUI_TranslationDlg::restoreSubShapes (SALOMEDS::SObject_ptr theSObject)
 {
   if (mainFrame()->CheckBoxRestoreSS->isChecked()) {
     // we pass here the first operation argument (object) through the list of arguments
@@ -614,7 +613,7 @@ void TransformationGUI_TranslationDlg::restoreSubShapes (SALOMEDS::Study_ptr   t
     GEOM::ListOfGO_var anArgs = new GEOM::ListOfGO;
     anArgs->length(1);
     anArgs[0] = myCurrObject.copy();
-    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, anArgs,
+    getGeomEngine()->RestoreSubShapesSO(theSObject, anArgs,
                                         /*theFindMethod=*/GEOM::FSM_Transformed,
                                         /*theInheritFirstArg=*/true,
                                         mainFrame()->CheckBoxAddPrefix->isChecked());

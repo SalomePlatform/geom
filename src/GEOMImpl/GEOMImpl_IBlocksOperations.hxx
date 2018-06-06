@@ -36,7 +36,7 @@ class GEOM_Object;
 
 class GEOMImpl_IBlocksOperations : public GEOM_IOperations {
  public:
-  Standard_EXPORT GEOMImpl_IBlocksOperations(GEOM_Engine* theEngine, int theDocID);
+  Standard_EXPORT GEOMImpl_IBlocksOperations(GEOM_Engine* theEngine);
   Standard_EXPORT ~GEOMImpl_IBlocksOperations();
 
   // Creation of blocks and block faces

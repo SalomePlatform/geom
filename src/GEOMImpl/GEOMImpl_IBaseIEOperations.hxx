@@ -33,7 +33,7 @@ class GEOMImpl_IShapesOperations;
 class GEOMImpl_IBaseIEOperations : public GEOM_IOperations
 {
 public:
-  Standard_EXPORT GEOMImpl_IBaseIEOperations(GEOM_Engine* theEngine, int theDocID);
+  Standard_EXPORT GEOMImpl_IBaseIEOperations(GEOM_Engine* theEngine);
   Standard_EXPORT ~GEOMImpl_IBaseIEOperations();
   
 protected:

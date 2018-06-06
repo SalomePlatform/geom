@@ -50,8 +50,7 @@ void DependencyTree_Selector::getSelection( SUIT_DataOwnerPtrList& theList ) con
     if( DependencyTree_Object* treeObject = dynamic_cast<DependencyTree_Object*>( myView->selectedObject() ) ) {
       QString studyEntry;
       QString name;
-      GEOM::GEOM_BaseObject_var anObj = GeometryGUI::GetGeomGen()->GetObject( myView->getStudyId(),
-                                                                              treeObject->getEntry().c_str() );
+      GEOM::GEOM_BaseObject_var anObj = GeometryGUI::GetGeomGen()->GetObject( treeObject->getEntry().c_str() );
       if( anObj->_is_nil() )
         continue;
 	  CORBA::String_var studyEntryVar = anObj->GetStudyEntry();

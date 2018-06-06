@@ -335,7 +335,7 @@ void BasicGUI_WorkingPlaneDlg::SelectionIntoArgument()
           aName = aName + ":edge_" + QString::number( anIndex );
 
           GEOM::GEOM_IShapesOperations_var aShapesOp =
-            getGeomEngine()->GetIShapesOperations( getStudyId() );
+            getGeomEngine()->GetIShapesOperations();
           if ( myEditCurrentArgument == Group2->LineEdit1 )
             myVectX = aShapesOp->GetSubShape( aSelectedObject, anIndex );
           else
@@ -489,7 +489,7 @@ bool BasicGUI_WorkingPlaneDlg::updateWPlane( const bool showPreview )
     Zz = Xx = 1.;
 
     GEOM::GEOM_IMeasureOperations_ptr aMeasureOp =
-      myGeomGUI->GetGeomGen()->GetIMeasureOperations( getStudyId() );
+      myGeomGUI->GetGeomGen()->GetIMeasureOperations();
     aMeasureOp->GetPosition( myFace, Ox, Oy, Oz, Zx, Zy, Zz, Xx, Xy, Xz);
 
     if ( aMeasureOp->IsDone() ) {
@@ -582,7 +582,7 @@ bool BasicGUI_WorkingPlaneDlg::updateWPlane( const bool showPreview )
   }
 
   if ( showPreview ) {
-    GEOM::GEOM_IBasicOperations_var aBasicOp = getGeomEngine()->GetIBasicOperations( getStudyId() );
+    GEOM::GEOM_IBasicOperations_var aBasicOp = getGeomEngine()->GetIBasicOperations();
     GEOM::GEOM_Object_var anObj = aBasicOp->MakeMarker
       ( myWPlane.Location().X(),   myWPlane.Location().Y(),   myWPlane.Location().Z(),
         myWPlane.XDirection().X(), myWPlane.XDirection().Y(), myWPlane.XDirection().Z(),

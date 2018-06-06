@@ -24,7 +24,7 @@ from GEOM import ISTLOperations
 __libraryName__ = "STLPluginEngine"
 
 def GetSTLPluginOperations(self):
-    anOp = self.GetPluginOperations(self.myStudyId, __libraryName__)
+    anOp = self.GetPluginOperations(__libraryName__)
     return anOp._narrow(ISTLOperations)
 
 ## Export the given shape into a file with given name in STL format.
@@ -52,7 +52,7 @@ def ExportSTL(self, theObject, theFileName, theIsASCII = True, theDeflection = 0
     anOp = GetSTLPluginOperations(self)
     anOp.ExportSTL(theObject, theFileName, theIsASCII, theDeflection, theIsRelative )
     if anOp.IsDone() == 0:
-        raise RuntimeError,  "Export : " + anOp.GetErrorCode()
+        raise RuntimeError("Export : " + anOp.GetErrorCode())
         pass
     pass
 

@@ -56,8 +56,7 @@ GEOMImpl_Gen* GEOMImpl_IECallBack::GetEngine()
  *  Export
  */
 //=============================================================================
-bool GEOMImpl_IECallBack::Export( int                            /*theDocId*/,
-				  const Handle(GEOM_Object)      /*theOriginal*/,
+bool GEOMImpl_IECallBack::Export( const Handle(GEOM_Object)      /*theOriginal*/,
                                   const TCollection_AsciiString& /*theFileName*/,
                                   const TCollection_AsciiString& /*theFormatName*/ )
 {
@@ -70,8 +69,7 @@ bool GEOMImpl_IECallBack::Export( int                            /*theDocId*/,
  */
 //=============================================================================
 Handle(TColStd_HSequenceOfTransient)
-GEOMImpl_IECallBack::Import( int                            /*theDocId*/,
-			     const TCollection_AsciiString& /*theFormatName*/,
+GEOMImpl_IECallBack::Import( const TCollection_AsciiString& /*theFormatName*/,
                              const TCollection_AsciiString& /*theFileName*/ )
 {
   return NULL;
@@ -83,8 +81,7 @@ GEOMImpl_IECallBack::Import( int                            /*theDocId*/,
  */
 //=============================================================================
 TCollection_AsciiString
-GEOMImpl_IECallBack::ReadValue( int                            /*theDocId*/,
-				const TCollection_AsciiString& /*theFileName*/,
+GEOMImpl_IECallBack::ReadValue( const TCollection_AsciiString& /*theFileName*/,
                                 const TCollection_AsciiString& /*theFormatName*/,
                                 const TCollection_AsciiString& /*theParameterName*/ )
 {

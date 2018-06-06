@@ -48,47 +48,47 @@ class GEOMIMPL_EXPORT GEOMImpl_Gen : public GEOM_Engine
   GEOMImpl_Gen();
   ~GEOMImpl_Gen();
 
-  GEOMImpl_IBasicOperations* GetIBasicOperations(int theDocID);
+  GEOMImpl_IBasicOperations* GetIBasicOperations();
 
-  GEOMImpl_ITransformOperations* GetITransformOperations(int theDocID);
+  GEOMImpl_ITransformOperations* GetITransformOperations();
 
-  GEOMImpl_I3DPrimOperations* GetI3DPrimOperations(int theDocID);
+  GEOMImpl_I3DPrimOperations* GetI3DPrimOperations();
 
-  GEOMImpl_IShapesOperations* GetIShapesOperations(int theDocID);
+  GEOMImpl_IShapesOperations* GetIShapesOperations();
 
-  GEOMImpl_IBlocksOperations* GetIBlocksOperations(int theDocID);
+  GEOMImpl_IBlocksOperations* GetIBlocksOperations();
 
-  GEOMImpl_IMeasureOperations* GetIMeasureOperations(int theDocID);
+  GEOMImpl_IMeasureOperations* GetIMeasureOperations();
 
-  GEOMImpl_IBooleanOperations* GetIBooleanOperations(int theDocID);
+  GEOMImpl_IBooleanOperations* GetIBooleanOperations();
 
-  GEOMImpl_ICurvesOperations* GetICurvesOperations(int theDocID);
+  GEOMImpl_ICurvesOperations* GetICurvesOperations();
 
-  GEOMImpl_ILocalOperations* GetILocalOperations(int theDocID);
+  GEOMImpl_ILocalOperations* GetILocalOperations();
 
-  GEOMImpl_IInsertOperations* GetIInsertOperations(int theDocID);
+  GEOMImpl_IInsertOperations* GetIInsertOperations();
 
-  GEOMImpl_IHealingOperations* GetIHealingOperations(int theDocID);
+  GEOMImpl_IHealingOperations* GetIHealingOperations();
 
-  GEOMImpl_IGroupOperations* GetIGroupOperations(int theDocID);
+  GEOMImpl_IGroupOperations* GetIGroupOperations();
 
-  GEOMImpl_IFieldOperations* GetIFieldOperations(int theDocID);
+  GEOMImpl_IFieldOperations* GetIFieldOperations();
 
  private:
 
-  std::map <int, GEOMImpl_IBasicOperations*>     _mapOfBasicOperations;
-  std::map <int, GEOMImpl_ITransformOperations*> _mapOfTransformOperations;
-  std::map <int, GEOMImpl_I3DPrimOperations*>    _mapOf3DPrimOperations;
-  std::map <int, GEOMImpl_IShapesOperations*>    _mapOfShapesOperations;
-  std::map <int, GEOMImpl_IBlocksOperations*>    _mapOfBlocksOperations;
-  std::map <int, GEOMImpl_IBooleanOperations*>   _mapOfBooleanOperations;
-  std::map <int, GEOMImpl_IHealingOperations*>   _mapOfHealingOperations;
-  std::map <int, GEOMImpl_ICurvesOperations*>    _mapOfCurvesOperations;
-  std::map <int, GEOMImpl_ILocalOperations*>     _mapOfLocalOperations;
-  std::map <int, GEOMImpl_IInsertOperations*>    _mapOfInsertOperations;
-  std::map <int, GEOMImpl_IMeasureOperations*>   _mapOfMeasureOperations;
-  std::map <int, GEOMImpl_IGroupOperations*>     _mapOfGroupOperations;
-  std::map <int, GEOMImpl_IFieldOperations*>     _mapOfFieldOperations;
+  GEOMImpl_IBasicOperations*     _BasicOperations;
+  GEOMImpl_ITransformOperations* _TransformOperations;
+  GEOMImpl_I3DPrimOperations*    _3DPrimOperations;
+  GEOMImpl_IShapesOperations*    _ShapesOperations;
+  GEOMImpl_IBlocksOperations*    _BlocksOperations;
+  GEOMImpl_IBooleanOperations*   _BooleanOperations;
+  GEOMImpl_IHealingOperations*   _HealingOperations;
+  GEOMImpl_ICurvesOperations*    _CurvesOperations;
+  GEOMImpl_ILocalOperations*     _LocalOperations;
+  GEOMImpl_IInsertOperations*    _InsertOperations;
+  GEOMImpl_IMeasureOperations*   _MeasureOperations;
+  GEOMImpl_IGroupOperations*     _GroupOperations;
+  GEOMImpl_IFieldOperations*     _FieldOperations;
 };
 
 #endif

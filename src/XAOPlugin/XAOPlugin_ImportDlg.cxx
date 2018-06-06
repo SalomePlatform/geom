@@ -235,7 +235,7 @@ void XAOPlugin_ImportDlg::enterEvent(QEvent*)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr XAOPlugin_ImportDlg::createOperation()
 {
-  return getGeomEngine()->GetPluginOperations( getStudyId(), "XAOPluginEngine" );
+  return getGeomEngine()->GetPluginOperations( "XAOPluginEngine" );
 }
 
 //=================================================================================
@@ -315,10 +315,8 @@ QString XAOPlugin_ImportDlg::addFieldInStudy( GEOM::GEOM_Field_ptr theField, GEO
   if ( !aStudy || theField->_is_nil() )
     return QString();
 
-  SALOMEDS::Study_var aStudyDS = GeometryGUI::ClientStudyToStudy(aStudy);
-
   SALOMEDS::SObject_var aSO =
-    getGeomEngine()->AddInStudy(aStudyDS, theField, theField->GetName(), theFather);
+    getGeomEngine()->AddInStudy(theField, theField->GetName(), theFather);
   theField->UnRegister();
 
   QString anEntry;
@@ -334,7 +332,7 @@ QString XAOPlugin_ImportDlg::addFieldInStudy( GEOM::GEOM_Field_ptr theField, GEO
     GEOM::GEOM_FieldStep_ptr step = theField->GetStep(steps[i]);
     QString stepName = (tr("XAOPLUGIN_STEP") + " %1 %2").arg( step->GetID() ).arg( step->GetStamp() );
     SALOMEDS::SObject_wrap aSOField =
-      getGeomEngine()->AddInStudy( aStudyDS, step, stepName.toLatin1().constData(), theField );
+      getGeomEngine()->AddInStudy( step, stepName.toLatin1().constData(), theField );
     step->UnRegister();
   }
 
@@ -348,7 +346,7 @@ GEOM::GEOM_Object_ptr XAOPlugin_ImportDlg::getFather(GEOM::GEOM_Object_ptr objec
   GEOM::GEOM_Object_var fatherObj;
   if (object->GetType() != GEOM_IMPORT && m_mainShape != NULL)
   {
-    //GEOM::GEOM_IGroupOperations_var groupOper = getGeomEngine()->GetIGroupOperations(getStudyId());
+    //GEOM::GEOM_IGroupOperations_var groupOper = getGeomEngine()->GetIGroupOperations();
     //fatherObj = groupOper->GetMainShape(object);
     fatherObj = m_mainShape;
   }

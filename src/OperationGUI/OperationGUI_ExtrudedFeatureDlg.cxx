@@ -340,7 +340,7 @@ void OperationGUI_ExtrudedFeatureDlg::ButtonClicked(bool checked)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr OperationGUI_ExtrudedFeatureDlg::createOperation()
 {
-  return getGeomEngine()->GetI3DPrimOperations(getStudyId());
+  return getGeomEngine()->GetI3DPrimOperations();
 }
 
 //=================================================================================

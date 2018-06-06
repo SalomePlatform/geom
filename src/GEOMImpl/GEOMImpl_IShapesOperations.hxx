@@ -78,7 +78,7 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
     std::list<Standard_Integer> indices; ///< Shape indices touched by this type of modification.
   };
 
-  Standard_EXPORT GEOMImpl_IShapesOperations(GEOM_Engine* theEngine, int theDocID);
+  Standard_EXPORT GEOMImpl_IShapesOperations(GEOM_Engine* theEngine);
   Standard_EXPORT ~GEOMImpl_IShapesOperations();
 
   Standard_EXPORT Handle(GEOM_Object) MakeEdge (Handle(GEOM_Object) thePoint1,

@@ -4,7 +4,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 gg = salome.ImportComponentGUI("GEOM")
 
 # create two vertices
@@ -26,4 +26,4 @@ id_group1 = geompy.addToStudy(group, "Group1")
 
 # display the contents of the group
 gg.createAndDisplayGO(id_group1)
-salome.sg.updateObjBrowser(True) 
+salome.sg.updateObjBrowser() 

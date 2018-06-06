@@ -4,7 +4,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 # Create two curves with three closest points
 Vertex_1 = geompy.MakeVertex(0, 0, 0)
@@ -46,8 +46,8 @@ for i in range(nbSols):
   geompy.addToStudy(v2, 'MinDist_%d_Curve_b'%(i+1))
 
 # Get minimum distance
-print "Minimal distance between Curve_a and Curve_b is", geompy.MinDistance(Curve_a, Curve_b)
+print("Minimal distance between Curve_a and Curve_b is", geompy.MinDistance(Curve_a, Curve_b))
 
 # Get minimum distance with components along axes
 [aDist, DX, DY, DZ] = geompy.MinDistanceComponents(Curve_a, Curve_b)
-print "Minimal distance between Curve_a and Curve_b is (", DX, ",", DY, ",", DZ, ")"
+print("Minimal distance between Curve_a and Curve_b is (", DX, ",", DY, ",", DZ, ")")

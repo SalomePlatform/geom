@@ -250,7 +250,7 @@ void RepairGUI_FreeFacesDlg::activateSelection()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr RepairGUI_FreeFacesDlg::createOperation()
 {
-  return getGeomEngine()->GetIShapesOperations( getStudyId() );
+  return getGeomEngine()->GetIShapesOperations();
 }
 
 //=================================================================================
@@ -364,7 +364,7 @@ bool RepairGUI_FreeFacesDlg::execute( ObjectList& objects )
 GEOM_Displayer* RepairGUI_FreeFacesDlg::getDisplayer()
 {
   if ( !myDisplayer )
-    myDisplayer = new GEOM_Displayer( getStudy() );
+    myDisplayer = new GEOM_Displayer();
   return myDisplayer;
 }
 

@@ -37,7 +37,7 @@ class ShHealOper_ModifStats;
 
 class GEOMImpl_IHealingOperations : public GEOM_IOperations {
  public:
-  Standard_EXPORT GEOMImpl_IHealingOperations(GEOM_Engine* theEngine, int theDocID);
+  Standard_EXPORT GEOMImpl_IHealingOperations(GEOM_Engine* theEngine);
   Standard_EXPORT ~GEOMImpl_IHealingOperations();
 
   // Apply Shape Processing to the selected Object

@@ -46,12 +46,11 @@ STLPlugin_IECallBack::~STLPlugin_IECallBack()
  */
 //=============================================================================
 bool 
-STLPlugin_IECallBack::Export( int                            theDocId,
-			      const Handle(GEOM_Object)      theOriginal,
-			      const TCollection_AsciiString& theFileName,
-			      const TCollection_AsciiString& theFormatName )
+STLPlugin_IECallBack::Export( const Handle(GEOM_Object)      theOriginal,
+                              const TCollection_AsciiString& theFileName,
+                              const TCollection_AsciiString& theFormatName )
 {
-  STLPlugin_IOperations* aPluginOperations = STLPlugin_OperationsCreator::get( GetEngine(), theDocId );
+  STLPlugin_IOperations* aPluginOperations = STLPlugin_OperationsCreator::get( GetEngine() );
   bool anIsASCII = ( theFormatName == "STL_Bin") ? false : true;
   const double aDeflection = 0.001;
   const bool anIsRelative = true;
@@ -65,11 +64,10 @@ STLPlugin_IECallBack::Export( int                            theDocId,
  */
 //=============================================================================
 Handle(TColStd_HSequenceOfTransient)
-STLPlugin_IECallBack::Import( int                            theDocId,
-			      const TCollection_AsciiString& theFormatName,
-			      const TCollection_AsciiString& theFileName )
+STLPlugin_IECallBack::Import( const TCollection_AsciiString& theFormatName,
+                              const TCollection_AsciiString& theFileName )
 {
-  STLPlugin_IOperations* aPluginOperations = STLPlugin_OperationsCreator::get( GetEngine(), theDocId );
+  STLPlugin_IOperations* aPluginOperations = STLPlugin_OperationsCreator::get( GetEngine() );
   return aPluginOperations->ImportSTL( theFileName );
 }
 

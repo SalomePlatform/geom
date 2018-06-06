@@ -454,7 +454,7 @@ void PrimitiveGUI_DiskDlg::ValueChangedInSpinBox()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr PrimitiveGUI_DiskDlg::createOperation()
 {
-  return getGeomEngine()->GetI3DPrimOperations(getStudyId());
+  return getGeomEngine()->GetI3DPrimOperations();
 }
 
 // //=================================================================================

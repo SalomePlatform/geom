@@ -24,7 +24,7 @@ from GEOM import IIGESOperations
 __libraryName__ = "IGESPluginEngine"
 
 def GetIGESPluginOperations(self):
-    anOp = self.GetPluginOperations(self.myStudyId, __libraryName__)
+    anOp = self.GetPluginOperations(__libraryName__)
     return anOp._narrow(IIGESOperations)
 
 ## Export the given shape into a file with given name in IGES format.
@@ -46,7 +46,7 @@ def ExportIGES(self, theObject, theFileName, theVersion="5.1"):
     anOp = GetIGESPluginOperations(self)
     anOp.ExportIGES(theObject, theFileName, theVersion)
     if anOp.IsDone() == 0:
-        raise RuntimeError,  "Export : " + anOp.GetErrorCode()
+        raise RuntimeError("Export : " + anOp.GetErrorCode())
         pass
     pass
 
@@ -96,7 +96,7 @@ def ImportIGES(self, theFileName, theIsIgnoreUnits = False, theName=None):
     
     anIsIgnoreUnits = theIsIgnoreUnits
     aName = theName
-    if isinstance( theIsIgnoreUnits, basestring ):
+    if isinstance( theIsIgnoreUnits, str ):
         anIsIgnoreUnits = False
         aName = theIsIgnoreUnits
         pass

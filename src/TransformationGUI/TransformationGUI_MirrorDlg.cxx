@@ -322,7 +322,7 @@ void TransformationGUI_MirrorDlg::enterEvent (QEvent*)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr  TransformationGUI_MirrorDlg::createOperation()
 {
-  return getGeomEngine()->GetITransformOperations(getStudyId());
+  return getGeomEngine()->GetITransformOperations();
 }
 
 //=================================================================================
@@ -414,12 +414,11 @@ bool  TransformationGUI_MirrorDlg::execute (ObjectList& objects)
 // function : restoreSubShapes
 // purpose  :
 //=================================================================================
-void TransformationGUI_MirrorDlg::restoreSubShapes (SALOMEDS::Study_ptr   theStudy,
-                                                    SALOMEDS::SObject_ptr theSObject)
+void TransformationGUI_MirrorDlg::restoreSubShapes (SALOMEDS::SObject_ptr theSObject)
 {
   if (mainFrame()->CheckBoxRestoreSS->isChecked()) {
     // empty list of arguments means that all arguments should be restored
-    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(),
+    getGeomEngine()->RestoreSubShapesSO(theSObject, GEOM::ListOfGO(),
                                         /*theFindMethod=*/GEOM::FSM_Transformed,
                                         /*theInheritFirstArg=*/true,
                                         mainFrame()->CheckBoxAddPrefix->isChecked());

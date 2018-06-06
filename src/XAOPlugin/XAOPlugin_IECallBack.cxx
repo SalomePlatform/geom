@@ -47,14 +47,13 @@ XAOPlugin_IECallBack::~XAOPlugin_IECallBack()
  */
 //=============================================================================
 bool
-XAOPlugin_IECallBack::Export( int                            theDocId,
-                              const Handle(GEOM_Object)      theOriginal,
+XAOPlugin_IECallBack::Export( const Handle(GEOM_Object)      theOriginal,
                               const TCollection_AsciiString& theFileName,
                               const TCollection_AsciiString& theFormatName,
                               const TCollection_AsciiString& theShapeFileName )
 {
-  XAOPlugin_IOperations* aPluginOperations = XAOPlugin_OperationsCreator::get( GetEngine(), theDocId );
-  GEOMImpl_IShapesOperations* aShapesOperations = GetEngine()->GetIShapesOperations( theDocId );
+  XAOPlugin_IOperations* aPluginOperations = XAOPlugin_OperationsCreator::get( GetEngine() );
+  GEOMImpl_IShapesOperations* aShapesOperations = GetEngine()->GetIShapesOperations();
 
   Handle(TColStd_HSequenceOfTransient) groups = aShapesOperations->GetExistingSubObjects( theOriginal, GEOMImpl_IShapesOperations::Groups );
   Handle(TColStd_HSequenceOfTransient) fields = aShapesOperations->GetExistingSubObjects( theOriginal, GEOMImpl_IShapesOperations::Fields );
@@ -74,11 +73,10 @@ XAOPlugin_IECallBack::Export( int                            theDocId,
  */
 //=============================================================================
 Handle(TColStd_HSequenceOfTransient)
-XAOPlugin_IECallBack::Import( int                            theDocId,
-			      const TCollection_AsciiString& theFormatName,
-			      const TCollection_AsciiString& theFileName )
+XAOPlugin_IECallBack::Import( const TCollection_AsciiString& theFormatName,
+                              const TCollection_AsciiString& theFileName )
 {
-  XAOPlugin_IOperations* aPluginOperations = XAOPlugin_OperationsCreator::get( GetEngine(), theDocId );
+  XAOPlugin_IOperations* aPluginOperations = XAOPlugin_OperationsCreator::get( GetEngine() );
 
   Handle(TColStd_HSequenceOfTransient) result = new TColStd_HSequenceOfTransient();
   Handle(TColStd_HSequenceOfTransient) subshapes = new TColStd_HSequenceOfTransient();

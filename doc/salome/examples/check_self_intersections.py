@@ -4,7 +4,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 # create a box
 box = geompy.MakeBoxDXDYDZ(100,100,100)
@@ -16,6 +16,6 @@ compound = geompy.MakeCompound([box, cylinder])
 # check self-intersection
 IsValid = geompy.CheckSelfIntersections(compound)
 if not IsValid:
-    print "Shape is self-intersected!"
+    print("Shape is self-intersected!")
 else:
-    print "No self-intersection detected in a shape"
+    print("No self-intersection detected in a shape")

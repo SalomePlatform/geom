@@ -30,7 +30,7 @@
 class STLPLUGINENGINE_EXPORT STLPlugin_IOperations: public GEOMImpl_IBaseIEOperations
 {
 public:
-  STLPlugin_IOperations( GEOM_Engine*, int );
+  STLPlugin_IOperations( GEOM_Engine* );
   ~STLPlugin_IOperations();
 
   void ExportSTL( const Handle(GEOM_Object),

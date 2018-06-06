@@ -445,7 +445,7 @@ void MeasureGUI_CheckShapeDlg::processObject()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr MeasureGUI_CheckShapeDlg::createOperation()
 {
-  return getGeomEngine()->GetIMeasureOperations( getStudyId() );
+  return getGeomEngine()->GetIMeasureOperations();
 }
 
 //=================================================================================
@@ -625,7 +625,7 @@ bool MeasureGUI_CheckShapeDlg::execute( ObjectList& objects )
   }
 
   if (myShapesOper->_is_nil()) {
-    myShapesOper = getGeomEngine()->GetIShapesOperations(getStudyId());
+    myShapesOper = getGeomEngine()->GetIShapesOperations();
   }
 
   GEOM::ListOfGO_var aList = myShapesOper->MakeSubShapes(myObj, anArray);

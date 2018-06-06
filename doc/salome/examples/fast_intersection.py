@@ -4,7 +4,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 # create a box
 box = geompy.MakeBoxDXDYDZ(100,100,100)
@@ -13,10 +13,10 @@ cylinder = geompy.MakeCylinderRH(100, 300)
 
 isOk, res1, res2 = geompy.FastIntersect(box, cylinder)
 if isOk == 0:
-    raise RuntimeError, "No intersection!"
+    raise RuntimeError("No intersection!")
 else:
-    print "\nTwo lists of indexes of sub-shapes localize the intersection:"
-    print res1, res2
+    print("\nTwo lists of indexes of sub-shapes localize the intersection:")
+    print(res1, res2)
 
 # create two boxes with gap
 Ver1 = geompy.MakeVertex(0, 0, 0)
@@ -28,7 +28,7 @@ box2 = geompy.MakeBoxTwoPnt(Ver3, Ver4)
 
 isOk1, aRes1, aRes2 = geompy.FastIntersect(box1, box2, 1.)
 if isOk1 == 0:
-    raise RuntimeError, "No gaps!"
+    raise RuntimeError("No gaps!")
 else:
-    print "\nTwo lists of indexes of sub-shapes localize the gap:"
-    print aRes1, aRes2
+    print("\nTwo lists of indexes of sub-shapes localize the gap:")
+    print(aRes1, aRes2)

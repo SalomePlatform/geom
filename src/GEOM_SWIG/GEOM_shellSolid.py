@@ -35,7 +35,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 # Interface with geometry
 # -----------------------
@@ -48,7 +48,7 @@ geomgui = salome.ImportComponentGUI("GEOM")
 
 def addToStudy(shape, name):
     i = geompy.addToStudy(shape, name)
-    salome.sg.updateObjBrowser(False)
+    salome.sg.updateObjBrowser()
 #    geomgui.createAndDisplayGO(i)
     return i
 

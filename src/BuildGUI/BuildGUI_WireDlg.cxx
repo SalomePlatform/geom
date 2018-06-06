@@ -263,7 +263,7 @@ void BuildGUI_WireDlg::enterEvent( QEvent* )
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BuildGUI_WireDlg::createOperation()
 {
-  return getGeomEngine()->GetIShapesOperations( getStudyId() );
+  return getGeomEngine()->GetIShapesOperations();
 }
 
 //=================================================================================

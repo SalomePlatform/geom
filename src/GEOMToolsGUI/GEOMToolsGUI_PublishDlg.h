@@ -59,8 +59,8 @@ public:
 
 protected:
   void               initData();
-  void               buildTree(_PTR(Study) theStudy, SalomeApp_DataObject* theItem);
-  QTreeWidgetItem*   findParentItem(_PTR(Study) theStudy, SalomeApp_DataObject* theItem, BufferedList& theList);
+  void               buildTree(SalomeApp_DataObject* theItem);
+  QTreeWidgetItem*   findParentItem(SalomeApp_DataObject* theItem, BufferedList& theList);
   QTreeWidgetItem*   createItem(QTreeWidgetItem* theItem, Pair theAttributes, bool isCheckable);
   void               getDrawableList(QTreeWidgetItem* theItem, QList<QTreeWidgetItem*>& theList);
   void               getTails(QTreeWidgetItem* theItem, QList<QTreeWidgetItem*>& theList);

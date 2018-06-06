@@ -23,7 +23,7 @@ from GEOM import IAdvancedOperations
 __libraryName__ = "AdvancedEngine"
 
 def GetAdvancedOperations(self):
-    anOp = self.GetPluginOperations(self.myStudyId, __libraryName__)
+    anOp = self.GetPluginOperations(__libraryName__)
     return anOp._narrow(IAdvancedOperations)
 
 ## Create a T-shape object with specified caracteristics for the main

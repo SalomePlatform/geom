@@ -38,8 +38,8 @@
  */
 //=============================================================================
 
-GEOM_IOperations::GEOM_IOperations(GEOM_Engine* theEngine, int theDocID)
-: _engine(theEngine), _docID(theDocID)
+GEOM_IOperations::GEOM_IOperations(GEOM_Engine* theEngine)
+: _engine(theEngine)
 {
   _solver = new GEOM_Solver(theEngine);
 }
@@ -64,7 +64,7 @@ GEOM_IOperations::~GEOM_IOperations()
 //=============================================================================   
 void GEOM_IOperations::StartOperation()
 {
-  Handle(TDocStd_Document) aDoc = _engine->GetDocument(_docID);
+  Handle(TDocStd_Document) aDoc = _engine->GetDocument();
   if(aDoc->GetUndoLimit() > 0) 
     aDoc->NewCommand();
 }
@@ -76,10 +76,9 @@ void GEOM_IOperations::StartOperation()
 //=============================================================================      
 void GEOM_IOperations::FinishOperation()
 {
-  Handle(TDocStd_Document) aDoc = _engine->GetDocument(_docID);
+  Handle(TDocStd_Document) aDoc = _engine->GetDocument();
   if(aDoc->GetUndoLimit() > 0) 
     aDoc->CommitCommand();
-  _engine->DocumentModified(_docID, true);
 }
 
 //=============================================================================
@@ -89,7 +88,7 @@ void GEOM_IOperations::FinishOperation()
 //=============================================================================   
 void GEOM_IOperations::AbortOperation()
 {
-  Handle(TDocStd_Document) aDoc = _engine->GetDocument(_docID);
+  Handle(TDocStd_Document) aDoc = _engine->GetDocument();
   aDoc->AbortCommand();
 }
    

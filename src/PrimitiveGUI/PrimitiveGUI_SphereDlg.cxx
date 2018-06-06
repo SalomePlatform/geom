@@ -325,7 +325,7 @@ void PrimitiveGUI_SphereDlg::ValueChangedInSpinBox()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr PrimitiveGUI_SphereDlg::createOperation()
 {
-  return getGeomEngine()->GetI3DPrimOperations( getStudyId() );
+  return getGeomEngine()->GetI3DPrimOperations();
 }
 
 

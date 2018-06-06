@@ -30,7 +30,7 @@
 class VTKPLUGINENGINE_EXPORT VTKPlugin_IOperations: public GEOMImpl_IBaseIEOperations
 {
 public:
-  VTKPlugin_IOperations( GEOM_Engine*, int );
+  VTKPlugin_IOperations( GEOM_Engine* );
   ~VTKPlugin_IOperations();
 
   void ExportVTK( const Handle(GEOM_Object),

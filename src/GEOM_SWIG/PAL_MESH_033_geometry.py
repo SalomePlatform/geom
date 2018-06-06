@@ -31,7 +31,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 #Points creation (2.2)
 Vertex_1 = geompy.MakeVertex(0, 0, 0)
@@ -63,4 +63,4 @@ geompy.addToStudy(Edge_4, "Edge_4")
 Wire_1 = geompy.MakeWire([Edge_1, Edge_2, Edge_3, Edge_4])
 geompy.addToStudy(Wire_1, "Wire_1")
 
-salome.sg.updateObjBrowser(True)
+salome.sg.updateObjBrowser()

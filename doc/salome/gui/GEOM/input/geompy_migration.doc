@@ -23,13 +23,13 @@ salome.salome_init()
 \n the old mode:
 \code
 import geompy
-geompy.init_geom(theStudy)
+geompy.init_geom()
 \endcode
 \n the new mode:
 \code
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 \endcode
 
 

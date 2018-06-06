@@ -418,7 +418,7 @@ void BasicGUI_CurveDlg::enterEvent (QEvent*)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BasicGUI_CurveDlg::createOperation()
 {
-  return myGeomGUI->GetGeomGen()->GetICurvesOperations(getStudyId());
+  return myGeomGUI->GetGeomGen()->GetICurvesOperations();
 }
 
 //=================================================================================

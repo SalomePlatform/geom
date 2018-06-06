@@ -24,7 +24,7 @@ from GEOM import IVTKOperations
 __libraryName__ = "VTKPluginEngine"
 
 def GetVTKPluginOperations(self):
-    anOp = self.GetPluginOperations(self.myStudyId, __libraryName__)
+    anOp = self.GetPluginOperations(__libraryName__)
     return anOp._narrow(IVTKOperations)
 
 ## Export the given shape into a file with given name in VTK format.
@@ -45,6 +45,6 @@ def ExportVTK(self, theObject, theFileName, theDeflection=0.001):
     anOp = GetVTKPluginOperations(self)
     anOp.ExportVTK(theObject, theFileName, theDeflection)
     if anOp.IsDone() == 0:
-        raise RuntimeError,  "Export : " + anOp.GetErrorCode()
+        raise RuntimeError("Export : " + anOp.GetErrorCode())
         pass
     pass

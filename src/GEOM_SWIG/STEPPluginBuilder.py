@@ -25,7 +25,7 @@ import GEOM
 __libraryName__ = "STEPPluginEngine"
 
 def GetSTEPPluginOperations(self):
-    anOp = self.GetPluginOperations(self.myStudyId, __libraryName__)
+    anOp = self.GetPluginOperations(__libraryName__)
     return anOp._narrow(ISTEPOperations)
 
 ## Export the given shape into a file with given name in STEP format.
@@ -45,7 +45,7 @@ def ExportSTEP(self, theObject, theFileName, theUnit=GEOM.LU_METER):
     anOp = GetSTEPPluginOperations(self)
     anOp.ExportSTEP(theObject, theFileName, theUnit)
     if anOp.IsDone() == 0:
-        raise RuntimeError,  "Export : " + anOp.GetErrorCode()
+        raise RuntimeError("Export : " + anOp.GetErrorCode())
         pass
     pass
 
@@ -103,11 +103,11 @@ def ImportSTEP(self, theFileName, theIsIgnoreUnits = False,
     anIsIgnoreUnits = theIsIgnoreUnits
     anIsCreateAssemblies = IsCreateAssemblies;
     aName = theName
-    if isinstance( theIsIgnoreUnits, basestring ):
+    if isinstance( theIsIgnoreUnits, str ):
         anIsIgnoreUnits = False
         aName = theIsIgnoreUnits
         pass
-    elif isinstance( IsCreateAssemblies, basestring ):
+    elif isinstance( IsCreateAssemblies, str ):
         anIsCreateAssemblies = False
         aName = IsCreateAssemblies
         pass

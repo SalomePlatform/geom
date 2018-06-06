@@ -40,7 +40,7 @@ namespace XAO {
 class XAOPLUGINENGINE_EXPORT XAOPlugin_IOperations: public GEOMImpl_IBaseIEOperations
 {
 public:
-  XAOPlugin_IOperations( GEOM_Engine*, int );
+  XAOPlugin_IOperations( GEOM_Engine* );
   ~XAOPlugin_IOperations();
 
   bool ExportXAO( Handle(GEOM_Object) shape,

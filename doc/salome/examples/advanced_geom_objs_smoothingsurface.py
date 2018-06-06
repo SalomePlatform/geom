@@ -1,6 +1,6 @@
 import salome, GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 # create a could of points
 points = [

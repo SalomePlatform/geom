@@ -394,7 +394,7 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::processObject()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr MeasureGUI_CheckCompoundOfBlocksDlg::createOperation()
 {
-  return getGeomEngine()->GetIBlocksOperations( getStudyId() );
+  return getGeomEngine()->GetIBlocksOperations();
 }
 
 //=================================================================================
