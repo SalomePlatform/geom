@@ -191,7 +191,7 @@ void GEOM_OCCReader::ComputeWireframe(vtkPoints* Pts,vtkCellArray* Cells){
 
 //=======================================================================
 // Function : TransferFaceWData
-// Purpose  : Transfert wireframe data for FACE
+// Purpose  : Transfer wireframe data for FACE
 //=======================================================================
 
 void GEOM_OCCReader::TransferFaceWData(const TopoDS_Face& aFace,
@@ -554,7 +554,7 @@ void GEOM_OCCReader::PlotIso (BRepAdaptor_Surface& S,
 
 //=======================================================================
 // Function : TransferEdgeWData
-// Purpose  : Transfert wireframe data for EDGE
+// Purpose  : Transfer wireframe data for EDGE
 //=======================================================================
 
 void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
@@ -782,7 +782,7 @@ void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
 
 //=======================================================================
 // Function : TransferVertexWData
-// Purpose  : Transfert wireframe data for VERTEX
+// Purpose  : Transfer wireframe data for VERTEX
 //=======================================================================
 
 void GEOM_OCCReader::TransferVertexWData(const TopoDS_Vertex& aVertex,
@@ -821,7 +821,7 @@ void GEOM_OCCReader::TransferVertexWData(const TopoDS_Vertex& aVertex,
 
 //=======================================================================
 // Function : TransferEdgeSData(
-// Purpose  : Transfert shading data for EDGE
+// Purpose  : Transfer shading data for EDGE
 //=======================================================================
 
 void GEOM_OCCReader::TransferEdgeSData(const TopoDS_Edge& aFace,
@@ -833,7 +833,7 @@ void GEOM_OCCReader::TransferEdgeSData(const TopoDS_Edge& aFace,
 
 //=======================================================================
 // Function : TransferFaceSData
-// Purpose  : Transfert shading data for FACE
+// Purpose  : Transfer shading data for FACE
 //=======================================================================
 void GEOM_OCCReader::TransferFaceSData(const TopoDS_Face& aFace,
                                          vtkPoints* Pts,

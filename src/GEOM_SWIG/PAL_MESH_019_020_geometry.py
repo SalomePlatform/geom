@@ -23,7 +23,7 @@
 
 #####################################################################################
 #Created                :17/02/2005
-#Auhtor                 :KOVALTCHUK Alexey 
+#Author                 :KOVALTCHUK Alexey 
 #GUI test scenario      :PAL-MESH-019 (geometry part), PAL-MESH-020 (geometry part)
 #####################################################################################
 #

@@ -4,7 +4,7 @@
 
 <ul>
 <li>\ref material_general_description_anchor "General Description"</li>
-<li>\ref material_opengl_model_anchor "OpenGL ligthing model" </li>
+<li>\ref material_opengl_model_anchor "OpenGL lighting model" </li>
 <li>\ref material_lib_anchor "Materials library"</li>
 <li>\ref material_anchor "Material properties"</li>
 </ul>

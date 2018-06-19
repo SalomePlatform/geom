@@ -639,7 +639,7 @@ void GEOMImpl_Block6Explorer::InitByBlockAndEdges (const TopoDS_Shape& theBlock,
     myEdges(edge_id(1, 2)) = E2_f;
   }
 
-  // fird vertex
+  // third vertex
   TopoDS_Edge E2 = TopoDS::Edge(myEdges(edge_id(1, 2)));
   TopoDS_Vertex V21, V22;
   TopExp::Vertices(E2, V21, V22, Standard_True);
@@ -755,7 +755,7 @@ void GEOMImpl_Block6Explorer::InitByBlockAndVertices (const TopoDS_Shape& theBlo
           myEdges(edge_id(1,2)) = anIterE3.Value();
 
         } else {
-          // Store the fird edge
+          // Store the third edge
           myEdges(edge_id(1,3)) = anIterE3.Value();
         }
       }
@@ -1265,7 +1265,7 @@ TCollection_AsciiString GEOMImpl_Block6Explorer::MakeFace (const TopoDS_Wire&   
     return aWarning;
   }
 
-  // Copy the wire, bacause it can be updated with very-very big tolerance here
+  // Copy the wire, because it can be updated with very-very big tolerance here
   BRepBuilderAPI_Copy aMC (theWire);
   if (!aMC.IsDone()) return aWarning;
   TopoDS_Wire aWire = TopoDS::Wire(aMC.Shape());

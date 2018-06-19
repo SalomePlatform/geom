@@ -2263,7 +2263,7 @@ void GeometryGUI::contextMenuPopup( const QString& client, QMenu* menu, QString&
   
   if ( ( client == "OCCViewer" || client == "VTKViewer" ) && lst.Extent() > 0 ) {
     QtxPopupMgr* mgr = popupMgr();
-    //get parrent for submenu
+    //get parent for submenu
     QAction* act = mgr->action( mgr->actionId( action(  GEOMOp::OpMaterialProperties ) ) );
     //Clear old  menu
     QMenu* oldMenu = act->menu() ;

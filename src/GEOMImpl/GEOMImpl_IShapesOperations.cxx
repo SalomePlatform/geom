@@ -2644,7 +2644,7 @@ Handle(TColStd_HSequenceOfInteger)
   aFinder.SetState(theState);
   aFinder.Perform();
 
-  // Interprete results
+  // Interpret results
   Standard_Integer iErr = aFinder.ErrorStatus();
   // the detailed description of error codes is in GEOMAlgo_FinderShapeOn2.cxx
   if (iErr) {
@@ -2836,7 +2836,7 @@ Handle(TColStd_HSequenceOfInteger)
   aFinder.SetState(theState);
   aFinder.Perform();
 
-  // Interprete results
+  // Interpret results
   Standard_Integer iErr = aFinder.ErrorStatus();
   // the detailed description of error codes is in GEOMAlgo_FinderShapeOn2.cxx
   if (iErr) {
@@ -3335,7 +3335,7 @@ Handle(TColStd_HSequenceOfInteger)
 
   aFinder.Perform();
 
-  // Interprete results
+  // Interpret results
   Standard_Integer iErr = aFinder.ErrorStatus();
   // the detailed description of error codes is in GEOMAlgo_FinderShapeOn2.cxx
   if (iErr) {
@@ -4263,7 +4263,7 @@ Handle(TColStd_HSequenceOfInteger)
 
   aFinder.Perform();
 
-  // Interprete results
+  // Interpret results
   Standard_Integer iErr = aFinder.ErrorStatus();
   // the detailed description of error codes is in GEOMAlgo_FinderShapeOn2.cxx
   if (iErr) {

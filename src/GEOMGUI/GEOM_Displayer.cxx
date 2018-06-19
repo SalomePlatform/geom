@@ -1432,7 +1432,7 @@ void GEOM_Displayer::Redisplay( const SALOME_ListIO& theIOList,
 //=================================================================
 /*!
  *  GEOM_Displayer::Update
- *  Update OCC presentaion
+ *  Update OCC presentation
  *  [ Reimplemented from SALOME_Displayer ]
  */
 //=================================================================
@@ -1567,7 +1567,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 //=================================================================
 /*!
  *  GEOM_Displayer::Update
- *  Update VTK presentaion
+ *  Update VTK presentation
  *  [ Reimplemented from SALOME_Displayer ]
  */
 //=================================================================

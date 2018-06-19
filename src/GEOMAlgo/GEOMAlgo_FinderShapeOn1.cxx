@@ -654,7 +654,7 @@ void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Face& aF,
           BRepLib_MakeEdge aBME(aP1, aP2);
           bIsDone=aBME.IsDone();
           if (!bIsDone) {
-            myErrorStatus=30; //can not obtain the line fron the link
+            myErrorStatus=30; //can not obtain the line from the link
             return;
           }
           //

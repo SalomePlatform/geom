@@ -99,7 +99,7 @@ public:
   //Returns the OCAF document by its ID, if document doesn't exists it will be created
   Standard_EXPORT Handle(TDocStd_Document) GetDocument(bool force=true);
   
-  //Returns the OCAF appliaction
+  //Returns the OCAF application
   Standard_EXPORT Handle(TDocStd_Application) GetApplication() { return _OCAFApp; }
 
   //Returns a pointer to GEOM_BaseObject defined by a document and the entry

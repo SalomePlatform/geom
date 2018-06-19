@@ -844,7 +844,7 @@ module GEOM
     GEOM_Object MakeVectorTwoPnt (in GEOM_Object thePnt1, in GEOM_Object thePnt2);
 
     /*!
-     *  C\brief reate a line, passing through the given point
+     *  \brief Create a line, passing through the given point
      *  and parallel to the given direction
      *  \param thePnt Point. The resulting line will pass through it.
      *  \param theDir Direction. The resulting line will be parallel to it.
@@ -872,7 +872,7 @@ module GEOM
      *  \brief Create a plane, passing through the three given points
      *  \param thePnt1 First of three points, defining the plane.
      *  \param thePnt2 Second of three points, defining the plane.
-     *  \param thePnt3 Fird of three points, defining the plane.
+     *  \param thePnt3 Third of three points, defining the plane.
      *  \param theTrimSize Half size of a side of quadrangle face, representing the plane.
      *  \return New GEOM_Object, containing the created plane.
      */
@@ -4723,7 +4723,7 @@ module GEOM
     void RemoveObject (in GEOM_Object theGroup, in long theSubShapeId);
 
     /*!
-     *  \brief Adds to the group all the given shapes. No errors, if some shapes are alredy included.
+     *  \brief Adds to the group all the given shapes. No errors, if some shapes are already included.
      *  \param theGroup is a GEOM group to which the new sub-shapes are added.
      *  \param theSubShapes is a list of sub-shapes to be added.
      */
@@ -4737,7 +4737,7 @@ module GEOM
     void DifferenceList (in GEOM_Object theGroup, in ListOfGO theSubShapes);
 
     /*!
-     *  \brief Adds to the group all the given shapes. No errors, if some shapes are alredy included.
+     *  \brief Adds to the group all the given shapes. No errors, if some shapes are already included.
      *  \param theGroup is a GEOM group to which the new sub-shapes are added.
      *  \param theSubShapes is a list of IDs of sub-shapes to be added.
      */

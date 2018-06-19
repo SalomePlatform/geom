@@ -1265,7 +1265,7 @@ Handle(TColStd_HSequenceOfInteger) FindEntries(TCollection_AsciiString& theStrin
         if(c == 58) isFound = Standard_True;
       }
 
-      if(isFound && arr[j-2] != 58) { // last char should be a diggit
+      if(isFound && arr[j-2] != 58) { // last char should be a digit
         aSeq->Append(i+1); // +1 because AsciiString starts from 1
         aSeq->Append(j-1);
       }
@@ -1565,7 +1565,7 @@ void ReplaceEntriesByNames (TCollection_AsciiString&                  theScript,
     theObjListToPublish.Append( anEntry );
     
     TObjectData& data = aEntry2ObjData[ anEntry ];
-    if ( data._pyName.IsEmpty() ) { // encounted for the 1st time
+    if ( data._pyName.IsEmpty() ) { // encountered for the 1st time
       if ( !data._name.IsEmpty() ) { // published object
         data._pyName = data._name;
         engine->healPyName( data._pyName, anEntry, aNameToEntry);

@@ -127,7 +127,7 @@ class GEOMImpl_Block6Explorer
   void InitByBlockAndEdges (const TopoDS_Shape& theBlock,
                             const TopoDS_Shape& theEdge1,
                             const TopoDS_Shape& theEdge2);
-  // Init by hexahedral solid, making theEdge1 the first, theEdge2 the fird.
+  // Init by hexahedral solid, making theEdge1 the first, theEdge2 the third.
   // First vertex is defined randomly from theEdge1 vertices
   // (Picture 1 and Picture 2 shows two possible cases)
 
@@ -136,7 +136,7 @@ class GEOMImpl_Block6Explorer
                                const TopoDS_Shape& theVertex2,
                                const TopoDS_Shape& theVertex3);
   // Init by hexahedral solid, making theVertex1 the first,
-  // theVertex2 the second and theVertex3 the fird vertices.
+  // theVertex2 the second and theVertex3 the third vertices.
 
   // Initialization by parts of solid to be built
 

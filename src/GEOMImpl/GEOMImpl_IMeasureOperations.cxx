@@ -179,7 +179,7 @@ GEOMImpl_IMeasureOperations::ShapeKind GEOMImpl_IMeasureOperations::KindOfShape
     return SK_LCS;
   }
 
-  // Interprete results
+  // Interpret results
   TopAbs_ShapeEnum aType = anInfo.Type();
   switch (aType)
   {

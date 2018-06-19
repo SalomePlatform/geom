@@ -833,7 +833,7 @@ bool AdvancedEngine_IOperations::GetFacesOnSurf
   aFinder.SetNbPntsMax(100);
   aFinder.Perform();
 
-  // Interprete results
+  // Interpret results
   Standard_Integer iErr = aFinder.ErrorStatus();
   // the detailed description of error codes is in GEOMAlgo_FinderShapeOn2.cxx
   if (iErr) {

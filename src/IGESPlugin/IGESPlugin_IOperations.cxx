@@ -154,7 +154,7 @@ IGESPlugin_IOperations::ImportIGES( const TCollection_AsciiString& theFileName,
     }
     aSeq->Append(anImported);
 
-    // Greate material groups.
+    // Create material groups.
     // MakeMaterialGroups( anImported, aSeq );
   }
   catch( Standard_Failure& aFail ) {

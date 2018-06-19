@@ -81,7 +81,7 @@ BlocksGUI_QuadFaceDlg::BlocksGUI_QuadFaceDlg (GeometryGUI* theGeometryGUI, QWidg
   createSelWg(tr("EDGE_1"), imageS, myGrp2, Edge12);
   createSelWg(tr("EDGE_2"), imageS, myGrp2, Edge22);
 
-  // Create fird group
+  // Create third group
   myGrp3 = new QGroupBox(tr("GEOM_ARGUMENTS"), centralWidget());
 
   createSelWg(tr("EDGE_1"), imageS, myGrp3, Edge14);

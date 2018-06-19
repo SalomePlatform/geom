@@ -1001,7 +1001,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(Handle(TFunction_Logbook)& log) c
 
     anExtractor.Perform();
 
-    // Interprete results
+    // Interpret results
     Standard_Integer iErr = anExtractor.ErrorStatus();
 
     // The detailed description of error codes is in GEOMAlgo_Extractor.cxx

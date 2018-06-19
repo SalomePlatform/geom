@@ -118,7 +118,7 @@ public:
   //! @param theIsVisible [in] the visibility state.
   GEOMGUI_EXPORT void SetIsVisible( const int theIndex, const bool theIsVisible );
 
-  //! Returns applicationb visibility state of an annotaion definition.
+  //! Returns application visibility state of an annotation definition.
   GEOMGUI_EXPORT bool GetIsVisible( const int theIndex ) const;
 
   //! Sets annotation label's text.

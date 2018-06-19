@@ -1772,7 +1772,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         ## Create a plane, passing through the three given points
         #  @param thePnt1 First of three points, defining the plane.
         #  @param thePnt2 Second of three points, defining the plane.
-        #  @param thePnt3 Fird of three points, defining the plane.
+        #  @param thePnt3 Third of three points, defining the plane.
         #  @param theTrimSize Half size of a side of quadrangle face, representing the plane.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
@@ -1789,7 +1789,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             Parameters:
                 thePnt1 First of three points, defining the plane.
                 thePnt2 Second of three points, defining the plane.
-                thePnt3 Fird of three points, defining the plane.
+                thePnt3 Third of three points, defining the plane.
                 theTrimSize Half size of a side of quadrangle face, representing the plane.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
@@ -13014,7 +13014,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("RemoveObject", self.GroupOp)
             pass
 
-        ## Adds to the group all the given shapes. No errors, if some shapes are alredy included.
+        ## Adds to the group all the given shapes. No errors, if some shapes are already included.
         #  @param theGroup is a GEOM group to which the new sub-shapes are added.
         #  @param theSubShapes is a list of sub-shapes to be added.
         #
@@ -13022,7 +13022,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         @ManageTransactions("GroupOp")
         def UnionList (self,theGroup, theSubShapes):
             """
-            Adds to the group all the given shapes. No errors, if some shapes are alredy included.
+            Adds to the group all the given shapes. No errors, if some shapes are already included.
 
             Parameters:
                 theGroup is a GEOM group to which the new sub-shapes are added.
@@ -13033,7 +13033,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("UnionList", self.GroupOp)
             pass
 
-        ## Adds to the group all the given shapes. No errors, if some shapes are alredy included.
+        ## Adds to the group all the given shapes. No errors, if some shapes are already included.
         #  @param theGroup is a GEOM group to which the new sub-shapes are added.
         #  @param theSubShapes is a list of indices of sub-shapes to be added.
         #
@@ -13041,7 +13041,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         @ManageTransactions("GroupOp")
         def UnionIDs(self,theGroup, theSubShapes):
             """
-            Adds to the group all the given shapes. No errors, if some shapes are alredy included.
+            Adds to the group all the given shapes. No errors, if some shapes are already included.
 
             Parameters:
                 theGroup is a GEOM group to which the new sub-shapes are added.

@@ -408,7 +408,7 @@ def TEST_createAndDeleteShape():
     gst.deleteShape(cylinderStudyEntry)
 
     # --------------------------------------------------
-    # At the end of the executioon of this test, you should have in
+    # At the end of the execution of this test, you should have in
     # the SALOME session:
     # - the box, in a dedicated folder of the study, and displayed in the viewer
     # - the sphere, in the standard place of the study, and not displayed 

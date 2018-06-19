@@ -124,7 +124,7 @@ AdvancedEngine_PipeTShapeDriver::GetShapesOnBoxIDs(const TopoDS_Shape& aBox,
   aFinder.SetState(theState);
   aFinder.Perform();
 
-  // Interprete results
+  // Interpret results
   Standard_Integer iErr = aFinder.ErrorStatus();
   // the detailed description of error codes is in GEOMAlgo_FinderShapeOn2.cxx
   if (iErr) {
@@ -207,7 +207,7 @@ Handle(TColStd_HSequenceOfInteger)
 
   aFinder.Perform();
 
-  // Interprete results
+  // Interpret results
   Standard_Integer iErr = aFinder.ErrorStatus();
   // the detailed description of error codes is in GEOMAlgo_FinderShapeOn2.cxx
   if (iErr) {

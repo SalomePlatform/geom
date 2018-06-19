@@ -21,7 +21,7 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-#  GEOM GEOM_SWIG : binding of C++ omplementaion with Python
+#  GEOM GEOM_SWIG : binding of C++ implementation with Python
 #  File   : GEOM_Partition4.py
 #  Module : GEOM
 # import couplex2_01_GEOM
