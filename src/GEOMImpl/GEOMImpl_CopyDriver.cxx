@@ -261,7 +261,7 @@ Standard_Integer GEOMImpl_CopyDriver::transferData(Handle(TFunction_Logbook)& lo
 
 //================================================================================
 /*!
- * \brief For each subshape of the source shape compute coinsident sub-shapes
+ * \brief For each subshape of the source shape compute coincident sub-shapes
  *        of the destination shape using GetInPlace method.
  */
 //================================================================================
@@ -320,7 +320,7 @@ Standard_Boolean GEOMImpl_CopyDriver::getInPlace
 
 //================================================================================
 /*!
- * \brief For each subshape of the source shape compute coinsident sub-shapes
+ * \brief For each subshape of the source shape compute coincident sub-shapes
  *        of the destination shape using an old implementation
  *        of GetInPlace algorithm.
  */
@@ -369,7 +369,7 @@ Standard_Boolean GEOMImpl_CopyDriver::getInPlaceOld
 
 //================================================================================
 /*!
- * \brief For each subshape of the source shape compute coinsident sub-shapes
+ * \brief For each subshape of the source shape compute coincident sub-shapes
  *        of the destination shape using GetInPlaceByHistory algorithm.
  */
 //================================================================================

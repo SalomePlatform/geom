@@ -29,7 +29,7 @@
 #include "GEOM_Function.hxx"
 
 /*!
- * \brief Interface to data of analitically defined curve
+ * \brief Interface to data of analytically defined curve
  *
  * WARNING: this data co-exists with data of either GEOMImpl_IPolyline
  *          or GEOMImpl_ISpline

@@ -51,7 +51,7 @@
 /*
   Class       : GEOM_VTKTrihedron
   Description : Class for displaying axis of trihedron in VTK viewer.
-                Placement of trihedron is chahged with SetPlacement() method
+                Placement of trihedron is changed with SetPlacement() method
 */
 class GEOM_VTKTrihedronAxis : public VTKViewer_Axis
 {
@@ -194,7 +194,7 @@ void GEOM_VTKTrihedronAxis::SetColor( const double theColor[ 3 ] )
 /*
   Class       : GEOM_VTKTrihedron
   Description : Class for displaying trihedron of local CS in VTK viewer.
-                Placement of trihedron is chahged with SetPlacement() method
+                Placement of trihedron is changed with SetPlacement() method
 */
 
 vtkStandardNewMacro( GEOM_VTKTrihedron );

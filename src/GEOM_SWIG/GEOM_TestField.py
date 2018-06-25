@@ -44,7 +44,7 @@ MustFail = -1
 geompy = None
 
 def CheckFieldCreation(shape, name, ftype, dimension, componentNames, nbFiOrMustFail=-1):
-    # WARNING: assure name uniquness to check geompy.GetField( shape, name )
+    # WARNING: assure name uniqueness to check geompy.GetField( shape, name )
     try:
         field = geompy.CreateField(shape, name, ftype, dimension, componentNames)
     except Exception as e:

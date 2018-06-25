@@ -1280,7 +1280,7 @@ bool GEOMUtils::IsOpenPath(const TopoDS_Shape &theShape)
       const TopAbs_ShapeEnum aType = theShape.ShapeType();
 
       if (aType == TopAbs_EDGE || aType == TopAbs_WIRE) {
-        // Check if path ends are coinsident.
+        // Check if path ends are coincident.
         TopoDS_Vertex aV[2];
 
         if (aType == TopAbs_EDGE) {

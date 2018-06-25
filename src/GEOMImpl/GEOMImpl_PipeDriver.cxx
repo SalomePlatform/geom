@@ -699,7 +699,7 @@ static TopoDS_Shape RemoveFaces(const TopoDS_Shape &theShapeFrom,
 
 //=======================================================================
 //function : makeSolid
-//purpose  : auxilary for CreatePipeWithDifferentSections
+//purpose  : auxiliary for CreatePipeWithDifferentSections
 //=======================================================================
 Standard_Boolean makeSolid(
   BRepOffsetAPI_MakePipeShell aBuilder,
@@ -1794,7 +1794,7 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
       TopTools_IndexedDataMapOfShapeListOfShape aMapEdgeFaces2;
       TopExp::MapShapesAndAncestors(aShBase2, TopAbs_EDGE, TopAbs_FACE, aMapEdgeFaces2);
 
-      // constuct map face->face
+      // construct map face->face
       TopTools_IndexedDataMapOfShapeShape FF;
       TopoDS_Shape FS1,FS2;
       if (nbSubBases==0) {
@@ -2189,7 +2189,7 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
     TopTools_IndexedDataMapOfShapeListOfShape aMapEdgeFaces2;
     TopExp::MapShapesAndAncestors(aShBase2, TopAbs_EDGE, TopAbs_FACE, aMapEdgeFaces2);
 
-    // constuct map face->face (and sub-shapes)
+    // construct map face->face (and sub-shapes)
     TopTools_IndexedDataMapOfShapeShape FF;
     //TopoDS_Shape FS1 = SecFs.Value(i), FS2 = SecFs.Value(i+1);
     TopoDS_Shape FS1, FS2;

@@ -49,7 +49,7 @@ class GEOMIMPL_EXPORT GEOMImpl_PolylineDumper
 public:
 
   /**
-   * This construcor initializes the object with 2D polyline creation
+   * This constructor initializes the object with 2D polyline creation
    * parameters.
    *
    *  \param theCoords the list of coordinates list. theCoordsList[0]
@@ -71,7 +71,7 @@ public:
              const Handle(TColStd_HArray1OfReal)           &thePlnCoords);
 
   /**
-   * This construcor initializes the object with 2D polyline creation
+   * This constructor initializes the object with 2D polyline creation
    * parameters.
    *
    *  \param theCoords the list of coordinates list. theCoordsList[0]

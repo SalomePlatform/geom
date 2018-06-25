@@ -40,7 +40,7 @@ class vtkPolyDataMapper;
 /*
   Class       : GEOM_VTKTrihedron
   Description : Class for displaying trihedron of local CS in VTK viewer.
-                Placement of trihedron is chahged with SetPlacement() method
+                Placement of trihedron is changed with SetPlacement() method
 */
 
 class GEOM_OBJECT_EXPORT GEOM_VTKTrihedron : public SALOME_Actor

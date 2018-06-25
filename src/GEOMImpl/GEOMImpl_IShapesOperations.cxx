@@ -139,7 +139,7 @@ namespace
    * \brief Returns the vertex from theWhere shape that is coincident with
    * theVertex.
    *
-   * \param theWhere the shape where the coinsident vertex is searched.
+   * \param theWhere the shape where the coincident vertex is searched.
    * \param theVertex the vertex to be searched.
    * \return the coincident vertex if it is found. Otherwise null object.
    */

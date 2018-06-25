@@ -124,7 +124,7 @@ GEOMToolsGUI_LineWidthDlg::GEOMToolsGUI_LineWidthDlg (QWidget* parent, const QSt
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(reject()));
   connect(buttonHelp, SIGNAL(clicked()), this, SLOT(ClickOnHelp()));
 
-  // Move widget on the botton right corner of main widget
+  // Move widget on the bottom right corner of main widget
   SUIT_Tools::centerWidget(this, parent);
 }
 

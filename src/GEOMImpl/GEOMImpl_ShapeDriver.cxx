@@ -1571,7 +1571,7 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
               const Standard_Real aTol = BRep_Tool::Tolerance(aVtx);
 
               if (aPFirst.IsEqual(aPnt, aTol)) {
-                // The coinsident vertex is found.
+                // The coincident vertex is found.
                 FirstVertex = aVtx;
                 LastVertex  = aVtx;
                 FirstVertex.Orientation(TopAbs_FORWARD);

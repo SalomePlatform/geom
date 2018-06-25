@@ -23,7 +23,7 @@ SALOME_CONFIGURE_FILE(doxyfile_tui.in doxyfile_tui)
 SALOME_CONFIGURE_FILE(static/header.html.in ${CMAKE_CURRENT_BINARY_DIR}/static/header.html)
 SALOME_CONFIGURE_FILE(static/header_py.html.in ${CMAKE_CURRENT_BINARY_DIR}/static/header_py.html)
 
-# Generate a temporary python file, needed for the genaration of the documentation
+# Generate a temporary python file, needed for the generation of the documentation
 # of the built-in Geometry plugins.
 SET(DOC_GEOM_PluginsList AdvancedGEOM STLPlugin BREPPlugin STEPPlugin IGESPlugin XAOPlugin)
 IF(SALOME_GEOM_USE_VTK)
