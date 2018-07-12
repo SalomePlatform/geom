@@ -472,9 +472,9 @@ bool BasicGUI_CurveDlg::execute (ObjectList& objects)
     if (myBySelectionBtn->isChecked())
       anObj = anOper->MakePolyline(points.in(), myGroupPoints->CheckButton1->isChecked());
     else
-      anObj = anOper->MakeCurveParametricNew(qPrintable(myGroupParams->myXExpr->text()),
-                                             qPrintable(myGroupParams->myYExpr->text()),
-                                             qPrintable(myGroupParams->myZExpr->text()),
+      anObj = anOper->MakeCurveParametricNew(qUtf8Printable(myGroupParams->myXExpr->text()),
+                                             qUtf8Printable(myGroupParams->myYExpr->text()),
+                                             qUtf8Printable(myGroupParams->myZExpr->text()),
                                              myGroupParams->myPMin->value(),
                                              myGroupParams->myPMax->value(),
                                              myGroupParams->myPStep->value(),
@@ -485,9 +485,9 @@ bool BasicGUI_CurveDlg::execute (ObjectList& objects)
     if (myBySelectionBtn->isChecked())
       anObj = anOper->MakeSplineBezier(points.in(), myGroupPoints->CheckButton1->isChecked());
     else
-      anObj = anOper->MakeCurveParametricNew(qPrintable(myGroupParams->myXExpr->text()),
-                                             qPrintable(myGroupParams->myYExpr->text()),
-                                             qPrintable(myGroupParams->myZExpr->text()),
+      anObj = anOper->MakeCurveParametricNew(qUtf8Printable(myGroupParams->myXExpr->text()),
+                                             qUtf8Printable(myGroupParams->myYExpr->text()),
+                                             qUtf8Printable(myGroupParams->myZExpr->text()),
                                              myGroupParams->myPMin->value(),
                                              myGroupParams->myPMax->value(),
                                              myGroupParams->myPStep->value(),
@@ -506,9 +506,9 @@ bool BasicGUI_CurveDlg::execute (ObjectList& objects)
                                                 myGroupPoints->CheckButton2->isChecked());
     }
     else
-      anObj = anOper->MakeCurveParametricNew(qPrintable(myGroupParams->myXExpr->text()),
-                                             qPrintable(myGroupParams->myYExpr->text()),
-                                             qPrintable(myGroupParams->myZExpr->text()),
+      anObj = anOper->MakeCurveParametricNew(qUtf8Printable(myGroupParams->myXExpr->text()),
+                                             qUtf8Printable(myGroupParams->myYExpr->text()),
+                                             qUtf8Printable(myGroupParams->myZExpr->text()),
                                              myGroupParams->myPMin->value(),
                                              myGroupParams->myPMax->value(),
                                              myGroupParams->myPStep->value(),
@@ -523,7 +523,7 @@ bool BasicGUI_CurveDlg::execute (ObjectList& objects)
       aParameters<<myGroupParams->myPMin->text();
       aParameters<<myGroupParams->myPMax->text();
       aParameters<<myGroupParams->myPStep->text();
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+      anObj->SetParameters(aParameters.join(":").toUtf8().constData());
     }
     objects.push_back(anObj._retn());
   }

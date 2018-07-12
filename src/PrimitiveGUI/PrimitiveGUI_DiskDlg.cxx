@@ -501,7 +501,7 @@ bool PrimitiveGUI_DiskDlg::execute (ObjectList& objects)
     if (!anObj->_is_nil() && !IsPreview())
     {
       aParameters << GroupDimensions->SpinBox_DX->text();
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+      anObj->SetParameters(aParameters.join(":").toUtf8().constData());
     }
     res = true;
     break;
@@ -510,7 +510,7 @@ bool PrimitiveGUI_DiskDlg::execute (ObjectList& objects)
     if (!anObj->_is_nil() && !IsPreview())
     {
       aParameters << GroupPntVecR->SpinBox_DX->text();
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+      anObj->SetParameters(aParameters.join(":").toUtf8().constData());
     }
     res = true;
     break;

@@ -420,7 +420,7 @@ bool PrimitiveGUI_ConeDlg::execute (ObjectList& objects)
         aParameters << GroupPoints->SpinBox_DX->text();
         aParameters << GroupPoints->SpinBox_DY->text();
         aParameters << GroupPoints->SpinBox_DZ->text();
-        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+        anObj->SetParameters(aParameters.join(":").toUtf8().constData());
       }
       res = true;
     }
@@ -433,7 +433,7 @@ bool PrimitiveGUI_ConeDlg::execute (ObjectList& objects)
       aParameters << GroupDimensions->SpinBox_DX->text();
       aParameters << GroupDimensions->SpinBox_DY->text();
       aParameters << GroupDimensions->SpinBox_DZ->text();
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+      anObj->SetParameters(aParameters.join(":").toUtf8().constData());
     }
     res = true;
     break;

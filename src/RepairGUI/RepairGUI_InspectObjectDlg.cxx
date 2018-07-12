@@ -145,7 +145,7 @@ RepairGUI_InspectObjectDlg::TreeWidgetItem::TreeWidgetItem
   myShape( shape ),
   myTolerance (theTolerance)
 {
-  myIO = new SALOME_InteractiveObject( entry.toLatin1(), "GEOM", "TEMP_IO" );
+  myIO = new SALOME_InteractiveObject( entry.toUtf8(), "GEOM", "TEMP_IO" );
   setFlags( flags() | Qt::ItemIsEditable );
 }
 

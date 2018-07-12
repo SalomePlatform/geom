@@ -448,7 +448,7 @@ bool BasicGUI_VectorDlg::execute( ObjectList& objects )
       anObj = anOper->MakeVectorDXDYDZ( dx, dy, dz );
 
       if ( !anObj->_is_nil() && !IsPreview() )
-        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+        anObj->SetParameters(aParameters.join(":").toUtf8().constData());
       
       res = true;
       break;

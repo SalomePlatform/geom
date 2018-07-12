@@ -462,7 +462,7 @@ bool RepairGUI_GlueDlg::execute(ObjectList& objects)
       {
         QStringList aParameters;
         aParameters << myTolEdt->text();
-        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+        anObj->SetParameters(aParameters.join(":").toUtf8().constData());
 
         objects.push_back(anObj._retn());
       }
@@ -521,7 +521,7 @@ bool RepairGUI_GlueDlg::execute(ObjectList& objects)
         if (!IsPreview()) {
           QStringList aParameters;
           aParameters << myTolEdt2->text();
-          anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+          anObj->SetParameters(aParameters.join(":").toUtf8().constData());
         }
         objects.push_back(anObj._retn());
       }
@@ -640,7 +640,7 @@ bool RepairGUI_GlueDlg::onAcceptLocal()
             if (aName.isEmpty())
               aName = GEOMBase::GetDefaultName(getPrefix(*it));
           }
-          addInStudy(*it, aName.toLatin1().data());
+          addInStudy(*it, aName.toUtf8().data());
           display(*it, false);
         }
 

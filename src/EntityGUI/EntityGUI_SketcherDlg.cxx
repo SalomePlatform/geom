@@ -2472,7 +2472,7 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
     if( !IsPreview() ) {
       QStringList aCurrentParameters = myParameters;
       aCurrentParameters << aParameters;
-      anObj->SetParameters(aCurrentParameters.join(":").toLatin1().constData());
+      anObj->SetParameters(aCurrentParameters.join(":").toUtf8().constData());
     }
 
     objects.push_back( anObj._retn() );
@@ -2755,7 +2755,7 @@ void EntityGUI_SketcherDlg::FindLocalCS()
     return;
   _PTR(SComponent) fc = obj->GetFatherComponent();
   QString geomComp = fc->GetID().c_str();
-  _PTR(SObject) comp = aStudy->FindObjectID( geomComp.toLatin1().data() );
+  _PTR(SObject) comp = aStudy->FindObjectID( geomComp.toUtf8().data() );
   if ( !comp )
     return;
 

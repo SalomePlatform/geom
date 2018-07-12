@@ -304,7 +304,7 @@ bool RepairGUI_LimitToleranceDlg::execute(ObjectList& objects)
   if (aResult) {
     QStringList aParameters;
     aParameters << myTolEdt->text();
-    anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+    anObj->SetParameters(aParameters.join(":").toUtf8().constData());
     if ( !IsPreview() )
       RepairGUI::ShowStatistics( anOper, this );
     objects.push_back(anObj._retn());
@@ -364,7 +364,7 @@ bool RepairGUI_LimitToleranceDlg::onAcceptLocal()
             if (aName.isEmpty())
               aName = GEOMBase::GetDefaultName(getPrefix(*it));
           }
-          addInStudy(*it, aName.toLatin1().data());
+          addInStudy(*it, aName.toUtf8().data());
           display(*it, false);
         }
 

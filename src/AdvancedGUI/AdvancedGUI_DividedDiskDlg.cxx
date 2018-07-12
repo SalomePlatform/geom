@@ -434,7 +434,7 @@ bool AdvancedGUI_DividedDiskDlg::execute (ObjectList& objects)
     {
       QStringList aParameters;
       aParameters << GroupParams->SpinBox_DX->text();
-      if ( aParameters.count() > 0 ) anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+      if ( aParameters.count() > 0 ) anObj->SetParameters(aParameters.join(":").toUtf8().constData());
     }
     break;
   case 1:
@@ -447,7 +447,7 @@ bool AdvancedGUI_DividedDiskDlg::execute (ObjectList& objects)
     {
       QStringList aParameters;
       aParameters << GroupPntVecR->SpinBox_DX->text();
-      if ( aParameters.count() > 0 ) anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+      if ( aParameters.count() > 0 ) anObj->SetParameters(aParameters.join(":").toUtf8().constData());
     }
     break;
   }

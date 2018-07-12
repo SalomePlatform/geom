@@ -582,7 +582,7 @@ void GEOM_AISShape::drawField( const Handle(Prs3d_Presentation)& thePrs,
           anAspectText3d->SetColor( myLabelColor );
           aGroup->SetPrimitivesAspect( anAspectText3d );
 
-          aGroup->Text( aString.toLatin1().constData(), aVertex, 14 );
+          aGroup->Text( aString.toUtf8().constData(), aVertex, 14 );
         }
       }
       else

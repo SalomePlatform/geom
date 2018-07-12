@@ -82,7 +82,7 @@ SALOME_Prs* GEOMGUI_AnnotationMgr::CreatePresentation( const GEOMGUI_AnnotationA
   if ( !theEntry.isEmpty() ) {
     // owner should be set to provide selection mechanizm
     Handle( SALOME_InteractiveObject ) anIO = new SALOME_InteractiveObject();
-    anIO->setEntry( theEntry.toLatin1().constData() );
+    anIO->setEntry( theEntry.toUtf8().constData() );
     aPresentation->SetOwner( anIO );
   }
 

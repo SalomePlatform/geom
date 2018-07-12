@@ -453,7 +453,7 @@ bool PrimitiveGUI_FaceDlg::execute (ObjectList& objects)
     {
       aParameters << GroupDimensions->SpinBox_DX->text();
       aParameters << GroupDimensions->SpinBox_DY->text();
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+      anObj->SetParameters(aParameters.join(":").toUtf8().constData());
     }
     res = true;
     break;
@@ -465,7 +465,7 @@ bool PrimitiveGUI_FaceDlg::execute (ObjectList& objects)
     {
       aParameters << GroupPlane->SpinBox_DX->text();
       aParameters << GroupPlane->SpinBox_DY->text();
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+      anObj->SetParameters(aParameters.join(":").toUtf8().constData());
     }
     res = true;
     break;

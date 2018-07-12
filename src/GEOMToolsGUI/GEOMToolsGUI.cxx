@@ -93,7 +93,7 @@ static bool inUse( const QString& component, const QMap<QString,QString>& object
   std::list<_PTR(SObject)> aSelectedSO;
   for ( oit = objects.begin(); oit != objects.end(); ++oit )
   {
-    _PTR(SObject) so = study->FindObjectID( oit.key().toLatin1().data() );
+    _PTR(SObject) so = study->FindObjectID( oit.key().toUtf8().data() );
     if ( !so )
       continue;
     aSelectedSO.push_back(so);
@@ -398,7 +398,7 @@ void GEOMToolsGUI::OnEditDelete()
       continue; // invalid object
     // ...
     QString entry = anIObject->getEntry();
-    _PTR(SObject) obj = aStudy->FindObjectID( entry.toLatin1().data() );
+    _PTR(SObject) obj = aStudy->FindObjectID( entry.toUtf8().data() );
     // check parent component
     QString parentComp = getParentComponent( obj );
     if ( parentComp != geomComp )  {
@@ -471,7 +471,7 @@ void GEOMToolsGUI::OnEditDelete()
 
   if ( isComponentSelected ) {
     // GEOM component is selected: delete all objects recursively
-    _PTR(SObject) comp = aStudy->FindObjectID( geomComp.toLatin1().data() );
+    _PTR(SObject) comp = aStudy->FindObjectID( geomComp.toUtf8().data() );
     if ( !comp )
       return;
     _PTR(ChildIterator) it ( aStudy->NewChildIterator( comp ) );
@@ -499,7 +499,7 @@ void GEOMToolsGUI::OnEditDelete()
     // ... and then delete all objects
     QMap<QString, QString>::Iterator it;
     for ( it = toBeDeleted.begin(); it != toBeDeleted.end(); ++it ) {
-      _PTR(SObject) obj ( aStudy->FindObjectID( it.key().toLatin1().data() ) );
+      _PTR(SObject) obj ( aStudy->FindObjectID( it.key().toUtf8().data() ) );
       // remove object from GEOM engine
       removeObjectWithChildren( obj, views, &disp );
       // remove objects from study
@@ -509,7 +509,7 @@ void GEOMToolsGUI::OnEditDelete()
     }
     // ... and then delete all folders
     for ( it = toBeDelFolders.begin(); it != toBeDelFolders.end(); ++it ) {
-      _PTR(SObject) obj ( aStudy->FindObjectID( it.key().toLatin1().data() ) );
+      _PTR(SObject) obj ( aStudy->FindObjectID( it.key().toUtf8().data() ) );
       // remove object from GEOM engine
       removeObjectWithChildren( obj, views, &disp );
       // remove objects from study

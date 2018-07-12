@@ -271,7 +271,7 @@ bool TransformationGUI_OffsetDlg::execute( ObjectList& objects )
       anObj = anOper->OffsetShapeCopy( myObjects[i].get(), GetOffset(), GetIsJoinByPipes() );
       if ( !anObj->_is_nil() ) {
         if(!IsPreview()) {
-          anObj->SetParameters(GroupPoints->SpinBox_DX->text().toLatin1().constData());
+          anObj->SetParameters(GroupPoints->SpinBox_DX->text().toUtf8().constData());
         }
         objects.push_back( anObj._retn() );
       }

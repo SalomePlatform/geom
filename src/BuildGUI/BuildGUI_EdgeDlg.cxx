@@ -475,7 +475,7 @@ bool BuildGUI_EdgeDlg::execute (ObjectList& objects)
       anObj = anOper->MakeEdgeWire(myWire.get(), aLinearTolerance, anAngularTolerance);
 
       if (!anObj->_is_nil() && !IsPreview())
-        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+        anObj->SetParameters(aParameters.join(":").toUtf8().constData());
 
       res = true;
       break;
@@ -487,7 +487,7 @@ bool BuildGUI_EdgeDlg::execute (ObjectList& objects)
       anObj = anOper->MakeEdgeOnCurveByLength(myCurve.get(), aLength, myStartPoint.get());
 
       if (!anObj->_is_nil() && !IsPreview())
-        anObj->SetParameters(GroupOnCurve->SpinBox_DX->text().toLatin1().constData());
+        anObj->SetParameters(GroupOnCurve->SpinBox_DX->text().toUtf8().constData());
 
       res = true;
       break;

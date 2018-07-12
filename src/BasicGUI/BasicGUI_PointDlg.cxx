@@ -889,7 +889,7 @@ bool BasicGUI_PointDlg::execute(ObjectList& objects)
                                            id == GEOM_POINT_REF ||
                                            id == GEOM_POINT_EDGE ||
                                            id == GEOM_POINT_SURF)) {
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+      anObj->SetParameters(aParameters.join(":").toUtf8().constData());
   }
 
   if (id == GEOM_POINT_REF || id == GEOM_POINT_EDGE || id == GEOM_POINT_SURF) {

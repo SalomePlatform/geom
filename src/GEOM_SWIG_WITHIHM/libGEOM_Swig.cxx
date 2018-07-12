@@ -347,7 +347,7 @@ void TSetPropertyEvent::Execute()
 
   study->setObjectProperty( mgrId, myEntry, myProperty, myValue );
   
-  Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( myEntry.toLatin1().data(), "GEOM" );
+  Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( myEntry.toUtf8().data(), "GEOM" );
   if ( window->isVisible( io ) ) displayer.Redisplay( io, myUpdateViewer );
 }
 

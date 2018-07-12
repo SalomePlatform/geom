@@ -995,10 +995,10 @@ bool EntityGUI_3DSketcherDlg::execute (ObjectList& objects)
 //   MESSAGE("aCommands.last() = "<< aCommands.last().toStdString());
   GEOM::GEOM_ICurvesOperations_var anOper = GEOM::GEOM_ICurvesOperations::_narrow(getOperation());
   //GEOM::GEOM_Object_var anObj = anOper->Make3DSketcher(aCoordsArray);
-  GEOM::GEOM_Object_var anObj = anOper->Make3DSketcherCommand(aCommands.join(":").toLatin1().constData());
+  GEOM::GEOM_Object_var anObj = anOper->Make3DSketcherCommand(aCommands.join(":").toUtf8().constData());
 
   if (!anObj->_is_nil()) {
-    if (!IsPreview()) anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+    if (!IsPreview()) anObj->SetParameters(aParameters.join(":").toUtf8().constData());
     objects.push_back(anObj._retn());
   }
 

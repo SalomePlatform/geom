@@ -858,7 +858,7 @@ void GEOMToolsGUI::OnCreateFolder()
   _PTR(SObject) aFatherSO(aStudy->FindObjectID(anIObject->getEntry()));
   if ( !aFatherSO ) return;
 
-  GeometryGUI::GetGeomGen()->CreateFolder( tr("NEW_FOLDER_NAME").toLatin1().constData(), 
+  GeometryGUI::GetGeomGen()->CreateFolder( tr("NEW_FOLDER_NAME").toUtf8().constData(), 
                                            _CAST(SObject, aFatherSO)->GetSObject() );
   app->updateObjectBrowser( false );
 }

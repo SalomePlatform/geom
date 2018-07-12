@@ -826,7 +826,7 @@ bool GEOMGUI_TextTreeWdg::setShapeItemVisibility( QSharedPointer<VisualProperty>
 //=================================================================================
 void GEOMGUI_TextTreeWdg::redisplay( QString theEntry )
 {
-  Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( theEntry.toLatin1().constData(), "GEOM", "TEMP_IO" );
+  Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( theEntry.toUtf8().constData(), "GEOM", "TEMP_IO" );
   myDisplayer.Redisplay( io );
 }
 

@@ -256,7 +256,7 @@ bool AdvancedGUI_DividedCylinderDlg::execute (ObjectList& objects)
     QStringList aParameters;
     aParameters << GroupParams->SpinBox_DX->text(); // R parameter
     aParameters << GroupParams->SpinBox_DY->text(); // H parameter
-    if ( aParameters.count() > 0 ) anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+    if ( aParameters.count() > 0 ) anObj->SetParameters(aParameters.join(":").toUtf8().constData());
   }
   
   if (res)

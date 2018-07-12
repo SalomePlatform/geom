@@ -753,7 +753,7 @@ void EntityGUI_FieldDlg::StepTable::setValues(GEOM::GEOM_FieldStep_var& step)
       vals->length( nbRows * nbComps );
       for ( int iV = 0, iR = 0; iR < nbRows; ++iR )
         for ( int iC = 1; iC < nbColumns; ++iC )
-          vals[ iV++ ] = item( iR, iC )->text().toLatin1().constData();
+          vals[ iV++ ] = item( iR, iC )->text().toUtf8().constData();
       ss->SetValues( vals );
     }
   }
@@ -1477,7 +1477,7 @@ int EntityGUI_FieldDlg::getSelectedSubshapes (TColStd_IndexedMapOfInteger& theMa
         if (!appStudy) return 0;
         _PTR(Study) aStudy = appStudy->studyDS();
 
-        _PTR(SObject) aSObj (aStudy->FindObjectID(anEntry.toLatin1().constData()));
+        _PTR(SObject) aSObj (aStudy->FindObjectID(anEntry.toUtf8().constData()));
         GEOM::GEOM_Object_var aGeomObj =
           GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aSObj));
         TopoDS_Shape aShape;
@@ -1695,7 +1695,7 @@ void EntityGUI_FieldDlg::activateSelection()
         TopoDS_Shape aSubShape = myShapeMap( index );
         QString anEntry = QString( "TEMP_" ) + aMainEntry.in() + QString("_%1").arg(index);
         Handle(SALOME_InteractiveObject) io =
-          new SALOME_InteractiveObject(anEntry.toLatin1(), "GEOM", "TEMP_IO");
+          new SALOME_InteractiveObject(anEntry.toUtf8(), "GEOM", "TEMP_IO");
         aDisplayer->SetColor( aCol );
         SALOME_Prs* aPrs = aDisplayer->buildSubshapePresentation(aSubShape, anEntry, aView);
         if (aPrs) {
@@ -1802,7 +1802,7 @@ void EntityGUI_FieldDlg::highlightSubShapes()
         if (anIds.Contains(anIndex)) {
           aSelList.Append(anIO);
           // if (childsMap.contains (anIndex)) {
-          //   Handle(SALOME_InteractiveObject) tmpIO = new SALOME_InteractiveObject(childsMap.value(anIndex).toLatin1().constData(), "GEOM", "TEMP_IO");
+          //   Handle(SALOME_InteractiveObject) tmpIO = new SALOME_InteractiveObject(childsMap.value(anIndex).toUtf8().constData(), "GEOM", "TEMP_IO");
           //   aSelList.Append(tmpIO);
           // }
         }
@@ -1870,11 +1870,11 @@ bool EntityGUI_FieldDlg::execute()
     GEOM::string_array_var compNames = new GEOM::string_array();
     compNames->length( nbComps );
     for ( int iC = 0; iC < nbComps; ++iC )
-      compNames[ iC ] = columnNames[ iC+1 ].toLatin1().constData();
+      compNames[ iC ] = columnNames[ iC+1 ].toUtf8().constData();
 
     GEOM::GEOM_IFieldOperations_var anOper = GEOM::GEOM_IFieldOperations::_narrow(getOperation());
     myField = anOper->CreateField( myShape,
-                                   aName.toLatin1().constData(),
+                                   aName.toUtf8().constData(),
                                    GEOM::field_data_type( getDataType() ),
                                    CORBA::Short( getDim() ),
                                    compNames );
@@ -1882,7 +1882,7 @@ bool EntityGUI_FieldDlg::execute()
       return false;
     
     SALOMEDS::SObject_wrap aSO =
-      getGeomEngine()->AddInStudy( myField, aName.toLatin1().constData(), myShape );
+      getGeomEngine()->AddInStudy( myField, aName.toUtf8().constData(), myShape );
     if ( !aSO->_is_nil() ) {
       myField->UnRegister();
       CORBA::String_var entry = aSO->GetID();
@@ -1891,13 +1891,13 @@ bool EntityGUI_FieldDlg::execute()
   }
   else // update field name
   {
-    myField->SetName( aName.toLatin1().constData() );
+    myField->SetName( aName.toUtf8().constData() );
 
     CORBA::String_var entry = myField->GetStudyEntry();
     if ( entry.in() ) {
       SALOMEDS::SObject_wrap SO = aStudyDS->FindObjectID( entry.in() );
       if ( !SO->_is_nil() ) {
-        aBuilder->SetName(SO, aName.toLatin1().constData());
+        aBuilder->SetName(SO, aName.toUtf8().constData());
       }
     }
   }
@@ -1918,7 +1918,7 @@ bool EntityGUI_FieldDlg::execute()
         step = myField->AddStep( tbl->getStepID(), tbl->getStamp() );
 
         SALOMEDS::SObject_wrap aSO =
-          getGeomEngine()->AddInStudy( step, stepName.toLatin1().constData(), myField );
+          getGeomEngine()->AddInStudy( step, stepName.toUtf8().constData(), myField );
         if ( /*!myIsCreation &&*/ !aSO->_is_nil() ) {
           step->UnRegister();
           CORBA::String_var entry = aSO->GetID();
@@ -1933,7 +1933,7 @@ bool EntityGUI_FieldDlg::execute()
       if ( entry.in() ) {
         SALOMEDS::SObject_wrap SO = aStudyDS->FindObjectID( entry.in() );
         if ( !SO->_is_nil() )
-          aBuilder->SetName( SO, stepName.toLatin1().constData() );
+          aBuilder->SetName( SO, stepName.toUtf8().constData() );
       }
     }
 

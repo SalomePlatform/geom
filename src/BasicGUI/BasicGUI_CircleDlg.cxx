@@ -592,7 +592,7 @@ bool BasicGUI_CircleDlg::execute( ObjectList& objects )
       aParameters << GroupPntVecR->SpinBox_DX->text();
       anObj = anOper->MakeCirclePntVecR( myPoint.get(), myDir.get(), getRadius() );
       if ( !anObj->_is_nil() && !IsPreview() )
-        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+        anObj->SetParameters(aParameters.join(":").toUtf8().constData());
       res = true;
       break;
     }

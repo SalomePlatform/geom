@@ -875,7 +875,7 @@ int GroupGUI_GroupDlg::getSelectedSubshapes (TColStd_IndexedMapOfInteger& theMap
         if (!appStudy) return 0;
         _PTR(Study) aStudy = appStudy->studyDS();
 
-        _PTR(SObject) aSObj (aStudy->FindObjectID(anEntry.toLatin1().constData()));
+        _PTR(SObject) aSObj (aStudy->FindObjectID(anEntry.toUtf8().constData()));
         GEOM::GEOM_Object_var aGeomObj =
           GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aSObj));
         TopoDS_Shape aShape;
@@ -1098,7 +1098,7 @@ void GroupGUI_GroupDlg::activateSelection()
           int index = aSubShapesMap.FindIndex(aSubShape);
           QString anEntry = QString( "TEMP_" ) + anEntryBase + QString("_%1").arg(index);
           Handle(SALOME_InteractiveObject) io =
-            new SALOME_InteractiveObject(anEntry.toLatin1(), "GEOM", "TEMP_IO");
+            new SALOME_InteractiveObject(anEntry.toUtf8(), "GEOM", "TEMP_IO");
           if ( myGroupIdList.contains( index ) ) {
             aDisplayer->SetColor( aCol );
           }
@@ -1259,7 +1259,7 @@ void GroupGUI_GroupDlg::highlightSubShapes()
     _PTR(Study) aStudy = appStudy->studyDS();
     CORBA::String_var aMainEntry = myMainObj->GetStudyEntry();
     QString anEntry = aMainEntry.in();
-    _PTR(SObject) aSObj (aStudy->FindObjectID(anEntry.toLatin1().constData()));
+    _PTR(SObject) aSObj (aStudy->FindObjectID(anEntry.toUtf8().constData()));
     _PTR(ChildIterator) anIt (aStudy->NewChildIterator(aSObj));
     for (anIt->InitEx(true); anIt->More(); anIt->Next()) {
       GEOM::GEOM_Object_var aChild = GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(anIt->Value()));
@@ -1285,7 +1285,7 @@ void GroupGUI_GroupDlg::highlightSubShapes()
         if (anIds.Contains(anIndex)) {
           aSelList.Append(anIO);
           if (childsMap.contains (anIndex)) {
-            Handle(SALOME_InteractiveObject) tmpIO = new SALOME_InteractiveObject(childsMap.value(anIndex).toLatin1().constData(), "GEOM", "TEMP_IO");
+            Handle(SALOME_InteractiveObject) tmpIO = new SALOME_InteractiveObject(childsMap.value(anIndex).toUtf8().constData(), "GEOM", "TEMP_IO");
             aSelList.Append(tmpIO);
           }
         }
@@ -1392,7 +1392,7 @@ bool GroupGUI_GroupDlg::execute(ObjectList& objects)
       _PTR(SObject) SO (study->studyDS()->FindObjectIOR(objIOR.toLatin1().constData()));
       if (SO) {
         _PTR(StudyBuilder) aBuilder (study->studyDS()->NewBuilder());
-        aBuilder->SetName(SO, getNewObjectName().toLatin1().constData());
+        aBuilder->SetName(SO, getNewObjectName().toUtf8().constData());
       }
     }
   }
@@ -1450,7 +1450,7 @@ void GroupGUI_GroupDlg::ClickOnOkFilter()
          ( myLessFilterCheck->isChecked() && !myGreaterFilterCheck->isChecked() && isLess ) ||
          ( myGreaterFilterCheck->isChecked() && !myLessFilterCheck->isChecked() && isGreater ) ) {
       Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject();
-      io->setEntry( anEntry.toLatin1().constData() );
+      io->setEntry( anEntry.toUtf8().constData() );
       toSelect.Append(io);
     }
   }

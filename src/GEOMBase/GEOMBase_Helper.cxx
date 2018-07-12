@@ -180,9 +180,9 @@ void GEOMBase_Helper::erase( GEOM::GEOM_Object_ptr object, const bool updateView
   if ( !object->_is_nil() ) {
     QString entry = getEntry( object );
     QString name  = GEOMBase::GetName( object );
-    getDisplayer()->Erase ( new SALOME_InteractiveObject(entry.toLatin1().constData(),
+    getDisplayer()->Erase ( new SALOME_InteractiveObject(entry.toUtf8().constData(),
                                                          "GEOM",
-                                                         name.toLatin1().constData() ),
+                                                         name.toUtf8().constData() ),
                             true, updateView );
   }
 }
@@ -223,9 +223,9 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
     QString entry = getEntry( object );
     QString  name = GEOMBase::GetName( object );
     getDisplayer()->Redisplay
-      (new SALOME_InteractiveObject (entry.toLatin1().constData(),
+      (new SALOME_InteractiveObject (entry.toUtf8().constData(),
                                      "GEOM",
-                                     name.toLatin1().constData()),
+                                     name.toUtf8().constData()),
        false);
   }
 
@@ -245,9 +245,9 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
               QString entry = getEntry( aChild );
               QString  name = GEOMBase::GetName( aChild );
               getDisplayer()->Redisplay
-                ( new SALOME_InteractiveObject( entry.toLatin1().constData(),
+                ( new SALOME_InteractiveObject( entry.toUtf8().constData(),
                                                 "GEOM",
-                                                name.toLatin1().constData() ),
+                                                name.toUtf8().constData() ),
                   false );
             }
           }
@@ -490,8 +490,8 @@ void GEOMBase_Helper::localSelection( const ObjectList& theObjs, const std::list
     if ( anEntry != "" )
     {
       QString aName = GEOMBase::GetName( anObj );
-      aListOfIO.Append( new SALOME_InteractiveObject( anEntry.toLatin1().constData(),
-                                                      "GEOM", aName.toLatin1().constData() ));
+      aListOfIO.Append( new SALOME_InteractiveObject( anEntry.toUtf8().constData(),
+                                                      "GEOM", aName.toUtf8().constData() ));
     }
   }
 
@@ -702,7 +702,7 @@ QString GEOMBase_Helper::getEntry( GEOM::GEOM_Object_ptr object ) const
   if ( study )  {
     QString objIOR = GEOMBase::GetIORFromObject( object );
     if ( objIOR != "" ) {
-      _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( objIOR.toLatin1().constData() ) );
+      _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( objIOR.toUtf8().constData() ) );
       if ( SO )
         return QString::fromStdString(SO->GetID());
     }
@@ -906,7 +906,7 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, b
                   aName = GEOMBase::GetDefaultName( getPrefix( obj ) );
               }
             }
-            anEntryList << addInStudy( obj, aName.toLatin1().constData() );
+            anEntryList << addInStudy( obj, aName.toUtf8().constData() );
             // updateView=false
             if( isDisplayResult() )
               display( obj, false );
@@ -1145,7 +1145,7 @@ GEOM::GEOM_Object_ptr GEOMBase_Helper::findObjectInFather (GEOM::GEOM_Object_ptr
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
   _PTR(Study) aDStudy = appStudy->studyDS();
   QString IOR = GEOMBase::GetIORFromObject( theFather );
-  _PTR(SObject) SObj ( aDStudy->FindObjectIOR( IOR.toLatin1().constData() ) );
+  _PTR(SObject) SObj ( aDStudy->FindObjectIOR( IOR.toUtf8().constData() ) );
 
   bool inStudy = false;
   GEOM::GEOM_Object_var aReturnObject;

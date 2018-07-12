@@ -693,7 +693,7 @@ int EntityGUI_SubShapeDlg::getSelectedSubshapes (TColStd_IndexedMapOfInteger& th
         if (!appStudy) return 0;
         _PTR(Study) aStudy = appStudy->studyDS();
 
-        _PTR(SObject) aSObj (aStudy->FindObjectID(anEntry.toLatin1().constData()));
+        _PTR(SObject) aSObj (aStudy->FindObjectID(anEntry.toUtf8().constData()));
         GEOM::GEOM_Object_var aGeomObj =
           GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aSObj));
         TopoDS_Shape aShape;
@@ -934,7 +934,7 @@ void EntityGUI_SubShapeDlg::ClickOnOkFilter()
          ( myLessFilterCheck->isChecked() && !myGreaterFilterCheck->isChecked() && isLess ) ||
          ( myGreaterFilterCheck->isChecked() && !myLessFilterCheck->isChecked() && isGreater ) ) {
       Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject();
-      io->setEntry( anEntry.toLatin1().constData() );
+      io->setEntry( anEntry.toUtf8().constData() );
       io->setName( myObject->GetName() );
       toSelect.Append(io);
     }
