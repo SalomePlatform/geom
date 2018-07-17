@@ -21,7 +21,6 @@
 
 # scripts / samples,data
 SET(_other_SCRIPTS
-  geompy.py
   GEOM_Spanner.py
   GEOM_blocks.py
   GEOM_example.py

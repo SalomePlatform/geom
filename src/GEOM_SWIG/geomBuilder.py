@@ -14048,6 +14048,10 @@ def New( instance=None):
     global engine
     global geom
     global doLcc
+    if instance and isinstance( instance, SALOMEDS._objref_Study ):
+        import sys
+        sys.stderr.write("Warning: 'study' argument is no more needed in geomBuilder.New(). Consider updating your script!!!\n\n")
+        instance = None
     engine = instance
     if engine is None:
       doLcc = True
