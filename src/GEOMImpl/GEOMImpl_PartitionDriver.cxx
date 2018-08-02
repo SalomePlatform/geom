@@ -309,6 +309,11 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(Handle(TFunction_Logbook)& lo
 
     PS.SetLimitMode(aCI.GetKeepNonlimitShapes());
     PS.SetLimit((TopAbs_ShapeEnum)aCI.GetLimit());
+
+    // Set parallel processing mode (default is false)
+    Standard_Boolean bRunParallel = Standard_True;
+    PS.SetRunParallel(bRunParallel);
+
     PS.Perform();
 
     //skl PS.Compute();
