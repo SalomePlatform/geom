@@ -235,11 +235,23 @@ Standard_Integer GEOMImpl_ProjectionDriver::Execute(Handle(TFunction_Logbook)& l
 
       // check that the result shape is an empty compound
       // (IPAL22905: TC650: Projection on face dialog problems)
-      if( !aShape.IsNull() && aShape.ShapeType() == TopAbs_COMPOUND )
+      if (!aShape.IsNull() && aShape.ShapeType() == TopAbs_COMPOUND)
       {
-        TopoDS_Iterator anIter( aShape );
-        if( !anIter.More() )
+        TopoDS_Iterator anIter(aShape);
+        if (!anIter.More())
           Standard_ConstructionError::Raise("Projection aborted : empty compound produced");
+
+        if (anOriginal.ShapeType() == TopAbs_WIRE) {
+          // Make wire from resulting compound (Mantis issue 0023497)
+          TopTools_ListOfShape anEdgesList;
+          for (; anIter.More(); anIter.Next()) {
+            anEdgesList.Append(anIter.Value());
+          }
+          BRepBuilderAPI_MakeWire aMkWire;
+          aMkWire.Add(anEdgesList);
+          if (aMkWire.IsDone())
+            aShape = aMkWire.Wire();
+        }
       }
     }
 
