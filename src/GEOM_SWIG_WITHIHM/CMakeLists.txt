@@ -74,7 +74,12 @@ SET(_swig_SCRIPTS
 
 # --- rules ---
 
-SWIG_ADD_MODULE(libGEOM_Swig python libGEOM_Swig.i libGEOM_Swig.cxx)
+IF(${CMAKE_VERSION} VERSION_LESS "3.8.0") 
+  SWIG_ADD_MODULE(libGEOM_Swig python libGEOM_Swig.i libGEOM_Swig.cxx)
+ELSE()
+  SWIG_ADD_LIBRARY(libGEOM_Swig LANGUAGE python SOURCES libGEOM_Swig.i libGEOM_Swig.cxx)
+ENDIF()
+
 SWIG_LINK_LIBRARIES(libGEOM_Swig "${_link_LIBRARIES}")
 SWIG_CHECK_GENERATION(libGEOM_Swig)
 IF(WIN32)

@@ -2531,8 +2531,22 @@ void GEOM_Gen_i::LoadPlugin(const std::string& theLibName)
 
   // check, if corresponding operations are already created
   if (myOpCreatorMap.find(theLibName) == myOpCreatorMap.end()) {
+#if WIN32
+  #if UNICODE
+    //RNV: this is workaround for providing compilation,
+    //     path should be processed as unicode string.
+    size_t length = strlen(aPlatformLibName.c_str()) + sizeof(char);
+    wchar_t* aPath = new wchar_t[length + 1];
+    memset(aPath, '\0', length);
+    mbstowcs(aPath, aPlatformLibName.c_str(), length);
+  #else
+    const char* aPath = aPlatformLibName.c_str();
+  #endif
     // load plugin library
-    LibHandle libHandle = LoadLib( aPlatformLibName.c_str() );
+    LibHandle libHandle = LoadLib(aPath);
+#else
+    LibHandle libHandle = LoadLib(aPlatformLibName.c_str());
+#endif
     if (!libHandle) {
       // report any error, if occurred
 #ifndef WIN32

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2016  CEA/DEN, EDF R&D, OPEN CASCADE
+﻿// Copyright (C) 2013-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -112,7 +112,21 @@ namespace
 	    xmlPath += sep;
 	  xmlPath += "share" + sep + "salome" + sep + "resources" + sep + "geom" + sep + plugin + ".xml";
 #ifdef WIN32
-	  fileOK = (GetFileAttributes(xmlPath.c_str()) != INVALID_FILE_ATTRIBUTES);
+
+#ifdef UNICODE
+	  //RNV: this is workaround for providing compilation,
+	  //     path should be processed as unicode string.
+	  size_t length = strlen(xmlPath.c_str()) + sizeof(char);
+	  wchar_t* aPath = new wchar_t[length + 1];
+	  memset(aPath, '\0', length);
+	  mbstowcs(aPath, xmlPath.c_str(), length);
+#else
+	  const char* aPath = xmlPath.c_str();
+#endif
+	  fileOK = (GetFileAttributes(aPath) != INVALID_FILE_ATTRIBUTES);
+#if UNICODE
+	  delete aPath;
+#endif
 #else
 	  fileOK = (access(xmlPath.c_str(), F_OK) == 0);
 #endif
@@ -124,8 +138,19 @@ namespace
 	  if ( xmlPath[ xmlPath.size()-1 ] != sep[0] )
 	    xmlPath += sep;
 	  xmlPath += "share" + sep + "salome" + sep + "resources" + sep + toLower(plugin) + sep + plugin + ".xml";
-#ifdef WIN32
-	  fileOK = (GetFileAttributes(xmlPath.c_str()) != INVALID_FILE_ATTRIBUTES);
+#ifdef WIN32	  
+#ifdef UNICODE
+	  size_t length = strlen(xmlPath.c_str()) + sizeof(char);
+	  wchar_t* aPath = new wchar_t[length+1];
+	  memset(aPath, '\0', length);
+	  mbstowcs(aPath, xmlPath.c_str(), length);
+#else
+	  const char* aPath = xmlPath.c_str();
+#endif
+	  fileOK = (GetFileAttributes(aPath) != INVALID_FILE_ATTRIBUTES);
+#if UNICODE
+	  delete aPath;
+#endif
 #else
 	  fileOK = (access(xmlPath.c_str(), F_OK) == 0);
 #endif
