@@ -434,6 +434,10 @@ bool GEOM_Engine::RemoveObject(Handle(GEOM_BaseObject)& theObject)
   if(!_document)
     return false;  // document is closed...
 
+  TDF_Label aLabel = theObject->GetEntry();
+  if ( aLabel == aLabel.Root() )
+    return false; // already removed object
+
   //Remove an object from the map of available objects
   TCollection_AsciiString anID = BuildIDFromObject(theObject);
   if (_objects.IsBound(anID)) {
@@ -462,7 +466,6 @@ bool GEOM_Engine::RemoveObject(Handle(GEOM_BaseObject)& theObject)
       aNode->Remove();
   }
 
-  TDF_Label aLabel = theObject->GetEntry();
   aLabel.ForgetAllAttributes(Standard_True);
 
   // Remember the label to reuse it then
@@ -1360,7 +1363,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
 
     if(MYDEBUG) {
       cout<<"Variables from SObject:"<<endl;
-      for (int i = 0; i < aVariables.size();i++)
+      for (size_t i = 0; i < aVariables.size();i++)
         cout<<"\t Variable["<<i<<"] = "<<aVariables[i].myVariable<<endl;
     }
 
@@ -1377,7 +1380,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
     //Replace parameters by variables
     Standard_Integer aStartPos = 0;
     Standard_Integer aEndPos = 0;
-    int iVar = 0;
+    size_t iVar = 0;
     TCollection_AsciiString aVar, aReplacedVar;
     for(Standard_Integer i=aFirstParam;i <= aTotalNbParams;i++) {
       //Replace first parameter (bettwen '(' character and first ',' character)
@@ -1911,7 +1914,7 @@ ObjectStates::~ObjectStates()
 //================================================================================
 TState ObjectStates::GetCurrectState() const
 {
-  if(_states.size() > _dumpstate)
+  if((int)_states.size() > _dumpstate)
     return _states[_dumpstate];
   return TState();
 }
