@@ -2126,21 +2126,9 @@ Standard_Integer GEOMImpl_IMeasureOperations::ClosestPoints (Handle(GEOM_Object)
 
     // skl 30.06.2008
     // additional workaround for bugs 19899, 19908 and 19910 from Mantis
-    gp_Pnt P1, P2;
-    double dist = GEOMUtils::GetMinDistanceSingular(aShape1, aShape2, P1, P2);
-    if (dist > -1.0) {
-      nbSolutions = 1;
-
-      theDoubles->Append(P1.X());
-      theDoubles->Append(P1.Y());
-      theDoubles->Append(P1.Z());
-      theDoubles->Append(P2.X());
-      theDoubles->Append(P2.Y());
-      theDoubles->Append(P2.Z());
-
-      SetErrorCode(OK);
-      return nbSolutions;
-    }
+    gp_Pnt P1s, P2s;
+    double dist = GEOMUtils::GetMinDistanceSingular(aShape1, aShape2, P1s, P2s);
+    bool singularBetter = dist > -1.0;
 
     BRepExtrema_DistShapeShape dst (aShape1, aShape2);
     if (dst.IsDone()) {
@@ -2151,14 +2139,31 @@ Standard_Integer GEOMImpl_IMeasureOperations::ClosestPoints (Handle(GEOM_Object)
       for (int i = 1; i <= nbSolutions; i++) {
         P1 = dst.PointOnShape1(i);
         P2 = dst.PointOnShape2(i);
-
+	
         theDoubles->Append(P1.X());
         theDoubles->Append(P1.Y());
         theDoubles->Append(P1.Z());
         theDoubles->Append(P2.X());
         theDoubles->Append(P2.Y());
         theDoubles->Append(P2.Z());
+	
+	Standard_Real Dist = P1.Distance(P2);
+	singularBetter = dist < Dist;
       }
+    }
+
+    if (singularBetter) {
+      if (theDoubles.IsNull()) theDoubles = new TColStd_HSequenceOfReal;
+      else theDoubles->Clear();
+
+      nbSolutions = 1;
+    
+      theDoubles->Append(P1s.X());
+      theDoubles->Append(P1s.Y());
+      theDoubles->Append(P1s.Z());
+      theDoubles->Append(P2s.X());
+      theDoubles->Append(P2s.Y());
+      theDoubles->Append(P2s.Z());
     }
   }
   catch (Standard_Failure& aFail) {

@@ -994,12 +994,13 @@ Standard_Real GEOMUtils::GetMinDistance
 
   // skl 30.06.2008
   // additional workaround for bugs 19899, 19908 and 19910 from Mantis
-  double dist = GEOMUtils::GetMinDistanceSingular
-      (theShape1, theShape2, thePnt1, thePnt2);
+  aResult = GEOMUtils::GetMinDistanceSingular(theShape1, theShape2, thePnt1, thePnt2);
 
+  /*
   if (dist > -1.0) {
     return dist;
   }
+  */
 
   BRepExtrema_DistShapeShape dst (theShape1, theShape2);
   if (dst.IsDone()) {
