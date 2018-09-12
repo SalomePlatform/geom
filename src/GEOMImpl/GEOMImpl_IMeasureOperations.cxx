@@ -2128,7 +2128,7 @@ Standard_Integer GEOMImpl_IMeasureOperations::ClosestPoints (Handle(GEOM_Object)
     // additional workaround for bugs 19899, 19908 and 19910 from Mantis
     gp_Pnt P1s, P2s;
     double dist = GEOMUtils::GetMinDistanceSingular(aShape1, aShape2, P1s, P2s);
-    bool singularBetter = dist > -1.0;
+    bool singularBetter = dist >= 0;
 
     BRepExtrema_DistShapeShape dst (aShape1, aShape2);
     if (dst.IsDone()) {
@@ -2148,7 +2148,7 @@ Standard_Integer GEOMImpl_IMeasureOperations::ClosestPoints (Handle(GEOM_Object)
         theDoubles->Append(P2.Z());
 	
 	Standard_Real Dist = P1.Distance(P2);
-	singularBetter = dist < Dist;
+	singularBetter = singularBetter && dist < Dist;
       }
     }
 

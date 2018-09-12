@@ -1011,7 +1011,7 @@ Standard_Real GEOMUtils::GetMinDistance
       P2 = dst.PointOnShape2(i);
 
       Standard_Real Dist = P1.Distance(P2);
-      if (aResult > Dist) {
+      if (aResult < 0 || aResult > Dist) {
         aResult = Dist;
         thePnt1 = P1;
         thePnt2 = P2;
