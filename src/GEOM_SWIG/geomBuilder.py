@@ -6038,6 +6038,38 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "inplace")
             return anObj
 
+        ## A sort of GetInPlace functionality, returning IDs of sub-shapes.
+        #  For each sub-shape ID of @a theShapeWhat return a list of corresponding sub-shape
+        #  IDs of @a theShapeWhere.
+        #  For example, if theShapeWhat is a box and theShapeWhere is this box cut into 
+        #  two parts by a plane, then the result can be as this: 
+        #    len( result_list ) = 35,
+        #    result_list[ 1 ] = [ 2, 36 ], which means that the box  (ID 1) turned into two
+        #  solids with IDs 2 and 36 within theShapeWhere
+        #
+        #  @param theShapeWhere Shape to find sub-shapes of.
+        #  @param theShapeWhat Shape, specifying what to find.
+        #  @return List of lists of sub-shape IDS of theShapeWhere.
+        def GetInPlaceMap(self, theShapeWhere, theShapeWhat):
+            """
+            A sort of GetInPlace functionality, returning IDs of sub-shapes.
+            For each sub-shape ID of @a theShapeWhat return a list of corresponding sub-shape
+            IDs of @a theShapeWhere.
+            For example, if theShapeWhat is a box and theShapeWhere is this box cut into 
+            two parts by a plane, then the result can be as this: 
+              len( result_list ) = 35,
+              result_list[ 1 ] = [ 2, 36 ], which means that the box (ID 1) turned into two
+            solids with IDs 2 and 36 within theShapeWhere
+
+            Parameters:
+                theShapeWhere Shape to find sub-shapes of.
+                theShapeWhat Shape, specifying what to find.
+
+            Returns:
+                List of lists of sub-shape IDS of theShapeWhere.
+            """
+            return self.ShapesOp.GetInPlaceMap(theShapeWhere, theShapeWhat)
+
         ## Get sub-shape of theShapeWhere, which is
         #  equal to \a theShapeWhat.
         #  @param theShapeWhere Shape to find sub-shape of.

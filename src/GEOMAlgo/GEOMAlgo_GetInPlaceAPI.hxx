@@ -32,6 +32,8 @@
 #include <TopTools_ListOfShape.hxx>
 #include <gp_Vec.hxx>
 
+#include <vector>
+
 class GEOMAlgo_GetInPlace;
 class BRepExtrema_DistShapeShape;
 class TopoDS_Face;
@@ -82,10 +84,20 @@ public:
    *  list is not cleared at first.
    */
   Standard_EXPORT static Standard_Boolean GetInPlaceByHistory
-                      (const Handle(GEOM_Function)       &theWhereFunction,
+                      (const Handle(GEOM_Function)      &theWhereFunction,
                        const TopTools_IndexedMapOfShape &theWhereIndices,
                        const TopoDS_Shape               &theWhat,
                              TopTools_ListOfShape       &theShapesInPlace);
+
+  /**
+   *  \brief GetInPlaceMap method implementation.
+   *  For each sub-shape ID in theWhat fills an array of corresponding
+   *  sub-shape IDs in theWhere
+   */
+  Standard_EXPORT static Standard_Boolean GetInPlaceMap
+                      (const Handle(GEOM_Function)       &theWhereFunction,
+                       const TopoDS_Shape                &theWhat,
+                       std::vector< std::vector< int > > &theResVec);
 
 protected:
 

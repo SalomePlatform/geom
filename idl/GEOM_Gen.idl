@@ -220,7 +220,7 @@ module GEOM
     CC_LE  ///< Less then or equal to
   };
 
- /*!
+  /*!
    * \brief Object creation parameters
    *
    * Is returned by GEOM_Object::GetCreationInformation()
@@ -256,6 +256,7 @@ module GEOM
   typedef sequence<long>         ListOfLong;
   typedef sequence<double>       ListOfDouble;
   typedef sequence<ListOfDouble> ListOfListOfDouble;
+  typedef sequence<ListOfLong>   ListOfListOfLong;
 
   interface GEOM_Object;
   interface GEOM_BaseObject;
@@ -2681,6 +2682,18 @@ module GEOM
      */
     GEOM_Object GetInPlaceByHistory (in GEOM_Object theShapeWhere,
                                      in GEOM_Object theShapeWhat);
+
+    /*!
+     *  \brief A sort of GetInPlace functionality, returning for each sub-shape ID of 
+     *  \a theShapeWhat a list of corresponding sub-shape IDs of \a theShapeWhere.
+     *  For example, if theShapeWhat is a box and theShapeWhere is this box cut into 
+     *  two parts by a plane, then the result can be as this: 
+     *    len( result_list ) = 35,
+     *    result_list[ 1 ] = [ 2, 36 ], which means that the box turned into two solids
+     *  with IDs 2 and 36 within theShapeWhere
+     */
+    ListOfListOfLong GetInPlaceMap (in GEOM_Object theShapeWhere,
+                                    in GEOM_Object theShapeWhat);
 
     /*!
      *  \brief Get sub-shape of theShapeWhere, which are

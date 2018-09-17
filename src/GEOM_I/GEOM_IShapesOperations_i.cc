@@ -35,6 +35,8 @@
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 
+#include <vector>
+
 /**
  * This function converts GEOM::comparison_condition type into
  * GEOMUtils::ComparisonCondition type.
@@ -1983,6 +1985,39 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::GetInPlaceByHistory
     return aGEOMObject._retn();
 
   return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  GetInPlaceMap
+ */
+//=============================================================================
+GEOM::ListOfListOfLong*
+GEOM_IShapesOperations_i::GetInPlaceMap (GEOM::GEOM_Object_ptr theShapeWhere,
+                                         GEOM::GEOM_Object_ptr theShapeWhat)
+{
+  GEOM::ListOfListOfLong_var aResult = new GEOM::ListOfListOfLong();
+
+  //Get the reference objects
+  Handle(::GEOM_Object) aShapeWhere = GetObjectImpl(theShapeWhere);
+  Handle(::GEOM_Object) aShapeWhat = GetObjectImpl(theShapeWhat);
+
+  if (!aShapeWhere.IsNull() &&
+      !aShapeWhat.IsNull())
+  {
+    std::vector< std::vector< int > > resVec;
+    GetOperations()->GetInPlaceMap(aShapeWhere, aShapeWhat, resVec);
+
+    aResult->length( resVec.size() );
+    for ( size_t i = 0; i < resVec.size(); ++i )
+    {
+      //if ( !resVec[i].empty() )
+      aResult[i].length( resVec[i].size() );
+      for ( size_t j = 0; j < resVec[i].size(); ++j )
+        aResult[i][j] = resVec[i][j];
+    }
+  }
+  return aResult._retn();
 }
 
 //=============================================================================

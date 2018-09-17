@@ -4716,6 +4716,42 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlaceByHistory
 }
 
 //=======================================================================
+//function : GetInPlaceMap
+//purpose  :
+//=======================================================================
+void GEOMImpl_IShapesOperations::GetInPlaceMap (Handle(GEOM_Object) theShapeWhere,
+                                                Handle(GEOM_Object) theShapeWhat,
+                                                std::vector< std::vector< int > > & theResVec)
+{
+  SetErrorCode(KO);
+
+  if (theShapeWhere.IsNull() || theShapeWhat.IsNull()) return;
+
+  TopoDS_Shape aWhere = theShapeWhere->GetValue();
+  TopoDS_Shape aWhat  = theShapeWhat->GetValue();
+
+  if (aWhere.IsNull() || aWhat.IsNull()) return;
+
+  Handle(GEOM_Function) aWhereFunction = theShapeWhere->GetLastFunction();
+  if (aWhereFunction.IsNull()) return;
+
+  bool isFound = GEOMAlgo_GetInPlaceAPI::GetInPlaceMap( aWhereFunction, aWhat, theResVec );
+
+  if ( isFound )
+    SetErrorCode(OK);
+
+  Handle(GEOM_Function) aFunction =
+    GEOM::GetCreatedLast(theShapeWhere,theShapeWhat)->GetLastFunction();
+
+  GEOM::TPythonDump(aFunction, /*append=*/true)
+    << "resultList = geompy.GetInPlaceMap( "
+    << theShapeWhere << ", "
+    << theShapeWhat << ")";
+
+  return;
+}
+
+//=======================================================================
 //function : isSameEdge
 //purpose  : Returns True if two edges coincide
 //=======================================================================

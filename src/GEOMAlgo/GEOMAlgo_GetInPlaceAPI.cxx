@@ -45,6 +45,7 @@
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Vertex.hxx>
+#include <TColStd_MapOfInteger.hxx>
 
 //=======================================================================
 //function : GetInPlace
@@ -422,6 +423,159 @@ Standard_Boolean GEOMAlgo_GetInPlaceAPI::GetInPlaceByHistory
     }
     else {
       // Removed entity
+    }
+  }
+
+  return isFound;
+}
+
+//=======================================================================
+//function : GetInPlaceByHistory
+//purpose  : 
+//=======================================================================
+Standard_Boolean
+GEOMAlgo_GetInPlaceAPI::GetInPlaceMap (const Handle(GEOM_Function)       & theWhereFunction,
+                                       const TopoDS_Shape                & theWhat,
+                                       std::vector< std::vector< int > > & theResVec)
+{
+  //theResVec.clear();
+
+  if (theWhereFunction.IsNull() || theWhat.IsNull() || theWhereFunction->GetValue().IsNull() )
+    return Standard_False;
+  TopoDS_Shape theWhere = theWhereFunction->GetValue();
+
+  TopTools_IndexedMapOfShape whereIndices, whatIndices;
+  TopExp::MapShapes( theWhere, whereIndices );
+  TopExp::MapShapes( theWhat,  whatIndices );
+
+  theResVec.resize( whatIndices.Extent() + 1 );
+
+  // first, try by history
+
+  Standard_Boolean isFound = Standard_False;
+
+  TDF_LabelSequence aLabelSeq;
+  theWhereFunction->GetDependency(aLabelSeq);
+  Standard_Integer nbArg = aLabelSeq.Length();
+
+  for (Standard_Integer iarg = 1; iarg <= nbArg && !isFound; iarg++)
+  {
+    TDF_Label anArgumentRefLabel = aLabelSeq.Value(iarg);
+
+    Handle(GEOM_Object) anArgumentObject = GEOM_Object::GetReferencedObject(anArgumentRefLabel);
+    TopoDS_Shape anArgumentShape = anArgumentObject->GetValue();
+
+    TopTools_IndexedMapOfShape anArgumentIndices;
+    TopExp::MapShapes(anArgumentShape, anArgumentIndices);
+
+    if (( isFound = anArgumentIndices.Contains(theWhat)))
+    {
+      // Find corresponding label in history
+      TDF_Label anArgumentHistoryLabel =
+        theWhereFunction->GetArgumentHistoryEntry(anArgumentRefLabel, Standard_False);
+      if ( anArgumentHistoryLabel.IsNull())
+      {
+        // Lost History of operation argument. Possibly, theWhat was removed from theWhere
+        isFound = false;
+        break;
+      }
+      else
+      {
+        Standard_Integer aWhatIndex = anArgumentIndices.FindIndex(theWhat);
+        for ( int i = 0, iSubWhat = aWhatIndex; i < whatIndices.Extent(); ++i, ++iSubWhat )
+        {
+          TDF_Label aHistoryLabel = anArgumentHistoryLabel.FindChild( iSubWhat, Standard_False );
+          if ( !aHistoryLabel.IsNull() )
+          {
+            Handle(TDataStd_IntegerArray) anIntegerArray;
+            if (aHistoryLabel.FindAttribute(TDataStd_IntegerArray::GetID(), anIntegerArray))
+            {
+              Standard_Integer imod, aModifLen = anIntegerArray->Array()->Length();
+              for ( imod = 1; imod <= aModifLen; imod++ )
+              {
+                Standard_Integer     whereIndex = anIntegerArray->Array()->Value( imod );
+                const TopoDS_Shape& argSubShape = anArgumentIndices( iSubWhat );
+                Standard_Integer      whatIndex = whatIndices.FindIndex( argSubShape );
+                theResVec[ whatIndex ].push_back( whereIndex );
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if ( !isFound ) // use GetInPlace()
+  {
+    GEOMAlgo_GetInPlace gip;
+    if ( ! GetInPlace( theWhere, theWhat, gip ))
+      return false;
+
+    const TopTools_DataMapOfShapeListOfShape& img = gip.Images();
+    TopTools_DataMapIteratorOfDataMapOfShapeListOfShape imgIt( img );
+    for ( ; imgIt.More(); imgIt.Next() )
+    {
+      const TopoDS_Shape&              whatSub = imgIt.Key();
+      const TopTools_ListOfShape& whereSubList = imgIt.Value();
+      int whatID = whatIndices.FindIndex( whatSub );
+      if ( whatID == 0 ) continue;
+      TopTools_ListIteratorOfListOfShape whereIt( whereSubList );
+      for ( ; whereIt.More(); whereIt.Next() )
+      {
+        int whereID = whereIndices.FindIndex( whereIt.Value() );
+        if ( whereID && whatSub.ShapeType() == whereIt.Value().ShapeType() )
+          theResVec[ whatID ].push_back( whereID );
+      }
+      isFound = true;
+    }
+  }
+
+  if ( isFound )
+  {
+    // check that all sub-shapes are found and restore missing history of wires, shells etc.
+    for ( int iSubWhat = 1; iSubWhat <= whatIndices.Extent(); ++iSubWhat )
+    {
+      if ( !theResVec[ iSubWhat ].empty() )
+        continue;
+      const TopoDS_Shape& whatSubShape = whatIndices( iSubWhat );
+      switch ( whatSubShape.ShapeType() )
+      {
+      case TopAbs_COMPOUND:
+      case TopAbs_COMPSOLID:
+        continue; // not possible?
+      case TopAbs_SHELL:
+      case TopAbs_WIRE:
+      {
+        // find a corresponding sub-shape in theWhere
+        TColStd_MapOfInteger whereIDs;
+        TopAbs_ShapeEnum subType =
+          whatSubShape.ShapeType() == TopAbs_WIRE ? TopAbs_EDGE : TopAbs_FACE;
+        for ( TopExp_Explorer subIt( whatSubShape, subType ); subIt.More(); subIt.Next() )
+        {
+          int whatID = whatIndices.FindIndex( subIt.Current() );
+          std::vector< int > & whereIDsVec = theResVec[ whatID ];
+          for ( size_t i = 0; i < whereIDsVec.size(); ++i )
+            whereIDs.Add( whereIDsVec[i] );
+        }
+        // look for a Where sub-shape including all whereIDs
+        TopExp_Explorer whereIt( theWhere, whatSubShape.ShapeType() );
+        for ( ; whereIt.More(); whereIt.Next() )
+        {
+          bool isAllIn = true;
+          for ( TopoDS_Iterator it( whereIt.Current() ); it.More() && isAllIn; it.Next() )
+          {
+            int whereID = whereIndices.FindIndex( it.Value() );
+            isAllIn = whereIDs.Contains( whereID );
+          }
+          if ( isAllIn )
+          {
+            theResVec[ iSubWhat ].push_back( whereIndices.FindIndex( whereIt.Current() ));
+            break;
+          }
+        }
+      }
+      default:; // removed sub-shape
+      }
     }
   }
 

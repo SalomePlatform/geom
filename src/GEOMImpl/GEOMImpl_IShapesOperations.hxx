@@ -42,6 +42,7 @@
 #include <Geom_Surface.hxx>
 
 #include <list>
+#include <vector>
 
 class GEOM_Engine;
 class GEOM_Object;
@@ -328,6 +329,10 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
 
   Standard_EXPORT Handle(GEOM_Object) GetInPlaceByHistory (Handle(GEOM_Object) theShapeWhere,
                                                            Handle(GEOM_Object) theShapeWhat);
+
+  Standard_EXPORT void GetInPlaceMap (Handle(GEOM_Object)                 theShapeWhere,
+                                      Handle(GEOM_Object)                 theShapeWhat,
+                                      std::vector< std::vector< int > > & theResVec);
 
   /*!
    * \brief Searches a shape equal to theWhat in the context of theWhere
