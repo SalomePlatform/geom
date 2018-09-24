@@ -76,6 +76,8 @@ public:
 
   Standard_EXPORT void highlightSubShapes(const TColStd_IndexedMapOfInteger& aIndexMap, const Standard_Boolean aHighlight );
   
+  Standard_Boolean AcceptDisplayMode(const Standard_Integer theMode) const;
+
   Standard_EXPORT void SetShadingColor(const Quantity_Color &aCol);
   Standard_EXPORT void SetEdgesInShadingColor(const Quantity_Color &aCol);
   Standard_EXPORT void SetLabelColor(const Quantity_Color &aCol);

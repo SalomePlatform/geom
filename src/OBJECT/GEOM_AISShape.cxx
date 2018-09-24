@@ -206,6 +206,11 @@ Standard_CString GEOM_AISShape::getName()
   return myName.ToCString();
 }
 
+Standard_Boolean GEOM_AISShape::AcceptDisplayMode(const Standard_Integer theMode) const
+{
+  return theMode >= Wireframe && theMode <= CustomHighlight;
+}
+
 void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
                             const Handle(Prs3d_Presentation)&           aPrs,
                             const Standard_Integer                      aMode)
