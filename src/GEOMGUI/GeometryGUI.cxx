@@ -138,8 +138,6 @@ extern "C" {
   }
 }
 
-GeometryGUI::TextureMap GeometryGUI::myTextureMap;
-
 GEOM::GEOM_Gen_var GeometryGUI::myComponentGeom = GEOM::GEOM_Gen::_nil();
 
 GEOM::GEOM_Gen_var GeometryGUI::GetGeomGen()
@@ -2220,25 +2218,20 @@ QString GeometryGUI::engineIOR() const
 Handle(TColStd_HArray1OfByte) GeometryGUI::getTexture (int theId, int& theWidth, int& theHeight)
 {
   theWidth = theHeight = 0;
-
   Handle(TColStd_HArray1OfByte) aTexture;
 
-  aTexture = myTextureMap[ theId ];
-  if ( aTexture.IsNull() ) {
-    GEOM::GEOM_IInsertOperations_var aInsOp = GeometryGUI::GetGeomGen()->GetIInsertOperations();
-    if ( !aInsOp->_is_nil() ) {
-      CORBA::Long aWidth, aHeight;
-      SALOMEDS::TMPFile_var aStream = aInsOp->GetTexture( theId, aWidth, aHeight );
-      if ( aWidth > 0 && aHeight > 0 && aStream->length() > 0 ) {
-        theWidth  = aWidth;
-        theHeight = aHeight;
+  GEOM::GEOM_IInsertOperations_var aInsOp = GeometryGUI::GetGeomGen()->GetIInsertOperations();
+  if ( !aInsOp->_is_nil() ) {
+    CORBA::Long aWidth, aHeight;
+    SALOMEDS::TMPFile_var aStream = aInsOp->GetTexture( theId, aWidth, aHeight );
+    if ( aWidth > 0 && aHeight > 0 && aStream->length() > 0 ) {
+      theWidth  = aWidth;
+      theHeight = aHeight;
 
-        aTexture  = new TColStd_HArray1OfByte (1, aStream->length());
+      aTexture  = new TColStd_HArray1OfByte (1, aStream->length());
 
-        for ( CORBA::ULong i = 0; i < aStream->length(); i++)
-          aTexture->SetValue( i+1, (Standard_Byte)aStream[i] );
-        myTextureMap[ theId ] = aTexture;
-      }
+      for ( CORBA::ULong i = 0; i < aStream->length(); i++)
+        aTexture->SetValue( i+1, (Standard_Byte)aStream[i] );
     }
   }
   return aTexture;

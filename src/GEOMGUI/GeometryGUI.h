@@ -211,8 +211,6 @@ public:
 
 private:  
 
-  typedef QMap<long, Handle(TColStd_HArray1OfByte)> TextureMap;
-
   typedef QMap<QString, GEOMGUI*> GUIMap;
 
   typedef QPair<QString, QString> PluginAction;
@@ -221,7 +219,6 @@ private:
   QDialog*                     myActiveDialogBox; // active dialog box
   gp_Ax3                       myWorkingPlane;
   //QMap<int,QString>          myRules;           // popup rules
-  static TextureMap            myTextureMap;      // texture map
 
   QMap<int, PluginAction>      myPluginActions;   // plugin actions
   QMap<QString, QString>       myPluginLibs;      // plugin name to plugin client library
