@@ -206,6 +206,8 @@ QVariant GEOMGUI_Selection::parameter( const int idx, const QString& p ) const
     v = hasHiddenAnnotations(idx);
   else if ( p == "hasVisibleAnnotations" )
     v = hasVisibleAnnotations(idx);
+  else if ( p == "matMenu" )
+    v = SUIT_Session::session()->resourceMgr()->booleanValue( "Geometry", "predef_materials", false );
   else
     v = LightApp_Selection::parameter( idx, p );
 
@@ -392,7 +394,7 @@ QString GEOMGUI_Selection::displayMode( const int index ) const
 
 bool GEOMGUI_Selection::autoBringToFront( const int /*index*/ ) const
 {
-  return SUIT_Session::session()->resourceMgr()->booleanValue( "Geometry", "auto_bring_to_front", "false" );
+  return SUIT_Session::session()->resourceMgr()->booleanValue( "Geometry", "auto_bring_to_front", false );
 }
 
 bool GEOMGUI_Selection::isVectorsMode( const int index ) const

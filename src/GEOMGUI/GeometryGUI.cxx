@@ -535,8 +535,9 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpPublishObject:      // ROOT GEOM OBJECT - POPUP MENU - PUBLISH
   case GEOMOp::OpPointMarker:        // POPUP MENU - POINT MARKER
   case GEOMOp::OpMaterialProperties: // POPUP MENU - MATERIAL PROPERTIES
-  case GEOMOp::OpPredefMaterial:     // POPUP MENU - <SOME MATERIAL>
-  case GEOMOp::OpPredefMaterCustom:  // POPUP MENU - MATERIAL PROPERTIES - CUSTOM...
+  case GEOMOp::OpMaterialMenu:       // POPUP MENU - MATERIAL PROPERTIES (sub-menu)
+  case GEOMOp::OpPredefMaterial:     // POPUP MENU - MATERIAL PROPERTIES (sub-menu) - <SOME MATERIAL>
+  case GEOMOp::OpPredefMaterCustom:  // POPUP MENU - MATERIAL PROPERTIES (sub-menu) - CUSTOM...
   case GEOMOp::OpEdgeWidth:          // POPUP MENU - LINE WIDTH - EDGE WIDTH
   case GEOMOp::OpIsosWidth:          // POPUP MENU - LINE WIDTH - ISOS WIDTH
   case GEOMOp::OpBringToFront:       // POPUP MENU - BRING TO FRONT
@@ -1151,6 +1152,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpPointMarker,      "POP_POINT_MARKER" );
   createGeomAction( GEOMOp::OpMaterialProperties,   "POP_MATERIAL_PROPERTIES" );
   createGeomAction( GEOMOp::OpPredefMaterCustom,    "POP_PREDEF_MATER_CUSTOM" );
+  createGeomAction( GEOMOp::OpMaterialMenu, "POP_MATERIAL_PROPERTIES");
+  action(GEOMOp::OpMaterialMenu)->setMenu( new QMenu() );
   createGeomAction( GEOMOp::OpCreateFolder, "POP_CREATE_FOLDER" );
   createGeomAction( GEOMOp::OpSortChildren, "POP_SORT_CHILD_ITEMS" );
 #ifndef DISABLE_GRAPHICSVIEW
@@ -1612,7 +1615,9 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   // material properties
   mgr->insert( action(  GEOMOp::OpMaterialProperties ), -1, -1 );
-  mgr->setRule( action( GEOMOp::OpMaterialProperties ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpMaterialProperties ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'}) and matMenu=false", QtxPopupMgr::VisibleRule );
+  mgr->insert( action(  GEOMOp::OpMaterialMenu ), -1, -1 );
+  mgr->setRule( action( GEOMOp::OpMaterialMenu ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'}) and matMenu=true", QtxPopupMgr::VisibleRule );
 
  // texture
   mgr->insert( action(  GEOMOp::OpSetTexture ), -1, -1 );
@@ -2248,59 +2253,44 @@ void GeometryGUI::contextMenuPopup( const QString& client, QMenu* menu, QString&
   SALOME_ListIO lst;
   getApp()->selectionMgr()->selectedObjects( lst );
 
-  //Add submenu for predefined materials
-  // RNV: '#23552: Unable to use the contextual menu of Object Browser window' issue: 
-  //      Temporary solution: do not show 'Materials' submenu forcibly
-  //bool isPredefMat = SUIT_Session::session()->resourceMgr()->booleanValue( "Geometry", "predef_materials" );
-  bool isPredefMat = false;
-  
+  // Update submenu for predefined materials
   if ( ( client == "OCCViewer" || client == "VTKViewer" ) && lst.Extent() > 0 ) {
-    QtxPopupMgr* mgr = popupMgr();
-    //get parent for submenu
-    QAction* act = mgr->action( mgr->actionId( action(  GEOMOp::OpMaterialProperties ) ) );
-    //Clear old  menu
-    QMenu* oldMenu = act->menu() ;
-    if( oldMenu ) {
-      delete oldMenu;
-    }
-    if( isPredefMat ){
-      QMenu* matMenu = new QMenu();
-      QSignalMapper* signalMapper = new QSignalMapper( matMenu );
+    QMenu* matMenu = action( GEOMOp::OpMaterialMenu )->menu();
+    matMenu->clear();
+    QSignalMapper* signalMapper = new QSignalMapper( menu );
 
-      //Get current material model for the object
-      QVariant v;
-      LightApp_Application* anApp = dynamic_cast<LightApp_Application*>( getApp() );
-      if ( anApp && anApp->activeViewManager() ) {
-        LightApp_Study* aStudy = dynamic_cast<LightApp_Study*>( anApp->activeStudy() );
-        if( aStudy ) {
-          v = aStudy->getObjectProperty( anApp->activeViewManager()->getGlobalId(), lst.Last()->getEntry(), GEOM::propertyName( GEOM::Material ), QVariant() );
-        }
+    QVariant v;
+    LightApp_Application* anApp = dynamic_cast<LightApp_Application*>( getApp() );
+    if ( anApp && anApp->activeViewManager() ) {
+      LightApp_Study* aStudy = dynamic_cast<LightApp_Study*>( anApp->activeStudy() );
+      if( aStudy ) {
+        v = aStudy->getObjectProperty( anApp->activeViewManager()->getGlobalId(), lst.Last()->getEntry(), GEOM::propertyName( GEOM::Material ), QVariant() );
       }
-      QString curModel = "";
-      if ( v.canConvert<QString>() ) curModel = v.toString();
-      // get list of all predefined materials
-      QStringList materials = Material_ResourceMgr::resourceMgr()->materials();
-      bool found = false;
-      foreach ( QString material, materials )
-      {
-        QAction* menAct = matMenu->addAction( material );
-        connect(menAct, SIGNAL( toggled( bool ) ), signalMapper, SLOT( map() ) );
-        signalMapper->setMapping( menAct, material );
-        menAct->setCheckable( true );
-        // Set checked if this material is current
-        Material_Model aModel;
-        aModel.fromResources( material );
-        if ( !found && aModel.toProperties() == curModel ) {
-          menAct->setChecked( true );
-          found = true;
-        }
-      }
-      matMenu->insertAction( matMenu->addSeparator(), action(  GEOMOp::OpPredefMaterCustom ) );
-      matMenu->insertSeparator( action(  GEOMOp::OpPredefMaterCustom ) );
-      connect( signalMapper, SIGNAL( mapped( const QString & ) ),
-                 this, SLOT( OnSetMaterial( const QString & ) ) );
-      act->setMenu( matMenu );
     }
+    QString curModel = "";
+    if ( v.canConvert<QString>() ) curModel = v.toString();
+
+    // get list of all predefined materials
+    QStringList materials = Material_ResourceMgr::resourceMgr()->materials();
+    bool found = false;
+    foreach ( QString material, materials )
+    {
+      QAction* a = matMenu->addAction( material );
+      connect( a, SIGNAL( toggled( bool ) ), signalMapper, SLOT( map() ) );
+      signalMapper->setMapping( a, material );
+      a->setCheckable( true );
+
+      Material_Model aModel;
+      aModel.fromResources( material );
+      if ( !found && aModel.toProperties() == curModel ) {
+	a->setChecked( true );
+	found = true;
+      }
+    }
+    matMenu->addSeparator();
+    matMenu->addAction( action( GEOMOp::OpPredefMaterCustom ) );
+    connect( signalMapper, SIGNAL( mapped( const QString & ) ),
+                 this, SLOT( OnSetMaterial( const QString & ) ) );
   }
   //Set name
   if ( ( client == "OCCViewer" || client == "VTKViewer" ) && lst.Extent() == 1 ) {
@@ -2373,9 +2363,8 @@ void GeometryGUI::createPreferences()
   int defl = addPreference( tr( "PREF_DEFLECTION" ), genGroup,
                             LightApp_Preferences::DblSpin, "Geometry", "deflection_coeff" );
 
-  // RNV: Temporary hide this preference, because of the '#23552: Unable to use the contextual menu of Object Browser window' issue
-  //addPreference( tr( "PREF_PREDEF_MATERIALS" ), genGroup,
-  //               LightApp_Preferences::Bool, "Geometry", "predef_materials" );
+  addPreference( tr( "PREF_PREDEF_MATERIALS" ), genGroup,
+                 LightApp_Preferences::Bool, "Geometry", "predef_materials" );
 
   int material = addPreference( tr( "PREF_MATERIAL" ), genGroup,
                                 LightApp_Preferences::Selector,
