@@ -4794,6 +4794,10 @@ static bool isSameEdge(const TopoDS_Edge& theEdge1, const TopoDS_Edge& theEdge2)
   gp_Pnt P2 = C1->Value(U);     //Compute a point on two thirds of the edge's length
 
   C2 = new Geom_TrimmedCurve(C2, U21, U22);
+  // vsr 04/10/2018: 0023312 - As curve may be periodic, its parameters may be normalized
+  // so, we re-take them from trimmed curve
+  U21 = C2->FirstParameter();
+  U22 = C2->LastParameter();
 
   if(!GeomLib_Tool::Parameter(C2, P1, MAX_TOLERANCE, U) ||  U < U21 || U > U22)
     return false;
