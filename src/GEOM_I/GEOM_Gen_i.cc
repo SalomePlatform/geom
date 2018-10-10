@@ -2544,6 +2544,9 @@ void GEOM_Gen_i::LoadPlugin(const std::string& theLibName)
   #endif
     // load plugin library
     LibHandle libHandle = LoadLib(aPath);
+  #if UNICODE
+    delete aPath;
+  #endif
 #else
     LibHandle libHandle = LoadLib(aPlatformLibName.c_str());
 #endif
