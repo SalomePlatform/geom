@@ -1205,7 +1205,7 @@ GEOM::GEOM_Object_ptr GEOMBase_Helper::findObjectInFather( GEOM::GEOM_Object_ptr
 //================================================================
 void GEOMBase_Helper::addSubshapesToStudy()
 {
-  //Impemented in Dialogs, called from Accept method
+  //Implemented in Dialogs, called from Accept method
 }
 
 //================================================================
@@ -1214,7 +1214,7 @@ void GEOMBase_Helper::addSubshapesToStudy()
 //================================================================
 QList<GEOM::GeomObjPtr> GEOMBase_Helper::getSourceObjects()
 {
-  //Impemented in Dialogs, called from Accept method
+  //Implemented in Dialogs, called from Accept method
   QList<GEOM::GeomObjPtr> res;
   return res;
 }

@@ -48,12 +48,12 @@ class ShHealOper_FillHoles : public ShHealOper_Tool
 
   Standard_EXPORT ShHealOper_FillHoles ();
   // Empty constructor initializes class by default parameters.
-  
+
   Standard_EXPORT ShHealOper_FillHoles (const TopoDS_Shape& theShape);
 
   Standard_EXPORT virtual void Init(const TopoDS_Shape& theShape);
   //Method for initialization by whole shape.
-  
+
   Standard_EXPORT void InitParameters(Standard_Integer theDegree = 3,//3(2)
                                  Standard_Integer theNbPtsOnCur =5,//3,
                                  Standard_Integer theNbIter = 12,//3
@@ -66,15 +66,15 @@ class ShHealOper_FillHoles : public ShHealOper_Tool
   //Initialization of the parameters for creation of the surface by GeomPlate.
 
   Standard_EXPORT Standard_Boolean Fill();
-  //Fill all holes detectected as free boundaries.
-  
+  //Fill all holes detected as free boundaries.
+
    Standard_EXPORT Standard_Boolean Fill(const TopTools_SequenceOfShape& theFillShapes);
   //Fill hole specified by wires or edges.
 
 
  private:
   // ---------- PRIVATE METHODS ----------
-  
+
   Standard_Boolean prepareWires(const TopTools_SequenceOfShape& theFillShapes,
                                 Handle(TopTools_HSequenceOfShape)& theSeqWires);
 
@@ -82,7 +82,7 @@ class ShHealOper_FillHoles : public ShHealOper_Tool
                                     Handle(TColGeom2d_HArray1OfCurve)& theCurves2d,
                                     Handle(TColStd_HArray1OfInteger)& theOrders,
                                     Handle(TColStd_HArray1OfInteger)& theSenses);
-  
+
   Standard_Boolean addFace(const Handle(Geom_Surface)& theSurf,
                            const TopoDS_Wire& theWire,
                            const Handle(TColGeom2d_HArray1OfCurve)& theCurves2d,
@@ -96,7 +96,7 @@ class ShHealOper_FillHoles : public ShHealOper_Tool
   // ---------- PRIVATE FIELDS ----------
 
   TopTools_IndexedDataMapOfShapeListOfShape myEdgeShells;
-  
+
   TopTools_IndexedDataMapOfShapeListOfShape myEdgeComps;
   TopTools_IndexedDataMapOfShapeListOfShape myEdgeFaces;
   Standard_Integer myNbPtsOnCur;

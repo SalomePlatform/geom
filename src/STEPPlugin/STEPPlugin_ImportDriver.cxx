@@ -78,69 +78,69 @@ namespace
    *  GetShape()
    */
   //=============================================================================
-  
+
   TopoDS_Shape GetShape(const Handle(Standard_Transient)        &theEnti,
                         const Handle(Transfer_TransientProcess) &theTP)
   {
     TopoDS_Shape            aResult;
     Handle(Transfer_Binder) aBinder = theTP->Find(theEnti);
-    
+
     if (aBinder.IsNull()) {
       return aResult;
     }
-    
+
     aResult = TransferBRep::ShapeResult(aBinder);
-    
+
     return aResult;
   }
-  
+
   //=============================================================================
   /*!
    *  GetLabel()
    */
   //=============================================================================
-  
+
   TDF_Label GetLabel(const Handle(Standard_Transient) &theEnti,
                      const TDF_Label                  &theShapeLabel,
                      const TopoDS_Shape               &aShape)
   {
     TDF_Label aResult;
-    
+
     if (theEnti->IsKind
         (STANDARD_TYPE(StepGeom_GeometricRepresentationItem))) {
       // check all named shapes using iterator
       TDF_ChildIDIterator anIt
         (theShapeLabel, TDataStd_Name::GetID(), Standard_True);
-      
+
       for (; anIt.More(); anIt.Next()) {
         Handle(TDataStd_Name) nameAttr =
           Handle(TDataStd_Name)::DownCast(anIt.Value());
-        
+
         if (nameAttr.IsNull()) {
           continue;
         }
-        
+
         TDF_Label aLab = nameAttr->Label();
         Handle(TNaming_NamedShape) shAttr;
-        
+
         if (aLab.FindAttribute(TNaming_NamedShape::GetID(), shAttr) &&
             shAttr->Get().IsEqual(aShape)) {
           aResult = aLab;
         }
       }
     }
-    
+
     // create label and set shape
     if (aResult.IsNull()) {
       TDF_TagSource aTag;
-      
+
       aResult = aTag.NewChild(theShapeLabel);
-      
+
       TNaming_Builder tnBuild (aResult);
-      
+
       tnBuild.Generated(aShape);
     }
-    
+
     return aResult;
   }
 
@@ -235,7 +235,7 @@ namespace
         }
       }
 
-      // Set the result shape orienation.
+      // Set the result shape orientation.
       aResult.Orientation(theShape.Orientation());
       theMapModified.Bind(theShape, aResult);
     } else {
@@ -323,7 +323,7 @@ namespace
    *  StoreName()
    */
   //=============================================================================
-  
+
   void StoreName(const Handle(Standard_Transient)        &theEnti,
                  const TopTools_IndexedMapOfShape        &theIndices,
                  const Handle(XSControl_WorkSession)     &theWS,
@@ -332,18 +332,18 @@ namespace
                        TopTools_DataMapOfShapeShape      &theMapShapeAssembly)
   {
     Handle(TCollection_HAsciiString) aName;
-    
+
     if (theEnti->IsKind(STANDARD_TYPE(StepShape_TopologicalRepresentationItem)) ||
         theEnti->IsKind(STANDARD_TYPE(StepGeom_GeometricRepresentationItem))) {
       aName = Handle(StepRepr_RepresentationItem)::DownCast(theEnti)->Name();
     } else if (theEnti->IsKind(STANDARD_TYPE(StepRepr_NextAssemblyUsageOccurrence))) {
-      Handle(StepRepr_NextAssemblyUsageOccurrence) aNAUO = 
+      Handle(StepRepr_NextAssemblyUsageOccurrence) aNAUO =
         Handle(StepRepr_NextAssemblyUsageOccurrence)::DownCast(theEnti);
 
       Interface_EntityIterator aSubs = theWS->Graph().Sharings(aNAUO);
 
       for (aSubs.Start(); aSubs.More(); aSubs.Next()) {
-        Handle(StepRepr_ProductDefinitionShape) aPDS = 
+        Handle(StepRepr_ProductDefinitionShape) aPDS =
           Handle(StepRepr_ProductDefinitionShape)::DownCast(aSubs.Value());
 
         if(aPDS.IsNull()) {
@@ -368,13 +368,13 @@ namespace
     } else {
       Handle(StepBasic_ProductDefinition) PD =
         Handle(StepBasic_ProductDefinition)::DownCast(theEnti);
-      
+
       if (PD.IsNull() == Standard_False) {
         Handle(StepBasic_Product) Prod = PD->Formation()->OfProduct();
         aName = Prod->Name();
       }
     }
-    
+
     bool isValidName = false;
 
     if (aName.IsNull() == Standard_False) {
@@ -565,7 +565,7 @@ namespace
       result = "M";
     else
       error = "The file contains not supported units";
-      
+
     // TODO (for other units)
     // else
     //  result = "??"
