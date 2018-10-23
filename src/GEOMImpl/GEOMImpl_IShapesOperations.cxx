@@ -2036,10 +2036,12 @@ Standard_Boolean GEOMImpl_IShapesOperations::IsSubShapeBelongsTo( Handle(GEOM_Ob
   if ( theObjectIndex > 0 ) {
     TopExp::MapShapes( shape, anIndices );
     shape = anIndices.FindKey(theObjectIndex);
+    anIndices.Clear();
   }
   if ( theSubObjectIndex > 0 ) {
     TopExp::MapShapes( subShape, anIndices );
     subShape = anIndices.FindKey(theSubObjectIndex);
+    anIndices.Clear();
   }
 
   TopExp::MapShapes( shape, anIndices );
