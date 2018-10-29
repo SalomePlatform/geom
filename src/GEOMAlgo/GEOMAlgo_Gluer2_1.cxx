@@ -157,21 +157,26 @@ void GEOMAlgo_Gluer2::MakeFace(const TopoDS_Face& theF,
       //
       if (!BRep_Tool::Degenerated(aEx)) {
         aEx.Orientation(TopAbs_FORWARD);
+        TopoDS_Edge aE_forward = aE;
+        aE_forward.Orientation(TopAbs_FORWARD);
         if (bIsUPeriodic) {
           GEOMAlgo_AlgoTools::RefinePCurveForEdgeOnFace(aEx, aFF, aUMin, aUMax);
         }
         //
         //modified by NIZNHY-PKV Fri Feb 03 11:18:17 2012f
-        iRet=GEOMAlgo_AlgoTools::BuildPCurveForEdgeOnFace(aE, aEx, aFF, myContext);
+        iRet=GEOMAlgo_AlgoTools::BuildPCurveForEdgeOnFace(aE_forward, aEx, aFF, myContext);
         if (iRet) {
           continue;
         }
         //modified by NIZNHY-PKV Fri Feb 03 11:18:20 2012t
         //
-        bIsToReverse=GEOMAlgo_AlgoTools::IsSplitToReverse(aEx, aE, myContext);
-        if (bIsToReverse) {
+        bIsToReverse=GEOMAlgo_AlgoTools::IsSplitToReverse(aEx, aE_forward, myContext);
+        //bIsToReverse=BOPTools_AlgoTools::IsSplitToReverse(aEx, aE, myContext);
+
+        aEx.Orientation(aE.Orientation());
+        
+        if (bIsToReverse)
           aEx.Reverse();
-        }
       }
       else {
         aEx.Orientation(aE.Orientation());
