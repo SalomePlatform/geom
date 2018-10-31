@@ -1,6 +1,5 @@
 # Point Coordinates
 
-import math
 import salome
 salome.salome_init()
 import GEOM
@@ -14,8 +13,9 @@ point = geompy.MakeVertex(15., 23., 80.)
 coords = geompy.PointCoordinates(point)
 
 # check the obtained coordinate values
-tolerance = 1.e-07
-def IsEqual(val1, val2): return (math.fabs(val1 - val2) < tolerance)
+def IsEqual(val1, val2, tolerance = 1.e-07):
+    import math
+    return (math.fabs(val1 - val2) < tolerance)
 
 if IsEqual(coords[0], 15.) and IsEqual(coords[1], 23.) and IsEqual(coords[2], 80.):
     print("All values are OK.")
