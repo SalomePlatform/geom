@@ -19,7 +19,7 @@ theShape = geompy.MakePrismVecH(face, edge, 130)
 
 # check the shape at the beginning
 print("Before ProcessShape:")
-isValid = geompy.CheckShape(theShape)
+isValid = geompy.CheckShape(theShape, True)
 if isValid == 0:
     print("The shape is not valid")
 else:
@@ -33,7 +33,7 @@ PS = geompy.ProcessShape(theShape, Operators, Parameters, Values)
 
 # check the shape at the end
 print("After ProcessShape:")
-isValid = geompy.CheckShape(PS)
+isValid = geompy.CheckShape(PS, True)
 if isValid == 0:
     print("The shape is not valid")
     raise RuntimeError("It seems, that the ProcessShape() has failed")
