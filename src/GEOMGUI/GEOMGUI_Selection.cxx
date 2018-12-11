@@ -288,10 +288,28 @@ bool GEOMGUI_Selection::isAutoColor( const int index ) const
 
 bool GEOMGUI_Selection::isImported( const int index ) const
 {
+  bool result = false;
   GEOM::GEOM_Object_var obj = getObject( index );
-  if ( !CORBA::is_nil( obj ) )
-    return obj->GetType() == GEOM_IMPORT;
-  return false;
+  if ( !CORBA::is_nil( obj ) && obj->GetType() == GEOM_IMPORT )
+  {
+    QString fileName;
+    GEOM::CreationInformationSeq_var info = obj->GetCreationInformation();
+    if ( info->length() > 0 )
+    {
+      for ( uint i = 0, nb = info->length(); i < nb; ++i )
+      {
+        GEOM::CreationInformation iInfo = info[i];
+        for ( uint j = 0; j < iInfo.params.length(); ++j )
+        {
+          QString param = (char*)(CORBA::String_var)(iInfo.params[j].name);
+          if ( param == "File name" )
+            fileName = (char*)(CORBA::String_var)(iInfo.params[j].value);
+        }
+      }
+    }
+    result = !fileName.isEmpty() && !fileName.toLower().endsWith(".xao");
+  }
+  return result;
 }
 
 bool GEOMGUI_Selection::hasImported() const
