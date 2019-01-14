@@ -23,7 +23,7 @@ With this initialization, the geometry engine runs in the default container,
 embedded in the SALOME Graphical User Interface process
 (see YACS documentation for concepts).
 
-To select another engine than the default “FactoryServer”,
+To select another engine than the default "FactoryServer",
 the CORBA engine can be given as an optional parameter of the method New.
 For instance:
 \code
