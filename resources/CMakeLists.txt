@@ -29,9 +29,6 @@ SET( _res_files
   STEPPlugin.xml
   IGESPlugin.xml
   XAOPlugin.xml
-  GEOM_en.xml
-  GEOM_fr.xml
-  GEOM.config
   GEOMDS_Resources
   ShHealing
   Y14.5M-2009.ttf
