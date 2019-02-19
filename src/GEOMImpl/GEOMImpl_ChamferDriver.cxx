@@ -45,6 +45,8 @@
 
 #include <StdFail_NotDone.hxx>
 
+#include <Basics_OCCTVersion.hxx>
+
 //=======================================================================
 //function : GetID
 //purpose  :
@@ -128,7 +130,11 @@ Standard_Integer GEOMImpl_ChamferDriver::Execute(Handle(TFunction_Logbook)& log)
       if (!BRepTools::IsReallyClosed(E, F) &&
           !BRep_Tool::Degenerated(E) &&
           M.FindFromIndex(i).Extent() == 2)
+#if OCC_VERSION_LARGE <= 0x07030000
         fill.Add(aD, E, F);
+#else
+        fill.Add(aD, aD, E, F);
+#endif
     }
   }
   else if (aType == CHAMFER_SHAPE_EDGE || aType == CHAMFER_SHAPE_EDGE_AD) {

@@ -47,6 +47,8 @@
 #include <Material_ResourceMgr.h>
 #include <Material_Model.h>
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <SUIT_Desktop.h>
 #include <SUIT_MessageBox.h>
 #include <SUIT_ResourceMgr.h>
@@ -2428,10 +2430,16 @@ void GeometryGUI::createPreferences()
   aFontFile = aFontFile + QDir::separator() + "Y14.5M-2009.ttf";
   // add enginier font into combobox
   /*int fontID =*/ QFontDatabase::addApplicationFont( aFontFile );
+#if OCC_VERSION_LARGE <= 0x07030000
   Handle(Font_SystemFont) sf = new Font_SystemFont( 
     new TCollection_HAsciiString("Y14.5M-2009"), 
     Font_FA_Regular, 
     new TCollection_HAsciiString(aFontFile.toLatin1().data()) );
+# else
+  Handle(Font_SystemFont) sf = new Font_SystemFont( TCollection_AsciiString("Y14.5M-2009") );
+  sf->SetFontPath( Font_FA_Regular, 
+    TCollection_AsciiString( aFontFile.toLatin1().data() ) );
+#endif
   // register font in OCC font manager
   fmgr->RegisterFont( sf, Standard_False );
 

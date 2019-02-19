@@ -375,11 +375,12 @@ static TopoDS_Edge GlueEdgesWithPCurves(const TopTools_SequenceOfShape& aChain,
   }
   Handle(TColGeom_HArray1OfBSplineCurve)  concatcurve;     //array of the concatenated curves
   Handle(TColStd_HArray1OfInteger)        ArrayOfIndices;  //array of the remining Vertex
+  Standard_Boolean ClosedFlag = Standard_False;
   GeomConvert::ConcatC1(tab_c3d,
                         tabtolvertex,
                         ArrayOfIndices,
                         concatcurve,
-                        Standard_False,
+                        ClosedFlag,
                         Precision::Confusion());   //C1 concatenation
   
   if (concatcurve->Length() > 1)
@@ -425,11 +426,12 @@ static TopoDS_Edge GlueEdgesWithPCurves(const TopTools_SequenceOfShape& aChain,
     }
     Handle(TColGeom2d_HArray1OfBSplineCurve)  concatc2d;     //array of the concatenated curves
     Handle(TColStd_HArray1OfInteger)        ArrayOfInd2d;  //array of the remining Vertex
+    Standard_Boolean ClosedFlag = Standard_False;
     Geom2dConvert::ConcatC1(tab_c2d,
                             tabtolvertex,
                             ArrayOfInd2d,
                             concatc2d,
-                            Standard_False,
+                            ClosedFlag,
                             Precision::Confusion());   //C1 concatenation
     
     if (concatc2d->Length() > 1)

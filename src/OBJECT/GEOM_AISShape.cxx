@@ -70,6 +70,8 @@
 #include <Prs3d_VertexDrawMode.hxx>
 #include <StdPrs_WFShape.hxx>
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <SalomeApp_Tools.h>
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
@@ -358,7 +360,11 @@ void GEOM_AISShape::highlightSubShapes(const TColStd_IndexedMapOfInteger& aIndex
 {
   Handle(AIS_InteractiveObject) anObj = this;
   Handle(AIS_InteractiveContext) anIC = GetContext();
-  if ( anIC.IsNull() || !anIC->HasOpenedContext() ) 
+  if ( anIC.IsNull() 
+#if OCC_VERSION_LARGE <= 0x07030000
+       || !anIC->HasOpenedContext() 
+#endif
+     ) 
     return;
 
   Standard_Boolean isAutoHilight = anIC->AutomaticHilight();

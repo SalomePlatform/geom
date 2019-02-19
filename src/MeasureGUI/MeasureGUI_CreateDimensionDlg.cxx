@@ -52,6 +52,8 @@
 
 #include <Aspect_PolygonOffsetMode.hxx>
 
+#include <Basics_OCCTVersion.hxx>
+
 //=================================================================================
 // function : Constructor
 // purpose  :
@@ -434,8 +436,9 @@ void MeasureGUI_CreateDimensionDlg::StartLocalEditing()
   Handle(V3d_Viewer)             aViewer3d    = myEditingViewer->getViewer3d();
 
   aViewer3d->AddZLayer( myEditingLayer );
-
+#if OCC_VERSION_LARGE <= 0x07030000
   anAISContext->OpenLocalContext( Standard_False, Standard_False );
+#endif
   anAISContext->Load( myDimension, AIS_DSM_All );
   anAISContext->SetZLayer( myDimension, myEditingLayer );
   anAISContext->Activate( myDimension, AIS_DSM_Line );
@@ -460,7 +463,12 @@ void MeasureGUI_CreateDimensionDlg::StopLocalEditing()
   Handle(V3d_Viewer)             aViewer3d    = myEditingViewer->getViewer3d();
 
   aViewer3d->RemoveZLayer( myEditingLayer );
+#if OCC_VERSION_LARGE <= 0x07030000
   anAISContext->CloseLocalContext( Standard_True );
+#else
+  anAISContext->Deactivate();
+  anAISContext->Activate(0);
+#endif
 
   myEditingViewer = NULL;
 }

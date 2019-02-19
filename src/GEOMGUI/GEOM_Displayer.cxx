@@ -118,6 +118,7 @@
 #include <vtkActorCollection.h>
 #include <vtkProperty.h>
 
+#include <Basics_OCCTVersion.hxx>
 // CORBA Headers
 #include CORBA_CLIENT_HEADER(SALOMEDS_Attributes)
 
@@ -2050,8 +2051,13 @@ void GEOM_Displayer::BeforeDisplay( SALOME_View* v, const SALOME_OCCPrs* )
     Handle(AIS_InteractiveContext) ic = vf->getAISContext();
     if ( !ic.IsNull() )
     {
+#if OCC_VERSION_LARGE <= 0x07030000
       if ( ic->HasOpenedContext() )
       ic->CloseAllContexts(Standard_True);
+#else
+      ic->Deactivate();
+      ic->Activate( 0 );
+#endif
     }
   }
 }

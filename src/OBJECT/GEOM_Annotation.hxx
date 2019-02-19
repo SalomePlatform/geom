@@ -44,6 +44,8 @@
 #include <StdSelect_Shape.hxx>
 #include <TCollection_ExtendedString.hxx>
 
+#include <Basics_OCCTVersion.hxx>
+
 class OpenGl_GraphicDriver;
 class OpenGl_PrimitiveArray;
 class OpenGl_Text;
@@ -401,7 +403,11 @@ public:
       const Standard_Boolean isMatches = Select3D_SensitiveBox::Matches( theMgr, thePickResult );
       if ( !myIsDepthCulling )
       {
+#if OCC_VERSION_LARGE <= 0x07030000
         thePickResult = SelectBasics_PickResult( -DBL_MAX, thePickResult.DistToGeomCenter() );
+#else
+        thePickResult = SelectBasics_PickResult( -DBL_MAX, thePickResult.DistToGeomCenter(), thePickResult.PickedPoint() );
+#endif
       }
       return isMatches;
     }

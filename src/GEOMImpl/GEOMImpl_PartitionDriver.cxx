@@ -48,6 +48,7 @@
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <BOPDS_DS.hxx>
+#include <BRepTools_History.hxx>
 
 // Depth of self-intersection check (see BOPAlgo_CheckerSI::SetLevelOfCheck() for more details)
 // Default value for BOPAlgo_CheckerSI gives very long computation when checking face-to-face intersections;
@@ -440,10 +441,6 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(Handle(TFunction_Logbook)& lo
   TopTools_IndexedMapOfShape aResIndices;
   TopExp::MapShapes(aShape, aResIndices);
 
-  // Map: source_shape/images of source_shape in Result
-  const TopTools_IndexedDataMapOfShapeListOfShape& aMR = PS.ImagesResult();
-  //const TopTools_IndexedDataMapOfShapeListOfShape& aMR = PS.ImagesResult();
-
   // history for all argument shapes
   // be sure to use aCopyMap
   TDF_LabelSequence aLabelSeq;
@@ -467,37 +464,39 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(Handle(TFunction_Logbook)& lo
 
     for (Standard_Integer ie = 1; ie <= nbArgumentEntities; ie++) {
       TopoDS_Shape anEntity = anArgumentIndices.FindKey(ie);
+      if (!BRepTools_History::IsSupportedType(anEntity))
+        continue;
+
       // be sure to use aCopyMap here
       if (aCopyMap.IsBound(anEntity))
         anEntity = aCopyMap.Find(anEntity);
       //
-      if (!aMR.Contains(anEntity)) continue;
+      if (PS.IsDeleted(anEntity))
+        // The shape has been deleted
+        continue;
 
-      const TopTools_ListOfShape& aModified = aMR.FindFromKey(anEntity);
-      //const TopTools_ListOfShape& aModified = aMR.FindFromKey(anEntity);
-      Standard_Integer nbModified = aModified.Extent();
-
-      if (nbModified > 0) { // Mantis issue 0021182
-        int ih = 1;
-        TopTools_ListIteratorOfListOfShape itM (aModified);
-        for (; itM.More() && nbModified > 0; itM.Next(), ++ih) {
-          if (!aResIndices.Contains(itM.Value())) {
-            nbModified = 0;
-          }
-        }
+      // Check if the shape has been modified during the operation.
+      // If it was - use its splits, otherwise use the shape itself
+      const TopTools_ListOfShape *pModified;
+      TopTools_ListOfShape aLItself;
+      const TopTools_ListOfShape& aPSModified = PS.Modified(anEntity);
+      if (!aPSModified.IsEmpty())
+        pModified = &aPSModified;
+      else
+      {
+        aLItself.Append(anEntity);
+        pModified = &aLItself;
       }
-      if (nbModified > 0) {
-        TDF_Label aWhatHistoryLabel = anArgumentHistoryLabel.FindChild(ie, Standard_True);
-        Handle(TDataStd_IntegerArray) anAttr =
-          TDataStd_IntegerArray::Set(aWhatHistoryLabel, 1, nbModified);
+        
+      TDF_Label aWhatHistoryLabel = anArgumentHistoryLabel.FindChild(ie, Standard_True);
+      Handle(TDataStd_IntegerArray) anAttr =
+        TDataStd_IntegerArray::Set(aWhatHistoryLabel, 1, pModified->Extent());
 
-        int ih = 1;
-        TopTools_ListIteratorOfListOfShape itM (aModified);
-        //TopTools_ListIteratorOfListOfShape itM (aModified);
-        for (; itM.More(); itM.Next(), ++ih) {
-          int id = aResIndices.FindIndex(itM.Value());
-          anAttr->SetValue(ih, id);
-        }
+      int ih = 1;
+      TopTools_ListIteratorOfListOfShape itM (*pModified);
+      for (; itM.More(); itM.Next(), ++ih) {
+        int id = aResIndices.FindIndex(itM.Value());
+        anAttr->SetValue(ih, id);
       }
     }
   }

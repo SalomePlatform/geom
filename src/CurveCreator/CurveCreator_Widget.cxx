@@ -17,6 +17,8 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+#include <Basics_OCCTVersion.hxx>
+
 #include "CurveCreator_Widget.h"
 #include "CurveCreator_TreeView.h"
 #include "CurveCreator_NewSectionDlg.h"
@@ -1520,7 +1522,11 @@ void CurveCreator_Widget::setSelectedPoints( const CurveCreator_ICurve::SectionT
   if ( myDragStarted )
     return;
   Handle(AIS_InteractiveContext) aContext = getAISContext();
-  if ( aContext.IsNull() || !aContext->HasOpenedContext() )
+  if ( aContext.IsNull() 
+#if OCC_VERSION_LARGE <= 0x07030000
+       || !aContext->HasOpenedContext() 
+#endif       
+     )
     return;
 
   CurveCreator_Utils::setSelectedPoints( aContext, myCurve, thePoints );

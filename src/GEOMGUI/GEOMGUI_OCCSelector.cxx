@@ -50,6 +50,7 @@
 #include <TColStd_IndexedMapOfInteger.hxx>
 #include <NCollection_DataMap.hxx>
 
+#include <Basics_OCCTVersion.hxx>
 
 //================================================================
 // Function : GEOMGUI_OCCSelector
@@ -79,24 +80,24 @@ void GEOMGUI_OCCSelector::getSelection( SUIT_DataOwnerPtrList& aList ) const
     return;
 
   Handle(AIS_InteractiveContext) ic = vw->getAISContext();
-
+#if OCC_VERSION_LARGE <= 0x07030000
   if (ic->HasOpenedContext())
   {
+#endif
     TopoDS_Shape curBigShape;
     TopTools_IndexedMapOfShape subShapes;
 
     for (ic->InitSelected(); ic->MoreSelected(); ic->NextSelected())
     {
-      Handle(StdSelect_BRepOwner) anOwner = Handle(StdSelect_BRepOwner)::DownCast(ic->SelectedOwner());
-      if (anOwner.IsNull())
-        continue;
 
-      Handle(AIS_InteractiveObject) io = Handle(AIS_InteractiveObject)::DownCast(anOwner->Selectable());
+      Handle(AIS_InteractiveObject) io = Handle(AIS_InteractiveObject)::DownCast( ic->SelectedInteractive() );
 
       QString entryStr = entry(io);
       int index = -1;
 
-      if (anOwner->ComesFromDecomposition()) // == Local Selection
+      Handle(StdSelect_BRepOwner) anOwner = Handle(StdSelect_BRepOwner)::DownCast( ic->SelectedOwner() );
+
+      if (!anOwner.IsNull() && anOwner->ComesFromDecomposition()) // == Local Selection
       {
         TopoDS_Shape subShape = anOwner->Shape();
         Handle(AIS_Shape) aisShape = Handle(AIS_Shape)::DownCast(io);
@@ -126,6 +127,7 @@ void GEOMGUI_OCCSelector::getSelection( SUIT_DataOwnerPtrList& aList ) const
         aList.append(SUIT_DataOwnerPtr(owner));
       }
     }
+#if OCC_VERSION_LARGE <= 0x07030000
   }
   else
   {
@@ -145,6 +147,7 @@ void GEOMGUI_OCCSelector::getSelection( SUIT_DataOwnerPtrList& aList ) const
       }
     }
   }
+#endif
 
   // add externally selected objects
   SUIT_DataOwnerPtrList::const_iterator anExtIter;
@@ -347,8 +350,8 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
     if ( owner->State() )
       continue;
 
-    if ( ic->HasOpenedContext() )
-      ic->AddOrRemoveSelected( owner, false );
+    if ( owner->ComesFromDecomposition() )
+      ic->AddOrRemoveSelected( owner, false ); 
     else
       ic->AddOrRemoveSelected( Handle(AIS_InteractiveObject)::DownCast(owner->Selectable()), false );
   }

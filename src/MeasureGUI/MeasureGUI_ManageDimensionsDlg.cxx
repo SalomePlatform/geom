@@ -61,6 +61,8 @@
 #include <QHBoxLayout>
 #include <QPixmap>
 
+#include <Basics_OCCTVersion.hxx>
+
 //=================================================================================
 // function : Constructor
 // purpose  :
@@ -196,8 +198,9 @@ void MeasureGUI_ManageDimensionsDlg::StartSelection( const Selection theSelectio
 
     anAISContext->ClearCurrents( Standard_False );
     anAISContext->ClearSelected( Standard_False );
+#if OCC_VERSION_LARGE <= 0x07030000
     anAISContext->OpenLocalContext( Standard_True, Standard_False );
-
+#endif
     Handle(MeasureGUI_DimensionFilter) aFilter = new MeasureGUI_DimensionFilter( myEditObject->GetStudyEntry() );
 
     anAISContext->AddFilter( aFilter );
@@ -261,8 +264,12 @@ void MeasureGUI_ManageDimensionsDlg::StopSelection()
      * ------------------------------------------------ */
 
     Handle(AIS_InteractiveContext) anAISContext = myOperatedViewer->getAISContext();
-
+#if OCC_VERSION_LARGE <= 0x07030000
     anAISContext->CloseLocalContext();
+#else
+    anAISContext->Deactivate();
+    anAISContext->Activate(0);
+#endif
 
     LightApp_SelectionMgr* aSelectionMgr = myGeomGUI->getApp()->selectionMgr();
 
@@ -355,7 +362,7 @@ void MeasureGUI_ManageDimensionsDlg::SelectionIntoArgument( const Selection theS
     anAISContext->InitSelected();
 
     Handle(AIS_InteractiveObject) anAIS;
-
+#if OCC_VERSION_LARGE <= 0x07030000
     if ( anAISContext->HasOpenedContext() )
     {
       Handle(SelectMgr_EntityOwner) anAISOwner = anAISContext->SelectedOwner();
@@ -363,8 +370,11 @@ void MeasureGUI_ManageDimensionsDlg::SelectionIntoArgument( const Selection theS
     }
     else
     {
+#endif
       anAIS = anAISContext->Current();
+#if OCC_VERSION_LARGE <= 0x07030000
     }
+#endif
 
     int aDimensionId = IdFromPrs( anAIS );
 
@@ -1239,7 +1249,7 @@ void MeasureGUI_ManageDimensionsDlg::SelectInViewer( SOCC_Viewer* theViewer, con
   {
     return;
   }
-
+#if OCC_VERSION_LARGE <= 0x07030000
   Standard_Boolean isLocal = anAISContext->HasOpenedContext();
   if ( isLocal )
   {
@@ -1247,9 +1257,11 @@ void MeasureGUI_ManageDimensionsDlg::SelectInViewer( SOCC_Viewer* theViewer, con
   }
   else
   {
+#endif
     anAISContext->ClearCurrents( Standard_False );
+#if OCC_VERSION_LARGE <= 0x07030000
   }
-
+#endif
   SOCC_Prs* aPrs = dynamic_cast<SOCC_Prs*>( theViewer->CreatePrs( myEditObject->GetStudyEntry() ) );
 
   AIS_ListOfInteractive aListOfIO;
@@ -1261,24 +1273,32 @@ void MeasureGUI_ManageDimensionsDlg::SelectInViewer( SOCC_Viewer* theViewer, con
     const Handle(AIS_InteractiveObject)& anIO = anIt.Value();
     if ( IdFromPrs( anIO ) != theId )
     {
+#if OCC_VERSION_LARGE <= 0x07030000
       if ( isLocal )
       {
+#endif
         anAISContext->Deactivate( anIO, AIS_DSM_Line );
         anAISContext->Deactivate( anIO, AIS_DSM_Text );
       }
       continue;
+#if OCC_VERSION_LARGE <= 0x07030000
     }
 
     if ( isLocal )
     {
+#endif
       anAISContext->AddOrRemoveSelected( anIO, Standard_False );
       anAISContext->Activate( anIO, AIS_DSM_Line );
       anAISContext->Activate( anIO, AIS_DSM_Text );
+#if OCC_VERSION_LARGE <= 0x07030000
     }
     else
     {
+#endif
       anAISContext->AddOrRemoveCurrentObject( anIO, Standard_False );
+#if OCC_VERSION_LARGE <= 0x07030000
     }
+#endif
 
     anAISContext->UpdateCurrentViewer();
   }

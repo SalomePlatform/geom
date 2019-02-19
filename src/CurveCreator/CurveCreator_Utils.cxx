@@ -17,6 +17,8 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+#include <Basics_OCCTVersion.hxx>
+
 #include "CurveCreator_Utils.hxx"
 #include "CurveCreator.hxx"
 #include "CurveCreator_Curve.hxx"
@@ -38,7 +40,10 @@
 #include <AIS_Shape.hxx>
 #include <AIS_Line.hxx>
 #include <AIS_Trihedron.hxx>
+
+#if OCC_VERSION_LARGE <= 0x07030000
 #include <AIS_LocalContext.hxx>
+#endif
 
 #include <Geom_Point.hxx>
 #include <Geom_BSplineCurve.hxx>
@@ -646,7 +651,9 @@ void CurveCreator_Utils::setSelectedPoints( Handle(AIS_InteractiveContext) theCo
   //ASL: we switch on again automatic highlight (otherwise selection will not be shown)
   //     and call HilightPicked to draw selected owners
   theContext->SetAutomaticHilight( Standard_True );
+#if OCC_VERSION_LARGE <= 0x07030000
   theContext->LocalContext()->HilightPicked( Standard_True );
+#endif
 }
 
 //=======================================================================
@@ -661,11 +668,15 @@ void CurveCreator_Utils::setLocalPointContext( const CurveCreator_ICurve* theCur
     return;
 
   if ( theOpen ) {
+#if OCC_VERSION_LARGE <= 0x07030000
     // Open local context if there is no one
     if ( !theContext->HasOpenedContext() ) {
+#endif
       theContext->ClearCurrents( false );
+#if OCC_VERSION_LARGE <= 0x07030000
       theContext->OpenLocalContext( false/*use displayed objects*/, true/*allow shape decomposition*/ );
     }
+#endif
     // load the curve AIS object to the local context with the point selection
     Handle(AIS_InteractiveObject) anAIS = theCurve->getAISObject();
     if ( !anAIS.IsNull() )
@@ -678,8 +689,13 @@ void CurveCreator_Utils::setLocalPointContext( const CurveCreator_ICurve* theCur
     }
   }
   else {
+#if OCC_VERSION_LARGE <= 0x07030000
     if ( theContext->HasOpenedContext() )
       theContext->CloseAllContexts( Standard_True );
+#else
+    theContext->Deactivate();
+    theContext->Activate(0);
+#endif
   }
 }
 
