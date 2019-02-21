@@ -512,7 +512,13 @@ bool GEOM_Engine::Save(const char* theFileName)
 {
   if(!_document) return false;
 
-  _OCAFApp->SaveAs(_document, theFileName);
+#if defined(WIN32) && defined(UNICODE)
+  std::wstring aFileName = Kernel_Utils::utf8_decode_s(theFileName);
+#else
+  std::string aFileName = theFileName;
+#endif
+
+  _OCAFApp->SaveAs( _document, aFileName.c_str() );
 
   return true;
 }
@@ -524,8 +530,13 @@ bool GEOM_Engine::Save(const char* theFileName)
 //=============================================================================
 bool GEOM_Engine::Load(const char* theFileName)
 {
+#if defined(WIN32) && defined(UNICODE)
+	std::wstring aFileName = Kernel_Utils::utf8_decode_s(theFileName);
+#else
+	std::string aFileName = theFileName;
+#endif
   Handle(TDocStd_Document) aDoc;
-  if (_OCAFApp->Open(theFileName, aDoc) != PCDM_RS_OK) {
+  if (_OCAFApp->Open(aFileName.c_str(), aDoc) != PCDM_RS_OK) {
     return false;
   }
 

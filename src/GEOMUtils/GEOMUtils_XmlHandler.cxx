@@ -18,12 +18,14 @@
 //
 
 #include "GEOMUtils_XmlHandler.hxx"
+#include <Basics_Utils.hxx>
 
 #include <libxml/parser.h>
 #include <algorithm>
 
 #ifdef WIN32
 #include <windows.h>
+#include <algorithm>
 #else
 #include <unistd.h>
 #endif
@@ -33,7 +35,7 @@
 namespace
 {
   const char*    env_var     = "GEOM_PluginsList";
-  
+
   const xmlChar* root_tag    = (xmlChar*)"geom-plugins";
   const xmlChar* plugin_tag  = (xmlChar*)"geom-plugin";
   const xmlChar* name_tag    = (xmlChar*)"name";
@@ -75,91 +77,113 @@ namespace
 
   std::list<std::string> getPluginXMLFiles()
   {
-    std::list<std::string> xmlPaths;
+	  std::list<std::string> xmlPaths;
 
 #ifdef WIN32
-    std::string sep = "\\";
+#ifdef UNICODE
+	  std::wstring sep = L"\\";
 #else
-    std::string sep = "/";
+	  std::string sep = "\\";
+#endif
+#else
+	  std::string sep = "/";
 #endif
 
-    if ( const char* var = getenv( env_var ) )
-    {
-      std::string plugins = var;
+#if defined(WIN32) && defined(UNICODE)
+	  std::wstring wenv_var = Kernel_Utils::utf8_decode_s(env_var);
+	  if (const wchar_t* var = _wgetenv(wenv_var.c_str()))
+	  {
+		  std::wstring plugins = var;
+#else
+	  if (const char* var = getenv(env_var))
+	  {
+		  std::string plugins = var;
+#endif
+		  std::string::size_type from = 0, pos;
+		  while (from < plugins.size())
+		  {
+#if defined(WIN32) && defined(UNICODE)
+			  pos = plugins.find(L':', from);
+			  std::wstring plugin;
+#else
+			  pos = plugins.find(':', from);
+			  std::string plugin;
+#endif
+			  if (pos != std::string::npos)
+				  plugin = plugins.substr(from, pos - from);
+			  else
+				  plugin = plugins.substr(from), pos = plugins.size();
+			  from = pos + 1;
 
-      std::string::size_type from = 0, pos;
-      while ( from < plugins.size() )
-      {
-	pos = plugins.find( ':', from );
-	std::string plugin;
-	if ( pos != std::string::npos )
-	  plugin = plugins.substr( from, pos-from );
-	else
-	  plugin = plugins.substr( from ), pos = plugins.size();
-	from = pos + 1;
-	
-	if ( plugin.size() == 0 ) continue;
-	
-	std::string pluginRoot    = toUpper( plugin+"_ROOT_DIR" );
+			  if (plugin.size() == 0) continue;
+#if defined(WIN32) && defined(UNICODE)
+			  std::wstring pluginRoot = plugin + L"_ROOT_DIR";
+			  std::transform(pluginRoot.begin(), pluginRoot.end(), pluginRoot.begin(), ::toupper);
+			  const wchar_t* rootDirGeom = _wgetenv(L"GEOM_ROOT_DIR");
+			  const wchar_t* rootDirPlugin = _wgetenv(pluginRoot.c_str());
+#else
+			  std::string pluginRoot = toUpper(plugin + "_ROOT_DIR");
 
-	const char* rootDirGeom   = getenv( "GEOM_ROOT_DIR" );
-	const char* rootDirPlugin = getenv( pluginRoot.c_str() );
+			  const char* rootDirGeom = getenv("GEOM_ROOT_DIR");
+			  const char* rootDirPlugin = getenv(pluginRoot.c_str());
+#endif
 
-	bool fileOK = false;
-	if ( rootDirGeom ) {
-	  std::string xmlPath = rootDirGeom;
-	  if ( xmlPath[ xmlPath.size()-1 ] != sep[0] )
-	    xmlPath += sep;
-	  xmlPath += "share" + sep + "salome" + sep + "resources" + sep + "geom" + sep + plugin + ".xml";
+			  bool fileOK = false;
+			  if (rootDirGeom) {
+
+#if defined(WIN32) && defined(UNICODE)
+				  std::wstring xmlPath = rootDirGeom;
+				  if (xmlPath[xmlPath.size() - 1] != sep[0])
+					  xmlPath += sep;
+				  xmlPath += L"share" + sep + L"salome" + sep + L"resources" + sep + L"geom" + sep + plugin + L".xml";
+#else
+				  std::string xmlPath = rootDirGeom;
+				  if (xmlPath[xmlPath.size() - 1] != sep[0])
+					  xmlPath += sep;
+				  xmlPath += "share" + sep + "salome" + sep + "resources" + sep + "geom" + sep + plugin + ".xml";
+#endif
+
 #ifdef WIN32
+				  fileOK = (GetFileAttributes(xmlPath.c_str()) != INVALID_FILE_ATTRIBUTES);
+#else
+				  fileOK = (access(xmlPath.c_str(), F_OK) == 0);
+#endif
+				  if (fileOK)
+#if defined(WIN32) && defined(UNICODE)
+					  xmlPaths.push_back(Kernel_Utils::utf8_encode_s(xmlPath));
+#else
+					  xmlPaths.push_back(xmlPath);
+#endif
+			  }
+			  if (!fileOK && rootDirPlugin) {
+#if defined(WIN32) && defined(UNICODE)
+				  std::wstring xmlPath = rootDirPlugin;
+				  if (xmlPath[xmlPath.size() - 1] != sep[0])
+					  xmlPath += sep;
+				  std::transform(plugin.begin(), plugin.end(), plugin.begin(), ::tolower);
+				  xmlPath += L"share" + sep + L"salome" + sep + L"resources" + sep + plugin + sep + plugin + L".xml";
 
-#ifdef UNICODE
-	  //RNV: this is workaround for providing compilation,
-	  //     path should be processed as unicode string.
-	  size_t length = strlen(xmlPath.c_str()) + sizeof(char);
-	  wchar_t* aPath = new wchar_t[length + 1];
-	  memset(aPath, '\0', length);
-	  mbstowcs(aPath, xmlPath.c_str(), length);
 #else
-	  const char* aPath = xmlPath.c_str();
+				  std::string xmlPath = rootDirPlugin;
+				  if (xmlPath[xmlPath.size() - 1] != sep[0])
+					  xmlPath += sep;
+				  xmlPath += "share" + sep + "salome" + sep + "resources" + sep + toLower(plugin) + sep + plugin + ".xml";
 #endif
-	  fileOK = (GetFileAttributes(aPath) != INVALID_FILE_ATTRIBUTES);
-#if UNICODE
-	  delete aPath;
-#endif
+
+#ifdef WIN32
+				  fileOK = (GetFileAttributes(xmlPath.c_str()) != INVALID_FILE_ATTRIBUTES);
 #else
-	  fileOK = (access(xmlPath.c_str(), F_OK) == 0);
+				  fileOK = (access(xmlPath.c_str(), F_OK) == 0);
 #endif
-	  if ( fileOK )
-	    xmlPaths.push_back( xmlPath );
-	}
-	if ( !fileOK && rootDirPlugin ) {
-	  std::string xmlPath = rootDirPlugin;
-	  if ( xmlPath[ xmlPath.size()-1 ] != sep[0] )
-	    xmlPath += sep;
-	  xmlPath += "share" + sep + "salome" + sep + "resources" + sep + toLower(plugin) + sep + plugin + ".xml";
-#ifdef WIN32	  
-#ifdef UNICODE
-	  size_t length = strlen(xmlPath.c_str()) + sizeof(char);
-	  wchar_t* aPath = new wchar_t[length+1];
-	  memset(aPath, '\0', length);
-	  mbstowcs(aPath, xmlPath.c_str(), length);
+#if defined(WIN32) && defined(UNICODE)
+				  xmlPaths.push_back(Kernel_Utils::utf8_encode_s(xmlPath));
 #else
-	  const char* aPath = xmlPath.c_str();
+				  xmlPaths.push_back(xmlPath);
 #endif
-	  fileOK = (GetFileAttributes(aPath) != INVALID_FILE_ATTRIBUTES);
-#if UNICODE
-	  delete aPath;
-#endif
-#else
-	  fileOK = (access(xmlPath.c_str(), F_OK) == 0);
-#endif
-	  if ( fileOK )
-	    xmlPaths.push_back( xmlPath );
-	}
-      }
-    }
-    return xmlPaths;
+			  }
+		  }
+		  return xmlPaths;
+	  }
   }
 
 #ifdef MYDEBUG
@@ -202,15 +226,15 @@ namespace GEOMUtils
     for ( fit = xmlPaths.begin(); fit != xmlPaths.end(); ++fit )
     {
       std::string fileName = *fit;
-      
+
       int options = XML_PARSE_HUGE | XML_PARSE_NOCDATA;
       xmlDocPtr doc = xmlReadFile( fileName.c_str(), NULL, options );
-      
+
       if ( doc )
       {
 	// get root node
 	xmlNodePtr root = xmlDocGetRootElement(doc);
-	
+
 	// check if it is plugins container node
 	if (xmlStrcmp(root->name, root_tag) == 0)
 	{
@@ -249,13 +273,13 @@ namespace GEOMUtils
 		  } // end iteration through actions container node children
 		} // end actions container node
 	      } // end iterations through plugin node children
-	      
+
 	      if (data.name != "")
 		info.push_back(data);
 	    } // end plugin node
 	  } // end iterations through plugins container node children
 	} // end root node
-	
+
 	xmlFreeDoc(doc);
 	//xmlCleanupParser();//vsr: xmlCleanupParser should not be called from the application
       } // end xml doc
