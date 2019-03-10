@@ -41,6 +41,7 @@
 #include <QMap>
 
 #include <list>
+#include <string>
 
 typedef std::list<GEOM::GEOM_Object_ptr> ObjectList;
 
@@ -60,7 +61,7 @@ class GEOM_Operation;
 class GEOMBASE_EXPORT GEOMBase_Helper
 {
 public:
-  GEOMBase_Helper( SUIT_Desktop* );
+  GEOMBase_Helper( SUIT_Desktop*, SUIT_ViewWindow* aVW = 0);
   virtual ~GEOMBase_Helper();
   static SUIT_ViewWindow* getActiveView();
 
@@ -105,6 +106,7 @@ protected:
   void localSelection( const ObjectList&, const int );
   void localSelection( GEOM::GEOM_Object_ptr, const std::list<int> );
   void localSelection( GEOM::GEOM_Object_ptr, const int );
+  void localSelection( const std::string&, const std::string&, const std::list<int> );
   void localSelection( const std::list<int> );
   void localSelection( const int );
   void activate( const int );

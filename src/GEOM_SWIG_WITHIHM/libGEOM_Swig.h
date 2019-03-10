@@ -26,11 +26,15 @@
 #define LIBGEOM_SWIG_H
 
 #include "GEOM_GEOMGUI.hxx"
+#include <vector>
+
+class GEOM_Swig_LocalSelector;
+class GEOMGUI_OCCSelector;
 
 class GEOMGUI_EXPORT GEOM_Swig
 {
 public:
-  GEOM_Swig();
+  GEOM_Swig( bool updateOB = true );
   ~GEOM_Swig();
 
   void createAndDisplayGO( const char* theEntry, bool theUpdateViewer = true );
@@ -50,14 +54,21 @@ public:
   void setMaterial( const char* theEntry, const char* theMaterial, bool theUpdateViewer = true );
   void setMaterialProperty( const char* theEntry, const char* theMaterial, bool theUpdateViewer = true );
 
+  void initLocalSelection( const char* theEntry, int theMode);
+  std::vector<int> getLocalSelection();
+  void closeLocalSelection();
+
   int         getIndexTopology( const char* theSubIOR, const char* theMainIOR );
   const char* getShapeTypeString( const char* theIOR );
   const char* getShapeTypeIcon( const char* theIOR );
 
   bool initGeomGen();
-private:
 
-  void init();
+  static GEOM_Swig_LocalSelector* myLocalSelector;
+  static GEOMGUI_OCCSelector* myOCCSelector;
+
+private:
+  void init( bool updateOB );
 };
 
 #endif // LIBGEOM_SWIG_H

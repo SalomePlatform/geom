@@ -23,11 +23,20 @@
 //  Project   : SALOME
 //  Module    : GEOM
 //
+
+
 %module libGEOM_Swig
 
 %{
 #include "libGEOM_Swig.h"
 %}
+
+%include "std_vector.i"
+namespace std {
+  %template(IntVector) vector<int>;
+}
+
+#include <vector>
 
 /*
   managing C++ exception in the Python API
@@ -52,7 +61,7 @@
 class GEOM_Swig
 {
  public:
-  GEOM_Swig();
+  GEOM_Swig( bool updateOB = true );
   ~GEOM_Swig();
 
   void createAndDisplayGO( const char* theEntry, bool theUpdateViewer = true );
@@ -71,6 +80,10 @@ class GEOM_Swig
   void setDeflection( const char* theEntry, float theDeflection, bool theUpdateViewer = true );
   void setMaterial( const char* theEntry, const char* theMaterial, bool theUpdateViewer = true );
   void setMaterialProperty( const char* theEntry, const char* theMaterial, bool theUpdateViewer = true );
+
+  void initLocalSelection( const char* theEntry, int theMode);
+  std::vector<int> getLocalSelection();
+  void closeLocalSelection();
 
   int         getIndexTopology( const char* theSubIOR, const char* theMainIOR );
   const char* getShapeTypeString( const char* theIOR );

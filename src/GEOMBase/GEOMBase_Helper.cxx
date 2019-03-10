@@ -88,8 +88,8 @@ GEOM::GEOM_Gen_ptr GEOMBase_Helper::getGeomEngine()
 // Function : GEOMBase_Helper
 // Purpose  :
 //================================================================
-GEOMBase_Helper::GEOMBase_Helper( SUIT_Desktop* desktop )
-  : myDisplayer( 0 ), myCommand( 0 ), myViewWindow( 0 ), isPreview( false ), myDesktop( desktop ),
+GEOMBase_Helper::GEOMBase_Helper( SUIT_Desktop* desktop, SUIT_ViewWindow* aVW )
+  : myDisplayer( 0 ), myCommand( 0 ), myViewWindow( aVW ), isPreview( false ), myDesktop( desktop ),
     myIsApplyAndClose( false ), myIsOptimizedBrowsing( false ), myIsWaitCursorEnabled( true ),
     myIsDisableBrowsing(false), myIsDisplayResult(true)
 {
@@ -489,6 +489,7 @@ void GEOMBase_Helper::localSelection( const ObjectList& theObjs, const std::list
     QString anEntry = getEntry( anObj );
     if ( anEntry != "" )
     {
+      //MESSAGE("anEntry: "<< anEntry.toStdString().c_str());
       QString aName = GEOMBase::GetName( anObj );
       aListOfIO.Append( new SALOME_InteractiveObject( anEntry.toUtf8().constData(),
                                                       "GEOM", aName.toUtf8().constData() ));
@@ -538,6 +539,20 @@ void GEOMBase_Helper::localSelection( GEOM::GEOM_Object_ptr obj, const int mode 
   std::list<int> modes;
   modes.push_back( mode );
   localSelection( obj, modes );
+}
+
+//================================================================
+// Function : localSelection
+// Purpose  : Activate selection of sub-shapes in accordance with mode
+//            mode is from TopAbs_ShapeEnum
+//================================================================
+void GEOMBase_Helper::localSelection( const std::string& entry,  const std::string& name, const std::list<int> modes)
+{
+  SALOME_ListIO aListOfIO;
+  QString aName = name.c_str();
+  aListOfIO.Append( new SALOME_InteractiveObject( entry.c_str(),
+                                                  "GEOM", aName.toUtf8().constData() ));
+  getDisplayer()->LocalSelection( aListOfIO, modes );
 }
 
 //================================================================

@@ -28,28 +28,37 @@
 #include "GEOM_Displayer.h"
 #include "GEOM_Constants.h"
 #include "Material_Model.h"
+#include "GEOM_Swig_LocalSelector.h"
+#include "GEOMGUI_OCCSelector.h"
+#include "OCCViewer_ViewManager.h"
 
 #include <SUIT_Desktop.h>
 #include <SUIT_Session.h>
 #include <SUIT_ViewManager.h>
 #include <SUIT_ViewModel.h>
+#include <SUIT_SelectionMgr.h>
+#include <LightApp_SelectionMgr.h>
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
 #include <OCCViewer_ViewFrame.h>
 #include <SVTK_ViewWindow.h>
 
 #include <SALOME_Event.h>
+#include <utilities.h>
 
 // IDL Headers
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 
+GEOM_Swig_LocalSelector* GEOM_Swig::myLocalSelector = 0;
+GEOMGUI_OCCSelector* GEOM_Swig::myOCCSelector =0;
+
 /*!
   \brief Constructor
 */
-GEOM_Swig::GEOM_Swig()
+GEOM_Swig::GEOM_Swig( bool updateOB )
 {
-  init();
+  init(updateOB);
 }
 
 /*!
@@ -62,12 +71,14 @@ GEOM_Swig::~GEOM_Swig()
 /*!
   \brief Internal initialization
 */
-void GEOM_Swig::init()
+void GEOM_Swig::init( bool updateOB )
 {
   class TEvent: public SALOME_Event
   {
+    bool myUpdateOB;
   public:
-    TEvent()
+    TEvent( bool _updateOB ):
+      myUpdateOB(_updateOB)
     {}
     virtual void Execute()
     {
@@ -99,12 +110,14 @@ void GEOM_Swig::init()
       }
 
       // update Object browser
-      if ( dynamic_cast<SalomeApp_Application*>( app ) )
+      if (myUpdateOB && dynamic_cast<SalomeApp_Application*>( app ) )
         dynamic_cast<SalomeApp_Application*>( app )->updateObjectBrowser( true );
+
+      //myLocalSelector = 0;
     }
   };
 
-  ProcessVoidEvent( new TEvent() );
+  ProcessVoidEvent( new TEvent(updateOB) );
 }
 
 /*!
@@ -475,6 +488,119 @@ void GEOM_Swig::setMaterialProperty( const char* theEntry, const char* theMateri
 {
   ProcessVoidEvent( new TSetPropertyEvent( theEntry, GEOM::propertyName( GEOM::Material ), 
                                            theMaterial, theUpdateViewer ) );
+}
+
+/*!
+  \brief initialize local subShapes selection on a given shape
+  \param theEntry geometry object's entry
+  \param theMode from enum TopAbs_ShapeEnum
+ */
+void GEOM_Swig::initLocalSelection( const char* theEntry, int theMode)
+{
+  class TEventInitLocalSelection: public SALOME_Event
+  {
+    std::string myEntry;
+    int myMode;
+  public:
+    TEventInitLocalSelection(const char* _entry, int _mode)
+    : myEntry(_entry), myMode(_mode)
+    {}
+    virtual void Execute()
+    {
+      if (myLocalSelector)
+        return;
+      SUIT_Application* app = SUIT_Session::session()->activeApplication();
+      if ( app )
+        {
+          SUIT_ViewWindow* window = app->desktop()->activeWindow();
+          SUIT_ViewWindow* wnd = 0;
+          LightApp_Application* lapp = dynamic_cast<LightApp_Application*>(app);
+          if ( lapp )
+            {
+              SUIT_ViewManager* viewMgr = lapp->activeViewManager();
+              if ( viewMgr )
+                {
+                  wnd = viewMgr->getActiveView();
+                }
+              LightApp_SelectionMgr* mgr = lapp->selectionMgr();
+              if (!myOCCSelector)
+                {
+                  myOCCSelector = new GEOMGUI_OCCSelector( ((OCCViewer_ViewManager*)viewMgr)->getOCCViewer(), mgr );
+                }
+
+              QList<SUIT_Selector*> aSelectorList;
+              mgr->selectors( "OCCViewer", aSelectorList );
+              for (int i=0; i< aSelectorList.size(); ++i)
+                {
+                  if ( LightApp_OCCSelector* aSelector = dynamic_cast<LightApp_OCCSelector*>( aSelectorList.at(i) ) )
+                    {
+                      aSelector->setEnabled(false);
+                    }
+                  if ( GEOMGUI_OCCSelector* aSelector = dynamic_cast<GEOMGUI_OCCSelector*>( aSelectorList.at(i) ) )
+                    {
+                      aSelector->setEnabled(true);
+                    }
+                }
+              myOCCSelector->setEnabled(true);
+            }
+
+          myLocalSelector = new GEOM_Swig_LocalSelector(app->desktop(), wnd, myEntry, myMode);
+          MESSAGE("TEventInitLocalSelection myLocalSelector: " << myLocalSelector);
+        }
+    }
+  };
+
+  ProcessVoidEvent(new TEventInitLocalSelection(theEntry, theMode));
+}
+
+/*!
+  \brief get local subShapes selection on a given shape
+  \return a list of selected subShapes indexes
+ */
+std::vector<int> GEOM_Swig::getLocalSelection()
+{
+  class TEventGetLocalSelection: public SALOME_Event
+  {
+  public:
+    typedef std::vector<int> TResult;
+    TResult myResult;
+
+    TEventGetLocalSelection(){}
+
+    virtual void Execute()
+    {
+      MESSAGE("TEventGetLocalSelection myLocalSelector: " << myLocalSelector);
+      if (myLocalSelector)
+        myResult = myLocalSelector->getSelection();
+    }
+  };
+
+  std::vector<int> result = ProcessEvent(new TEventGetLocalSelection());
+  return result;
+}
+
+/*!
+  \brief close local subShapes selection on a given shape
+ */
+void GEOM_Swig::closeLocalSelection()
+{
+  class TEventCloseLocalSelection: public SALOME_Event
+  {
+  public:
+    TEventCloseLocalSelection()
+    {}
+    virtual void Execute()
+    {
+      MESSAGE("TEventCloseLocalSelection myLocalSelector: " << myLocalSelector);
+      if (myLocalSelector)
+        {
+          delete myLocalSelector;
+          myLocalSelector = 0;
+        }
+    }
+  };
+
+  ProcessVoidEvent(new TEventCloseLocalSelection());
 }
 
 class TInitGeomGenEvent: public SALOME_Event

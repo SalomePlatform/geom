@@ -33,6 +33,7 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_BINARY_DIR}/idl
   ${PROJECT_BINARY_DIR}
   ${PROJECT_SOURCE_DIR}/src/OBJECT
+  ${PROJECT_SOURCE_DIR}/src/GEOMBase
   ${PROJECT_SOURCE_DIR}/src/GEOMClient
   ${PROJECT_SOURCE_DIR}/src/GEOMGUI
   ${PROJECT_SOURCE_DIR}/src/Material
@@ -75,9 +76,9 @@ SET(_swig_SCRIPTS
 # --- rules ---
 
 IF(${CMAKE_VERSION} VERSION_LESS "3.8.0") 
-  SWIG_ADD_MODULE(libGEOM_Swig python libGEOM_Swig.i libGEOM_Swig.cxx)
+  SWIG_ADD_MODULE(libGEOM_Swig python libGEOM_Swig.i libGEOM_Swig.cxx  GEOM_Swig_LocalSelector.cxx)
 ELSE()
-  SWIG_ADD_LIBRARY(libGEOM_Swig LANGUAGE python SOURCES libGEOM_Swig.i libGEOM_Swig.cxx)
+  SWIG_ADD_LIBRARY(libGEOM_Swig LANGUAGE python SOURCES libGEOM_Swig.i libGEOM_Swig.cxx  GEOM_Swig_LocalSelector.cxx)
 ENDIF()
 
 SWIG_LINK_LIBRARIES(libGEOM_Swig "${_link_LIBRARIES}")
