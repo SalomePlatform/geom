@@ -31,38 +31,38 @@
 class GEOM_Swig_LocalSelector;
 class GEOMGUI_OCCSelector;
 
-class GEOMGUI_EXPORT GEOM_Swig
+class GEOM_Swig
 {
 public:
-  GEOM_Swig( bool updateOB = true );
-  ~GEOM_Swig();
+  GEOMGUI_EXPORT GEOM_Swig( bool updateOB = true );
+  GEOMGUI_EXPORT ~GEOM_Swig();
 
-  void createAndDisplayGO( const char* theEntry, bool theUpdateViewer = true );
-  void createAndDisplayFitAllGO( const char* theEntry );
-  void eraseGO( const char* theEntry, bool theUpdateViewer = true );
+  GEOMGUI_EXPORT void createAndDisplayGO( const char* theEntry, bool theUpdateViewer = true );
+  GEOMGUI_EXPORT void createAndDisplayFitAllGO( const char* theEntry );
+  GEOMGUI_EXPORT void eraseGO( const char* theEntry, bool theUpdateViewer = true );
 
-  void UpdateViewer();
+  GEOMGUI_EXPORT void UpdateViewer();
 
-  void setDisplayMode( const char* theEntry, int theMode, bool theUpdateViewer = true );
-  void setVectorsMode( const char* theEntry, bool theOn, bool theUpdateViewer = true );
-  void setVerticesMode( const char* theEntry, bool theOn, bool theUpdateViewer = true );
-  void setNameMode( const char* theEntry, bool theOn, bool theUpdateViewer = true );
-  void setColor( const char* theEntry, int theRed, int theGreen, int theBlue, bool theUpdateViewer = true );
-  void setTransparency( const char* theEntry, float theTransparency, bool theUpdateViewer = true );
-  void setIsos( const char* theEntry, int theNbU, int theNbV, bool theUpdateViewer = true );
-  void setDeflection( const char* theEntry, float theDeflection, bool theUpdateViewer = true );
-  void setMaterial( const char* theEntry, const char* theMaterial, bool theUpdateViewer = true );
-  void setMaterialProperty( const char* theEntry, const char* theMaterial, bool theUpdateViewer = true );
+  GEOMGUI_EXPORT void setDisplayMode( const char* theEntry, int theMode, bool theUpdateViewer = true );
+  GEOMGUI_EXPORT void setVectorsMode( const char* theEntry, bool theOn, bool theUpdateViewer = true );
+  GEOMGUI_EXPORT void setVerticesMode( const char* theEntry, bool theOn, bool theUpdateViewer = true );
+  GEOMGUI_EXPORT void setNameMode( const char* theEntry, bool theOn, bool theUpdateViewer = true );
+  GEOMGUI_EXPORT void setColor( const char* theEntry, int theRed, int theGreen, int theBlue, bool theUpdateViewer = true );
+  GEOMGUI_EXPORT void setTransparency( const char* theEntry, float theTransparency, bool theUpdateViewer = true );
+  GEOMGUI_EXPORT void setIsos( const char* theEntry, int theNbU, int theNbV, bool theUpdateViewer = true );
+  GEOMGUI_EXPORT void setDeflection( const char* theEntry, float theDeflection, bool theUpdateViewer = true );
+  GEOMGUI_EXPORT void setMaterial( const char* theEntry, const char* theMaterial, bool theUpdateViewer = true );
+  GEOMGUI_EXPORT void setMaterialProperty( const char* theEntry, const char* theMaterial, bool theUpdateViewer = true );
 
-  void initLocalSelection( const char* theEntry, int theMode);
-  std::vector<int> getLocalSelection();
-  void closeLocalSelection();
+  GEOMGUI_EXPORT void initLocalSelection( const char* theEntry, int theMode);
+  GEOMGUI_EXPORT std::vector<int> getLocalSelection();
+  GEOMGUI_EXPORT void closeLocalSelection();
 
-  int         getIndexTopology( const char* theSubIOR, const char* theMainIOR );
-  const char* getShapeTypeString( const char* theIOR );
-  const char* getShapeTypeIcon( const char* theIOR );
+  GEOMGUI_EXPORT int         getIndexTopology( const char* theSubIOR, const char* theMainIOR );
+  GEOMGUI_EXPORT const char* getShapeTypeString( const char* theIOR );
+  GEOMGUI_EXPORT const char* getShapeTypeIcon( const char* theIOR );
 
-  bool initGeomGen();
+  GEOMGUI_EXPORT bool initGeomGen();
 
   static GEOM_Swig_LocalSelector* myLocalSelector;
   static GEOMGUI_OCCSelector* myOCCSelector;
