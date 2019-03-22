@@ -21,7 +21,10 @@
 
 import salome_pluginsmanager
 
-def t_shape_fluid():
+def t_shape_fluid(context):
+
+    #study = context.study
+    #sg = context.sg
 
     #from salome.geom.t_shape import t_shape_builder
     from salome.geom.t_shape import t_shape_dialog
