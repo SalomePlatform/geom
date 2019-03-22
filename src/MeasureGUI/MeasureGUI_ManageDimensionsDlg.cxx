@@ -129,7 +129,7 @@ MeasureGUI_ManageDimensionsDlg::MeasureGUI_ManageDimensionsDlg( GeometryGUI* the
   connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( OnDeactivateThisDialog() ) );
   connect( myGeomGUI, SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
 
-  myDimensionInteractor = new MeasureGUI_DimensionInteractor( theGUI, theParent ),
+  myDimensionInteractor = new MeasureGUI_DimensionInteractor( theGUI, this ),
 
   SelectionIntoArgument( Selection_Object );
 
@@ -245,6 +245,9 @@ void MeasureGUI_ManageDimensionsDlg::StartSelection( const Selection theSelectio
 //=================================================================================
 void MeasureGUI_ManageDimensionsDlg::StopSelection()
 {
+  if( !myGeomGUI || !myGeomGUI->getApp() || !myGeomGUI->getApp()->selectionMgr() )
+    return;
+
   if ( myCurrentSelection == Selection_Object )
   {
     /* -----------------------------------------------  *

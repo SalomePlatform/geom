@@ -29,6 +29,7 @@
 
 #include <GeometryGUI.h>
 #include <QObject>
+#include <QPointer>
 
 #include <SelectMgr_EntityOwner.hxx>
 #include <NCollection_Sequence.hxx>
@@ -165,7 +166,7 @@ private:
 private:
   GeometryGUI*            myGeomGUI;
   bool                    myIsEnabled;
-  OCCViewer_ViewManager*  myVM;
+  QPointer<OCCViewer_ViewManager> myVM;
   OCCViewer_Viewer*       myViewer;
   Operation               myOperation;
   bool                    myOperationStarted;

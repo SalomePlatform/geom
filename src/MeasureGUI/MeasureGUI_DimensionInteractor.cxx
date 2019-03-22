@@ -132,12 +132,14 @@ void MeasureGUI_DimensionInteractor::Disable()
 
   myIsEnabled = false;
 
-  // remove event filtering from viewer windows
-  QVector<SUIT_ViewWindow*>           aViews  = myVM->getViews();
-  QVector<SUIT_ViewWindow*>::iterator aViewIt = aViews.begin();
-  for ( ; aViewIt != aViews.end(); ++aViewIt )
-  {
-    DisconnectView( *aViewIt );
+  if (myVM) {
+    // remove event filtering from viewer windows
+    QVector<SUIT_ViewWindow*>           aViews  = myVM->getViews();
+    QVector<SUIT_ViewWindow*>::iterator aViewIt = aViews.begin();
+    for ( ; aViewIt != aViews.end(); ++aViewIt )
+    {
+      DisconnectView( *aViewIt );
+    }
   }
 }
 
