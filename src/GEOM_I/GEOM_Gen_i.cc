@@ -1642,7 +1642,8 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapes(GEOM::GEOM_Object_ptr   theObj
 
   // Get all arguments
   GEOM::ListOfGBO_var anOpArgsList = theObject->GetDependency();
-  Standard_Integer    nbArgsActual = anOpArgsList->length();
+  Standard_Integer    nbOpArgs     = anOpArgsList->length();
+  Standard_Integer    nbArgsActual = nbOpArgs;
 
   // If anOpArgsList list is empty, nothing to do
   if (nbArgsActual == 0)
@@ -1674,7 +1675,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapes(GEOM::GEOM_Object_ptr   theObj
   if (nbArgsActual < 1)
     return aParts._retn();
 
-  if (theInheritFirstArg || (nbArgsActual == 1)) {
+  if (theInheritFirstArg || (nbOpArgs == 1)) {
     // Do not publish argument's reflection,
     // but only reconstruct its published sub-shapes
 
