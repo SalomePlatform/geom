@@ -110,7 +110,14 @@ namespace GEOM
   TPythonDump& TPythonDump::operator<< (const TopAbs_ShapeEnum theArg)
   {
     myStream<<"geompy.ShapeType[\"";
-    TopAbs::Print(theArg, myStream);
+    if (theArg == -1)
+      myStream<<"AUTO";
+    else if (theArg == 9)
+      myStream<<"FLAT";
+    else if (theArg >= TopAbs_COMPOUND && theArg <= TopAbs_SHAPE)
+      TopAbs::Print(theArg, myStream);
+    else
+      myStream<<int(theArg);
     myStream<<"\"]";
     return *this;
   }
