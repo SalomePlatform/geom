@@ -1415,6 +1415,8 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
         aStartPos = aCommand.Location(i-1, COMMA, 1, aCommand.Length()) + 2;
         aEndPos = aCommand.Location(i, COMMA, 1, aCommand.Length());
       }
+      if (aStartPos == 0 || aEndPos == 0)
+        continue;
 
       if( aCommand.Value( aStartPos ) == O_SQR_BRACKET )
         aStartPos++;
