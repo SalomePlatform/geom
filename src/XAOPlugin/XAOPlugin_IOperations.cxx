@@ -527,8 +527,6 @@ bool XAOPlugin_IOperations::ImportXAO( const char* fileName,
     TDF_Label freeLabel = group->GetFreeLabel();
     TDataStd_Integer::Set(freeLabel, (Standard_Integer) getGroupDimension(xaoGroup));
     groups->Append(group);
-
-    function = group->GetLastFunction();
   }
 
   // create the fields
