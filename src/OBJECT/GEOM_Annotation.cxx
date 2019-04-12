@@ -52,6 +52,8 @@
 #include <V3d_Viewer.hxx>
 #include <V3d_View.hxx>
 
+#include <Basics_OCCTVersion.hxx>
+
 IMPLEMENT_STANDARD_RTTIEXT( GEOM_Annotation, AIS_InteractiveObject )
 
 // =======================================================================
@@ -689,7 +691,11 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
   const unsigned int aDPI = theWorkspace->View()->RenderingParams().Resolution;
   if (myTextDPI != aDPI)
   {
+#if OCC_VERSION_LARGE <= 0x07030000
     const OpenGl_AspectText* anAspect = theWorkspace->AspectText();
+#else
+    const OpenGl_Aspects* anAspect = theWorkspace->Aspects();
+#endif
 
     // getting string size will also initialize font library
     myTextDraw->StringSize( aContext,
@@ -751,7 +757,11 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
   {
     Handle(Graphic3d_PresentationAttributes) empty;
     theWorkspace->SetHighlightStyle(empty);
+#if OCC_VERSION_LARGE <= 0x07030000
     theWorkspace->ApplyAspectLine();
+#else
+    theWorkspace->ApplyAspects();
+#endif
   }
   
   GLint myOldDepthMode = 0;
