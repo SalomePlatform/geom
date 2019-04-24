@@ -1965,16 +1965,7 @@ void GEOM_Displayer::GlobalSelection( const TColStd_MapOfInteger& theModes,
     return;
 
   SUIT_SelectionFilter* aFilter;
-  if ( theModes.Extent() == 1 )
-    {
-      int aMode = TColStd_MapIteratorOfMapOfInteger( theModes ).Key();
-
-      if ( aMode == GEOM_COMPOUNDFILTER )
-        aFilter = getComplexFilter( theSubShapes );
-      else
-        aFilter = getFilter( aMode );
-    }
-  else if ( theModes.Extent() > 1 )
+  if ( theModes.Extent() > 0 )
     {
       TColStd_MapOfInteger aTopAbsModes;
       TColStd_MapIteratorOfMapOfInteger anIter( theModes );
@@ -1985,6 +1976,14 @@ void GEOM_Displayer::GlobalSelection( const TColStd_MapOfInteger& theModes,
           int aMode = anIter.Key();
           if ( aMode == GEOM_COMPOUNDFILTER )
             aFilter = getComplexFilter( theSubShapes );
+          if ( aMode == GEOM_COMPOUND ) {
+            // always add COMPSOLID filter together with COMPOUND filter
+            aFilter = new GEOM_TypeFilter( getStudy(), TopAbs_COMPSOLID, true );
+            aListOfFilters.append( aFilter );
+
+            // add the COMPOUND filter itself
+            aFilter = getFilter( aMode );
+          }
           else
             aFilter = getFilter( aMode );
 
@@ -1992,7 +1991,8 @@ void GEOM_Displayer::GlobalSelection( const TColStd_MapOfInteger& theModes,
             aListOfFilters.append( aFilter );
         }
 
-      aFilter = new GEOM_LogicalFilter( aListOfFilters, GEOM_LogicalFilter::LO_OR );
+      if (aListOfFilters.size() > 1)
+        aFilter = new GEOM_LogicalFilter( aListOfFilters, GEOM_LogicalFilter::LO_OR );
     }
   else
     return;
