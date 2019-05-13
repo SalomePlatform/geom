@@ -25,6 +25,7 @@
 #include "STEPPlugin_IImport.hxx"
 
 // KERNEL includes
+#include <Basics_DirUtils.hxx>
 #include <utilities.h>
 
 // GEOM includes
@@ -151,8 +152,9 @@ void STEPPlugin_IOperations::ExportSTEP
   }
 
   //Make a Python command
+  std::string convFileName = Kernel_Utils::BackSlashToSlash(theFileName.ToCString());
   GEOM::TPythonDump(aFunction) << "geompy.ExportSTEP(" << theOriginal << ", \""
-    << theFileName.ToCString() << "\", " << theUnit << " )";
+    << convFileName.c_str() << "\", " << theUnit << " )";
 
   SetErrorCode(OK);
 }
@@ -211,7 +213,8 @@ STEPPlugin_IOperations::ImportSTEP(const TCollection_AsciiString& theFileName,
 
   //Make a Python command
   GEOM::TPythonDump pd (aFunction);
-  pd << aSeq << " = geompy.ImportSTEP(\"" << theFileName.ToCString() << "\", ";
+  std::string convFileName =  Kernel_Utils::BackSlashToSlash( theFileName.ToCString() );
+  pd << aSeq << " = geompy.ImportSTEP(\"" << convFileName.c_str() << "\", ";
   pd << (theIsIgnoreUnits ? "True" : "False");
   pd << ", " << (IsCreateAssemblies ? "True" : "False");
   pd << ")";

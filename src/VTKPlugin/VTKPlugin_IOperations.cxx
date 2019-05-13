@@ -23,6 +23,7 @@
 #include "VTKPlugin_IExport.hxx"
 
 // KERNEL includes
+#include <Basics_DirUtils.hxx>
 #include <utilities.h>
 
 // GEOM includes
@@ -101,8 +102,9 @@ void VTKPlugin_IOperations::ExportVTK( const Handle(GEOM_Object)      theOrigina
   }
 
   //Make a Python command
+  std::string convFileName = Kernel_Utils::BackSlashToSlash(theFileName.ToCString());
   GEOM::TPythonDump(aFunction) << "geompy.ExportVTK(" << theOriginal << ", \""
-    << theFileName.ToCString() << "\", " << theDeflection << ")";
+    << convFileName.c_str() << "\", " << theDeflection << ")";
 
   SetErrorCode(OK);
 }

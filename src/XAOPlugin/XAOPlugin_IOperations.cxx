@@ -23,6 +23,7 @@
 #include "XAOPlugin_IImportExport.hxx"
 
 // KERNEL includes
+#include <Basics_DirUtils.hxx>
 #include <utilities.h>
 #include <Utils_SALOME_Exception.hxx>
 
@@ -353,6 +354,7 @@ bool XAOPlugin_IOperations::ExportXAO( Handle(GEOM_Object) shape,
 
   // make a Python command
   GEOM::TPythonDump pd(exportFunction);
+  std::string convFileName = Kernel_Utils::BackSlashToSlash(fileName);
   pd << "exported = geompy.ExportXAO(" << shape;
 
   // list of groups
@@ -379,7 +381,7 @@ bool XAOPlugin_IOperations::ExportXAO( Handle(GEOM_Object) shape,
     }
   }
   pd << "], ";
-  pd << "\"" << author << "\", \"" << fileName << "\", \"" << shapeFileName << "\")";
+  pd << "\"" << author << "\", \"" << convFileName.c_str() << "\", \"" << shapeFileName << "\")";
 
   SetErrorCode(OK);
   delete xaoObject;
@@ -664,8 +666,9 @@ bool XAOPlugin_IOperations::ImportXAO( const char* fileName,
       pd << obj << ((i < nbFields) ? ", " : "");
     }
   }
+  std::string convFileName =  Kernel_Utils::BackSlashToSlash( fileName );
   pd << "]";
-  pd << ") = geompy.ImportXAO(\"" << fileName << "\")";
+  pd << ") = geompy.ImportXAO(\"" << convFileName.c_str() << "\")";
 
   delete xaoObject;
   SetErrorCode(OK);

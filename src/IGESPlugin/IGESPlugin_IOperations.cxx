@@ -25,6 +25,7 @@
 #include "IGESPlugin_IImport.hxx"
 
 // KERNEL includes
+#include <Basics_DirUtils.hxx>
 #include <utilities.h>
 
 // GEOM includes
@@ -106,8 +107,9 @@ void IGESPlugin_IOperations::ExportIGES( const Handle(GEOM_Object)      theOrigi
   }
 
   //Make a Python command
+  std::string convFileName = Kernel_Utils::BackSlashToSlash(theFileName.ToCString());
   GEOM::TPythonDump(aFunction) << "geompy.ExportIGES(" << theOriginal << ", \""
-    << theFileName.ToCString() << "\", \"" << theVersion.ToCString() << "\" )";
+    << convFileName.c_str() << "\", \"" << theVersion.ToCString() << "\" )";
 
   SetErrorCode(OK);
 }
@@ -164,10 +166,11 @@ IGESPlugin_IOperations::ImportIGES( const TCollection_AsciiString& theFileName,
 
   //Make a Python command
   GEOM::TPythonDump pd (aFunction);
+  std::string convFileName = Kernel_Utils::BackSlashToSlash(theFileName.ToCString());
   if( theIsIgnoreUnits )
-    pd << aSeq << " = geompy.ImportIGES(\"" << theFileName.ToCString() << "\", True)";
+    pd << aSeq << " = geompy.ImportIGES(\"" << convFileName.c_str() << "\", True)";
   else
-    pd << aSeq << " = geompy.ImportIGES(\"" << theFileName.ToCString() << "\")";
+    pd << aSeq << " = geompy.ImportIGES(\"" << convFileName.c_str() << "\")";
   SetErrorCode(OK);
 
   return aSeq;
