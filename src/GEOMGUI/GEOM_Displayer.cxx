@@ -1964,7 +1964,7 @@ void GEOM_Displayer::GlobalSelection( const TColStd_MapOfInteger& theModes,
   if ( theModes.Contains( GEOM_ALLOBJECTS ) )
     return;
 
-  SUIT_SelectionFilter* aFilter;
+  SUIT_SelectionFilter* aFilter = NULL;
   if ( theModes.Extent() > 0 )
     {
       TColStd_MapOfInteger aTopAbsModes;
