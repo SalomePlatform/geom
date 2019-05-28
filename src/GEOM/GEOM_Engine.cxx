@@ -1842,7 +1842,8 @@ TCollection_AsciiString GetPublishCommands
       TIntToListIntMap::const_iterator aRefIt = theMapRefs.find(theTag);
 
       if (aRefIt != theMapRefs.end()) {
-        // Recursively publish all references.
+		thePublished.insert(theTag);
+        // Recursively publish all references.		
         std::list< int >::const_iterator aRefTagIt = aRefIt->second.begin();
 
         for(; aRefTagIt != aRefIt->second.end(); ++aRefTagIt) {
@@ -1856,8 +1857,6 @@ TCollection_AsciiString GetPublishCommands
       // Add the object command.
       aResult += anIt->second;
     }
-
-    thePublished.insert(theTag);
   }
 
   return aResult;
