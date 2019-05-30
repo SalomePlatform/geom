@@ -47,11 +47,7 @@ GEOMGUI_CreationInfoWdg::GEOMGUI_CreationInfoWdg( SalomeApp_Application* app )
   myParamsTreeWd->setColumnCount( 2 );
   myParamsTreeWd->setHeaderLabels( QStringList() << tr( "PARAMETER" ) << tr( "VALUE" ) );
   myParamsTreeWd->header()->setStretchLastSection( true );
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-  myParamsTreeWd->header()->setResizeMode( 0, QHeaderView::ResizeToContents );
-#else
   myParamsTreeWd->header()->setSectionResizeMode( 0, QHeaderView::ResizeToContents );
-#endif
 
   QVBoxLayout* aLayout = new QVBoxLayout( this );
   aLayout->addWidget( myParamsTreeWd );

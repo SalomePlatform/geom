@@ -158,11 +158,8 @@ namespace
     const int nbCols = 2;
     QTableWidget* table = new QTableWidget( nbRows, nbCols, this );
     table->setEditTriggers( QAbstractItemView::NoEditTriggers );
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    table->horizontalHeader()->setResizeMode( 1, QHeaderView::Interactive );
-#else
     table->horizontalHeader()->setSectionResizeMode( 1, QHeaderView::Interactive );
-#endif
+
     table->horizontalHeader()->setStretchLastSection( true );
 
     QStringList headers;

@@ -78,11 +78,7 @@ GEOMToolsGUI_PublishDlg::GEOMToolsGUI_PublishDlg(QWidget* parent):
    SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
    headerItem->setIcon( 2, QIcon( resMgr->loadPixmap( "SUIT", tr( "ICON_DATAOBJ_VISIBLE" ) ) ) );
    myTreeWidget->setHeaderItem ( headerItem );
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-   myTreeWidget->header()->setClickable( true );
-#else
    myTreeWidget->header()->setSectionsClickable( true );
-#endif
    myTreeWidget->header()->setSortIndicatorShown( true );
    myTreeWidget->header()->moveSection( 2, 0 );
    myTreeWidget->setSortingEnabled( true );
