@@ -1834,6 +1834,8 @@ TCollection_AsciiString GetPublishCommands
 
   if (!thePublished.count(theTag)) {
     // This object is not published yet.
+    thePublished.insert(theTag);
+
     std::map< int, TCollection_AsciiString >::const_iterator anIt =
       theEntryToCmdMap.find(theTag);
 
@@ -1856,7 +1858,6 @@ TCollection_AsciiString GetPublishCommands
       // Add the object command.
       aResult += anIt->second;
     }
-    thePublished.insert(theTag);
   }
 
   return aResult;
