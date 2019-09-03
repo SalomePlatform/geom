@@ -288,22 +288,22 @@ GEOM::CreationInformationSeq* GEOM_BaseObject_i::GetCreationInformation()
 #ifdef _DEBUG_
         if ( operationName.empty() )
         {
-          cout << endl << endl << endl << "Warning: " << endl << "Dear developer!!!" << endl
-               << "  Consider implementing "
-               <<    typeid(*(driver.operator->())).name() << "::GetCreationInformation() " << endl
-               << "  for the case of operation which has created '" << GetName() << "' object" << endl
-               << "PLEEEEEEEASE" << endl
-               << "\tPLEEEEEEEASE" << endl
-               << "\t\tPLEEEEEEEASE" << endl
-               << "\t\t\tPLEEEEEEEASE" << endl
-               << "\t\t\t\tPLEEEEEEEASE" << endl;
+          std::cout << std::endl << std::endl << std::endl << "Warning: " << std::endl << "Dear developer!!!" << std::endl
+                    << "  Consider implementing "
+                    <<    typeid(*(driver.operator->())).name() << "::GetCreationInformation() " << std::endl
+                    << "  for the case of operation which has created '" << GetName() << "' object" << std::endl
+                    << "PLEEEEEEEASE" << std::endl
+                    << "\tPLEEEEEEEASE" << std::endl
+                    << "\t\tPLEEEEEEEASE" << std::endl
+                    << "\t\t\tPLEEEEEEEASE" << std::endl
+                    << "\t\t\t\tPLEEEEEEEASE" << std::endl;
         }
 #endif
       }
       catch(...)
       {
 #ifdef _DEBUG_
-        cout << "Ecxeption in GEOM_BaseObject_i::GetCreationInformation()" << endl;
+        std::cout << "Ecxeption in GEOM_BaseObject_i::GetCreationInformation()" << std::endl;
 #endif
       }
     }

@@ -82,6 +82,7 @@
 
 #ifdef _DEBUG_
 static int MYDEBUG = 0;
+using namespace std;
 #else
 static int MYDEBUG = 0;
 #endif

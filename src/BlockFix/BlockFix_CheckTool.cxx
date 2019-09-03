@@ -277,18 +277,18 @@ TopoDS_Shape BlockFix_CheckTool::PossibleBlock(const Standard_Integer num) const
 void BlockFix_CheckTool::DumpCheckResult(Standard_OStream& S) const
 {
   if(!myHasCheck)
-    S<<"Check not performed!"<<endl;
+    S<<"Check not performed!"<<std::endl;
   else {
-    S<<"dump results of check:"<<endl;
-    S<<"  total number of solids = "<<myNbSolids<<endl;
-    S<<"  including: number of good blocks = "<<myNbBlocks<<endl;
-    S<<"             number of possible blocks = "<<NbPossibleBlocks()<<endl;
-    S<<"             including: need remove degenerative = "<<myNbDegen<<endl;
-    S<<"                        need unionfaces = "<<myNbUF<<endl;
-    S<<"                        need unionedges = "<<myNbUE<<endl;
-    S<<"                        need both unionfaces and unionedges = "<<myNbUFUE<<endl;
+    S<<"dump results of check:"<<std::endl;
+    S<<"  total number of solids = "<<myNbSolids<<std::endl;
+    S<<"  including: number of good blocks = "<<myNbBlocks<<std::endl;
+    S<<"             number of possible blocks = "<<NbPossibleBlocks()<<std::endl;
+    S<<"             including: need remove degenerative = "<<myNbDegen<<std::endl;
+    S<<"                        need unionfaces = "<<myNbUF<<std::endl;
+    S<<"                        need unionedges = "<<myNbUE<<std::endl;
+    S<<"                        need both unionfaces and unionedges = "<<myNbUFUE<<std::endl;
     Standard_Integer nbtmp = myNbSolids - myNbBlocks - NbPossibleBlocks();
-    S<<"             number of impossible blocks = "<<nbtmp<<endl;
+    S<<"             number of impossible blocks = "<<nbtmp<<std::endl;
   }
 }
 
