@@ -32,7 +32,19 @@ ENDIF()
 SALOME_ACCUMULATE_ENVIRONMENT(GEOM_PluginsList NOCHECK ${DOC_GEOM_PluginsList})
 SET(geom_file "${CMAKE_CURRENT_SOURCE_DIR}/collect_geom_methods.py")
 SET(plugins_cmd_options ${geom_file} -o tmp1/geomBuilder.py ${DOC_GEOM_PluginsList})
-SALOME_GENERATE_ENVIRONMENT_SCRIPT(plugins_cmd env_script "${PYTHON_EXECUTABLE}" "${plugins_cmd_options}")
+
+SET(ADD_VARS)
+IF(WIN32 AND "$ENV{SALOME_HAS_GLOBAL_ENV}" STREQUAL "1")
+
+  FOREACH(plg ${DOC_GEOM_PluginsList})
+    LIST(APPEND ADD_VARS GEOM_PluginsList=${plg})
+  ENDFOREACH()
+  LIST(APPEND ADD_VARS PYTHONPATH=${CMAKE_INSTALL_PREFIX}/bin/salome)
+  LIST(APPEND ADD_VARS PYTHONPATH=${CMAKE_INSTALL_PREFIX}/lib/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/salome)
+  LIST(APPEND ADD_VARS PYTHONPATH=${CMAKE_INSTALL_PREFIX}/lib/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/salome/shared_modules)
+ENDIF()
+
+SALOME_GENERATE_ENVIRONMENT_SCRIPT(plugins_cmd env_script "${PYTHON_EXECUTABLE}" "${plugins_cmd_options}" ADDITIONAL_VARIABLES ${ADD_VARS})
 # Install a script
 SALOME_INSTALL_SCRIPTS(collect_geom_methods.py ${SALOME_INSTALL_BINS})
 
