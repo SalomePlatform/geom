@@ -1302,13 +1302,13 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
                       const TVariablesList&    theVariables)
 {
   if (MYDEBUG)
-    cout<<"Command : "<<theCommand<<endl;
+    std::cout<<"Command : "<<theCommand<<std::endl;
 
   if (MYDEBUG) {
-    cout<<"All Entries:"<<endl;
+    std::cout<<"All Entries:"<<std::endl;
     TVariablesList::const_iterator it = theVariables.begin();
     for(;it != theVariables.end();it++)
-      cout<<"\t'"<<(*it).first<<"'"<<endl;
+      std::cout<<"\t'"<<(*it).first<<"'"<<std::endl;
   }
 
   //Additional case - multi-row commands
@@ -1319,7 +1319,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
       break;
 
     if (MYDEBUG)
-      cout<<"Sub-command : "<<aCommand<<endl;
+      std::cout<<"Sub-command : "<<aCommand<<std::endl;
 
     Standard_Integer aStartCommandPos = theCommand.Location(aCommand,1,theCommand.Length());
     Standard_Integer aEndCommandPos = aStartCommandPos + aCommand.Length();
@@ -1337,7 +1337,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
     anEntry.RightAdjust();
     anEntry.LeftAdjust();
     if(MYDEBUG)
-      cout<<"Result entry : '" <<anEntry<<"'"<<endl;
+      std::cout<<"Result entry : '" <<anEntry<<"'"<<std::endl;
 
     if ( anEntry.IsEmpty() ) {
       aCommandIndex++;
@@ -1355,7 +1355,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
       anEntry.RightAdjust();
       anEntry.LeftAdjust();
       if(MYDEBUG)
-        cout<<"Sub-entry : '" <<anEntry<<"'"<<endl;
+		std::cout<<"Sub-entry : '" <<anEntry<<"'"<<std::endl;
     }
 
     //Find variables used for object construction
@@ -1366,7 +1366,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
 
     if(!aStates) {
       if(MYDEBUG)
-        cout<<"Valiables list empty!!!"<<endl;
+		std::cout<<"Valiables list empty!!!"<<std::endl;
       aCommandIndex++;
       continue;
     }
@@ -1374,9 +1374,9 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
     TState aVariables = aStates->GetCurrectState();
 
     if(MYDEBUG) {
-      cout<<"Variables from SObject:"<<endl;
+	   std::cout<<"Variables from SObject:"<<std::endl;
       for (size_t i = 0; i < aVariables.size();i++)
-        cout<<"\t Variable["<<i<<"] = "<<aVariables[i].myVariable<<endl;
+        std::cout<<"\t Variable["<<i<<"] = "<<aVariables[i].myVariable<<std::endl;
     }
 
     //Calculate total number of parameters
@@ -1385,7 +1385,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
       aTotalNbParams++;
 
     if(MYDEBUG)
-      cout<<"aTotalNbParams = "<<aTotalNbParams<<endl;
+	  std::cout<<"aTotalNbParams = "<<aTotalNbParams<<std::endl;
 
     Standard_Integer aFirstParam = aNbEntries;
 
@@ -1427,14 +1427,14 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
         continue; // PAL20889: for "[]"
 
       if(MYDEBUG)
-        cout<<"aStartPos = "<<aStartPos<<", aEndPos = "<<aEndPos<<endl;
+        std::cout<<"aStartPos = "<<aStartPos<<", aEndPos = "<<aEndPos<<std::endl;
 
       aVar = aCommand.SubString(aStartPos, aEndPos-1);
       aVar.RightAdjust();
       aVar.LeftAdjust();
 
       if(MYDEBUG)
-        cout<<"Variable: '"<< aVar <<"'"<<endl;
+        std::cout<<"Variable: '"<< aVar <<"'"<<std::endl;
 
       // specific case for sketcher
       if(aVar.Location( TCollection_AsciiString("Sketcher:"), 1, aVar.Length() ) != 0) {
@@ -1454,7 +1454,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
 
           aSection = aVar.SubString(aStartSectionPos, aEndSectionPos-1);
           if(MYDEBUG)
-            cout<<"aSection: "<<aSection<<endl;
+			std::cout<<"aSection: "<<aSection<<std::endl;
 
           Standard_Integer aNbParams = 1;
           while( aSection.Location( aNbParams, ' ', 1, aSection.Length() ) )
@@ -1471,14 +1471,14 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
               aEndParamPos = aSection.Length() + 1;
 
             if(MYDEBUG)
-              cout<<"aParamIndex: "<<aParamIndex<<" aStartParamPos: " <<aStartParamPos<<" aEndParamPos: "<<aEndParamPos<<endl;
+              std::cout<<"aParamIndex: "<<aParamIndex<<" aStartParamPos: " <<aStartParamPos<<" aEndParamPos: "<<aEndParamPos<<std::endl;
 
             if ( aStartParamPos == aEndParamPos)
               continue;
 
             aParameter = aSection.SubString(aStartParamPos, aEndParamPos-1);
             if(MYDEBUG)
-              cout<<"aParameter: "<<aParameter<<endl;
+			  std::cout<<"aParameter: "<<aParameter<<std::endl;
 
             if(iVar >= aVariables.size())
               continue;
@@ -1495,27 +1495,27 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
             }
 
             if(MYDEBUG)
-              cout<<"aSection before : "<<aSection<<endl;
+			  std::cout<<"aSection before : "<<aSection<< std::endl;
             aSection.Remove(aStartParamPos, aEndParamPos - aStartParamPos);
             aSection.Insert(aStartParamPos, aReplacedParameter);
             if(MYDEBUG)
-              cout<<"aSection after  : "<<aSection<<endl<<endl;
+              std::cout<<"aSection after  : "<<aSection<<std::endl<<std::endl;
             iVar++;
           }
           if(MYDEBUG)
-            cout<<"aVar before : "<<aVar<<endl;
+            std::cout<<"aVar before : "<<aVar<<std::endl;
           aVar.Remove(aStartSectionPos, aEndSectionPos - aStartSectionPos);
           aVar.Insert(aStartSectionPos, aSection);
           if(MYDEBUG)
-            cout<<"aVar after  : "<<aVar<<endl<<endl;
+            std::cout<<"aVar after  : "<<aVar<<std::endl<<std::endl;
         }
 
         if(MYDEBUG)
-          cout<<"aCommand before : "<<aCommand<<endl;
+          std::cout<<"aCommand before : "<<aCommand<<std::endl;
         aCommand.Remove(aStartPos, aEndPos - aStartPos);
         aCommand.Insert(aStartPos, aVar);
         if(MYDEBUG)
-          cout<<"aCommand after  : "<<aCommand<<endl;
+          std::cout<<"aCommand after  : "<<aCommand<<std::endl;
 
         break;
       } // end of specific case for sketcher
@@ -1552,7 +1552,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
   }
 
   if (MYDEBUG)
-    cout<<"Command : "<<theCommand<<endl;
+    std::cout<<"Command : "<<theCommand<<std::endl;
 }
 
 //=============================================================================
