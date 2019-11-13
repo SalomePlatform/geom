@@ -76,7 +76,6 @@ WARN_LOGFILE           =
 # configuration options related to the input files
 #---------------------------------------------------------------------------
 INPUT                  = @PROJECT_SOURCE_DIR@/src \
-			 ./geomBuilder.py \
 			 @PROJECT_SOURCE_DIR@/bin \
 			 @PROJECT_SOURCE_DIR@/idl \
 			 @PROJECT_SOURCE_DIR@/bin \
