@@ -2900,7 +2900,10 @@ QList<QVariant> GEOM_Displayer::groupFieldData( const QList<QVariant>& theFieldS
             aValue = double( aVariant.toLongLong() );
           else if( aVariant.type() == QVariant::Double )
             aValue = aVariant.toDouble();
-          aNorm += aValue * aValue;
+          if ( theFieldNbComponents > 1 )
+            aNorm += aValue * aValue;
+          else
+            aNorm += aValue;
         }
       }
     }
@@ -2911,7 +2914,7 @@ QList<QVariant> GEOM_Displayer::groupFieldData( const QList<QVariant>& theFieldS
     {
       if( anIsBoolean )
         aNorm /= theFieldNbComponents;
-      else
+      else if ( theFieldNbComponents > 1 )
         aNorm = pow( aNorm, 0.5 );
 
       if( aGroupedList.isEmpty() )
