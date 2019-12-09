@@ -11325,9 +11325,10 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "centerOfMass")
             return anObj
 
-        ## Get a vertex sub-shape by index depended with orientation.
+        ## Get a vertex sub-shape by index.
         #  @param theShape Shape to find sub-shape.
         #  @param theIndex Index to find vertex by this index (starting from zero)
+        #  @param theUseOri To consider edge/wire orientation or not
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -11336,13 +11337,14 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_measurement_tools_page "Example"
         @ManageTransactions("MeasuOp")
-        def GetVertexByIndex(self, theShape, theIndex, theName=None):
+        def GetVertexByIndex(self, theShape, theIndex, theUseOri=True, theName=None):
             """
-            Get a vertex sub-shape by index depended with orientation.
+            Get a vertex sub-shape by index.
 
             Parameters:
                 theShape Shape to find sub-shape.
                 theIndex Index to find vertex by this index (starting from zero)
+                theUseOri To consider edge/wire orientation or not
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -11351,7 +11353,9 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the created vertex.
             """
             # Example: see GEOM_TestMeasures.py
-            anObj = self.MeasuOp.GetVertexByIndex(theShape, theIndex)
+            if isinstance( theUseOri, str ): # theUseOri was inserted before theName
+                theUseOri, theName = True, theUseOri
+            anObj = self.MeasuOp.GetVertexByIndex(theShape, theIndex, theUseOri)
             RaiseIfFailed("GetVertexByIndex", self.MeasuOp)
             self._autoPublish(anObj, theName, "vertex")
             return anObj
@@ -11380,7 +11384,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             """
             # Example: see GEOM_TestMeasures.py
             # note: auto-publishing is done in self.GetVertexByIndex()
-            return self.GetVertexByIndex(theShape, 0, theName)
+            return self.GetVertexByIndex(theShape, 0, True, theName)
 
         ## Get the last vertex of wire/edge depended orientation.
         #  @param theShape Shape to find last vertex.
@@ -11407,7 +11411,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestMeasures.py
             nb_vert =  self.NumberOfSubShapes(theShape, self.ShapeType["VERTEX"])
             # note: auto-publishing is done in self.GetVertexByIndex()
-            return self.GetVertexByIndex(theShape, (nb_vert-1), theName)
+            return self.GetVertexByIndex(theShape, (nb_vert-1), True, theName)
 
         ## Get a normale to the given face. If the point is not given,
         #  the normale is calculated at the center of mass.

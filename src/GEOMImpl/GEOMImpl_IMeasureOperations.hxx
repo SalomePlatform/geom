@@ -113,7 +113,8 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) GetCentreOfMass (Handle(GEOM_Object) theShape);
 
   Standard_EXPORT Handle(GEOM_Object) GetVertexByIndex (Handle(GEOM_Object) theShape,
-                                                        Standard_Integer theIndex);
+                                                        Standard_Integer theIndex,
+                                                        Standard_Boolean theUseOri);
 
   Standard_EXPORT Handle(GEOM_Object) GetNormal (Handle(GEOM_Object) theFace,
                                                  Handle(GEOM_Object) theOptionalPoint);
@@ -162,9 +163,9 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
                                                Handle(TColStd_HSequenceOfInteger)& theIntersections);
   
   Standard_EXPORT bool CheckSelfIntersectionsFast (Handle(GEOM_Object) theShape,
-						   float  deflection, 
-						   double tolerance,
-						   Handle(TColStd_HSequenceOfInteger)& theIntersections);
+                                                   float  deflection, 
+                                                   double tolerance,
+                                                   Handle(TColStd_HSequenceOfInteger)& theIntersections);
 
   Standard_EXPORT bool CheckBOPArguments (const Handle(GEOM_Object) &theShape);
   

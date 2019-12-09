@@ -24,15 +24,13 @@
 //
 #include "GEOM_Function.hxx"
 
-//#define MEASURE_ARG_BASE  1
-//#define MEASURE_ARG_POINT 2
-
 class GEOMImpl_IMeasure
 {
   enum {
     MEASURE_ARG_BASE  = 1,
     MEASURE_ARG_POINT = 2,
-    MEASURE_INDEX = 3
+    MEASURE_INDEX = 3,
+    MEASURE_USE_ORI = 4
   };
  public:
 
@@ -51,6 +49,12 @@ class GEOMImpl_IMeasure
   void SetIndex(int theIndex) { _func->SetInteger(MEASURE_INDEX, theIndex); }
     
   int GetIndex() { return _func->GetInteger(MEASURE_INDEX); }
+
+  void SetUseOri(int theIndex) { _func->SetInteger(MEASURE_USE_ORI, theIndex); }
+    
+  bool GetUseOri() { return ( _func->GetInteger(MEASURE_USE_ORI) ||
+                              !_func->IsDone() ); // old behavior was to useOri
+  }
 
  private:
 
