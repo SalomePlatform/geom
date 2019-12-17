@@ -624,10 +624,18 @@ GEOM_Annotation::OpenGl_Annotation::OpenGl_Annotation( GEOM_Annotation* theAnnot
   myTextDPI( 0 )
 {
   // graphical resources for drawing text and underline
+#if OCC_VERSION_LARGE >= 0x07040000
+  myTextParams = new Graphic3d_Text( theTextHeight );
+  myTextParams->SetText( myText.ToCString() );
+  myTextParams->SetHorizontalAlignment ( Graphic3d_HTA_CENTER );
+  myTextParams->SetVerticalAlignment ( Graphic3d_VTA_CENTER );
+  myTextDraw = new OpenGl_Text( myTextParams );
+#else
   myTextParams.Height = theTextHeight;
   myTextParams.HAlign = Graphic3d_HTA_CENTER;
   myTextParams.VAlign = Graphic3d_VTA_CENTER;
   myTextDraw = new OpenGl_Text( myText.ToCString(), OpenGl_Vec3(), myTextParams );
+#endif
   myTextLineDraw = new OpenGl_PrimitiveArray( theDriver );
 
   // graphical resources for drawing extension line and marker
@@ -698,13 +706,24 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
 #endif
 
     // getting string size will also initialize font library
+#if OCC_VERSION_LARGE >= 0x07040000
+    myTextDraw->StringSize( aContext,
+      myText, *anAspect, myTextParams->Height(), aDPI,
+      myTextSize.x, myTextSize.a, myTextSize.d );
+#else
     myTextDraw->StringSize( aContext,
       myText, *anAspect, myTextParams, aDPI,
       myTextSize.x, myTextSize.a, myTextSize.d );
+#endif
 
     myTextDPI = aDPI;
     myTextSize.y = myTextSize.a - myTextSize.d;
+
+# if OCC_VERSION_LARGE >= 0x07040000
+    switch ( myTextParams->HorizontalAlignment() )
+#else
     switch (myTextParams.HAlign)
+#endif
     {
       case Graphic3d_HTA_LEFT:   myTextUnderline.x() = 0.f; break;
       case Graphic3d_HTA_CENTER: myTextUnderline.x() = -myTextSize.x / 2.f; break;
@@ -712,7 +731,12 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
       default:
         break;
     }
+
+# if OCC_VERSION_LARGE >= 0x07040000
+    switch ( myTextParams->VerticalAlignment() )
+#else
     switch (myTextParams.VAlign)
+#endif
     {
       case Graphic3d_VTA_TOPFIRSTLINE:
       case Graphic3d_VTA_TOP:    myTextUnderline.y() = -myTextSize.y; break;
@@ -813,14 +837,22 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
   // ------------------------------------------------------------
 
   OpenGl_Vec4 aCenter (0.f, 0.f, 0.f, 1.f);
+# if OCC_VERSION_LARGE >= 0x07040000
+  switch ( myTextParams->HorizontalAlignment() )
+#else
   switch (myTextParams.HAlign)
+#endif
   {
     case Graphic3d_HTA_LEFT:   aCenter.x() =  myTextSize.x / 2.f; break;
     case Graphic3d_HTA_CENTER: aCenter.x() = 0.f; break;
     case Graphic3d_HTA_RIGHT:  aCenter.x() = -myTextSize.x / 2.f; break;
     default: break;
   }
+# if OCC_VERSION_LARGE >= 0x07040000
+  switch ( myTextParams->VerticalAlignment() )
+#else
   switch (myTextParams.VAlign)
+#endif
   {
     case Graphic3d_VTA_TOPFIRSTLINE:
     case Graphic3d_VTA_TOP:    aCenter.y() = -myTextSize.y / 2.f; break;

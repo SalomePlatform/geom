@@ -27,6 +27,8 @@
 
 #include <QMutexLocker>
 
+#include <Basics_OCCTVersion.hxx>
+
 /*!
   \brief Constructor
 
@@ -557,17 +559,34 @@ Graphic3d_MaterialAspect Material_Model::getMaterialOCCAspect( bool theIsFront )
   QColor c;
   
   // ambient reflection
+#if OCC_VERSION_LARGE >= 0x07040000
   if ( color( Ambient ).isValid() ) {
     c = color( Ambient );
-    aspect.SetAmbientColor( Quantity_Color( c.redF(), c.greenF(), c.blueF(), Quantity_TOC_RGB ) );
+    aspect.SetAmbientColor( Quantity_Color( Graphic3d_Vec3( c.redF(), c.greenF(), c.blueF() ) * reflection( Ambient, theIsFront ) ) );
+  }
+  if ( !hasReflection( Ambient ) )
+    aspect.SetAmbientColor( Quantity_NOC_BLACK );
+#else
+  if ( color( Ambient ).isValid() ) {
+    c = color( Ambient );
+    aspect.SetAmbientColor( ( c.redF(), c.greenF(), c.blueF(), Quantity_TOC_RGB ) );
   }
   aspect.SetAmbient( reflection( Ambient, theIsFront ));
   if ( hasReflection( Ambient ) )
     aspect.SetReflectionModeOn( Graphic3d_TOR_AMBIENT );
   else
     aspect.SetReflectionModeOff( Graphic3d_TOR_AMBIENT );
+#endif
   
   // diffuse reflection
+#if OCC_VERSION_LARGE >= 0x07040000
+  if ( color( Diffuse ).isValid() ) {
+    c = color( Diffuse );
+    aspect.SetDiffuseColor( Quantity_Color( Graphic3d_Vec3( c.redF(), c.greenF(), c.blueF() ) * reflection( Diffuse, theIsFront ) ) );
+  }
+  if ( !hasReflection( Diffuse ) )
+    aspect.SetDiffuseColor( Quantity_NOC_BLACK );
+#else
   if ( color( Diffuse ).isValid() ) {
     c = color( Diffuse );
     aspect.SetDiffuseColor( Quantity_Color( c.redF(), c.greenF(), c.blueF(), Quantity_TOC_RGB ) );
@@ -577,8 +596,17 @@ Graphic3d_MaterialAspect Material_Model::getMaterialOCCAspect( bool theIsFront )
     aspect.SetReflectionModeOn( Graphic3d_TOR_DIFFUSE );
   else
     aspect.SetReflectionModeOff( Graphic3d_TOR_DIFFUSE );
+#endif
 
   // specular reflection
+#if OCC_VERSION_LARGE >= 0x07040000
+  if ( color( Specular ).isValid() ) {
+    c = color( Specular );
+    aspect.SetSpecularColor( Quantity_Color( Graphic3d_Vec3( c.redF(), c.greenF(), c.blueF() ) * reflection( Specular, theIsFront ) ) );
+  }
+  if ( !hasReflection( Specular ) )
+    aspect.SetSpecularColor( Quantity_NOC_BLACK );
+#else
   if ( color( Specular ).isValid() ) {
     c = color( Specular );
     aspect.SetSpecularColor( Quantity_Color( c.redF(), c.greenF(), c.blueF(), Quantity_TOC_RGB ) );
@@ -588,8 +616,17 @@ Graphic3d_MaterialAspect Material_Model::getMaterialOCCAspect( bool theIsFront )
     aspect.SetReflectionModeOn( Graphic3d_TOR_SPECULAR );
   else
     aspect.SetReflectionModeOff( Graphic3d_TOR_SPECULAR );
+#endif
 
   // emissive reflection
+#if OCC_VERSION_LARGE >= 0x07040000
+  if ( color( Emissive ).isValid() ) {
+    c = color( Emissive );
+    aspect.SetEmissiveColor( Quantity_Color( Graphic3d_Vec3( c.redF(), c.greenF(), c.blueF() ) * reflection( Emissive, theIsFront ) ) );
+  }
+  if ( !hasReflection( Emissive ) )
+    aspect.SetEmissiveColor( Quantity_NOC_BLACK );
+#else
   if ( color( Emissive ).isValid() ) {
     c = color( Emissive );
     aspect.SetEmissiveColor( Quantity_Color( c.redF(), c.greenF(), c.blueF(), Quantity_TOC_RGB ) );
@@ -599,6 +636,7 @@ Graphic3d_MaterialAspect Material_Model::getMaterialOCCAspect( bool theIsFront )
     aspect.SetReflectionModeOn( Graphic3d_TOR_EMISSION );
   else
     aspect.SetReflectionModeOff( Graphic3d_TOR_EMISSION );
+#endif
   
   // shininess
   aspect.SetShininess( shininess( theIsFront ) );

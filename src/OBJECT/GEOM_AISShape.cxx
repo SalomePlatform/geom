@@ -161,12 +161,18 @@ GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape&    shape,
   myTopLevel = Standard_False;
   Graphic3d_MaterialAspect aMatAspect;
   if ( !HasMaterial() ) {
+#if OCC_VERSION_LARGE >= 0x07040000
+    aMatAspect.SetAmbientColor( Quantity_Color (Graphic3d_Vec3( 0.5f ) ) );
+    aMatAspect.SetDiffuseColor( Quantity_Color (Graphic3d_Vec3( 0.5f ) ) );
+    aMatAspect.SetEmissiveColor( Quantity_Color (Graphic3d_Vec3( 0.5f ) ) );
+    aMatAspect.SetSpecularColor( Quantity_Color (Graphic3d_Vec3( 0.5f ) ) );
+#else
     aMatAspect.SetAmbient( 0.5 );
     aMatAspect.SetDiffuse( 0.5 );
     aMatAspect.SetEmissive( 0.5 );
-    aMatAspect.SetShininess(0.5 );
     aMatAspect.SetSpecular( 0.5 );
-
+#endif
+    aMatAspect.SetShininess(0.5 );
     myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial(aMatAspect);
     myDrawer->ShadingAspect()->Aspect()->SetBackMaterial(aMatAspect);
   }

@@ -34,7 +34,6 @@
 #include <NCollection_Handle.hxx>
 #include <NCollection_String.hxx>
 #include <OpenGl_Element.hxx>
-#include <OpenGl_TextParam.hxx>
 #include <Prs3d_Presentation.hxx>
 #include <Prs3d_LineAspect.hxx>
 #include <Prs3d_TextAspect.hxx>
@@ -45,6 +44,11 @@
 #include <TCollection_ExtendedString.hxx>
 
 #include <Basics_OCCTVersion.hxx>
+#if OCC_VERSION_LARGE >= 0x07040000
+#include <Graphic3d_Text.hxx>
+#else
+#include <OpenGl_TextParam.hxx>
+#endif
 
 class OpenGl_GraphicDriver;
 class OpenGl_PrimitiveArray;
@@ -329,7 +333,11 @@ private:
 
     GEOM_Annotation* myAISObject;           //!< Instance of presentation class.
     NCollection_String myText;              //!< Text string of annotation label.
+#if OCC_VERSION_LARGE >= 0x07040000
+    Handle(Graphic3d_Text) myTextParams;    //!< Text draw parameters.
+#else
     OpenGl_TextParam myTextParams;          //!< Text draw parameters.
+#endif
     OpenGl_Text* myTextDraw;                //!< Text draw element.
     OpenGl_PrimitiveArray* myTextLineDraw;  //!< Text underline draw element.
     OpenGl_PrimitiveArray* myExtLineDraw;   //!< Extension line draw element.
