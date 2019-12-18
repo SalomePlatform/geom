@@ -569,7 +569,7 @@ Graphic3d_MaterialAspect Material_Model::getMaterialOCCAspect( bool theIsFront )
 #else
   if ( color( Ambient ).isValid() ) {
     c = color( Ambient );
-    aspect.SetAmbientColor( ( c.redF(), c.greenF(), c.blueF(), Quantity_TOC_RGB ) );
+    aspect.SetAmbientColor( Quantity_Color( c.redF(), c.greenF(), c.blueF(), Quantity_TOC_RGB ) );
   }
   aspect.SetAmbient( reflection( Ambient, theIsFront ));
   if ( hasReflection( Ambient ) )
