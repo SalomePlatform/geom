@@ -81,6 +81,11 @@ class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public
 
   virtual bool IsShape();
 
+  virtual bool IsParametrical() { return false; }
+
+  virtual void BreakLinks() {}
+
+
   Handle(::GEOM_Object) GetImpl() { return _impl; }
 
  private:

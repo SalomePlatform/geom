@@ -509,6 +509,17 @@ module GEOM
      */
     GEOM_Object GetMainShape();
 
+    /*
+     * \brief Returns true if the current object has connection to a parametrical model
+     * which can be modified by parameters change.
+     */
+    boolean IsParametrical();
+
+    /*
+     * \brief Breaks links to parametrical mode for parametrical shape
+    */
+    void BreakLinks();
+
   };
 
   //# GEOM_Field
