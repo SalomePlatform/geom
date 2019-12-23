@@ -515,11 +515,6 @@ module GEOM
      */
     boolean IsParametrical();
 
-    /*
-     * \brief Breaks links to parametrical mode for parametrical shape
-    */
-    void BreakLinks();
-
   };
 
   //# GEOM_Field
@@ -5154,6 +5149,11 @@ module GEOM
 				                 inout string_array theSubEntries,
 				                 inout string_array theOtherEntries);
 
+
+    /*
+    * \brief Breaks links to parametrical mode for parametrical shape
+    */
+    void BreakLink(in string theEntry);
   };
 };
 
