@@ -235,8 +235,8 @@ def TestAll (geompy, math):
   PrismTwoPnt2Ways = geompy.MakePrism2Ways(Face2, p0, pxyz)    #(3 GEOM_Object)->GEOM_Object
   PrismDXDYDZ      = geompy.MakePrismDXDYDZ(Face2, 10, 20, 100)#(2 GEOM_Object, Double)->GEOM_Object
   PrismDXDYDZ2Ways = geompy.MakePrismDXDYDZ2Ways(Face, 30, -20, 200)#(2 GEOM_Object, Double)->GEOM_Object
-  Revolution       = geompy.MakeRevolution(Face, vz, angle2)   #
-  Revolution2Ways  = geompy.MakeRevolution(Face, vz, angle1)   #
+  Revolution       = geompy.MakeRevolution(Face, vxy, angle2)      #(2 GEOM_Object, Double)->GEOM_Object
+  Revolution2Ways  = geompy.MakeRevolution2Ways(Face, vxy, angle1) #(2 GEOM_Object, Double)->GEOM_Object
   Filling          = geompy.MakeFilling(Compound, mindeg, maxdeg,
                                         tol2d, tol3d, nbiter)  #(GEOM_Object, 4 Doubles, Short)->GEOM_Object
   Pipe             = geompy.MakePipe(Wire, Edge)               #(2 GEOM_Object)->GEOM_Object
