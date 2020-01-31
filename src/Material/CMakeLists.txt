@@ -24,7 +24,6 @@ INCLUDE(UseQtExt)
 # additional include directories
 INCLUDE_DIRECTORIES(
   ${QT_INCLUDE_DIRS}
-  ${VTK_INCLUDE_DIRS}
   ${OMNIORB_INCLUDE_DIR}
   ${OpenCASCADE_INCLUDE_DIR}
   ${KERNEL_INCLUDE_DIRS}
@@ -48,7 +47,6 @@ SET(_link_LIBRARIES
   GEOMClient
   ${OpenCASCADE_ModelingData_LIBRARIES}
   ${KERNEL_SALOMELocalTrace}
-  ${GUI_SalomeApp}
   )
 
 # --- headers ---

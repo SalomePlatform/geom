@@ -26,7 +26,6 @@ ENDIF()
 # additional include directories
 INCLUDE_DIRECTORIES(
   ${OpenCASCADE_INCLUDE_DIR}
-  ${VTK_INCLUDE_DIRS}
   ${KERNEL_INCLUDE_DIRS}
   ${PROJECT_BINARY_DIR}/idl
   ${PROJECT_SOURCE_DIR}/src/GEOMAlgo
@@ -71,7 +70,7 @@ SET(_link_engine_LIBRARIES
   SalomeIDLVTKPlugin
   GEOMEngine
   GEOMClient
-  vtkIOLegacy
+  VTK::IOLegacy
   OCC2VTK
   )
   

@@ -24,7 +24,6 @@ INCLUDE(UseQtExt)
 # additional include directories
 INCLUDE_DIRECTORIES(
   ${PTHREAD_INCLUDE_DIR}
-  ${VTK_INCLUDE_DIRS}
   ${OMNIORB_INCLUDE_DIR}
   ${OpenCASCADE_INCLUDE_DIR}
   ${KERNEL_INCLUDE_DIRS}
@@ -59,7 +58,6 @@ SET(_link_LIBRARIES
   ${KERNEL_SALOMELocalTrace}
   ${KERNEL_SalomeDS}
   ${KERNEL_SalomeDSClient}
-  ${GUI_SalomeApp}
   )
 
 # --- headers ---

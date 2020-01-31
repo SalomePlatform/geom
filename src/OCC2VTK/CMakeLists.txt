@@ -23,7 +23,6 @@
 INCLUDE_DIRECTORIES(
   ${OpenCASCADE_INCLUDE_DIR}
   ${KERNEL_INCLUDE_DIRS}
-  ${VTK_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${PROJECT_SOURCE_DIR}/src/GEOMUtils
   )
@@ -35,7 +34,7 @@ ADD_DEFINITIONS(
 
 # libraries to link to
 SET(_link_LIBRARIES
-  vtkFiltersCore
+  VTK::FiltersCore
   ${OpenCASCADE_FoundationClasses_LIBRARIES}
   ${OpenCASCADE_ModelingAlgorithms_LIBRARIES}
   ${KERNEL_SALOMELocalTrace}

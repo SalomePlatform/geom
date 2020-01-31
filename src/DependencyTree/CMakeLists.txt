@@ -49,7 +49,6 @@ ENDIF(WIN32)
 # libraries to link to
 SET(_link_LIBRARIES
   ${QT_LIBRARIES}
-  ${GUI_SalomeApp}
   ${GUI_GraphicsView}
   GEOM
   GEOMBase
