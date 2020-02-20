@@ -85,6 +85,33 @@
 
 #include <TColgp_SequenceOfPnt2d.hxx>
 
+static Standard_Real ComputeMaxTolOfFace(const TopoDS_Face& theFace)
+{
+  Standard_Real MaxTol = BRep_Tool::Tolerance(theFace);
+
+  TopTools_IndexedMapOfShape aMap;
+  TopExp::MapShapes(theFace, TopAbs_EDGE, aMap);
+  for (Standard_Integer i = 1; i <= aMap.Extent(); i++)
+  {
+    const TopoDS_Edge& anEdge = TopoDS::Edge(aMap(i));
+    Standard_Real aTol = BRep_Tool::Tolerance(anEdge);
+    if (aTol > MaxTol)
+      MaxTol = aTol;
+  }
+
+  aMap.Clear();
+  TopExp::MapShapes(theFace, TopAbs_VERTEX, aMap);
+  for (Standard_Integer i = 1; i <= aMap.Extent(); i++)
+  {
+    const TopoDS_Vertex& aVertex = TopoDS::Vertex(aMap(i));
+    Standard_Real aTol = BRep_Tool::Tolerance(aVertex);
+    if (aTol > MaxTol)
+      MaxTol = aTol;
+  }
+
+  return MaxTol;
+}
+
 //=======================================================================
 //function : FixResult
 //purpose  : auxiliary
@@ -243,64 +270,99 @@ TopoDS_Shape BlockFix::RefillProblemFaces (const TopoDS_Shape& aShape)
   TopTools_ListIteratorOfListOfShape itl(theFaces);
   for (; itl.More(); itl.Next())
   {
-    const TopoDS_Face& aFace = TopoDS::Face(itl.Value());
-    BRepOffsetAPI_MakeFilling Filler;
-    for (Explo.Init(aFace, TopAbs_EDGE); Explo.More(); Explo.Next())
+    TopoDS_Face aFace = TopoDS::Face(itl.Value());
+    aFace.Orientation(TopAbs_FORWARD);
+    Standard_Real MaxTolOfFace = ComputeMaxTolOfFace(aFace);
+    BRepAdaptor_Surface BAsurf(aFace, Standard_False);
+    BRepOffsetAPI_MakeFilling Filler(3, 10);
+    TopExp_Explorer Explo(aFace, TopAbs_EDGE);
+    for (; Explo.More(); Explo.Next())
     {
       const TopoDS_Edge& anEdge = TopoDS::Edge(Explo.Current());
-      if (!BRep_Tool::Degenerated(anEdge))
-        Filler.Add(anEdge, GeomAbs_C0);
+      if (BRep_Tool::Degenerated(anEdge) ||
+          BRepTools::IsReallyClosed(anEdge, aFace))
+        continue;
+      
+      Filler.Add(anEdge, GeomAbs_C0);
     }
     Standard_Real Umin, Umax, Vmin, Vmax;
     BRepTools::UVBounds(aFace, Umin, Umax, Vmin, Vmax);
-    //Handle(Geom_Surface) aSurf = BRep_Tool::Surface(aFace);
-    Standard_Integer i, j;
-    for (i = 1; i < NbSamples; i++)
-      for (j = 1; j < NbSamples; j++) {
-        /*
-        gp_Pnt aPoint = aSurf->Value(Umin + i*(Umax-Umin)/NbSamples,
-                                     Vmin + j*(Vmax-Vmin)/NbSamples);
-        Filler.Add(aPoint);
-        */
-        Filler.Add(Umin + i*(Umax-Umin)/NbSamples,
-                   Vmin + j*(Vmax-Vmin)/NbSamples,
-                   aFace, GeomAbs_G1);
+    Standard_Real DeltaU = (Umax - Umin)/NbSamples,
+      DeltaV = (Vmax - Vmin)/NbSamples;
+    for (Standard_Integer i = 1; i < NbSamples; i++)
+      for (Standard_Integer j = 1; j < NbSamples; j++) {
+        Filler.Add(Umin + i*DeltaU, Vmin + j*DeltaV, aFace, GeomAbs_G1);
       }
 
     Filler.Build();
     if (Filler.IsDone())
     {
-      for (Explo.Init(aFace, TopAbs_EDGE); Explo.More(); Explo.Next())
-      {
-        const TopoDS_Edge& anEdge = TopoDS::Edge(Explo.Current());
-        TopTools_ListOfShape Ledge;
-        if (!BRep_Tool::Degenerated(anEdge))
+      TopoDS_Face aNewFace = TopoDS::Face(Filler.Shape());
+      aNewFace.Orientation(TopAbs_FORWARD);
+      Handle(Geom_Surface) aNewSurf = BRep_Tool::Surface(aNewFace);
+      GeomAdaptor_Surface GAnewsurf(aNewSurf);
+      Extrema_ExtPS Projector;
+      Projector.Initialize(GAnewsurf, GAnewsurf.FirstUParameter(), GAnewsurf.LastUParameter(),
+                           GAnewsurf.FirstVParameter(), GAnewsurf.LastVParameter(),
+                           Precision::Confusion(), Precision::Confusion());
+      Standard_Real MaxSqDist = 0.;
+      for (Standard_Integer i = 0; i < NbSamples; i++)
+        for (Standard_Integer j = 0; j < NbSamples; j++)
         {
-          const TopTools_ListOfShape& Ledges = Filler.Generated(anEdge);
-          if (!Ledges.IsEmpty()) {
-            TopoDS_Shape NewEdge = Ledges.First();
-            Ledge.Append(NewEdge.Oriented(TopAbs_FORWARD));
+          gp_Pnt aPoint = BAsurf.Value(Umin + DeltaU/2 + i*DeltaU,
+                                       Vmin + DeltaV/2 + j*DeltaV);
+          Projector.Perform(aPoint);
+          if (Projector.IsDone())
+          {
+            Standard_Real LocalMinSqDist = RealLast();
+            for (Standard_Integer ind = 1; ind <= Projector.NbExt(); ind++)
+            {
+              Standard_Real aSqDist = Projector.SquareDistance(ind);
+              if (aSqDist < LocalMinSqDist)
+                LocalMinSqDist = aSqDist;
+            }
+            if (!Precision::IsInfinite(LocalMinSqDist) &&
+                LocalMinSqDist > MaxSqDist)
+              MaxSqDist = LocalMinSqDist;
           }
         }
-        aSubst.Substitute(anEdge, Ledge);
+      Standard_Real MaxDist = Sqrt(MaxSqDist);
+      if (MaxDist < Max(1.e-4, 1.5*MaxTolOfFace))
+      {
+        TopTools_IndexedMapOfShape Emap;
+        TopExp::MapShapes(aFace, TopAbs_EDGE, Emap);
+        for (Standard_Integer i = 1; i <= Emap.Extent(); i++)
+        {
+          TopoDS_Edge anEdge = TopoDS::Edge(Emap(i));
+          anEdge.Orientation(TopAbs_FORWARD);
+          TopTools_ListOfShape Ledge;
+          if (!BRep_Tool::Degenerated(anEdge) &&
+              !BRepTools::IsReallyClosed(anEdge, aFace))
+          {
+            const TopTools_ListOfShape& Ledges = Filler.Generated(anEdge);
+            if (!Ledges.IsEmpty()) {
+              TopoDS_Edge NewEdge = TopoDS::Edge(Ledges.First());
+              Ledge.Append(NewEdge.Oriented(TopAbs_FORWARD));
+            }
+          }
+          aSubst.Substitute(anEdge, Ledge);
+        }
+        TopTools_ListOfShape Lface;
+        BRepAdaptor_Surface NewBAsurf(aNewFace);
+        gp_Pnt MidPnt;
+        gp_Vec D1U, D1V, Normal, NewNormal;
+        Handle(Geom_Surface) aSurf = BRep_Tool::Surface(aFace);
+        aSurf->D1((Umin+Umax)*0.5, (Vmin+Vmax)*0.5, MidPnt, D1U, D1V);
+        Normal = D1U ^ D1V;
+        NewBAsurf.D1((NewBAsurf.FirstUParameter() + NewBAsurf.LastUParameter())*0.5,
+                     (NewBAsurf.FirstVParameter() + NewBAsurf.LastVParameter())*0.5,
+                     MidPnt, D1U, D1V);
+        NewNormal = D1U ^ D1V;
+        if (Normal * NewNormal < 0.)
+          aNewFace.Reverse();
+        Lface.Append(aNewFace);
+        aSubst.Substitute(aFace, Lface);
       }
-      TopTools_ListOfShape Lface;
-      TopoDS_Face NewFace = TopoDS::Face(Filler.Shape());
-      NewFace.Orientation(TopAbs_FORWARD);
-      BRepAdaptor_Surface NewBAsurf(NewFace);
-      gp_Pnt MidPnt;
-      gp_Vec D1U, D1V, Normal, NewNormal;
-      Handle(Geom_Surface) aSurf = BRep_Tool::Surface(aFace);
-      aSurf->D1((Umin+Umax)*0.5, (Vmin+Vmax)*0.5, MidPnt, D1U, D1V);
-      Normal = D1U ^ D1V;
-      NewBAsurf.D1((NewBAsurf.FirstUParameter() + NewBAsurf.LastUParameter())*0.5,
-                   (NewBAsurf.FirstVParameter() + NewBAsurf.LastVParameter())*0.5,
-                   MidPnt, D1U, D1V);
-      NewNormal = D1U ^ D1V;
-      if (Normal * NewNormal < 0.)
-        NewFace.Reverse();
-      Lface.Append(NewFace);
-      aSubst.Substitute(aFace, Lface);
     }
   }
   aSubst.Build(aShape);
