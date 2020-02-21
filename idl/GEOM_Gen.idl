@@ -258,6 +258,7 @@ module GEOM
   typedef sequence<ListOfDouble> ListOfListOfDouble;
   typedef sequence<ListOfLong>   ListOfListOfLong;
 
+  interface GEOM_Gen;
   interface GEOM_Object;
   interface GEOM_BaseObject;
   interface GEOM_Field;
@@ -359,6 +360,11 @@ module GEOM
      * \brief Return name of operation and values of parameters used for object creation
      */
     CreationInformationSeq GetCreationInformation();
+
+    /*!
+     * \brief Return the engine creating this object
+     */
+    GEOM_Gen GetGen();
   };
 
   //# GEOM_Object
@@ -502,6 +508,12 @@ module GEOM
      *  \note Internal method, suppopsed to be used only by GEOM_Client
      */
     GEOM_Object GetMainShape();
+
+    /*
+     * \brief Returns true if the current object has connection to a parametrical model
+     * which can be modified by parameters change.
+     */
+    boolean IsParametrical();
 
   };
 
@@ -4366,12 +4378,13 @@ module GEOM
     GEOM_Object GetCentreOfMass (in GEOM_Object theShape);
 
     /*
-     *  Get the vertex by index for 1D objects depends the edge/wire orientation
+     *  Get the vertex by index for 1D objects
      *  \param theShape Shape (wire or edge) to find the vertex on it
      *  \param theIndex Index of vertex sub-shape
+     *  \param theUseOri To consider edge/wire orientation or not
      *  \return New GEOM_Object, vertex.
      */
-    GEOM_Object GetVertexByIndex( in GEOM_Object theShape, in long index );
+    GEOM_Object GetVertexByIndex( in GEOM_Object theShape, in long theIndex, in boolean theUseOri );
 
     /*!
      *  \brief Get a vector, representing the normal of theFace.
@@ -5136,6 +5149,11 @@ module GEOM
 				                 inout string_array theSubEntries,
 				                 inout string_array theOtherEntries);
 
+
+    /*
+    * \brief Breaks links to parametrical mode for parametrical shape
+    */
+    void BreakLink(in string theEntry);
   };
 };
 

@@ -440,8 +440,10 @@ GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::GetCentreOfMass
  *  GetVertexByIndex
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::GetVertexByIndex
-  (GEOM::GEOM_Object_ptr theShape, CORBA::Long theIndex)
+GEOM::GEOM_Object_ptr
+GEOM_IMeasureOperations_i::GetVertexByIndex( GEOM::GEOM_Object_ptr theShape,
+                                             CORBA::Long           theIndex,
+                                             CORBA::Boolean        theUseOri )
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -453,7 +455,7 @@ GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::GetVertexByIndex
   if ( aShape.IsNull() ) return aGEOMObject._retn();
 
   // Get vertex by index
-  Handle(::GEOM_Object) anObject = GetOperations()->GetVertexByIndex(aShape, theIndex);
+  Handle(::GEOM_Object) anObject = GetOperations()->GetVertexByIndex(aShape, theIndex, theUseOri);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
