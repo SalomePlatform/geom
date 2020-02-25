@@ -312,3 +312,14 @@ GEOM::CreationInformationSeq* GEOM_BaseObject_i::GetCreationInformation()
 
   return info._retn();
 }
+
+//================================================================================
+/*!
+ * \brief Return the engine creating this object
+ */
+//================================================================================
+
+GEOM::GEOM_Gen_ptr GEOM_BaseObject_i::GetGen()
+{
+  return GEOM::GEOM_Gen::_duplicate( _engine );
+}

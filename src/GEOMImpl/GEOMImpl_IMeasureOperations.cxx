@@ -850,7 +850,8 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetCentreOfMass
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetVertexByIndex
                                                 (Handle(GEOM_Object) theShape,
-                                                 Standard_Integer theIndex)
+                                                 Standard_Integer theIndex,
+                                                 Standard_Boolean theUseOri)
 {
   SetErrorCode(KO);
 
@@ -873,6 +874,7 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetVertexByIndex
   GEOMImpl_IMeasure aCI (aFunction);
   aCI.SetBase(aRefShape);
   aCI.SetIndex(theIndex);
+  aCI.SetUseOri(theUseOri);
 
   //Compute
   try {
@@ -888,7 +890,10 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetVertexByIndex
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aVertex << " = geompy.GetVertexByIndex(" << theShape << ", " << theIndex << ")";
+  GEOM::TPythonDump(aFunction) << aVertex << " = geompy.GetVertexByIndex("
+                               << theShape << ", "
+                               << theIndex << ", "
+                               << theUseOri << ")";
 
   SetErrorCode(OK);
   return aVertex;
@@ -2139,16 +2144,16 @@ Standard_Integer GEOMImpl_IMeasureOperations::ClosestPoints (Handle(GEOM_Object)
       for (int i = 1; i <= nbSolutions; i++) {
         P1 = dst.PointOnShape1(i);
         P2 = dst.PointOnShape2(i);
-	
+        
         theDoubles->Append(P1.X());
         theDoubles->Append(P1.Y());
         theDoubles->Append(P1.Z());
         theDoubles->Append(P2.X());
         theDoubles->Append(P2.Y());
         theDoubles->Append(P2.Z());
-	
-	Standard_Real Dist = P1.Distance(P2);
-	singularBetter = singularBetter && dist < Dist;
+        
+        Standard_Real Dist = P1.Distance(P2);
+        singularBetter = singularBetter && dist < Dist;
       }
     }
 

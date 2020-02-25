@@ -63,7 +63,8 @@ class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
                                    GEOM::GEOM_Object_ptr theOptionalPoint);
 
   GEOM::GEOM_Object_ptr GetVertexByIndex (GEOM::GEOM_Object_ptr theObject,
-                                          CORBA::Long theIndex);
+                                          CORBA::Long           theIndex,
+                                          CORBA::Boolean        theUseOri);
 
   void GetInertia (GEOM::GEOM_Object_ptr theShape,
                    CORBA::Double& I11, CORBA::Double& I12, CORBA::Double& I13,

@@ -385,6 +385,9 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
 
   void LoadPlugin(const std::string& theLibName);
 
+
+  virtual void BreakLink(const char*) {}
+
  private:
 
    ::GEOMImpl_Gen* _impl;

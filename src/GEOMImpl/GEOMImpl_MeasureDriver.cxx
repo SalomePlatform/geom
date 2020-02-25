@@ -154,6 +154,7 @@ Standard_Integer GEOMImpl_MeasureDriver::Execute(Handle(TFunction_Logbook)& log)
     }
 
     int index = aCI.GetIndex();
+    bool useOri = aCI.GetUseOri();
     gp_Pnt aVertex;
 
     if (aShapeBase.ShapeType() == TopAbs_VERTEX) {
@@ -161,23 +162,21 @@ Standard_Integer GEOMImpl_MeasureDriver::Execute(Handle(TFunction_Logbook)& log)
         Standard_NullObject::Raise("Vertex index is out of range");
       else
         aVertex = BRep_Tool::Pnt(TopoDS::Vertex(aShapeBase));
-    } else if (aShapeBase.ShapeType() == TopAbs_EDGE) {
-      TopoDS_Vertex aV1, aV2;
-      TopoDS_Edge anEdgeE = TopoDS::Edge(aShapeBase);
-      
-      TopExp::Vertices(anEdgeE, aV1, aV2);
-      gp_Pnt aP1 = BRep_Tool::Pnt(aV1);
-      gp_Pnt aP2 = BRep_Tool::Pnt(aV2);
-
+    }
+    else if (aShapeBase.ShapeType() == TopAbs_EDGE) {
       if (index < 0 || index > 1)
         Standard_NullObject::Raise("Vertex index is out of range");
 
-      if ( ( anEdgeE.Orientation() == TopAbs_FORWARD && index == 0 ) ||
-           ( anEdgeE.Orientation() == TopAbs_REVERSED && index == 1 ) )
-        aVertex = aP1;
-      else
-      aVertex = aP2;
-    } else if (aShapeBase.ShapeType() == TopAbs_WIRE) {
+      TopoDS_Edge anEdgeE = TopoDS::Edge(aShapeBase);
+      if ( anEdgeE.Orientation() != TopAbs_FORWARD && 
+           anEdgeE.Orientation() != TopAbs_REVERSED )
+        anEdgeE.Orientation( TopAbs_FORWARD );
+
+      TopoDS_Vertex aV[2];
+      TopExp::Vertices(anEdgeE, aV[0], aV[1], useOri );
+      aVertex = BRep_Tool::Pnt( aV[ index ]);
+    }
+    else if (aShapeBase.ShapeType() == TopAbs_WIRE) {
       TopTools_IndexedMapOfShape anEdgeShapes;
       TopTools_IndexedMapOfShape aVertexShapes;
       TopoDS_Vertex aV1, aV2;
@@ -198,11 +197,12 @@ Standard_Integer GEOMImpl_MeasureDriver::Execute(Handle(TFunction_Logbook)& log)
       if (index < 0 || index > aVertexShapes.Extent())
         Standard_NullObject::Raise("Vertex index is out of range");
 
-      if (aWire.Orientation() == TopAbs_FORWARD)
+      if ( aWire.Orientation() == TopAbs_FORWARD || !useOri )
         aVertex = BRep_Tool::Pnt(TopoDS::Vertex(aVertexShapes(index+1)));
       else
         aVertex = BRep_Tool::Pnt(TopoDS::Vertex(aVertexShapes(aVertexShapes.Extent() - index)));
-    } else {
+    }
+    else {
       Standard_NullObject::Raise("Shape for vertex calculation is not an edge or wire");
     }
 
@@ -352,6 +352,7 @@ GetCreationInformation(std::string&             theOperationName,
     theOperationName = "GetVertexByIndex";
     AddParam( theParams, "Object", aCI.GetBase() );
     AddParam( theParams, "Index", aCI.GetIndex() );
+    AddParam( theParams, "Oriented", aCI.GetUseOri() );
     break;
   case VECTOR_FACE_NORMALE:
     theOperationName = "NORMALE";
