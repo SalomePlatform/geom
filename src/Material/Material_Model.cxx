@@ -401,6 +401,11 @@ QColor Material_Model::color( ReflectionType type ) const
   QColor value;
   if ( type >= 0 && type < 4 )
     value = myReflection[ type ].color;
+#if OCC_VERSION_LARGE >= 0x07040000
+  // Compatibility with previous OCCT versions, set for non-physical materials always white color
+  if ( !isPhysical() )
+    value = Qt::white;
+#endif
   return value;
 }
 
