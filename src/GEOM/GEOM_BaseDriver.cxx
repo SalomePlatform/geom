@@ -119,7 +119,8 @@ GEOM_Param & GEOM_Param::operator<<( const Handle(TColStd_HSequenceOfTransient)&
   {
     if ( funs->Length() > 1 )
       (*this) << funs->Length() << " objects: ";
-    for ( int i = 1; i <= funs->Length(); ++i )
+    int nb = Min( 100, funs->Length() ); // don't show huge lists
+    for ( int i = 1; i <= nb; ++i )
       (*this) << funs->Value( i ) << " ";
   }
   return *this;

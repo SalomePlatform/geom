@@ -25,8 +25,6 @@
 
 #include <Standard_Stream.hxx>
 
-#include <Standard_Stream.hxx>
-
 #include <sstream>
 
 #include "GEOM_Client.hxx"
@@ -141,8 +139,9 @@ GEOM_Client GEOM_Client::get_client()
 //=======================================================================
 Standard_Boolean GEOM_Client::Find (const TCollection_AsciiString& IOR, TopoDS_Shape& S)
 {
-  if (myShapesMap.count(IOR) != 0) {
-    S = myShapesMap[IOR];
+  std::map< TCollection_AsciiString , TopoDS_Shape >::iterator i2s = myShapesMap.find( IOR );
+  if ( i2s != myShapesMap.end() ) {
+    S = i2s->second;
     return Standard_True;
   }
   return Standard_False;
@@ -179,13 +178,8 @@ void GEOM_Client::Bind( const TCollection_AsciiString& IOR, const TopoDS_Shape& 
 //=======================================================================
 void GEOM_Client::RemoveShapeFromBuffer( const TCollection_AsciiString& IOR)
 {
-  if (myShapesMap.size() == 0)
-    return;
-
-  if (myShapesMap.count(IOR) != 0) {
-    myShapesMap.erase(IOR);
-    _mySubShapes.erase(IOR);
-  }
+  if ( myShapesMap.erase( IOR ))
+    _mySubShapes.erase( IOR );
 }
 
 //=======================================================================
@@ -194,9 +188,6 @@ void GEOM_Client::RemoveShapeFromBuffer( const TCollection_AsciiString& IOR)
 //=======================================================================
 void GEOM_Client::ClearClientBuffer()
 {
-  if (myShapesMap.size() == 0)
-    return;
-
   _mySubShapes.clear();
   myShapesMap.clear();
 }
@@ -217,14 +208,13 @@ unsigned int GEOM_Client::BufferLength()
 TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr aShape )
 {
   TopoDS_Shape S;
-  CORBA::String_var anIOR = geom->GetStringFromIOR(aShape);
-  TCollection_AsciiString IOR = (char*)anIOR.in();
-  Standard_Boolean anIndex = Find(IOR, S);
-
-  if (anIndex) return S;
+  CORBA::String_var     anIOR = geom->GetStringFromIOR(aShape);
+  TCollection_AsciiString IOR = anIOR.in();
+  if ( Find( IOR, S ))
+    return S;
 
   /******* in case of a MAIN GEOM::SHAPE ********/
-  if (aShape->IsMainShape()) {
+  if ( aShape->IsMainShape() ) {
     S = Load(geom, aShape);
     Bind(IOR, S);
     return S;
@@ -232,38 +222,35 @@ TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_p
 
   /******* in case of SUB GEOM::SHAPE ***********/
   // Load and Explore the Main Shape
-  TopoDS_Shape aMainShape = GetShape (geom, aShape->GetMainShape());
-  GEOM::ListOfLong_var list = aShape->GetSubShapeIndices();
+  GEOM::GEOM_Object_var mainGO = aShape->GetMainShape();
+  TopoDS_Shape      aMainShape = GetShape( geom, mainGO );
+  GEOM::ListOfLong_var    list = aShape->GetSubShapeIndices();
 
-  CORBA::String_var aMainIOR = geom->GetStringFromIOR(aShape->GetMainShape());
-  TCollection_AsciiString mainIOR = (char*)aMainIOR.in();
+  CORBA::String_var      aMainIOR = geom->GetStringFromIOR( mainGO );
+  TCollection_AsciiString mainIOR = aMainIOR.in();
 
   //find subshapes only one time
-  if (_mySubShapes.count(mainIOR) == 0)
+  auto pos2isnew = _mySubShapes.insert( std::make_pair( mainIOR, std::vector<TopoDS_Shape>() ));
+  std::vector<TopoDS_Shape> & subShapes = pos2isnew.first->second;
+  if ( pos2isnew.second )
   {
     TopTools_IndexedMapOfShape anIndices;
-    TopExp::MapShapes(aMainShape, anIndices);
-    Standard_Integer ii = 1, nbSubSh = anIndices.Extent();
-    for (; ii <= nbSubSh; ii++)
-    {
-      _mySubShapes[mainIOR].push_back(anIndices.FindKey(ii));
-    }
+    TopExp::MapShapes( aMainShape, anIndices );
+    subShapes.insert( subShapes.end(), anIndices.cbegin(), anIndices.cend() );
   }
 
   /* Case of only one subshape */
-  if (list->length() == 1 && list[0] > 0) {
-    S = _mySubShapes[mainIOR][list[0]-1];
+  if ( list->length() == 1 && list[0] > 0 ) {
+    S = subShapes[list[0]-1];
   }
   else {
     BRep_Builder B;
     TopoDS_Compound aCompound;
     B.MakeCompound(aCompound);
-    for (size_t i = 0; i < list->length(); i++) {
-      if (0 < list[i] && list[i] <= (CORBA::Long)_mySubShapes[mainIOR].size()) {
-        TopoDS_Shape aSubShape = _mySubShapes[mainIOR][list[i]-1];
-        B.Add(aCompound, aSubShape);
-      }
-    }
+    CORBA::Long nbSub = subShapes.size();
+    for ( size_t i = 0; i < list->length(); i++ )
+      if ( 0 < list[i] && list[i] <= nbSub )
+        B.Add(aCompound, subShapes[list[i]-1] );
 
     S = aCompound;
   }
