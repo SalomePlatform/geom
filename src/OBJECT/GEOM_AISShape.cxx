@@ -99,9 +99,10 @@ static void getEntityOwners( const Handle(AIS_InteractiveObject)&  theObj,
       continue;
 
     Handle(SelectMgr_Selection) sel = theObj->Selection( m );
-
-    for ( sel->Init(); sel->More(); sel->Next() ) {
-      const Handle(SelectMgr_SensitiveEntity) aHSenEntity = sel->Sensitive();
+    const NCollection_Vector<Handle(SelectMgr_SensitiveEntity)>& selected = sel->Entities();
+    for ( NCollection_Vector<Handle(SelectMgr_SensitiveEntity)>::Iterator selIter( selected );
+	  selIter.More(); selIter.Next() ) {
+      const Handle(SelectMgr_SensitiveEntity) aHSenEntity = selIter.Value();
       if( aHSenEntity.IsNull() )
         continue;
 

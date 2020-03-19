@@ -620,15 +620,17 @@ void CurveCreator_Utils::setSelectedPoints( Handle(AIS_InteractiveContext) theCo
   theContext->SetAutomaticHilight( Standard_False );
 
   Handle(SelectMgr_Selection) aSelection = anAISShape->Selection( AIS_Shape::SelectionMode( TopAbs_VERTEX ) );
+  const NCollection_Vector<Handle(SelectMgr_SensitiveEntity)>& selected = aSelection->Entities();
 
   CurveCreator_ICurve::SectionToPointList::const_iterator anIt = thePoints.begin(),
                                                           aLast = thePoints.end();
   bool isFound = false;
   for( int i=0; i<aSize; i++ )
   {
-  for( aSelection->Init(); aSelection->More(); aSelection->Next() )
+  for ( NCollection_Vector<Handle(SelectMgr_SensitiveEntity)>::Iterator selIter( selected );
+        selIter.More(); selIter.Next() )
   {    
-    const Handle(SelectMgr_SensitiveEntity) aHSenEntity = aSelection->Sensitive();
+    const Handle(SelectMgr_SensitiveEntity) aHSenEntity = selIter.Value();
     if( aHSenEntity.IsNull() )
       continue;
     Handle(SelectBasics_SensitiveEntity) aSenEntity = aHSenEntity->BaseSensitive();
