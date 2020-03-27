@@ -30,8 +30,7 @@
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
-#include <QButtonGroup> 
-
+#include <QButtonGroup>
 
 //=================================================================================
 // class    : EntityGUI_IsolineDlg

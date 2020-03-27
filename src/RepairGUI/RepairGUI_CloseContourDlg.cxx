@@ -45,6 +45,8 @@
 
 #include <GEOMImpl_Types.hxx>
 
+#include <QButtonGroup>
+
 //=================================================================================
 // class    : RepairGUI_CloseContourDlg()
 // purpose  : Constructs a RepairGUI_CloseContourDlg  which is a child of 'parent', with the

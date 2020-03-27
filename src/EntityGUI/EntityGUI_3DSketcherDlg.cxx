@@ -48,6 +48,8 @@
 
 #include <SalomeApp_Tools.h>
 
+#include <QButtonGroup>
+
 //OCCT includes
 #include <TopoDS.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>

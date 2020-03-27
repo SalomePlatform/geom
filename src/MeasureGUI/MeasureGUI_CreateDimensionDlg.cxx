@@ -56,6 +56,8 @@
 
 #include <Basics_OCCTVersion.hxx>
 
+#include <QButtonGroup>
+
 //=================================================================================
 // function : Constructor
 // purpose  :
