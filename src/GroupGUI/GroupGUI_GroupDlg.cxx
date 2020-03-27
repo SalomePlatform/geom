@@ -396,7 +396,7 @@ bool GroupGUI_GroupDlg::ClickOnApply()
     setIsDisableBrowsing( true );
     setIsDisplayResult( false );
   }
-    
+
   myIsAccept = onAccept(myMode == CreateGroup, true, isApplyAndClose());
   if (!myIsAccept)
     return false;
@@ -552,7 +552,7 @@ void GroupGUI_GroupDlg::setInPlaceObj(GEOM::GEOM_Object_var theObj, const bool i
       GEOM::ListOfLong_var aCurrList = aShapesOp->GetSameIDs( myMainObj, aSubObjects[i] );
       if( aCurrList->length() > 1 ) {
         //rnv : To Fix the 21561: EDF 2184 GEOM: Group with second shape restriction.
-        //      In case if GetSameIDs(...) method return more then one ID use 
+        //      In case if GetSameIDs(...) method return more then one ID use
         //      GetSharedShapes(...) method to get sub-shapes of the second shape.
         GEOM::ListOfGO_var aSubObjects2 = aShapesOp->GetSharedShapes( myMainObj, aSubObjects[i], getShapeType() );
         for( int j = 0; j < aSubObjects2->length(); j++ ) {
@@ -775,7 +775,7 @@ void GroupGUI_GroupDlg::showOnlySelected()
       Handle(SALOME_InteractiveObject) io =
         new SALOME_InteractiveObject (aMainEntry.in(), "GEOM", "TEMP_IO");
       if (view->isVisible(io)) myIsHiddenMain = true;
-      
+
       //keep the selected entry and IO in the map for checking
       std::map<QString, Handle(SALOME_InteractiveObject)> aSelEntriesMap;
       SALOME_ListIteratorOfListIO aSelIt(aSelList);
@@ -787,7 +787,7 @@ void GroupGUI_GroupDlg::showOnlySelected()
       SALOME_ListIO displayed;
       view->GetVisible(displayed);
       // Erase all, except the selected sub-shapes
-      std::map<QString, Handle(SALOME_InteractiveObject)>::iterator 
+      std::map<QString, Handle(SALOME_InteractiveObject)>::iterator
         aSelDispIter = aSelEntriesMap.end();
       SALOME_ListIteratorOfListIO aDispIt( displayed );
       for ( ; aDispIt.More(); aDispIt.Next() ) {
@@ -1165,7 +1165,7 @@ void GroupGUI_GroupDlg::updateState (bool isAdd)
   myRemBtn->setEnabled(hasSel);
   myRestrictGroupBox->setEnabled(!CORBA::is_nil(myMainObj));
   mySelAllBtn->setEnabled(!CORBA::is_nil(myMainObj));
-  
+
   mySelBtn2->setEnabled(subSelectionWay() != ALL_SUBSHAPES);
   myShape2Name->setEnabled(subSelectionWay() != ALL_SUBSHAPES);
   myFilterGrp->setEnabled(!CORBA::is_nil(myMainObj) &&
@@ -1179,7 +1179,7 @@ void GroupGUI_GroupDlg::updateState (bool isAdd)
 #ifndef DISABLE_PLOT2DVIEWER
   myPlotDistributionButton->setEnabled( myFilterGrp->isEnabled() &&
 					myIsShapeType &&
-					( getShapeType() == TopAbs_EDGE || 
+					( getShapeType() == TopAbs_EDGE ||
 					  getShapeType() == TopAbs_FACE ||
 					  getShapeType() == TopAbs_SOLID ) &&
 					hasCurrentEntities );
@@ -1423,7 +1423,7 @@ void GroupGUI_GroupDlg::ClickOnOkFilter()
 {
   if (CORBA::is_nil(myMainObj) || subSelectionWay() != ALL_SUBSHAPES || !myIsShapeType || getShapeType() == TopAbs_VERTEX)
     return;
-  
+
   TopoDS_Shape aMainShape = GEOM_Client::get_client().GetShape(GeometryGUI::GetGeomGen(), myMainObj);
   TopTools_IndexedMapOfShape aSubShapesMap;
   TopExp::MapShapes(aMainShape, aSubShapesMap);

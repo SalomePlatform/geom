@@ -92,7 +92,7 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
   setModal( modal );
   setAttribute( Qt::WA_DeleteOnClose );
-  
+
   // Disable rectangular selection
 //   SUIT_ViewWindow*      theViewWindow  = getDesktop()->activeWindow();
 //   ((OCCViewer_ViewWindow*)theViewWindow)->setEnabledDrawMode( false );
@@ -104,9 +104,9 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
 //   OCCViewer_ViewSketcher* aViewSketcher = ((OCCViewer_ViewWindow*)theViewWindow)->getSketcher( OCCViewer_ViewWindow::Rect );
 //   aViewSketcher->deactivate()
 //   aViewSketcher->setVisible(false);
-  
+
 //   this->setMouseTracking(false);
-  
+
   myGeometryGUI->SetActiveDialogBox(this);
 
   MainWidget = new EntityGUI_Skeleton( this );
@@ -153,17 +153,17 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   planeButton = new QPushButton (GroupBox1);
   planeButton->setText( tr( "GEOM_SKETCHER_RESTORE" ) );
   planeLayout->addWidget(planeButton,0,2);
-  
+
   selButton = new QPushButton (GroupBox1);
   selButton->setIcon(image5);
   planeLayout->addWidget(selButton,1,0);
-  
+
   WPlaneLineEdit = new QLineEdit (GroupBox1);
   WPlaneLineEdit->setReadOnly(true);
   planeLayout->addWidget(WPlaneLineEdit,1,1,1,2);
-  
+
   planeLayout->setColumnStretch(1,1);
-  
+
   topLayout->addWidget(GroupBox1);
   topLayout->addWidget( MainWidget );
   topLayout->setStretch( 1, 1);
@@ -177,10 +177,10 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
 
   GroupPt2 = new EntityGUI_Point( MainWidget->DestCnt );
 
-  GroupPt2->GroupPoint->setTitle( tr( "GEOM_SKETCHER_ADD_PARAMS" ) ); 
+  GroupPt2->GroupPoint->setTitle( tr( "GEOM_SKETCHER_ADD_PARAMS" ) );
   GroupPt2->RB_Point1->setText( tr( "GEOM_SKETCHER_NONE" ) );
   GroupPt2->RB_Point2->setText( tr( "GEOM_SKETCHER_RADIUS" ) );
-  GroupPt2->RB_Point3->setText( tr( "GEOM_SKETCHER_CENTER" ) ); 
+  GroupPt2->RB_Point3->setText( tr( "GEOM_SKETCHER_CENTER" ) );
 
   GroupD1 = new EntityGUI_Dir1( MainWidget->DestCnt );
 
@@ -251,7 +251,7 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   Group4Spin->checkBox->setText( tr( "GEOM_REVERSE" ) );
   Group4Spin->buttonUndo->setIcon( image1 );
   Group4Spin->buttonRedo->setIcon( image2 );
-  
+
   GroupRect = new DlgRef_4Spin( MainWidget->SkeletonCnt );
   GroupRect->GroupBox1->setTitle( tr( "GEOM_SKETCHER_VALUES" ) );
   GroupRect->TextLabel1->setText("X1:");
@@ -259,7 +259,7 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   GroupRect->TextLabel3->setText("X2:");
   GroupRect->TextLabel4->setText("Y2:");
 
-  // Defines a palette for the error message on Group4Spin and Group2Sel 
+  // Defines a palette for the error message on Group4Spin and Group2Sel
   QPalette palette;
   QColor color("red");
   palette.setColor(Group4Spin->label->foregroundRole(), color);
@@ -366,7 +366,7 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
 
   connect( myGeometryGUI,            SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) );
   connect( myGeometryGUI,            SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
-  
+
   // install event filter on spin-boxes to provide Apply action on Return pressed
   Group1Spin->SpinBox_DX->installEventFilter(this);
   Group1Sel1Spin->SpinBox_DX->installEventFilter(this);
@@ -391,7 +391,7 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
 EntityGUI_SketcherDlg::~EntityGUI_SketcherDlg()
 {
 //   SUIT_ViewWindow*      theViewWindow  = getDesktop()->activeWindow();
-  
+
   myGeometryGUI->SetActiveDialogBox( 0 );
 //   ((OCCViewer_ViewWindow*)theViewWindow)->setSketcherStyle(false);
 }
@@ -445,9 +445,9 @@ void EntityGUI_SketcherDlg::Init()
 {
   /* init variables */
   autoApply = false;
-  
+
   myEditCurrentArgument = WPlaneLineEdit; // Initiate the parameters selection with the first WPlaneLineEdit
-  
+
   myCommand.append( "Sketcher" );
   myUndoCommand.append( "Sketcher" );
 
@@ -462,11 +462,11 @@ void EntityGUI_SketcherDlg::Init()
   myLastY2 = 0.0;
 
   myHelpFileName = "create_sketcher_page.html";
-  
+
   GEOM::GEOM_IBasicOperations_var aBasicOp = getGeomEngine()->GetIBasicOperations();
   myGlobalCS = aBasicOp->MakeMarker( 0,0,0,
                                      1,0,0,
-                                     0,1,0 ); 
+                                     0,1,0 );
   myWPlane = myGlobalCS;
   myLCSList.push_back( WPlaneToLCS(myGlobalCS) );
 
@@ -486,12 +486,12 @@ void EntityGUI_SketcherDlg::Init()
   initSpinBox( Group4Spin->SpinBox_DX, COORD_MIN, COORD_MAX, 0.1, "length_precision" );
   initSpinBox( Group4Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 0.1, "length_precision" );
   initSpinBox( Group4Spin->SpinBox_DS, COORD_MIN, COORD_MAX, 5., "length_precision" );
-  
-  initSpinBox( GroupRect->SpinBox_DX1, COORD_MIN, COORD_MAX, step, "length_precision" ); 
+
+  initSpinBox( GroupRect->SpinBox_DX1, COORD_MIN, COORD_MAX, step, "length_precision" );
   initSpinBox( GroupRect->SpinBox_DY1, COORD_MIN, COORD_MAX, step, "length_precision" );
   initSpinBox( GroupRect->SpinBox_DX2, COORD_MIN, COORD_MAX, step, "length_precision" );
   initSpinBox( GroupRect->SpinBox_DY2, COORD_MIN, COORD_MAX, step, "length_precision" );
-    
+
   /* displays Dialog */
 
 //   MainWidget->RadioButton1->setEnabled( false );
@@ -507,17 +507,17 @@ void EntityGUI_SketcherDlg::Init()
   TypeClicked( 0 );
   // If a face has already been selected use it. Placed after FindLocalCS to avoid clearing the combobox
   // that should be filled with the possibly selected face
-  
+
   OnFirstPoint();
-  
-  SelectionIntoArgument();     
-  
+
+  SelectionIntoArgument();
+
   resize(100,100);
-  
+
   setPrefix(tr("GEOM_SKETCH"));
 
   ActivateLocalCS();
-  
+
   setIsWaitCursorEnabled( false );
   GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
 }
@@ -555,7 +555,7 @@ void EntityGUI_SketcherDlg::TypeClicked( int constructorId )
   myConstructorId = constructorId;
   MainWidget->buttonEnd->setText(tr("GEOM_BUT_CLOSE"));
   MainWidget->buttonClose->setEnabled(true);
-  
+
   if ( myConstructorId == 0 ) {    // SEGMENT
     GroupPt2->RB_Point1->setChecked( true );
     GroupPt ->setEnabled( true );
@@ -564,7 +564,7 @@ void EntityGUI_SketcherDlg::TypeClicked( int constructorId )
     GroupD2->setEnabled( true );
     MainWidget->RB_Dest1->setEnabled( true );
     MainWidget->RB_Dest1->setChecked( true );
-    
+
     MainWidget->GroupDest ->setEnabled( true );
     MainWidget->GroupDest1->setEnabled( true );
     MainWidget->GroupDest ->show();
@@ -581,9 +581,9 @@ void EntityGUI_SketcherDlg::TypeClicked( int constructorId )
     GroupD2->RB_Dir21->setChecked( true );
     GroupD1->setEnabled( true );
     GroupD2->setEnabled( false );
-    MainWidget->RB_Dest1->setEnabled( true ); 
+    MainWidget->RB_Dest1->setEnabled( true );
     MainWidget->RB_Dest1->setChecked( true );
-    
+
     MainWidget->GroupDest ->setEnabled( true );
     MainWidget->GroupDest1->setEnabled( true );
     MainWidget->GroupDest ->show();
@@ -608,14 +608,14 @@ void EntityGUI_SketcherDlg::TypeClicked( int constructorId )
     GroupD2 ->hide();
     MainWidget->GroupDest ->hide();
     MainWidget->GroupDest1->hide();
-    
+
     MainWidget->buttonEnd->setText(tr("Apply and Close"));
     MainWidget->buttonClose->setEnabled(false);
-    
+
     GroupRect->setEnabled( true );
     MainWidget->RadioButton1->setEnabled( true );
     MainWidget->RadioButton2->setEnabled( true );
-    
+
     RectClicked();
   }
 }
@@ -627,24 +627,24 @@ void EntityGUI_SketcherDlg::TypeClicked( int constructorId )
 void EntityGUI_SketcherDlg::RectClicked()
 {
   InitClick();
-  
+
   // Connect the selection manager (disconnected in InitClick())
   connect( myGeometryGUI->getApp()->selectionMgr(),
        SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
-  
+
   GroupRect->show();
- 
+
   myX1=0;
-  GroupRect->SpinBox_DX1->setValue(myX1); 
+  GroupRect->SpinBox_DX1->setValue(myX1);
   myY1=0;
   GroupRect->SpinBox_DY1->setValue(myY1);
   myX2=10;
   GroupRect->SpinBox_DX2->setValue(myX2);
   myY2=10;
   GroupRect->SpinBox_DY2->setValue(myY2);
-  
+
   resize( minimumSizeHint() );
-  
+
   GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
 }
 
@@ -695,15 +695,15 @@ void EntityGUI_SketcherDlg::DestClicked( int constructorId )
 void EntityGUI_SketcherDlg::PointClicked( int constructorId )
 {
   MESSAGE("PointClicked")
-  myConstructorPntId = constructorId;  
+  myConstructorPntId = constructorId;
   GroupPt->RB_Point3->setEnabled( true );
   int buttonId = GroupPt2->ButtonGroup->checkedId();
   if (buttonId >= 0){           // = If a button is checked
     Point2Clicked(buttonId);
   }
-  else{ 
+  else{
     GroupPt2->RB_Point1->setChecked( true );
-    Point2Clicked( 1 ); 
+    Point2Clicked( 1 );
   }
 }
 
@@ -737,18 +737,18 @@ void EntityGUI_SketcherDlg::Point2Clicked( int constructorId )
     }
     else if ( constructorId == 0 ){   // Point + radius
       mySketchType = PT_ABS_RADIUS;
-      initSpinBox( Group3Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" ); 
+      initSpinBox( Group3Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" );
       initSpinBox( Group3Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, "length_precision" );
       initSpinBox( Group3Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step/10.0, "length_precision" );
       Group3Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_X2" ) );
       Group3Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_Y2" ) );
-      Group3Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_RADIUS2" ) ); 
+      Group3Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_RADIUS2" ) );
       myX = 0.0;
       Group3Spin->SpinBox_DX->setValue( myX );
       myY = 0.0;
       Group3Spin->SpinBox_DY->setValue( myY );
       myRadius=0.0;
-      Group3Spin->SpinBox_DZ->setValue( myRadius ); 
+      Group3Spin->SpinBox_DZ->setValue( myRadius );
       Group3Spin->show();
       Group3Spin->buttonApply->setFocus();
 
@@ -756,20 +756,20 @@ void EntityGUI_SketcherDlg::Point2Clicked( int constructorId )
     }
     else if ( constructorId == 2 ){   // Point + center
       mySketchType = PT_ABS_CENTER;
-      initSpinBox( Group4Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" ); 
+      initSpinBox( Group4Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" );
       initSpinBox( Group4Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, "length_precision" );
       initSpinBox( Group4Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, "length_precision" );
       initSpinBox( Group4Spin->SpinBox_DS, COORD_MIN, COORD_MAX, step, "length_precision" );
       Group4Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_X2" ) );
       Group4Spin->TextLabel4->setText( tr( "GEOM_SKETCHER_Y2" ) );
       Group4Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_CENTER_X" ) );
-      Group4Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_CENTER_Y" ) ); 
+      Group4Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_CENTER_Y" ) );
       myXc = 0.0;
       Group4Spin->SpinBox_DX->setValue( myXc );
       myYc = 0.0;
       Group4Spin->SpinBox_DY->setValue( myYc );
       myX = 0.0;
-      Group4Spin->SpinBox_DZ->setValue( myX ); 
+      Group4Spin->SpinBox_DZ->setValue( myX );
       myY = 0.0;
       Group4Spin->SpinBox_DS->setValue( myY );
       Group4Spin->show();
@@ -795,14 +795,14 @@ void EntityGUI_SketcherDlg::Point2Clicked( int constructorId )
 
       GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
     }
-    else if ( constructorId == 0 ){   // Point + radius 
+    else if ( constructorId == 0 ){   // Point + radius
       mySketchType = PT_REL_RADIUS;
-      initSpinBox( Group3Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" ); 
+      initSpinBox( Group3Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" );
       initSpinBox( Group3Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, "length_precision" );
       initSpinBox( Group3Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step/10.0, "length_precision" );
       Group3Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_DX2" ) );
       Group3Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_DY2" ) );
-      Group3Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_RADIUS2" ) ); 
+      Group3Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_RADIUS2" ) );
       myDX = 10.0;
       Group3Spin->SpinBox_DX->setValue( myDX );
       myDY = 0.0;
@@ -816,20 +816,20 @@ void EntityGUI_SketcherDlg::Point2Clicked( int constructorId )
     }
     else if ( constructorId == 2 ){   // Point + center
       mySketchType = PT_REL_CENTER;
-      initSpinBox( Group4Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" ); 
+      initSpinBox( Group4Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" );
       initSpinBox( Group4Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, "length_precision" );
       initSpinBox( Group4Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, "length_precision" );
       initSpinBox( Group4Spin->SpinBox_DS, COORD_MIN, COORD_MAX, step, "length_precision" );
       Group4Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_DX2" ) );
       Group4Spin->TextLabel4->setText( tr( "GEOM_SKETCHER_DY2" ) );
       Group4Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_CENTER_DX" ) );
-      Group4Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_CENTER_DY" ) ); 
+      Group4Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_CENTER_DY" ) );
       myDXc = 0.0;
       Group4Spin->SpinBox_DX->setValue( myDXc );
       myDYc = 0.0;
       Group4Spin->SpinBox_DY->setValue( myDYc );
       myDX = 0.0;
-      Group4Spin->SpinBox_DZ->setValue( myDX ); 
+      Group4Spin->SpinBox_DZ->setValue( myDX );
       myDY = 0.0;
       Group4Spin->SpinBox_DS->setValue( myDY );
       Group4Spin->show();
@@ -843,17 +843,17 @@ void EntityGUI_SketcherDlg::Point2Clicked( int constructorId )
     if ( constructorId == 1 ){    // No additional parameter
       mySketchType = PT_SEL;
       myEditCurrentArgument = Group1Sel->LineEdit1;
-      Group1Sel->TextLabel1->setText( tr( "GEOM_SKETCHER_END_POINT2" ) ); 
+      Group1Sel->TextLabel1->setText( tr( "GEOM_SKETCHER_END_POINT2" ) );
       Group1Sel->show();
       Group1Sel->buttonApply->setFocus();
       SelectionIntoArgument();
     }
-    else if ( constructorId == 0 ){   // Point + radius 
+    else if ( constructorId == 0 ){   // Point + radius
       mySketchType = PT_SEL_RADIUS;
       myEditCurrentArgument = Group1Sel1Spin->LineEdit1;
       initSpinBox( Group1Sel1Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step/10.0, "length_precision" );
-      Group1Sel1Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_END_POINT2" ) ); 
-      Group1Sel1Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_RADIUS2" ) ); 
+      Group1Sel1Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_END_POINT2" ) );
+      Group1Sel1Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_RADIUS2" ) );
       myRadius=0.0;
       Group1Sel1Spin->SpinBox_DX->setValue( myRadius );
 
@@ -861,10 +861,10 @@ void EntityGUI_SketcherDlg::Point2Clicked( int constructorId )
       Group1Sel1Spin->buttonApply->setFocus();
       SelectionIntoArgument();
     }
-    else if ( constructorId == 2 ){   // Point + center 
+    else if ( constructorId == 2 ){   // Point + center
       mySketchType = PT_SEL_CENTER;
       myEditCurrentArgument = Group2Sel->LineEdit1;
-      Group2Sel->TextLabel2->setText( tr( "GEOM_SKETCHER_END_POINT2" ) );  
+      Group2Sel->TextLabel2->setText( tr( "GEOM_SKETCHER_END_POINT2" ) );
       Group2Sel->TextLabel1->setText( tr( "GEOM_SKETCHER_CENTER2" ) );
       Group2Sel->LineEdit1->setEnabled(true);
       Group2Sel->PushButton1->setDown(true);
@@ -879,7 +879,7 @@ void EntityGUI_SketcherDlg::Point2Clicked( int constructorId )
   resize( minimumSizeHint() );
   connect( myGeometryGUI->getApp()->selectionMgr(),
       SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
-  
+
 }
 
 
@@ -894,9 +894,9 @@ void EntityGUI_SketcherDlg::Dir1Clicked( int constructorId )
   if (dirButtonId >= 0){           // = If a button is checked
     Dir2Clicked(dirButtonId);
   }
-  else{ 
+  else{
     GroupD2->RB_Dir21->setChecked( true );
-    Dir2Clicked( 2 ); 
+    Dir2Clicked( 2 );
   }
 }
 
@@ -911,15 +911,15 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
   Group3Spin->SpinBox_DX->blockSignals(true); // Block signals in order not to modify
   Group3Spin->SpinBox_DY->blockSignals(true); // default values
   Group3Spin->SpinBox_DZ->blockSignals(true);
-  
+
   Group2Spin->SpinBox_DX->blockSignals(true);
   Group2Spin->SpinBox_DY->blockSignals(true);
-  
-  Group4Spin->SpinBox_DX->blockSignals(true); 
+
+  Group4Spin->SpinBox_DX->blockSignals(true);
   Group4Spin->SpinBox_DY->blockSignals(true);
   Group4Spin->SpinBox_DZ->blockSignals(true);
-  Group4Spin->SpinBox_DS->blockSignals(true); 
-  
+  Group4Spin->SpinBox_DS->blockSignals(true);
+
   // Get setting of step value from file configuration
   double step = SUIT_Session::session()->resourceMgr()->doubleValue( "Geometry", "SettingsGeomStep", 100.0 );
 
@@ -948,7 +948,7 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
       }
       else if ( constructorId == 1 ) {  // Y
         mySketchType = DIR_ANGLE_Y;
-        initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, "angle_precision" );        
+        initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, "angle_precision" );
         Group2Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_Y2" ) );
         Group2Spin->SpinBox_DY->setValue( myY );
       }
@@ -1091,17 +1091,17 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
     }
   }
   Group3Spin->SpinBox_DX->blockSignals(false); // Restore signals
-  Group3Spin->SpinBox_DY->blockSignals(false); 
+  Group3Spin->SpinBox_DY->blockSignals(false);
   Group3Spin->SpinBox_DZ->blockSignals(false);
-  
+
   Group2Spin->SpinBox_DX->blockSignals(false);
   Group2Spin->SpinBox_DY->blockSignals(false);
-  
-  Group4Spin->SpinBox_DX->blockSignals(false); 
+
+  Group4Spin->SpinBox_DX->blockSignals(false);
   Group4Spin->SpinBox_DY->blockSignals(false);
   Group4Spin->SpinBox_DZ->blockSignals(false);
-  Group4Spin->SpinBox_DS->blockSignals(false); 
-  
+  Group4Spin->SpinBox_DS->blockSignals(false);
+
   resize( minimumSizeHint() );
   GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
 }
@@ -1160,7 +1160,7 @@ void EntityGUI_SketcherDlg::ClickOnEnd()
          ( Group4Spin->buttonApply->isEnabled() && Group4Spin->isVisible() ) ||
          ( Group1Sel->buttonApply->isEnabled()  && Group1Sel->isVisible()  ) ||
          ( Group2Sel->buttonApply->isEnabled()  && Group2Sel->isVisible()  ) ||
-         ( Group1Sel1Spin->buttonApply->isEnabled() && Group1Sel1Spin->isVisible() ) )  {     
+         ( Group1Sel1Spin->buttonApply->isEnabled() && Group1Sel1Spin->isVisible() ) )  {
       ClickOnApply();
     }*/
 //     ClickOnApply(); // TEST remove then
@@ -1238,7 +1238,7 @@ bool EntityGUI_SketcherDlg::ClickOnApply()
     (Group4Spin->SpinBox_DX)->setFocus();
     (Group4Spin->SpinBox_DX)->selectAll();
   }
-  
+
   return true;
 }
 
@@ -1310,9 +1310,9 @@ void EntityGUI_SketcherDlg::ClickOnRedo()
   myUndoParameters.pop_back();
 
   mySketchState = NEXT_POINT;
-  
+
   OnNextPoint();
-  
+
   setEnabledUndo( true );
 
   if ( myUndoCommand.count() == 1 )
@@ -1363,9 +1363,9 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
   LightApp_SelectionMgr* aSelMgr = myGeometryGUI->getApp()->selectionMgr();
   SALOME_ListIO aSelList;
   aSelMgr->selectedObjects(aSelList);
-  
+
   this->activateWindow();
-  
+
   if (aSelList.Extent() == 0)
   {
     selButton->setDown(false);
@@ -1373,32 +1373,32 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
     WPlaneLineEdit->setText(tr("GEOM_SKETCHER_WPLANE"));
     return;
   }
-  else if (aSelList.Extent() != 1)                                
+  else if (aSelList.Extent() != 1)
     return;
-  
+
   double tmpX = myX;
   double tmpY = myY;
   myX = myLastX1;
   myY = myLastY1;
-  
+
   TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
   if (myEditCurrentArgument == WPlaneLineEdit)
     aNeedType = TopAbs_FACE;
-  
- 
+
+
   GEOM::GeomObjPtr aSelectedObject = getSelected( aNeedType );
   TopoDS_Shape aShape;
-  
-  if(aSelectedObject && GEOMBase::GetShape(aSelectedObject.get(), aShape) 
+
+  if(aSelectedObject && GEOMBase::GetShape(aSelectedObject.get(), aShape)
                      && !aShape.IsNull())
-  { 
-    QString aName = GEOMBase::GetName( aSelectedObject.get() ); 
-    if (myEditCurrentArgument==WPlaneLineEdit)  
-    { 
+  {
+    QString aName = GEOMBase::GetName( aSelectedObject.get() );
+    if (myEditCurrentArgument==WPlaneLineEdit)
+    {
       // Check if the face is planar
       Handle(Geom_Surface) aSurf = BRep_Tool::Surface(TopoDS::Face(aShape));
       GeomLib_IsPlanarSurface aPlanarCheck(aSurf, Precision::Confusion());
-      
+
       if (aPlanarCheck.IsPlanar())
       {
         myEditCurrentArgument->setText(aName);
@@ -1411,9 +1411,9 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
       {
         myEditCurrentArgument->setText(tr("GEOM_SKETCHER_WPLANE"));
         // The following leads to crash TODO : find a way to return a warning
-//         Standard_Failure::Raise(tr("GEOM_SKETCHER_NOT_PLANAR").toStdString().c_str()); 
+//         Standard_Failure::Raise(tr("GEOM_SKETCHER_NOT_PLANAR").toStdString().c_str());
       }
-    }           
+    }
     else
     {
       gp_Trsf aTrans;
@@ -1424,27 +1424,27 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
       aShape = aTransformation.Shape();
 
       gp_Pnt aPnt;
-      if ( GEOMBase::VertexToPoint( aShape, aPnt ) ) 
+      if ( GEOMBase::VertexToPoint( aShape, aPnt ) )
       {
         myEditCurrentArgument->setText(aName);
         myX = aPnt.X();
-        myY = aPnt.Y();       
+        myY = aPnt.Y();
         double Xcoord = myX;
         double Ycoord = myY;
-        
+
         switch (mySketchType)
         {
           case PT_ABS:
           disconnect( Group2Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
           disconnect( Group2Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-          
+
           Group2Spin->SpinBox_DX->setValue(Xcoord);
           Group2Spin->SpinBox_DY->setValue(Ycoord);
-      
+
           connect( Group2Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
           connect( Group2Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
             break;
-            
+
           case PT_RELATIVE:
             if (myLastX1 && myLastY1)
             {
@@ -1455,22 +1455,22 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
             {
               Xcoord = myX - tmpX;
               Ycoord = myY - tmpY;
-            }          
+            }
             Group2Spin->SpinBox_DX->setValue(Xcoord);
-            Group2Spin->SpinBox_DY->setValue(Ycoord);      
-            break; 
-            
+            Group2Spin->SpinBox_DY->setValue(Ycoord);
+            break;
+
           case PT_ABS_RADIUS:
             disconnect( Group3Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
             disconnect( Group3Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-            
+
             Group3Spin->SpinBox_DX->setValue(Xcoord);
             Group3Spin->SpinBox_DY->setValue(Ycoord);
-      
+
             connect( Group3Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
             connect( Group3Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
             break;
-            
+
           case PT_REL_RADIUS:
             if (myLastX1 && myLastY1)
             {
@@ -1481,22 +1481,22 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
             {
               Xcoord = myX - tmpX;
               Ycoord = myY - tmpY;
-            }             
+            }
             Group3Spin->SpinBox_DX->setValue(Xcoord);
             Group3Spin->SpinBox_DY->setValue(Ycoord);
-            break; 
-            
+            break;
+
           case PT_ABS_CENTER:
             disconnect( Group4Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
             disconnect( Group4Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-            
+
             Group4Spin->SpinBox_DX->setValue(Xcoord);
             Group4Spin->SpinBox_DY->setValue(Ycoord);
-      
+
             connect( Group4Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-            connect( Group4Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );        
+            connect( Group4Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
             break;
-            
+
           case PT_REL_CENTER:
             if (myLastX1 && myLastY1)
             {
@@ -1507,17 +1507,17 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
             {
               Xcoord = myXc - tmpX;
               Ycoord = myYc - tmpY;
-            } 
+            }
             else
             {
               Xcoord = myXc;
               Ycoord = myYc;
             }
-            
+
             Group4Spin->SpinBox_DX->setValue(Xcoord);
-            Group4Spin->SpinBox_DY->setValue(Ycoord);            
-            break; 
-            
+            Group4Spin->SpinBox_DY->setValue(Ycoord);
+            break;
+
         }
       }
     }
@@ -1526,11 +1526,11 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
   if(!autoApply){
     GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
   }
-  else {    
+  else {
     ClickOnApply();
     autoApply = false;
   }
-  
+
 }
 
 
@@ -1582,11 +1582,11 @@ void EntityGUI_SketcherDlg::SetEditCurrentArgument()
 //=================================================================================
 void EntityGUI_SketcherDlg::LineEditReturnPressed()
 {
-  if ( sender() == Group1Sel->LineEdit1 ) 
+  if ( sender() == Group1Sel->LineEdit1 )
     myEditCurrentArgument = Group1Sel->LineEdit1;
-  else if ( sender() == Group1Sel1Spin->LineEdit1 ) 
+  else if ( sender() == Group1Sel1Spin->LineEdit1 )
      myEditCurrentArgument = Group1Sel1Spin->LineEdit1;
-  else if ( sender() == Group2Sel->LineEdit1 ) 
+  else if ( sender() == Group2Sel->LineEdit1 )
      myEditCurrentArgument = Group2Sel->LineEdit1;
   else if ( sender() == Group2Sel->LineEdit2 )
      myEditCurrentArgument = Group2Sel->LineEdit2;
@@ -1637,10 +1637,10 @@ void EntityGUI_SketcherDlg::ActivateThisDialog()
 
   //myGeometryGUI->SetState( 0 );
 //   globalSelection( GEOM_POINT );
-  
+
   myEditCurrentArgument = WPlaneLineEdit;
   myEditCurrentArgument->setFocus();
-  
+
    if ( sender() == Group1Sel->LineEdit1 ) {
      myEditCurrentArgument = Group1Sel->LineEdit1;
      myEditCurrentArgument->setFocus();
@@ -1657,7 +1657,7 @@ void EntityGUI_SketcherDlg::ActivateThisDialog()
      myEditCurrentArgument = Group2Sel->LineEdit2;
      myEditCurrentArgument->setFocus();
    }
-   
+
   GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
 }
 
@@ -1695,19 +1695,19 @@ void EntityGUI_SketcherDlg::OnPointSelected(Qt::KeyboardModifiers modifiers, con
 {
   // NOTE Basing the autoapply functionality on the background picture has no sense anymore
   // The import picture functionality is now used for drawing on top of a picture
-  
+
 //   SUIT_ViewWindow*      theViewWindow  = getDesktop()->activeWindow();
 //   OCCViewer_ViewPort3d* vp             = ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
-//   
+//
 //   QString                theImgFileName;
 //   vp->background().texture( theImgFileName ); ////////////// VSR: temporarily
-  
+
   double x, y;
   x = y = 0;
-  
+
   BRepBuilderAPI_MakeVertex mkVertex (thePnt);
   TopoDS_Shape aShape = mkVertex.Shape();
-  
+
   // Taking into account LocalCS
   gp_Ax3 aWPlane = GetActiveLocalCS();
   gp_Trsf aTrans;
@@ -1715,14 +1715,14 @@ void EntityGUI_SketcherDlg::OnPointSelected(Qt::KeyboardModifiers modifiers, con
   aTrans.SetTransformation(aWPlane);
   BRepBuilderAPI_Transform aTransformation (aShape, aTrans, Standard_False);
   aShape = aTransformation.Shape();
-  
-  gp_Pnt aTrsfPnt; 
+
+  gp_Pnt aTrsfPnt;
   GEOMBase::VertexToPoint( aShape, aTrsfPnt );
-  
+
   // NOTE autoapply disabled : doesn't seem useful anymore
 //   autoApply = ( (getPnt2ConstructorId() == 1) && (!theImgFileName.isEmpty()) );  // If no additional argument needed after selection and there is a backgroundimage
-                                                                                 // -> apply automatically 
-  
+                                                                                 // -> apply automatically
+
   if ( getPnt1ConstructorId() == 0 ){                    // Relative selection mode
     x = aTrsfPnt.X() - myLastX1;
     y = aTrsfPnt.Y() - myLastY1;
@@ -1735,12 +1735,12 @@ void EntityGUI_SketcherDlg::OnPointSelected(Qt::KeyboardModifiers modifiers, con
     case 1:
       Group2Spin->SpinBox_DX->setValue( x );
       Group2Spin->SpinBox_DY->setValue( y );
-      Group2Spin->buttonApply->setFocus();               // Previous setFocus (during preview) may have been inoperative if it was disabled 
+      Group2Spin->buttonApply->setFocus();               // Previous setFocus (during preview) may have been inoperative if it was disabled
       break;
     case 0:
       Group3Spin->SpinBox_DX->setValue( x );
       Group3Spin->SpinBox_DY->setValue( y );
-      Group3Spin->buttonApply->setFocus(); 
+      Group3Spin->buttonApply->setFocus();
       break;
     case 2:
       if (modifiers == Qt::MetaModifier){                // Select center with Meta key
@@ -1751,7 +1751,7 @@ void EntityGUI_SketcherDlg::OnPointSelected(Qt::KeyboardModifiers modifiers, con
         Group4Spin->SpinBox_DZ->setValue( x );
         Group4Spin->SpinBox_DS->setValue( y );
       }
-      Group4Spin->buttonApply->setFocus(); 
+      Group4Spin->buttonApply->setFocus();
       break;
   }
   if ( myConstructorId == 2 ) //RECTANGLE
@@ -1831,7 +1831,7 @@ void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
     vx = newValue;                        vxStr = newValueStr;
     vy = Group3Spin->SpinBox_DY->value(); vyStr = Group3Spin->SpinBox_DY->text();
     vz = Group3Spin->SpinBox_DZ->value();
-    if ( (mySketchType == PT_REL_RADIUS || mySketchType == PT_ABS_RADIUS) && (vx != 0 || vy != 0) ) {  
+    if ( (mySketchType == PT_REL_RADIUS || mySketchType == PT_ABS_RADIUS) && (vx != 0 || vy != 0) ) {
       if (mySketchType == PT_ABS_RADIUS){
         dx = vx - myLastX1;
         dy = vy - myLastY1;
@@ -1841,15 +1841,15 @@ void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
         dy = vy;
       }
       minRad = 0.5 * Sqrt(dx * dx + dy * dy);                             //Computation of the minimum acceptable radius for the arc calculation
-      if (aPrecision >= 0)    // 'f' format in the QString             
+      if (aPrecision >= 0)    // 'f' format in the QString
         LastDecimal = aPrecision;
       else                    // 'g' format in the Qstring
-        LastDecimal = qAbs( aPrecision ) - ceil( log10(minRad) ); 
+        LastDecimal = qAbs( aPrecision ) - ceil( log10(minRad) );
       minRad = ceil(pow(10,LastDecimal) * minRad) / pow(10,LastDecimal);  // Rounded up at the last allowed decimal place
       if ( Abs(vz) < minRad){
         if (vz < 0.0)
           Group3Spin->SpinBox_DZ->setValue( - minRad );
-        else 
+        else
           Group3Spin->SpinBox_DZ->setValue( minRad );
       }
     }
@@ -1867,17 +1867,17 @@ void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
       else{
         dx = vx;
         dy = vy;
-      }    
+      }
       minRad = 0.5 * Sqrt(dx * dx + dy * dy);                            //Computation of the minimum acceptable radius for the arc calculation
-      if (aPrecision >= 0)    // 'f' format in the QString 
+      if (aPrecision >= 0)    // 'f' format in the QString
         LastDecimal = aPrecision;
-      else                    // 'g' format in the QString 
-        LastDecimal = qAbs( aPrecision ) - ceil( log10(minRad) ); 
+      else                    // 'g' format in the QString
+        LastDecimal = qAbs( aPrecision ) - ceil( log10(minRad) );
         minRad = ceil(pow(10,LastDecimal) * minRad) / pow(10,LastDecimal); // Rounded up at the last allowed decimal place
       if ( Abs(vz) < minRad){
         if (vz < 0.0)
           Group3Spin->SpinBox_DZ->setValue( - minRad );
-        else 
+        else
           Group3Spin->SpinBox_DZ->setValue( minRad );
       }
     }
@@ -1995,7 +1995,7 @@ void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
     }
   }
   else if ( myConstructorId == 1 ) {  // ARC
-    if ( mySketchType == PT_ABS ) {  
+    if ( mySketchType == PT_ABS ) {
       myX = vx;
       myY = vy;
       myXStr = vxStr;
@@ -2007,7 +2007,7 @@ void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
       myDXStr = vxStr;
       myDYStr = vyStr;
     }
-    if ( mySketchType == PT_ABS_RADIUS ) {  
+    if ( mySketchType == PT_ABS_RADIUS ) {
       myX = vx;
       myY = vy;
       myRadius=vz;
@@ -2027,7 +2027,7 @@ void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
       myRadius = vx;
       myRadiusStr = vxStr;
     }
-    if ( mySketchType == PT_ABS_CENTER ) {  
+    if ( mySketchType == PT_ABS_CENTER ) {
       myXc = vx;
       myYc = vy;
       myX = vz;
@@ -2085,10 +2085,10 @@ void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
     myY2 = GroupRect->SpinBox_DY2->value(); myY2Str = GroupRect->SpinBox_DY2->text();
   }
 
-  
-  if (!autoApply) 
+
+  if (!autoApply)
     GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
-  
+
   double x, y, xc, yc;
   x = y = xc = yc = 0.0;
   if ( mySketchType == PT_ABS_CENTER || mySketchType == PT_REL_CENTER )
@@ -2124,7 +2124,7 @@ QString EntityGUI_SketcherDlg::GetNewCommand( QString& theParameters )
   int DigNum = qAbs(aPrecision);                   // options for the format of numbers in myNewCommand
   char Format = 'f';
   if ( aPrecision < 0 )                            // f --> DigNum is the number of digits after the decimal point
-    Format = 'g';                                  // g --> DigNum is the maximum number of significant digits 
+    Format = 'g';                                  // g --> DigNum is the maximum number of significant digits
 
   if ( mySketchState == FIRST_POINT ) {
     if ( mySketchType == PT_ABS || mySketchType == PT_SEL ) {
@@ -2219,19 +2219,19 @@ QString EntityGUI_SketcherDlg::GetNewCommand( QString& theParameters )
     }
     if ( mySketchType == PT_ABS_RADIUS || mySketchType == PT_SEL_RADIUS ) {
       myNewCommand = myNewCommand + "UU " + QString::number( myX, Format, DigNum) + " " + QString::number( myY, Format, DigNum ) + " " + QString::number( myRadius , Format,  DigNum)+ " " + QString::number( myCheckFlag );
-      theParameters = myXStr + ":" + myYStr + ":" + myRadiusStr; 
+      theParameters = myXStr + ":" + myYStr + ":" + myRadiusStr;
     }
     if ( mySketchType == PT_REL_RADIUS) {
       myNewCommand = myNewCommand + "U " + QString::number( myDX, Format, DigNum ) + " " + QString::number( myDY, Format, DigNum ) + " " + QString::number( myRadius, Format, DigNum )+ " " + QString::number( myCheckFlag );
-      theParameters = myDXStr + ":" + myDYStr + ":" + myRadiusStr;  
+      theParameters = myDXStr + ":" + myDYStr + ":" + myRadiusStr;
     }
     if ( mySketchType == PT_ABS_CENTER || mySketchType == PT_SEL_CENTER ) {
       myNewCommand = myNewCommand + "EE " + QString::number( myX, Format, DigNum) + " " + QString::number( myY, Format, DigNum ) + " " + QString::number( myXc , Format,  DigNum) + " " + QString::number( myYc , Format,  DigNum)+ " " + QString::number( myCheckFlag ) + " " + QString::number( 0 );
-      theParameters = myXStr + ":" + myYStr + ":" + myXcStr+ ":" + myYcStr; 
+      theParameters = myXStr + ":" + myYStr + ":" + myXcStr+ ":" + myYcStr;
     }
     if ( mySketchType == PT_REL_CENTER) {
       myNewCommand = myNewCommand + "E " + QString::number( myDX, Format, DigNum ) + " " + QString::number( myDY, Format, DigNum ) + " " + QString::number( myDXc, Format, DigNum )+ " " + QString::number( myDYc, Format, DigNum )+ " " + QString::number( myCheckFlag )+ " " + QString::number( 0 );
-      theParameters = myDXStr + ":" + myDYStr + ":" +  myDXcStr + ":" + myDYcStr ;  
+      theParameters = myDXStr + ":" + myDYStr + ":" +  myDXcStr + ":" + myDYcStr ;
     }
     if ( mySketchType == DIR_ANGLE_LENGTH ) {
       myNewCommand = myNewCommand + "R " + QString::number( myAngle );
@@ -2259,7 +2259,7 @@ QString EntityGUI_SketcherDlg::GetNewCommand( QString& theParameters )
                                   + ":TT " + QString::number( myX2, Format, DigNum) + " " + QString::number( myY2, Format, DigNum)
                                   + ":TT " + QString::number( myX2, Format, DigNum) + " " + QString::number( myY1, Format, DigNum)
                                   + ":WW";
-                          
+
       theParameters = myX1Str + ":" + myY1Str + ":" + myX1Str + ":" + myY2Str + ":" + myX2Str + ":" + myY2Str + ":" + myX2Str + ":" + myY1Str;
     }
   return myNewCommand;
@@ -2323,10 +2323,10 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
   int DigNum = qAbs(aPrecision);                   // options for the format of numbers in myNewCommand
   char Format = 'f';
   if ( aPrecision < 0 )                            // f --> DigNum is the number of digits after the decimal point
-    Format = 'g';                                  // g --> DigNum is the maximum number of significant digits 
-    
+    Format = 'g';                                  // g --> DigNum is the maximum number of significant digits
+
   QString aParameters;
-  
+
   if ( mySketchState == FIRST_POINT ) {
     myLastX2 = myX;
     myLastY2 = myY;
@@ -2358,9 +2358,9 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
       }
       else{
         Group4Spin->label->hide();
-      } 
+      }
     }
-    else 
+    else
       Group4Spin->label->hide();
     if ( mySketchType == PT_SEL_CENTER ){
       if (error > Precision::Confusion()){
@@ -2369,9 +2369,9 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
       }
       else{
         Group2Sel->label->hide();
-      } 
+      }
     }
-    else 
+    else
       Group2Sel->label->hide();
 
     if ( myShape2.IsNull() ) {
@@ -2462,7 +2462,7 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
 
   GEOM::GEOM_ICurvesOperations_var anOper = GEOM::GEOM_ICurvesOperations::_narrow(getOperation());
   GEOM::GEOM_Object_var anObj = NULL;
-  
+
   int index = ComboBox1->currentIndex();
   if(index != -1 && !myWPlane->_is_nil()) // The combobox is not empty
   {
@@ -2494,15 +2494,15 @@ void EntityGUI_SketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
                                             const double          lineWidth,
                                             const int             displayMode,
                                             const int             color )
-{ 
-  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr(); 
-  
+{
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+
   QColor aColor = resMgr->colorValue("Geometry","line_color",QColor(255,0,0));
   Quantity_NameOfColor line_color = SalomeApp_Tools::color( aColor ).Name();
-  
+
   // set width of displayed shape
   int lw = lineWidth;
-  if(lw == -1) { 
+  if(lw == -1) {
     lw = resMgr->integerValue("Geometry", "preview_edge_width", -1);
   }
   getDisplayer()->SetWidth( lw );
@@ -2524,19 +2524,19 @@ void EntityGUI_SketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
     getDisplayer()->SetColor( line_color );
   else
     getDisplayer()->SetColor( Quantity_NOC_VIOLET );
-  
+
   SALOME_Prs* aPrs = getDisplayer()->BuildPrs( anApplyedWire );
   if ( aPrs != 0 && !aPrs->IsNull() )
     GEOMBase_Helper::displayPreview( aPrs, append, update );
 
-  getDisplayer()->SetColor( Quantity_NOC_VIOLET ); 
+  getDisplayer()->SetColor( Quantity_NOC_VIOLET );
   aPrs = getDisplayer()->BuildPrs( aLastSegment );
-  
+
   if ( aPrs != 0 && !aPrs->IsNull() )
     GEOMBase_Helper::displayPreview( aPrs, append, update );
 
   getDisplayer()->SetColor( line_color );
-  
+
   getDisplayer()->UnsetName();
 
   // Enable activation of displayed objects
@@ -2556,26 +2556,26 @@ void EntityGUI_SketcherDlg::displayPntPreview(const double x,
   // Get globalCS and working plane
   gp_Ax3 globalCS = WPlaneToLCS( myGlobalCS );
   gp_Ax3 aWPlane  = GetActiveLocalCS();
-  
+
   // Build point in localCS
   gp_Pnt aPnt = gp_Pnt(x,y,0.0);
-  
+
   // Get transfomation from local to global CS
   gp_Trsf aTrans;
   aTrans.SetTransformation(aWPlane, globalCS);
-  
+
   BRepBuilderAPI_MakeVertex mkVertex (aPnt);
   TopoDS_Shape aLocalVertex = mkVertex.Shape();
-  
+
   // Perform transformation
   BRepBuilderAPI_Transform aTransformation (aLocalVertex, aTrans, Standard_False);
   TopoDS_Shape aGlobalVertex = aTransformation.Shape();
-  
+
   // Build prs with vertex in globalCS
   SALOME_Prs* aPrs = getDisplayer()->BuildPrs( aGlobalVertex );
   if ( aPrs != 0 && !aPrs->IsNull() )
     GEOMBase_Helper::displayPreview( aPrs, append, update );
-  
+
 }
 
 //================================================================
@@ -2625,14 +2625,14 @@ bool EntityGUI_SketcherDlg::createShapes( GEOM::GEOM_Object_ptr theObject,
 // function : acceptMouseEvent()
 // purpose  :
 //=================================================================================
-bool EntityGUI_SketcherDlg::acceptMouseEvent() const 
+bool EntityGUI_SketcherDlg::acceptMouseEvent() const
 {
-  return ( (getPnt1ConstructorId() == 1 
+  return ( (getPnt1ConstructorId() == 1
             || getPnt1ConstructorId() == 0
-            || myConstructorId == 2)                       //accept mouse event only on absolute and relative selection mode                                                        
+            || myConstructorId == 2)                       //accept mouse event only on absolute and relative selection mode
             && !WPlaneLineEdit->isEnabled());              //or when the constructor is rectangle
-                                                           //called by EntityGUI::OnMousePress()        
-}  
+                                                           //called by EntityGUI::OnMousePress()
+}
 
 //=================================================================================
 // function : keyPressEvent()
@@ -2664,16 +2664,16 @@ void EntityGUI_SketcherDlg::initSpinBox( SalomeApp_DoubleSpinBox* spinBox,
   // Obtain precision from preferences
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   int aPrecision = resMgr->integerValue( "Geometry", quantity, 6 );
-  
+
   spinBox->setPrecision( aPrecision );
   spinBox->setDecimals( qAbs( aPrecision ) ); // it's necessary to set decimals before the range setting,
                                               // by default Qt rounds boundaries to 2 decimals at setRange
   spinBox->setRange( min, max );
   spinBox->setSingleStep( step );
-  
+
   // Add a hint for the user saying how to tune precision
   QString userPropName = QObject::tr( QString( "GEOM_PREF_%1" ).arg( quantity ).toLatin1().constData() );
-  spinBox->setProperty( "validity_tune_hint", 
+  spinBox->setProperty( "validity_tune_hint",
                         QVariant( QObject::tr( "GEOM_PRECISION_HINT" ).arg( userPropName ) ) );
 }
 
@@ -2706,24 +2706,24 @@ void EntityGUI_SketcherDlg::SetDoubleSpinBoxStep( double step )
 void EntityGUI_SketcherDlg::AddLocalCS(GEOM::GEOM_Object_var aSelectedObject)
 {
   QString aName = GEOMBase::GetName( aSelectedObject );
-  
+
   int index = ComboBox1->findText(aName, Qt::MatchExactly);
-  
+
   if (index==-1)  // If the working plane hasn't been added yet
-  {   
+  {
     myWPlaneList.push_back(aSelectedObject);
     myWPlane = aSelectedObject;
     addSubshapesToStudy();
     myLCSList.push_back(WPlaneToLCS(aSelectedObject));
-    ComboBox1->addItem(aName); 
+    ComboBox1->addItem(aName);
     index = ComboBox1->count();
-    ComboBox1->setCurrentIndex(index-1);    
+    ComboBox1->setCurrentIndex(index-1);
   }
   else
   {
     ComboBox1->setCurrentIndex(index);
   }
-  ActivateLocalCS();   
+  ActivateLocalCS();
 }
 
 //=================================================================================
@@ -2762,14 +2762,14 @@ void EntityGUI_SketcherDlg::FindLocalCS()
 
   // browse through all GEOM data tree
   _PTR(ChildIterator) it ( aStudy->NewChildIterator( comp ) );
-  for ( it->InitEx( true ); it->More(); it->Next() ) 
+  for ( it->InitEx( true ); it->More(); it->Next() )
   {
     _PTR(SObject) child( it->Value() );
     CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject( child );
     GEOM::GEOM_Object_var geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
-    if( CORBA::is_nil( geomObj ) ) 
+    if( CORBA::is_nil( geomObj ) )
       continue;
-    if (geomObj->GetType() == GEOM_MARKER) 
+    if (geomObj->GetType() == GEOM_MARKER)
     {
       myWPlaneList.push_back(geomObj);
       myLCSList.push_back(WPlaneToLCS(geomObj));
@@ -2780,26 +2780,26 @@ void EntityGUI_SketcherDlg::FindLocalCS()
 
 //=================================================================================
 // function : WPlaneToLCS ( aWPlane )
-// purpose  : 
+// purpose  :
 //=================================================================================
 gp_Ax3 EntityGUI_SketcherDlg::WPlaneToLCS( GEOM::GEOM_Object_var geomObj )
 {
   TopoDS_Shape aShape = GEOM_Client::get_client().GetShape(GeometryGUI::GetGeomGen(), geomObj);
-  
+
   gp_Ax3 aLCS;
   if (CORBA::is_nil( geomObj ) || aShape.IsNull())
   {
     MESSAGE("CORBA::is_nil( geomObj ) || aShape.IsNull()")
   }
   aLCS.Transform(aShape.Location().Transformation());
-  if (aShape.ShapeType() == TopAbs_FACE) 
+  if (aShape.ShapeType() == TopAbs_FACE)
   {
     GEOM::GEOM_IMeasureOperations_ptr aMeasureOp =
     myGeometryGUI->GetGeomGen()->GetIMeasureOperations();
     double Ox, Oy, Oz, Zx, Zy, Zz, Xx, Xy, Xz;
     aMeasureOp->GetPosition( geomObj, Ox, Oy, Oz, Zx, Zy, Zz, Xx, Xy, Xz);
     if ( aMeasureOp->IsDone() )
-    {  
+    {
       gp_Pnt aPnt ( Ox, Oy, Oz );
       gp_Dir aDirN ( Zx, Zy, Zz );
       gp_Dir aDirX ( Xx, Xy, Xz );
@@ -2815,8 +2815,8 @@ gp_Ax3 EntityGUI_SketcherDlg::WPlaneToLCS( GEOM::GEOM_Object_var geomObj )
 // purpose  :
 //=================================================================================
 int EntityGUI_SketcherDlg::getPnt1ConstructorId() const
-{ 
-  int buttonId = GroupPt->ButtonGroup->checkedId(); 
+{
+  int buttonId = GroupPt->ButtonGroup->checkedId();
 //   MESSAGE("buttonId = "<<buttonId)
   return buttonId;
 }
@@ -2826,8 +2826,8 @@ int EntityGUI_SketcherDlg::getPnt1ConstructorId() const
 // purpose  :
 //=================================================================================
 int EntityGUI_SketcherDlg::getPnt2ConstructorId() const
-{ 
-  int buttonId = GroupPt2->ButtonGroup->checkedId(); 
+{
+  int buttonId = GroupPt2->ButtonGroup->checkedId();
 //   MESSAGE("buttonId = "<<buttonId)
   return buttonId;
 }
@@ -2841,7 +2841,7 @@ gp_Ax3 EntityGUI_SketcherDlg::GetActiveLocalCS()
   int ind = ComboBox1->currentIndex();
   if (ind == -1)
     return myGeometryGUI->GetWorkingPlane();
-  
+
   gp_Ax3 aLCS = myLCSList.at(ind);
   myWPlane = myWPlaneList.at(ind);
 

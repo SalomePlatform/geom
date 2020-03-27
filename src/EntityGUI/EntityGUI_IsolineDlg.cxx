@@ -35,7 +35,7 @@
 
 //=================================================================================
 // class    : EntityGUI_IsolineDlg
-// purpose  : 
+// purpose  :
 //=================================================================================
 EntityGUI_IsolineDlg::EntityGUI_IsolineDlg (GeometryGUI     *theGeometryGUI,
                                             QWidget         *parent,
@@ -85,7 +85,7 @@ EntityGUI_IsolineDlg::EntityGUI_IsolineDlg (GeometryGUI     *theGeometryGUI,
 
 //=================================================================================
 // function : ~EntityGUI_IsolineDlg()
-// purpose  : 
+// purpose  :
 //=================================================================================
 EntityGUI_IsolineDlg::~EntityGUI_IsolineDlg()
 {

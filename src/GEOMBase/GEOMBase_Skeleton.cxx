@@ -48,14 +48,14 @@
 
 //=================================================================================
 // class    : GEOMBase_Skeleton()
-// purpose  : Constructs a GEOMBase_Skeleton which is a child of 'parent', with the 
+// purpose  : Constructs a GEOMBase_Skeleton which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            true to construct a modal dialog.
 //=================================================================================
 GEOMBase_Skeleton::GEOMBase_Skeleton( GeometryGUI* theGeometryGUI, QWidget* parent,
                                       bool modal, Qt::WindowFlags fl )
-  : QDialog( parent, fl ), 
+  : QDialog( parent, fl ),
     GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
     myGeomGUI( theGeometryGUI ),
     myRBGroup( 0 )
@@ -140,16 +140,16 @@ void GEOMBase_Skeleton::Init()
 
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   bool aPrv = (resMgr == 0) ? false : resMgr->booleanValue( "Geometry", "geom_preview", false );
-  
+
   myMainFrame->CheckBoxPreview->setChecked( aPrv );
   myMainFrame->GroupBoxPublish->hide();
 }
 
 //=================================================================================
 // function : initSpinBox()
-// purpose  : 
+// purpose  :
 //=================================================================================
-void GEOMBase_Skeleton::initSpinBox( QSpinBox* spinBox, 
+void GEOMBase_Skeleton::initSpinBox( QSpinBox* spinBox,
                                      int min,  int max, int step )
 {
   spinBox->setRange( min, max );
@@ -158,25 +158,25 @@ void GEOMBase_Skeleton::initSpinBox( QSpinBox* spinBox,
 
 //=================================================================================
 // function : initSpinBox()
-// purpose  : 
+// purpose  :
 //=================================================================================
-void GEOMBase_Skeleton::initSpinBox( SalomeApp_DoubleSpinBox* spinBox, 
-                                     double min,  double max, 
+void GEOMBase_Skeleton::initSpinBox( SalomeApp_DoubleSpinBox* spinBox,
+                                     double min,  double max,
                                      double step, const char* quantity )
 {
   // Obtain precision from preferences
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   int aPrecision = resMgr->integerValue( "Geometry", quantity, 6 );
-  
+
   spinBox->setPrecision( aPrecision );
   spinBox->setDecimals( qAbs( aPrecision ) ); // it's necessary to set decimals before the range setting,
                                     // by default Qt rounds boundaries to 2 decimals at setRange
   spinBox->setRange( min, max );
   spinBox->setSingleStep( step );
-  
+
   // Add a hint for the user saying how to tune precision
   QString userPropName = QObject::tr( QString( "GEOM_PREF_%1" ).arg( quantity ).toLatin1().constData() );
-  spinBox->setProperty( "validity_tune_hint", 
+  spinBox->setProperty( "validity_tune_hint",
                         QVariant( QObject::tr( "GEOM_PRECISION_HINT" ).arg( userPropName ) ) );
 }
 
@@ -356,7 +356,7 @@ void GEOMBase_Skeleton::ClickOnHelp()
   } else {
     context = myHelpContext;
   }
-  if ( app ) 
+  if ( app )
     app->onHelpContextModule( context , myHelpFileName );
   else {
     QString platform;
@@ -430,7 +430,7 @@ void GEOMBase_Skeleton::keyPressEvent( QKeyEvent* e )
 //=================================================================================
 // function : showOnlyPreviewControl()
 // purpose  : display only CheckBoxPreview check box,
-//            hide CheckBoxRestoreSS and CheckBoxAddPrefix 
+//            hide CheckBoxRestoreSS and CheckBoxAddPrefix
 //=================================================================================
 void GEOMBase_Skeleton::showOnlyPreviewControl(){
   mainFrame()->GroupBoxPublish->show();

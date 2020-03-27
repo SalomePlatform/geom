@@ -92,7 +92,7 @@ MeasureGUI_CreateDimensionDlg::MeasureGUI_CreateDimensionDlg( const GEOM::GeomOb
                            SLOT( OnStartSelection( const QList<TopAbs_ShapeEnum>& ) ) );
   connect( myDiameterArgs, SIGNAL( StartSelection( const QList<TopAbs_ShapeEnum>& ) ),
                            SLOT( OnStartSelection( const QList<TopAbs_ShapeEnum>& ) ) );
-  connect( myAngleArgs,    SIGNAL( StartSelection( const QList<TopAbs_ShapeEnum>& ) ), 
+  connect( myAngleArgs,    SIGNAL( StartSelection( const QList<TopAbs_ShapeEnum>& ) ),
                            SLOT( OnStartSelection( const QList<TopAbs_ShapeEnum>& ) ) );
 
   connect( myLengthArgs,   SIGNAL( StopSelection() ), SLOT( OnStopSelection() ) );
@@ -109,7 +109,7 @@ MeasureGUI_CreateDimensionDlg::MeasureGUI_CreateDimensionDlg( const GEOM::GeomOb
 
   // construct main layout
   QVBoxLayout* aCustomWidLayout = new QVBoxLayout( centralWidget() );
-  aCustomWidLayout->setMargin( 0 ); 
+  aCustomWidLayout->setMargin( 0 );
   aCustomWidLayout->setSpacing( 6 );
   aCustomWidLayout->addWidget( aGroupArgs );
 
@@ -155,7 +155,7 @@ MeasureGUI_CreateDimensionDlg::~MeasureGUI_CreateDimensionDlg()
 
 //=================================================================================
 // function : ActiveArgs
-// purpose  : 
+// purpose  :
 //=================================================================================
 MeasureGUI_CreateDimensionDlg::BaseSelectorPane* MeasureGUI_CreateDimensionDlg::ActiveArgs()
 {
@@ -171,7 +171,7 @@ MeasureGUI_CreateDimensionDlg::BaseSelectorPane* MeasureGUI_CreateDimensionDlg::
 
 //=================================================================================
 // function : GenerateName
-// purpose  : 
+// purpose  :
 //=================================================================================
 QString MeasureGUI_CreateDimensionDlg::GenerateName( const QString& thePrefix )
 {
@@ -213,7 +213,7 @@ QString MeasureGUI_CreateDimensionDlg::GenerateName( const QString& thePrefix )
 
 //=================================================================================
 // function : ConstructTypeChanged
-// purpose  : 
+// purpose  :
 //=================================================================================
 void MeasureGUI_CreateDimensionDlg::ConstructTypeChanged( int theType )
 {
@@ -240,7 +240,7 @@ void MeasureGUI_CreateDimensionDlg::ConstructTypeChanged( int theType )
 
 //=================================================================================
 // function : OnArgumentTabChanged
-// purpose  : 
+// purpose  :
 //=================================================================================
 void MeasureGUI_CreateDimensionDlg::OnArgumentTabChanged()
 {
@@ -308,9 +308,9 @@ void MeasureGUI_CreateDimensionDlg::SelectionIntoArgument()
     return;
   }
 
-  GEOM::GeomObjPtr aSelectedMain = 
-    !aSelected->IsMainShape() 
-      ? aSelected->GetMainShape() 
+  GEOM::GeomObjPtr aSelectedMain =
+    !aSelected->IsMainShape()
+      ? aSelected->GetMainShape()
       : GEOM::GeomObjPtr();
 
   if ( myParentObj != aSelected && myParentObj != aSelectedMain )
@@ -361,7 +361,7 @@ void MeasureGUI_CreateDimensionDlg::OnSelectionDone()
 
 //=================================================================================
 // function : ClickOnOk
-// purpose  : 
+// purpose  :
 //=================================================================================
 void MeasureGUI_CreateDimensionDlg::ClickOnOk()
 {
@@ -374,7 +374,7 @@ void MeasureGUI_CreateDimensionDlg::ClickOnOk()
 
 //=================================================================================
 // function : ClickOnApply
-// purpose  : 
+// purpose  :
 //=================================================================================
 bool MeasureGUI_CreateDimensionDlg::ClickOnApply()
 {
@@ -404,7 +404,7 @@ bool MeasureGUI_CreateDimensionDlg::ClickOnApply()
 
 //=================================================================================
 // function : StartLocalEditing
-// purpose  : 
+// purpose  :
 //=================================================================================
 void MeasureGUI_CreateDimensionDlg::StartLocalEditing()
 {
@@ -455,7 +455,7 @@ void MeasureGUI_CreateDimensionDlg::StartLocalEditing()
 
 //=================================================================================
 // function : StopLocalEditing
-// purpose  : 
+// purpose  :
 //=================================================================================
 void MeasureGUI_CreateDimensionDlg::StopLocalEditing()
 {
@@ -478,7 +478,7 @@ void MeasureGUI_CreateDimensionDlg::StopLocalEditing()
 
 //=================================================================================
 // function : Init
-// purpose  : 
+// purpose  :
 //=================================================================================
 void MeasureGUI_CreateDimensionDlg::Init()
 {
@@ -495,7 +495,7 @@ void MeasureGUI_CreateDimensionDlg::Init()
 
 //=================================================================================
 // function : CreateDimensionPrs
-// purpose  : 
+// purpose  :
 //=================================================================================
 Handle(AIS_Dimension) MeasureGUI_CreateDimensionDlg::CreateDimension()
 {
@@ -670,7 +670,7 @@ Handle(AIS_Dimension) MeasureGUI_CreateDimensionDlg::CreateDimension()
 
 //=================================================================================
 // class    : AddDimensionToOwner
-// purpose  : 
+// purpose  :
 //=================================================================================
 bool MeasureGUI_CreateDimensionDlg::AddDimensionToOwner()
 {
@@ -949,7 +949,7 @@ void MeasureGUI_CreateDimensionDlg::BaseSelectorPane::SelectionIntoArguments( co
 
 //=================================================================================
 // function : BaseSelectorPane::GetSelection
-// purpose  : 
+// purpose  :
 //=================================================================================
 GEOM::GeomObjPtr MeasureGUI_CreateDimensionDlg::BaseSelectorPane::GetSelection( QLineEdit* theSelector ) const
 {
