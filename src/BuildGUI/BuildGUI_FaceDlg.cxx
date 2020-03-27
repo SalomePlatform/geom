@@ -691,6 +691,8 @@ void BuildGUI_FaceDlg::addSubshapesToStudy()
   case 0:
     break;
   case 1:
+    GEOMBase::PublishSubObject( myFace.get() );
+    GEOMBase::PublishSubObject( myWire.get() );
     break;
   case 2:
     for( int i = 0; i < myTreeConstraints->topLevelItemCount(); i++ ) {
