@@ -56,6 +56,7 @@
 #include <TColStd_HArray1OfReal.hxx>
 #include <TDataStd_Integer.hxx>
 
+#include <TopExp.hxx>
 
 XAO::Dimension shapeEnumToDimension(const TopAbs_ShapeEnum& shape)
 {
@@ -169,6 +170,8 @@ bool XAOPlugin_IOperations::exportGroups( std::list<Handle(GEOM_Object)> groupLi
         group->add(index);
       }
       break;
+    default:
+      ;
     }
   }
   return true;
@@ -268,6 +271,13 @@ void XAOPlugin_IOperations::exportSubshapes( const Handle(GEOM_Object)& shape, X
 {
   Handle(TColStd_HSequenceOfTransient) subObjects = myShapesOperations->GetExistingSubObjects( shape, GEOMImpl_IShapesOperations::SubShapes );
   int nbSubObjects = subObjects->Length();
+  if (!nbSubObjects) return;
+
+  TopoDS_Shape aMainShape = shape->GetValue();
+  if (aMainShape.IsNull()) return;
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aMainShape, anIndices);
+
   // set the names of the sub shapes
   for (int i = 1; i <= nbSubObjects; i++)
   {
@@ -278,8 +288,16 @@ void XAOPlugin_IOperations::exportSubshapes( const Handle(GEOM_Object)& shape, X
     Handle(GEOM_Object) subObject = Handle(GEOM_Object)::DownCast( transientSubObject );
     if (subObject->GetType() != GEOM_GROUP)
     {
-      int subIndex = myShapesOperations->GetSubShapeIndex( shape, subObject );
-      switch (subObject->GetValue().ShapeType())
+      TopoDS_Shape aSubShape = subObject->GetValue();
+      if (aSubShape.IsNull()) continue;
+
+      // Do not call GEOMImpl_IShapesOperations::GetSubShapeIndex() here
+      // for time optimization reason (it invokes TopExp::MapShapes())
+      //int subIndex = myShapesOperations->GetSubShapeIndex( shape, subObject );
+      int subIndex = anIndices.FindIndex(aSubShape);
+      if (!subIndex) continue;
+
+      switch (aSubShape.ShapeType())
       {
       case TopAbs_VERTEX:
         geometry->changeVertexName(subIndex, subObject->GetName().ToCString());
@@ -293,6 +311,8 @@ void XAOPlugin_IOperations::exportSubshapes( const Handle(GEOM_Object)& shape, X
       case TopAbs_SOLID:
         geometry->changeSolidName(subIndex, subObject->GetName().ToCString());
         break;
+      default:
+        ;
       }
     }
   }
