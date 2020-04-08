@@ -75,7 +75,7 @@ Prism_1 = geompy.MakePrismVecH(Faces[4], Edges[1], 100)
 geompy.addToStudy(Prism_1, "Prism_1")
 
 #Save Study (9.1)
-theHomePath = os.getenv("HOME")
+theHomePath = os.path.expanduser("~")
 theFilenameToSave = theHomePath + "/Pyramid.hdf"
 if os.access(theFilenameToSave, os.F_OK):
     if os.access(theFilenameToSave, os.W_OK):
