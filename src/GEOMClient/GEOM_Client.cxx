@@ -240,7 +240,7 @@ TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_p
   }
 
   /* Case of only one subshape */
-  if ( list->length() == 1 && list[0] > 0 ) {
+  if ( list->length() == 1 && list[0] > 1 ) {
     S = subShapes[list[0]-1];
   }
   else {
