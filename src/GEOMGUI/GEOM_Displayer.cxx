@@ -831,10 +831,12 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   AISShape->Attributes()->SetLineAspect( anAspect );
   
   // - unfree boundaries color
-  anAspect = AISShape->Attributes()->UnFreeBoundaryAspect();
-  anAspect->SetColor( HasColor() ? (Quantity_NameOfColor)GetColor() : 
+  Handle(Prs3d_LineAspect) aUnFreeBoundaryAspect =
+    new Prs3d_LineAspect (Quantity_NOC_RED, Aspect_TOL_SOLID, 1.0);
+  *aUnFreeBoundaryAspect->Aspect() = *AISShape->Attributes()->UnFreeBoundaryAspect()->Aspect();
+  aUnFreeBoundaryAspect->SetColor( HasColor() ? (Quantity_NameOfColor)GetColor() :
                       SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::WireframeColor ) ).value<QColor>() ) );
-  AISShape->Attributes()->SetUnFreeBoundaryAspect( anAspect );
+  AISShape->Attributes()->SetUnFreeBoundaryAspect( aUnFreeBoundaryAspect );
   
   // - free boundaries color
   Handle(Prs3d_LineAspect) aFreeBoundaryAspect =
