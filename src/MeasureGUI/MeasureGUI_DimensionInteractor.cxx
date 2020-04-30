@@ -35,6 +35,8 @@
 #include <SUIT_ViewWindow.h>
 #include <SUIT_Desktop.h>
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <QMouseEvent>
 
 #include <AIS_InteractiveContext.hxx>
@@ -157,7 +159,11 @@ MeasureGUI_DimensionInteractor::Operation
     return Operation_None;
   }
 
+#if OCC_VERSION_LARGE > 0x07040000
+  Handle(PrsDim_DimensionOwner) anOwner = Handle(PrsDim_DimensionOwner)::DownCast( theEntity );
+#else
   Handle(AIS_DimensionOwner) anOwner = Handle(AIS_DimensionOwner)::DownCast( theEntity );
+#endif
   if ( anOwner.IsNull() )
   {
     return Operation_None;
@@ -167,7 +173,11 @@ MeasureGUI_DimensionInteractor::Operation
 
   switch ( anOwner->SelectionMode() )
   {
+#if OCC_VERSION_LARGE > 0x07040000
+    case PrsDim_DimensionSelectionMode_Line :
+#else
     case AIS_DSM_Line :
+#endif
     {
       if ( ( theKeys & Qt::ControlModifier ) == 0 )
       {
@@ -184,7 +194,11 @@ MeasureGUI_DimensionInteractor::Operation
       return Operation_MoveFlyoutFree;
     }
 
+#if OCC_VERSION_LARGE > 0x07040000
+    case PrsDim_DimensionSelectionMode_Text : return Operation_MoveText;
+#else
     case AIS_DSM_Text : return Operation_MoveText;
+#endif
     default :           return Operation_None;
   }
 }

@@ -36,6 +36,9 @@
 #include <BRep_Tool.hxx>
 #include <GCPnts_AbscissaPoint.hxx>
 #include <GeomAdaptor_Curve.hxx>
+#include <gp_Dir.hxx>
+#include <gp_Pnt.hxx>
+#include <gp_Vec.hxx>
 #include <Graphic3d_ArrayOfPoints.hxx>
 #include <Graphic3d_AspectFillArea3d.hxx>
 #include <Graphic3d_AspectLine3d.hxx>
@@ -45,14 +48,15 @@
 #include <Prs3d_Arrow.hxx>
 #include <Prs3d_IsoAspect.hxx>
 #include <Prs3d_ShadingAspect.hxx>
+#include <Prs3d_VertexDrawMode.hxx>
 #include <SelectBasics_SensitiveEntity.hxx>
 #include <SelectMgr_EntityOwner.hxx>
 #include <SelectMgr_IndexedMapOfOwner.hxx>
 #include <SelectMgr_Selection.hxx>
 #include <StdPrs_ShadedShape.hxx>
 #include <StdPrs_ToolTriangulatedShape.hxx>
+#include <StdPrs_WFShape.hxx>
 #include <StdSelect_BRepOwner.hxx>
-#include <StdSelect_DisplayMode.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
 #include <TColStd_ListOfInteger.hxx>
@@ -64,13 +68,13 @@
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <V3d_View.hxx>
-#include <gp_Dir.hxx>
-#include <gp_Pnt.hxx>
-#include <gp_Vec.hxx>
-#include <Prs3d_VertexDrawMode.hxx>
-#include <StdPrs_WFShape.hxx>
 
 #include <Basics_OCCTVersion.hxx>
+#if OCC_VERSION_LARGE > 0x07040000
+#include <Graphic3d_Text.hxx>
+#else
+#include <StdSelect_DisplayMode.hxx>
+#endif
 
 #include <SalomeApp_Tools.h>
 #include <SUIT_Session.h>
@@ -109,8 +113,7 @@ static void getEntityOwners( const Handle(AIS_InteractiveObject)&  theObj,
       Handle(SelectBasics_SensitiveEntity) entity = aHSenEntity->BaseSensitive();
       if ( entity.IsNull() )
         continue;
-      Handle(SelectMgr_EntityOwner) owner =
-        Handle(SelectMgr_EntityOwner)::DownCast(entity->OwnerId());
+      const Handle(SelectMgr_EntityOwner)& owner = entity->OwnerId();
       if ( !owner.IsNull() )
         theMap.Add( owner );
     }
@@ -247,9 +250,11 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
     {
       StdPrs_ToolTriangulatedShape::ClearOnOwnDeflectionChange (myshape, myDrawer, Standard_True);
 
+#if OCC_VERSION_LARGE <= 0x07040000
       // After this call if type of deflection is relative
       // computed deflection coefficient is stored as absolute.
       Prs3d::GetDeflection (myshape, myDrawer);
+#endif
     }
     // End 0023271
     case CustomHighlight:
@@ -593,14 +598,20 @@ void GEOM_AISShape::drawField( const Handle(Prs3d_Presentation)& thePrs,
         gp_Pnt aCenter;
         if( computeMassCenter( aSubShape, aCenter ) )
         {
-          Graphic3d_Vertex aVertex( aCenter.X(), aCenter.Y(), aCenter.Z() );
-
           Handle(Graphic3d_AspectText3d) anAspectText3d = new Graphic3d_AspectText3d();
           anAspectText3d->SetStyle( Aspect_TOST_ANNOTATION );
           anAspectText3d->SetColor( myLabelColor );
           aGroup->SetPrimitivesAspect( anAspectText3d );
 
+#if OCC_VERSION_LARGE > 0x07040000
+          Handle(Graphic3d_Text) aText = new Graphic3d_Text (14.);
+          aText->SetText (aString.toUtf8().constData());
+          aText->SetPosition (aCenter);
+          aGroup->AddText (aText);
+#else
+          Graphic3d_Vertex aVertex( aCenter.X(), aCenter.Y(), aCenter.Z() );
           aGroup->Text( aString.toUtf8().constData(), aVertex, 14 );
+#endif
         }
       }
       else
@@ -661,15 +672,21 @@ void GEOM_AISShape::drawName( const Handle(Prs3d_Presentation)& thePrs )
   gp_Ax3 anAx3 = GEOMUtils::GetPosition(myshape);
   gp_Pnt aCenter = anAx3.Location();
 
-  Graphic3d_Vertex aVertex( aCenter.X(), aCenter.Y(), aCenter.Z() );
-
   Handle(Graphic3d_AspectText3d) anAspectText3d = new Graphic3d_AspectText3d();
   anAspectText3d->SetStyle( Aspect_TOST_ANNOTATION );
   anAspectText3d->SetColor( myLabelColor );
   aGroup->SetPrimitivesAspect( anAspectText3d );
 
   const char* aName = getIO()->getName();
+#if OCC_VERSION_LARGE > 0x07040000
+  Handle(Graphic3d_Text) aText = new Graphic3d_Text (16.);
+  aText->SetText (aName);
+  aText->SetPosition (aCenter);
+  aGroup->AddText(aText);
+#else
+  Graphic3d_Vertex aVertex( aCenter.X(), aCenter.Y(), aCenter.Z() );
   aGroup->Text( TCollection_ExtendedString( aName ), aVertex, 16 );
+#endif
 }
 
 Standard_Boolean GEOM_AISShape::computeMassCenter( const TopoDS_Shape& theShape,

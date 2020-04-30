@@ -26,6 +26,8 @@
 
 #include "GEOMGUI_DimensionProperty.h"
 
+#include <Basics_OCCTVersion.hxx>
+
 // OCCT includes
 #include <Standard_ProgramError.hxx>
 #include <gp_Trsf.hxx>
@@ -72,7 +74,11 @@ namespace
 // function : Length::Init
 // purpose  : 
 //=================================================================================
+#if OCC_VERSION_LARGE > 0x07040000
+void GEOMGUI_DimensionProperty::Length::Init( const Handle(PrsDim_LengthDimension)& theIO, const gp_Ax3& theLCS )
+#else
 void GEOMGUI_DimensionProperty::Length::Init( const Handle(AIS_LengthDimension)& theIO, const gp_Ax3& theLCS )
+#endif
 {
   gp_Trsf aFromLCS;
   aFromLCS.SetTransformation( gp_Ax3(), theLCS );
@@ -90,7 +96,11 @@ void GEOMGUI_DimensionProperty::Length::Init( const Handle(AIS_LengthDimension)&
 // function : Length::Update
 // purpose  : 
 //=================================================================================
+#if OCC_VERSION_LARGE > 0x07040000
+void GEOMGUI_DimensionProperty::Length::Update( Handle(PrsDim_LengthDimension)& theIO, const gp_Ax3& theLCS )
+#else
 void GEOMGUI_DimensionProperty::Length::Update( Handle(AIS_LengthDimension)& theIO, const gp_Ax3& theLCS )
+#endif
 {
   gp_Trsf aToLCS;
   aToLCS.SetTransformation( theLCS, gp_Ax3() );
@@ -840,8 +850,13 @@ void GEOMGUI_DimensionProperty::AddRecord( const Handle(AIS_Dimension)& theIO, c
   {
     case DimensionType_Length :
     {
+#if OCC_VERSION_LARGE > 0x07040000
+      Handle(PrsDim_LengthDimension) aLength = 
+        Handle(PrsDim_LengthDimension)::DownCast( theIO );
+#else
       Handle(AIS_LengthDimension) aLength = 
         Handle(AIS_LengthDimension)::DownCast( theIO );
+#endif
 
       aNewRecord = RecordPtr( new Length() );
       aNewRecord->AsLength()->Init( aLength, theLCS );
@@ -922,8 +937,13 @@ void GEOMGUI_DimensionProperty::SetRecord( const int theIndex,
   {
     case DimensionType_Length :
     {
+#if OCC_VERSION_LARGE > 0x07040000
+      Handle(PrsDim_LengthDimension) aLength = 
+        Handle(PrsDim_LengthDimension)::DownCast( theIO );
+#else
       Handle(AIS_LengthDimension) aLength = 
         Handle(AIS_LengthDimension)::DownCast( theIO );
+#endif
 
       aChangeRecord = RecordPtr( new Length() );
       aChangeRecord->AsLength()->Init( aLength, theLCS );
@@ -1118,7 +1138,11 @@ void GEOMGUI_DimensionProperty::SaveToAttribute( const std::string &theEntry )
 //=================================================================================
 int GEOMGUI_DimensionProperty::TypeFromIO( const Handle(AIS_Dimension)& theIO ) const
 {
+#if OCC_VERSION_LARGE > 0x07040000
+  if ( theIO->IsKind( STANDARD_TYPE( PrsDim_LengthDimension ) ) )
+#else
   if ( theIO->IsKind( STANDARD_TYPE( AIS_LengthDimension ) ) )
+#endif
   {
     return DimensionType_Length;
   }

@@ -1280,8 +1280,14 @@ void MeasureGUI_ManageDimensionsDlg::SelectInViewer( SOCC_Viewer* theViewer, con
       if ( isLocal )
       {
 #endif
+
+#if OCC_VERSION_LARGE > 0x07040000
+        anAISContext->Deactivate( anIO, PrsDim_DimensionSelectionMode_Line );
+        anAISContext->Deactivate( anIO, PrsDim_DimensionSelectionMode_Text );
+#else
         anAISContext->Deactivate( anIO, AIS_DSM_Line );
         anAISContext->Deactivate( anIO, AIS_DSM_Text );
+#endif
       }
       continue;
 #if OCC_VERSION_LARGE <= 0x07030000
@@ -1291,8 +1297,15 @@ void MeasureGUI_ManageDimensionsDlg::SelectInViewer( SOCC_Viewer* theViewer, con
     {
 #endif
       anAISContext->AddOrRemoveSelected( anIO, Standard_False );
+
+#if OCC_VERSION_LARGE > 0x07040000
+      anAISContext->Activate( anIO, PrsDim_DimensionSelectionMode_Line );
+      anAISContext->Activate( anIO, PrsDim_DimensionSelectionMode_Text );
+#else
       anAISContext->Activate( anIO, AIS_DSM_Line );
       anAISContext->Activate( anIO, AIS_DSM_Text );
+#endif
+
 #if OCC_VERSION_LARGE <= 0x07030000
     }
     else

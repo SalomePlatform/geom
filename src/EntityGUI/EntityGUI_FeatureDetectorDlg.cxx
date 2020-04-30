@@ -51,6 +51,8 @@
 
 #include <SalomeApp_Study.h>
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <utilities.h>
 #include <Precision.hxx>
 
@@ -67,7 +69,7 @@
 #include <AIS_Shape.hxx>
 
 #include <TCollection_AsciiString.hxx>
-#include <StdSelect_DisplayMode.hxx>
+//#include <StdSelect_DisplayMode.hxx>
 
 #include <Graphic3d_MaterialAspect.hxx>
 
@@ -84,7 +86,7 @@
 #endif
 
 // Constructors
-enum{
+enum {
   CONTOURS,
   CORNERS,
   LINES

@@ -27,9 +27,16 @@
 #ifndef GEOMGUI_DIMENSIONPROPERTY_H
 #define GEOMGUI_DIMENSIONPROPERTY_H
 
+#include <Basics_OCCTVersion.hxx>
+
 // OCCT includes
+#include <AIS_Dimension.hxx>
 #include <AIS_DiameterDimension.hxx>
+#if OCC_VERSION_LARGE > 0x07040000
+#include <PrsDim_LengthDimension.hxx>
+#else
 #include <AIS_LengthDimension.hxx>
+#endif
 #include <AIS_AngleDimension.hxx>
 #include <gp_Ax3.hxx>
 #include <QVariant>
@@ -137,14 +144,22 @@ public:
      * \param theIO [in] the interactive presentation.
      * \param theLCS [in] the local coordinate system of parent object.
      */
+#if OCC_VERSION_LARGE > 0x07040000
+    void Init( const Handle(PrsDim_LengthDimension)& theIO, const gp_Ax3& theLCS );
+#else
     void Init( const Handle(AIS_LengthDimension)& theIO, const gp_Ax3& theLCS );
+#endif
 
     /*!
      * \brief Updates length object properties from the fields.
      * \param theIO [in/out] the interactive presentation.
      * \param theLCS [in] the local coordinate system of parent object.
      */
+#if OCC_VERSION_LARGE > 0x07040000
+    void Update( Handle(PrsDim_LengthDimension)& theIO, const gp_Ax3& theLCS );
+#else
     void Update( Handle(AIS_LengthDimension)& theIO, const gp_Ax3& theLCS );
+#endif
 
     /*!
      * \brief Packs properties to array of doubles.

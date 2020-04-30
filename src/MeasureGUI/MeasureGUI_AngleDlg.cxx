@@ -40,9 +40,11 @@
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
+#include <Basics_OCCTVersion.hxx>
+
 // OCCT Includes
 #include <AIS_AngleDimension.hxx>
-#include <AIS_ListIteratorOfListOfInteractive.hxx>
+//#include <AIS_ListIteratorOfListOfInteractive.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
@@ -52,7 +54,13 @@
 #include <Geom_Plane.hxx>
 #include <gce_MakePln.hxx>
 #include <Precision.hxx>
+
+#if OCC_VERSION_LARGE > 0x07040000
+#include <PrsDim.hxx>
+#else
 #include <AIS.hxx>
+#endif
+
 #include <Prs3d_LineAspect.hxx> 
 #include <IntTools_EdgeEdge.hxx>
 #include <IntTools_SequenceOfCommonPrts.hxx>
@@ -309,7 +317,7 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
       OCC_CATCH_SIGNALS;
       TopoDS_Shape S1, S2;
       if (GEOMBase::GetShape(myObj.get() , S1, TopAbs_EDGE) &&
-        GEOMBase::GetShape(myObj2.get(), S2, TopAbs_EDGE)) {
+          GEOMBase::GetShape(myObj2.get(), S2, TopAbs_EDGE)) {
         TopoDS_Edge anEdge1 = TopoDS::Edge(S1);
         TopoDS_Edge anEdge2 = TopoDS::Edge(S2);
 
@@ -323,19 +331,17 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
         Handle(Geom_Curve) extCurv;
         Standard_Integer extShape;
         Handle(Geom_Plane) aPlane;
-        if (AIS::ComputeGeometry(anEdge1,
-                                  anEdge2,
-                                  extShape,
-                                  geom_lin1,
-                                  geom_lin2,
-                                  ptat11,
-                                  ptat12,
-                                  ptat21,
-                                  ptat22,
-                                  extCurv,
-                                  isInfinite1,
-                                  isInfinite2,
-                                  aPlane)) {
+#if OCC_VERSION_LARGE > 0x07040000
+        if (PrsDim::ComputeGeometry (anEdge1, anEdge2,
+#else
+        if (AIS::ComputeGeometry    (anEdge1, anEdge2,
+#endif
+                                     extShape,
+                                     geom_lin1, geom_lin2,
+                                     ptat11, ptat12, ptat21, ptat22,
+                                     extCurv,
+                                     isInfinite1, isInfinite2,
+                                     aPlane)) {
           Standard_Real arrSize1 = aDimensionStyle->ArrowAspect()->Length();
           Standard_Real arrSize2 = aDimensionStyle->ArrowAspect()->Length();
           if (!isInfinite1) arrSize1 = ptat11.Distance(ptat12)/10.;
@@ -356,7 +362,11 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
         anIO->SetDimensionAspect( aDimensionStyle );
         anIO->SetDisplayUnits( aUnitsAngle.toUtf8().data() );
         if (aUnitsAngle == "rad")
+#if OCC_VERSION_LARGE > 0x07040000
+          anIO->SetDisplaySpecialSymbol(PrsDim_DisplaySpecialSymbol_No);
+#else
           anIO->SetDisplaySpecialSymbol(AIS_DSS_No);
+#endif
 
         SOCC_Prs* aPrs =
           dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));

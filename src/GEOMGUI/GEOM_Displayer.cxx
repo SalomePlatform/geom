@@ -92,7 +92,7 @@
 #include <Prs3d_PointAspect.hxx>
 #include <StdSelect_TypeOfEdge.hxx>
 #include <StdSelect_TypeOfFace.hxx>
-#include <StdSelect_DisplayMode.hxx>
+//#include <StdSelect_DisplayMode.hxx>
 #include <TopoDS_Face.hxx>
 #include <BRep_Tool.hxx>
 #include <Geom_Plane.hxx>
@@ -1348,12 +1348,21 @@ void GEOM_Displayer::updateDimensions( const Handle(SALOME_InteractiveObject)& t
       if ( aUnitsAngle == "deg" )
       {
         aPrs->SetSpecialSymbol(0xB0);
+#if OCC_VERSION_LARGE > 0x07040000
+        aPrs->SetDisplaySpecialSymbol( isUnitsShown ? PrsDim_DisplaySpecialSymbol_After :
+                                                      PrsDim_DisplaySpecialSymbol_No );
+#else
         aPrs->SetDisplaySpecialSymbol( isUnitsShown ? AIS_DSS_After : AIS_DSS_No );
+#endif
         aStyle->MakeUnitsDisplayed(Standard_False);
       }
       else
       {
+#if OCC_VERSION_LARGE > 0x07040000
+        aPrs->SetDisplaySpecialSymbol(PrsDim_DisplaySpecialSymbol_No);
+#else
         aPrs->SetDisplaySpecialSymbol(AIS_DSS_No);
+#endif
         aStyle->MakeUnitsDisplayed( (Standard_Boolean) isUnitsShown );
       }
     }

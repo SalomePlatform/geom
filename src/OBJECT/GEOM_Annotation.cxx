@@ -538,11 +538,20 @@ Bnd_Box GEOM_Annotation::TextBoundingBox() const
 {
   Handle(Prs3d_TextAspect) anAsp = myDrawer->TextAspect();
   Font_FTFont aFont;
+#if OCC_VERSION_LARGE > 0x07040000
+  Font_FTFontParams aFontParams;
+  aFontParams.PointSize  = (unsigned int)anAsp->Height();
+  aFontParams.Resolution = GetContext()->CurrentViewer()->DefaultRenderingParams().Resolution;
+  if ( aFont.FindAndInit(anAsp->Aspect()->Font().ToCString(),
+                         anAsp->Aspect()->GetTextFontAspect(),
+                         aFontParams) )
+#else
   unsigned int aResolution = GetContext()->CurrentViewer()->DefaultRenderingParams().Resolution;
   if ( aFont.Init( anAsp->Aspect()->Font().ToCString(),
                    anAsp->Aspect()->GetTextFontAspect(),
                   (unsigned int)anAsp->Height(),
                   aResolution ) )
+#endif
   {
     const NCollection_String aText( (Standard_Utf16Char* )myText.ToExtString() );
     const Font_Rect aFontRect = aFont.BoundingBox( aText, Graphic3d_HTA_CENTER, Graphic3d_VTA_CENTER );
