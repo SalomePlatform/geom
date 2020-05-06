@@ -604,12 +604,12 @@ SALOMEDS::TMPFile* GEOM_Gen_i::Save(SALOMEDS::SComponent_ptr theComponent,
   // Build a full file name of temporary file
   TCollection_AsciiString aFullName = TCollection_AsciiString((char*)aTmpDir.c_str()) + aNameWithExt;
   // Save GEOM component in this file
-  _impl->Save((char*) aFullName.ToCString());
-  // Conver a file to the byte stream
-  aStreamFile = SALOMEDS_Tool::PutFilesToStream(aTmpDir.c_str(), aSeq, isMultiFile);
-  // Remove the created file and tmp directory
-  if (!isMultiFile) SALOMEDS_Tool::RemoveTemporaryFiles(aTmpDir.c_str(), aSeq, true);
-
+  if (_impl->Save((char*) aFullName.ToCString())) {
+    // Convert a file to the byte stream
+    aStreamFile = SALOMEDS_Tool::PutFilesToStream(aTmpDir.c_str(), aSeq, isMultiFile);
+    // Remove the created file and tmp directory
+    if (!isMultiFile) SALOMEDS_Tool::RemoveTemporaryFiles(aTmpDir.c_str(), aSeq, true);
+  }
   // Return the created byte stream
   return aStreamFile._retn();
 }
