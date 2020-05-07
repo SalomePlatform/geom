@@ -38,7 +38,7 @@ class GEOM_Annotation;
 class GEOM_Displayer;
 
 /*!
- * \brief A help class to process visualizatin of annotation presentations.
+ * \brief A help class to process visualization of annotation presentations.
  * It contains a map of presentations shown in each viewer.
  * and correct 2D position persistent properties of annotations of active viewer.
  * When the viewer is closed, information about the viewer is removed from the manager 

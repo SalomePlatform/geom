@@ -89,9 +89,10 @@ public:
 
   static bool                 InitGeomGen();
 
-  static  GEOM::GEOM_Gen_var  GetGeomGen();
+  static GEOM::GEOM_Gen_var   GetGeomGen();
 
   static CORBA::Object_var    ClientSObjectToObject (_PTR(SObject) theSObject);
+  static bool                 IsInGeomComponent( _PTR(SObject) theSObject );
   static SALOMEDS::Study_var  getStudyServant();
 
   static void                 Modified( bool = true );

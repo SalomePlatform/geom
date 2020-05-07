@@ -160,7 +160,7 @@ void GEOMToolsGUI::OnAutoColor()
   _PTR(Study) aStudy = appStudy->studyDS();
   _PTR(SObject) aMainSObject(aStudy->FindObjectID(anIObject->getEntry()));
   GEOM::GEOM_Object_var aMainObject = GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aMainSObject));
-  if (CORBA::is_nil(aMainObject)) return;
+  if (CORBA::is_nil(aMainObject) || !GeometryGUI::IsInGeomComponent( aMainSObject )) return;
 
   aMainObject->SetAutoColor( true );
 
@@ -229,7 +229,7 @@ void GEOMToolsGUI::OnDisableAutoColor()
   _PTR(Study) aStudy = appStudy->studyDS();
   _PTR(SObject) aMainSObject( aStudy->FindObjectID( anIObject->getEntry() ) );
   GEOM::GEOM_Object_var aMainObject =  GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aMainSObject));
-  if( CORBA::is_nil( aMainObject ) )
+  if( CORBA::is_nil( aMainObject ) || !GeometryGUI::IsInGeomComponent( aMainSObject ))
     return;
 
   aMainObject->SetAutoColor( false );

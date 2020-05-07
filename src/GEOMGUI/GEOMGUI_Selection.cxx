@@ -132,7 +132,7 @@ void GEOMGUI_Selection::init( const QString& context, LightApp_SelectionMgr* sel
       QString anEntry = entry( idx );
       if ( study && !anEntry.isEmpty() ) {
         _PTR(SObject) aSO( study->FindObjectID( anEntry.toStdString() ) );
-        if ( aSO ) {
+        if ( GeometryGUI::IsInGeomComponent( aSO )) {
           CORBA::Object_var varObj = GeometryGUI::ClientSObjectToObject( aSO );
           myObjects[idx] = GEOM::GEOM_BaseObject::_narrow( varObj );
         }

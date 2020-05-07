@@ -1765,7 +1765,7 @@ SALOME_Prs* GEOM_Displayer::buildPresentation( const QString& entry,
         if ( getStudy() )
         {
           _PTR(SObject) SO ( getStudy()->studyDS()->FindObjectID( theIO->getEntry() ) );
-          if ( SO )
+          if ( SO ) //GeometryGUI::IsInGeomComponent( SO ))
           {
             // get CORBA reference to data object
             CORBA::Object_var object = GeometryGUI::ClientSObjectToObject(SO);
@@ -2377,6 +2377,7 @@ void GEOM_Displayer::setFieldStepInfo( const GEOM::field_data_type theFieldDataT
 bool GEOM_Displayer::canBeDisplayed( const QString& entry, const QString& viewer_type ) const
 {
   _PTR(SObject) anObj = getStudy()->studyDS()->FindObjectID( (const char*)entry.toUtf8() );
+  //if ( ! GeometryGUI::IsInGeomComponent( anObj )) return false;
   GEOM::GEOM_Object_var aGeomObj = GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(anObj)); // enable displaying of GEOM objects
   GEOM::GEOM_FieldStep_var aFieldStepObj = GEOM::GEOM_FieldStep::_narrow(GeometryGUI::ClientSObjectToObject(anObj)); // enable displaying of GEOM field steps
   GEOM::GEOM_Gen_var aCompObj = GEOM::GEOM_Gen::_narrow(GeometryGUI::ClientSObjectToObject(anObj)); // enable displaying of whole GEOM component
@@ -2538,7 +2539,7 @@ PropMap GEOM_Displayer::getObjectProperties( const QString& entry,
       if ( !entry.isEmpty() ) {
         // get CORBA reference to geom object
         _PTR(SObject) SO( getStudy()->studyDS()->FindObjectID( entry.toStdString() ) );
-        if ( SO ) {
+        if ( SO ) { //GeometryGUI::IsInGeomComponent( SO )) {
           CORBA::Object_var object = GeometryGUI::ClientSObjectToObject( SO );
           if ( !CORBA::is_nil( object ) ) {
             GEOM::GEOM_Object_var geomObject = GEOM::GEOM_Object::_narrow( object );

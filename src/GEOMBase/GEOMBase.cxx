@@ -450,12 +450,11 @@ GEOM::GEOM_Object_ptr GEOMBase::ConvertIOinGEOMObject( const Handle(SALOME_Inter
     SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
     if ( study ) {
       _PTR(Study) studyDS = study->studyDS();
-      _PTR(SObject) obj( studyDS->FindObjectID( IO->getEntry() ) );
-      if ( obj ) {
-        CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject( obj );
-        if ( !CORBA::is_nil( corbaObj ) )
+      _PTR(SObject)   obj = studyDS->FindObjectID( IO->getEntry() );
+      if ( GeometryGUI::IsInGeomComponent( obj )) {
+          CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject( obj );
           object = GEOM::GEOM_Object::_narrow( corbaObj );
-      }
+        }
     }
   }
   return object._retn();
@@ -488,7 +487,6 @@ void GEOMBase::ConvertListOfIOInListOfGO( const SALOME_ListIO& IObjects,
     geomObjects.length( i );
   }
 }
-
 
 //=================================================================================
 // function : CreateArrowForLinearEdge()

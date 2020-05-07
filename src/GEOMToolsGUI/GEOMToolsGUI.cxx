@@ -94,7 +94,7 @@ static bool inUse( const QString& component, const QMap<QString,QString>& object
   for ( oit = objects.begin(); oit != objects.end(); ++oit )
   {
     _PTR(SObject) so = study->FindObjectID( oit.key().toUtf8().data() );
-    if ( !so )
+    if ( !GeometryGUI::IsInGeomComponent( so ))
       continue;
     aSelectedSO.push_back(so);
     CORBA::Object_var        corbaObj_rem = GeometryGUI::ClientSObjectToObject( so );

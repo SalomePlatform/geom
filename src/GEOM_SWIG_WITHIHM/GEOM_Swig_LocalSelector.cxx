@@ -41,20 +41,20 @@ GEOM_Swig_LocalSelector::GEOM_Swig_LocalSelector(QWidget* parent, SUIT_ViewWindo
 
   SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>(SUIT_Session::session()->activeApplication()->activeStudy());
   if (study)
+  {
+    _PTR(Study) studyDS = study->studyDS();
+    _PTR(SObject) obj( studyDS->FindObjectID( shapeEntry ) );
+    if ( GeometryGUI::IsInGeomComponent( obj ))
     {
-      _PTR(Study) studyDS = study->studyDS();
-      _PTR(SObject) obj( studyDS->FindObjectID( shapeEntry ) );
-      if (obj)
-        {
-          CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject(obj);
-          if (!CORBA::is_nil(corbaObj))
-            {
-              myObject = GEOM::GEOM_Object::_narrow(corbaObj);
-              shapeName = myObject->GetName();
-              MESSAGE("shapeName: " << shapeName);
-            }
-        }
+      CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject(obj);
+      if (!CORBA::is_nil(corbaObj))
+      {
+        myObject = GEOM::GEOM_Object::_narrow(corbaObj);
+        shapeName = myObject->GetName();
+        MESSAGE("shapeName: " << shapeName);
+      }
     }
+  }
 
   std::list<int> modes;
   modes.push_back(mode);

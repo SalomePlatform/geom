@@ -220,7 +220,7 @@ void GEOMToolsGUI_MarkerDlg::accept()
             _PTR(SObject) aSObject( study->FindObjectID( it.Value()->getEntry() ) );
             GEOM::GEOM_Object_var anObject =
               GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( aSObject ) );
-            if ( !anObject->_is_nil() ) {
+            if ( !anObject->_is_nil() && GeometryGUI::IsInGeomComponent( aSObject )) {
               if ( myWGStack->currentIndex() == 0 ) {
                 anObject->SetMarkerStd( getMarkerType(), getStandardMarkerScale() );
                 QString aMarker = "%1%2%3";
@@ -296,7 +296,7 @@ void GEOMToolsGUI_MarkerDlg::init()
           _PTR(SObject) aSObject( study->FindObjectID( it.Value()->getEntry() ) );
           GEOM::GEOM_Object_var anObject =
             GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( aSObject ) );
-          if ( !anObject->_is_nil() ) {
+          if ( !anObject->_is_nil() && GeometryGUI::IsInGeomComponent( aSObject )) {
             GEOM::marker_type mtype = anObject->GetMarkerType();
             if ( aType == -1 )
               aType = mtype;

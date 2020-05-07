@@ -141,14 +141,16 @@ bool EntityGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
     GEOM::GEOM_FieldStep_var step;
 
     SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
-    if ( aList.Extent() > 0 && study ) {
+    if ( study )
       for ( ; anIter.More(); anIter.Next() )
       {
         Handle(SALOME_InteractiveObject) anIObj = anIter.Value();
         if ( !anIObj.IsNull() && anIObj->hasEntry() )
-          if ( _PTR(SObject) obj = study->studyDS()->FindObjectID( anIObj->getEntry() ))
+        {
+          _PTR(SObject) obj = study->studyDS()->FindObjectID( anIObj->getEntry() );
+          if ( GeometryGUI::IsInGeomComponent( obj ))
           {
-            CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject( obj );
+            CORBA::Object_var   corbaObj = GeometryGUI::ClientSObjectToObject( obj );
             GEOM::GEOM_BaseObject_var bo = GEOM::GEOM_BaseObject::_narrow( corbaObj );
             GEOM::GEOM_Field_var     f;
             GEOM::GEOM_FieldStep_var s;
@@ -173,9 +175,8 @@ bool EntityGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
               field = f;
             }
           }
+        }
       }
-    }
-
     if ( !field->_is_nil()) {
       int stepID;
       if ( !step->_is_nil() ) {

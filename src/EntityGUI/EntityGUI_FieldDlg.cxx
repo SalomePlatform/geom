@@ -1478,6 +1478,7 @@ int EntityGUI_FieldDlg::getSelectedSubshapes (TColStd_IndexedMapOfInteger& theMa
         _PTR(Study) aStudy = appStudy->studyDS();
 
         _PTR(SObject) aSObj (aStudy->FindObjectID(anEntry.toUtf8().constData()));
+        if ( ! GeometryGUI::IsInGeomComponent( aSObj )) continue;
         GEOM::GEOM_Object_var aGeomObj =
           GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aSObj));
         TopoDS_Shape aShape;
@@ -1773,20 +1774,21 @@ void EntityGUI_FieldDlg::highlightSubShapes()
     CORBA::String_var aMainEntry = myShape->GetStudyEntry();
     _PTR(SObject) aSObj = aStudy->FindObjectID( aMainEntry.in() );
     _PTR(ChildIterator) anIt = aStudy->NewChildIterator(aSObj);
-    for (anIt->InitEx(true); anIt->More(); anIt->Next()) {
-      GEOM::GEOM_Object_var aChild =
-        GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(anIt->Value()));
-      if (!CORBA::is_nil(aChild)) {
-        int index = aLocOp->GetSubShapeIndex(myShape, aChild);
-        if ( anIds.Contains( index )) {
-          CORBA::String_var aChildEntry = aChild->GetStudyEntry();
-          //childsMap.insert(index, aChildEntry.in());
+    if ( GeometryGUI::IsInGeomComponent( aSObj ))
+      for (anIt->InitEx(true); anIt->More(); anIt->Next()) {
+        GEOM::GEOM_Object_var aChild =
+          GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(anIt->Value()));
+        if (!CORBA::is_nil(aChild)) {
+          int index = aLocOp->GetSubShapeIndex(myShape, aChild);
+          if ( anIds.Contains( index )) {
+            CORBA::String_var aChildEntry = aChild->GetStudyEntry();
+            //childsMap.insert(index, aChildEntry.in());
             Handle(SALOME_InteractiveObject) tmpIO =
               new SALOME_InteractiveObject( aChildEntry.in(), "GEOM", "TEMP_IO");
             aSelList.Append(tmpIO);
+          }
         }
       }
-    }
   }
 
   AIS_ListIteratorOfListOfInteractive ite (List);

@@ -176,6 +176,17 @@ CORBA::Object_var GeometryGUI::ClientSObjectToObject (_PTR(SObject) theSObject)
   }
   return anObj._retn();
 }
+//=================================================================================
+// function : IsInGeomComponent
+// purpose  : Check if an SObject is under GEOM component
+//=================================================================================
+bool GeometryGUI::IsInGeomComponent( _PTR(SObject) sobject )
+{
+  if ( sobject )
+    if ( _PTR(SComponent) aComp = sobject->GetFatherComponent() )
+      return aComp->ComponentDataType() == "GEOM";
+  return false;
+}
 
 //=======================================================================
 // function : GetStudy
@@ -2128,7 +2139,7 @@ void GeometryGUI::updateCreationInfo()
     Handle(SALOME_InteractiveObject) io = selIt.Value();
     if ( !io->hasEntry() ) continue;
     _PTR(SObject) sobj = study->FindObjectID( io->getEntry() );
-    if ( !sobj ) continue;
+    if ( !GeometryGUI::IsInGeomComponent( sobj )) continue;
     CORBA::Object_var          obj = GeometryGUI::ClientSObjectToObject( sobj );
     GEOM::GEOM_BaseObject_var gobj = GEOM::GEOM_BaseObject::_narrow( obj );
     if ( !gobj->_is_nil() )

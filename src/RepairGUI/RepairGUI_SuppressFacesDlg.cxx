@@ -224,6 +224,7 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
         QString anEntry = anIO->getEntry();
 
         _PTR(SObject) aSObj (aStudy->FindObjectID(anEntry.toUtf8().constData()));
+        if ( ! GeometryGUI::IsInGeomComponent( aSObj )) continue;
         GEOM::GEOM_Object_var aGeomObj =
           GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aSObj));
         TopoDS_Shape aShape;
