@@ -745,7 +745,10 @@ bool GEOMBase::GetShape( GEOM::GEOM_Object_ptr object, TopoDS_Shape& shape, cons
   if ( !CORBA::is_nil( object ) ) {
     TopAbs_ShapeEnum stype = (TopAbs_ShapeEnum)( object->GetShapeType() );
     if ( type == TopAbs_SHAPE || type == stype )
-      shape = GEOM_Client::get_client().GetShape(  GeometryGUI::GetGeomGen(), object );
+    {
+      GEOM::GEOM_Gen_var gen = object->GetGen();
+      shape = GEOM_Client::get_client().GetShape( gen, object );
+    }
   }
   return !shape.IsNull();
 }
