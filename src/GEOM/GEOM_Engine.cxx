@@ -519,9 +519,7 @@ bool GEOM_Engine::Save(const char* theFileName)
   std::string aFileName = theFileName;
 #endif
 
-  _OCAFApp->SaveAs( _document, aFileName.c_str() );
-
-  return true;
+  return _OCAFApp->SaveAs( _document, aFileName.c_str() ) == PCDM_SS_OK;
 }
 
 //=============================================================================
