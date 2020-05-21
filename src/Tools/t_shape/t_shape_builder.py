@@ -65,7 +65,7 @@ def demidisk(r1, a1, roty=0, solid_thickness=0):
   arc1 = geompy.MakeArc(v[1], v7, v[3])
   l[0] = geompy.MakeLineTwoPnt(v[1], v[3])
   face1 = geompy.MakeFaceWires([arc1, l[0]], 1)
-  part1 = geompy.MakePartition([face1], [l[2], l[4], l[5], l[6], l[7]], [], [], geompy.ShapeType["FACE"], 0, [], 0, True)
+  part1 = geompy.MakePartition([face1], [l[2], l[4], l[5], l[6], l[7]], [], [], geompy.ShapeType["FACE"], 0, [], 0)
   
   if with_solid:
     # Add some faces corresponding to the solid layer outside
@@ -191,7 +191,7 @@ def build_shape(r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
   faces_coupe = faci[5:]
   if with_solid:
     faces_coupe = faci[5:]+faces_jonction_ext[:3]
-  base2 = geompy.MakePartition(faces_coupe, [], [], [], geompy.ShapeType["FACE"], 0, [], 0, True)
+  base2 = geompy.MakePartition(faces_coupe, [], [], [], geompy.ShapeType["FACE"], 0, [], 0)
   extru2 = geompy.MakePrismVecH(base2, OZ, h2)
 
   if progressBar is not None:
@@ -223,7 +223,7 @@ def build_shape(r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
   faces_coupe = faci[:5]
   if with_solid:
     faces_coupe.extend(faces_jonction_ext[-7:])
-  raccord = geompy.MakePartition([garder], faces_coupe + [arcextru], [], [], geompy.ShapeType["SOLID"], 0, [], 0, True)
+  raccord = geompy.MakePartition([garder], faces_coupe + [arcextru], [], [], geompy.ShapeType["SOLID"], 0, [], 0)
   assemblage = geompy.MakeCompound([raccord, extru1, extru2])
   assemblage = geompy.MakeGlueFaces(assemblage, 1e-7)
 
@@ -325,7 +325,7 @@ def jonction(r1, r2, h1, h2, a1):
     plan = geompy.MakePlaneThreePnt(p0, p1, p2, 10000)
     #geompy.addToStudy(plan, "plan%d"%i)
     section = geompy.MakeSection(plan, arcextru, True)
-    secpart = geompy.MakePartition([section], [sect45, sect90], [], [], geompy.ShapeType["EDGE"], 0, [], 0, True)
+    secpart = geompy.MakePartition([section], [sect45, sect90], [], [], geompy.ShapeType["EDGE"], 0, [], 0)
     #geompy.addToStudy(secpart, "secpart%d"%i)
     lsec = geompy.ExtractShapes(secpart, geompy.ShapeType["EDGE"], True)
 

@@ -1352,6 +1352,13 @@ TCollection_AsciiString GEOMImpl_Block6Explorer::MakeAnyFace (const TopoDS_Wire&
     if (!ana.IsValid()) {
       TopoDS_Shape aFace2;
       ShHealOper_ShapeProcess aHealer;
+
+      // bos #19108: T-Shape
+      // Default values for the next two parameters is 0.05,
+      // which is too large for some T-Shape cases
+      aHealer.SetParameter("FixFaceSize.Tolerance", 1e-05);
+      aHealer.SetParameter("DropSmallEdges.Tolerance3d", 1e-05);
+
       aHealer.Perform(aFace1, aFace2);
       if (aHealer.isDone())
         theResult = aFace2;
