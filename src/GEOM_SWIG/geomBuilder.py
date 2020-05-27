@@ -836,17 +836,11 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             self.myStudy = salome.myStudy
             self.myBuilder = self.myStudy.NewBuilder()
             self.father = self.myStudy.FindComponent("GEOM")
-            notebook.myStudy = salome.myStudy
-            if self.father is None:
-                self.father = self.myBuilder.NewComponent("GEOM")
-                A1 = self.myBuilder.FindOrCreateAttribute(self.father, "AttributeName")
-                FName = A1._narrow(SALOMEDS.AttributeName)
-                FName.SetValue("Geometry")
-                A2 = self.myBuilder.FindOrCreateAttribute(self.father, "AttributePixMap")
-                aPixmap = A2._narrow(SALOMEDS.AttributePixMap)
-                aPixmap.SetPixMap("ICON_OBJBROWSER_Geometry")
-                self.myBuilder.DefineComponentInstance(self.father,self)
-                pass
+
+            # load data from the study file, if necessary
+            if self.father:
+                self.myBuilder.LoadWith(self.father, self)
+
             self.BasicOp  = self.GetIBasicOperations    ()
             self.CurvesOp = self.GetICurvesOperations   ()
             self.PrimOp   = self.GetI3DPrimOperations   ()
@@ -866,8 +860,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             self.myUseCaseBuilder.SetRootCurrent()
             self.myUseCaseBuilder.Append(self.father)
 
-            # load data from the study file, if necessary
-            self.myBuilder.LoadWith(self.father, self)
+            notebook.myStudy = salome.myStudy
             pass
 
         def GetPluginOperations(self, libraryName):
