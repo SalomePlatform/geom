@@ -732,8 +732,6 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
               GEOM._objref_GEOM_Gen.__init__(self, *args)
               self.myMaxNbSubShapesAllowed = 0 # auto-publishing is disabled by default
               self.myBuilder = None
-              self.father    = None
-
               self.BasicOp  = None
               self.CurvesOp = None
               self.PrimOp   = None
@@ -835,11 +833,11 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         def init_geom(self):
             self.myStudy = salome.myStudy
             self.myBuilder = self.myStudy.NewBuilder()
-            self.father = self.myStudy.FindComponent("GEOM")
 
             # load data from the study file, if necessary
-            if self.father:
-                self.myBuilder.LoadWith(self.father, self)
+            component = self.myStudy.FindComponent("GEOM")
+            if component:
+                self.myBuilder.LoadWith(component, self)
 
             self.BasicOp  = self.GetIBasicOperations    ()
             self.CurvesOp = self.GetICurvesOperations   ()
@@ -854,11 +852,6 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             self.BlocksOp = self.GetIBlocksOperations   ()
             self.GroupOp  = self.GetIGroupOperations    ()
             self.FieldOp  = self.GetIFieldOperations    ()
-
-            # set GEOM as root in the use case tree
-            self.myUseCaseBuilder = self.myStudy.GetUseCaseBuilder()
-            self.myUseCaseBuilder.SetRootCurrent()
-            self.myUseCaseBuilder.Append(self.father)
 
             notebook.myStudy = salome.myStudy
             pass
@@ -13795,7 +13788,6 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             Returns:
                 a new created folder
             """
-            if not Father: Father = self.father
             return self.CreateFolder(Name, Father)
 
         ## Move object to the specified folder
