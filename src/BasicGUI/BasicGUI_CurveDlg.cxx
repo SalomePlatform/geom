@@ -47,6 +47,8 @@
 
 #include <GEOMImpl_Types.hxx>
 
+#include <QButtonGroup>
+
 //=================================================================================
 // class    : BasicGUI_CurveDlg()
 // purpose  : Constructs a BasicGUI_CurveDlg which is a child of 'parent', with the

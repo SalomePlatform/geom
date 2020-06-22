@@ -50,6 +50,8 @@
 #include <SUIT_Session.h>
 #include <SUIT_Desktop.h>
 
+#include <QButtonGroup>
+
 #include <Aspect_PolygonOffsetMode.hxx>
 
 #include <Basics_OCCTVersion.hxx>

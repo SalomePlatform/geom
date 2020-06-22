@@ -52,6 +52,7 @@
 #include <DlgRef.h>
 
 #include <QKeyEvent>
+#include <QButtonGroup>
 
 #include <BRep_Tool.hxx>
 #include <TopExp.hxx>

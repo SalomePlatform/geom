@@ -72,6 +72,8 @@
 #include <Graphic3d_AspectText3d.hxx>
 #include <Font_FontAspect.hxx>
 
+#include <QButtonGroup>
+
 // This include must be *AFTER* SOCC_ViewModel.h because
 // of the constant ROTATE which is a #define in
 // GEOMImpl_Types.hxx and an enum in SOCC_ViewModel.h

@@ -55,6 +55,8 @@
 #include <TopoDS_Edge.hxx>
 #include <gp_Pnt.hxx>
 
+#include <QButtonGroup>
+
 enum { BY_PARAM, BY_POINT_PROJ };
 
 //=================================================================================

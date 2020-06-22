@@ -41,6 +41,8 @@
 #include <TColStd_MapOfInteger.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
 
+#include <QButtonGroup>
+
 #include <GEOMImpl_Types.hxx>
 
 //=================================================================================

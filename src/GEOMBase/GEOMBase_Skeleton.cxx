@@ -44,6 +44,7 @@
 #include <QKeyEvent>
 #include <QSpinBox>
 #include <QDoubleSpinBox>
+#include <QButtonGroup>
 
 //=================================================================================
 // class    : GEOMBase_Skeleton()

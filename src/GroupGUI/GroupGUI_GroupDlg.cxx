@@ -61,6 +61,7 @@
 #include <QListWidget>
 #include <QLineEdit>
 #include <QMap>
+#include <QButtonGroup>
 
 #include <AIS_ListOfInteractive.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
