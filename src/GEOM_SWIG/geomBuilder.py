@@ -732,8 +732,6 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
               GEOM._objref_GEOM_Gen.__init__(self, *args)
               self.myMaxNbSubShapesAllowed = 0 # auto-publishing is disabled by default
               self.myBuilder = None
-              self.father    = None
-
               self.BasicOp  = None
               self.CurvesOp = None
               self.PrimOp   = None
@@ -835,18 +833,12 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         def init_geom(self):
             self.myStudy = salome.myStudy
             self.myBuilder = self.myStudy.NewBuilder()
-            self.father = self.myStudy.FindComponent("GEOM")
-            notebook.myStudy = salome.myStudy
-            if self.father is None:
-                self.father = self.myBuilder.NewComponent("GEOM")
-                A1 = self.myBuilder.FindOrCreateAttribute(self.father, "AttributeName")
-                FName = A1._narrow(SALOMEDS.AttributeName)
-                FName.SetValue("Geometry")
-                A2 = self.myBuilder.FindOrCreateAttribute(self.father, "AttributePixMap")
-                aPixmap = A2._narrow(SALOMEDS.AttributePixMap)
-                aPixmap.SetPixMap("ICON_OBJBROWSER_Geometry")
-                self.myBuilder.DefineComponentInstance(self.father,self)
-                pass
+
+            # load data from the study file, if necessary
+            component = self.myStudy.FindComponent("GEOM")
+            if component:
+                self.myBuilder.LoadWith(component, self)
+
             self.BasicOp  = self.GetIBasicOperations    ()
             self.CurvesOp = self.GetICurvesOperations   ()
             self.PrimOp   = self.GetI3DPrimOperations   ()
@@ -861,13 +853,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             self.GroupOp  = self.GetIGroupOperations    ()
             self.FieldOp  = self.GetIFieldOperations    ()
 
-            # set GEOM as root in the use case tree
-            self.myUseCaseBuilder = self.myStudy.GetUseCaseBuilder()
-            self.myUseCaseBuilder.SetRootCurrent()
-            self.myUseCaseBuilder.Append(self.father)
-
-            # load data from the study file, if necessary
-            self.myBuilder.LoadWith(self.father, self)
+            notebook.myStudy = salome.myStudy
             pass
 
         def GetPluginOperations(self, libraryName):
@@ -13802,7 +13788,6 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             Returns:
                 a new created folder
             """
-            if not Father: Father = self.father
             return self.CreateFolder(Name, Father)
 
         ## Move object to the specified folder

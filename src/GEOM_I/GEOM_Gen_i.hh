@@ -325,6 +325,8 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   virtual GEOM::GEOM_BaseObject_ptr GetObject(const char* theEntry);
 
  private:
+  SALOMEDS::SComponent_var findOrCreateComponent();
+
   GEOM::ListOfGO* RestoreSubShapes (GEOM::GEOM_Object_ptr   theObject,
                                     SALOMEDS::SObject_ptr   theSObject,
                                     const GEOM::ListOfGO&   theArgs,

@@ -226,23 +226,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::SObject_ptr theSObjec
   SALOMEDS::StudyBuilder_var     aStudyBuilder = aStudy->NewBuilder();
   SALOMEDS::UseCaseBuilder_wrap  useCaseBuilder = aStudy->GetUseCaseBuilder();
 
-  SALOMEDS::SComponent_var       aFather = aStudy->FindComponent("GEOM");
-  if (aFather->_is_nil()) {
-    aFather = aStudyBuilder->NewComponent("GEOM");
-    anAttr = aStudyBuilder->FindOrCreateAttribute(aFather, "AttributeName");
-    SALOMEDS::AttributeName_var aName = SALOMEDS::AttributeName::_narrow(anAttr);
-    aName->SetValue("Geometry");
-    aName->UnRegister();
-    anAttr = aStudyBuilder->FindOrCreateAttribute(aFather, "AttributePixMap");
-    SALOMEDS::AttributePixMap_var aPixMap=SALOMEDS::AttributePixMap::_narrow(anAttr);
-    aPixMap->SetPixMap("ICON_OBJBROWSER_Geometry");
-    aPixMap->UnRegister();
-    aStudyBuilder->DefineComponentInstance(aFather, (GEOM::GEOM_Gen_var)GEOM_Gen::_this());
-    // add component to the use case tree
-    // (to support tree representation customization and drag-n-drop)
-    useCaseBuilder->SetRootCurrent();
-    useCaseBuilder->Append( aFather ); // component object is added as the top level item
-  }
+  SALOMEDS::SComponent_var aFather = findOrCreateComponent();
   if (aFather->_is_nil()) return aResultSO;
 
   if (CORBA::is_nil(theSObject)) {
@@ -2196,6 +2180,41 @@ SALOMEDS::Study_var GEOM_Gen_i::getStudyServant()
 }
 
 //============================================================================
+// function : findOrCreateComponent()
+// purpose  : Find root study component; create if it does not exist
+//============================================================================
+SALOMEDS::SComponent_var GEOM_Gen_i::findOrCreateComponent()
+{
+  SALOMEDS::SComponent_var aComponent;
+
+  SALOMEDS::Study_var aStudy = getStudyServant();
+  if (aStudy->_is_nil()) return aComponent;
+
+  SALOMEDS::GenericAttribute_var anAttr;
+  SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
+  SALOMEDS::UseCaseBuilder_wrap useCaseBuilder = aStudy->GetUseCaseBuilder();
+
+  aComponent = aStudy->FindComponent(ComponentDataType());
+  if (aComponent->_is_nil()) {
+    aComponent = aStudyBuilder->NewComponent(ComponentDataType());
+    anAttr = aStudyBuilder->FindOrCreateAttribute(aComponent.in(), "AttributeName");
+    SALOMEDS::AttributeName_var aName = SALOMEDS::AttributeName::_narrow(anAttr);
+    aName->SetValue("Geometry");
+    aName->UnRegister();
+    anAttr = aStudyBuilder->FindOrCreateAttribute(aComponent.in(), "AttributePixMap");
+    SALOMEDS::AttributePixMap_var aPixMap=SALOMEDS::AttributePixMap::_narrow(anAttr);
+    aPixMap->SetPixMap("ICON_OBJBROWSER_Geometry");
+    aPixMap->UnRegister();
+    aStudyBuilder->DefineComponentInstance(aComponent.in(), (GEOM::GEOM_Gen_var)GEOM_Gen::_this());
+    // add component to the use case tree
+    // (to support tree representation customization and drag-n-drop)
+    useCaseBuilder->SetRootCurrent();
+    useCaseBuilder->Append(aComponent.in()); // component object is added as the top level item
+  }
+  return aComponent;
+}
+
+//============================================================================
 // function : Undo
 // purpose  :
 //============================================================================
@@ -2866,6 +2885,11 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::CreateFolder(const char* theName,
 {
   SALOMEDS::SObject_var aFolderSO;
 
+  if ( CORBA::is_nil(theFather) ) {
+    SALOMEDS::SComponent_var aComponent = findOrCreateComponent();
+    if (aComponent->_is_nil()) return aFolderSO._retn();
+    theFather = SALOMEDS::SObject::_narrow(aComponent);
+  }
   if ( CORBA::is_nil(theFather) ) return aFolderSO._retn();
 
   SALOMEDS::GenericAttribute_var anAttr;
