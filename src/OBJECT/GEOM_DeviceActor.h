@@ -36,7 +36,10 @@ typedef GEOM_SmartPtr<vtkPolyDataNormals> PPolyDataNormals;
  
 //class vtkActor;
 class VTKViewer_Actor;
+class VTKViewer_Transform;
+class VTKViewer_TransformFilter;
 typedef GEOM_SmartPtr<VTKViewer_Actor> PActor;
+typedef GEOM_SmartPtr<VTKViewer_TransformFilter> PTransformFilter;
  
 class vtkProperty; 
 class vtkRenderer; 
@@ -66,12 +69,15 @@ public:
   void RemoveFromRender(vtkRenderer* theRenderer);
   
   PActor GetDeviceActor() {return myActor;}
+
+  virtual void SetTransform(VTKViewer_Transform* theTransform);
  
 protected: 
   PPolyDataNormals myPolyDataNormals; 
   PPolyDataMapper myPolyDataMapper; 
   PStripper myStripper; 
-  PActor myActor; 
+  PActor myActor;
+  PTransformFilter myTransformFilter;
  
   GEOM_DeviceActor(); 
   ~GEOM_DeviceActor(); 

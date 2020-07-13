@@ -26,20 +26,26 @@
 #include <vtkStripper.h>  
 #include <vtkPolyDataMapper.h>  
 #include <vtkPolyDataNormals.h>  
-#include <vtkActor.h> 
-#include <VTKViewer_Actor.h>
+#include <vtkActor.h>
 #include <vtkRenderer.h> 
+
+#include <VTKViewer_Actor.h>
+#include <VTKViewer_Transform.h>
+#include <VTKViewer_TransformFilter.h>
+
  
 vtkStandardNewMacro(GEOM_DeviceActor);
  
-GEOM_DeviceActor::GEOM_DeviceActor(): 
-  myStripper(vtkStripper::New(),true), 
-  myPolyDataMapper(vtkPolyDataMapper::New(),true), 
-  myPolyDataNormals(vtkPolyDataNormals::New(),true), 
-  myActor(VTKViewer_Actor::New(),true) 
+GEOM_DeviceActor::GEOM_DeviceActor() :
+  myStripper(vtkStripper::New(), true),
+  myPolyDataMapper(vtkPolyDataMapper::New(), true),
+  myPolyDataNormals(vtkPolyDataNormals::New(), true),
+  myActor(VTKViewer_Actor::New(), true),
+  myTransformFilter(VTKViewer_TransformFilter::New())
 { 
-  myStripper->SetInputConnection(myPolyDataNormals->GetOutputPort()); 
-  myPolyDataMapper->SetInputConnection(myStripper->GetOutputPort()); 
+  myStripper->SetInputConnection(myPolyDataNormals->GetOutputPort());
+  myTransformFilter->SetInputConnection(myStripper->GetOutputPort());
+  myPolyDataMapper->SetInputConnection(myTransformFilter->GetOutputPort());
  
   myActor->SetMapper(myPolyDataMapper.Get()); 
   myActor->PickableOff(); 
@@ -56,11 +62,13 @@ SetInput(vtkAlgorithmOutput* thePolyData, bool theUseStripper)
   if(theUseStripper)
   {
     myPolyDataNormals->SetInputConnection(thePolyData); 
-    myStripper->SetInputConnection(myPolyDataNormals->GetOutputPort()); 
-    myPolyDataMapper->SetInputConnection(myStripper->GetOutputPort()); 
+    myStripper->SetInputConnection(myPolyDataNormals->GetOutputPort());
+    myTransformFilter->SetInputConnection(myStripper->GetOutputPort());
+    myPolyDataMapper->SetInputConnection(myTransformFilter->GetOutputPort());
   }
-  else 
-    myPolyDataMapper->SetInputConnection(thePolyData); 
+  else
+    myTransformFilter->SetInputConnection(thePolyData);
+    myPolyDataMapper->SetInputConnection(myTransformFilter->GetOutputPort());
 }
  
 void 
@@ -117,4 +125,11 @@ GEOM_DeviceActor::
 RemoveFromRender(vtkRenderer* theRenderer)
 {
   theRenderer->RemoveActor(myActor.GetPointer());
+}
+
+void
+GEOM_DeviceActor
+::SetTransform(VTKViewer_Transform* theTransform)
+{
+  myTransformFilter->SetTransform(theTransform);
 }

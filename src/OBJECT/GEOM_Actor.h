@@ -222,6 +222,11 @@ public:
   bool
   GetNameMode();
 
+  virtual 
+  void 
+  SetTransform(VTKViewer_Transform* theTransform);
+
+
 protected:
   void SetModified();
 
