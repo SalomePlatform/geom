@@ -126,6 +126,10 @@
 
 #include <TColStd_HArray1OfByte.hxx>
 
+#if OCC_VERSION_LARGE > 0x07040000
+#include <Image_SupportedFormats.hxx>
+#endif
+
 // If the next macro is defined, autocolor feature works for all sub-shapes;
 // if it is undefined, autocolor feature works for groups only
 #define GENERAL_AUTOCOLOR
@@ -242,8 +246,12 @@ namespace
       const Handle(Graphic3d_TextureMap)& aTexture = aAISShape->Attributes()->ShadingAspect()->Aspect()->TextureMap();
       if ( aTexture.IsNull() )
         continue;
-
+#if OCC_VERSION_LARGE > 0x07040000
+      Handle(Image_SupportedFormats) aFormats = new Image_SupportedFormats();
+      const Handle(Image_PixMap)& aPixmap = aTexture->GetImage(aFormats);
+#else
       const Handle(Image_PixMap)& aPixmap = aTexture->GetImage();
+#endif
       if ( aPixmap.IsNull() )
         continue;
 
