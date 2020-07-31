@@ -1522,11 +1522,7 @@ void CurveCreator_Widget::setSelectedPoints( const CurveCreator_ICurve::SectionT
   if ( myDragStarted )
     return;
   Handle(AIS_InteractiveContext) aContext = getAISContext();
-  if ( aContext.IsNull() 
-#if OCC_VERSION_LARGE <= 0x07030000
-       || !aContext->HasOpenedContext() 
-#endif       
-     )
+  if ( aContext.IsNull() )
     return;
 
   CurveCreator_Utils::setSelectedPoints( aContext, myCurve, thePoints );

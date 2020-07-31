@@ -80,12 +80,8 @@ void GEOMGUI_OCCSelector::getSelection( SUIT_DataOwnerPtrList& aList ) const
     return;
 
   Handle(AIS_InteractiveContext) ic = vw->getAISContext();
-#if OCC_VERSION_LARGE <= 0x07030000
-  if (ic->HasOpenedContext())
-  {
-#endif
-    TopoDS_Shape curBigShape;
-    TopTools_IndexedMapOfShape subShapes;
+  TopoDS_Shape curBigShape;
+  TopTools_IndexedMapOfShape subShapes;
 
     for (ic->InitSelected(); ic->MoreSelected(); ic->NextSelected())
     {
@@ -127,27 +123,6 @@ void GEOMGUI_OCCSelector::getSelection( SUIT_DataOwnerPtrList& aList ) const
         aList.append(SUIT_DataOwnerPtr(owner));
       }
     }
-#if OCC_VERSION_LARGE <= 0x07030000
-  }
-  else
-  {
-    for (ic->InitCurrent(); ic->MoreCurrent(); ic->NextCurrent())
-    {
-      Handle(AIS_InteractiveObject) io = ic->Current();
-
-      QString entryStr = entry( io );
-
-      if ( !entryStr.isEmpty() )
-      {
-        Handle(SALOME_InteractiveObject) anIO = Handle(SALOME_InteractiveObject)::DownCast(io->GetOwner()); 
-        if ( !anIO.IsNull() ) {
-          LightApp_DataOwner* owner = new LightApp_DataOwner( anIO );
-          aList.append( SUIT_DataOwnerPtr( owner ) );
-        }
-      }
-    }
-  }
-#endif
 
   // add externally selected objects
   SUIT_DataOwnerPtrList::const_iterator anExtIter;

@@ -55,7 +55,7 @@
 #include <gce_MakePln.hxx>
 #include <Precision.hxx>
 
-#if OCC_VERSION_LARGE > 0x07040000
+#if OCC_VERSION_LARGE >= 0x070400ff
 #include <PrsDim.hxx>
 #else
 #include <AIS.hxx>
@@ -331,7 +331,7 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
         Handle(Geom_Curve) extCurv;
         Standard_Integer extShape;
         Handle(Geom_Plane) aPlane;
-#if OCC_VERSION_LARGE > 0x07040000
+#if OCC_VERSION_LARGE >= 0x070400ff
         if (PrsDim::ComputeGeometry (anEdge1, anEdge2,
 #else
         if (AIS::ComputeGeometry    (anEdge1, anEdge2,
@@ -362,7 +362,7 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
         anIO->SetDimensionAspect( aDimensionStyle );
         anIO->SetDisplayUnits( aUnitsAngle.toUtf8().data() );
         if (aUnitsAngle == "rad")
-#if OCC_VERSION_LARGE > 0x07040000
+#if OCC_VERSION_LARGE >= 0x070400ff
           anIO->SetDisplaySpecialSymbol(PrsDim_DisplaySpecialSymbol_No);
 #else
           anIO->SetDisplaySpecialSymbol(AIS_DSS_No);

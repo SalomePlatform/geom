@@ -74,7 +74,7 @@ namespace
 // function : Length::Init
 // purpose  : 
 //=================================================================================
-#if OCC_VERSION_LARGE > 0x07040000
+#if OCC_VERSION_LARGE >= 0x070400ff
 void GEOMGUI_DimensionProperty::Length::Init( const Handle(PrsDim_LengthDimension)& theIO, const gp_Ax3& theLCS )
 #else
 void GEOMGUI_DimensionProperty::Length::Init( const Handle(AIS_LengthDimension)& theIO, const gp_Ax3& theLCS )
@@ -96,7 +96,7 @@ void GEOMGUI_DimensionProperty::Length::Init( const Handle(AIS_LengthDimension)&
 // function : Length::Update
 // purpose  : 
 //=================================================================================
-#if OCC_VERSION_LARGE > 0x07040000
+#if OCC_VERSION_LARGE >= 0x070400ff
 void GEOMGUI_DimensionProperty::Length::Update( Handle(PrsDim_LengthDimension)& theIO, const gp_Ax3& theLCS )
 #else
 void GEOMGUI_DimensionProperty::Length::Update( Handle(AIS_LengthDimension)& theIO, const gp_Ax3& theLCS )
@@ -850,7 +850,7 @@ void GEOMGUI_DimensionProperty::AddRecord( const Handle(AIS_Dimension)& theIO, c
   {
     case DimensionType_Length :
     {
-#if OCC_VERSION_LARGE > 0x07040000
+#if OCC_VERSION_LARGE >= 0x070400ff
       Handle(PrsDim_LengthDimension) aLength = 
         Handle(PrsDim_LengthDimension)::DownCast( theIO );
 #else
@@ -937,7 +937,7 @@ void GEOMGUI_DimensionProperty::SetRecord( const int theIndex,
   {
     case DimensionType_Length :
     {
-#if OCC_VERSION_LARGE > 0x07040000
+#if OCC_VERSION_LARGE >= 0x070400ff
       Handle(PrsDim_LengthDimension) aLength = 
         Handle(PrsDim_LengthDimension)::DownCast( theIO );
 #else
@@ -1138,7 +1138,7 @@ void GEOMGUI_DimensionProperty::SaveToAttribute( const std::string &theEntry )
 //=================================================================================
 int GEOMGUI_DimensionProperty::TypeFromIO( const Handle(AIS_Dimension)& theIO ) const
 {
-#if OCC_VERSION_LARGE > 0x07040000
+#if OCC_VERSION_LARGE >= 0x070400ff
   if ( theIO->IsKind( STANDARD_TYPE( PrsDim_LengthDimension ) ) )
 #else
   if ( theIO->IsKind( STANDARD_TYPE( AIS_LengthDimension ) ) )

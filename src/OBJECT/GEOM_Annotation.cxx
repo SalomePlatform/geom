@@ -538,7 +538,7 @@ Bnd_Box GEOM_Annotation::TextBoundingBox() const
 {
   Handle(Prs3d_TextAspect) anAsp = myDrawer->TextAspect();
   Font_FTFont aFont;
-#if OCC_VERSION_LARGE > 0x07040000
+#if OCC_VERSION_LARGE >= 0x070400FF
   Font_FTFontParams aFontParams;
   aFontParams.PointSize  = (unsigned int)anAsp->Height();
   aFontParams.Resolution = GetContext()->CurrentViewer()->DefaultRenderingParams().Resolution;
@@ -708,11 +708,7 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
   const unsigned int aDPI = theWorkspace->View()->RenderingParams().Resolution;
   if (myTextDPI != aDPI)
   {
-#if OCC_VERSION_LARGE <= 0x07030000
-    const OpenGl_AspectText* anAspect = theWorkspace->AspectText();
-#else
     const OpenGl_Aspects* anAspect = theWorkspace->Aspects();
-#endif
 
     // getting string size will also initialize font library
 #if OCC_VERSION_LARGE >= 0x07040000
@@ -790,11 +786,7 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
   {
     Handle(Graphic3d_PresentationAttributes) empty;
     theWorkspace->SetHighlightStyle(empty);
-#if OCC_VERSION_LARGE <= 0x07030000
-    theWorkspace->ApplyAspectLine();
-#else
     theWorkspace->ApplyAspects();
-#endif
   }
   
   GLint myOldDepthMode = 0;

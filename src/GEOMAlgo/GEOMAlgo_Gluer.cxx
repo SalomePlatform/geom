@@ -510,12 +510,8 @@ void GEOMAlgo_Gluer::MakeSolids()
   myResult=aCmp;
   //
   if (aMS.Extent()) {
-#if OCC_VERSION_LARGE > 0x07020001
     TopTools_IndexedMapOfShape aMapToAvoid;
     BOPTools_AlgoTools::CorrectCurveOnSurface(myResult, aMapToAvoid, 0.0001);
-#else
-    BOPTools_AlgoTools::CorrectCurveOnSurface(myResult, 0.0001);
-#endif
   }
 }
 //=======================================================================

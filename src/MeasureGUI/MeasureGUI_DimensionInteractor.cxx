@@ -159,7 +159,7 @@ MeasureGUI_DimensionInteractor::Operation
     return Operation_None;
   }
 
-#if OCC_VERSION_LARGE > 0x07040000
+#if OCC_VERSION_LARGE >= 0x070400ff
   Handle(PrsDim_DimensionOwner) anOwner = Handle(PrsDim_DimensionOwner)::DownCast( theEntity );
 #else
   Handle(AIS_DimensionOwner) anOwner = Handle(AIS_DimensionOwner)::DownCast( theEntity );
@@ -173,7 +173,7 @@ MeasureGUI_DimensionInteractor::Operation
 
   switch ( anOwner->SelectionMode() )
   {
-#if OCC_VERSION_LARGE > 0x07040000
+#if OCC_VERSION_LARGE >= 0x070400ff
     case PrsDim_DimensionSelectionMode_Line :
 #else
     case AIS_DSM_Line :
@@ -194,7 +194,7 @@ MeasureGUI_DimensionInteractor::Operation
       return Operation_MoveFlyoutFree;
     }
 
-#if OCC_VERSION_LARGE > 0x07040000
+#if OCC_VERSION_LARGE >= 0x070400ff
     case PrsDim_DimensionSelectionMode_Text : return Operation_MoveText;
 #else
     case AIS_DSM_Text : return Operation_MoveText;

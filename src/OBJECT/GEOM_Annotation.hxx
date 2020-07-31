@@ -274,7 +274,7 @@ private:
   virtual void ComputeSelection( const Handle(SelectMgr_Selection)& theSelection,
                                  const Standard_Integer theMode ) Standard_OVERRIDE;
 
-#if OCC_VERSION_LARGE > 0x07040000
+#if OCC_VERSION_LARGE >= 0x070400ff
   virtual void setLocalTransformation( const Handle(TopLoc_Datum3D)& /*theTransformation*/ ) Standard_OVERRIDE {}
 #else
   virtual void setLocalTransformation( const Handle(Geom_Transformation)& /*theTransformation*/ ) Standard_OVERRIDE {}
@@ -415,11 +415,7 @@ public:
       const Standard_Boolean isMatches = Select3D_SensitiveBox::Matches( theMgr, thePickResult );
       if ( !myIsDepthCulling )
       {
-#if OCC_VERSION_LARGE <= 0x07030000
-        thePickResult = SelectBasics_PickResult( -DBL_MAX, thePickResult.DistToGeomCenter() );
-#else
         thePickResult = SelectBasics_PickResult( -DBL_MAX, thePickResult.DistToGeomCenter(), thePickResult.PickedPoint() );
-#endif
       }
       return isMatches;
     }

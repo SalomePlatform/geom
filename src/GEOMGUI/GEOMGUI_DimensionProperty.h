@@ -32,7 +32,7 @@
 // OCCT includes
 #include <AIS_Dimension.hxx>
 #include <AIS_DiameterDimension.hxx>
-#if OCC_VERSION_LARGE > 0x07040000
+#if OCC_VERSION_LARGE >= 0x070400ff
 #include <PrsDim_LengthDimension.hxx>
 #else
 #include <AIS_LengthDimension.hxx>
@@ -144,7 +144,7 @@ public:
      * \param theIO [in] the interactive presentation.
      * \param theLCS [in] the local coordinate system of parent object.
      */
-#if OCC_VERSION_LARGE > 0x07040000
+#if OCC_VERSION_LARGE >= 0x070400ff
     void Init( const Handle(PrsDim_LengthDimension)& theIO, const gp_Ax3& theLCS );
 #else
     void Init( const Handle(AIS_LengthDimension)& theIO, const gp_Ax3& theLCS );
@@ -155,7 +155,7 @@ public:
      * \param theIO [in/out] the interactive presentation.
      * \param theLCS [in] the local coordinate system of parent object.
      */
-#if OCC_VERSION_LARGE > 0x07040000
+#if OCC_VERSION_LARGE >= 0x070400ff
     void Update( Handle(PrsDim_LengthDimension)& theIO, const gp_Ax3& theLCS );
 #else
     void Update( Handle(AIS_LengthDimension)& theIO, const gp_Ax3& theLCS );

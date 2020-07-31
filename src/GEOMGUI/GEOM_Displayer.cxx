@@ -126,7 +126,7 @@
 
 #include <TColStd_HArray1OfByte.hxx>
 
-#if OCC_VERSION_LARGE > 0x07040000
+#if OCC_VERSION_LARGE >= 0x070400ff
 #include <Image_SupportedFormats.hxx>
 #endif
 
@@ -246,7 +246,7 @@ namespace
       const Handle(Graphic3d_TextureMap)& aTexture = aAISShape->Attributes()->ShadingAspect()->Aspect()->TextureMap();
       if ( aTexture.IsNull() )
         continue;
-#if OCC_VERSION_LARGE > 0x07040000
+#if OCC_VERSION_LARGE >= 0x070400ff
       Handle(Image_SupportedFormats) aFormats = new Image_SupportedFormats();
       const Handle(Image_PixMap)& aPixmap = aTexture->GetImage(aFormats);
 #else
@@ -1356,7 +1356,7 @@ void GEOM_Displayer::updateDimensions( const Handle(SALOME_InteractiveObject)& t
       if ( aUnitsAngle == "deg" )
       {
         aPrs->SetSpecialSymbol(0xB0);
-#if OCC_VERSION_LARGE > 0x07040000
+#if OCC_VERSION_LARGE >= 0x070400ff
         aPrs->SetDisplaySpecialSymbol( isUnitsShown ? PrsDim_DisplaySpecialSymbol_After :
                                                       PrsDim_DisplaySpecialSymbol_No );
 #else
@@ -1366,7 +1366,7 @@ void GEOM_Displayer::updateDimensions( const Handle(SALOME_InteractiveObject)& t
       }
       else
       {
-#if OCC_VERSION_LARGE > 0x07040000
+#if OCC_VERSION_LARGE >= 0x070400ff
         aPrs->SetDisplaySpecialSymbol(PrsDim_DisplaySpecialSymbol_No);
 #else
         aPrs->SetDisplaySpecialSymbol(AIS_DSS_No);
@@ -2070,13 +2070,8 @@ void GEOM_Displayer::BeforeDisplay( SALOME_View* v, const SALOME_OCCPrs* )
     Handle(AIS_InteractiveContext) ic = vf->getAISContext();
     if ( !ic.IsNull() )
     {
-#if OCC_VERSION_LARGE <= 0x07030000
-      if ( ic->HasOpenedContext() )
-      ic->CloseAllContexts(Standard_True);
-#else
       ic->Deactivate();
       ic->Activate( 0 );
-#endif
     }
   }
 }

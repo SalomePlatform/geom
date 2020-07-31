@@ -438,11 +438,8 @@ void MeasureGUI_CreateDimensionDlg::StartLocalEditing()
   Handle(V3d_Viewer)             aViewer3d    = myEditingViewer->getViewer3d();
 
   aViewer3d->AddZLayer( myEditingLayer );
-#if OCC_VERSION_LARGE <= 0x07030000
-  anAISContext->OpenLocalContext( Standard_False, Standard_False );
-#endif
 
-#if OCC_VERSION_LARGE > 0x07040000
+#if OCC_VERSION_LARGE >= 0x070400ff
   anAISContext->Load( myDimension, PrsDim_DimensionSelectionMode_All );
   anAISContext->SetZLayer( myDimension, myEditingLayer );
   anAISContext->Activate( myDimension, PrsDim_DimensionSelectionMode_Line );
@@ -473,12 +470,8 @@ void MeasureGUI_CreateDimensionDlg::StopLocalEditing()
   Handle(V3d_Viewer)             aViewer3d    = myEditingViewer->getViewer3d();
 
   aViewer3d->RemoveZLayer( myEditingLayer );
-#if OCC_VERSION_LARGE <= 0x07030000
-  anAISContext->CloseLocalContext( Standard_True );
-#else
   anAISContext->Deactivate();
   anAISContext->Activate(0);
-#endif
 
   myEditingViewer = NULL;
 }
@@ -644,7 +637,7 @@ Handle(AIS_Dimension) MeasureGUI_CreateDimensionDlg::CreateDimension()
     if ( aUnitsAngle == "deg" )
     {
       aDimensionIO->SetSpecialSymbol(0xB0);
-#if OCC_VERSION_LARGE > 0x07040000
+#if OCC_VERSION_LARGE >= 0x070400ff
       aDimensionIO->SetDisplaySpecialSymbol( isUnitsShown ? PrsDim_DisplaySpecialSymbol_After :
                                                             PrsDim_DisplaySpecialSymbol_No );
 #else
@@ -654,7 +647,7 @@ Handle(AIS_Dimension) MeasureGUI_CreateDimensionDlg::CreateDimension()
     }
     else
     {
-#if OCC_VERSION_LARGE > 0x07040000
+#if OCC_VERSION_LARGE >= 0x070400ff
       aDimensionIO->SetDisplaySpecialSymbol(PrsDim_DisplaySpecialSymbol_No);
 #else
       aDimensionIO->SetDisplaySpecialSymbol(AIS_DSS_No);

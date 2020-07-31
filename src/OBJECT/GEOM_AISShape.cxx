@@ -70,7 +70,7 @@
 #include <V3d_View.hxx>
 
 #include <Basics_OCCTVersion.hxx>
-#if OCC_VERSION_LARGE > 0x07040000
+#if OCC_VERSION_LARGE >= 0x070400ff
 #include <Graphic3d_Text.hxx>
 #else
 #include <StdSelect_DisplayMode.hxx>
@@ -372,11 +372,7 @@ void GEOM_AISShape::highlightSubShapes(const TColStd_IndexedMapOfInteger& aIndex
 {
   Handle(AIS_InteractiveObject) anObj = this;
   Handle(AIS_InteractiveContext) anIC = GetContext();
-  if ( anIC.IsNull() 
-#if OCC_VERSION_LARGE <= 0x07030000
-       || !anIC->HasOpenedContext() 
-#endif
-     ) 
+  if ( anIC.IsNull() ) 
     return;
 
   Standard_Boolean isAutoHilight = anIC->AutomaticHilight();
@@ -603,7 +599,7 @@ void GEOM_AISShape::drawField( const Handle(Prs3d_Presentation)& thePrs,
           anAspectText3d->SetColor( myLabelColor );
           aGroup->SetPrimitivesAspect( anAspectText3d );
 
-#if OCC_VERSION_LARGE > 0x07040000
+#if OCC_VERSION_LARGE >= 0x070400ff
           Handle(Graphic3d_Text) aText = new Graphic3d_Text (14.);
           aText->SetText (aString.toUtf8().constData());
           aText->SetPosition (aCenter);
@@ -678,7 +674,7 @@ void GEOM_AISShape::drawName( const Handle(Prs3d_Presentation)& thePrs )
   aGroup->SetPrimitivesAspect( anAspectText3d );
 
   const char* aName = getIO()->getName();
-#if OCC_VERSION_LARGE > 0x07040000
+#if OCC_VERSION_LARGE >= 0x070400ff
   Handle(Graphic3d_Text) aText = new Graphic3d_Text (16.);
   aText->SetText (aName);
   aText->SetPosition (aCenter);
