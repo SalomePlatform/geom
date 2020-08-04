@@ -52,6 +52,7 @@
 #include <GeomFill_CorrectedFrenet.hxx>
 #include <BRepOffsetAPI_MakePipe.hxx>
 #include <BRepOffsetAPI_MakePipeShell.hxx>
+#include <BRepOffsetAPI_ThruSections.hxx>
 
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
@@ -1280,6 +1281,44 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
       }
   }
   else {
+    // old implementation without splitting
+
+    // Generally, we should better use BRepOffsetAPI_ThruSections algorithm if
+    //   1) the path is a polyline, and
+    //   2) all break points of the path have correspondent sections
+    bool doThruSections = false;
+    if (!theWithContact && !theWithCorrect && theGroups == NULL &&
+        nbBases == Edges.Length() + 1) {
+      doThruSections = true;
+      // check if all edges are lines
+      Standard_Real aFP, aLP;
+      for (int ie = 1; ie <= Edges.Length() && doThruSections; ie++) {
+        TopoDS_Edge anE = TopoDS::Edge(Edges.Value(ie));
+        Handle(Geom_Curve) aC = BRep_Tool::Curve(anE, aFP, aLP);
+        if (!aC.IsNull()) {
+          while(aC->IsKind(STANDARD_TYPE(Geom_TrimmedCurve))) {
+            Handle(Geom_TrimmedCurve) aTc = Handle(Geom_TrimmedCurve)::DownCast(aC);
+            aC = aTc->BasisCurve();
+          }
+          if (!aC->IsKind(STANDARD_TYPE(Geom_Line)))
+            doThruSections = false;
+        }
+      }
+    }
+    
+    if (doThruSections) {
+      BRepOffsetAPI_ThruSections aBuilder (NeedCreateSolid, Standard_True, Precision::Confusion()*10.0);
+      aBuilder.CheckCompatibility(Standard_False);
+
+      for (int ibase = 1; ibase <= nbBases; ibase++) {
+        TopoDS_Shape aBase = aSeqBases.Value(ibase);
+        aBuilder.AddWire(TopoDS::Wire(aBase));
+      }
+
+      aBuilder.Build();
+      aShape = aBuilder.Shape();
+    }
+    else {
       // old implementation without splitting
       BRepOffsetAPI_MakePipeShell aBuilder(aWirePath);
       GeomFill_Trihedron theBestMode = EvaluateBestSweepMode(aWirePath);
@@ -1358,6 +1397,7 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
         for (j = 1; j <=usedBases.Length(); j++)
           aBuilder.Delete(usedBases.Value(j));
       }
+    }
   }
 
   return aShape;
