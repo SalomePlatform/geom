@@ -52,6 +52,7 @@
 #include <BRep_Builder.hxx>
 
 #include <BRepAdaptor_Surface.hxx>
+#include <BRepBndLib.hxx>
 
 #include <BRepTools.hxx>
 #include <BRepTools_Modifier.hxx>
@@ -84,6 +85,8 @@
 #include <Geom2d_Curve.hxx>
 
 #include <TColgp_SequenceOfPnt2d.hxx>
+
+#include <Basics_OCCTVersion.hxx>
 
 static Standard_Real ComputeMaxTolOfFace(const TopoDS_Face& theFace)
 {
@@ -230,6 +233,11 @@ TopoDS_Shape BlockFix::RefillProblemFaces (const TopoDS_Shape& aShape)
 {
   Standard_Integer NbSamples = 10;
 
+#if OCC_VERSION_LARGE > 0x07040000
+  TopTools_IndexedDataMapOfShapeListOfShape VFmap;
+  TopExp::MapShapesAndUniqueAncestors(aShape, TopAbs_VERTEX, TopAbs_FACE, VFmap);
+#endif
+
   TopTools_ListOfShape theFaces;
 
   TopExp_Explorer Explo(aShape, TopAbs_FACE);
@@ -272,7 +280,18 @@ TopoDS_Shape BlockFix::RefillProblemFaces (const TopoDS_Shape& aShape)
   {
     TopoDS_Face aFace = TopoDS::Face(itl.Value());
     aFace.Orientation(TopAbs_FORWARD);
+
+    //Compute proper tolerance
     Standard_Real MaxTolOfFace = ComputeMaxTolOfFace(aFace);
+#if OCC_VERSION_LARGE > 0x07040000
+    Bnd_Box aBndBox;
+    BRepBndLib::Add(aFace, aBndBox);
+    Standard_Real Xmin, Ymin, Zmin, Xmax, Ymax, Zmax;
+    aBndBox.Get(Xmin, Ymin, Zmin, Xmax, Ymax, Zmax);
+    Standard_Real LinSize = Min(Xmax - Xmin, Min(Ymax - Ymin, Zmax - Zmin));
+    Standard_Real LinTol = Max(0.001*LinSize, 1.5*MaxTolOfFace);
+#endif
+    
     BRepAdaptor_Surface BAsurf(aFace, Standard_False);
     BRepOffsetAPI_MakeFilling Filler(3, 10);
     TopExp_Explorer Explo(aFace, TopAbs_EDGE);
@@ -284,6 +303,7 @@ TopoDS_Shape BlockFix::RefillProblemFaces (const TopoDS_Shape& aShape)
         continue;
       
       Filler.Add(anEdge, GeomAbs_C0);
+      //Filler.Add(anEdge, aFace, GeomAbs_G1);
     }
     Standard_Real Umin, Umax, Vmin, Vmax;
     BRepTools::UVBounds(aFace, Umin, Umax, Vmin, Vmax);
@@ -327,14 +347,26 @@ TopoDS_Shape BlockFix::RefillProblemFaces (const TopoDS_Shape& aShape)
           }
         }
       Standard_Real MaxDist = Sqrt(MaxSqDist);
+#if OCC_VERSION_LARGE > 0x07040000
+      if (MaxDist < LinTol)
+#else
       if (MaxDist < Max(1.e-4, 1.5*MaxTolOfFace))
+#endif
       {
         TopTools_IndexedMapOfShape Emap;
+#if OCC_VERSION_LARGE > 0x07040000
+        TopTools_MapOfShape Vmap;
+#endif
         TopExp::MapShapes(aFace, TopAbs_EDGE, Emap);
         for (Standard_Integer i = 1; i <= Emap.Extent(); i++)
         {
           TopoDS_Edge anEdge = TopoDS::Edge(Emap(i));
           anEdge.Orientation(TopAbs_FORWARD);
+#if OCC_VERSION_LARGE > 0x07040000
+          TopoDS_Vertex V1, V2;
+          TopExp::Vertices(anEdge, V1, V2);
+          TopTools_ListOfShape ListV1, ListV2;
+#endif
           TopTools_ListOfShape Ledge;
           if (!BRep_Tool::Degenerated(anEdge) &&
               !BRepTools::IsReallyClosed(anEdge, aFace))
@@ -344,8 +376,32 @@ TopoDS_Shape BlockFix::RefillProblemFaces (const TopoDS_Shape& aShape)
               TopoDS_Edge NewEdge = TopoDS::Edge(Ledges.First());
               Ledge.Append(NewEdge.Oriented(TopAbs_FORWARD));
             }
+
+#if OCC_VERSION_LARGE > 0x07040000
+            TopoDS_Vertex NewV1 = TopoDS::Vertex(Filler.Generated(V1).First());
+            ListV1.Append(NewV1.Oriented(TopAbs_FORWARD));
+
+            if (!V1.IsSame(V2)) {
+              TopoDS_Vertex NewV2 = TopoDS::Vertex(Filler.Generated(V2).First());
+              ListV2.Append(NewV2.Oriented(TopAbs_FORWARD));
+            }
+#endif
           }
           aSubst.Substitute(anEdge, Ledge);
+#if OCC_VERSION_LARGE > 0x07040000
+          if (!Vmap.Contains(V1) &&
+              (!ListV1.IsEmpty() || VFmap.FindFromKey(V1).Extent() == 1))
+          {
+            aSubst.Substitute(V1, ListV1);
+            Vmap.Add(V1);
+          }
+          if (!Vmap.Contains(V2) &&
+              (!ListV2.IsEmpty() || VFmap.FindFromKey(V2).Extent() == 1))
+          {
+            aSubst.Substitute(V2.Oriented(TopAbs_FORWARD), ListV2);
+            Vmap.Add(V2);
+          }
+#endif
         }
         TopTools_ListOfShape Lface;
         BRepAdaptor_Surface NewBAsurf(aNewFace);
