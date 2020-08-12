@@ -28,6 +28,7 @@
 #include "GEOM_Object.hxx"
 
 #include <BRepBuilderAPI_MakeEdge.hxx>
+#include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <Geom_Curve.hxx>
 #include <Precision.hxx>
@@ -120,8 +121,12 @@ Standard_Integer GEOMImpl_VectorDriver::Execute(Handle(TFunction_Logbook)& log) 
     if (P1.Distance(P2) < Precision::Confusion()) {
       Standard_ConstructionError::Raise("The end points are too close");
     }
-    aShape = BRepBuilderAPI_MakeEdge(V1, V2).Shape();
-  } 
+    TopoDS_Edge anEdge = BRepBuilderAPI_MakeEdge(V1, V2);
+    Standard_Real aTol = Max(BRep_Tool::Tolerance(V1), BRep_Tool::Tolerance(V2));
+    BRep_Builder aBuilder;
+    aBuilder.UpdateEdge(anEdge, aTol);
+    aShape = anEdge;
+  }
   else if (aType == VECTOR_TANGENT_CURVE_PAR) {
     Handle(GEOM_Function) aRefCurve = aPI.GetCurve();
     TopoDS_Shape aRefShape = aRefCurve->GetValue();

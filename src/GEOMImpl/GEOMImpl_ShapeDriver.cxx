@@ -1677,9 +1677,10 @@ TopoDS_Shape GEOMImpl_ShapeDriver::MakeIsoline
   Handle(Geom_Surface) aSurface   = BRep_Tool::Surface(theFace);
   Handle(Geom_Curve)   anIsoCurve = (IsUIso ?
     aSurface->UIso(theParameter) : aSurface->VIso(theParameter));
-  Handle(Geom2d_Curve) aPIsoCurve =
-    aHatcher.GetHatching(aHatchingIndex);
-  const Standard_Real  aTol = Precision::Confusion();
+  Handle(Geom2d_Curve) aPIsoCurve = aHatcher.GetHatching(aHatchingIndex);
+
+  Standard_Real aTol = BRep_Tool::MaxTolerance(theFace, TopAbs_EDGE);
+
   Standard_Integer     anIDom = 1;
   Standard_Real        aV1;
   Standard_Real        aV2;
@@ -1695,6 +1696,10 @@ TopoDS_Shape GEOMImpl_ShapeDriver::MakeIsoline
 
         // Update it with a parametric curve on face.
         aBuilder.UpdateEdge(anEdge, aPIsoCurve, theFace, aTol);
+        for (TopExp_Explorer ExV (anEdge, TopAbs_VERTEX); ExV.More(); ExV.Next()) {
+          TopoDS_Vertex V = TopoDS::Vertex(ExV.Current());
+          aBuilder.UpdateVertex(V, aTol);
+        }
         aNbEdges++;
 
         if (aNbEdges > 1) {
