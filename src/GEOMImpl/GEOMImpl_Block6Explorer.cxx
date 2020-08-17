@@ -1360,8 +1360,15 @@ TCollection_AsciiString GEOMImpl_Block6Explorer::MakeAnyFace (const TopoDS_Wire&
       aHealer.SetParameter("DropSmallEdges.Tolerance3d", 1e-05);
 
       aHealer.Perform(aFace1, aFace2);
-      if (aHealer.isDone())
-        theResult = aFace2;
+      if (aHealer.isDone()) {
+        // Check nb of edges in the resulting face, as sometimes
+        // some degenerated edges are added for unknown reason
+        Standard_Integer nbEdgesNew = 0;
+        TopExp_Explorer aFE (aFace2, TopAbs_EDGE);
+        for (; aFE.More(); aFE.Next()) nbEdgesNew++;
+        if (nbEdgesNew == nbEdges)
+          theResult = aFace2;
+      }
     }
   }
   // 12.04.2006 for PAL12149 end
