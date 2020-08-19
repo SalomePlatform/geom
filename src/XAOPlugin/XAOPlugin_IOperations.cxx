@@ -136,6 +136,9 @@ bool XAOPlugin_IOperations::exportGroups( std::list<Handle(GEOM_Object)> groupLi
     XAO::Dimension dim = shapeEnumToDimension(shapeGroup);
     XAO::Group* group = xaoObject->addGroup(dim, currGroup->GetName().ToCString());
 
+    // Group can be empty
+    if (groupIds.IsNull()) continue;
+
     switch (shapeGroup)
     {
     case TopAbs_VERTEX:
@@ -531,13 +534,19 @@ bool XAOPlugin_IOperations::ImportXAO( const char* fileName,
 
     // build an array with the indexes of the sub shapes
     int nbElt = xaoGroup->count();
-    Handle(TColStd_HArray1OfInteger) array = new TColStd_HArray1OfInteger(1, nbElt);
-    int j = 0;
-    for (std::set<int>::iterator it = xaoGroup->begin(); it != xaoGroup->end(); ++it)
-    {
-      int index = (*it);
-      std::string ref = xaoGeometry->getElementReference(xaoGroup->getDimension(), index);
-      array->SetValue(++j, XAO::XaoUtils::stringToInt(ref));
+    Handle(TColStd_HArray1OfInteger) array;
+    if (nbElt > 0) {
+      array = new TColStd_HArray1OfInteger(1, nbElt);
+      int j = 0;
+      for (std::set<int>::iterator it = xaoGroup->begin(); it != xaoGroup->end(); ++it) {
+        int index = (*it);
+        std::string ref = xaoGeometry->getElementReference(xaoGroup->getDimension(), index);
+        array->SetValue(++j, XAO::XaoUtils::stringToInt(ref));
+      }
+    }
+    else { // empty group
+      array = new TColStd_HArray1OfInteger(1, 1);
+      array->SetValue(1, -1);
     }
 
     // create the group with the array of sub shapes indexes
