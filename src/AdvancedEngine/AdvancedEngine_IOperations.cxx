@@ -459,31 +459,32 @@ bool AdvancedEngine_IOperations::MakeGroups(Handle(GEOM_Object) theShape, int sh
 
 #ifdef FIND_GROUPS_BY_POINTS
   // BEGIN: new groups search
-
-  //              W2  R2
-  //            .----.-----.----.
-  //           e|    |  |  |    |
-  //            |    |  |  |    |
-  //            .    |  |  |    .
-  //         g / ''..|  |  |..'' \
-  //       f  /      '''''''      \
-  //  .---.--'..     |  |  |     ..'--.---.
-  //  |a    \   '''...........'''   /     |
-  //  |-------\------'  |  '------/-------.
-  //  |         \       |       /         |
-  // c|           \     |     /           |
-  //  |    R1       \   |   /             |
-  //  |               \ | /               |
-  //  ._________________|_________________.
-  //  |       L1        |                 |
-  //  |                 |                 |
-  //  |                 |                 |
-  // b|                 |                 |
-  //  |                 |                 |
-  //  |-----------------|-----------------|
-  //  |    W1           |                 |
-  //  '-----------------'-----------------'
-  //          d
+  /*
+                  W2  R2
+                .----.-----.----.
+               e|    |  |  |    |
+                |    |  |  |    |
+                .    |  |  |    .
+             g / ''..|  |  |..'' \
+           f  /      '''''''      \
+      .---.--'..     |  |  |     ..'--.---.
+      |a    \   '''...........'''   /     |
+      |-------\------'  |  '------/-------.
+      |         \       |       /         |
+     c|           \     |     /           |
+      |    R1       \   |   /             |
+      |               \ | /               |
+      ._________________|_________________.
+      |       L1        |                 |
+      |                 |                 |
+      |                 |                 |
+     b|                 |                 |
+      |                 |                 |
+      |-----------------|-----------------|
+      |    W1           |                 |
+      '-----------------'-----------------'
+              d
+  */
 
   // "Thickness" group (a)
   gp_Pnt aPntA (-theL1, 0, theR1 + theW1/2.);
@@ -1338,7 +1339,7 @@ bool AdvancedEngine_IOperations::MakePipeTShapePartition(Handle(GEOM_Object) the
     else {
       Handle(GEOM_Object) P1, P2, P3, P4, P5, P6;
       int idP1, idP2, idP3, idP4;
-      int PZX, PZY;
+      int PZX=0, PZY=0; // todo: PZX, PZY must be explicitly initialized to avoid warning (see below)
       double ZX=0, ZY=0;
       std::vector<int> LX;
       std::vector<int> LY;
@@ -1412,9 +1413,9 @@ bool AdvancedEngine_IOperations::MakePipeTShapePartition(Handle(GEOM_Object) the
         idP3 = LY.at(1);
 
       P1 = Handle(GEOM_Object)::DownCast(extremVertices->Value(idP1));
-      P2 = Handle(GEOM_Object)::DownCast(extremVertices->Value(idP2));
+      P2 = Handle(GEOM_Object)::DownCast(extremVertices->Value(idP2)); // todo: PZX must be explicitly initialized to avoid warning (see above)
       P3 = Handle(GEOM_Object)::DownCast(extremVertices->Value(idP3));
-      P4 = Handle(GEOM_Object)::DownCast(extremVertices->Value(idP4));
+      P4 = Handle(GEOM_Object)::DownCast(extremVertices->Value(idP4)); // todo: PZY must be explicitly initialized to avoid warning (see above)
 
       Handle(GEOM_Object) Cote_1 = myBasicOperations->MakeLineTwoPnt(P1, vi1);
       if (Cote_1.IsNull()) {
@@ -1563,7 +1564,7 @@ bool AdvancedEngine_IOperations::MakePipeTShapePartition(Handle(GEOM_Object) the
 // Mirror and glue faces
 bool AdvancedEngine_IOperations::MakePipeTShapeMirrorAndGlue(Handle(GEOM_Object) theShape,
                                                              double theR1, double theW1, double theL1,
-                                                             double theR2, double theW2, double theL2)
+                                                             double /*theR2*/, double /*theW2*/, double theL2)
 {
   SetErrorCode(KO);
 
@@ -1682,16 +1683,17 @@ TopoDS_Shape AdvancedEngine_IOperations::MakePipeTShapeThicknessReduction
 {
   // Add thickness reduction elements
   // at the three extremities: Left, Right and Incident
-  //
-  // ---------------------.
-  //   W                   \
-  // ---------------------. \
-  //   ^                   \ '-----------------.
-  //   |R                   \        Wthin     |
-  //   |                     '-----------------'
-  //   v                             Rthin
-  // --.--.--.--.--.--.--.--.--.--.--.--.--.--.--
-  //                     Ltrans    Lthin
+  /*
+     ---------------------.
+       W                   \
+     ---------------------. \
+       ^                   \ '-----------------.
+       |R                   \        Wthin     |
+       |                     '-----------------'
+       v                             Rthin
+     --.--.--.--.--.--.--.--.--.--.--.--.--.--.--
+                         Ltrans    Lthin
+  */
 
   TopoDS_Shape aResult = theShape;
   double aTol = Precision::Confusion();
@@ -1805,15 +1807,17 @@ TopoDS_Shape AdvancedEngine_IOperations::MakeThicknessReduction (gp_Ax2 theAxes,
   }
   bool isThinPart = (Lthin > aTol);
 
-  //     .
-  //   W |\
-  //     . \
-  //   ^  \ '-----------------.
-  //   |R  \|                 | Wthin
-  //   |    '-----------------'
-  //   v                        Rthin
-  // --.--.--.--.--.--.--.--.--.--.--.--.--> theAxes.Direction()
-  //     Ltrans     Lthin
+  /*
+         .
+       W |\
+         . \
+       ^  \ '-----------------.
+       |R  \|                 | Wthin
+       |    '-----------------'
+       v                        Rthin
+     --.--.--.--.--.--.--.--.--.--.--.--.--> theAxes.Direction()
+         Ltrans     Lthin
+  */
 
   double RExt = R + W;
   double RthinExt = Rthin + Wthin;

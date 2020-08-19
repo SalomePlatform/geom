@@ -116,7 +116,7 @@ namespace GEOMUtils
    * \brief Sort shapes in the list by their coordinates.
    * \param SL The list of shapes to sort.
    */
-  struct CompareShapes : public std::binary_function<TopoDS_Shape, TopoDS_Shape, bool>
+  struct CompareShapes //: public std::binary_function<TopoDS_Shape, TopoDS_Shape, bool>
   {
     CompareShapes (bool isOldSorting)
       : myIsOldSorting(isOldSorting) {}
@@ -390,6 +390,6 @@ namespace GEOMUtils
                                       const double              theTolShape,
                                       const double              theTolRef);
 
-};
+}
 
 #endif

@@ -86,7 +86,7 @@ std::vector<int> GEOM_Swig_LocalSelector::getSelection()
   std::vector<int> ids;
   for (int i = 1; i <= n; i++)
     ids.push_back(aMap(i));
-  for (int i =0; i < ids.size(); i++)
+  for (int i =0; i < (int)ids.size(); i++)
     {
       MESSAGE("ids[" << i << "] = " << ids[i]);
     }

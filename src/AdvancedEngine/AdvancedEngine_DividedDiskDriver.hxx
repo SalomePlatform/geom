@@ -33,7 +33,7 @@ class gp_Pnt;
 class gp_Dir;
 class gp_Ax3;
 
-DEFINE_STANDARD_HANDLE( AdvancedEngine_DividedDiskDriver, GEOM_BaseDriver );
+DEFINE_STANDARD_HANDLE( AdvancedEngine_DividedDiskDriver, GEOM_BaseDriver )
 
 class AdvancedEngine_DividedDiskDriver : public GEOM_BaseDriver
 {

@@ -420,7 +420,7 @@ void AdvancedGUI_PipeTShapeDlg::ApplyNewDimensions()
 // function : UpdatePicture()
 // purpose  :
 //=================================================================================
-void AdvancedGUI_PipeTShapeDlg::UpdatePicture (QWidget* old, QWidget* now)
+void AdvancedGUI_PipeTShapeDlg::UpdatePicture (QWidget* /*old*/, QWidget* now)
 {
   if (ChamferGroupParams->GroupBox1->isChecked())
     if (now == MainTubeGroupParams->SpinBox_DX)
@@ -504,7 +504,7 @@ void AdvancedGUI_PipeTShapeDlg::SetPosition (bool isChecked)
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void AdvancedGUI_PipeTShapeDlg::ValueChangedInSpinBox (double newValue)
+void AdvancedGUI_PipeTShapeDlg::ValueChangedInSpinBox (double /*newValue*/)
 {
   if (JunctionPointsSel->GroupBox1->isChecked() && myOkPoint1 && myOkPoint2 && myOkPoint3)
     CheckCompatiblePosition(myPoint1, myPoint2, myPoint3, 0.01);

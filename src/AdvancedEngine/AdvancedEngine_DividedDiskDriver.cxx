@@ -523,4 +523,4 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-IMPLEMENT_STANDARD_RTTIEXT (AdvancedEngine_DividedDiskDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (AdvancedEngine_DividedDiskDriver,GEOM_BaseDriver)

@@ -169,7 +169,7 @@ MeasureGUI_DimensionInteractor::Operation
     return Operation_None;
   }
 
-  Standard_Real anAngTolerance = M_PI / 30.0; // 6 degree tolerance
+  //Standard_Real anAngTolerance = M_PI / 30.0; // 6 degree tolerance
 
   switch ( anOwner->SelectionMode() )
   {
@@ -330,7 +330,7 @@ void MeasureGUI_DimensionInteractor::MoveFlyoutFree( const Handle(V3d_View)& the
   gp_Pnt aPointOnBase = gp_Pnt( aFirstPoint.XYZ() + aBaseDir.XYZ() * aPointVector.Dot( aBaseDir ) );
 
   // snapping tolerance
-  Quantity_Length aSize[2];
+  Standard_Real aSize[2];
   theView->Size( aSize[0], aSize[1] );
   Standard_Real aSnapTolerance = 1e-2 * Max( aSize[0], aSize[1] );
 
@@ -618,7 +618,7 @@ void MeasureGUI_DimensionInteractor::MoveText( const Handle(V3d_View)& theView,
     const gp_Pnt& aFirstPoint  = anAngle->FirstPoint();
     const gp_Pnt& aSecondPoint = anAngle->SecondPoint();
 
-    Standard_Boolean isPositive = anAngle->GetFlyout() > 0.0;
+    //Standard_Boolean isPositive = anAngle->GetFlyout() > 0.0;
 
     gp_Dir aFirstDir  = gce_MakeDir( aCenterPoint, aFirstPoint );
     gp_Dir aSecondDir = gce_MakeDir( aCenterPoint, aSecondPoint );
@@ -871,7 +871,7 @@ gp_Pnt MeasureGUI_DimensionInteractor::ProjectPlane( const Handle(V3d_View)& the
 Standard_Real MeasureGUI_DimensionInteractor::SensitivityTolerance( const Handle(V3d_View)& theView )
 {
   // snapping tolerance
-  Quantity_Length aSize[2];
+  Standard_Real aSize[2];
   theView->Size( aSize[0], aSize[1] );
   return 1e-2 * Max( aSize[0], aSize[1] );
 }

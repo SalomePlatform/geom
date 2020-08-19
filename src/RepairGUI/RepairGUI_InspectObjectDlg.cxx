@@ -237,8 +237,8 @@ QWidget* RepairGUI_InspectObjectDlg::Delegate::createEditor( QWidget* parent,
 // purpose  : Constructs a RepairGUI_InspectObjectDlg which is a child of 'parent'.
 //=================================================================================
 RepairGUI_InspectObjectDlg::RepairGUI_InspectObjectDlg(GeometryGUI *theGeomGUI, SUIT_Desktop* parent )
-: GEOMBase_Helper       (parent),
-  QDialog               (parent),
+: QDialog               (parent),
+  GEOMBase_Helper       (parent),
   myGeomGUI             (theGeomGUI),
   myTreeObjects         (0),
   myFilteredTreeObjects (0),
@@ -247,14 +247,14 @@ RepairGUI_InspectObjectDlg::RepairGUI_InspectObjectDlg(GeometryGUI *theGeomGUI, 
   myTolFilterGrp        (0),
   myShapeTypeBtnGrp     (0),
   myComparisonCompo     (0),
+  myTolEdit             (0),
   myMinTolValLabel      (0),
   myMaxTolValLabel      (0),
-  myTolEdit             (0),
   myTreesLayout         (0),
-  myTransparency        (0.0),
-  myIsSelectAll         (false),
   myMaxTol              (-1.),
-  myMinTol              (-1.)
+  myMinTol              (-1.),
+  myIsSelectAll         (false),
+  myTransparency        (0.0)
 {
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   QIcon iconSelect( resMgr->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
@@ -1214,7 +1214,7 @@ void RepairGUI_InspectObjectDlg::clickOnPublish()
   GEOM::ListOfGO_var aList = anOper->MakeSubShapes( aMainObject, anArray );
 
   // publish sub-shapes
-  for ( int i = 0; i < aList->length(); i++ )
+  for ( int i = 0; i < (int)aList->length(); i++ )
     GeometryGUI::GetGeomGen()->AddInStudy( aList[i],
                                            anIndices.values().at(i).toStdString().c_str(), aMainObject );
 

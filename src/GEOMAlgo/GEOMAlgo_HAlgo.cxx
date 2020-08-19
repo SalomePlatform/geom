@@ -27,7 +27,7 @@
 //
 #include <GEOMAlgo_HAlgo.hxx>
 
-IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_HAlgo, Standard_Transient);
+IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_HAlgo, Standard_Transient)
 
 //=======================================================================
 // function:

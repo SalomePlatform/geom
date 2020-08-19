@@ -396,7 +396,7 @@ GEOM::GEOM_IOperations_ptr XAOPlugin_ExportDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool XAOPlugin_ExportDlg::isValid(QString& msg)
+bool XAOPlugin_ExportDlg::isValid(QString& /*msg*/)
 {
   // check shape
   if (ledShape->text().isEmpty())

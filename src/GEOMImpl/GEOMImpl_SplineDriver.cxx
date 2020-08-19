@@ -166,12 +166,14 @@ Standard_Integer GEOMImpl_SplineDriver::Execute(Handle(TFunction_Logbook)& log) 
           }
         }
         if (nearest > 0 && nearest != i + 1) {
-          // Keep given order of points to use it in case of equidistant candidates
-          //               .-<---<-.
-          //              /         \
-          // o  o  o  c  o->o->o->o->n  o  o
-          //          |  |           |
-          //          i i+1       nearest
+          /*====================================================================
+          Keep given order of points to use it in case of equidistant candidates
+                         .-<---<-.
+                        /         \ 
+           o  o  o  c  o->o->o->o->n  o  o
+                    |  |           |
+                    i i+1       nearest
+          ======================================================================*/
           gp_Pnt p = points->Value(nearest);
           for (int j = nearest; j > i+1; j--)
             points->SetValue(j, points->Value(j-1));
@@ -397,4 +399,4 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_SplineDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_SplineDriver,GEOM_BaseDriver)

@@ -213,7 +213,7 @@ bool EntityGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 // function : 0nMousePress()
 // purpose  : [static] manage mouse events
 //=================================================================================
-bool EntityGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* theViewWindow )
+bool EntityGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* /*parent*/, SUIT_ViewWindow* theViewWindow )
 {
   QDialog* aDlg = getGeometryGUI()->GetActiveDialogBox();
 
@@ -295,7 +295,7 @@ bool EntityGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWi
 // function : 0nMouseRelease()
 // purpose  : [static] manage mouse events
 //=================================================================================
-bool EntityGUI::OnMouseRelease( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* theViewWindow )
+bool EntityGUI::OnMouseRelease( QMouseEvent* pe, SUIT_Desktop* /*parent*/, SUIT_ViewWindow* theViewWindow )
 {
   ((OCCViewer_ViewWindow*)theViewWindow)->setSketcherStyle(false);
 #ifdef WITH_OPENCV
@@ -324,7 +324,7 @@ bool EntityGUI::OnMouseRelease( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_View
 // function : 0nMouseMove()
 // purpose  : [static] manage mouse events
 //=================================================================================
-bool EntityGUI::OnMouseMove( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* theViewWindow )
+bool EntityGUI::OnMouseMove( QMouseEvent* pe, SUIT_Desktop* /*parent*/, SUIT_ViewWindow* theViewWindow )
 {
   QDialog* aDlg = getGeometryGUI()->GetActiveDialogBox();
   
@@ -390,7 +390,7 @@ void EntityGUI::DisplaySimulationShape( const TopoDS_Shape& S1, const TopoDS_Sha
     }
     ic->UpdateCurrentViewer();
   }
-  catch( Standard_Failure ) {
+  catch( Standard_Failure& ) {
     MESSAGE( "Exception caught in EntityGUI::DisplaySimulationShape" );
   } 
 }

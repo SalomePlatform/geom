@@ -25,7 +25,7 @@
      <property name="title">
       <string>Values</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout" columnstretch="0,1,0">
+     <layout class="QGridLayout" name="gridLayout1" columnstretch="0,1,0">
       <item row="0" column="0">
        <widget class="QLabel" name="TextLabel1">
         <property name="sizePolicy">

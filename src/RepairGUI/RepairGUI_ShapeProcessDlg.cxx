@@ -524,7 +524,7 @@ void RepairGUI_ShapeProcessDlg::loadDefaults()
   anOp->GetShapeProcessParameters( anOperators, aParams, aValues );
 
   // check the default items-operators
-  for ( int i = 0; i < anOperators->length(); i++ ) {
+  for ( int i = 0; i < (int)anOperators->length(); i++ ) {
     //MESSAGE("-->"<<(const char*)anOperators[i]);
     QList<QListWidgetItem*> items = myOpList->findItems ( (const char*)anOperators[i], Qt::MatchFixedString );
     if ( items.count() ) 
@@ -541,7 +541,7 @@ void RepairGUI_ShapeProcessDlg::loadDefaults()
     if ( aParams->length() != aValues->length() )
       continue;
 
-    for ( int j = 0; j < aParams->length(); j++ ) {
+    for ( int j = 0; j < (int)aParams->length(); j++ ) {
       QWidget* aCtrl = getControl( (const char*)aParams[j] );
       setValue( aCtrl, set_convert( (const char*)aParams[j], aValues[j] ));
     }
@@ -684,7 +684,7 @@ bool RepairGUI_ShapeProcessDlg::execute( ObjectList& objects )
   */// -----------
 
   QStringList anErrorObjNames;
-  for ( int i = 0; i < myObjects->length(); i++ ) {
+  for ( int i = 0; i < (int)myObjects->length(); i++ ) {
     GEOM::GEOM_Object_var obj = myObjects[i];
     GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow( getOperation() );
     GEOM::GEOM_Object_var anObj = anOper->ProcessShape( obj, anOperators, aParams, aValues );
@@ -696,10 +696,10 @@ bool RepairGUI_ShapeProcessDlg::execute( ObjectList& objects )
       {
         QStringList aParameters;
 
-        for ( int i = 0; i < anOperators->length(); i++ )
+        for ( int i = 0; i < (int)anOperators->length(); i++ )
           aParameters << QString( anOperators[i] );
 
-        for ( int i = 0; i < aParams->length(); i++ )
+        for ( int i = 0; i < (int)aParams->length(); i++ )
           aParameters << QString( aParams[i] );
 
         aParameters << getTexts( aParams );
@@ -714,7 +714,7 @@ bool RepairGUI_ShapeProcessDlg::execute( ObjectList& objects )
   if ( !anErrorObjNames.empty() )
     MESSAGE( "ERRORS occurred while processing the following objects: " << anErrorObjNames.join( " " ).toLatin1().data() );
     
-  return anErrorObjNames.size() < myObjects->length(); // true if at least one object was OK, false if ALL objects were nil after Healing.
+  return anErrorObjNames.size() < (int)myObjects->length(); // true if at least one object was OK, false if ALL objects were nil after Healing.
 }
 
 //=================================================================================
@@ -839,14 +839,14 @@ GEOM::string_array* RepairGUI_ShapeProcessDlg::getParameters( const GEOM::string
   int i = 0, j = 0;
 
   // calculate the length of parameters
-  for ( i = 0, j = 0; i < theOperators.length(); i++ )
+  for ( i = 0, j = 0; i < (int)theOperators.length(); i++ )
     j += myValMap[ QString( theOperators[i].in() ) ].size();
   
   // set the new length of parameters
   aParams->length( j );
 
   // fill the parameters
-  for ( i = 0, j = 0; i < theOperators.length(); i++ ) {
+  for ( i = 0, j = 0; i < (int)theOperators.length(); i++ ) {
     QStringList aParamLst = myValMap[ QString( theOperators[i].in() ) ];
     foreach ( QString aParam, aParamLst ) {
       aParams[j++] = CORBA::string_dup( aParam.toLatin1().constData() );
@@ -868,7 +868,7 @@ GEOM::string_array* RepairGUI_ShapeProcessDlg::getValues( const GEOM::string_arr
   GEOM::string_array_var aValues = new GEOM::string_array();
   aValues->length( theParams.length() );
 
-  for ( int i = 0; i < theParams.length(); i++ ) {
+  for ( int i = 0; i < (int)theParams.length(); i++ ) {
     QWidget* aCtrl = getControl( (const char*)theParams[i] );
     if ( aCtrl )
       aValues[i] = get_convert( (const char*)theParams[i], getValue( aCtrl ));
@@ -885,7 +885,7 @@ QStringList RepairGUI_ShapeProcessDlg::getTexts( const GEOM::string_array& thePa
 {
   QStringList aTexts;
     
-  for ( int i = 0; i < theParams.length(); i++ ) {
+  for ( int i = 0; i < (int)theParams.length(); i++ ) {
     QWidget* aCtrl = getControl( (const char*)theParams[i] );
     if ( aCtrl )
     {
@@ -1000,7 +1000,7 @@ QList<GEOM::GeomObjPtr> RepairGUI_ShapeProcessDlg::getSourceObjects()
 {
   QList<GEOM::GeomObjPtr> res;
   GEOM::ListOfGO aListPtr(myObjects);
-  for (int i = 0; i < aListPtr.length(); i++) {
+  for (int i = 0; i < (int)aListPtr.length(); i++) {
     GEOM::GeomObjPtr aGeomObjPtr(aListPtr[i]);
     res << aGeomObjPtr;
   }

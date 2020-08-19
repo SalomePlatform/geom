@@ -636,6 +636,7 @@ void Sketcher_Profile::ShapeFunctor::addSegmentLength( const TCollection_AsciiSt
 void Sketcher_Profile::ShapeFunctor::addSegmentX( const TCollection_AsciiString& x,
                                                   int CurrentIndex )
 {
+  (void)CurrentIndex; // unused in release mode
   myMove = none;
   myLength = x.RealValue();
   if ( Abs( myDx ) < Precision::Confusion() ) {
@@ -656,6 +657,7 @@ void Sketcher_Profile::ShapeFunctor::addSegmentX( const TCollection_AsciiString&
 void Sketcher_Profile::ShapeFunctor::addSegmentY( const TCollection_AsciiString& y,
                                                   int CurrentIndex )
 {
+  (void)CurrentIndex; // unused in release mode
   myMove = none;
   myLength = y.RealValue();
   if ( Abs( myDy ) < Precision::Confusion() ) {
@@ -1380,7 +1382,7 @@ void Sketcher_Profile::DumpFunctor::addSegmentLength( const TCollection_AsciiStr
   \internal
 */
 void Sketcher_Profile::DumpFunctor::addSegmentX( const TCollection_AsciiString& x,
-                                                 int CurrentIndex )
+                                                 int /*CurrentIndex*/ )
 {
   myDescr += "sk.addSegmentX(";
   myDescr += x + ")";
@@ -1393,7 +1395,7 @@ void Sketcher_Profile::DumpFunctor::addSegmentX( const TCollection_AsciiString& 
   \internal
 */
 void Sketcher_Profile::DumpFunctor::addSegmentY( const TCollection_AsciiString& y,
-                                                 int CurrentIndex  )
+                                                 int /*CurrentIndex*/  )
 {
   myDescr += "sk.addSegmentY(";
   myDescr += y + ")";
@@ -1408,7 +1410,7 @@ void Sketcher_Profile::DumpFunctor::addSegmentY( const TCollection_AsciiString& 
 */
 void Sketcher_Profile::DumpFunctor::addSegmentAngleLength( const TCollection_AsciiString& angle,
                                                            const TCollection_AsciiString& length,
-                                                           int& CurrentIndex )
+                                                           int& /*CurrentIndex*/ )
 {
   double aAngle = angle.RealValue();
   if ( aAngle == 90 ) {
@@ -1430,7 +1432,7 @@ void Sketcher_Profile::DumpFunctor::addSegmentAngleLength( const TCollection_Asc
 */
 void Sketcher_Profile::DumpFunctor::addSegmentAngleX( const TCollection_AsciiString& angle,
                                                       const TCollection_AsciiString& x,
-                                                      int& CurrentIndex )
+                                                      int& /*CurrentIndex*/ )
 {
   double aAngle = angle.RealValue();
   if ( aAngle == 90 ) {
@@ -1452,7 +1454,7 @@ void Sketcher_Profile::DumpFunctor::addSegmentAngleX( const TCollection_AsciiStr
 */
 void Sketcher_Profile::DumpFunctor::addSegmentAngleY( const TCollection_AsciiString& angle,
                                                       const TCollection_AsciiString& y,
-                                                      int& CurrentIndex )
+                                                      int& /*CurrentIndex*/ )
 {
   double aAngle = angle.RealValue();
   if ( aAngle == 90 ) {
@@ -1476,7 +1478,7 @@ void Sketcher_Profile::DumpFunctor::addSegmentAngleY( const TCollection_AsciiStr
 void Sketcher_Profile::DumpFunctor::addSegmentDirectionLength( const TCollection_AsciiString& dx,
                                                                const TCollection_AsciiString& dy,
                                                                const TCollection_AsciiString& length,
-                                                               int& CurrentIndex )
+                                                               int& /*CurrentIndex*/ )
 {
   myDescr += "sk.addSegmentDirectionLength(";
   myDescr += dx + ", " + dy + ", " + length + ")";
@@ -1493,7 +1495,7 @@ void Sketcher_Profile::DumpFunctor::addSegmentDirectionLength( const TCollection
 void Sketcher_Profile::DumpFunctor::addSegmentDirectionX( const TCollection_AsciiString& dx,
                                                           const TCollection_AsciiString& dy,
                                                           const TCollection_AsciiString& x,
-                                                          int& CurrentIndex )
+                                                          int& /*CurrentIndex*/ )
 {
   myDescr += "sk.addSegmentDirectionX(";
   myDescr += dx + ", " + dy + ", " + x + ")";
@@ -1510,7 +1512,7 @@ void Sketcher_Profile::DumpFunctor::addSegmentDirectionX( const TCollection_Asci
 void Sketcher_Profile::DumpFunctor::addSegmentDirectionY( const TCollection_AsciiString& dx,
                                                           const TCollection_AsciiString& dy,
                                                           const TCollection_AsciiString& y,
-                                                          int& CurrentIndex )
+                                                          int& /*CurrentIndex*/ )
 {
   myDescr += "sk.addSegmentDirectionY(";
   myDescr += dx + ", " + dy + ", " + y + ")";
@@ -1642,7 +1644,7 @@ void Sketcher_Profile::DumpFunctor::addArcRadiusLength( const TCollection_AsciiS
 void Sketcher_Profile::DumpFunctor::addArcAngleRadiusLength( const TCollection_AsciiString& angle,
                                                              const TCollection_AsciiString& radius,
                                                              const TCollection_AsciiString& length ,
-                                                             int& CurrentIndex )
+                                                             int& /*CurrentIndex*/ )
 {
   double aAngle = angle.RealValue();
   if ( aAngle == 90 ) {
@@ -1668,7 +1670,7 @@ void Sketcher_Profile::DumpFunctor::addArcDirectionRadiusLength( const TCollecti
                                                                  const TCollection_AsciiString& dy,
                                                                  const TCollection_AsciiString& radius,
                                                                  const TCollection_AsciiString& length ,
-                                                                 int& CurrentIndex )
+                                                                 int& /*CurrentIndex*/ )
 {
   myDescr += "sk.addArcDirectionRadiusLength(";
   myDescr += dx + ", " + dy + ", " + radius + ", " + length + ")";
@@ -1800,7 +1802,7 @@ TCollection_AsciiString Sketcher_Profile::GetDump( bool* isDone )
   \param cmd sketcher script to parse
   \internal
 */
-void Sketcher_Profile::parse( const TCollection_AsciiString& cmd, Functor* functor )
+void Sketcher_Profile::parse( const TCollection_AsciiString& /*cmd*/, Functor* functor )
 {
   int CurrentIndex = 1;
   int NumberOfArg = 0;

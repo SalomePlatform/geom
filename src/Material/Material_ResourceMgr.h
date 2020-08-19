@@ -33,7 +33,7 @@ class QFileSystemWatcher;
 
 class MATERIAL_SALOME_EXPORT Material_ResourceMgr : public QObject, public QtxResourceMgr
 {
-  Q_OBJECT;
+  Q_OBJECT
 
   class Updater;
 

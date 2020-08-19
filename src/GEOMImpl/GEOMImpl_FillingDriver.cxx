@@ -407,4 +407,4 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_FillingDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_FillingDriver,GEOM_BaseDriver)

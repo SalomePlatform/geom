@@ -182,7 +182,7 @@ void OperationGUI_GetSharedShapesDlg::initTypes()
 // function : ConstructorsClicked()
 // purpose  : Radio button management
 //=================================================================================
-void OperationGUI_GetSharedShapesDlg::ConstructorsClicked (int constructorId)
+void OperationGUI_GetSharedShapesDlg::ConstructorsClicked (int /*constructorId*/)
 {
   disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
   globalSelection();

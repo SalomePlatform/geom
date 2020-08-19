@@ -177,4 +177,4 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_SketcherDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_SketcherDriver,GEOM_BaseDriver)

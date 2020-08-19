@@ -38,7 +38,7 @@ protected:
   virtual                           ~GEOM_VTKPropertyMaterial();
 
 public:
-                                    vtkTypeMacro(GEOM_VTKPropertyMaterial, vtkProperty);
+                                    vtkTypeMacro(GEOM_VTKPropertyMaterial, vtkProperty)
 
                                     vtkSetMacro(Physical, bool);
                                     vtkGetMacro(Physical, bool);

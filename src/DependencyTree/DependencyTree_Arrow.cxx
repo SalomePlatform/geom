@@ -38,11 +38,11 @@ const qreal arrowSize = 20;
 
 DependencyTree_Arrow::DependencyTree_Arrow( DependencyTree_Object* theStartItem,
                                             DependencyTree_Object* theEndItem,
-                                            QGraphicsItem* parent, QGraphicsScene* scene )
+                                            QGraphicsItem* parent, QGraphicsScene* /*scene*/ )
 :QGraphicsLineItem( parent ),
-myIsBiLink( false ),
 myStartItem( theStartItem ),
-myEndItem( theEndItem )
+myEndItem( theEndItem ),
+myIsBiLink( false )
 {
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
 

@@ -37,7 +37,7 @@ class GEOM_Object;
 class TFunction_Driver;
 class GEOM_Engine;
 
-DEFINE_STANDARD_HANDLE( GEOM_Object, GEOM_BaseObject );
+DEFINE_STANDARD_HANDLE( GEOM_Object, GEOM_BaseObject )
 
 class GEOM_Object : public GEOM_BaseObject
 {

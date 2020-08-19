@@ -28,7 +28,7 @@
 
 #include <GEOM_BaseDriver.hxx>
 
-DEFINE_STANDARD_HANDLE( GEOMImpl_OffsetDriver, GEOM_BaseDriver );
+DEFINE_STANDARD_HANDLE( GEOMImpl_OffsetDriver, GEOM_BaseDriver )
 
 class GEOMImpl_OffsetDriver : public GEOM_BaseDriver {
 

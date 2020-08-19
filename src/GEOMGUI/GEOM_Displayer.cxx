@@ -396,7 +396,7 @@ SUIT_SelectionFilter* GEOM_Displayer::getFilter( const int theMode )
 //================================================================
 SUIT_SelectionFilter* GEOM_Displayer::getComplexFilter( const QList<int>* aSubShapes)
 {
-  GEOM_CompoundFilter* aFilter;
+  GEOM_CompoundFilter* aFilter = 0;
 
   if(aSubShapes != NULL ) {
     aFilter = new GEOM_CompoundFilter(getStudy());
@@ -1991,7 +1991,7 @@ void GEOM_Displayer::GlobalSelection( const TColStd_MapOfInteger& theModes,
       QList<SUIT_SelectionFilter*> aListOfFilters;
       for ( ; anIter.More(); anIter.Next() )
         {
-          SUIT_SelectionFilter* aFilter;
+          SUIT_SelectionFilter* aFilter = 0;
           int aMode = anIter.Key();
           if ( aMode == GEOM_COMPOUNDFILTER )
             aFilter = getComplexFilter( theSubShapes );

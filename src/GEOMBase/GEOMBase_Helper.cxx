@@ -1038,7 +1038,7 @@ bool GEOMBase_Helper::isValid( QString& )
 //            It should perform the required operation and put all new or modified objects into
 //            <objects> argument.Should return <false> if some error occurs during its execution.
 //================================================================
-bool GEOMBase_Helper::execute( ObjectList& objects )
+bool GEOMBase_Helper::execute( ObjectList& )
 {
   return false;
 }
@@ -1049,7 +1049,7 @@ bool GEOMBase_Helper::execute( ObjectList& objects )
 //            for <theObj> or a nil reference if <theObj> should be published
 //            as a top-level object.
 //================================================================
-GEOM::GEOM_Object_ptr GEOMBase_Helper::getFather( GEOM::GEOM_Object_ptr theObj )
+GEOM::GEOM_Object_ptr GEOMBase_Helper::getFather( GEOM::GEOM_Object_ptr )
 {
   return GEOM::GEOM_Object::_nil();
 }
@@ -1058,7 +1058,7 @@ GEOM::GEOM_Object_ptr GEOMBase_Helper::getFather( GEOM::GEOM_Object_ptr theObj )
 // Function : getObjectName
 // Purpose  : Redefine this method to return proper name for the given object
 //================================================================
-QString GEOMBase_Helper::getObjectName(GEOM::GEOM_Object_ptr object) const
+QString GEOMBase_Helper::getObjectName( GEOM::GEOM_Object_ptr ) const
 {
   return QString();
 }
@@ -1067,7 +1067,7 @@ QString GEOMBase_Helper::getObjectName(GEOM::GEOM_Object_ptr object) const
 // Function : getNewObjectName
 // Purpose  : Redefine this method to return proper name for a new object
 //================================================================
-QString GEOMBase_Helper::getNewObjectName (int) const
+QString GEOMBase_Helper::getNewObjectName( int ) const
 {
   return QString();
 }

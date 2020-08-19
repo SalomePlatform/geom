@@ -181,4 +181,4 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_ConeDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_ConeDriver,GEOM_BaseDriver)

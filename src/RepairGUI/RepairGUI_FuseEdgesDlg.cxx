@@ -311,7 +311,7 @@ GEOM::GEOM_IOperations_ptr RepairGUI_FuseEdgesDlg::createOperation()
 // function : isValid()
 // purpose  : Verify validity of input data
 //=================================================================================
-bool RepairGUI_FuseEdgesDlg::isValid (QString& msg)
+bool RepairGUI_FuseEdgesDlg::isValid (QString& /*msg*/)
 {
   return (!myShape->_is_nil());
 }

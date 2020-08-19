@@ -296,5 +296,5 @@ GEOM_Object::GetLastFunctions( const std::list< Handle(GEOM_Object) >& theObject
   return funs;
 }
 
-IMPLEMENT_STANDARD_RTTIEXT(GEOM_Object, GEOM_BaseObject );
+IMPLEMENT_STANDARD_RTTIEXT(GEOM_Object, GEOM_BaseObject )
 

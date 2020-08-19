@@ -371,7 +371,7 @@ GEOM::GEOM_IOperations_ptr BasicGUI_LineDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool BasicGUI_LineDlg::isValid( QString& msg )
+bool BasicGUI_LineDlg::isValid( QString& /*msg*/ )
 {
   bool ok = false;
   switch ( getConstructorId() ) {

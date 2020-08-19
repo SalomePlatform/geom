@@ -81,8 +81,8 @@ void XaoTest::testFields()
     CPPUNIT_ASSERT_EQUAL(3, fi->countComponents());
 
     Field* fb = obj.addField(XAO::BOOLEAN, XAO::FACE, 3);
-    Field* fd = obj.addField(XAO::DOUBLE, XAO::FACE, 3);
-    Field* fs = obj.addField(XAO::STRING, XAO::FACE, 3);
+    /*Field* fd = */obj.addField(XAO::DOUBLE, XAO::FACE, 3);
+    /*Field* fs = */obj.addField(XAO::STRING, XAO::FACE, 3);
     CPPUNIT_ASSERT_EQUAL(4, obj.countFields());
     CPPUNIT_ASSERT_THROW(obj.getField(10), XAO_Exception);
 

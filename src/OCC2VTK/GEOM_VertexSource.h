@@ -36,7 +36,7 @@ class vtkPolyData;
 class OCC2VTK_EXPORT GEOM_VertexSource: public vtkPolyDataAlgorithm
 { 
 public: 
-  vtkTypeMacro(GEOM_VertexSource,vtkPolyDataAlgorithm); 
+  vtkTypeMacro(GEOM_VertexSource,vtkPolyDataAlgorithm)
   static GEOM_VertexSource* New(); 
  
   void AddVertex(const TopoDS_Vertex& theVertex); 

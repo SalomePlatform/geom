@@ -28,7 +28,7 @@
 
 #include <GEOM_BaseDriver.hxx>
 
-DEFINE_STANDARD_HANDLE( GEOMImpl_PartitionDriver, GEOM_BaseDriver );
+DEFINE_STANDARD_HANDLE( GEOMImpl_PartitionDriver, GEOM_BaseDriver )
 
 class GEOMImpl_PartitionDriver : public GEOM_BaseDriver {
 

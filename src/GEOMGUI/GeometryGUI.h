@@ -72,7 +72,7 @@ class GEOMGUI_AnnotationMgr;
 //=================================================================================
 class  GEOMGUI_EXPORT GeometryGUI : public SalomeApp_Module
 {
-  Q_OBJECT;
+  Q_OBJECT
 
 public:
   // Constructor

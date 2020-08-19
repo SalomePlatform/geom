@@ -28,7 +28,7 @@
 
 #include <GEOM_BaseDriver.hxx>
 
-DEFINE_STANDARD_HANDLE( GEOMImpl_MirrorDriver, GEOM_BaseDriver );
+DEFINE_STANDARD_HANDLE( GEOMImpl_MirrorDriver, GEOM_BaseDriver )
 
 class GEOMImpl_MirrorDriver : public GEOM_BaseDriver {
 

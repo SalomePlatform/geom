@@ -141,7 +141,7 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(Handle(TFunction_Logbook)& lo
     Handle(TColStd_HArray1OfInteger) aMaterials   = aCI.GetMaterials();
     //skl Standard_Boolean DoRemoveWebs = !aMaterials.IsNull();
 
-    unsigned int ind;
+    int ind;
     //unsigned int ind, nbshapes = 0;
     //nbshapes += aShapes->Length() + aTools->Length();
     //nbshapes += aKeepIns->Length() + aRemIns->Length();
@@ -559,4 +559,4 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_PartitionDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_PartitionDriver,GEOM_BaseDriver)

@@ -378,13 +378,13 @@ void BasicGUI_MarkerDlg::onSelectionDone()
     return;
   }
 
-  TopAbs_ShapeEnum aNeedType;
+  TopAbs_ShapeEnum aNeedType = TopAbs_SHAPE; // todo: aNeedType must be explicitly initialized to avoid warning (see below)
   if ( getConstructorId() == 1 ) // by shape position
     aNeedType = TopAbs_SHAPE;
   else if ( getConstructorId() == 2 ) // by point and two vectors
     aNeedType = myEditCurrentArgument == Group2->LineEdit1 ? TopAbs_VERTEX : TopAbs_EDGE;
   
-  GEOM::GeomObjPtr aSelectedObject = getSelected( aNeedType );
+  GEOM::GeomObjPtr aSelectedObject = getSelected( aNeedType ); // todo: aNeedType must be explicitly initialized to avoid warning (see above)
   TopoDS_Shape aShape;
   if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
     QString aName = GEOMBase::GetName( aSelectedObject.get() );

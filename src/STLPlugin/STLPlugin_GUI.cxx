@@ -96,7 +96,7 @@ bool STLPlugin_GUI::OnGUIEvent( const QString& theCommandID, SUIT_Desktop* paren
     getGeometryGUI()->getApp()->putInfo( tr("GEOM_PRP_COMMAND").arg( theCommandID ) );
   }
 
-  return true; // ?????????
+  return result;
 }
 
 //=======================================================================

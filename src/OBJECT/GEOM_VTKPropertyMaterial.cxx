@@ -27,7 +27,7 @@
 
 #include <vtkObjectFactory.h>
 
-vtkStandardNewMacro( GEOM_VTKPropertyMaterial );
+vtkStandardNewMacro( GEOM_VTKPropertyMaterial )
 
 GEOM_VTKPropertyMaterial::GEOM_VTKPropertyMaterial()
 {

@@ -30,7 +30,7 @@
 
 #include <GEOM_BaseDriver.hxx>
 
-DEFINE_STANDARD_HANDLE( GEOMImpl_BlockDriver, GEOM_BaseDriver );
+DEFINE_STANDARD_HANDLE( GEOMImpl_BlockDriver, GEOM_BaseDriver )
 
 class GEOMImpl_BlockDriver : public GEOM_BaseDriver {
 

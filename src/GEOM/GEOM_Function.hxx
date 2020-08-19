@@ -37,7 +37,7 @@
 #include <TopoDS_Shape.hxx>
 
 class GEOM_Function;
-DEFINE_STANDARD_HANDLE (GEOM_Function, Standard_Transient);
+DEFINE_STANDARD_HANDLE (GEOM_Function, Standard_Transient)
 
 class GEOM_Function : public Standard_Transient
 {

@@ -165,6 +165,8 @@ RepairGUI_GlueDlg::RepairGUI_GlueDlg(GeometryGUI* theGeometryGUI, QWidget* paren
         aHelpFileName = "glue_faces_operation_page.html";
         break;
       }
+    default:
+      break;
   }
   setHelpFileName(aHelpFileName);
 

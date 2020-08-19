@@ -877,4 +877,4 @@ STEPPlugin_ImportDriver::GetValue( const TCollection_AsciiString& theFileName,
   return aValue;
 }
 
-IMPLEMENT_STANDARD_RTTIEXT( STEPPlugin_ImportDriver, GEOM_BaseDriver );
+IMPLEMENT_STANDARD_RTTIEXT( STEPPlugin_ImportDriver, GEOM_BaseDriver )

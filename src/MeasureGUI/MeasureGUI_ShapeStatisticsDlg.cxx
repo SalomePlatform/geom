@@ -64,8 +64,8 @@
 // class    : MeasureGUI_ShapeStatisticsDlg()
 //===========================================================================
 MeasureGUI_ShapeStatisticsDlg::MeasureGUI_ShapeStatisticsDlg( QWidget* parent, TopoDS_Shape aShape, TopAbs_ShapeEnum aSubShapeType )
-: GEOMBase_Helper( SUIT_Session::session()->activeApplication()->desktop() ),
-  QDialog( parent ),
+: QDialog( parent ),
+  GEOMBase_Helper( SUIT_Session::session()->activeApplication()->desktop() ),
   myHistogram ( 0 )
 {
   myShapes.push_back( aShape );

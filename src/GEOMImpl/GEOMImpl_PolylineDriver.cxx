@@ -104,7 +104,7 @@ Standard_Integer GEOMImpl_PolylineDriver::MakePolyline2D(Handle(TFunction_Logboo
     return 0;
   }
 
-  if (aNbSections != aCoords.size()) {
+  if (aNbSections != (int)aCoords.size()) {
     return 0;
   }
 
@@ -318,10 +318,8 @@ GetCreationInformation(std::string&             theOperationName,
         Handle(TColStd_HArray1OfReal) coords = aCI.GetCoordinates();
         if ( coords->Length() > 3 )
           pntParam << ( coords->Length() ) / 3 << " points: ";
-        for ( int i = coords->Lower(), nb = coords->Upper(); i <= nb; )
-          pntParam << "( " << coords->Value( i++ )
-                   << ", " << coords->Value( i++ )
-                   << ", " << coords->Value( i++ ) << " ) ";
+        for ( int i = coords->Lower(), nb = coords->Lower()+(coords->Length()/3)*3; i < nb; i+=3)
+          pntParam << "( " << coords->Value( i ) << ", " << coords->Value( i+1 ) << ", " << coords->Value( i+2 ) << " ) ";
       }
       else
       {
@@ -383,7 +381,7 @@ GetCreationInformation(std::string&             theOperationName,
           AddParam(theParams, "Number of curves", aNbCurves);
           aP2d.GetCoords(aCoords);
 
-          Standard_Integer aNbCoords = aCoords.size();
+          //Standard_Integer aNbCoords = aCoords.size();
           std::list <std::list <double> >::const_iterator
                            anIt      = aCoords.begin();
 
@@ -437,4 +435,4 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_PolylineDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_PolylineDriver,GEOM_BaseDriver)

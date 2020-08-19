@@ -367,7 +367,7 @@ void BasicGUI_VectorDlg::enterEvent( QEvent* )
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void BasicGUI_VectorDlg::ValueChangedInSpinBox( double newValue )
+void BasicGUI_VectorDlg::ValueChangedInSpinBox( double /*newValue*/ )
 {
   displayPreview(true);
 }
@@ -376,7 +376,7 @@ void BasicGUI_VectorDlg::ValueChangedInSpinBox( double newValue )
 // function : ReverseVector()
 // purpose  : 'state' not used here
 //=================================================================================
-void BasicGUI_VectorDlg::ReverseVector( int state )
+void BasicGUI_VectorDlg::ReverseVector( int /*state*/ )
 {
   double dx = -GroupDimensions->SpinBox_DX->value();
   double dy = -GroupDimensions->SpinBox_DY->value();

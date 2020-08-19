@@ -275,6 +275,8 @@ bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
             setNbUndos(1);
             isOK = myPUndo[0].init(CurveCreator_Operation::RemoveSection, -1);
             break;
+        default:
+          break;
         }
       }
     }
@@ -298,6 +300,8 @@ bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
         setNbUndos(1);
         isOK = myPUndo[0].init(CurveCreator_Operation::RenameSection,
                                theCurve->getSectionName(theIntParam1), theIntParam1);
+        break;
+      default:
         break;
     }
   }

@@ -28,7 +28,7 @@
 
 #include <GEOM_BaseDriver.hxx>
 
-DEFINE_STANDARD_HANDLE( GEOMImpl_PipePathDriver, GEOM_BaseDriver );
+DEFINE_STANDARD_HANDLE( GEOMImpl_PipePathDriver, GEOM_BaseDriver )
 
 class GEOMImpl_PipePathDriver : public GEOM_BaseDriver {
 

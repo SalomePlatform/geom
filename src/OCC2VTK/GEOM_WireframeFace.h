@@ -36,7 +36,7 @@ namespace GEOMUtils
 class OCC2VTK_EXPORT GEOM_WireframeFace: public GEOM_FaceSource 
 { 
 public: 
-  vtkTypeMacro(GEOM_WireframeFace,GEOM_FaceSource); 
+  vtkTypeMacro(GEOM_WireframeFace,GEOM_FaceSource)
   static GEOM_WireframeFace* New(); 
  
   /*  vtkSetMacro(NbIso,int); 

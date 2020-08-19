@@ -25,7 +25,7 @@
 
 #include <GEOM_BaseDriver.hxx>
 
-DEFINE_STANDARD_HANDLE( GEOMImpl_Fillet2dDriver, GEOM_BaseDriver );
+DEFINE_STANDARD_HANDLE( GEOMImpl_Fillet2dDriver, GEOM_BaseDriver )
 
 class GEOMImpl_Fillet2dDriver : public GEOM_BaseDriver {
 

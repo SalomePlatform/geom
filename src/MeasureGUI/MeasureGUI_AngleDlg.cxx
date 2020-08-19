@@ -389,7 +389,7 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
         return aPrs;
       }
     }
-    catch(Standard_Failure) {
+    catch(Standard_Failure&) {
     }
   }
 

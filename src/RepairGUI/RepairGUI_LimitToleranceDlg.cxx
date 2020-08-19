@@ -150,7 +150,7 @@ void RepairGUI_LimitToleranceDlg::Init()
 // function : ConstructorsClicked()
 // purpose  : Radio button management
 //=================================================================================
-void RepairGUI_LimitToleranceDlg::ConstructorsClicked(int constructorId)
+void RepairGUI_LimitToleranceDlg::ConstructorsClicked(int /*constructorId*/)
 {
   disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
 

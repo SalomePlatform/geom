@@ -116,14 +116,14 @@ namespace {
     void parseStepElementNode(xmlNodePtr eltNode, Step* step);
 
     std::string readStringProp(xmlNodePtr node, const xmlChar* attribute,
-                               const bool& required, const std::string& defaultValue,
+                               bool required, const std::string& defaultValue,
                                const std::string& exception = std::string(""));
     int readIntegerProp(xmlNodePtr node, const xmlChar* attribute,
-                        const bool& required, const int& defaultValue,
+                        bool required, int defaultValue,
                         const std::string& exception = std::string(""));
 
     std::string readStringProp(xmlNodePtr node, const xmlChar* attribute,
-                               const bool& required, const std::string& defaultValue,
+                               bool required, const std::string& defaultValue,
                                const std::string& exception /*= std::string() */)
   {
     xmlChar* strAttr = xmlGetProp(node, attribute);
@@ -147,7 +147,7 @@ namespace {
   }
 
   int readIntegerProp(xmlNodePtr node, const xmlChar* attribute,
-                      const bool& required, const int& defaultValue,
+                      bool required, int defaultValue,
                       const std::string& exception /*= std::string() */)
   {
     xmlChar* strAttr = xmlGetProp(node, attribute);
@@ -298,7 +298,7 @@ namespace {
     }
   }
 
-  void exportStep(Step* step, Field* field, xmlNodePtr nodeSteps)
+  void exportStep(Step* step, Field* /*field*/, xmlNodePtr nodeSteps)
   {
     xmlNodePtr nodeStep = xmlNewChild(nodeSteps, 0, C_TAG_STEP, 0);
     xmlNewProp(nodeStep, C_ATTR_STEP_NUMBER, BAD_CAST XaoUtils::intToString(step->getStep()).c_str());
@@ -378,7 +378,7 @@ namespace {
     xaoObject->setGeometry(geometry);
   }
 
-  void parseShapeNode(xmlDocPtr doc, xmlNodePtr shapeNode, Geometry* geometry)
+  void parseShapeNode(xmlDocPtr /*doc*/, xmlNodePtr shapeNode, Geometry* geometry)
   {
     if (geometry->getFormat() == XAO::BREP)
     {
@@ -638,8 +638,8 @@ namespace {
   }
 }
 
-const bool XaoExporter::saveToFile(Xao* xaoObject, const std::string& fileName, const std::string& shapeFileName)
-throw (XAO_Exception)
+bool XaoExporter::saveToFile(Xao* xaoObject, const std::string& fileName, const std::string& shapeFileName)
+
 {
     xmlDocPtr doc = exportXMLDoc(xaoObject, shapeFileName);
     xmlSaveFormatFileEnc(fileName.c_str(), doc, "UTF-8", 1); // format = 1 for node indentation
@@ -649,7 +649,7 @@ throw (XAO_Exception)
 }
 
 const std::string XaoExporter::saveToXml(Xao* xaoObject)
-throw (XAO_Exception)
+
 {
     xmlDocPtr doc = exportXMLDoc(xaoObject, "");
 
@@ -662,8 +662,8 @@ throw (XAO_Exception)
     return (char*)xmlbuff;
 }
 
-const bool XaoExporter::readFromFile(const std::string& fileName, Xao* xaoObject)
-throw (XAO_Exception)
+bool XaoExporter::readFromFile(const std::string& fileName, Xao* xaoObject)
+
 {
     // parse the file and get the DOM
     int options = XML_PARSE_HUGE | XML_PARSE_NOCDATA;
@@ -677,8 +677,8 @@ throw (XAO_Exception)
     return true;
 }
 
-const bool XaoExporter::setXML(const std::string& xml, Xao* xaoObject)
-throw (XAO_Exception)
+bool XaoExporter::setXML(const std::string& xml, Xao* xaoObject)
+
 {
     int options = XML_PARSE_HUGE | XML_PARSE_NOCDATA;
     xmlDocPtr doc = xmlReadDoc(BAD_CAST xml.c_str(), "", NULL, options);

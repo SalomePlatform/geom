@@ -360,7 +360,7 @@ void BasicGUI_EllipseDlg::enterEvent( QEvent* )
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void BasicGUI_EllipseDlg::ValueChangedInSpinBox( double newValue )
+void BasicGUI_EllipseDlg::ValueChangedInSpinBox( double /*newValue*/ )
 {
   displayPreview(true);
 }

@@ -143,8 +143,8 @@
  <tabstops>
   <tabstop>PushButton1</tabstop>
   <tabstop>LineEdit1</tabstop>
+  <tabstop>ComboBox1</tabstop>
   <tabstop>CheckButton1</tabstop>
-  <tabstop>ListView1</tabstop>
   <tabstop>PushButton2</tabstop>
   <tabstop>PushButton3</tabstop>
   <tabstop>PushButton4</tabstop>

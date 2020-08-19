@@ -82,10 +82,10 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
                                          CurveCreator_ICurve *theCurve,
                                          const int theActionFlags,
                                          const QStringList& theCoordTitles,
-                                         Qt::WindowFlags fl )
-: QWidget(parent), myNewSectionEditor(NULL), myCurve(theCurve), mySection(0),
+                                         Qt::WindowFlags /*fl*/ )
+: QWidget(parent), myCurve(theCurve), myNewSectionEditor(NULL),
+  myOCCViewer( 0 ), mySection(0),
   myDragStarted( false ), myDragInteractionStyle( SUIT_ViewModel::STANDARD ),
-  myOCCViewer( 0 ),
   myOld2DMode(OCCViewer_ViewWindow::No2dMode)
 {
   bool isToEnableClosed = !( theActionFlags & DisableClosedSection );
@@ -431,6 +431,8 @@ void CurveCreator_Widget::updateActionsStates()
       break;
     }*/
 
+    default:
+      break;
     }
     
     /*int aSelObjsCnt = aSelPoints.size() + aSelSections.size();
@@ -480,7 +482,7 @@ void CurveCreator_Widget::onModificationMode(bool checked)
   myLocalPointView->setVisible( checked );
 }
 
-void CurveCreator_Widget::onDetectionMode(bool checked)
+void CurveCreator_Widget::onDetectionMode(bool /*checked*/)
 {
 }
 
@@ -510,6 +512,8 @@ void CurveCreator_Widget::onModeChanged(bool checked)
           myActionMap[ADDITION_MODE_ID]->trigger();
         else if (myActionMap[MODIFICATION_MODE_ID]->isChecked())
           myActionMap[MODIFICATION_MODE_ID]->trigger();
+        break;
+      default:
         break;
     }
   }
@@ -617,18 +621,18 @@ void CurveCreator_Widget::onModifySection()
   bool isClosed = myNewSectionEditor->isClosed();
   CurveCreator::SectionType aSectType = myNewSectionEditor->getSectionType();
   if( myCurve->getSectionName(mySection) != aName.toStdString() )
-    myCurve->setSectionName( mySection , aName.toStdString() );
+    myCurve->setSectionName( mySection, aName.toStdString() );
 
-  bool isGeomModified = false;
+  //bool isGeomModified = false;
 
   if( myCurve->getSectionType(mySection) != aSectType ) {
     myCurve->setSectionType( mySection, aSectType );
-    isGeomModified = true;
+    //isGeomModified = true;
   }
 
   if( myCurve->isClosed(mySection) != isClosed ) {
     myCurve->setClosed( mySection, isClosed );
-    isGeomModified = true;
+    //isGeomModified = true;
   }
   mySectionView->sectionChanged(mySection);
   updateUndoRedo();
@@ -706,7 +710,7 @@ void CurveCreator_Widget::onJoinAll()
   for( int i = 0, aNb = myCurve->getNbSections(); i < aNb ; i++ ){
     aSectionsToJoin.push_back( i );
   }
-  bool aRes = myCurve->join( aSectionsToJoin );
+  /*bool aRes = */myCurve->join( aSectionsToJoin );
 
   mySectionView->reset();
   updateActionsStates();
@@ -1113,7 +1117,7 @@ void CurveCreator_Widget::onMouseRelease( SUIT_ViewWindow* theWindow, QMouseEven
       return;
 
     if (!aHasShift)
-      aCtx->ClearCurrents( false );
+      aCtx->ClearCurrents( false );  // todo: deprecated OCCT API
 
     Handle(V3d_View) aView3d = aView->getViewPort()->getView();
     if ( !aView3d.IsNull() )
@@ -1141,7 +1145,6 @@ void CurveCreator_Widget::onMouseRelease( SUIT_ViewWindow* theWindow, QMouseEven
   }
 
   if ( myDragStarted ) {
-    bool isDragged = myDragged;
     CurveCreator_ICurve::SectionToPointList aDraggedPoints;
     QMap<CurveCreator_ICurve::SectionToPoint, CurveCreator::Coordinates > anInitialDragPointsCoords;
     if ( myDragged ) {
@@ -1246,7 +1249,7 @@ void CurveCreator_Widget::onMouseMove( SUIT_ViewWindow*, QMouseEvent* theEvent )
  * Set zero viewer by the last view closed in
  * \param theManager a viewer manager
  */
-void CurveCreator_Widget::onLastViewClosed( SUIT_ViewManager* theManager )
+void CurveCreator_Widget::onLastViewClosed( SUIT_ViewManager* /*theManager*/ )
 {
   myOCCViewer = 0;
 }
@@ -1266,7 +1269,7 @@ void CurveCreator_Widget::onMouseMove( QMouseEvent* theEvent )
   onMouseMove( 0, theEvent );
 }
 
-void CurveCreator_Widget::onCellChanged( int theRow, int theColumn )
+void CurveCreator_Widget::onCellChanged( int theRow, int /*theColumn*/ )
 {
   int aCurrSect = myLocalPointView->getSectionId( theRow );
   int aPntIndex = myLocalPointView->getPointId( theRow );
@@ -1459,7 +1462,7 @@ void CurveCreator_Widget::updateLocalPointView()
     return;
 
   CurveCreator_Utils::getSelectedPoints( aContext, myCurve, myLocalPoints );
-  int aNbPoints = myLocalPoints.size();
+  //int aNbPoints = myLocalPoints.size();
 
   //bool isRowLimit = aNbPoints > myLocalPointRowLimit;
   myLocalPointView->setVisible( getActionMode() == ModificationMode/* && !isRowLimit */);

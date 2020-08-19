@@ -429,9 +429,9 @@ void ShHealOper_RemoveFace::removePCurve(const TopoDS_Face& theFace)
     for(; aIterOtherFace.More() && aIsDeleted ; aIterOtherFace.Next()) {
       if(aIterOtherFace.Value().IsSame(theFace))
          continue;
-         TopoDS_Face aFaceOther = TopoDS::Face(aIterOtherFace.Value());
-         Handle(Geom_Surface) aSurf = BRep_Tool::Surface( aFaceOther);
-         aIsDeleted = (aSurf != aSurfDel);
+      TopoDS_Face aFaceOther = TopoDS::Face(aIterOtherFace.Value());
+      Handle(Geom_Surface) aSurf = BRep_Tool::Surface( aFaceOther);
+      aIsDeleted = (aSurf != aSurfDel);
     }
     
     TopoDS_Edge aEdge = TopoDS::Edge(myContext->Apply(aExpEdges.Current()));

@@ -176,7 +176,7 @@ GEOM::GEOM_IOperations_ptr EntityGUI_SurfFromFaceDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool EntityGUI_SurfFromFaceDlg::isValid (QString& msg)
+bool EntityGUI_SurfFromFaceDlg::isValid (QString& /*msg*/)
 {
   return myFace;
 }

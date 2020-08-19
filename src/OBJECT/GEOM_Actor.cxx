@@ -71,7 +71,7 @@
 
 #include "SALOME_InteractiveObject.hxx"
 
-//vtkStandardNewMacro(GEOM_Actor);
+//vtkStandardNewMacro(GEOM_Actor)
 
 #ifndef MYDEBUG
 //#define MYDEBUG
@@ -724,8 +724,8 @@ const TopoDS_Shape& GEOM_Actor::getTopo() {
   return myShape;
 }
 
-void GEOM_Actor::setInputShape(const TopoDS_Shape& ashape, double adef1,
-                               int imode, bool isVector)
+void GEOM_Actor::setInputShape(const TopoDS_Shape& /*ashape*/, double /*adef1*/,
+                               int /*imode*/, bool /*isVector*/)
 {
 #ifdef MYDEBUG
   MESSAGE ( "GEOM_Actor::setInputShape" );
@@ -986,7 +986,7 @@ GEOM_Actor
 */
 bool
 GEOM_Actor
-::PreHighlight(vtkInteractorStyle *theInteractorStyle, 
+::PreHighlight(vtkInteractorStyle* /*theInteractorStyle*/, 
                SVTK_SelectionEvent* theSelectionEvent,
                bool theIsHighlight)
 {

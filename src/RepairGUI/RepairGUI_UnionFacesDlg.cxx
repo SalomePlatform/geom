@@ -237,7 +237,7 @@ void RepairGUI_UnionFacesDlg::ActivateThisDialog()
 // function : enterEvent()
 // purpose  : Mouse enter onto the dialog to activate it
 //=================================================================================
-void RepairGUI_UnionFacesDlg::enterEvent(QEvent* e)
+void RepairGUI_UnionFacesDlg::enterEvent(QEvent*)
 {
   if ( !mainFrame()->GroupConstructors->isEnabled() )
     ActivateThisDialog();
@@ -270,7 +270,7 @@ GEOM::GEOM_IOperations_ptr RepairGUI_UnionFacesDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool RepairGUI_UnionFacesDlg::isValid( QString& msg )
+bool RepairGUI_UnionFacesDlg::isValid( QString& /*msg*/ )
 {
   return myOkObject;
 }

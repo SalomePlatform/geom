@@ -33,7 +33,7 @@
 #include <Poly_Triangulation.hxx>
 
 
-vtkStandardNewMacro(GEOM_ShadingFace);
+vtkStandardNewMacro(GEOM_ShadingFace)
  
 GEOM_ShadingFace::GEOM_ShadingFace() 
 { 

@@ -126,7 +126,7 @@ bool BasicGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 // function : 0nMousePress()
 // purpose  : [static] manage mouse events
 //=================================================================================
-bool BasicGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* theViewWindow )
+bool BasicGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* /*parent*/, SUIT_ViewWindow* theViewWindow )
 {
   QDialog* aDlg = getGeometryGUI()->GetActiveDialogBox();
 

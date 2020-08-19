@@ -50,7 +50,7 @@ namespace CurveCreator
     Dim3d = 3
   };
 
-};
+}
 
 //! The type represents the interface to the curve section.
 struct CURVECREATOR_EXPORT CurveCreator_ISection

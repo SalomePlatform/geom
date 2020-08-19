@@ -28,7 +28,7 @@
 
 #include <GEOM_BaseDriver.hxx>
 
-DEFINE_STANDARD_HANDLE( GEOMImpl_ArchimedeDriver, GEOM_BaseDriver );
+DEFINE_STANDARD_HANDLE( GEOMImpl_ArchimedeDriver, GEOM_BaseDriver )
 
 class GEOMImpl_ArchimedeDriver : public GEOM_BaseDriver {
 

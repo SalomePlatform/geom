@@ -31,7 +31,7 @@ namespace GEOMUtils
 
   class HTrsfCurve2d;
 
-  DEFINE_STANDARD_HANDLE(HTrsfCurve2d, Adaptor2d_HCurve2d);
+  DEFINE_STANDARD_HANDLE(HTrsfCurve2d, Adaptor2d_HCurve2d)
 
   /*!
    *  This class represents an adaptor curve that represents an original curve

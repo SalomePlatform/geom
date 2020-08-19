@@ -302,7 +302,7 @@ bool OperationGUI_ArchimedeDlg::execute( ObjectList& objects )
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void OperationGUI_ArchimedeDlg::ValueChangedInSpinBox(double newValue)
+void OperationGUI_ArchimedeDlg::ValueChangedInSpinBox(double /*newValue*/)
 {
   processPreview();
 }

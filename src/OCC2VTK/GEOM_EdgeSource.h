@@ -36,7 +36,7 @@ class vtkPolyData;
 class OCC2VTK_EXPORT GEOM_EdgeSource: public vtkPolyDataAlgorithm 
 { 
 public: 
-  vtkTypeMacro(GEOM_EdgeSource,vtkPolyDataAlgorithm); 
+  vtkTypeMacro(GEOM_EdgeSource,vtkPolyDataAlgorithm)
   static GEOM_EdgeSource* New(); 
  
   void AddEdge (const TopoDS_Edge& theEdge,

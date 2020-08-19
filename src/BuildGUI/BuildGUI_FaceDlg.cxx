@@ -554,7 +554,7 @@ void BuildGUI_FaceDlg::ActivateThisDialog()
 // function : onItemClicked()
 // purpose  : called when tree item was clicked
 //=================================================================================
-void BuildGUI_FaceDlg::onItemClicked( QTreeWidgetItem* theItem, int theColumn )
+void BuildGUI_FaceDlg::onItemClicked( QTreeWidgetItem* theItem, int /*theColumn*/ )
 {
   if ( !theItem || !( theItem->flags() & Qt::ItemIsSelectable ) )
     return;

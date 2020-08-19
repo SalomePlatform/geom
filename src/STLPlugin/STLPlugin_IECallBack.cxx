@@ -64,7 +64,7 @@ STLPlugin_IECallBack::Export( const Handle(GEOM_Object)      theOriginal,
  */
 //=============================================================================
 Handle(TColStd_HSequenceOfTransient)
-STLPlugin_IECallBack::Import( const TCollection_AsciiString& theFormatName,
+STLPlugin_IECallBack::Import( const TCollection_AsciiString& /*theFormatName*/,
                               const TCollection_AsciiString& theFileName )
 {
   STLPlugin_IOperations* aPluginOperations = STLPlugin_OperationsCreator::get( GetEngine() );

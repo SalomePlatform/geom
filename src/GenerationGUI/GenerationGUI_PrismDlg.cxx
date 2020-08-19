@@ -641,7 +641,7 @@ void GenerationGUI_PrismDlg::onAddThickening(bool isChecked)
 // function : onChangeDirection(bool)
 // purpose  :
 //=================================================================================
-void GenerationGUI_PrismDlg::onChangeDirection(bool isChecked)
+void GenerationGUI_PrismDlg::onChangeDirection(bool /*isChecked*/)
 {
   processPreview();
 }

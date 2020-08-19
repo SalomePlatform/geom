@@ -28,7 +28,7 @@
 
 #include <GEOM_BaseDriver.hxx>
 
-DEFINE_STANDARD_HANDLE( GEOMImpl_MarkerDriver, GEOM_BaseDriver );
+DEFINE_STANDARD_HANDLE( GEOMImpl_MarkerDriver, GEOM_BaseDriver )
 
 class GEOMImpl_MarkerDriver : public GEOM_BaseDriver {
 

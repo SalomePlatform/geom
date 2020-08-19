@@ -90,7 +90,7 @@ namespace
            QString( ":" ) + QString( "ShapeType=" ) + QString::number( theShapeType ) +
            QString( " }" );
   }
-};
+}
 
 //=================================================================================
 // function : FindAttributes

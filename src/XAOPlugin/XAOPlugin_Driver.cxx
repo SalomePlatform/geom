@@ -110,5 +110,5 @@ bool XAOPlugin_Driver::GetCreationInformation(std::string&             theOperat
   return true;
 }
 
-IMPLEMENT_STANDARD_RTTIEXT(XAOPlugin_Driver, GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT(XAOPlugin_Driver, GEOM_BaseDriver)
  

@@ -26,7 +26,7 @@
 class OCC2VTK_EXPORT GEOM_ShadingFace: public GEOM_FaceSource 
 { 
 public: 
-  vtkTypeMacro(GEOM_ShadingFace,GEOM_FaceSource); 
+  vtkTypeMacro(GEOM_ShadingFace,GEOM_FaceSource)
   static GEOM_ShadingFace* New(); 
  
   static  

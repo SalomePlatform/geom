@@ -196,7 +196,7 @@ void PrimitiveGUI_FaceDlg::SetDoubleSpinBoxStep( double step )
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void PrimitiveGUI_FaceDlg::ValueChangedInSpinBox( double newValue )
+void PrimitiveGUI_FaceDlg::ValueChangedInSpinBox( double /*newValue*/ )
 {
   displayPreview(true);
 }

@@ -146,7 +146,7 @@ GetCreationInformation(std::string&             theOperationName,
  * \brief Performs Transfer Data operation.
  */
 //================================================================================
-Standard_Integer GEOMImpl_CopyDriver::transferData(Handle(TFunction_Logbook)& log) const
+Standard_Integer GEOMImpl_CopyDriver::transferData(Handle(TFunction_Logbook)& /*log*/) const
 {
   Handle(GEOM_Function)  aFunction = GEOM_Function::GetFunction(Label());
   GEOMImpl_ITransferData aTD (aFunction);
@@ -410,4 +410,4 @@ Standard_Boolean GEOMImpl_CopyDriver::getInPlaceByHistory
   return Standard_True;
 }
 
-IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_CopyDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_CopyDriver,GEOM_BaseDriver)

@@ -82,7 +82,7 @@ DisplayGUI::~DisplayGUI()
 // function : DisplayGUI::OnGUIEvent()
 // purpose  : Dispatch menu command
 //=======================================================================
-bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
+bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* /*parent*/)
 {
   SalomeApp_Application* app = getGeometryGUI()->getApp();
   if (!app) return false;

@@ -28,7 +28,7 @@
 
 #include <GEOM_BaseDriver.hxx>
 
-DEFINE_STANDARD_HANDLE( GEOMImpl_SplineDriver, GEOM_BaseDriver );
+DEFINE_STANDARD_HANDLE( GEOMImpl_SplineDriver, GEOM_BaseDriver )
 
 class GEOMImpl_SplineDriver : public GEOM_BaseDriver {
 

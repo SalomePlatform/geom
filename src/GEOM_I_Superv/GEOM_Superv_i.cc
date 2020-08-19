@@ -419,9 +419,9 @@ PortableServer::ServantBase_var GEOM_Superv_i::GetServant(CORBA::Object_ptr     
 // function : Save()
 // purpose  : save OCAF/Geom document
 //============================================================================
-SALOMEDS::TMPFile* GEOM_Superv_i::Save(SALOMEDS::SComponent_ptr theComponent,
-                                       const char* theURL,
-                                       CORBA::Boolean isMultiFile)
+SALOMEDS::TMPFile* GEOM_Superv_i::Save(SALOMEDS::SComponent_ptr /*theComponent*/,
+                                       const char* /*theURL*/,
+                                       CORBA::Boolean /*isMultiFile*/)
 {
   SALOMEDS::TMPFile_var aStreamFile;
   return aStreamFile._retn();
@@ -431,9 +431,9 @@ SALOMEDS::TMPFile* GEOM_Superv_i::Save(SALOMEDS::SComponent_ptr theComponent,
 // function : SaveASCII()
 // purpose  :
 //============================================================================
-SALOMEDS::TMPFile* GEOM_Superv_i::SaveASCII(SALOMEDS::SComponent_ptr theComponent,
-                                            const char* theURL,
-                                            CORBA::Boolean isMultiFile)
+SALOMEDS::TMPFile* GEOM_Superv_i::SaveASCII(SALOMEDS::SComponent_ptr /*theComponent*/,
+                                            const char* /*theURL*/,
+                                            CORBA::Boolean /*isMultiFile*/)
 {
   SALOMEDS::TMPFile_var aStreamFile;
   return aStreamFile._retn();
@@ -443,10 +443,10 @@ SALOMEDS::TMPFile* GEOM_Superv_i::SaveASCII(SALOMEDS::SComponent_ptr theComponen
 // function : Load()
 // purpose  :
 //============================================================================
-CORBA::Boolean GEOM_Superv_i::Load(SALOMEDS::SComponent_ptr theComponent,
-                                   const SALOMEDS::TMPFile& theStream,
-                                   const char* theURL,
-                                   CORBA::Boolean isMultiFile)
+CORBA::Boolean GEOM_Superv_i::Load(SALOMEDS::SComponent_ptr /*theComponent*/,
+                                   const SALOMEDS::TMPFile& /*theStream*/,
+                                   const char* /*theURL*/,
+                                   CORBA::Boolean /*isMultiFile*/)
 {
   return false;
 }
@@ -455,10 +455,10 @@ CORBA::Boolean GEOM_Superv_i::Load(SALOMEDS::SComponent_ptr theComponent,
 // function : LoadASCII()
 // purpose  :
 //============================================================================
-CORBA::Boolean GEOM_Superv_i::LoadASCII(SALOMEDS::SComponent_ptr theComponent,
-                                        const SALOMEDS::TMPFile& theStream,
-                                        const char* theURL,
-                                        CORBA::Boolean isMultiFile)
+CORBA::Boolean GEOM_Superv_i::LoadASCII(SALOMEDS::SComponent_ptr /*theComponent*/,
+                                        const SALOMEDS::TMPFile& /*theStream*/,
+                                        const char* /*theURL*/,
+                                        CORBA::Boolean /*isMultiFile*/)
 {
   return false;
 }
@@ -467,7 +467,7 @@ CORBA::Boolean GEOM_Superv_i::LoadASCII(SALOMEDS::SComponent_ptr theComponent,
 // function : Close()
 // purpose  :
 //============================================================================
-void GEOM_Superv_i::Close(SALOMEDS::SComponent_ptr theComponent)
+void GEOM_Superv_i::Close(SALOMEDS::SComponent_ptr /*theComponent*/)
 {
 }
 
@@ -484,10 +484,10 @@ char* GEOM_Superv_i::ComponentDataType()
 // function : IORToLocalPersistentID()
 // purpose  :
 //============================================================================
-char* GEOM_Superv_i::IORToLocalPersistentID(SALOMEDS::SObject_ptr theSObject,
-                                            const char* IORString,
-                                            CORBA::Boolean isMultiFile,
-                                            CORBA::Boolean isASCII)
+char* GEOM_Superv_i::IORToLocalPersistentID(SALOMEDS::SObject_ptr /*theSObject*/,
+                                            const char* /*IORString*/,
+                                            CORBA::Boolean /*isMultiFile*/,
+                                            CORBA::Boolean /*isASCII*/)
 {
   return 0;
 }
@@ -498,10 +498,10 @@ char* GEOM_Superv_i::IORToLocalPersistentID(SALOMEDS::SObject_ptr theSObject,
 //          : Used when a study is loaded
 //          : The IOR (IORName) of object created is returned
 //============================================================================
-char* GEOM_Superv_i::LocalPersistentIDToIOR(SALOMEDS::SObject_ptr theSObject,
-                                            const char* aLocalPersistentID,
-                                            CORBA::Boolean isMultiFile,
-                                            CORBA::Boolean isASCII)
+char* GEOM_Superv_i::LocalPersistentIDToIOR(SALOMEDS::SObject_ptr /*theSObject*/,
+                                            const char* /*aLocalPersistentID*/,
+                                            CORBA::Boolean /*isMultiFile*/,
+                                            CORBA::Boolean /*isASCII*/)
 {
   return 0;
 }
@@ -523,7 +523,7 @@ CORBA::Boolean GEOM_Superv_i::CanPublishInStudy(CORBA::Object_ptr theIOR)
 //============================================================================
 SALOMEDS::SObject_ptr GEOM_Superv_i::PublishInStudy(SALOMEDS::SObject_ptr theSObject,
                                                     CORBA::Object_ptr theObject,
-                                                    const char* theName) throw (SALOME::SALOME_Exception)
+                                                    const char* theName) 
 {
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
@@ -547,7 +547,7 @@ GEOM_Superv_i::PublishNamedShapesInStudy(//SALOMEDS::SObject_ptr theSObject,
 // function : CanCopy()
 // purpose  :
 //============================================================================
-CORBA::Boolean GEOM_Superv_i::CanCopy(SALOMEDS::SObject_ptr theObject)
+CORBA::Boolean GEOM_Superv_i::CanCopy(SALOMEDS::SObject_ptr /*theObject*/)
 {
   return false;
 }
@@ -556,7 +556,7 @@ CORBA::Boolean GEOM_Superv_i::CanCopy(SALOMEDS::SObject_ptr theObject)
 // function : CopyFrom()
 // purpose  :
 //============================================================================
-SALOMEDS::TMPFile* GEOM_Superv_i::CopyFrom(SALOMEDS::SObject_ptr theObject, CORBA::Long& theObjectID)
+SALOMEDS::TMPFile* GEOM_Superv_i::CopyFrom(SALOMEDS::SObject_ptr /*theObject*/, CORBA::Long& /*theObjectID*/)
 {
   SALOMEDS::TMPFile_var aStreamFile;
   return aStreamFile._retn();
@@ -566,7 +566,7 @@ SALOMEDS::TMPFile* GEOM_Superv_i::CopyFrom(SALOMEDS::SObject_ptr theObject, CORB
 // function : CanPaste()
 // purpose  :
 //============================================================================
-CORBA::Boolean GEOM_Superv_i::CanPaste(const char* theComponentName, CORBA::Long theObjectID)
+CORBA::Boolean GEOM_Superv_i::CanPaste(const char* /*theComponentName*/, CORBA::Long /*theObjectID*/)
 {
   return false;
 }
@@ -575,9 +575,9 @@ CORBA::Boolean GEOM_Superv_i::CanPaste(const char* theComponentName, CORBA::Long
 // function : PasteInto()
 // purpose  :
 //============================================================================
-SALOMEDS::SObject_ptr GEOM_Superv_i::PasteInto(const SALOMEDS::TMPFile& theStream,
-                                               CORBA::Long theObjectID,
-                                               SALOMEDS::SObject_ptr theObject)
+SALOMEDS::SObject_ptr GEOM_Superv_i::PasteInto(const SALOMEDS::TMPFile& /*theStream*/,
+                                               CORBA::Long /*theObjectID*/,
+                                               SALOMEDS::SObject_ptr /*theObject*/)
 {
   SALOMEDS::SObject_var aNewSO;
   return aNewSO._retn();
@@ -3415,14 +3415,14 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::ImportSTL( const char* theFileName )
   MESSAGE("GEOM_Superv_i::ImportSTL");
   getSTLPluginOp();
   GEOM::ListOfGO* aSeq = mySTLOp->ImportSTL(theFileName );
-  GEOM::GEOM_Object_ptr anObj;
+  GEOM::GEOM_Object_var anObj;
 
   if (aSeq->length() > 0) {
     anObj = aSeq->operator[](0);
   }
 
   endService( " GEOM_Superv_i::ImportSTL" );
-  return anObj;
+  return anObj._retn();
 }
 
 //=============================================================================
@@ -3447,14 +3447,14 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::ImportBREP( const char* theFileName )
   MESSAGE("GEOM_Superv_i::ImportBREP");
   getBREPPluginOp();
   GEOM::ListOfGO* aSeq = myBREPOp->ImportBREP(theFileName );
-  GEOM::GEOM_Object_ptr anObj;
+  GEOM::GEOM_Object_var anObj;
 
   if (aSeq->length() > 0) {
     anObj = aSeq->operator[](0);
   }
 
   endService( " GEOM_Superv_i::ImportBREP" );
-  return anObj;
+  return anObj._retn();
 }
 
 //=============================================================================
@@ -3483,14 +3483,14 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::ImportSTEP( const char* theFileName,
   MESSAGE("GEOM_Superv_i::ImportSTEP");
   getSTEPPluginOp();
   GEOM::ListOfGO* aSeq = mySTEPOp->ImportSTEP(theFileName, theIsIgnoreUnits, false );
-  GEOM::GEOM_Object_ptr anObj;
+  GEOM::GEOM_Object_var anObj;
 
   if (aSeq->length() > 0) {
     anObj = aSeq->operator[](0);
   }
 
   endService( " GEOM_Superv_i::ImportSTEP" );
-  return anObj;
+  return anObj._retn();
 }
 
 //=============================================================================
@@ -3517,14 +3517,14 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::ImportIGES( const char* theFileName,
   MESSAGE("GEOM_Superv_i::ImportIGES");
   getIGESPluginOp();
   GEOM::ListOfGO* aSeq = myIGESOp->ImportIGES(theFileName, theIsIgnoreUnits );
-  GEOM::GEOM_Object_ptr anObj;
+  GEOM::GEOM_Object_var anObj;
 
   if (aSeq->length() > 0) {
     anObj = aSeq->operator[](0);
   }
 
   endService( " GEOM_Superv_i::ImportIGES" );
-  return anObj;
+  return anObj._retn();
 }
 
 //=============================================================================
@@ -3548,11 +3548,11 @@ CORBA::Boolean GEOM_Superv_i::ExportXAO( GEOM::GEOM_Object_ptr shape,
 //=============================================================================
 //  Import XAO
 //=============================================================================
-CORBA::Boolean GEOM_Superv_i::ImportXAO( const char* fileName,
-                                         GEOM::GEOM_Object_out shape,
-                                         GEOM::ListOfGO_out subShapes,
-                                         GEOM::ListOfGO_out groups,
-                                         GEOM::ListOfFields_out fields )
+CORBA::Boolean GEOM_Superv_i::ImportXAO( const char* /*fileName*/,
+                                         GEOM::GEOM_Object_out /*shape*/,
+                                         GEOM::ListOfGO_out /*subShapes*/,
+                                         GEOM::ListOfGO_out /*groups*/,
+                                         GEOM::ListOfFields_out /*fields*/ )
 {
   return false;
 }

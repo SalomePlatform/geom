@@ -321,7 +321,7 @@ bool OperationGUI_GetShapesOnShapeDlg::execute (ObjectList& objects)
   default: aLimit = GEOM::SHAPE ; break;
   }
 
-  GEOM::shape_state aState;
+  GEOM::shape_state aState = GEOM::ST_IN; // todo: aState must be explicitly initialized to avoid warning (see below)
   switch (GroupPoints->ComboBox2->currentIndex())
   {
     case 0:  aState = GEOM::ST_IN;    break;
@@ -335,7 +335,7 @@ bool OperationGUI_GetShapesOnShapeDlg::execute (ObjectList& objects)
   GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow(getOperation());
   GEOM::GEOM_Object_var anObj = anOper->GetShapesOnShapeAsCompound(myObject2, myObject1,
                                                                    (CORBA::Short) aLimit,
-                                                                   aState);
+                                                                   aState); // todo: aState must be explicitly initialized to avoid warning (see above)
 
   if (!anObj->_is_nil())
     objects.push_back(anObj._retn());

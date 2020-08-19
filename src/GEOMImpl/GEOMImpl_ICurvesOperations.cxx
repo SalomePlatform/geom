@@ -106,13 +106,13 @@ namespace
   static PyMethodDef PyStdOut_methods[] = {
     {"write",  (PyCFunction)PyStdOut_write,  METH_VARARGS,
      PyDoc_STR("write(string) -> None")},
-    {NULL,    NULL}   /* sentinel */
+    {0, 0, 0, 0}   /* sentinel */
   };
 
   static PyMemberDef PyStdOut_memberlist[] = {
     {(char*)"softspace", T_INT,  offsetof(PyStdOut, softspace), 0,
      (char*)"flag indicating that a space needs to be printed; used by print"},
-    {NULL} /* Sentinel */
+    {0, 0, 0, 0, 0}   /* sentinel */
   };
   
   static PyTypeObject PyStdOut_Type = {

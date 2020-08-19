@@ -37,7 +37,7 @@
 class GEOM_BaseObject;
 class GEOM_Engine;
 
-DEFINE_STANDARD_HANDLE( GEOM_BaseObject, Standard_Transient );
+DEFINE_STANDARD_HANDLE( GEOM_BaseObject, Standard_Transient )
 
 class GEOM_BaseObject : public Standard_Transient
 {

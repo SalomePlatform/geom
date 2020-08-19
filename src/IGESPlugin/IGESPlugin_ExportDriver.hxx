@@ -23,7 +23,7 @@
 // GEOM includes
 #include "GEOM_BaseDriver.hxx"
 
-DEFINE_STANDARD_HANDLE( IGESPlugin_ExportDriver, GEOM_BaseDriver );
+DEFINE_STANDARD_HANDLE( IGESPlugin_ExportDriver, GEOM_BaseDriver )
 
 class IGESPlugin_ExportDriver : public GEOM_BaseDriver
 {

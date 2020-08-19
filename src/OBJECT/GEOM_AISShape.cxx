@@ -255,7 +255,7 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
       // computed deflection coefficient is stored as absolute.
       Prs3d::GetDeflection (myshape, myDrawer);
 #endif
-    }
+    } // fall through!
     // End 0023271
     case CustomHighlight:
     {
@@ -333,7 +333,7 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
         else
           aDir = -aDirVec;
 
-        Prs3d_Arrow::Draw(aPrs, aP2, aDir, M_PI/180.*5., aDist/10.);
+        Prs3d_Arrow::Draw(aPrs->CurrentGroup(), aP2, aDir, M_PI/180.*5., aDist/10.);
       }
     }
   }
@@ -606,7 +606,7 @@ void GEOM_AISShape::drawField( const Handle(Prs3d_Presentation)& thePrs,
           aGroup->AddText (aText);
 #else
           Graphic3d_Vertex aVertex( aCenter.X(), aCenter.Y(), aCenter.Z() );
-          aGroup->Text( aString.toUtf8().constData(), aVertex, 14 );
+          aGroup->Text( aString.toUtf8().constData(), aVertex, 14 ); // deprecated API, to be removed (see above)
 #endif
         }
       }
@@ -681,7 +681,7 @@ void GEOM_AISShape::drawName( const Handle(Prs3d_Presentation)& thePrs )
   aGroup->AddText(aText);
 #else
   Graphic3d_Vertex aVertex( aCenter.X(), aCenter.Y(), aCenter.Z() );
-  aGroup->Text( TCollection_ExtendedString( aName ), aVertex, 16 );
+  aGroup->Text( TCollection_ExtendedString( aName ), aVertex, 16 ); // deprecated API, to be removed (see above)
 #endif
 }
 

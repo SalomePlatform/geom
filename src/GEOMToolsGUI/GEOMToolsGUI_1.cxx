@@ -607,7 +607,7 @@ void GEOMToolsGUI::OnUnpublishObject() {
             disp->EraseWithChildren(IObject);
             // hide references if any
             std::vector< _PTR(SObject) > vso = aStudy->FindDependances(obj);
-            for ( int i = 0; i < vso.size(); i++ ) {
+            for ( int i = 0; i < (int)vso.size(); i++ ) {
               _PTR(SObject) refObj = vso[i];
               aDrw = B->FindOrCreateAttribute( refObj, "AttributeDrawable" );
               aDrw->SetDrawable( false );

@@ -25,7 +25,7 @@
 
 #include <GEOM_BaseDriver.hxx>
 
-DEFINE_STANDARD_HANDLE( GEOMImpl_FieldDriver, GEOM_BaseDriver );
+DEFINE_STANDARD_HANDLE( GEOMImpl_FieldDriver, GEOM_BaseDriver )
 
 /*!
  * \brief This class is needed only to retrieve creation information of GEOM_Field

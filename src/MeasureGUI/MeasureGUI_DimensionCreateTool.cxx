@@ -509,7 +509,7 @@ Handle(AIS_DiameterDimension) MeasureGUI_DimensionCreateTool::Diameter( const GE
           aPmin = aTrimmedCurve->FirstParameter();
           aPmax = aTrimmedCurve->LastParameter();
 
-          aCircle = Handle(Geom_Circle)::DownCast( aTrimmedCurve );
+          aCircle = Handle(Geom_Circle)::DownCast( aTrimmedCurve ); // todo: useless downcast: aCircle always NULL
         }
         break;
       }
@@ -550,7 +550,7 @@ Handle(AIS_DiameterDimension) MeasureGUI_DimensionCreateTool::Diameter( const GE
           aPmin = aTrimmedCurve->FirstParameter();
           aPmax = aTrimmedCurve->LastParameter();
 
-          aCircle = Handle(Geom_Circle)::DownCast( aTrimmedCurve );
+          aCircle = Handle(Geom_Circle)::DownCast( aTrimmedCurve ); // todo: useless downcast: aCircle always NULL
         }
 
         break;
@@ -579,6 +579,7 @@ Handle(AIS_DiameterDimension) MeasureGUI_DimensionCreateTool::Diameter( const GE
       // do not break, go to edge checking
       aMeasuredShape = anExpEdge;
     }
+    // fall through!
 
     case TopAbs_EDGE:
     {
@@ -626,6 +627,8 @@ Handle(AIS_DiameterDimension) MeasureGUI_DimensionCreateTool::Diameter( const GE
         aFaceN = gp_Vec( aFace.Orientation() == TopAbs_REVERSED ? -aNorm : aNorm );
       }
     }
+    break;
+  default:
     break;
   }
 

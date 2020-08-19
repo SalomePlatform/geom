@@ -45,7 +45,7 @@ class GEOM_Displayer;
  */
 class GEOMGUI_EXPORT GEOMGUI_AnnotationMgr : public QObject
 {
-  Q_OBJECT;
+  Q_OBJECT
 
 public:
   GEOMGUI_AnnotationMgr( SalomeApp_Application* theApplication );

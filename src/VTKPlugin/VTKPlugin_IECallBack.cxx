@@ -47,7 +47,7 @@ VTKPlugin_IECallBack::~VTKPlugin_IECallBack()
 //=============================================================================
 bool VTKPlugin_IECallBack::Export( const Handle(GEOM_Object)      theOriginal,
                                    const TCollection_AsciiString& theFileName,
-                                   const TCollection_AsciiString& theFormatName )
+                                   const TCollection_AsciiString& /*theFormatName*/ )
 {
   VTKPlugin_IOperations* aPluginOperations = VTKPlugin_OperationsCreator::get( GetEngine() );
   const double aDeflection = 0.001;

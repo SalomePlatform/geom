@@ -33,8 +33,8 @@ const int GEOM_FIELD_STEP_OBJTYPE = 53;
 
 class GEOM_Field;
 class GEOM_FieldStep;
-DEFINE_STANDARD_HANDLE( GEOM_Field, GEOM_BaseObject );
-DEFINE_STANDARD_HANDLE( GEOM_FieldStep, GEOM_BaseObject );
+DEFINE_STANDARD_HANDLE( GEOM_Field, GEOM_BaseObject )
+DEFINE_STANDARD_HANDLE( GEOM_FieldStep, GEOM_BaseObject )
 
 class GEOM_Field : public GEOM_BaseObject
 {

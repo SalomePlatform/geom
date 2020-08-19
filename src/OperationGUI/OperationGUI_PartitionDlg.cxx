@@ -317,7 +317,7 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
     //myListMaterials.length( 0 ); // obsolete
 
     GEOM::shape_type type = GEOM::SHAPE;
-    for (int i = 0; i < myListShapes.length(); i++)
+    for (int i = 0; i < (int)myListShapes.length(); i++)
       type = qMin( type, myListShapes[i]->GetMaxShapeType() );
     int idx = qMax( 0, GroupPoints->ComboBox1->findData( type ) );
     GroupPoints->ComboBox1->setCurrentIndex( idx );
@@ -560,19 +560,19 @@ int OperationGUI_PartitionDlg::GetLimit() const
 QList<GEOM::GeomObjPtr> OperationGUI_PartitionDlg::getSourceObjects()
 {
   QList<GEOM::GeomObjPtr> res;
-  for (int i = 0; i < myListShapes.length(); i++) {
+  for (int i = 0; i < (int)myListShapes.length(); i++) {
     GEOM::GeomObjPtr aGeomObjPtr(myListShapes[i]);
     res << aGeomObjPtr;
   }
-  for (int i = 0; i < myListTools.length(); i++) {
+  for (int i = 0; i < (int)myListTools.length(); i++) {
     GEOM::GeomObjPtr aGeomObjPtr(myListTools[i]);
     res << aGeomObjPtr;
   }
-  for (int i = 0; i < myListRemoveInside.length(); i++) {
+  for (int i = 0; i < (int)myListRemoveInside.length(); i++) {
     GEOM::GeomObjPtr aGeomObjPtr(myListRemoveInside[i]);
     res << aGeomObjPtr;
   }
-  for (int i = 0; i < myListKeepInside.length(); i++) {
+  for (int i = 0; i < (int)myListKeepInside.length(); i++) {
     GEOM::GeomObjPtr aGeomObjPtr(myListKeepInside[i]);
     res << aGeomObjPtr;
   }

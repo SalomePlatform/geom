@@ -347,7 +347,7 @@ void TransformationGUI_ExtensionDlg::enterEvent(QEvent*)
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void TransformationGUI_ExtensionDlg::ValueChangedInSpinBox(double newValue)
+void TransformationGUI_ExtensionDlg::ValueChangedInSpinBox(double /*newValue*/)
 {
   processPreview();
 }

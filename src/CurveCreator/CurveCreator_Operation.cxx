@@ -363,6 +363,8 @@ void CurveCreator_Operation::apply(CurveCreator_Curve *theCurve)
             case CurveCreator_Operation::SetCoordinates:
               theCurve->setPointInternal( aSectionsMap );
               break;
+            default:
+              break;
           }
         }
         break;

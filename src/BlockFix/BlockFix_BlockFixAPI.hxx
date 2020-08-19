@@ -31,7 +31,7 @@
 #include <TopoDS_Shape.hxx>
 #include <Standard_Real.hxx>
 
-DEFINE_STANDARD_HANDLE(BlockFix_BlockFixAPI, Standard_Transient);
+DEFINE_STANDARD_HANDLE(BlockFix_BlockFixAPI, Standard_Transient)
 
 class BlockFix_BlockFixAPI : public Standard_Transient
 {

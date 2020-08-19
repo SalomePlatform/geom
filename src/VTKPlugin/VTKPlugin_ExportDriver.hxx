@@ -23,7 +23,7 @@
 // GEOM includes
 #include "GEOM_BaseDriver.hxx"
 
-DEFINE_STANDARD_HANDLE( VTKPlugin_ExportDriver, GEOM_BaseDriver );
+DEFINE_STANDARD_HANDLE( VTKPlugin_ExportDriver, GEOM_BaseDriver )
 
 class VTKPlugin_ExportDriver : public GEOM_BaseDriver
 {

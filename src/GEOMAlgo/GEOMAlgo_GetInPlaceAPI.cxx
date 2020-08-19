@@ -260,7 +260,7 @@ gp_Vec GEOMAlgo_GetInPlaceAPI::GetNormal
 
     return du ^ dv;
 
-  } catch (Standard_Failure ) {
+  } catch (Standard_Failure&) {
   }
   return defaultNorm;
 }

@@ -28,7 +28,7 @@
 
 #include <GEOM_BaseDriver.hxx>
 
-DEFINE_STANDARD_HANDLE( GEOM_SubShapeDriver, GEOM_BaseDriver );
+DEFINE_STANDARD_HANDLE( GEOM_SubShapeDriver, GEOM_BaseDriver )
 
 class GEOM_SubShapeDriver : public GEOM_BaseDriver {
 

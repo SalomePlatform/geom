@@ -52,7 +52,7 @@ protected:
   virtual                           ~GEOM_VTKTrihedron();
 
 public:
-                                    vtkTypeMacro( GEOM_VTKTrihedron, SALOME_Actor );
+                                    vtkTypeMacro( GEOM_VTKTrihedron, SALOME_Actor )
   static GEOM_VTKTrihedron*         New();
 
   virtual double      GetSize() { return mySize;}

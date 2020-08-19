@@ -459,7 +459,7 @@ GEOM::GEOM_IOperations_ptr BasicGUI_ArcDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool BasicGUI_ArcDlg::isValid( QString& msg )
+bool BasicGUI_ArcDlg::isValid( QString& /*msg*/ )
 {
   bool ok = myPoint1 && myPoint2 && myPoint3 &&
     myPoint1 != myPoint2 && myPoint1 != myPoint3 && myPoint2 != myPoint3;

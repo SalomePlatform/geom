@@ -344,7 +344,7 @@ void GEOMAlgo_FinderShapeOn2::ProcessEdges()
   //
   Standard_Boolean bIsConformState, bIsToBreak;
   Standard_Integer i, aNb, iCnt, iErr;
-  TopAbs_State aSt;
+  TopAbs_State aSt = TopAbs_UNKNOWN; // todo: aSt must be explicitly initilized to avoid warning (see below)
   TopTools_IndexedMapOfShape aM;
   TopExp_Explorer aExp;
   GEOMAlgo_ListIteratorOfListOfPnt aIt;
@@ -378,7 +378,7 @@ void GEOMAlgo_FinderShapeOn2::ProcessEdges()
     }
     //
     if (BRep_Tool::Degenerated(aE)) {
-      myMSS.Add(aE, aSt);
+      myMSS.Add(aE, aSt); // todo: aSt must be explicitly initilized to avoid warning (see above)
       continue;
     }
     //

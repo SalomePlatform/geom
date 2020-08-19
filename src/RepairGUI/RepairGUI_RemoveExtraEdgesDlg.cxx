@@ -241,7 +241,7 @@ void RepairGUI_RemoveExtraEdgesDlg::ActivateThisDialog()
 // function : enterEvent()
 // purpose  : Mouse enter onto the dialog to activate it
 //=================================================================================
-void RepairGUI_RemoveExtraEdgesDlg::enterEvent(QEvent* e)
+void RepairGUI_RemoveExtraEdgesDlg::enterEvent(QEvent*)
 {
   if ( !mainFrame()->GroupConstructors->isEnabled() )
     ActivateThisDialog();
@@ -274,7 +274,7 @@ GEOM::GEOM_IOperations_ptr RepairGUI_RemoveExtraEdgesDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool RepairGUI_RemoveExtraEdgesDlg::isValid( QString& msg )
+bool RepairGUI_RemoveExtraEdgesDlg::isValid( QString& /*msg*/ )
 {
   return myOkObject;
 }

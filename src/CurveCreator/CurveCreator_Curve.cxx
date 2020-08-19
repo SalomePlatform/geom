@@ -48,19 +48,19 @@
 // purpose:
 //=======================================================================
 CurveCreator_Curve::CurveCreator_Curve( const CurveCreator::Dimension theDimension )
-: myIsLocked  (false),
+: mySkipSorting (false),
+  myIsLocked (false),
   myDimension (theDimension),
   myDisplayer (NULL),
-  myAISShape  (NULL),
-  myNbUndos   (0),
-  myNbRedos   (0),
-  myUndoDepth (-1),
-  myOpLevel(0),
-  mySkipSorting(false),
   myPointAspectColor (Quantity_NOC_ROYALBLUE4), 
   myCurveColor (Quantity_NOC_RED),
-  myEraseAll(true),
-  myLineWidth(1)
+  myLineWidth (1),
+  myNbUndos (0),
+  myNbRedos (0),
+  myUndoDepth (-1),
+  myOpLevel (0),
+  myAISShape (NULL),
+  myEraseAll (true)
 {
 }
 
@@ -95,12 +95,12 @@ std::string CurveCreator_Curve::getUniqSectionName() const
         sprintf( aBuffer, "Section_%d", i+1 );
         std::string aName(aBuffer);
         int j;
-        for( j = 0 ; j < mySections.size() ; j++ ){
+        for( j = 0 ; j < (int)mySections.size() ; j++ ){
             aSection = (CurveCreator_Section*)getSection( j );
             if ( aSection && aSection->myName == aName )
               break;
         }
-        if( j == mySections.size() )
+        if( j == (int)mySections.size() )
             return aName;
     }
     return "";
@@ -791,8 +791,8 @@ bool CurveCreator_Curve::addPointsInternal( const CurveCreator::SectionsMap &the
           anIterPosition = aSection->myPoints.end();
         else
           anIterPosition = aSection->myPoints.begin() + toICoord(anIPnt);
-        CurveCreator::Coordinates::const_iterator aFirstPosition = 
-          aCoords.begin();
+        /*CurveCreator::Coordinates::const_iterator aFirstPosition = 
+          aCoords.begin();*/
         aSection->myPoints.insert(anIterPosition,
                                   aCoords.begin(), aCoords.end());
       }
@@ -884,9 +884,9 @@ bool CurveCreator_Curve::setPoint( const int theISection,
   aPoints.push_back( aPosPoint );
   aSectionsMap[theISection] = aPoints;
 
-  int aSize1 = getNbPoints( theISection );
+  /*int aSize1 = */getNbPoints( theISection ); // todo: unused variable
   res = setPointInternal( aSectionsMap );
-  int aSize2 = getNbPoints( theISection );
+  /*int aSize2 = */getNbPoints( theISection ); // todo: unused variable
 
   finishOperation();
 

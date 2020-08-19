@@ -34,7 +34,7 @@
 class TopoDS_Shape;
 class Standard_GUID;
 
-DEFINE_STANDARD_HANDLE( GEOMImpl_CopyDriver, GEOM_BaseDriver );
+DEFINE_STANDARD_HANDLE( GEOMImpl_CopyDriver, GEOM_BaseDriver )
 
 class GEOMImpl_CopyDriver : public GEOM_BaseDriver {
 

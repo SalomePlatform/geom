@@ -252,7 +252,7 @@ void MeasureGUI_FastCheckIntersectionsDlg::onCompute()
     TopExp::MapShapes(aSelShape2, anIndices2);
 
     //Sub-shapes of 1st Object
-    for (int i = 0; i < myInters1->length(); i++) {
+    for (int i = 0; i < (int)myInters1->length(); i++) {
       TopoDS_Shape aSubShape = anIndices1.FindKey(myInters1[i]);
       QString aType = GEOMBase::GetShapeTypeString(aSubShape);
       if (!aType.isEmpty())
@@ -262,7 +262,7 @@ void MeasureGUI_FastCheckIntersectionsDlg::onCompute()
     myShapeList1->selectAll();
 
     //Sub-shapes of second Object
-    for (int i = 0; i < myInters2->length(); i++) {
+    for (int i = 0; i < (int)myInters2->length(); i++) {
       TopoDS_Shape aSubShape = anIndices2.FindKey(myInters2[i]);
       QString aType = GEOMBase::GetShapeTypeString(aSubShape);
       if (!aType.isEmpty())
@@ -475,7 +475,7 @@ bool MeasureGUI_FastCheckIntersectionsDlg::findIntersections()
     GEOM::GEOM_IMeasureOperations::_narrow(getOperation());
   bool isOK = true;
 
-  bool HasInte;
+  bool HasInte = false;
   try {
     HasInte = anOper->FastIntersect(myObj1.get(), myObj2.get(), getTolerance(), getDeflection(), myInters1, myInters2);
   }
@@ -623,7 +623,7 @@ GEOM::ListOfGO_var MeasureGUI_FastCheckIntersectionsDlg::getLstObjFromListSelect
   for (i=0, anIter = aObjLstExist.begin(); anIter != aObjLstExist.end(); i++, ++anIter) {
     anObjLst[i] = *anIter;
   }
-  for (int j = 0; j < aObjLstCreate->length(); j++) {
+  for (int j = 0; j < (int)aObjLstCreate->length(); j++) {
     anObjLst[aObjLstExist.size()+j]=aObjLstCreate[j];
   }
   return  anObjLst._retn();
@@ -645,11 +645,11 @@ bool MeasureGUI_FastCheckIntersectionsDlg::execute(ObjectList& objects)
   //Collect general intersection list
   aCompList->length(nbObj);
   int i;
-  for (i = 0; i < aList1->length(); i++) {
+  for (i = 0; i < (int)aList1->length(); i++) {
     GEOMBase::PublishSubObject( aList1[i] );
     aCompList[i]=aList1[i];
   }
-  for (int j = 0; j < aList2->length(); j++) {
+  for (int j = 0; j < (int)aList2->length(); j++) {
     GEOMBase::PublishSubObject( aList2[j] );
     aCompList[i+j]=aList2[j];
   }

@@ -196,7 +196,7 @@ void MeasureGUI_ManageDimensionsDlg::StartSelection( const Selection theSelectio
 
     Handle(AIS_InteractiveContext) anAISContext = myOperatedViewer->getAISContext();
 
-    anAISContext->ClearCurrents( Standard_False );
+    anAISContext->ClearCurrents( Standard_False );  // todo: deprecated OCCT API
     anAISContext->ClearSelected( Standard_False );
     Handle(MeasureGUI_DimensionFilter) aFilter = new MeasureGUI_DimensionFilter( myEditObject->GetStudyEntry() );
 
@@ -358,7 +358,7 @@ void MeasureGUI_ManageDimensionsDlg::SelectionIntoArgument( const Selection theS
     anAISContext->InitSelected();
 
     Handle(AIS_InteractiveObject) anAIS;
-    anAIS = anAISContext->Current();
+    anAIS = anAISContext->Current(); // todo: deprecated OCCT API
 
     int aDimensionId = IdFromPrs( anAIS );
 
@@ -1233,7 +1233,7 @@ void MeasureGUI_ManageDimensionsDlg::SelectInViewer( SOCC_Viewer* theViewer, con
   {
     return;
   }
-  anAISContext->ClearCurrents( Standard_False );
+  anAISContext->ClearCurrents( Standard_False ); // todo: deprecated OCCT API
   SOCC_Prs* aPrs = dynamic_cast<SOCC_Prs*>( theViewer->CreatePrs( myEditObject->GetStudyEntry() ) );
 
   AIS_ListOfInteractive aListOfIO;
@@ -1264,7 +1264,7 @@ void MeasureGUI_ManageDimensionsDlg::SelectInViewer( SOCC_Viewer* theViewer, con
     anAISContext->Activate( anIO, AIS_DSM_Text );
 #endif
 
-    anAISContext->AddOrRemoveCurrentObject( anIO, Standard_False );
+    anAISContext->AddOrRemoveCurrentObject( anIO, Standard_False ); // todo: deprecated OCCT API
     anAISContext->UpdateCurrentViewer();
   }
 }

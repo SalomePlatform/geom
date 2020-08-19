@@ -169,7 +169,7 @@ void AdvancedGUI_DividedDiskDlg::Init()
 // function : SetDoubleSpinBoxStep()
 // purpose  : Double spin box management
 //=================================================================================
-void AdvancedGUI_DividedDiskDlg::SetDoubleSpinBoxStep (double step)
+void AdvancedGUI_DividedDiskDlg::SetDoubleSpinBoxStep (double /*step*/)
 {
   //@@ set double spin box step for all spin boxes here @@//
 }
@@ -399,7 +399,7 @@ GEOM::GEOM_IOperations_ptr AdvancedGUI_DividedDiskDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool AdvancedGUI_DividedDiskDlg::isValid (QString& msg)
+bool AdvancedGUI_DividedDiskDlg::isValid (QString& /*msg*/)
 {
   bool ok = true;
 

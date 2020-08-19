@@ -904,7 +904,7 @@ Standard_Boolean BlockFix_UnionFaces::IsSameDomain(const TopoDS_Face& aFace,
 
       return anIIInt.TangentFaces();
     }
-    catch (Standard_Failure) {
+    catch (Standard_Failure&) {
       return false;
     }
   }

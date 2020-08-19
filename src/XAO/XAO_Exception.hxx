@@ -41,13 +41,13 @@ namespace XAO
         {
         }
 
-        virtual ~XAO_Exception() throw() {};
+        virtual ~XAO_Exception() noexcept {};
 
         /**
          * Returns the error message.
          * @return the error message.
          */
-        virtual const char* what() const throw ()
+        virtual const char* what() const noexcept
         {
             return m_message;
         }

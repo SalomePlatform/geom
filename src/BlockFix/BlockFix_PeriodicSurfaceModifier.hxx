@@ -44,7 +44,7 @@ class Geom_Curve;
 class Geom2d_Curve;
 class gp_Pnt;
 
-DEFINE_STANDARD_HANDLE(BlockFix_PeriodicSurfaceModifier, BRepTools_Modification);
+DEFINE_STANDARD_HANDLE(BlockFix_PeriodicSurfaceModifier, BRepTools_Modification)
 
 class BlockFix_PeriodicSurfaceModifier : public BRepTools_Modification {
 

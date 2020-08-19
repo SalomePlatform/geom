@@ -28,7 +28,7 @@
 
 #include <GEOM_BaseDriver.hxx>
 
-DEFINE_STANDARD_HANDLE( GEOMImpl_ExportDriver, GEOM_BaseDriver );
+DEFINE_STANDARD_HANDLE( GEOMImpl_ExportDriver, GEOM_BaseDriver )
 
 class GEOMImpl_ExportDriver : public GEOM_BaseDriver {
 

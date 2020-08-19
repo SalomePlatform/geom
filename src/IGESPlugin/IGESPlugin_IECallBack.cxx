@@ -76,7 +76,7 @@ IGESPlugin_IECallBack::Import( const TCollection_AsciiString& theFormatName,
 //=============================================================================
 TCollection_AsciiString
 IGESPlugin_IECallBack::ReadValue( const TCollection_AsciiString& theFileName,
-                                  const TCollection_AsciiString& theFormatName,
+                                  const TCollection_AsciiString& /*theFormatName*/,
                                   const TCollection_AsciiString& theParameterName )
 {
   IGESPlugin_IOperations* aPluginOperations = IGESPlugin_OperationsCreator::get( GetEngine() );

@@ -59,20 +59,20 @@
 //=================================================================================
 MeasureGUI_CheckSelfIntersectionsDlg::MeasureGUI_CheckSelfIntersectionsDlg (GeometryGUI* GUI, QWidget* parent)
   : GEOMBase_Skeleton (GUI, parent, false),
-    myTextView1       (0),
-    myTextView2       (0),
-    mySelButton1      (0),
-    mySelButton2      (0),
-    myEditObjName1    (0),
-    myEditObjName2    (0),
-    myLevelBox        (0),
+    myCurrConstrId    (-1),
     myComputeButton1  (0),
-    myComputeButton2  (0),
+    myTextView1       (0),
+    mySelButton1      (0),
+    myEditObjName1    (0),
+    myLevelBox        (0),
     myInteList1       (0),
     myShapeList1      (0),
+    myComputeButton2  (0),
+    myTextView2       (0),
+    mySelButton2      (0),
+    myEditObjName2    (0),
     myInteList2       (0),
-    myShapeList2      (0),
-    myCurrConstrId    (-1)
+    myShapeList2      (0)
 {
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
   QPixmap image0 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_CHECK_SELF_INTERSECTIONS")));
@@ -588,7 +588,7 @@ bool MeasureGUI_CheckSelfIntersectionsDlg::findSelfIntersections
     }
     nbPairs = getInters()->length()/2;
 
-    if (nbPairs*2 != getInters()->length()) {
+    if (nbPairs*2 != (int)getInters()->length()) {
       isOK = false;
     }
   }

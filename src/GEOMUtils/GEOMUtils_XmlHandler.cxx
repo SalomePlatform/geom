@@ -182,8 +182,8 @@ namespace
 #endif
 			  }
 		  }
-		  return xmlPaths;
 	  }
+	  return xmlPaths;
   }
 
 #ifdef MYDEBUG

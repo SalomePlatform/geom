@@ -62,8 +62,8 @@ EntityGUI_PolylineDlg::EntityGUI_PolylineDlg
     myPlnComboBox         (0),
     myPlnButton           (0),
     myPlnSelButton        (0),
-    myWPlaneLineEdit      (0),
     myPolylineSelButton   (0),
+    myWPlaneLineEdit      (0),
     myPolylineEdit        (0),
     myEditCurrentArgument (0),
     myPreviewManager(0),
@@ -293,7 +293,7 @@ GEOM::GEOM_IOperations_ptr EntityGUI_PolylineDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool EntityGUI_PolylineDlg::isValid( QString& msg )
+bool EntityGUI_PolylineDlg::isValid( QString& /*msg*/ )
 {
   return true;
 }
@@ -530,7 +530,7 @@ void EntityGUI_PolylineDlg::SelectionIntoArgument( bool isForced )
 // function : SetEditCurrentArgument()
 // purpose  :
 //=================================================================================
-void EntityGUI_PolylineDlg::SetEditCurrentArgument( bool isChecked )
+void EntityGUI_PolylineDlg::SetEditCurrentArgument( bool /*isChecked*/ )
 {
   if (sender() == myPlnSelButton)
   {

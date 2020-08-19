@@ -178,7 +178,7 @@ namespace GEOM
         ret->ShallowCopy(myAppendFilter->GetOutput());
         myAppendFilter->Delete();
       }
-      catch(Standard_Failure) {
+      catch(Standard_Failure&) {
       }
     }
     return ret;

@@ -35,7 +35,7 @@
 
 class TopoDS_Face;
 
-DEFINE_STANDARD_HANDLE( GEOMImpl_ShapeDriver, GEOM_BaseDriver );
+DEFINE_STANDARD_HANDLE( GEOMImpl_ShapeDriver, GEOM_BaseDriver )
 
 class GEOMImpl_ShapeDriver : public GEOM_BaseDriver {
 

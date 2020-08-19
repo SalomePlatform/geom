@@ -332,7 +332,7 @@ namespace
 
       for (anIter.Initialize(aListFaces); anIter.More();) {
         const TopoDS_Shape &aFace      = anIter.Value();
-        Standard_Boolean    isFaceUsed = Standard_False;
+        //Standard_Boolean    isFaceUsed = Standard_False;
 
         if (aMapFaces.Contains(aFace) || aSewing.IsModified(aFace)) {
           // Remove face from the list.
@@ -1096,7 +1096,7 @@ TopoDS_Wire GEOMImpl_ShapeDriver::MakeWireFromEdges(const Handle(TColStd_HSequen
   B.MakeWire(aWire);
 
   // add edges
-  for (unsigned int ind = 1; ind <= theEdgesFuncs->Length(); ind++) {
+  for (int ind = 1; ind <= theEdgesFuncs->Length(); ind++) {
     Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast(theEdgesFuncs->Value(ind));
     TopoDS_Shape aShape_i = aRefShape->GetValue();
     if (aShape_i.IsNull()) {
@@ -1172,7 +1172,7 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
     TColStd_SequenceOfReal FparSeq;
     TColStd_SequenceOfReal LparSeq;
     TColStd_SequenceOfReal TolSeq;
-    GeomAbs_CurveType CurType;
+    GeomAbs_CurveType CurType = GeomAbs_OtherCurve; // todo: refactor: CurType must be explicitly initialized to avoid warning (see below)
     TopoDS_Vertex FirstVertex, LastVertex;
     Standard_Real aPntShiftDist = 0.;
 
@@ -1204,7 +1204,7 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
         LocSeq.Append(aLocShape);
         FparSeq.Append(fpar);
         LparSeq.Append(lpar);
-        CurType = aType;
+        CurType = aType;                     // todo: refactor: CurType must be explicitly initialized to avoid warning (see above)
         FirstVertex = wexp.CurrentVertex();
       }
       else
@@ -1447,6 +1447,8 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
               }
               break;
             }
+          default:
+            break;
           } //end of switch (aType)
         } // end of else if (aType == CurType && ...
         if (Done)
@@ -2031,7 +2033,7 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_ShapeDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_ShapeDriver,GEOM_BaseDriver)
 
 //modified by NIZNHY-PKV Wed Dec 28 13:48:31 2011f
 #include <TopoDS_Iterator.hxx>

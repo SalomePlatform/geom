@@ -134,7 +134,7 @@ void AdvancedGUI_DividedCylinderDlg::Init()
 // function : SetDoubleSpinBoxStep()
 // purpose  : Double spin box management
 //=================================================================================
-void AdvancedGUI_DividedCylinderDlg::SetDoubleSpinBoxStep (double step)
+void AdvancedGUI_DividedCylinderDlg::SetDoubleSpinBoxStep (double /*step*/)
 {
   //@@ set double spin box step for all spin boxes here @@//
 }
@@ -223,7 +223,7 @@ GEOM::GEOM_IOperations_ptr AdvancedGUI_DividedCylinderDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool AdvancedGUI_DividedCylinderDlg::isValid (QString& msg)
+bool AdvancedGUI_DividedCylinderDlg::isValid (QString& /*msg*/)
 {
   bool ok = true;
 

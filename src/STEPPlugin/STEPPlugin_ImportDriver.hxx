@@ -23,7 +23,7 @@
 // GEOM includes
 #include "GEOM_BaseDriver.hxx"
 
-DEFINE_STANDARD_HANDLE( STEPPlugin_ImportDriver, GEOM_BaseDriver );
+DEFINE_STANDARD_HANDLE( STEPPlugin_ImportDriver, GEOM_BaseDriver )
 
 class STEPPlugin_ImportDriver : public GEOM_BaseDriver
 {

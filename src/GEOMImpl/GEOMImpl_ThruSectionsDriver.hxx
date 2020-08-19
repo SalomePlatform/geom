@@ -28,7 +28,7 @@
 
 #include <GEOM_BaseDriver.hxx>
 
-DEFINE_STANDARD_HANDLE( GEOMImpl_ThruSectionsDriver, GEOM_BaseDriver );
+DEFINE_STANDARD_HANDLE( GEOMImpl_ThruSectionsDriver, GEOM_BaseDriver )
 
 class GEOMImpl_ThruSectionsDriver : public GEOM_BaseDriver {
 

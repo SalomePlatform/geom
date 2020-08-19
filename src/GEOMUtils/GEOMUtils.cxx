@@ -1083,7 +1083,7 @@ void GEOMUtils::ConvertStringToTree( const std::string& dependencyStr,
     std::string objectEntry = dependencyStr.substr( cursor, objectIndex - cursor );
     cursor = objectIndex;
 
-    std::size_t upwardIndexBegin = dependencyStr.find("{",cursor) + 1;
+    //std::size_t upwardIndexBegin = dependencyStr.find("{",cursor) + 1;
     //std::size_t upwardIndexFinish = dependencyStr.find("}",upwardIndexBegin);
     LevelsList upwardList = parseWard( dependencyStr, cursor );
 

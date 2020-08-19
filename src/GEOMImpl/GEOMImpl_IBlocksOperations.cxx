@@ -2072,7 +2072,7 @@ Standard_Boolean HasAnyConnection (const Standard_Integer         theBlockIndex,
  */
 //=============================================================================
 TCollection_AsciiString GEOMImpl_IBlocksOperations::PrintBCErrors
-                                                (Handle(GEOM_Object)  theCompound,
+                                                 (Handle(GEOM_Object) /*theCompound*/,
                                                  const std::list<BCError>& theErrors)
 {
   TCollection_AsciiString aDescr;

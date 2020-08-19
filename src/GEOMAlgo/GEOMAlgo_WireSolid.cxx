@@ -90,7 +90,7 @@ void GEOMAlgo_WireSolid::Perform()
     BuildResult();
   }
   //
-  catch (Standard_Failure) {
+  catch (Standard_Failure&) {
     myErrorStatus= 12;
   }
 }

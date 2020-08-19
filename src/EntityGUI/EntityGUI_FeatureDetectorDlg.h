@@ -106,7 +106,7 @@ private:
   QList<QWidget*>                    myWidgets;
   
   // Output typeselection widget
-  DlgRef_3Radio*                     myOutputGroup;;
+  DlgRef_3Radio*                     myOutputGroup;
   
   gp_Pnt                             myStartPnt;
   gp_Pnt                             myEndPnt;

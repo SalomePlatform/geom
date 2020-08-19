@@ -100,6 +100,6 @@ public:
   DEFINE_STANDARD_RTTIEXT(GEOM_BaseDriver,TFunction_Driver)
 };
 
-DEFINE_STANDARD_HANDLE (GEOM_BaseDriver,TFunction_Driver);
+DEFINE_STANDARD_HANDLE (GEOM_BaseDriver,TFunction_Driver)
 
 #endif

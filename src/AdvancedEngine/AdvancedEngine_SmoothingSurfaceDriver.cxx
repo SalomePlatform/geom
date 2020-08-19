@@ -266,4 +266,4 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-IMPLEMENT_STANDARD_RTTIEXT (AdvancedEngine_SmoothingSurfaceDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (AdvancedEngine_SmoothingSurfaceDriver,GEOM_BaseDriver)

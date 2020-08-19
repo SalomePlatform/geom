@@ -68,7 +68,7 @@ namespace
     PATTERN_XYZ.arg( "Point1" ) + ":" +
     PATTERN_XYZ.arg( "Point2" ) + ":" +
     PATTERN_XYZ.arg( "Point3" );
-};
+}
 
 //=================================================================================
 // function : Length::Init

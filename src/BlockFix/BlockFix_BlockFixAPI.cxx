@@ -34,7 +34,7 @@
 
 #include <Precision.hxx>
 
-IMPLEMENT_STANDARD_RTTIEXT(BlockFix_BlockFixAPI, Standard_Transient);
+IMPLEMENT_STANDARD_RTTIEXT(BlockFix_BlockFixAPI, Standard_Transient)
 
 //=======================================================================
 //function : BlockFix_BlockFixAPI

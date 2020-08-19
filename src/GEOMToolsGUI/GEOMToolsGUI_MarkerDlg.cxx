@@ -277,7 +277,7 @@ void GEOMToolsGUI_MarkerDlg::init()
   GEOM::GEOM_Gen_var engine = GeometryGUI::GetGeomGen();
   myOperation = engine->GetIInsertOperations();
   GEOM::ListOfLong_var ids = myOperation->GetAllTextures();
-  for ( int i = 0; i < ids->length(); i++ )
+  for ( int i = 0; i < (int)ids->length(); i++ )
     addTexture( ids[i] );
 
   // ---

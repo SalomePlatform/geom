@@ -344,7 +344,7 @@ void EntityGUI_FieldDlg::Delegate::setModelData( QWidget* editor,
 
 void EntityGUI_FieldDlg::Delegate::updateEditorGeometry( QWidget* editor,
                                                          const QStyleOptionViewItem& option, 
-                                                         const QModelIndex& index ) const
+                                                         const QModelIndex& /*index*/ ) const
 {
   editor->setGeometry( option.rect );
 }
@@ -393,7 +393,7 @@ EntityGUI_FieldDlg::StepTable::StepTable (int stepID, int dataType,
     if ( !bs->_is_nil() )
     {
       GEOM::short_array_var vals = bs->GetValues();
-      if ( vals->length() == nbRows * nbComps )
+      if ( (int)vals->length() == nbRows * nbComps )
         for ( int iV = 0, iR = 0; iR < nbRows; ++iR )
           for ( int iC = 1; iC < nbColumns; ++iC )
             setItem( iR, iC, new CheckItem( vals[ iV++ ]));
@@ -407,7 +407,7 @@ EntityGUI_FieldDlg::StepTable::StepTable (int stepID, int dataType,
     if ( !is->_is_nil() )
     {
       GEOM::ListOfLong_var vals = is->GetValues();
-      if ( vals->length() == nbRows * nbComps )
+      if ( (int)vals->length() == nbRows * nbComps )
         for ( int iV = 0, iR = 0; iR < nbRows; ++iR )
           for ( int iC = 1; iC < nbColumns; ++iC )
             setItem( iR, iC, new IntSpinItem( vals[ iV++ ]));
@@ -420,7 +420,7 @@ EntityGUI_FieldDlg::StepTable::StepTable (int stepID, int dataType,
     if ( !ds->_is_nil() )
     {
       GEOM::ListOfDouble_var vals = ds->GetValues();
-      if ( vals->length() == nbRows * nbComps )
+      if ( (int)vals->length() == nbRows * nbComps )
         for ( int iV = 0, iR = 0; iR < nbRows; ++iR )
           for ( int iC = 1; iC < nbColumns; ++iC )
             setItem( iR, iC, new DoubleSpinItem( vals[ iV++ ]));
@@ -432,7 +432,7 @@ EntityGUI_FieldDlg::StepTable::StepTable (int stepID, int dataType,
     if ( !ss->_is_nil() )
     {
       GEOM::string_array_var vals = ss->GetValues();
-      if ( vals->length() == nbRows * nbComps )
+      if ( (int)vals->length() == nbRows * nbComps )
         for ( int iV = 0, iR = 0; iR < nbRows; ++iR )
           for ( int iC = 1; iC < nbColumns; ++iC )
             setItem( iR, iC, new QTableWidgetItem( vals[ iV++ ].in() ));
@@ -1054,7 +1054,7 @@ void EntityGUI_FieldDlg::Init()
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void EntityGUI_FieldDlg::enterEvent(QEvent* e)
+void EntityGUI_FieldDlg::enterEvent(QEvent*)
 {
   if (!buttonCancel()->isEnabled())
     ActivateThisDialog();
@@ -1413,7 +1413,7 @@ void EntityGUI_FieldDlg::showCurStep()
       if ( !myIsCreation && !myField->_is_nil() )
       {
         GEOM::string_array_var compNames = myField->GetComponents();
-        for ( int iC = 0; iC < compNames->length(); ++iC )
+        for ( int iC = 0; iC < (int)compNames->length(); ++iC )
           headers << compNames[ iC ].in();
       }
       else
@@ -1628,7 +1628,7 @@ void EntityGUI_FieldDlg::updateDims(int curDim)
 //=================================================================================
 void EntityGUI_FieldDlg::activateSelection()
 {
-  bool isApply = ((QPushButton*)sender() == buttonApply());
+  //bool isApply = ((QPushButton*)sender() == buttonApply());
   if(!isApplyAndClose())
     erasePreview(false);
 

@@ -977,4 +977,4 @@ void* GEOM_Function::GetCallBackData()
   return reinterpret_cast<void*> ( address );
 }
 
-IMPLEMENT_STANDARD_RTTIEXT(GEOM_Function, Standard_Transient );
+IMPLEMENT_STANDARD_RTTIEXT(GEOM_Function, Standard_Transient )

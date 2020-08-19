@@ -34,12 +34,12 @@
 #include <VTKViewer_TransformFilter.h>
 
  
-vtkStandardNewMacro(GEOM_DeviceActor);
+vtkStandardNewMacro(GEOM_DeviceActor)
  
 GEOM_DeviceActor::GEOM_DeviceActor() :
-  myStripper(vtkStripper::New(), true),
-  myPolyDataMapper(vtkPolyDataMapper::New(), true),
   myPolyDataNormals(vtkPolyDataNormals::New(), true),
+  myPolyDataMapper(vtkPolyDataMapper::New(), true),
+  myStripper(vtkStripper::New(), true),
   myActor(VTKViewer_Actor::New(), true),
   myTransformFilter(VTKViewer_TransformFilter::New())
 { 
@@ -66,9 +66,10 @@ SetInput(vtkAlgorithmOutput* thePolyData, bool theUseStripper)
     myTransformFilter->SetInputConnection(myStripper->GetOutputPort());
     myPolyDataMapper->SetInputConnection(myTransformFilter->GetOutputPort());
   }
-  else
+  else {
     myTransformFilter->SetInputConnection(thePolyData);
     myPolyDataMapper->SetInputConnection(myTransformFilter->GetOutputPort());
+  }
 }
  
 void 

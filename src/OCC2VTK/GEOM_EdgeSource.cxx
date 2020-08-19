@@ -37,7 +37,7 @@
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
 
-vtkStandardNewMacro(GEOM_EdgeSource);
+vtkStandardNewMacro(GEOM_EdgeSource)
  
 GEOM_EdgeSource::GEOM_EdgeSource() :
   myIsVector(false)

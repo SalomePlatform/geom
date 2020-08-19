@@ -49,7 +49,7 @@ XAOPlugin_IECallBack::~XAOPlugin_IECallBack()
 bool
 XAOPlugin_IECallBack::Export( const Handle(GEOM_Object)      theOriginal,
                               const TCollection_AsciiString& theFileName,
-                              const TCollection_AsciiString& theFormatName,
+                              const TCollection_AsciiString& /*theFormatName*/,
                               const TCollection_AsciiString& theShapeFileName )
 {
   XAOPlugin_IOperations* aPluginOperations = XAOPlugin_OperationsCreator::get( GetEngine() );
@@ -73,7 +73,7 @@ XAOPlugin_IECallBack::Export( const Handle(GEOM_Object)      theOriginal,
  */
 //=============================================================================
 Handle(TColStd_HSequenceOfTransient)
-XAOPlugin_IECallBack::Import( const TCollection_AsciiString& theFormatName,
+XAOPlugin_IECallBack::Import( const TCollection_AsciiString& /*theFormatName*/,
                               const TCollection_AsciiString& theFileName )
 {
   XAOPlugin_IOperations* aPluginOperations = XAOPlugin_OperationsCreator::get( GetEngine() );

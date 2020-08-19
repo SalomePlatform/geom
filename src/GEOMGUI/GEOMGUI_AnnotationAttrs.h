@@ -205,9 +205,8 @@ private:
   : myObj( theObject ),
     myParameterMap( theParameter ) {}
 
-  GEOMGUI_AnnotationAttrs( const GEOMGUI_AnnotationAttrs& theOther ) {}
-
-  void operator=( const GEOMGUI_AnnotationAttrs& theOther ) {}
+  GEOMGUI_AnnotationAttrs( const GEOMGUI_AnnotationAttrs& ); // private copy constructor, must be never called
+  void operator=( const GEOMGUI_AnnotationAttrs& ); // private assignment operator, must be never called
 
 private:
 

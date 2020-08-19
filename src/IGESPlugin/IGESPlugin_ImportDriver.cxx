@@ -276,4 +276,4 @@ IGESPlugin_ImportDriver::GetValue( const TCollection_AsciiString& theFileName,
     return TCollection_AsciiString();
 }
 
-IMPLEMENT_STANDARD_RTTIEXT( IGESPlugin_ImportDriver, GEOM_BaseDriver );
+IMPLEMENT_STANDARD_RTTIEXT( IGESPlugin_ImportDriver, GEOM_BaseDriver )

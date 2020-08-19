@@ -37,7 +37,7 @@ class vtkPolyData;
 class OCC2VTK_EXPORT GEOM_FaceSource: public vtkPolyDataAlgorithm 
 { 
 public: 
-  vtkTypeMacro(GEOM_FaceSource,vtkPolyDataAlgorithm); 
+  vtkTypeMacro(GEOM_FaceSource,vtkPolyDataAlgorithm)
  
   void AddFace(const TopoDS_Face& theFace); 
   void Clear(){ myFaceSet.Clear();} 

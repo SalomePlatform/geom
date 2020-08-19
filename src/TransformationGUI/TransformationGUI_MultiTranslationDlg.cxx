@@ -502,7 +502,7 @@ void TransformationGUI_MultiTranslationDlg::enterEvent (QEvent*)
 // function : TextValueChangedInSpinBox
 // purpose  :
 //=================================================================================
-void TransformationGUI_MultiTranslationDlg::TextValueChangedInSpinBox( const QString& s)
+void TransformationGUI_MultiTranslationDlg::TextValueChangedInSpinBox( const QString& )
 {
   QObject* send = (QObject*)sender();
   bool isDigit = true;

@@ -195,7 +195,7 @@ void BuildGUI_CompoundDlg::ActivateThisDialog()
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void BuildGUI_CompoundDlg::enterEvent(QEvent* e)
+void BuildGUI_CompoundDlg::enterEvent(QEvent*)
 {
   if ( !mainFrame()->GroupConstructors->isEnabled() )
     ActivateThisDialog(); 

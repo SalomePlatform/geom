@@ -31,7 +31,7 @@
      <property name="title">
       <string/>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="gridLayout1">
       <property name="spacing">
        <number>6</number>
       </property>

@@ -63,7 +63,7 @@ protected:
 
 public:
 
-                                vtkTypeMacro( GEOM_VTKTrihedronAxis, VTKViewer_Axis );
+                                vtkTypeMacro( GEOM_VTKTrihedronAxis, VTKViewer_Axis )
   static GEOM_VTKTrihedronAxis* New();
 
   void                          SetAxis( const gp_Ax1& theAxis, const int theRot, double theColor[ 3 ] );
@@ -79,7 +79,7 @@ private:
   vtkTransform*                 myTrsf;
 };
 
-vtkStandardNewMacro( GEOM_VTKTrihedronAxis );
+vtkStandardNewMacro( GEOM_VTKTrihedronAxis )
 
 GEOM_VTKTrihedronAxis::GEOM_VTKTrihedronAxis()
 {
@@ -197,7 +197,7 @@ void GEOM_VTKTrihedronAxis::SetColor( const double theColor[ 3 ] )
                 Placement of trihedron is changed with SetPlacement() method
 */
 
-vtkStandardNewMacro( GEOM_VTKTrihedron );
+vtkStandardNewMacro( GEOM_VTKTrihedron )
 
 GEOM_VTKTrihedron::GEOM_VTKTrihedron()
 {

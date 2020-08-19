@@ -1142,7 +1142,7 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::UnionListOfGroups
     return NULL;
   }
 
-  TopAbs_ShapeEnum aType, aType_i;
+  TopAbs_ShapeEnum aType = TopAbs_SHAPE, aType_i;   // todo: refactor: aType must be initialized to avoid warning (see below)
   TDF_Label aLabel, aLabel_i;
   TColStd_ListOfInteger aNewIDs;
   TColStd_MapOfInteger mapIDs;
@@ -1160,7 +1160,7 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::UnionListOfGroups
       aType = aType_i;
     else {
       if (aType_i != aType) {
-        if (aType != TopAbs_SHAPE && aType != TopAbs_COMPOUND) {
+        if (aType != TopAbs_SHAPE && aType != TopAbs_COMPOUND) { // todo: refactor: aType must be initialized to avoid warning (see above)
           if (aType_i == TopAbs_SHAPE || aType_i == TopAbs_COMPOUND)
             aType = aType_i;
           else {
@@ -1257,7 +1257,7 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::IntersectListOfGroups
     return NULL;
   }
 
-  TopAbs_ShapeEnum aType, aType_i;
+  TopAbs_ShapeEnum aType = TopAbs_SHAPE, aType_i; // todo: refactor: aType must be initialized to avoid warning (see below)
   TDF_Label aLabel, aLabel_i;
   TColStd_ListOfInteger aNewIDs;
   TColStd_MapOfInteger mapIDs;
@@ -1275,7 +1275,7 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::IntersectListOfGroups
       aType = aType_i;
     else {
       if (aType_i != aType) {
-        if (aType != TopAbs_SHAPE && aType != TopAbs_COMPOUND) {
+        if (aType != TopAbs_SHAPE && aType != TopAbs_COMPOUND) { // todo: refactor: aType must be initialized to avoid warning (see above)
           if (aType_i == TopAbs_SHAPE || aType_i == TopAbs_COMPOUND)
             aType = aType_i;
           else {
@@ -1398,7 +1398,7 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::CutListOfGroups
     return NULL;
   }
 
-  TopAbs_ShapeEnum aType, aType_i;
+  TopAbs_ShapeEnum aType = TopAbs_SHAPE, aType_i; // todo: refactor: aType must be initialized to avoid warning (see below)
   TDF_Label aLabel, aLabel_i;
   TColStd_ListOfInteger aNewIDs;
   TColStd_MapOfInteger mapIDs;
@@ -1470,7 +1470,7 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::CutListOfGroups
       aType = aType_i;
     else {
       if (aType_i != aType) {
-        if (aType != TopAbs_SHAPE && aType != TopAbs_COMPOUND) {
+        if (aType != TopAbs_SHAPE && aType != TopAbs_COMPOUND) { // todo: refactor: aType must be initialized to avoid warning (see above)
           if (aType_i == TopAbs_SHAPE || aType_i == TopAbs_COMPOUND)
             aType = aType_i;
           else {

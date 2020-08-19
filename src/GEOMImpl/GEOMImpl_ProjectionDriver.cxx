@@ -810,4 +810,4 @@ TopoDS_Shape GEOMImpl_ProjectionDriver::projectOnCylinder
   return aResult;
 }
 
-IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_ProjectionDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_ProjectionDriver,GEOM_BaseDriver)

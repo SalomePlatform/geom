@@ -86,7 +86,7 @@ void GEOMGUI_OCCSelector::getSelection( SUIT_DataOwnerPtrList& aList ) const
     for (ic->InitSelected(); ic->MoreSelected(); ic->NextSelected())
     {
 
-      Handle(AIS_InteractiveObject) io = Handle(AIS_InteractiveObject)::DownCast( ic->SelectedInteractive() );
+      Handle(AIS_InteractiveObject) io = ic->SelectedInteractive();
 
       QString entryStr = entry(io);
       int index = -1;
@@ -114,13 +114,13 @@ void GEOMGUI_OCCSelector::getSelection( SUIT_DataOwnerPtrList& aList ) const
       if (!entryStr.isEmpty())
       {
         Handle(SALOME_InteractiveObject) anIO = Handle(SALOME_InteractiveObject)::DownCast(io->GetOwner()); 
-        LightApp_DataOwner* owner;
+        LightApp_DataOwner* owner = 0;
         if (index > -1) // Local Selection
           owner = new LightApp_DataSubOwner (entryStr, index);
         else if ( !anIO.IsNull() ) // Global Selection
           owner = new LightApp_DataOwner( anIO );
-
-        aList.append(SUIT_DataOwnerPtr(owner));
+        if ( owner )
+          aList.append(SUIT_DataOwnerPtr(owner));
       }
     }
 
@@ -164,8 +164,7 @@ static void getEntityOwners( const Handle(AIS_InteractiveObject)& theObj,
       if ( entity.IsNull() )
         continue;
 
-      Handle(SelectMgr_EntityOwner) owner =
-        Handle(SelectMgr_EntityOwner)::DownCast(entity->OwnerId());
+      Handle(SelectMgr_EntityOwner) owner = entity->OwnerId();
       if ( !owner.IsNull() )
         theMap.Add( owner );
     }
@@ -323,7 +322,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
   for  (; i <= n; i++)
   {
     Handle(SelectMgr_EntityOwner) owner = ownersmap( i );
-    if ( owner->State() )
+    if ( owner->IsSelected() )
       continue;
 
     if ( owner->ComesFromDecomposition() )

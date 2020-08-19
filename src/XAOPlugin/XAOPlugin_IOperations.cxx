@@ -182,7 +182,7 @@ bool XAOPlugin_IOperations::exportGroups( std::list<Handle(GEOM_Object)> groupLi
 
 void XAOPlugin_IOperations::exportFields( std::list<Handle(GEOM_Field)> fieldList,
                                           XAO::Xao* xaoObject,
-                                          XAO::BrepGeometry* geometry )
+                                          XAO::BrepGeometry* /*geometry*/ )
 {
   std::list<Handle(GEOM_Field)>::iterator fieldIterator = fieldList.begin();
   while (fieldIterator != fieldList.end())

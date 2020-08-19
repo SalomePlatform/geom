@@ -34,7 +34,7 @@
 #include <Standard_Integer.hxx>
 #include <Standard_Transient.hxx>
 
-DEFINE_STANDARD_HANDLE(GEOMAlgo_HAlgo, Standard_Transient);
+DEFINE_STANDARD_HANDLE(GEOMAlgo_HAlgo, Standard_Transient)
 
 //=======================================================================
 //class    : GEOMAlgo_HAlgo

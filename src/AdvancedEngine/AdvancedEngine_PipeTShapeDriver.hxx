@@ -28,7 +28,7 @@
 #include <TColStd_HSequenceOfInteger.hxx>
 #include <Geom_Surface.hxx>
 
-DEFINE_STANDARD_HANDLE( AdvancedEngine_PipeTShapeDriver, GEOM_BaseDriver );
+DEFINE_STANDARD_HANDLE( AdvancedEngine_PipeTShapeDriver, GEOM_BaseDriver )
 
 class AdvancedEngine_PipeTShapeDriver : public GEOM_BaseDriver
 {

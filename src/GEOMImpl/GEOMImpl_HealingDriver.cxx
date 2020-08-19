@@ -69,10 +69,10 @@ void raiseNotDoneExeption( const int theErrorStatus )
 {
   switch ( theErrorStatus )
   {
-  case ShHealOper_NotError:           StdFail_NotDone::Raise( "ShHealOper_NotError_msg" );
-  case ShHealOper_InvalidParameters:  StdFail_NotDone::Raise( "ShHealOper_InvalidParameters_msg" );
+  case ShHealOper_NotError:           StdFail_NotDone::Raise( "ShHealOper_NotError_msg" ); break;
+  case ShHealOper_InvalidParameters:  StdFail_NotDone::Raise( "ShHealOper_InvalidParameters_msg" ); break;
   case ShHealOper_ErrorExecution:
-  default:                            StdFail_NotDone::Raise( "ShHealOper_ErrorExecution_msg" );
+  default:                            StdFail_NotDone::Raise( "ShHealOper_ErrorExecution_msg" ); break;
   }
 }
 
@@ -610,7 +610,7 @@ Standard_Boolean GEOMImpl_HealingDriver::AddPointOnEdge (GEOMImpl_IHealing*  the
 //function :  ChangeOrientation
 //purpose  :
 //=======================================================================
-Standard_Boolean GEOMImpl_HealingDriver::ChangeOrientation (GEOMImpl_IHealing* theHI,
+Standard_Boolean GEOMImpl_HealingDriver::ChangeOrientation (GEOMImpl_IHealing* /*theHI*/,
                                                             const TopoDS_Shape& theOriginalShape,
                                                             TopoDS_Shape& theOutShape) const
 {
@@ -1157,4 +1157,4 @@ void GEOMImpl_HealingDriver::SaveStatistics( const ShHealOper_Tool& healer, bool
     *stats = healer.GetStatistics();
 }
 
-IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_HealingDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_HealingDriver,GEOM_BaseDriver)

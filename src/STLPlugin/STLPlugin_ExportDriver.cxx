@@ -110,7 +110,7 @@ Standard_Integer STLPlugin_ExportDriver::Execute(Handle(TFunction_Logbook)& log)
     log->SetTouched(Label());
     return 1;
   }
-  catch( Standard_Failure )
+  catch( Standard_Failure& )
   {
     //THROW_SALOME_CORBA_EXCEPTION("Exception caught in ExportSTL", SALOME::BAD_PARAM);
   }
@@ -123,10 +123,10 @@ Standard_Integer STLPlugin_ExportDriver::Execute(Handle(TFunction_Logbook)& log)
  */
 //================================================================================
 bool STLPlugin_ExportDriver::
-GetCreationInformation( std::string&             theOperationName,
-                        std::vector<GEOM_Param>& theParams )
+GetCreationInformation( std::string&             /*theOperationName*/,
+                        std::vector<GEOM_Param>& /*theParams*/ )
 {
   return false;
 }
 
-IMPLEMENT_STANDARD_RTTIEXT( STLPlugin_ExportDriver,GEOM_BaseDriver );
+IMPLEMENT_STANDARD_RTTIEXT( STLPlugin_ExportDriver,GEOM_BaseDriver )

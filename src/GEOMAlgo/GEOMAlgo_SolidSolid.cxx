@@ -91,7 +91,7 @@ void GEOMAlgo_SolidSolid::Perform()
     myRank=2;
     BuildResult();
   }
-  catch (Standard_Failure) {
+  catch (Standard_Failure&) {
     myErrorStatus=12;
   }
 }

@@ -28,7 +28,7 @@
 
 #include <GEOM_BaseDriver.hxx>
 
-DEFINE_STANDARD_HANDLE( GEOMImpl_TorusDriver, GEOM_BaseDriver );
+DEFINE_STANDARD_HANDLE( GEOMImpl_TorusDriver, GEOM_BaseDriver )
 
 class GEOMImpl_TorusDriver : public GEOM_BaseDriver {
 

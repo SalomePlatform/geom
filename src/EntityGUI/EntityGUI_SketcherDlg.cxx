@@ -83,9 +83,9 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
                                               bool modal, Qt::WindowFlags fl,
                                               const double lineWidth )
   : QDialog( parent, fl ),
+    GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
     myIsAllAdded( false ),
     myIsApply( false ),
-    GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
     myGeometryGUI( GUI ),
     myLineWidth( lineWidth )
 {
@@ -1873,7 +1873,7 @@ void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
         LastDecimal = aPrecision;
       else                    // 'g' format in the QString
         LastDecimal = qAbs( aPrecision ) - ceil( log10(minRad) );
-        minRad = ceil(pow(10,LastDecimal) * minRad) / pow(10,LastDecimal); // Rounded up at the last allowed decimal place
+      minRad = ceil(pow(10,LastDecimal) * minRad) / pow(10,LastDecimal); // Rounded up at the last allowed decimal place
       if ( Abs(vz) < minRad){
         if (vz < 0.0)
           Group3Spin->SpinBox_DZ->setValue( - minRad );
@@ -2492,8 +2492,8 @@ void EntityGUI_SketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
                                             const bool            activate,
                                             const bool            update,
                                             const double          lineWidth,
-                                            const int             displayMode,
-                                            const int             color )
+                                            const int             /*displayMode*/,
+                                            const int             /*color*/ )
 {
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
 

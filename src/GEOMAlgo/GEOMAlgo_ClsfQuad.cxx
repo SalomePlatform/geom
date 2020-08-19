@@ -31,7 +31,7 @@
 
 #include <Geom_Plane.hxx>
 
-IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfQuad, GEOMAlgo_Clsf);
+IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfQuad, GEOMAlgo_Clsf)
 
 //=======================================================================
 //function :

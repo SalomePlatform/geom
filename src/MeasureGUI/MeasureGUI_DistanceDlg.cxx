@@ -404,7 +404,7 @@ SALOME_Prs* MeasureGUI_DistanceDlg::buildPrs()
       return aPrs;
     }
   }
-  catch (Standard_Failure) {
+  catch (Standard_Failure&) {
     return 0;
   }
 }
@@ -422,7 +422,7 @@ GEOM::GEOM_IOperations_ptr MeasureGUI_DistanceDlg::createOperation()
 // function : isValid()
 // purpose  :
 //=================================================================================
-bool MeasureGUI_DistanceDlg::isValid (QString& msg)
+bool MeasureGUI_DistanceDlg::isValid (QString& /*msg*/)
 {
   return myObj1 && myObj2;
 }

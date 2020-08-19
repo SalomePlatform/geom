@@ -31,7 +31,7 @@
 #include <gp_Pnt.hxx>
 #include <BRep_Tool.hxx>
  
-vtkStandardNewMacro(GEOM_VertexSource);
+vtkStandardNewMacro(GEOM_VertexSource)
  
 GEOM_VertexSource::GEOM_VertexSource() 
 { 

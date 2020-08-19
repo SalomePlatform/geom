@@ -65,7 +65,7 @@ CurveCreator_TreeViewModel::CurveCreator_TreeViewModel( CurveCreator_ICurve* the
 
 int	CurveCreator_TreeViewModel::columnCount(const QModelIndex & parent ) const
 {
-  if( parent.internalId() == ID_SECTION )
+  if( parent.internalId() == (quintptr)ID_SECTION )
     return 2;
   else
     return 2;
@@ -76,7 +76,7 @@ QVariant	CurveCreator_TreeViewModel::data(const QModelIndex & index, int role ) 
   int aRow = index.row();
   int aColumn = index.column();
   if( myCurve ){
-    if( index.internalId() == ID_SECTION ){
+    if( index.internalId() == (quintptr)ID_SECTION ){
       if( role == Qt::DisplayRole ){
         if( aColumn == 0 )
           return QString::fromStdString(myCurve->getSectionName(aRow));
@@ -150,7 +150,7 @@ QModelIndex	CurveCreator_TreeViewModel::parent(const QModelIndex & theIndex) con
   if( !theIndex.isValid() )
     return QModelIndex();
 
-  if( theIndex.internalId() == ID_SECTION ){
+  if( theIndex.internalId() == (quintptr)ID_SECTION ){
     return QModelIndex();
   }
   return createIndex( theIndex.internalId(), 0, ID_SECTION  );
@@ -165,7 +165,7 @@ int	CurveCreator_TreeViewModel::rowCount(const QModelIndex & parent ) const
       aRowCnt =  myCurve->getNbSections();
     }
     else{
-      if( parent.internalId() == ID_SECTION ){
+      if( parent.internalId() == (quintptr)ID_SECTION ){
         //Points level
         aRowCnt = myCurve->getNbPoints(parent.row());
       }
@@ -191,21 +191,21 @@ QModelIndex CurveCreator_TreeViewModel::pointIndex( int theSection, int thePoint
 
 bool CurveCreator_TreeViewModel::isSection( const QModelIndex& theIndx ) const
 {
-  if( theIndx.internalId() == ID_SECTION )
+  if( theIndx.internalId() == (quintptr)ID_SECTION )
     return true;
   return false;
 }
 
 int CurveCreator_TreeViewModel::getSection( const QModelIndex& theIndx ) const
 {
-  if( theIndx.internalId() == ID_SECTION )
+  if( theIndx.internalId() == (quintptr)ID_SECTION )
     return theIndx.row();
   return theIndx.internalId();
 }
 
 int CurveCreator_TreeViewModel::getPoint( const QModelIndex& theIndx ) const
 {
-  if( theIndx.internalId() == ID_SECTION )
+  if( theIndx.internalId() == (quintptr)ID_SECTION )
     return -1;
   return theIndx.row();
 }
@@ -320,7 +320,7 @@ void CurveCreator_TreeView::sectionsRemoved( int theSection, int theSectionCnt )
   }
 }
 
-void CurveCreator_TreeView::setIndexState( const QModelIndex& theIndx, bool& isExpanded, bool& isSelected, bool& isCurrent )
+void CurveCreator_TreeView::setIndexState( const QModelIndex& theIndx, bool& isExpanded, bool& isSelected, bool& /*isCurrent*/ ) // todo: isCurrent is not set!
 {
   setExpanded( theIndx, isExpanded );
   QItemSelectionModel::SelectionFlags aFlag = QItemSelectionModel::Select;

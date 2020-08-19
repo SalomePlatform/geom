@@ -667,7 +667,7 @@ void BasicGUI_PointDlg::DeactivateActiveDialog()
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void BasicGUI_PointDlg::ValueChangedInSpinBox(double newValue)
+void BasicGUI_PointDlg::ValueChangedInSpinBox(double /*newValue*/)
 {
   displayPreview(true);
 }
@@ -957,7 +957,7 @@ QList<GEOM::GeomObjPtr> BasicGUI_PointDlg::getSourceObjects()
 // function : ClickParamCoord()
 // purpose  :
 //=================================================================================
-void BasicGUI_PointDlg::ClickParamCoord(int id)
+void BasicGUI_PointDlg::ClickParamCoord(int /*id*/)
 {
   updateParamCoord(true);
   displayPreview(true);

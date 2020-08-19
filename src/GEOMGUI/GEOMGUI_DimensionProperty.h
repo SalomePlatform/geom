@@ -504,6 +504,6 @@ private:
   VectorOfRecords            myRecords;
 };
 
-Q_DECLARE_METATYPE(GEOMGUI_DimensionProperty);
+Q_DECLARE_METATYPE(GEOMGUI_DimensionProperty)
 
 #endif

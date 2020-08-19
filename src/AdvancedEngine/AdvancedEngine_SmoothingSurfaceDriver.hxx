@@ -25,7 +25,7 @@
 #include <TColgp_HArray1OfPnt.hxx>
 #include <TopoDS_Shape.hxx>
 
-DEFINE_STANDARD_HANDLE( AdvancedEngine_SmoothingSurfaceDriver, GEOM_BaseDriver );
+DEFINE_STANDARD_HANDLE( AdvancedEngine_SmoothingSurfaceDriver, GEOM_BaseDriver )
 
 class AdvancedEngine_SmoothingSurfaceDriver : public GEOM_BaseDriver
 {

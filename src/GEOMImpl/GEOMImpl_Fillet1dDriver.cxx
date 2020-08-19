@@ -125,7 +125,7 @@ static Standard_Boolean takePlane( const TopoDS_Edge& theE1,
       return false;
     thePlane = gp_Pln( gp_Pnt(aXYZ), aDir1^ aDir2);
   }
-  catch (Standard_Failure) {
+  catch (Standard_Failure&) {
     return false;
   }
   return true;
@@ -445,4 +445,4 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_Fillet1dDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_Fillet1dDriver,GEOM_BaseDriver)

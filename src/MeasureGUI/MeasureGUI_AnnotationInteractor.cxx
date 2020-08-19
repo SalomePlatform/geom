@@ -273,7 +273,7 @@ bool MeasureGUI_AnnotationInteractor::eventFilter( QObject* theObject, QEvent* t
       {
         const Handle(AIS_InteractiveContext) anAISContext = myViewer->getAISContext();
 
-        if ( anAISContext->IsHilighted( Handle(AIS_InteractiveObject)::DownCast( myActiveIO ) ) )
+        if ( anAISContext->IsHilighted( myActiveIO ) )
         {
           anAISContext->Unhilight( myActiveIO, Standard_False );
         }

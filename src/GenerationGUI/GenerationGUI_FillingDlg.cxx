@@ -275,7 +275,7 @@ void GenerationGUI_FillingDlg::enterEvent(QEvent*)
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void GenerationGUI_FillingDlg::ValueChangedInSpinBox(double newValue)
+void GenerationGUI_FillingDlg::ValueChangedInSpinBox(double /*newValue*/)
 {
   processPreview();
 }
@@ -354,7 +354,7 @@ bool GenerationGUI_FillingDlg::execute(ObjectList& objects)
   GEOM::GEOM_I3DPrimOperations_var anOper =
     GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
 
-  GEOM::filling_oper_method aMethod;
+  GEOM::filling_oper_method aMethod = GEOM::FOM_Default; // todo: aMethod must be explicitly initialized to avoid warning (see below)
   switch (GroupPoints->ComboBox1->currentIndex())
   {
   case 0:  aMethod = GEOM::FOM_Default; break;
@@ -376,7 +376,7 @@ bool GenerationGUI_FillingDlg::execute(ObjectList& objects)
                         GroupPoints->SpinBox5->value(),
                         GroupPoints->SpinBox3->value(),
                         aMethod,
-                        GroupPoints->CheckBox1->isChecked());
+                        GroupPoints->CheckBox1->isChecked()); // todo: aMethod must be explicitly initialized to avoid warning (see below)
   if (!anObj->_is_nil())
   {
     if (!IsPreview())

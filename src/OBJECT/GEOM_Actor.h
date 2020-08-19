@@ -59,7 +59,7 @@ typedef GEOM_SmartPtr<vtkAppendPolyData> PAppendFilter;
 class GEOM_OBJECT_EXPORT GEOM_Actor: public SALOME_Actor
 {
 public:
-  vtkTypeMacro(GEOM_Actor,SALOME_Actor);
+  vtkTypeMacro(GEOM_Actor,SALOME_Actor)
   static GEOM_Actor* New();
 
   void SetShape(const TopoDS_Shape& theShape,

@@ -618,9 +618,9 @@ void CurveCreator_Utils::setSelectedPoints( Handle(AIS_InteractiveContext) theCo
   Handle(SelectMgr_Selection) aSelection = anAISShape->Selection( AIS_Shape::SelectionMode( TopAbs_VERTEX ) );
   const NCollection_Vector<Handle(SelectMgr_SensitiveEntity)>& selected = aSelection->Entities();
 
-  CurveCreator_ICurve::SectionToPointList::const_iterator anIt = thePoints.begin(),
-                                                          aLast = thePoints.end();
-  bool isFound = false;
+  /*CurveCreator_ICurve::SectionToPointList::const_iterator anIt = thePoints.begin(),
+                                                          aLast = thePoints.end();*/
+  //bool isFound = false;
   for( int i=0; i<aSize; i++ )
   {
   for ( NCollection_Vector<Handle(SelectMgr_SensitiveEntity)>::Iterator selIter( selected );
@@ -634,7 +634,7 @@ void CurveCreator_Utils::setSelectedPoints( Handle(AIS_InteractiveContext) theCo
     Handle(Select3D_SensitivePoint) aSenPnt = Handle(Select3D_SensitivePoint)::DownCast( aSenEntity );
 
     gp_Pnt anOwnerPnt = aSenPnt->Point();
-    Handle(SelectMgr_EntityOwner) anOwner = Handle(SelectMgr_EntityOwner)::DownCast( aSenPnt->OwnerId() );
+    Handle(SelectMgr_EntityOwner) anOwner = aSenPnt->OwnerId();
 
       bool isIntersect = fabs( aPntsToSelect[i].X() - anOwnerPnt.X() ) < LOCAL_SELECTION_TOLERANCE &&
                          fabs( aPntsToSelect[i].Y() - anOwnerPnt.Y() ) < LOCAL_SELECTION_TOLERANCE;
@@ -663,14 +663,14 @@ void CurveCreator_Utils::setLocalPointContext( const CurveCreator_ICurve* theCur
     return;
 
   if ( theOpen ) {
-    theContext->ClearCurrents( false );
+    theContext->ClearCurrents( false ); // todo: deprecated OCCT API
     // load the curve AIS object to the local context with the point selection
     Handle(AIS_InteractiveObject) anAIS = theCurve->getAISObject();
     if ( !anAIS.IsNull() )
     {
       if ( anAIS->IsKind( STANDARD_TYPE( AIS_Shape ) ) )
       {
-        theContext->Load( anAIS, -1/*selection mode*/, true/*allow decomposition*/ );
+        theContext->Load( anAIS, -1/*selection mode*/);
         theContext->Activate( anAIS, AIS_Shape::SelectionMode( (TopAbs_ShapeEnum)TopAbs_VERTEX ) );
       }
     }

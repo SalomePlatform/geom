@@ -32,7 +32,7 @@
 
 #include <GEOM_BaseDriver.hxx>
 
-DEFINE_STANDARD_HANDLE( GEOMImpl_PrismDriver, GEOM_BaseDriver );
+DEFINE_STANDARD_HANDLE( GEOMImpl_PrismDriver, GEOM_BaseDriver )
 
 class GEOMImpl_PrismDriver : public GEOM_BaseDriver {
 

@@ -212,7 +212,7 @@ void RepairGUI_RemoveWebsDlg::ActivateThisDialog()
 // function : enterEvent()
 // purpose  : Mouse enter onto the dialog to activate it
 //=================================================================================
-void RepairGUI_RemoveWebsDlg::enterEvent (QEvent* e)
+void RepairGUI_RemoveWebsDlg::enterEvent (QEvent*)
 {
   if (!mainFrame()->GroupConstructors->isEnabled())
     ActivateThisDialog();
@@ -243,7 +243,7 @@ GEOM::GEOM_IOperations_ptr RepairGUI_RemoveWebsDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool RepairGUI_RemoveWebsDlg::isValid (QString& msg)
+bool RepairGUI_RemoveWebsDlg::isValid (QString& /*msg*/)
 {
   return myOkObject;
 }

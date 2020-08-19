@@ -300,7 +300,7 @@ void GEOMAlgo_ShellSolid::Perform()
     }//for (i=iBeg; i<=iEnd; ++i) {
     
   }// try
-  catch (Standard_Failure) {
+  catch (Standard_Failure&) {
     myErrorStatus=12;
   }
 }

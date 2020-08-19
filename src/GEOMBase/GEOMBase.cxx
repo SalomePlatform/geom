@@ -307,7 +307,7 @@ Handle(GEOM_AISShape) GEOMBase::ConvertIORinGEOMAISShape(const QString& IOR, boo
             if ( it.Value()->IsInstance( STANDARD_TYPE(GEOM_AISShape) ) ) {
               Handle(GEOM_AISShape) sh = Handle(GEOM_AISShape)::DownCast( it.Value() );
               if ( !sh.IsNull() && sh->hasIO() ) {
-                Handle(SALOME_InteractiveObject) IO = Handle(SALOME_InteractiveObject)::DownCast( sh->getIO() );
+                Handle(SALOME_InteractiveObject) IO = sh->getIO();
                 if ( !IO.IsNull() && IO->hasEntry() && obj->GetID() == IO->getEntry() )
                   shape = sh;
               }
@@ -354,7 +354,7 @@ GEOM_Actor* GEOMBase::ConvertIORinGEOMActor(const QString& IOR, bool onlyInActiv
             if ( a->IsA( "GEOM_Actor" ) ) {
               GEOM_Actor* ga = GEOM_Actor::SafeDownCast( a );
               if ( ga && ga->hasIO() ) {
-                Handle(SALOME_InteractiveObject) IO = Handle(SALOME_InteractiveObject)::DownCast( ga->getIO() );
+                Handle(SALOME_InteractiveObject) IO = ga->getIO();
                 if ( !IO.IsNull() && IO->hasEntry() && obj->GetID() == IO->getEntry() )
                   actor = ga;
               }
@@ -374,7 +374,7 @@ GEOM_Actor* GEOMBase::ConvertIORinGEOMActor(const QString& IOR, bool onlyInActiv
 // purpose  :
 //=======================================================================
 Handle(AIS_InteractiveObject) GEOMBase::GetAIS( const Handle(SALOME_InteractiveObject)& IO,
-                                                bool onlyInActiveView, bool onlyGeom )
+                                                bool onlyInActiveView, bool /*onlyGeom*/ )
 {
   Handle(AIS_InteractiveObject) aisObject;
 
@@ -524,7 +524,7 @@ TopoDS_Shape GEOMBase::CreateArrowForLinearEdge( const TopoDS_Shape& shape )
         }
       }
     }
-    catch ( Standard_Failure ) {
+    catch ( Standard_Failure& ) {
       // OCC failures are hard to catch in GUI.
       // This is because of the position for #include <Standard_ErrorHandler.hxx> that is very critical to find
       // in SALOME environment : compilation error !

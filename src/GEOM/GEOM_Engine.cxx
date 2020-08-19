@@ -114,7 +114,7 @@ bool ProcessFunction(Handle(GEOM_Function)&             theFunction,
                      TCollection_AsciiString&           theScript,
                      TCollection_AsciiString&           theAfterScript,
                      const TVariablesList&              theVariables,
-                     const bool                         theIsPublished,
+                     const bool                         /*theIsPublished*/,
                      TDF_LabelMap&                      theProcessed,
                      std::set<TCollection_AsciiString>& theIgnoreObjs,
                      bool&                              theIsDumpCollected);
@@ -1560,7 +1560,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
 //=============================================================================
 void ReplaceEntriesByNames (TCollection_AsciiString&                  theScript,
                             TSting2ObjDataMap&                        aEntry2ObjData,
-                            const bool                                theIsPublished,
+                            const bool                                /*theIsPublished*/,
                             TColStd_SequenceOfAsciiString&            theObjListToPublish,
                             Standard_Integer&                         objectCounter,
                             Resource_DataMapOfAsciiStringAsciiString& aNameToEntry)

@@ -33,7 +33,7 @@
 #include <TDataStd_Name.hxx>
 #include <TDocStd_Owner.hxx>
 
-IMPLEMENT_STANDARD_RTTIEXT(GEOM_BaseDriver,TFunction_Driver);
+IMPLEMENT_STANDARD_RTTIEXT(GEOM_BaseDriver,TFunction_Driver)
 
 //================================================================================
 /*!

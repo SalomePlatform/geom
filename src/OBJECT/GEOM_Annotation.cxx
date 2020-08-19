@@ -549,8 +549,8 @@ Bnd_Box GEOM_Annotation::TextBoundingBox() const
   unsigned int aResolution = GetContext()->CurrentViewer()->DefaultRenderingParams().Resolution;
   if ( aFont.Init( anAsp->Aspect()->Font().ToCString(),
                    anAsp->Aspect()->GetTextFontAspect(),
-                  (unsigned int)anAsp->Height(),
-                  aResolution ) )
+                   (unsigned int)anAsp->Height(),
+                   aResolution ) ) // deprecated API, to be removed (see above)
 #endif
   {
     const NCollection_String aText( (Standard_Utf16Char* )myText.ToExtString() );
@@ -807,7 +807,7 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
     // to avoid jittering when dragging text
     myTextDraw->SetPosition( OpenGl_Vec3( static_cast<float>( myAISObject->myPosition.X() ),
                                           static_cast<float>( myAISObject->myPosition.Y() ),
-                                          static_cast<float>( myAISObject->myPosition.Z() ) ) );
+                                          static_cast<float>( myAISObject->myPosition.Z() ) ) ); // todo: deprecated OCCT API
   }
 
   myTextDraw->Render( theWorkspace );

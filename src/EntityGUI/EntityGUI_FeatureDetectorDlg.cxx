@@ -407,8 +407,8 @@ void EntityGUI_FeatureDetectorDlg::SelectionIntoArgument()
 {
   
   // TODO supprimer les lignes qui ne servent à rien le cas échéant
-  SUIT_ViewWindow*       theViewWindow  = getDesktop()->activeWindow();
-  SOCC_Viewer* soccViewer = (SOCC_Viewer*)(theViewWindow->getViewManager()->getViewModel());
+  //SUIT_ViewWindow*       theViewWindow  = getDesktop()->activeWindow();
+  //SOCC_Viewer* soccViewer = (SOCC_Viewer*)(theViewWindow->getViewManager()->getViewModel());
 
   if (!myEditCurrentArgument->isEnabled())
     return;
@@ -618,9 +618,10 @@ ShapeRec_Parameters* EntityGUI_FeatureDetectorDlg::parametersChanged()
     aCornersParameters->qualityLevel = (dynamic_cast<QDoubleSpinBox*>(myWidgets[QUALITY_LEVEL]))->value();
     aCornersParameters->minDistance  = (dynamic_cast<QDoubleSpinBox*>(myWidgets[MIN_DISTANCE]))->value();
     switch ( (dynamic_cast<QComboBox*>(myWidgets[TYPE_CRITERIA]))->currentIndex() ) {
-    case 0: aCornersParameters->typeCriteria = CV_TERMCRIT_ITER;
-    case 1: aCornersParameters->typeCriteria = CV_TERMCRIT_EPS;
-    case 2: aCornersParameters->typeCriteria = CV_TERMCRIT_ITER | CV_TERMCRIT_EPS;
+    case 0: aCornersParameters->typeCriteria = CV_TERMCRIT_ITER; break;
+    case 1: aCornersParameters->typeCriteria = CV_TERMCRIT_EPS; break;
+    case 2: aCornersParameters->typeCriteria = CV_TERMCRIT_ITER | CV_TERMCRIT_EPS; break;
+    default: break;
     }
     aCornersParameters->maxIter = (dynamic_cast<QSpinBox*>(myWidgets[MAX_ITER]))->value();
     aCornersParameters->epsilon = (dynamic_cast<QDoubleSpinBox*>(myWidgets[EPSILON]))->value();

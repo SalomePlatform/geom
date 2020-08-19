@@ -36,7 +36,7 @@ class GEOMImpl_IHealing;
 class ShHealOper_Tool;
 
 
-DEFINE_STANDARD_HANDLE( GEOMImpl_HealingDriver, GEOM_BaseDriver );
+DEFINE_STANDARD_HANDLE( GEOMImpl_HealingDriver, GEOM_BaseDriver )
 
 class GEOMImpl_HealingDriver : public GEOM_BaseDriver {
 

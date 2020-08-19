@@ -205,10 +205,12 @@ int CurveCreator_TableView::getPointId( const int theRowId ) const
 void CurveCreator_TableView::OnHeaderClick( int theLogicalId )
 {
   if( theLogicalId == myCurrentSortId )
+  {
     if( myCurrentSortOrder == Qt::AscendingOrder )
       myCurrentSortOrder = Qt::DescendingOrder;
     else
       myCurrentSortOrder = Qt::AscendingOrder;
+  }
 
   sortByColumn( theLogicalId, myCurrentSortOrder );
 

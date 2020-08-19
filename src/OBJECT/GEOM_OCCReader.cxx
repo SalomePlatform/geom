@@ -102,7 +102,7 @@ GEOM_OCCReader::~GEOM_OCCReader()
 //=======================================================================
 
 int GEOM_OCCReader::RequestData(vtkInformation *vtkNotUsed(request),
-                                vtkInformationVector **inputVector,
+                                vtkInformationVector **/*inputVector*/,
                                 vtkInformationVector *outputVector)
 {
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
@@ -350,7 +350,7 @@ void GEOM_OCCReader::DrawIso(GeomAbs_IsoType T,
                                Standard_Real T2,
                                vtkPoints* Pts,
                                vtkCellArray* Cells,
-                               Standard_Integer& startidx)
+                               Standard_Integer& /*startidx*/)
 {
 
   Standard_Boolean halt = Standard_False;
@@ -785,7 +785,7 @@ void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
 // Purpose  : Transfer wireframe data for VERTEX
 //=======================================================================
 
-void GEOM_OCCReader::TransferVertexWData(const TopoDS_Vertex& aVertex,
+void GEOM_OCCReader::TransferVertexWData(const TopoDS_Vertex& /*aVertex*/,
                                          vtkPoints*           Pts,
                                          vtkCellArray*        Cells)
 {
@@ -824,9 +824,9 @@ void GEOM_OCCReader::TransferVertexWData(const TopoDS_Vertex& aVertex,
 // Purpose  : Transfer shading data for EDGE
 //=======================================================================
 
-void GEOM_OCCReader::TransferEdgeSData(const TopoDS_Edge& aFace,
-                                         vtkPoints* Pts,
-                                         vtkCellArray* Cells) 
+void GEOM_OCCReader::TransferEdgeSData(const TopoDS_Edge& /*aFace*/,
+                                       vtkPoints* /*Pts*/,
+                                       vtkCellArray* /*Cells*/) 
 {
 }
 

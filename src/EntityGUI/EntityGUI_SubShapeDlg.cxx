@@ -910,7 +910,7 @@ void EntityGUI_SubShapeDlg::ClickOnOkFilter()
   
   TopTools_IndexedMapOfShape aSubShapesMap;
   TopExp::MapShapes(myShape, aSubShapesMap);
-  SALOME_View* view = GEOM_Displayer::GetActiveView();
+  //SALOME_View* view = GEOM_Displayer::GetActiveView();
   getDisplayer()->Erase(myObject, false, false);
   CORBA::String_var aMainEntry = myObject->GetStudyEntry();
   QString anEntryBase = aMainEntry.in();

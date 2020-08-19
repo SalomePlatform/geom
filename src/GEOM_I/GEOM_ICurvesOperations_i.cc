@@ -485,7 +485,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCurveParametric
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  GEOMImpl_ICurvesOperations::CurveType aType;
+  GEOMImpl_ICurvesOperations::CurveType aType = GEOMImpl_ICurvesOperations::Polyline; // todo: aType must be explicitly initialized to avoid warning
   switch(theCurveType) {
   case GEOM::Polyline:
     aType = GEOMImpl_ICurvesOperations::Polyline;
@@ -526,7 +526,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCurveParametricNew
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  GEOMImpl_ICurvesOperations::CurveType aType;
+  GEOMImpl_ICurvesOperations::CurveType aType = GEOMImpl_ICurvesOperations::Polyline; // todo: aType must be explicitly initialized to avoid warning
   switch(theCurveType) {
   case GEOM::Polyline:
     aType = GEOMImpl_ICurvesOperations::Polyline;

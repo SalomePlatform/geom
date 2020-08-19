@@ -155,4 +155,4 @@ GetCreationInformation(std::string&             theOperationName,
   return true;
 }
 
-IMPLEMENT_STANDARD_RTTIEXT (GEOM_SubShapeDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOM_SubShapeDriver,GEOM_BaseDriver)

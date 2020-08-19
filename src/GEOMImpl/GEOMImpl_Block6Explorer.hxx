@@ -33,77 +33,79 @@
 #include <TCollection_AsciiString.hxx>
 #include <gp_Trsf.hxx>
 
-  //  Class GEOMImpl_Block6Explorer gives easy and fast access to a certain sub-elements of hexahedral solid
-  //  Each face   can be accessed by its global ID [1-6]
-  //  Each edge   can be accessed by its global ID [1-12] or by its local NB [1-4] inside certain face
-  //  Each vertex can be accessed by its global ID [1-8] or  by its local NB [1-4] inside certain face
-  //  Numeration of the sub-shapes is defined in constructors, see they comments
-  //
-  //                  face 2       face 4          |           4 face     2 face                   |
-  //                       |           /           |            \         |                        |
-  //                      \|/        |/_           |            _\|      \|/                       |
-  //                       '         '             |              '       '                        |
-  //                    8_______7__7               |               7__7_______8                    |
-  //                   /|         /|               |               |\         |\                   |
-  //                  8 12       6 11              |              11 6       12 8                  |
-  //                 /  |       /  |               |               |  \       |  \                 |
-  //               5/______5__6/   |               |               |   \6__5______\5               |
-  //  face 5 --->  |    |     |    |  <--- 6 face  |  face 6 --->  |    |     |    |  <--- 5 face  |
-  //               |    |__3__|____|               |               |____|__3__|    |               |
-  //               |   /4     |   /3               |               3\   |     4\   |               |
-  //               |  /       |  /                 |                 \  |       \  |               |
-  //               9 4       10 2                  |                  2 10       4 9               |
-  //               |/__1______|/                   |                   \|______1__\|               |
-  //               1          2                    |                    2          1               |
-  //            _.        .                        |                        .       ._             |
-  //            /|       /|\                       |                       /|\      |\             |
-  //           /          |                        |                        |         \            |
-  //          3 face      1 face                   |                   face 1     face 3           |
-  //                                               |                                               |
-  //  Picture 1 (right orientation)                |  Picture 2 (left orientation)                 |
-  //                                                                                               |
-  //  For the moment, the orientation of numbering is not controlled
+  /*  ======================================================================================================
+      Class GEOMImpl_Block6Explorer gives easy and fast access to a certain sub-elements of hexahedral solid
+      Each face   can be accessed by its global ID [1-6]
+      Each edge   can be accessed by its global ID [1-12] or by its local NB [1-4] inside certain face
+      Each vertex can be accessed by its global ID [1-8] or  by its local NB [1-4] inside certain face
+      Numeration of the sub-shapes is defined in constructors, see they comments
 
-  // Faces: 1 - bottom, 2 - top, 3 - front, 4 - back, 5 - left (right), 6 - right (left)
+                      face 2       face 4          |           4 face     2 face
+                           |           /           |            \         |
+                          \|/        |/_           |            _\|      \|/
+                           '         '             |              '       '
+                        8_______7__7               |               7__7_______8
+                       /|         /|               |               |\         |\
+                      8 12       6 11              |              11 6       12 8
+                     /  |       /  |               |               |  \       |  \
+                   5/______5__6/   |               |               |   \6__5______\5
+      face 5 --->  |    |     |    |  <--- 6 face  |  face 6 --->  |    |     |    |  <--- 5 face
+                   |    |__3__|____|               |               |____|__3__|    |
+                   |   /4     |   /3               |               3\   |     4\   |
+                   |  /       |  /                 |                 \  |       \  |
+                   9 4       10 2                  |                  2 10       4 9
+                   |/__1______|/                   |                   \|______1__\|
+                   1          2                    |                    2          1
+                _.        .                        |                        .       ._
+                /|       /|\                       |                       /|\      |\
+               /          |                        |                        |         \
+              3 face      1 face                   |                   face 1     face 3
+                                                   |
+      Picture 1 (right orientation)                |  Picture 2 (left orientation)
 
-  //
-  //                             4_______3__3         2 ______2__3
-  //                            /          /          |          |
-  //                           4          2           1          3
-  //                          /          /            |          |
-  //                        1/______1__2/             |          |
-  //                                                  |          |
-  //                                                  | __4______|
-  //                           face 2       face 4    1          4
-  //                                |           /
-  //                               \|/        |/_
-  //                                '         '
-  //        3                    8_______7__7                    3
-  //       /|                   /|         /|                   /|
-  //      3 2                  8 12       6 11                 3 2
-  //     /  |                 /  |       /  |                 /  |
-  //   4/   |               5/______5__6/   |               4/   |
-  //   |    |  face 5 --->  |    |     |    |  <--- 6 face  |    |
-  //   |    |               |    |__3__|____|               |    |
-  //   |   /2               |   /4     |   /3               |   /2
-  //   |  /                 |  /       |  /                 |  /
-  //   4 1                  9 4       10 2                  4 1
-  //   |/                   |/__1______|/                   |/
-  //   1                    1          2                    1
-  //                     _.        .
-  //                     /|       /|\
-  //                    /          |
-  //   2 ______2__3    3 face      1 face
-  //   |          |
-  //   |          |               __3_______
-  //   |          |             /4         /3
-  //   |          |            /          /
-  //   1          3           4          2
-  //   | __4______|          /__1______ /
-  //   1          4         1          2
-  //
-  //  Picture 3 (On periferal pictures the local
-  //  numeration of edges and vertices is shown)
+      For the moment, the orientation of numbering is not controlled
+
+      Faces: 1 - bottom, 2 - top, 3 - front, 4 - back, 5 - left (right), 6 - right (left)
+
+
+                                 4_______3__3         2 ______2__3
+                                /          /          |          |
+                               4          2           1          3
+                              /          /            |          |
+                            1/______1__2/             |          |
+                                                      |          |
+                                                      | __4______|
+                               face 2       face 4    1          4
+                                    |           /
+                                   \|/        |/_
+                                    '         '
+            3                    8_______7__7                    3
+           /|                   /|         /|                   /|
+          3 2                  8 12       6 11                 3 2
+         /  |                 /  |       /  |                 /  |
+       4/   |               5/______5__6/   |               4/   |
+       |    |  face 5 --->  |    |     |    |  <--- 6 face  |    |
+       |    |               |    |__3__|____|               |    |
+       |   /2               |   /4     |   /3               |   /2
+       |  /                 |  /       |  /                 |  /
+       4 1                  9 4       10 2                  4 1
+       |/                   |/__1______|/                   |/
+       1                    1          2                    1
+                         _.        .
+                         /|       /|\
+                        /          |
+       2 ______2__3    3 face      1 face
+       |          |
+       |          |               __3_______
+       |          |             /4         /3
+       |          |            /          /
+       1          3           4          2
+       | __4______|          /__1______ /
+       1          4         1          2
+
+      Picture 3 (On periferal pictures the local
+      numeration of edges and vertices is shown)
+      ======================================================================================================  */
 
 class GEOMImpl_Block6Explorer
 {

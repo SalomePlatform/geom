@@ -355,7 +355,7 @@ void GroupGUI_GroupDlg::Init()
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void GroupGUI_GroupDlg::enterEvent(QEvent* e)
+void GroupGUI_GroupDlg::enterEvent(QEvent*)
 {
   if (!buttonCancel()->isEnabled())
     ActivateThisDialog();
@@ -547,7 +547,7 @@ void GroupGUI_GroupDlg::setInPlaceObj(GEOM::GEOM_Object_var theObj, const bool i
     GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations();
 
     GEOM::ListOfGO_var aSubObjects = aShapesOp->MakeExplode(myInPlaceObj, getShapeType(), false);
-    for ( int i = 0; i < aSubObjects->length(); i++ )
+    for ( int i = 0; i < (int)aSubObjects->length(); i++ )
     {
       GEOM::ListOfLong_var aCurrList = aShapesOp->GetSameIDs( myMainObj, aSubObjects[i] );
       if( aCurrList->length() > 1 ) {
@@ -555,7 +555,7 @@ void GroupGUI_GroupDlg::setInPlaceObj(GEOM::GEOM_Object_var theObj, const bool i
         //      In case if GetSameIDs(...) method return more then one ID use
         //      GetSharedShapes(...) method to get sub-shapes of the second shape.
         GEOM::ListOfGO_var aSubObjects2 = aShapesOp->GetSharedShapes( myMainObj, aSubObjects[i], getShapeType() );
-        for( int j = 0; j < aSubObjects2->length(); j++ ) {
+        for( int j = 0; j < (int)aSubObjects2->length(); j++ ) {
           CORBA::Long aMainIndex =  aLocOp->GetSubShapeIndex( myMainObj, aSubObjects2[j] );
           CORBA::Long aPlaceIndex = aLocOp->GetSubShapeIndex( myInPlaceObj, aSubObjects[i]);
           if ( aMainIndex >= 0 && aPlaceIndex > 0 ) {
@@ -1008,6 +1008,7 @@ void GroupGUI_GroupDlg::setShapeType(const TopAbs_ShapeEnum theType)
   case TopAbs_EDGE:   anId = 1; break;
   case TopAbs_FACE:   anId = 2; break;
   case TopAbs_SOLID:  anId = 3; break;
+  default: break;
   }
   setConstructorId(anId);
   if (!myIsShapeType)
@@ -1024,7 +1025,7 @@ void GroupGUI_GroupDlg::setShapeType(const TopAbs_ShapeEnum theType)
 //=================================================================================
 void GroupGUI_GroupDlg::activateSelection()
 {
-  bool isApply = ((QPushButton*)sender() == buttonApply());
+  //bool isApply = ((QPushButton*)sender() == buttonApply());
   if(!isApplyAndClose())
     erasePreview(false);
 
@@ -1139,7 +1140,6 @@ void GroupGUI_GroupDlg::activateSelection()
           }
         }
       }
-      else ;
       aDisplayer->UnsetDisplayMode();
       aDisplayer->UnsetColor();
       aDisplayer->UpdateViewer();
@@ -1427,7 +1427,7 @@ void GroupGUI_GroupDlg::ClickOnOkFilter()
   TopoDS_Shape aMainShape = GEOM_Client::get_client().GetShape(GeometryGUI::GetGeomGen(), myMainObj);
   TopTools_IndexedMapOfShape aSubShapesMap;
   TopExp::MapShapes(aMainShape, aSubShapesMap);
-  SALOME_View* view = GEOM_Displayer::GetActiveView();
+  //SALOME_View* view = GEOM_Displayer::GetActiveView();
   getDisplayer()->Erase(myMainObj, false, false);
   CORBA::String_var aMainEntry = myMainObj->GetStudyEntry();
   QString anEntryBase = aMainEntry.in();

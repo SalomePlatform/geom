@@ -395,7 +395,7 @@ void GEOMGUI_TextTreeWdg::fillBranch( const BranchType& theBranchType, const QSt
 //=================================================================================
 QSharedPointer<GEOMGUI_TextTreeWdg::VisualProperty>
   GEOMGUI_TextTreeWdg::getVisualProperty( const BranchType& theBranchType,
-                                          SalomeApp_Study* theStudy,
+                                          SalomeApp_Study* /*theStudy*/,
                                           const std::string& theEntry )
 {
   switch ( theBranchType )

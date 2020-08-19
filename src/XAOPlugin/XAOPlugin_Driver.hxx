@@ -25,7 +25,7 @@
 
 #include "GEOM_BaseDriver.hxx"
 
-DEFINE_STANDARD_HANDLE(XAOPlugin_Driver, GEOM_BaseDriver);
+DEFINE_STANDARD_HANDLE(XAOPlugin_Driver, GEOM_BaseDriver)
 
 class XAOPlugin_Driver: public GEOM_BaseDriver
 {

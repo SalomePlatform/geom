@@ -51,7 +51,7 @@ class vtkAlgorithmOutput;
 class VTK_EXPORT GEOM_DeviceActor: public vtkObject 
 {  
 public: 
-  vtkTypeMacro(GEOM_DeviceActor,vtkObject); 
+  vtkTypeMacro(GEOM_DeviceActor,vtkObject)
   static GEOM_DeviceActor* New(); 
 
   void SetProperty(vtkProperty* theProperty);

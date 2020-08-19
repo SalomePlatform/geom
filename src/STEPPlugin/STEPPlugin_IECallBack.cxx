@@ -48,7 +48,7 @@ STEPPlugin_IECallBack::~STEPPlugin_IECallBack()
 bool
 STEPPlugin_IECallBack::Export( const Handle(GEOM_Object)      theOriginal,
                                const TCollection_AsciiString& theFileName,
-                               const TCollection_AsciiString& theFormatName )
+                               const TCollection_AsciiString& /*theFormatName*/ )
 {
   STEPPlugin_IOperations* aPluginOperations = STEPPlugin_OperationsCreator::get( GetEngine() );
   const STEPPlugin_IOperations::LengthUnit aUnit = STEPPlugin_IOperations::LengthUnit_Meter;
@@ -78,7 +78,7 @@ STEPPlugin_IECallBack::Import( const TCollection_AsciiString& theFormatName,
 //=============================================================================
 TCollection_AsciiString
 STEPPlugin_IECallBack::ReadValue( const TCollection_AsciiString& theFileName,
-                                  const TCollection_AsciiString& theFormatName,
+                                  const TCollection_AsciiString& /*theFormatName*/,
                                   const TCollection_AsciiString& theParameterName )
 {
   STEPPlugin_IOperations* aPluginOperations = STEPPlugin_OperationsCreator::get( GetEngine() );

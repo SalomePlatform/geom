@@ -34,7 +34,7 @@
  *  Update
  */
 //=============================================================================
-bool GEOM_Solver::Update(TDF_LabelSequence& theSeq)
+bool GEOM_Solver::Update(TDF_LabelSequence& /*theSeq*/)
 {
   return false;
 } 
@@ -44,7 +44,7 @@ bool GEOM_Solver::Update(TDF_LabelSequence& theSeq)
  *  UpdateObject
  */
 //=============================================================================
-bool GEOM_Solver::UpdateObject(Handle(GEOM_Object) theObject, TDF_LabelSequence& theSeq)
+bool GEOM_Solver::UpdateObject(Handle(GEOM_Object) /*theObject*/, TDF_LabelSequence& /*theSeq*/)
 {
   return false;
 }

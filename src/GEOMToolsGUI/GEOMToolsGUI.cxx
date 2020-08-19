@@ -206,7 +206,7 @@ GEOMToolsGUI::~GEOMToolsGUI()
 // function : OnGUIEvent()
 // purpose  :
 //=======================================================================
-bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
+bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* /*parent*/)
 {
   getGeometryGUI()->EmitSignalDeactivateDialog();
 
@@ -335,7 +335,7 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 // function : OnGUIEvent()
 // purpose  :
 //=======================================================================
-bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent, const QVariant& theParam )
+bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* /*parent*/, const QVariant& theParam )
 {
   getGeometryGUI()->EmitSignalDeactivateDialog();
 

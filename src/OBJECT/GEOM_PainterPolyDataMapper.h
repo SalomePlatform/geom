@@ -40,15 +40,15 @@ public vtkPolyDataMapper
 {
  public:
 #ifndef VTK_OPENGL2
-  vtkTypeMacro(GEOM_PainterPolyDataMapper,vtkPainterPolyDataMapper);
+  vtkTypeMacro(GEOM_PainterPolyDataMapper,vtkPainterPolyDataMapper)
 #else
-  vtkTypeMacro(GEOM_PainterPolyDataMapper,vtkPolyDataMapper);
+  vtkTypeMacro(GEOM_PainterPolyDataMapper,vtkPolyDataMapper)
 #endif
 
 
   static GEOM_PainterPolyDataMapper* New();
 
-  virtual void RenderPiece(vtkRenderer *ren, vtkActor *act) {}
+  virtual void RenderPiece(vtkRenderer* /*ren*/, vtkActor* /*act*/) {}
 
  protected:
   GEOM_PainterPolyDataMapper() {}

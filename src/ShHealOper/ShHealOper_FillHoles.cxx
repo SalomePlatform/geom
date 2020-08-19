@@ -230,7 +230,7 @@ Standard_Boolean ShHealOper_FillHoles::prepareWires(const TopTools_SequenceOfSha
       if (!BRep_Tool::Degenerated (TopoDS::Edge (aExp.Current())))
         if(myEdgeFaces.Contains(aExp.Current()) && myEdgeFaces.FindFromKey(aExp.Current()).Extent() >1)
           continue;
-        aSeqEdges->Append(aExp.Current());
+      aSeqEdges->Append(aExp.Current()); // to do: mustn't this clause be within if(!BRep_Tool::Degenerated...)?
     }
   }
 
@@ -319,7 +319,7 @@ Handle(Geom_Surface) ShHealOper_FillHoles::buildSurface(const TopoDS_Wire& theWi
     theSenses    = aBuilder.Sense();
   }
 
-  catch (Standard_Failure) {
+  catch (Standard_Failure&) {
     aSurf.Nullify();
     return aSurf;
   }

@@ -371,24 +371,22 @@ bool BuildGUI_SolidDlg::execute( ObjectList& objects )
   switch (getConstructorId()) {
     case 0:
     {
-	if ( GroupSolid->CheckButton1->isChecked() ) {
-	  GEOM::ListOfGO_var objlist = new GEOM::ListOfGO();
-	  objlist->length( myShells.count() );
-	  for ( int i = 0; i < myShells.count(); i++ )
-		objlist[i] = myShells[i].copy();
+      if ( GroupSolid->CheckButton1->isChecked() ) {
+        GEOM::ListOfGO_var objlist = new GEOM::ListOfGO();
+        objlist->length( myShells.count() );
+        for ( int i = 0; i < myShells.count(); i++ )
+          objlist[i] = myShells[i].copy();
 
-	  anObj = anOper->MakeSolidShells( objlist.in() );
-
-	  if ( !anObj->_is_nil() ) objects.push_back( anObj._retn() );
-	}
-	else {
-	  for ( int i = 0, n = myShells.count(); i< n; i++ ){
-		anObj = anOper->MakeSolidShell( myShells[ i ].get() );
-
-		if ( !anObj->_is_nil() ) objects.push_back( anObj._retn() );
-	  }
-	}
-	break;
+        anObj = anOper->MakeSolidShells( objlist.in() );
+        if ( !anObj->_is_nil() ) objects.push_back( anObj._retn() );
+      }
+      else {
+        for ( int i = 0, n = myShells.count(); i< n; i++ ) {
+          anObj = anOper->MakeSolidShell( myShells[ i ].get() );
+          if ( !anObj->_is_nil() ) objects.push_back( anObj._retn() );
+        }
+      }
+      break;
     }
     case 1:
     {
@@ -397,9 +395,9 @@ bool BuildGUI_SolidDlg::execute( ObjectList& objects )
       for ( int i = 0; i < myShells.count(); i++ )
         objlist[i] = myShells[i].copy();
 
-    	anObj = anOper->MakeSolidFromConnectedFaces( objlist.in(), GroupFaces->CheckButton1->isChecked() );
+      anObj = anOper->MakeSolidFromConnectedFaces( objlist.in(), GroupFaces->CheckButton1->isChecked() );
+      if ( !anObj->_is_nil() ) objects.push_back( anObj._retn() );
 
-    	if ( !anObj->_is_nil() ) objects.push_back( anObj._retn() );
       break;
     }
   }

@@ -44,7 +44,7 @@ class SalomeApp_Application;
  */
 class GEOMGUI_EXPORT GEOMGUI_CreationInfoWdg : public QWidget
 {
-  Q_OBJECT;
+  Q_OBJECT
 
  public:
   GEOMGUI_CreationInfoWdg( SalomeApp_Application* app );

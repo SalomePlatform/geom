@@ -140,7 +140,7 @@ public:
   CORBA::Boolean CanPublishInStudy(CORBA::Object_ptr theIOR);
   SALOMEDS::SObject_ptr PublishInStudy(SALOMEDS::SObject_ptr theSObject,
                                        CORBA::Object_ptr theObject,
-                                       const char* theName) throw (SALOME::SALOME_Exception) ;
+                                       const char* theName) ;
 
   GEOM::ListOfGO* PublishNamedShapesInStudy(//SALOMEDS::SObject_ptr theSObject,
                                             CORBA::Object_ptr theObject);

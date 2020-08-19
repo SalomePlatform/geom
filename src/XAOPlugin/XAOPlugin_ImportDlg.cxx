@@ -242,7 +242,7 @@ GEOM::GEOM_IOperations_ptr XAOPlugin_ImportDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool XAOPlugin_ImportDlg::isValid(QString& msg)
+bool XAOPlugin_ImportDlg::isValid(QString& /*msg*/)
 {
   // check file name
   if (ledFileName->text().isEmpty())

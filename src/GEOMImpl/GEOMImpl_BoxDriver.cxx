@@ -156,4 +156,4 @@ bool GEOMImpl_BoxDriver::GetCreationInformation(std::string&             theOper
   return true;
 }
 
-IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_BoxDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_BoxDriver,GEOM_BaseDriver)

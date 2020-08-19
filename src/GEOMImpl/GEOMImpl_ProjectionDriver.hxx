@@ -30,7 +30,7 @@ class TopoDS_Shape;
 
 #include <GEOM_BaseDriver.hxx>
 
-DEFINE_STANDARD_HANDLE( GEOMImpl_ProjectionDriver, GEOM_BaseDriver );
+DEFINE_STANDARD_HANDLE( GEOMImpl_ProjectionDriver, GEOM_BaseDriver )
 
 class GEOMImpl_ProjectionDriver : public GEOM_BaseDriver {
 

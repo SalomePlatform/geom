@@ -165,13 +165,13 @@ void GEOMToolsGUI_ReduceStudyDlg::init( const std::set<std::string>& theObjectEn
   GeometryGUI::GetGeomGen()->GetEntriesToReduceStudy( keptObjects, parentsObjects,
 		                                              subObjects, otherObjects );
 
-  for ( int i = 0; i < keptObjects->length(); i++ )
+  for ( unsigned long i = 0; i < keptObjects->length(); i++ )
     myKeptObjects.insert( keptObjects[i].in() );
-  for( int i = 0; i< otherObjects->length(); i++ )
+  for( unsigned long i = 0; i< otherObjects->length(); i++ )
     myRemovedObjects.insert( otherObjects[i].in() );
-  for( int i = 0; i< parentsObjects->length(); i++ )
+  for( unsigned long i = 0; i< parentsObjects->length(); i++ )
     myListParents.insert( parentsObjects[i].in() );
-  for( int i = 0; i< subObjects->length(); i++ )
+  for( unsigned long i = 0; i< subObjects->length(); i++ )
     myListSubObjects.insert( subObjects[i].in() );
 
   update();
@@ -400,7 +400,7 @@ void GEOMToolsGUI_ReduceStudyDlg::unpublishObjects( std::set<std::string>& theOb
       myDisplayer.EraseWithChildren( new SALOME_InteractiveObject( studyEntry.c_str(), "GEOM", "TEMP_IO" ) );
       // hide references if any
       std::vector< _PTR(SObject) > vso = aStudy->FindDependances(obj);
-      for ( int i = 0; i < vso.size(); i++ ) {
+      for ( int i = 0; i < (int)vso.size(); i++ ) {
         _PTR(SObject) refObj = vso[i];
         aDrw = aStudyBuilder->FindOrCreateAttribute( refObj, "AttributeDrawable" );
         aDrw->SetDrawable( false );
@@ -703,16 +703,16 @@ void GEOMToolsGUI_ReduceStudyDlg::clickOnHelp()
 GEOMToolsGUI_TreeWidgetItem::GEOMToolsGUI_TreeWidgetItem( QTreeWidget* view, const QStringList &strings,
                                                           char* studyEntry, int type )
 :QTreeWidgetItem( view, strings, type ),
- myStudyEntry( studyEntry ),
- myVisible( false )
+ myVisible( false ),
+ myStudyEntry( studyEntry )
 {
 }
 
 GEOMToolsGUI_TreeWidgetItem::GEOMToolsGUI_TreeWidgetItem( QTreeWidgetItem* parent, const QStringList &strings,
                                                           char* studyEntry, int type )
 :QTreeWidgetItem( parent, strings, type ),
- myStudyEntry( studyEntry ),
- myVisible( false )
+ myVisible( false ),
+ myStudyEntry( studyEntry )
 {
 }
 

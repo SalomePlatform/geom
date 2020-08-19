@@ -48,6 +48,6 @@ namespace CurveCreator
   typedef std::list<CurveCreator_PosPoint*> PosPointsList;
   //! Map of sections with positioned points
   typedef std::map<int,PosPointsList> SectionsMap;
-};
+}
 
 #endif

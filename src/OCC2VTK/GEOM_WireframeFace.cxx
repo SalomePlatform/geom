@@ -35,7 +35,7 @@
 #include <BRep_Tool.hxx>
 #include <TColStd_Array1OfReal.hxx>
 
-vtkStandardNewMacro(GEOM_WireframeFace);
+vtkStandardNewMacro(GEOM_WireframeFace)
  
 GEOM_WireframeFace::GEOM_WireframeFace(): 
   Discret(15)
@@ -309,11 +309,13 @@ CreateIso_(const TopoDS_Face& theFace,
                 case GeomAbs_BSplineCurve :
                 case GeomAbs_OtherCurve :
                   for(j = 1; j <= theDiscret/2; j++){
-              Standard_Real aStep = (theIsoType == GeomAbs_IsoV) ? stepU*2. : stepV*2.;
-                  CreateIso__(S, theIsoType, U1, V1, aStep, thePolyData, thePts);
+                    Standard_Real aStep = (theIsoType == GeomAbs_IsoV) ? stepU*2. : stepV*2.;
+                    CreateIso__(S, theIsoType, U1, V1, aStep, thePolyData, thePts);
                     U1 += stepU*2.;
                     V1 += stepV*2.;
                   }
+                  break;
+                default:
                   break;
                 }
               }

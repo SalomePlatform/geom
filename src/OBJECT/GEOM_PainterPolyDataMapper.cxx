@@ -21,4 +21,4 @@
 
 #include <vtkObjectFactory.h>
 
-vtkStandardNewMacro(GEOM_PainterPolyDataMapper);
+vtkStandardNewMacro(GEOM_PainterPolyDataMapper)

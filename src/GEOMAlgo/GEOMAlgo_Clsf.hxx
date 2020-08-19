@@ -39,7 +39,7 @@
 #include <Geom_Curve.hxx>
 #include <Geom_Surface.hxx>
 
-DEFINE_STANDARD_HANDLE(GEOMAlgo_Clsf, GEOMAlgo_HAlgo);
+DEFINE_STANDARD_HANDLE(GEOMAlgo_Clsf, GEOMAlgo_HAlgo)
 
 //=======================================================================
 //class    : GEOMAlgo_Clsf

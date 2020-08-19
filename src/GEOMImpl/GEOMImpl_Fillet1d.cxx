@@ -578,7 +578,7 @@ TopoDS_Edge GEOMImpl_Fillet1d::Result(const gp_Pnt& thePoint,
   aTargetPoint2d.SetCoord(aX, aY);
 
   // choose the nearest circle
-  Standard_Real aDistance, aP;
+  Standard_Real aDistance = 0., aP; // todo: aDistance must be explicitly initialized to avoid warning (see below)
   GEOMImpl_Fillet1dPoint *aNearest;
   Standard_Integer a;
   TColStd_ListIteratorOfListOfReal anIter(myResultParams);
@@ -590,7 +590,7 @@ TopoDS_Edge GEOMImpl_Fillet1d::Result(const gp_Pnt& thePoint,
     if (!aPoint->HasSolution(myRadius))
       continue;
     aP = fabs(aPoint->GetCenter().Distance(aTargetPoint2d) - myRadius);
-    if (!aNearest || aP < aDistance)
+    if (!aNearest || aP < aDistance) // todo: aDistance must be explicitly initialized to avoid warning (see above)
     {
       aNearest = aPoint;
       aDistance = aP;
@@ -715,7 +715,7 @@ Standard_Boolean GEOMImpl_Fillet1dPoint::ComputeDifference(GEOMImpl_Fillet1dPoin
 {
   Standard_Integer a;
   Standard_Boolean aDiffsSet = (myD.Length() != 0);
-  Standard_Real aDX = thePoint->GetParam() - myParam, aDY;
+  Standard_Real aDX = thePoint->GetParam() - myParam, aDY = 0.; // todo: aDY must be explicitly initialized to avoid warning (see below)
   if (thePoint->myV.Length() == myV.Length())
   { // absolutely the same points
     for(a = 1; a <= myV.Length(); a++)
@@ -746,7 +746,7 @@ Standard_Boolean GEOMImpl_Fillet1dPoint::ComputeDifference(GEOMImpl_Fillet1dPoin
     }
     else
     {
-      myD.Append( fabs(aDX) > gp::Resolution() ? aDY/aDX : 0);
+      myD.Append( fabs(aDX) > gp::Resolution() ? aDY/aDX : 0); // todo: aDY must be explicitly initialized to avoid warning (see above)
     }
   }
 

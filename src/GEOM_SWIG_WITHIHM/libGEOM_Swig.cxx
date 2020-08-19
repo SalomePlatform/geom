@@ -512,7 +512,7 @@ void GEOM_Swig::initLocalSelection( const char* theEntry, int theMode)
       SUIT_Application* app = SUIT_Session::session()->activeApplication();
       if ( app )
         {
-          SUIT_ViewWindow* window = app->desktop()->activeWindow();
+          //SUIT_ViewWindow* window = app->desktop()->activeWindow();
           SUIT_ViewWindow* wnd = 0;
           LightApp_Application* lapp = dynamic_cast<LightApp_Application*>(app);
           if ( lapp )

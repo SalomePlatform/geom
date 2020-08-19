@@ -96,7 +96,7 @@ bool IGESPlugin_GUI::OnGUIEvent( const QString& theCommandID, SUIT_Desktop* pare
     getGeometryGUI()->getApp()->putInfo( tr("GEOM_PRP_COMMAND").arg( theCommandID ) );
   }
 
-  return true; // ?????????????
+  return result;
 }
 
 //=======================================================================

@@ -633,7 +633,7 @@ void BasicGUI_PlaneDlg::enterEvent( QEvent* )
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void BasicGUI_PlaneDlg::ValueChangedInSpinBox( double newValue )
+void BasicGUI_PlaneDlg::ValueChangedInSpinBox( double /*newValue*/ )
 {
   displayPreview(true);
 }

@@ -109,7 +109,7 @@ void GEOMAlgo_VertexSolid::Perform()
     BuildResult();
   }
   //
-  catch (Standard_Failure) {
+  catch (Standard_Failure&) {
     myErrorStatus = 12;
   }
 }

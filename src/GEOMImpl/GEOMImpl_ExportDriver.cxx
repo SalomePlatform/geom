@@ -85,7 +85,7 @@ Standard_Integer GEOMImpl_ExportDriver::Execute(Handle(TFunction_Logbook)& log) 
   if (aFileName.IsEmpty() || aFormatName.IsEmpty() || aLibName.IsEmpty())
     return 0;
 
-  if( !GEOMImpl_IECallBack::GetCallBack( aFormatName )->Export( obj, aFileName, aFormatName ) );
+  if( !GEOMImpl_IECallBack::GetCallBack( aFormatName )->Export( obj, aFileName, aFormatName ) )
     return 0;
 
   log->SetTouched(Label());
@@ -100,10 +100,10 @@ Standard_Integer GEOMImpl_ExportDriver::Execute(Handle(TFunction_Logbook)& log) 
 //================================================================================
 
 bool GEOMImpl_ExportDriver::
-GetCreationInformation(std::string&             theOperationName,
-                       std::vector<GEOM_Param>& theParams)
+GetCreationInformation(std::string& /*theOperationName*/,
+                       std::vector<GEOM_Param>& /*theParams*/)
 {
   return false;
 }
 
-IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_ExportDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_ExportDriver,GEOM_BaseDriver)

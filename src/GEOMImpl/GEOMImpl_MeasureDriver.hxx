@@ -28,7 +28,7 @@
 
 #include <GEOM_BaseDriver.hxx>
 
-DEFINE_STANDARD_HANDLE( GEOMImpl_MeasureDriver, GEOM_BaseDriver );
+DEFINE_STANDARD_HANDLE( GEOMImpl_MeasureDriver, GEOM_BaseDriver )
 
 class GEOMImpl_MeasureDriver : public GEOM_BaseDriver {
 

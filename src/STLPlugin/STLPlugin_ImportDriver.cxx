@@ -142,4 +142,4 @@ GetCreationInformation( std::string&             theOperationName,
   return true;
 }
 
-IMPLEMENT_STANDARD_RTTIEXT( STLPlugin_ImportDriver, GEOM_BaseDriver );
+IMPLEMENT_STANDARD_RTTIEXT( STLPlugin_ImportDriver, GEOM_BaseDriver )

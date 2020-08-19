@@ -756,5 +756,5 @@ const Standard_GUID& GEOM_FieldStep::GetDataID()
   return TDataStd_ExtStringArray::GetID();
 }
 
-IMPLEMENT_STANDARD_RTTIEXT(GEOM_Field, GEOM_BaseObject );
-IMPLEMENT_STANDARD_RTTIEXT(GEOM_FieldStep, GEOM_BaseObject );
+IMPLEMENT_STANDARD_RTTIEXT(GEOM_Field, GEOM_BaseObject )
+IMPLEMENT_STANDARD_RTTIEXT(GEOM_FieldStep, GEOM_BaseObject )

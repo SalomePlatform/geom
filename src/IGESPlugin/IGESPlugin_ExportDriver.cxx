@@ -115,7 +115,7 @@ IGESPlugin_ExportDriver::IGESPlugin_ExportDriver()
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer IGESPlugin_ExportDriver::Execute(Handle(TFunction_Logbook)& log) const
+Standard_Integer IGESPlugin_ExportDriver::Execute(Handle(TFunction_Logbook)& /*log*/) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction( Label() );
@@ -179,10 +179,10 @@ Standard_Integer IGESPlugin_ExportDriver::Execute(Handle(TFunction_Logbook)& log
  */
 //================================================================================
 bool IGESPlugin_ExportDriver::
-GetCreationInformation( std::string&             theOperationName,
-                        std::vector<GEOM_Param>& theParams )
+GetCreationInformation( std::string&             /*theOperationName*/,
+                        std::vector<GEOM_Param>& /*theParams*/ )
 {
   return false;
 }
 
-IMPLEMENT_STANDARD_RTTIEXT( IGESPlugin_ExportDriver,GEOM_BaseDriver );
+IMPLEMENT_STANDARD_RTTIEXT( IGESPlugin_ExportDriver,GEOM_BaseDriver )

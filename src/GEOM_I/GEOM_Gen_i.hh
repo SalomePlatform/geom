@@ -150,7 +150,7 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   bool CanPublishInStudy(CORBA::Object_ptr theIOR);
   SALOMEDS::SObject_ptr PublishInStudy(SALOMEDS::SObject_ptr theSObject,
                                        CORBA::Object_ptr theObject,
-                                       const char* theName) throw (SALOME::SALOME_Exception) ;
+                                       const char* theName) ;
 
   GEOM::ListOfGO* PublishNamedShapesInStudy(CORBA::Object_ptr theObject);
 
@@ -213,60 +213,55 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   //-----------------------------------------------------------------------//
 
   //Returns a pointer to BasicOperations interface
-  virtual GEOM::GEOM_IBasicOperations_ptr GetIBasicOperations()
-    throw (SALOME::SALOME_Exception);
+  virtual GEOM::GEOM_IBasicOperations_ptr GetIBasicOperations();
 
   //Returns a pointer to TransformOperations interface
-  virtual GEOM::GEOM_ITransformOperations_ptr GetITransformOperations()
-    throw (SALOME::SALOME_Exception);
+  virtual GEOM::GEOM_ITransformOperations_ptr GetITransformOperations();
 
   //Returns a pointer to 3DPrimOperations interface
-  virtual GEOM::GEOM_I3DPrimOperations_ptr GetI3DPrimOperations()
-    throw (SALOME::SALOME_Exception);
+  virtual GEOM::GEOM_I3DPrimOperations_ptr GetI3DPrimOperations();
 
   //Returns a pointer to ShapesOperations interface
-  virtual GEOM::GEOM_IShapesOperations_ptr GetIShapesOperations()
-    throw (SALOME::SALOME_Exception);
+  virtual GEOM::GEOM_IShapesOperations_ptr GetIShapesOperations();
 
   //Returns a pointer to BlocksOperations interface
-  virtual GEOM::GEOM_IBlocksOperations_ptr GetIBlocksOperations()
-    throw (SALOME::SALOME_Exception);
+  virtual GEOM::GEOM_IBlocksOperations_ptr GetIBlocksOperations();
 
   //Returns a pointer to BooleanOperations interface
   virtual GEOM::GEOM_IBooleanOperations_ptr GetIBooleanOperations()
-    throw (SALOME::SALOME_Exception);
+    ;
 
   //Returns a pointer to CurvesOperations interface
   virtual GEOM::GEOM_ICurvesOperations_ptr GetICurvesOperations()
-    throw (SALOME::SALOME_Exception);
+    ;
 
   //Returns a pointer to LocalOperations interface
   virtual GEOM::GEOM_ILocalOperations_ptr GetILocalOperations()
-    throw (SALOME::SALOME_Exception);
+    ;
 
   //Returns a pointer to HealingOperations interface
   virtual GEOM::GEOM_IHealingOperations_ptr GetIHealingOperations()
-    throw (SALOME::SALOME_Exception);
+    ;
 
   //Returns a pointer to InsertOperations interface
   virtual GEOM::GEOM_IInsertOperations_ptr GetIInsertOperations()
-    throw (SALOME::SALOME_Exception);
+    ;
 
   //Returns a pointer to MeasureOperations interface
   virtual GEOM::GEOM_IMeasureOperations_ptr GetIMeasureOperations()
-    throw (SALOME::SALOME_Exception);
+    ;
 
   //Returns a pointer to GroupOperations interface
   virtual GEOM::GEOM_IGroupOperations_ptr GetIGroupOperations()
-    throw (SALOME::SALOME_Exception);
+    ;
 
   //Returns a pointer to FiedlOperations interface
   virtual GEOM::GEOM_IFieldOperations_ptr GetIFieldOperations()
-    throw (SALOME::SALOME_Exception);
+    ;
 
   //Returns a pointer to corresponding plugin operations interface
   virtual GEOM::GEOM_IOperations_ptr GetPluginOperations (const char* theLibName)
-    throw (SALOME::SALOME_Exception);
+    ;
 
   //Adds a new sub-shape
   virtual GEOM::GEOM_Object_ptr AddSubShape (GEOM::GEOM_Object_ptr theMainShape,

@@ -405,7 +405,7 @@ void BuildGUI_EdgeDlg::enterEvent (QEvent*)
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void BuildGUI_EdgeDlg::ValueChangedInSpinBox(double newValue)
+void BuildGUI_EdgeDlg::ValueChangedInSpinBox(double /*newValue*/)
 {
   displayPreview(true);
 }

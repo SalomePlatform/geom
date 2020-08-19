@@ -486,4 +486,4 @@ TDF_Label GEOM_BaseObject::GetFreeLabel()
   return _label.FindChild(FREE_LABEL);
 }
 
-IMPLEMENT_STANDARD_RTTIEXT(GEOM_BaseObject, Standard_Transient );
+IMPLEMENT_STANDARD_RTTIEXT(GEOM_BaseObject, Standard_Transient )

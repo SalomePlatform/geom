@@ -198,7 +198,7 @@ GEOM::GEOM_IOperations_ptr EntityGUI_IsolineDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool EntityGUI_IsolineDlg::isValid (QString& msg)
+bool EntityGUI_IsolineDlg::isValid (QString& /*msg*/)
 {
   return myFace;
 }
@@ -278,7 +278,7 @@ void EntityGUI_IsolineDlg::SetEditFace()
 // function : ValueChangedInSpinBox
 // purpose  :
 //=================================================================================
-void EntityGUI_IsolineDlg::ValueChangedInSpinBox(double newValue)
+void EntityGUI_IsolineDlg::ValueChangedInSpinBox(double /*newValue*/)
 {
   displayPreview(true);
 }

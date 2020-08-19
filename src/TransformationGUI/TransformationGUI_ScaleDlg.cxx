@@ -466,7 +466,7 @@ bool TransformationGUI_ScaleDlg::execute (ObjectList& objects)
         {
           anObj = anOper->ScaleShapeAlongAxesCopy(myObjects[i].get(), myPoint.get(), SpinBox_FX->value(),
                                                   SpinBox_FY->value(), SpinBox_FZ->value());
-          if (!anObj->_is_nil())
+          if (!anObj->_is_nil()) {
             if(!IsPreview()) {
               QStringList aParameters;
               aParameters<<SpinBox_FX->text();
@@ -475,6 +475,7 @@ bool TransformationGUI_ScaleDlg::execute (ObjectList& objects)
               anObj->SetParameters(aParameters.join(":").toUtf8().constData());
             }
             objects.push_back(anObj._retn());
+          }
         }
       }
       else

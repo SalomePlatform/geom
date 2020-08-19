@@ -106,7 +106,7 @@ void GEOMGUI_CreationInfoWdg::setInfo( GEOM::CreationInformationSeq& info )
 
   try
   {
-    if ( &info && info.length() > 0 )
+    if ( info.length() > 0 )
     {
       SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
       for ( int j = 0, nb = info.length(); j < nb; ++j )

@@ -217,7 +217,7 @@ public:
   //! A virtual method.
   const CurveCreator_ISection* getSection(const int theSectionIndex) const
   {
-    if (theSectionIndex >= 0 && theSectionIndex < mySections.size())
+    if (theSectionIndex >= 0 && theSectionIndex < (int)mySections.size())
     {
       return (CurveCreator_ISection*)mySections[theSectionIndex];
     }
