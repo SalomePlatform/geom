@@ -1075,8 +1075,12 @@ GEOMImpl_ITransformOperations::OffsetShape (Handle(GEOM_Object) theObject,
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << "geompy.Offset("
-                               << theObject << ", " << theOffset << ")";
+  if (theJoinByPipes)
+    GEOM::TPythonDump(aFunction) << "geompy.Offset("
+                                 << theObject << ", " << theOffset << ")";
+  else
+    GEOM::TPythonDump(aFunction) << theObject << " = geompy.MakeOffsetIntersectionJoin("
+                                 << theObject << ", " << theOffset << ")";
 
   SetErrorCode(OK);
   return theObject;
@@ -1129,8 +1133,12 @@ GEOMImpl_ITransformOperations::OffsetShapeCopy( Handle(GEOM_Object) theObject,
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakeOffset("
-                               << theObject << ", " << theOffset << ")";
+  if (theJoinByPipes)
+    GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakeOffset("
+                                 << theObject << ", " << theOffset << ")";
+  else
+    GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakeOffsetIntersectionJoin("
+                                 << theObject << ", " << theOffset << ")";
 
   SetErrorCode(OK);
   return aCopy;
