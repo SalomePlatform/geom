@@ -169,7 +169,9 @@ void MeasureGUI_PropertiesDlg::activateSelection()
   globalSelection( aTypes );
 
   std::list<int> needTypes;
-  needTypes.push_back( TopAbs_EDGE ), needTypes.push_back( TopAbs_WIRE ), needTypes.push_back( TopAbs_FACE ), needTypes.push_back( TopAbs_SHELL ), needTypes.push_back( TopAbs_SOLID ), needTypes.push_back( TopAbs_COMPOUND );
+  needTypes.push_back( TopAbs_EDGE ), needTypes.push_back( TopAbs_WIRE ),
+    needTypes.push_back( TopAbs_FACE ), needTypes.push_back( TopAbs_SHELL ),
+    needTypes.push_back( TopAbs_SOLID ), needTypes.push_back( TopAbs_COMPOUND );
   localSelection( needTypes );
 }
 
@@ -177,7 +179,8 @@ void MeasureGUI_PropertiesDlg::SelectionIntoArgument()
 {
   myObj.nullify();
   QList<TopAbs_ShapeEnum> aTypes;
-  aTypes << TopAbs_EDGE << TopAbs_WIRE << TopAbs_FACE << TopAbs_SHELL << TopAbs_SOLID << TopAbs_COMPOUND;
+  aTypes << TopAbs_EDGE << TopAbs_WIRE << TopAbs_FACE << TopAbs_SHELL
+         << TopAbs_SOLID << TopAbs_COMPSOLID << TopAbs_COMPOUND;
   myObj = getSelected( aTypes );
  
   if (!myObj) {
