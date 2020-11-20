@@ -5631,6 +5631,74 @@ shells and solids on the other hand.</translation>
         <source>TOOL_IMPORTEXPORT</source>
         <translation>Import / Export XAO</translation>
     </message>
+    <message>
+        <source>INFO_WELCOME_TO_GEOM</source>
+        <translation>Welcome to Geometry</translation>
+    </message>
+    <message>
+        <source>INFO_GRP_CREATE_MODEL</source>
+        <translation>Create model</translation>
+    </message>
+    <message>
+        <source>INFO_VERTICES</source>
+        <translation>vertices</translation>
+    </message>
+    <message>
+        <source>INFO_EDGES</source>
+        <translation>edges</translation>
+    </message>
+    <message>
+        <source>INFO_WIRES</source>
+        <translation>wires</translation>
+    </message>
+    <message>
+        <source>INFO_FACES</source>
+        <translation>faces</translation>
+    </message>
+    <message>
+        <source>INFO_SHELLS</source>
+        <translation>shells</translation>
+    </message>
+    <message>
+        <source>INFO_SOLIDS</source>
+        <translation>solids</translation>
+    </message>
+    <message>
+        <source>INFO_BOTTOM_UP_CONSTRUCTION</source>
+        <translation>Bottom-up construction</translation>
+    </message>
+    <message>
+        <source>INFO_BOX</source>
+        <translation>box</translation>
+    </message>
+    <message>
+        <source>INFO_CYLINDER</source>
+        <translation>cylinder</translation>
+    </message>
+    <message>
+        <source>INFO_CONE</source>
+        <translation>cone</translation>
+    </message>
+    <message>
+        <source>INFO_PRIMITIVES</source>
+        <translation>Primitives construction</translation>
+    </message>
+    <message>
+        <source>INFO_BOOLEANS</source>
+        <translation>Boolean operations</translation>
+    </message>
+    <message>
+        <source>INFO_TRANSFORMATIONS</source>
+        <translation>Transformations</translation>
+    </message>
+    <message>
+        <source>INFO_GRP_IMPORT_MODEL</source>
+        <translation>Import and repair model</translation>
+    </message>
+    <message>
+        <source>INFO_AVAILABLE_FORMATS</source>
+        <translation>Available formats</translation>
+    </message>
 </context>
 <context>
     <name>BasicGUI_CurveDlg</name>
