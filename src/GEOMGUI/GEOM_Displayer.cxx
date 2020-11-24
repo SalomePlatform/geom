@@ -2697,38 +2697,40 @@ SALOMEDS::Color GEOM_Displayer::getColor(GEOM::GEOM_Object_var theGeomObject, bo
       aSColor = theGeomObject->GetColor();
       hasColor = aSColor.R >= 0 && aSColor.G >= 0 && aSColor.B >= 0;
       if ( !hasColor ) {
+        if (!theGeomObject->IsMainShape()) {
 #ifdef GENERAL_AUTOCOLOR // auto-color for all sub-shapes
-        bool general_autocolor = true;
+          bool general_autocolor = true;
 #else                    // auto-color for groups only
-        bool general_autocolor = false;
+          bool general_autocolor = false;
 #endif                   // GENERAL_AUTOCOLOR
-        if ( general_autocolor || theGeomObject->GetType() == GEOM_GROUP ) {
-          GEOM::GEOM_Object_var aMainObject = theGeomObject->GetMainShape();
-          if ( !CORBA::is_nil( aMainObject ) && aMainObject->GetAutoColor() ) {
+          if ( general_autocolor || theGeomObject->GetType() == GEOM_GROUP ) {
+            GEOM::GEOM_Object_var aMainObject = theGeomObject->GetMainShape();
+            if ( !CORBA::is_nil( aMainObject ) && aMainObject->GetAutoColor() ) {
 #ifdef SIMPLE_AUTOCOLOR  // simplified algorithm for auto-colors
-            aSColor = getPredefinedUniqueColor();
-            hasColor = true;
+              aSColor = getPredefinedUniqueColor();
+              hasColor = true;
 #else                    // old algorithm  for auto-colors
-            QList<SALOMEDS::Color> aReservedColors;
-            CORBA::String_var IOR = app->orb()->object_to_string( aMainObject );
-            _PTR(SObject) aMainSObject( aStudy->FindObjectIOR( IOR.in() ) );
-            if ( aMainSObject ) {
-              _PTR(ChildIterator) it( aStudy->NewChildIterator( aMainSObject ) );
-              for ( ; it->More(); it->Next() ) {
-                _PTR(SObject) aChildSObject( it->Value() );
-                GEOM::GEOM_Object_var aChildObject =
-                  GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aChildSObject));
-                if ( CORBA::is_nil( aChildObject ) )
-                  continue;
+              QList<SALOMEDS::Color> aReservedColors;
+              CORBA::String_var IOR = app->orb()->object_to_string( aMainObject );
+              _PTR(SObject) aMainSObject( aStudy->FindObjectIOR( IOR.in() ) );
+              if ( aMainSObject ) {
+                _PTR(ChildIterator) it( aStudy->NewChildIterator( aMainSObject ) );
+                for ( ; it->More(); it->Next() ) {
+                  _PTR(SObject) aChildSObject( it->Value() );
+                  GEOM::GEOM_Object_var aChildObject =
+                    GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aChildSObject));
+                  if ( CORBA::is_nil( aChildObject ) )
+                    continue;
 
-                SALOMEDS::Color aReservedColor = aChildObject->GetColor();
-                if ( aReservedColor.R >= 0 && aReservedColor.G >= 0 && aReservedColor.B >= 0 )
-                  aReservedColors.append( aReservedColor );
+                  SALOMEDS::Color aReservedColor = aChildObject->GetColor();
+                  if ( aReservedColor.R >= 0 && aReservedColor.G >= 0 && aReservedColor.B >= 0 )
+                    aReservedColors.append( aReservedColor );
+                }
               }
-            }
-            aSColor = getUniqueColor( aReservedColors );
-            hasColor = true;
+              aSColor = getUniqueColor( aReservedColors );
+              hasColor = true;
 #endif                   // SIMPLE_AUTOCOLOR
+            }
           }
         }
       }

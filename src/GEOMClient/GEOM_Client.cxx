@@ -167,9 +167,10 @@ Standard_Boolean GEOM_Client::Find (const TopoDS_Shape& S, TCollection_AsciiStri
 // function : Bind()
 // purpose  :
 //=======================================================================
-void GEOM_Client::Bind( const TCollection_AsciiString& IOR, const TopoDS_Shape& S )
+void GEOM_Client::Bind( const TCollection_AsciiString& IOR, const TopoDS_Shape& S, int Tick )
 {
   myShapesMap[IOR] = S;
+  myTicksMap[IOR] = Tick;
 }
 
 //=======================================================================
@@ -193,30 +194,30 @@ void GEOM_Client::ClearClientBuffer()
 }
 
 //=======================================================================
-// function : BufferLength()
-// purpose  :
-//=======================================================================
-unsigned int GEOM_Client::BufferLength()
-{
-  return myShapesMap.size();
-}
-
-//=======================================================================
 // function : GetShape()
 // purpose  :
 //=======================================================================
 TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr aShape )
 {
-  TopoDS_Shape S;
   CORBA::String_var     anIOR = geom->GetStringFromIOR(aShape);
   TCollection_AsciiString IOR = anIOR.in();
+  int aShapeTick = aShape->GetTick();
+
+  std::map< TCollection_AsciiString , int >::iterator i2t = myTicksMap.find( IOR );
+  if ( i2t != myTicksMap.end() ) {
+    // The shape was modified, clean the stored one
+    if (i2t->second != aShapeTick)
+      RemoveShapeFromBuffer(IOR);
+  }
+
+  TopoDS_Shape S;
   if ( Find( IOR, S ))
     return S;
 
   /******* in case of a MAIN GEOM::SHAPE ********/
   if ( aShape->IsMainShape() ) {
     S = Load(geom, aShape);
-    Bind(IOR, S);
+    Bind(IOR, S, aShapeTick);
     return S;
   }
 
@@ -254,6 +255,6 @@ TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_p
 
     S = aCompound;
   }
-  Bind(IOR, S);
+  Bind(IOR, S, aShapeTick);
   return S;
 }

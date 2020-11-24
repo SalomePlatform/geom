@@ -220,19 +220,21 @@ void GEOMToolsGUI_MarkerDlg::accept()
             _PTR(SObject) aSObject( study->FindObjectID( it.Value()->getEntry() ) );
             GEOM::GEOM_Object_var anObject =
               GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( aSObject ) );
-            if ( !anObject->_is_nil() && GeometryGUI::IsInGeomComponent( aSObject )) {
-              if ( myWGStack->currentIndex() == 0 ) {
+            if ( myWGStack->currentIndex() == 0 ) {
+              if ( !anObject->_is_nil() && GeometryGUI::IsInGeomComponent( aSObject )) {
                 anObject->SetMarkerStd( getMarkerType(), getStandardMarkerScale() );
-                QString aMarker = "%1%2%3";
-                aMarker = aMarker.arg(getMarkerType());
-                aMarker = aMarker.arg(GEOM::subSectionSeparator());
-                aMarker = aMarker.arg(getStandardMarkerScale());
-                getStudy()->setObjectProperty(mgrId ,it.Value()->getEntry(),GEOM::propertyName( GEOM::PointMarker ), aMarker);
               }
-              else if ( getCustomMarkerID() > 0 ) {
+              QString aMarker = "%1%2%3";
+              aMarker = aMarker.arg(getMarkerType());
+              aMarker = aMarker.arg(GEOM::subSectionSeparator());
+              aMarker = aMarker.arg(getStandardMarkerScale());
+              getStudy()->setObjectProperty(mgrId ,it.Value()->getEntry(),GEOM::propertyName( GEOM::PointMarker ), aMarker);
+            }
+            else if ( getCustomMarkerID() > 0 ) {
+              if ( !anObject->_is_nil() && GeometryGUI::IsInGeomComponent( aSObject )) {
                 anObject->SetMarkerTexture( getCustomMarkerID() );
-                getStudy()->setObjectProperty(mgrId ,it.Value()->getEntry(),GEOM::propertyName( GEOM::PointMarker ), QString::number(getCustomMarkerID()));
               }
+              getStudy()->setObjectProperty(mgrId ,it.Value()->getEntry(),GEOM::propertyName( GEOM::PointMarker ), QString::number(getCustomMarkerID()));
             }
           }
           GEOM_Displayer displayer;
@@ -298,6 +300,7 @@ void GEOMToolsGUI_MarkerDlg::init()
             GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( aSObject ) );
           if ( !anObject->_is_nil() && GeometryGUI::IsInGeomComponent( aSObject )) {
             GEOM::marker_type mtype = anObject->GetMarkerType();
+
             if ( aType == -1 )
               aType = mtype;
             else if ( aType != mtype ) {
@@ -313,6 +316,47 @@ void GEOMToolsGUI_MarkerDlg::init()
             }
             else if ( mtype == GEOM::MT_USER ) {
               int mtexture = anObject->GetMarkerTexture();
+              if ( aTexture == 0 )
+                aTexture = mtexture;
+              else if ( aTexture != mtexture )
+                break;
+            }
+          }
+          else {
+            // try study object properties
+            QStringList aMarkerProp;
+            SUIT_ViewWindow* window = getStudy()->application()->desktop()->activeWindow();
+            if (window && window->getViewManager()) {
+              int mgrId = window->getViewManager()->getGlobalId();
+              PropMap aPropMap = getStudy()->getObjectProperties(mgrId, it.Value()->getEntry());
+              aMarkerProp = aPropMap.value(GEOM::propertyName(GEOM::PointMarker)).toString().split( GEOM::subSectionSeparator());
+            }
+            if ( aMarkerProp.size() == 2 ) {
+              // standard marker string contains "TypeOfMarker:ScaleOfMarker"
+              GEOM::marker_type mtype = (GEOM::marker_type)aMarkerProp[0].toInt();
+              GEOM::marker_size msize = (GEOM::marker_size)aMarkerProp[1].toInt();
+
+              if ( aType == -1 )
+                aType = mtype;
+              else if ( aType != mtype ) {
+                aType = (GEOM::marker_type)-1;
+                break;
+              }
+              if ( aSize == -1 )
+                aSize = msize;
+              else if ( aSize != msize )
+                break;
+            }
+            else if ( aMarkerProp.size() == 1 ) {
+              // custom marker string contains "IdOfTexture"
+              int mtexture = aMarkerProp[0].toInt();
+
+              if ( aType == -1 )
+                aType = GEOM::MT_USER;
+              else if ( aType !=  GEOM::MT_USER) {
+                aType = (GEOM::marker_type)-1;
+                break;
+              }
               if ( aTexture == 0 )
                 aTexture = mtexture;
               else if ( aTexture != mtexture )
