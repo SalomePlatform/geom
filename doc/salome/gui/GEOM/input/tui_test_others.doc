@@ -10,7 +10,7 @@
 \skipline import os
 
 \anchor swig_Import_Export
-\until print "OK"
+\until print("OK")
 
 \until id_w3
 
@@ -68,7 +68,7 @@
 \until Now contains
 
 \anchor swig_GetObjectIDs
-\until print " ", ObjectID
+\until print(" ", ObjectID)
 
 \anchor swig_GetMainShape
 \until BoxCopy
@@ -77,7 +77,7 @@
 \until Now contains
 
 \anchor swig_UnionIDs
-\until print " ", ObjectID
+\until print(" ", ObjectID)
 
 \anchor swig_bop_on_groups
 \until Box, Group_CL_2_4
