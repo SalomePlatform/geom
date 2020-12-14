@@ -37,6 +37,7 @@
 #include "utilities.h"
 
 #include <Basics_Utils.hxx>
+#include <Basics_OCCTVersion.hxx>
 
 #include <TDF_Tool.hxx>
 #include <TDF_Data.hxx>
@@ -62,7 +63,9 @@
 
 #include <TColStd_DataMapIteratorOfDataMapOfIntegerTransient.hxx>
 
+#if OCC_VERSION_LARGE < 0x07050000
 #include <Resource_DataMapIteratorOfDataMapOfAsciiStringAsciiString.hxx>
+#endif
 
 #include <BinDrivers.hxx>
 #include <StdDrivers_DocumentRetrievalDriver.hxx>
