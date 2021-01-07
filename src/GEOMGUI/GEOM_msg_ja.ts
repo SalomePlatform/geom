@@ -5567,6 +5567,10 @@
       <source>HIDE_ALL_BTN</source>
       <translation>全非表示</translation>
     </message>
+    <message>
+        <source>Create, import, repair CAD models</source>
+        <translation type="unfinished">Create, import, repair CAD models</translation>
+    </message>
   </context>
   <context>
     <name>GeometryGUI</name>
@@ -5621,6 +5625,74 @@
     <message>
       <source>TOOL_IMPORTEXPORT</source>
       <translation>インポート / エクスポート XAO</translation>
+    </message>
+    <message>
+        <source>INFO_WELCOME_TO_GEOM</source>
+        <translation type="unfinished">Welcome to Geometry</translation>
+    </message>
+    <message>
+        <source>INFO_GRP_CREATE_MODEL</source>
+        <translation type="unfinished">Create model</translation>
+    </message>
+    <message>
+        <source>INFO_VERTICES</source>
+        <translation type="unfinished">vertices</translation>
+    </message>
+    <message>
+        <source>INFO_EDGES</source>
+        <translation type="unfinished">edges</translation>
+    </message>
+    <message>
+        <source>INFO_WIRES</source>
+        <translation type="unfinished">wires</translation>
+    </message>
+    <message>
+        <source>INFO_FACES</source>
+        <translation type="unfinished">faces</translation>
+    </message>
+    <message>
+        <source>INFO_SHELLS</source>
+        <translation type="unfinished">shells</translation>
+    </message>
+    <message>
+        <source>INFO_SOLIDS</source>
+        <translation type="unfinished">solids</translation>
+    </message>
+    <message>
+        <source>INFO_BOTTOM_UP_CONSTRUCTION</source>
+        <translation type="unfinished">Bottom-up construction</translation>
+    </message>
+    <message>
+        <source>INFO_BOX</source>
+        <translation type="unfinished">box</translation>
+    </message>
+    <message>
+        <source>INFO_CYLINDER</source>
+        <translation type="unfinished">cylinder</translation>
+    </message>
+    <message>
+        <source>INFO_CONE</source>
+        <translation type="unfinished">cone</translation>
+    </message>
+    <message>
+        <source>INFO_PRIMITIVES</source>
+        <translation type="unfinished">Primitives construction</translation>
+    </message>
+    <message>
+        <source>INFO_BOOLEANS</source>
+        <translation type="unfinished">Boolean operations</translation>
+    </message>
+    <message>
+        <source>INFO_TRANSFORMATIONS</source>
+        <translation type="unfinished">Transformations</translation>
+    </message>
+    <message>
+        <source>INFO_GRP_IMPORT_MODEL</source>
+        <translation type="unfinished">Import and repair model</translation>
+    </message>
+    <message>
+        <source>INFO_AVAILABLE_FORMATS</source>
+        <translation type="unfinished">Available formats</translation>
     </message>
   </context>
   <context>

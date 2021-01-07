@@ -91,6 +91,7 @@
 #include <SALOMEDS_SObject.hxx>
 
 #include <QtxFontEdit.h>
+#include <QtxInfoPanel.h>
 
 // External includes
 #include <QDir>
@@ -1840,12 +1841,58 @@ void GeometryGUI::addPluginActions()
   }
 }
 
+namespace
+{
+  QString wrap(const QString& text, const QString& tag)
+  { return QString("<%1>%2</%3>").arg(tag).arg(text).arg(tag);}
+}
+
 //=======================================================================
 // function : GeometryGUI::activateModule()
 // purpose  : Called when GEOM module is activated
 //=======================================================================
 bool GeometryGUI::activateModule( SUIT_Study* study )
 {
+  // Fill in: Help Panel
+  SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( application() ); 
+  app->infoPanel()->setTitle(tr("INFO_WELCOME_TO_GEOM"));
+
+  int gb = app->infoPanel()->addGroup(tr("INFO_GRP_CREATE_MODEL"));
+  QString lab;
+  QStringList items;
+  items << wrap(tr("INFO_VERTICES"), "li")
+	<< wrap(tr("INFO_EDGES"),    "li")
+	<< wrap(tr("INFO_WIRES"),    "li")
+	<< wrap(tr("INFO_FACES"),    "li")
+	<< wrap(tr("INFO_SHELLS"),   "li")
+	<< wrap(tr("INFO_SOLIDS"),   "li");
+  lab = tr("INFO_BOTTOM_UP_CONSTRUCTION") + ":" + wrap(items.join(""), "ul");
+  items.clear();
+
+  items << wrap(tr("INFO_BOX"),      "li")
+	<< wrap(tr("INFO_CYLINDER"), "li")
+	<< wrap(tr("INFO_CONE"),     "li")
+	<< wrap("...",               "li");
+  lab = lab + tr("INFO_PRIMITIVES") + ":" + wrap(items.join(""), "ul");
+  items.clear();
+
+  lab = lab + tr("INFO_BOOLEANS") + "<br/>";
+  lab = lab + tr("INFO_TRANSFORMATIONS");
+
+  app->infoPanel()->addLabel(lab, gb);
+
+  gb = app->infoPanel()->addGroup(tr("INFO_GRP_IMPORT_MODEL"));
+  items << wrap("BREP",  "li")
+	<< wrap("STEP",  "li")
+	<< wrap("IGES",  "li")
+	<< wrap("STL",   "li")
+	<< wrap("XAO",   "li");
+  lab = tr("INFO_AVAILABLE_FORMATS") + ":" + wrap(items.join(""), "ul");
+  items.clear();
+
+  app->infoPanel()->addLabel(lab, gb);
+  // << Help Panel
+
   if ( CORBA::is_nil( myComponentGeom ) )
     return false;
 
@@ -1942,6 +1989,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   }
 
   Py_XDECREF(pluginsmanager);
+
   return true;
 }
 
@@ -2027,6 +2075,7 @@ void GeometryGUI::onWindowActivated( SUIT_ViewWindow* win )
 void GeometryGUI::windows( QMap<int, int>& mappa ) const
 {
   mappa.insert( SalomeApp_Application::WT_ObjectBrowser, Qt::LeftDockWidgetArea );
+  mappa.insert( SalomeApp_Application::WT_InfoPanel, Qt::RightDockWidgetArea );
   mappa.insert( SalomeApp_Application::WT_NoteBook, Qt::LeftDockWidgetArea );
 #ifndef DISABLE_PYCONSOLE
   mappa.insert( SalomeApp_Application::WT_PyConsole, Qt::BottomDockWidgetArea );
