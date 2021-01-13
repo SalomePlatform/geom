@@ -853,7 +853,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             self.GroupOp  = self.GetIGroupOperations    ()
             self.FieldOp  = self.GetIFieldOperations    ()
 
-            notebook.myStudy = salome.myStudy
+            notebook.myStudy = self.myStudy
             pass
 
         def GetPluginOperations(self, libraryName):

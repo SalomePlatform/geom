@@ -23,7 +23,7 @@
 #include "GEOM_IOperations_i.hh"
 
 #include "GEOM_Engine.hxx"
-#include "GEOM_Gen_i.hh"
+#include "GEOM_Gen_Session_i.hh"
 #include <SALOME_NamingService.hxx>
 
 #include "utilities.h"
@@ -232,7 +232,7 @@ void GEOM_IOperations_i::UpdateGUIForObject(GEOM::GEOM_Object_ptr theObj)
   if (!CORBA::is_nil (theObj)) {
     // Cast _engine to GEOM_Gen_i type.
     PortableServer::Servant aServant = myPOA->reference_to_servant(_engine.in());
-    GEOM_Gen_i *anEngine = dynamic_cast<GEOM_Gen_i *>(aServant);
+    GEOM_Gen_Session_i *anEngine = dynamic_cast<GEOM_Gen_Session_i *>(aServant);
 
     if (anEngine) {
       SALOME_NamingService *aNameService = anEngine->GetNS();

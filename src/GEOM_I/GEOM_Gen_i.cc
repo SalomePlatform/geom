@@ -98,13 +98,12 @@ GEOM_Gen_i::GEOM_Gen_i(CORBA::ORB_ptr            orb,
                        PortableServer::POA_ptr   poa,
                        PortableServer::ObjectId* contId,
                        const char*               instanceName,
-                       const char*               interfaceName) :
-  Engines_Component_i(orb, poa, contId, instanceName, interfaceName)
+                       const char*               interfaceName,
+                       bool withRegistry) :
+  Engines_Component_i(orb, poa, contId, instanceName, interfaceName, false, withRegistry)
 {
   _thisObj = this;
   _id = _poa->activate_object(_thisObj);
-  name_service = new SALOME_NamingService(_orb);
-
   _impl = new ::GEOMImpl_Gen;
 
   //PAL10867: disable signals catching with "noexcepthandler" option
@@ -140,10 +139,8 @@ GEOM_Gen_i::GEOM_Gen_i(CORBA::ORB_ptr            orb,
 // purpose  : destructor
 //============================================================================
 GEOM_Gen_i::~GEOM_Gen_i() {
-  delete name_service;
   delete _impl;
-  std::map<std::string, GEOM_GenericOperationsCreator*>::const_iterator it;
-  for ( it = myOpCreatorMap.begin(); it != myOpCreatorMap.end(); ++it)
+  for (auto it = myOpCreatorMap.cbegin(); it != myOpCreatorMap.cend(); ++it)
     delete (*it).second;
 }
 
@@ -2156,30 +2153,6 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapesOneLevel (SALOMEDS::SObject_ptr
 }
 
 //============================================================================
-// function : register()
-// purpose  : register 'name' in 'name_service'
-//============================================================================
-void GEOM_Gen_i::register_name(char * name)
-{
-  GEOM::GEOM_Gen_var g = _this();
-  name_service->Register(g, name);
-}
-
-//============================================================================
-// function : getStudyServant()
-// purpose  : Get Study
-//============================================================================
-SALOMEDS::Study_var GEOM_Gen_i::getStudyServant()
-{
-  static SALOMEDS::Study_var aStudy;
-  if(CORBA::is_nil(aStudy)){
-    CORBA::Object_ptr anObject = name_service->Resolve("/Study");
-    aStudy = SALOMEDS::Study::_narrow(anObject);
-  }
-  return aStudy;
-}
-
-//============================================================================
 // function : findOrCreateComponent()
 // purpose  : Find root study component; create if it does not exist
 //============================================================================
@@ -3351,24 +3324,4 @@ void GEOM_Gen_i::includeSubObjects(const std::string& aSelectedEntry,
     includeSubObjects( aSubEntryStr, aSelected, aParents, aChildren, anOthers );
   }
 }
-//=====================================================================================
-// EXPORTED METHODS
-//=====================================================================================
-extern "C"
-{
-  /*
-  GEOM_I_EXPORT
-  PortableServer::ObjectId* GEOMEngine_factory(CORBA::ORB*, PortableServer::POA*, PortableServer::ObjectId*, const char*, const char*);
-  */
 
-  GEOM_I_EXPORT
-  PortableServer::ObjectId* GEOMEngine_factory(CORBA::ORB_ptr            orb,
-                                               PortableServer::POA_ptr   poa,
-                                               PortableServer::ObjectId* contId,
-                                               const char*               instanceName,
-                                               const char*               interfaceName)
-  {
-    GEOM_Gen_i* myGEOM_Gen_i = new GEOM_Gen_i(orb, poa, contId, instanceName, interfaceName);
-    return myGEOM_Gen_i->getId();
-  }
-}

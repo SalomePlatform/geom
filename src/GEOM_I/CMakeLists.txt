@@ -52,6 +52,7 @@ SET(_link_LIBRARIES
   ${KERNEL_TOOLSDS}
   ${KERNEL_SalomeContainer}
   ${KERNEL_SalomeNS}
+  ${KERNEL_SalomeDS}
   )
 
 # --- headers ---
@@ -74,6 +75,8 @@ SET(GEOMEngine_HEADERS
   GEOM_IMeasureOperations_i.hh
   GEOM_IGroupOperations_i.hh
   GEOM_Gen_i.hh
+  GEOM_Gen_Session_i.hh
+  GEOM_Gen_No_Session_i.hh
   GEOM_GEOM_I.hxx
   GEOM_wrap.hxx
   )
@@ -98,6 +101,8 @@ SET(GEOMEngine_SOURCES
   GEOM_IGroupOperations_i.cc
   GEOM_IFieldOperations_i.cc
   GEOM_Gen_i.cc
+  GEOM_Gen_Session_i.cc
+  GEOM_Gen_No_Session_i.cc
   GEOM_DumpPython.cc
   )
 

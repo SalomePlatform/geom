@@ -17,6 +17,17 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
+include(${SWIG_USE_FILE})
+
+include_directories(
+  ${PROJECT_BINARY_DIR}/idl
+  ${PROJECT_SOURCE_DIR}/src/GEOMUtils
+  ${PROJECT_SOURCE_DIR}/src/GEOMAlgo
+  ${PROJECT_SOURCE_DIR}/src/GEOM
+  ${PROJECT_SOURCE_DIR}/src/GEOMImpl
+  ${PROJECT_SOURCE_DIR}/src/GEOM_I
+)
+
 # --- scripts ---
 
 # scripts / samples,data
@@ -117,6 +128,23 @@ SET(_python_VTK_SCRIPTS
 SET(_shared_SCRIPTS
   GEOM_shared_modules.py
   )
+
+
+SET(GeomHelper_HEADERS GeomHelper.h GeomHelper.i)
+SET(GeomHelper_SOURCES GeomHelper.cxx ${GeomHelper_HEADERS})
+SET_SOURCE_FILES_PROPERTIES(GeomHelper.i PROPERTIES CPLUSPLUS ON)
+SET_SOURCE_FILES_PROPERTIES(GeomHelper.i PROPERTIES SWIG_FLAGS "-py3")
+SET_SOURCE_FILES_PROPERTIES(GeomHelper_wrap.cpp PROPERTIES COMPILE_FLAGS "-DHAVE_CONFIG_H")
+SET(_swig_SCRIPTS ${CMAKE_CURRENT_BINARY_DIR}/GeomHelper.py )
+IF(${CMAKE_VERSION} VERSION_LESS "3.8.0") 
+  SWIG_ADD_MODULE(GeomHelper python ${GeomHelper_SOURCES})
+ELSE()
+  SWIG_ADD_LIBRARY(GeomHelper LANGUAGE python SOURCES ${GeomHelper_SOURCES})
+ENDIF()
+SWIG_LINK_LIBRARIES(GeomHelper ${PYTHON_LIBRARIES} ${PLATFORM_LIBS} GEOMEngine ${KERNEL_SalomeKernelHelpers} ${KERNEL_SalomeDS} )
+install(TARGETS _GeomHelper DESTINATION ${SALOME_INSTALL_LIBS})
+install(FILES ${GeomHelper_HEADERS} DESTINATION ${SALOME_INSTALL_HEADERS})
+SALOME_INSTALL_SCRIPTS("${_swig_SCRIPTS}"  ${SALOME_INSTALL_BINS} EXTRA_DPYS "${SWIG_MODULE_GeomHelper_REAL_NAME}")
 
 # --- rules ---
 
