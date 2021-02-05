@@ -28,7 +28,7 @@ class CurveCreator_ICurve;
 class CurveCreator_TreeViewModel : public QAbstractItemModel
 {
 public:
-  CurveCreator_TreeViewModel( CurveCreator_ICurve* theCurve, QObject* parent );
+  CurveCreator_TreeViewModel( CurveCreator_ICurve* theCurve, QObject* parent, bool toDrawColorIcon );
   virtual int	columnCount(const QModelIndex & parent = QModelIndex()) const;
   virtual int	rowCount(const QModelIndex & parent = QModelIndex()) const;
   virtual QVariant	data(const QModelIndex & index, int role = Qt::DisplayRole) const;
@@ -50,6 +50,7 @@ private:
   enum IconType{ ICON_POLYLINE, ICON_SPLINE, ICON_CLOSED_SPLINE, ICON_CLOSED_POLYLINE, ICON_POINT };
 private:
   CurveCreator_ICurve*          myCurve;
+  bool                         myDrawColorIcon;
   QMap<IconType, QPixmap>      myCachedIcons;
 };
 
@@ -59,7 +60,7 @@ class CurveCreator_TreeView : public QTreeView
 public:
   enum SelectionType{ ST_NOSEL, ST_POINTS, ST_POINTS_ONE_SECTION, ST_SECTIONS, ST_MIXED };
 public:
-  explicit CurveCreator_TreeView( CurveCreator_ICurve* theCurve, QWidget *parent = 0);
+  explicit CurveCreator_TreeView( CurveCreator_ICurve* theCurve, QWidget *parent = 0, bool toDrawColorIcon = true);
   SelectionType getSelectionType() const;
   QList<int> getSelectedSections() const;
 

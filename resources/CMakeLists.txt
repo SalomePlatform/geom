@@ -267,6 +267,7 @@ SET( _res_files
   propagate.png
   redo.png
   undo.png
+  setcolor.png
   glue2.png
   remove_webs.png
   remove_extra_edges.png

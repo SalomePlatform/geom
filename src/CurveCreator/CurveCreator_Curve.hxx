@@ -31,12 +31,14 @@
 
 #include <list>
 #include <map>
+#include <NCollection_IndexedDataMap.hxx>
 
 struct CurveCreator_Section;
 class CurveCreator_Displayer;
 class AIS_Shape;
 class AIS_InteractiveObject;
 class Quantity_Color;
+class TopoDS_Shape;
 
 /**
  *  The CurveCreator_Curve object is represented as one or more sets of
@@ -108,7 +110,7 @@ protected:
 
 public: // TODO: remove public
   void getCoordinates( int theISection, int theIPoint, double& theX, double& theY, double& theZ ) const;
-protected:  // TODO: remove public
+protected:  // TODO
   void redisplayCurve(bool preEraseAllObjects = true);
 
 public:
@@ -159,20 +161,21 @@ public:
   virtual int getNbSections() const;
 
   //! For internal use only! Undo/Redo are not used here.
-  virtual int addSectionInternal( const std::string &theName, 
+  virtual int addSectionInternal( const std::string &theName,
                                   const CurveCreator::SectionType theType,
                                   const bool theIsClosed,
-                                  const CurveCreator::Coordinates &thePoints);
+                                  const CurveCreator::Coordinates &thePoints,
+                                  const Quantity_Color& aColor);
   //! Add a new section.
-  virtual int addSection( const std::string &theName, 
+  virtual int addSection( const std::string &theName,
                            const CurveCreator::SectionType theType,
                            const bool theIsClosed );
   //! Add a new section.
-  virtual int addSection( const std::string &theName, 
+  virtual int addSection( const std::string &theName,
                            const CurveCreator::SectionType theType,
                            const bool theIsClosed,
                            const CurveCreator::Coordinates &thePoints);
-  
+
   //! For internal use only! Undo/Redo are not used here.
   virtual bool removeSectionInternal( const int theISection );
   //! Removes the given sections.
@@ -182,36 +185,49 @@ public:
   virtual bool isClosed( const int theISection ) const;
 
   //! For internal use only! Undo/Redo are not used here.
-  virtual bool setClosedInternal( const int theISection, 
+  virtual bool setClosedInternal( const int theISection,
                                   const bool theIsClosed );
   /**
    *  Set "closed" flag of the specified section (all sections if
    *  \a theISection is -1).
    */
-  virtual bool setClosed( const int theISection, 
+  virtual bool setClosed( const int theISection,
                           const bool theIsClosed );
+
+  //! Sets color of section by index
+  virtual bool setColorSection(  int SectInd, Quantity_Color theNewColor );
+
+  //! For internal use only! Undo/Redo are not used here.
+  virtual void setColorSectionInternal( int SectInd, Quantity_Color theNewColor );
+
+  virtual Quantity_Color getLastRemovedColor() const;
+
+  virtual void popLastRemovedColor();
+
+  //! Gets color of section by index
+  virtual Quantity_Color getColorSection( int SectInd ) const;
 
   //! Returns specifyed section name
   virtual std::string getSectionName( const int theISection ) const;
 
   //! For internal use only! Undo/Redo are not used here.
-  virtual bool setSectionNameInternal( const int theISection, 
+  virtual bool setSectionNameInternal( const int theISection,
                                        const std::string& theName );
   /** Set name of the specified section */
-  virtual bool setSectionName( const int theISection, 
+  virtual bool setSectionName( const int theISection,
                                const std::string& theName );
 
   //! Get type of the specified section
   virtual CurveCreator::SectionType getSectionType( const int theISection ) const;
 
   //! For internal use only! Undo/Redo are not used here.
-  virtual bool setSectionTypeInternal( const int theISection, 
+  virtual bool setSectionTypeInternal( const int theISection,
                                        const CurveCreator::SectionType theType );
   /**
    *  Set type of the specified section (or all sections
    *  if \a theISection is -1).
    */
-  virtual bool setSectionType( const int theISection, 
+  virtual bool setSectionType( const int theISection,
                                const CurveCreator::SectionType theType );
 
   //! A virtual method.
@@ -264,7 +280,7 @@ public:
   virtual bool removeSeveralPoints( const SectionToPointList &theSectionToPntIDs);
 
   //! Get coordinates of specified point
-  virtual CurveCreator::Coordinates getPoint( const int theISection, 
+  virtual CurveCreator::Coordinates getPoint( const int theISection,
                                               const int theIPnt ) const;
 
   /**
@@ -327,6 +343,7 @@ protected:
 
 protected:
   bool                            mySkipSorting;
+  AIS_Shape*                      myAISShape;   //!< AIS shape
 
 public:
   bool                            myIsLocked;
@@ -334,8 +351,10 @@ public:
   CurveCreator::Dimension         myDimension;  //!< curve dimension
   CurveCreator_Displayer*         myDisplayer;  //!< curve displayer
   Quantity_Color myPointAspectColor;
-  Quantity_Color myCurveColor;
+  //Quantity_Color myCurveColor;
   double myLineWidth;
+  NCollection_IndexedDataMap<int, TopoDS_Shape> mySect2Shape;
+  std::vector<int> myCurSectInd;
 
 private:
 
@@ -345,8 +364,8 @@ private:
   ListDiff                        myListDiffs;
   int                             myUndoDepth;
   int                             myOpLevel;
-  AIS_Shape*                      myAISShape;   //!< AIS shape
   bool                            myEraseAll;
+  std::vector<Quantity_Color>     myRemColors;
 };
 
 #endif

@@ -56,7 +56,8 @@ public:
     NoFlags              = 0x00000000,
     DisableDetectionMode = 0x00000001,
     DisableNewSection    = 0x00000002,
-    DisableClosedSection = 0x00000004
+    DisableClosedSection = 0x00000004,
+    DisableSetColor      = 0x00000008
   };
 
   enum ActionMode {
@@ -119,6 +120,7 @@ public slots:
   void     onJoin();
   void     onBringTogether();
   void     onRemove();
+  void     onSetColor();
   void     onClearAll();
   void     onJoinAll();
   void     onSetSpline();
@@ -146,23 +148,24 @@ protected:
 
 protected:
   enum ActionId{ NONE_ID,
-                 UNDO_ID, 
-                 REDO_ID, 
-                 NEW_SECTION_ID, 
-                 ADDITION_MODE_ID, 
-                 REMOVE_ID, 
-                 REMOVE_ALL_ID, 
+                 UNDO_ID,
+                 REDO_ID,
+                 NEW_SECTION_ID,
+                 ADDITION_MODE_ID,
+                 REMOVE_ID,
+                 REMOVE_ALL_ID,
                  JOIN_ID,
-                 JOIN_ALL_ID, 
-                 CLOSE_SECTIONS_ID, 
+                 JOIN_ALL_ID,
+                 CLOSE_SECTIONS_ID,
                  UNCLOSE_SECTIONS_ID,
-                 SET_SECTIONS_POLYLINE_ID, 
-                 SET_SECTIONS_SPLINE_ID, 
-                 CLEAR_ALL_ID, 
-                 SEPARATOR_ID, 
-                 MODIFICATION_MODE_ID, 
+                 SET_SECTIONS_POLYLINE_ID,
+                 SET_SECTIONS_SPLINE_ID,
+                 CLEAR_ALL_ID,
+                 SEPARATOR_ID,
+                 MODIFICATION_MODE_ID,
                  DETECTION_MODE_ID,
-                 BRING_TOGETHER_ID
+                 BRING_TOGETHER_ID,
+                 SETCOLOR_ID
   };
 
 public:
@@ -193,7 +196,7 @@ private:
 
   void startCurveModification( CurveCreator_ICurve::SectionToPointList& thePoints,
                                const bool theFillPoints = true );
-  void finishCurveModification( const CurveCreator_ICurve::SectionToPointList& thePoints = 
+  void finishCurveModification( const CurveCreator_ICurve::SectionToPointList& thePoints =
                                       CurveCreator_ICurve::SectionToPointList() );
 
   // curve algorithm

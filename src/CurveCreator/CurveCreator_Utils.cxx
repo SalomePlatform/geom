@@ -295,11 +295,13 @@ TopoDS_Wire CurveCreator_Utils::ConstructWire(
 // purpose  :
 //=======================================================================
 void CurveCreator_Utils::constructShape(
-  const CurveCreator_ICurve* theCurve, TopoDS_Shape& theShape)
+  const CurveCreator_ICurve* theCurve, TopoDS_Shape& theShape,
+  NCollection_IndexedDataMap<int, TopoDS_Shape>* theSect2Shape )
 {
   BRep_Builder aBuilder;
   TopoDS_Compound aShape;
   aBuilder.MakeCompound(aShape);
+
   const int aSectionCount = theCurve->getNbSections();
   for (int aSectionI = 0; aSectionI < aSectionCount; ++aSectionI)
   {
@@ -314,10 +316,18 @@ void CurveCreator_Utils::constructShape(
     const int aPointCount = aPoints->Length();
     const bool isClosed = theCurve->isClosed(aSectionI);
 
+    TopoDS_Compound ShapeWireWithV;
+    if (theSect2Shape)
+      aBuilder.MakeCompound(ShapeWireWithV);
+
     // Add the vertices to the shape.
     for (Standard_Integer aPN = 1; aPN <= aPointCount; ++aPN)
     {
-      aBuilder.Add(aShape, BRepBuilderAPI_MakeVertex(aPoints->Value(aPN)));
+      TopoDS_Vertex V;
+      aBuilder.MakeVertex(V,aPoints->Value(aPN),Precision::Confusion());
+      aBuilder.Add(aShape, V);
+      if (theSect2Shape)
+        aBuilder.Add(ShapeWireWithV, V);
     }
 
     // Add the wire to the shape.
@@ -327,6 +337,11 @@ void CurveCreator_Utils::constructShape(
     if (!aWire.IsNull())
     {
       aBuilder.Add(aShape, aWire);
+      if (theSect2Shape)
+      {
+        aBuilder.Add(ShapeWireWithV, aWire);
+        (*theSect2Shape).Add(aSectionI, ShapeWireWithV);
+      }
     }
   }
   theShape = aShape;
@@ -345,9 +360,36 @@ struct Section3D
   Handle(TColgp_HArray1OfPnt) myPoints;
 };
 
+Quantity_Color CurveCreator_Utils::getRandColor()
+{
+  float aHue = ( rand()%1000 ) * 0.001f;
+
+  QColor aColor;
+  aColor.setHsl( (int)(aHue*255.), 200, 128 );
+  int r = aColor.red();
+  int g = aColor.green();
+  int b = aColor.blue();
+
+  double r1 = r / 255.0;
+  double g1 = g / 255.0;
+  double b1 = b / 255.0;
+  return Quantity_Color( r1, g1, b1, Quantity_TOC_RGB );
+}
+
+Quantity_Color CurveCreator_Utils::colorConv(QColor color)
+{
+  return  Quantity_Color( color.red() / 255.,
+    color.green() / 255., color.blue() / 255., Quantity_TOC_RGB );
+}
+
+QColor CurveCreator_Utils::colorConv(Quantity_Color color)
+{
+  return QColor( (int)( color.Red() * 255 ), (int)( color.Green() * 255 ), (int)( color.Blue() * 255 ) );
+}
+
 //=======================================================================
 // function : constructCurve
-// purpose  : 
+// purpose  :
 //=======================================================================
 bool CurveCreator_Utils::constructCurve
                       (const TopoDS_Shape        theShape,
@@ -517,7 +559,7 @@ bool CurveCreator_Utils::constructCurve
       CurveCreator::Spline : CurveCreator::Polyline;
 
     theCurve->addSectionInternal(aSecName, aSecType,
-                                 aSecIt->myIsClosed, aCoords);
+                                 aSecIt->myIsClosed, aCoords, Quantity_NOC_RED);
   }
 
   // Set the local coordinate system.
@@ -625,7 +667,7 @@ void CurveCreator_Utils::setSelectedPoints( Handle(AIS_InteractiveContext) theCo
   {
   for ( NCollection_Vector<Handle(SelectMgr_SensitiveEntity)>::Iterator selIter( selected );
         selIter.More(); selIter.Next() )
-  {    
+  {
     const Handle(SelectMgr_SensitiveEntity) aHSenEntity = selIter.Value();
     if( aHSenEntity.IsNull() )
       continue;
@@ -820,7 +862,7 @@ bool CurveCreator_Utils::isEqualPoints( const gp_Pnt& thePoint, const gp_Pnt& th
 
 //=======================================================================
 // function : getPoints
-// purpose  : 
+// purpose  :
 //=======================================================================
 Handle(TColgp_HArray1OfPnt) CurveCreator_Utils::getPoints
                   (const TopoDS_Shape &theShape,
@@ -909,7 +951,7 @@ Handle(TColgp_HArray1OfPnt) CurveCreator_Utils::getPoints
     }
 
     IsClosed = aV[0].IsSame(aV[1]) ? true : false;
-    
+
     Standard_Integer aNbPoints = aBSplCurve->NbKnots();
     TColStd_Array1OfReal aKnots(1, aNbPoints);
     aBSplCurve->Knots(aKnots);
@@ -979,7 +1021,7 @@ Handle(TColgp_HArray1OfPnt) CurveCreator_Utils::getPoints
 }
 //=======================================================================
 // function : FindPlane
-// purpose  : 
+// purpose  :
 //=======================================================================
 void CurveCreator_Utils::FindPlane
                        (const Handle(TColgp_HArray1OfPnt) &thePoints,

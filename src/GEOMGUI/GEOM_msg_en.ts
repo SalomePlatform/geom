@@ -6104,6 +6104,14 @@ shells and solids on the other hand.</translation>
         <translation>Set selected section type to spline</translation>
     </message>
     <message>
+        <source>SETCOLOR</source>
+        <translation>Set color</translation>
+    </message>
+    <message>
+        <source>SETCOLOR_TLT</source>
+        <translation>Set color</translation>
+    </message>
+    <message>
         <source>REMOVE</source>
         <translation>Remove</translation>
     </message>

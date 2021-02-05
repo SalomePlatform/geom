@@ -64,6 +64,10 @@
             <translation>undo.png</translation>
         </message>
         <message>
+            <source>ICON_CC_SETCOLOR</source>
+            <translation>setcolor.png</translation>
+        </message>
+        <message>
             <source>ICON_FOLDER</source>
             <translation>folder.png</translation>
         </message>

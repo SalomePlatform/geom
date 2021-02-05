@@ -26,7 +26,7 @@ ENDIF(SALOME_BUILD_GUI)
 # additional include directories
 INCLUDE_DIRECTORIES(
   ${PTHREAD_INCLUDE_DIR}
-  ${OpenCASCADE_INCLUDE_DIR}
+  ${CAS_INCLUDE_DIR}
   ${KERNEL_INCLUDE_DIRS}
   ${GUI_INCLUDE_DIRS}
   ${PROJECT_SOURCE_DIR}/src/GEOMUtils
@@ -34,12 +34,15 @@ INCLUDE_DIRECTORIES(
 
 # additional preprocessor / compiler flags
 ADD_DEFINITIONS(
+  ${CAS_DEFINITIONS}
   ${OpenCASCADE_DEFINITIONS}
   ${QT_DEFINITIONS}
 )
 
 # libraries to link to
 SET(_link_LIBRARIES
+  ${CAS_KERNEL}
+  ${CAS_TKernel}
   GEOMUtils
 )
 IF(SALOME_BUILD_GUI)
@@ -66,6 +69,7 @@ ENDIF(SALOME_BUILD_GUI)
 SET(_other_HEADERS
   CurveCreator.hxx
   CurveCreator_Curve.hxx
+  CurveCreator_ShapeFilter.hxx
   CurveCreator_Diff.hxx
   CurveCreator_Displayer.hxx
   CurveCreator_ICurve.hxx
@@ -92,6 +96,7 @@ SET(_other_SOURCES
   CurveCreator_Curve.cxx
   CurveCreator_Diff.cxx
   CurveCreator_Displayer.cxx
+  CurveCreator_ShapeFilter.cxx
   CurveCreator_Operation.cxx
   CurveCreator_Section.cxx
   CurveCreator_Utils.cxx

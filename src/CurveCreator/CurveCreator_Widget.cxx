@@ -26,10 +26,17 @@
 #include "CurveCreator_UtilsICurve.hxx"
 #include "CurveCreator_TableView.h"
 
+#include "CurveCreator_Curve.hxx"
+#include "CurveCreator_Section.hxx"
+#include <QColorDialog>
+
 #include <SUIT_Session.h>
 #include <SUIT_Desktop.h>
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_ViewManager.h>
+
+#include <TopExp_Explorer.hxx>
+#include "CurveCreator_ShapeFilter.hxx"
 
 #include <OCCViewer_ViewManager.h>
 #include <OCCViewer_ViewPort3d.h>
@@ -97,7 +104,10 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
 
   QGroupBox* aSectionGroup = new QGroupBox(tr("SECTION_GROUP_TITLE"),this);
 
-  mySectionView = new CurveCreator_TreeView(myCurve, aSectionGroup);
+
+  bool toDrawSectColor = !(theActionFlags & DisableSetColor);
+
+  mySectionView = new CurveCreator_TreeView(myCurve, aSectionGroup, toDrawSectColor);
   mySectionView->setSelectionMode( QTreeView::ExtendedSelection );
   connect( mySectionView, SIGNAL(selectionChanged()), this, SLOT( onSelectionChanged() ) );
   connect( mySectionView, SIGNAL(sectionEntered(int)), this, SLOT(onEditSection(int)) );
@@ -124,20 +134,21 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
   QPixmap aBringTogetherPixmap(aResMgr->loadPixmap("GEOM", tr("ICON_CC_BRING_TOGETHER")));
   QPixmap aStepUpPixmap(aResMgr->loadPixmap("GEOM", tr("ICON_CC_ARROW_UP")));
   QPixmap aStepDownPixmap(aResMgr->loadPixmap("GEOM", tr("ICON_CC_ARROW_DOWN")));
+  QPixmap aSetColorPixmap(aResMgr->loadPixmap("GEOM", tr("ICON_CC_SETCOLOR")));
 
-  QAction* anAct = createAction( UNDO_ID, tr("UNDO"), anUndoPixmap, tr("UNDO_TLT"), 
+  QAction* anAct = createAction( UNDO_ID, tr("UNDO"), anUndoPixmap, tr("UNDO_TLT"),
                                  QKeySequence(Qt::ControlModifier|Qt::Key_Z) );
   connect(anAct, SIGNAL(triggered()), this, SLOT(onUndo()) );
   aTB->addAction(anAct);
 
-  anAct = createAction( REDO_ID, tr("REDO"), aRedoPixmap, tr("REDO_TLT"), 
+  anAct = createAction( REDO_ID, tr("REDO"), aRedoPixmap, tr("REDO_TLT"),
                         QKeySequence(Qt::ControlModifier|Qt::Key_Y) );
   connect(anAct, SIGNAL(triggered()), this, SLOT(onRedo()) );
   aTB->addAction(anAct);
 
   aTB->addSeparator();
-  
-  anAct = createAction( NEW_SECTION_ID, tr("NEW_SECTION"), aNewSectionPixmap, tr("NEW_SECTION_TLT"), 
+
+  anAct = createAction( NEW_SECTION_ID, tr("NEW_SECTION"), aNewSectionPixmap, tr("NEW_SECTION_TLT"),
                         QKeySequence(Qt::ControlModifier|Qt::Key_N) );
   connect(anAct, SIGNAL(triggered()), this, SLOT(onNewSection()) );
   if ( !(theActionFlags & DisableNewSection) ) {
@@ -145,21 +156,21 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
     aTB->addSeparator();
   }
 
-  anAct = createAction( ADDITION_MODE_ID, tr("ADDITION_MODE"), aNewPointPixmap, tr("ADDITION_MODE_TLT"), 
+  anAct = createAction( ADDITION_MODE_ID, tr("ADDITION_MODE"), aNewPointPixmap, tr("ADDITION_MODE_TLT"),
                         QKeySequence() );
   anAct->setCheckable(true);
   connect(anAct, SIGNAL(triggered(bool)), this, SLOT(onAdditionMode(bool)) );
   connect(anAct, SIGNAL(toggled(bool)), this, SLOT(onModeChanged(bool)) );
   aTB->addAction(anAct);
-  
-  anAct = createAction( MODIFICATION_MODE_ID, tr("MODIFICATION_MODE"), anEditPointsPixmap, tr("MODIFICATION_MODE_TLT"), 
+
+  anAct = createAction( MODIFICATION_MODE_ID, tr("MODIFICATION_MODE"), anEditPointsPixmap, tr("MODIFICATION_MODE_TLT"),
                         QKeySequence() );
   anAct->setCheckable(true);
   connect(anAct, SIGNAL(triggered(bool)), this, SLOT(onModificationMode(bool)) );
   connect(anAct, SIGNAL(toggled(bool)), this, SLOT(onModeChanged(bool)) );
   aTB->addAction(anAct);
 
-  anAct = createAction( DETECTION_MODE_ID, tr("DETECTION_MODE"), aDetectPointsPixmap, tr("DETECTION_MODE_TLT"), 
+  anAct = createAction( DETECTION_MODE_ID, tr("DETECTION_MODE"), aDetectPointsPixmap, tr("DETECTION_MODE_TLT"),
                         QKeySequence() );
   anAct->setCheckable(true);
   connect(anAct, SIGNAL(triggered(bool)), this, SLOT(onDetectionMode(bool)) );
@@ -167,32 +178,39 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
 //  if ( !(theActionFlags & DisableDetectionMode) ) {
 //    aTB->addAction(anAct);
 //  }
-  
-  anAct = createAction( CLOSE_SECTIONS_ID, tr("CLOSE_SECTIONS"), QPixmap(), tr("CLOSE_SECTIONS_TLT"), 
+
+  anAct = createAction( CLOSE_SECTIONS_ID, tr("CLOSE_SECTIONS"), QPixmap(), tr("CLOSE_SECTIONS_TLT"),
                         QKeySequence(Qt::ControlModifier|Qt::Key_W) );
   connect(anAct, SIGNAL(triggered()), this, SLOT(onCloseSections()) );
 
-  anAct = createAction( UNCLOSE_SECTIONS_ID, tr("UNCLOSE_SECTIONS"), QPixmap(), 
+  anAct = createAction( UNCLOSE_SECTIONS_ID, tr("UNCLOSE_SECTIONS"), QPixmap(),
                         tr("UNCLOSE_SECTIONS_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_S) );
   connect(anAct, SIGNAL(triggered()), this, SLOT(onUncloseSections()) );
 
-  anAct = createAction( SET_SECTIONS_POLYLINE_ID, tr("SET_SECTIONS_POLYLINE"), 
-                        aPolylinePixmap, tr("SET_SECTIONS_POLYLINE_TLT"), 
+  anAct = createAction( SET_SECTIONS_POLYLINE_ID, tr("SET_SECTIONS_POLYLINE"),
+                        aPolylinePixmap, tr("SET_SECTIONS_POLYLINE_TLT"),
                         QKeySequence(Qt::ControlModifier|Qt::Key_E) );
   connect(anAct, SIGNAL(triggered()), this, SLOT(onSetPolyline()) );
 
-  anAct = createAction( SET_SECTIONS_SPLINE_ID, tr("SET_SECTIONS_SPLINE"), aSplinePixmap, 
+  anAct = createAction( SET_SECTIONS_SPLINE_ID, tr("SET_SECTIONS_SPLINE"), aSplinePixmap,
                         tr("SET_SECTIONS_SPLINE_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_R) );
   connect(anAct, SIGNAL(triggered()), this, SLOT(onSetSpline()) );
 
   aTB->addSeparator();
 
-  anAct = createAction( REMOVE_ID, tr("REMOVE"), aRemovePixmap, tr("REMOVE_TLT"), 
+  anAct = createAction( REMOVE_ID, tr("REMOVE"), aRemovePixmap, tr("REMOVE_TLT"),
                         QKeySequence(Qt::ControlModifier|Qt::Key_Delete ) );
   connect(anAct, SIGNAL(triggered()), this, SLOT(onRemove()) );
   aTB->addAction(anAct);
-  
-  anAct = createAction( JOIN_ID, tr("JOIN"), aJoinPixmap, tr("JOIN_TLT"), 
+
+  anAct = createAction( SETCOLOR_ID, tr("SETCOLOR"), aSetColorPixmap, tr("SETCOLOR_TLT"),
+                        QKeySequence(Qt::ControlModifier|Qt::Key_C ) );
+  connect(anAct, SIGNAL(triggered()), this, SLOT(onSetColor()) );
+
+  if ( !(theActionFlags & DisableSetColor) )
+    aTB->addAction(anAct);
+
+  anAct = createAction( JOIN_ID, tr("JOIN"), aJoinPixmap, tr("JOIN_TLT"),
                         QKeySequence(Qt::ControlModifier|Qt::Key_Plus ) );
   connect( anAct, SIGNAL(triggered()), this, SLOT(onJoin()) );
   aTB->addAction(anAct);
@@ -202,11 +220,11 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
   connect( anAct, SIGNAL(triggered()), this, SLOT(onBringTogether()) );
   aTB->addAction(anAct);
 
-  anAct = createAction( CLEAR_ALL_ID, tr("CLEAR_ALL"), QPixmap(), tr("CLEAR_ALL_TLT"), 
+  anAct = createAction( CLEAR_ALL_ID, tr("CLEAR_ALL"), QPixmap(), tr("CLEAR_ALL_TLT"),
                         QKeySequence(Qt::ControlModifier | Qt::ShiftModifier | Qt::Key_Delete ) );
   connect( anAct, SIGNAL(triggered()), this, SLOT( onClearAll()) );
 
-  anAct = createAction( JOIN_ALL_ID, tr("JOIN_ALL"), QPixmap(), tr("JOIN_ALL_TLT"), 
+  anAct = createAction( JOIN_ALL_ID, tr("JOIN_ALL"), QPixmap(), tr("JOIN_ALL_TLT"),
                         QKeySequence(Qt::ControlModifier | Qt::ShiftModifier | Qt::Key_Plus ) );
   connect( anAct, SIGNAL(triggered()), this, SLOT(onJoinAll()) );
 
@@ -305,7 +323,7 @@ OCCViewer_ViewPort3d* CurveCreator_Widget::getViewPort()
   OCCViewer_Viewer* aViewer = getOCCViewer();
   if ( aViewer )
     aViewPort = ((OCCViewer_ViewWindow*)aViewer->getViewManager()->getActiveView())->getViewPort();
-    
+
   return aViewPort;
 }
 
@@ -349,6 +367,11 @@ void CurveCreator_Widget::onSelectionChanged()
   updateActionsStates();
   updateUndoRedo();
   emit selectionChanged();
+  QList<int> selectedSections = mySectionView->getSelectedSections();
+  CurveCreator_Curve* Curve =  ((CurveCreator_Curve*)myCurve);
+  Curve->myCurSectInd.clear();
+  foreach (int sectInd, selectedSections)
+    Curve->myCurSectInd.push_back(sectInd);
 }
 
 void CurveCreator_Widget::updateActionsStates()
@@ -359,6 +382,8 @@ void CurveCreator_Widget::updateActionsStates()
     if ( removeEnabled() )
       anEnabledAct << REMOVE_ID;
     QList<int> aSelSections = mySectionView->getSelectedSections();
+    if (aSelSections.size() == 1)
+      anEnabledAct << SETCOLOR_ID;
     CurveCreator_TreeView::SelectionType aSelType = mySectionView->getSelectionType();
     switch( aSelType ){
     case CurveCreator_TreeView::ST_NOSEL:{
@@ -434,7 +459,7 @@ void CurveCreator_Widget::updateActionsStates()
     default:
       break;
     }
-    
+
     /*int aSelObjsCnt = aSelPoints.size() + aSelSections.size();
     if( aSelObjsCnt > 0 ){
       anEnabledAct << REMOVE_ID;
@@ -601,7 +626,7 @@ void CurveCreator_Widget::onEditSection( int theSection )
 {
   if( !myCurve )
     return;
-  
+
   stopActionMode();
   mySection = theSection;
   QString aSectName = QString::fromStdString( myCurve->getSectionName(theSection));
@@ -688,6 +713,31 @@ void CurveCreator_Widget::onRemove()
       break;
   }
 }
+
+void CurveCreator_Widget::onSetColor()
+{
+  if( !myCurve )
+    return;
+
+  QList<int> aSections = mySectionView->getSelectedSections();
+  if (aSections.size() != 1)
+    return;
+
+  int aSectNum = aSections[0];
+  Quantity_Color aColor = ((CurveCreator_Curve*)myCurve)->getColorSection( aSectNum );;
+
+  QColor aQColor = CurveCreator_Utils::colorConv(aColor);
+  QColor aNewQColor = QColorDialog::getColor( aQColor, this );
+  if( !aNewQColor.isValid() )
+    return;
+
+  Quantity_Color aNewColor = CurveCreator_Utils::colorConv(aNewQColor);
+
+  ((CurveCreator_Curve*)myCurve)->setColorSection( aSectNum, aNewColor);
+
+  updateUndoRedo();
+}
+
 
 void CurveCreator_Widget::onClearAll()
 {
@@ -971,7 +1021,7 @@ void CurveCreator_Widget::addCoordsByClick( QMouseEvent* pe )
     if ( ic.IsNull() )
       return;
 
-    gp_Pnt aPnt;    
+    gp_Pnt aPnt;
     OCCViewer_ViewPort3d* vp = getViewPort();
 
     aPnt = CurveCreator_Utils::ConvertClickToPoint( pe->x(), pe->y(), vp->getView() );
@@ -1098,7 +1148,7 @@ void CurveCreator_Widget::onMouseRelease( SUIT_ViewWindow* theWindow, QMouseEven
         aCtx->ClearSelected( Standard_True );
     }
     return;
-  } 
+  }
   if (theEvent->button() != Qt::LeftButton) return;
   if (!theWindow->inherits("OCCViewer_ViewWindow")) return;
 
@@ -1122,6 +1172,32 @@ void CurveCreator_Widget::onMouseRelease( SUIT_ViewWindow* theWindow, QMouseEven
     Handle(V3d_View) aView3d = aView->getViewPort()->getView();
     if ( !aView3d.IsNull() )
     {
+      CurveCreator_Curve* Curve =  ((CurveCreator_Curve*)myCurve);
+      //if (!Curve->myCurSectInd.empty())
+      //{
+        aCtx->RemoveFilters();
+        Handle(CurveCreator_ShapeFilter) filter = new CurveCreator_ShapeFilter();
+        for (int i=0; i<Curve->myCurSectInd.size(); i++)
+        {
+          int sectInd = Curve->myCurSectInd[i];
+          const TopoDS_Shape& W = Curve->mySect2Shape(sectInd+1);
+          TopExp_Explorer exp(W, TopAbs_VERTEX);
+          for (;exp.More();exp.Next())
+            filter->AddShape(exp.Current());
+        }
+        aCtx->AddFilter(filter);
+#if OCC_VERSION_LARGE <= 0x07030000
+        if (aCtx->HasOpenedContext())
+        {
+          Handle(AIS_LocalContext) aLctx = aCtx->LocalContext();
+          aLctx->Filter()->Clear();
+          aLctx->AddFilter(filter);
+        }
+#else
+        // TODO: check if something required
+#endif
+      //}
+
       // Initialize the single selection if start and end points are equal,
       // otherwise a rectangular selection.
       if ( myStartPoint == myEndPoint )
@@ -1171,7 +1247,7 @@ void CurveCreator_Widget::onMouseRelease( SUIT_ViewWindow* theWindow, QMouseEven
             if ( aCoords.size() < 2 ) {
               continue;
             }
-            
+
             CurveCreator_ICurve::SectionToPoint aSectionToPoint = std::make_pair( aSectionId, aPointId );
 
             if ( !anInitialDragPointsCoords.contains( aSectionToPoint ) ) {
@@ -1179,7 +1255,7 @@ void CurveCreator_Widget::onMouseRelease( SUIT_ViewWindow* theWindow, QMouseEven
             }
           }
         }
-        
+
         // Apply points sorting
         CurveCreator_ICurve::SectionToPointList aPoints;
         startCurveModification( aPoints, false );
@@ -1199,7 +1275,7 @@ void CurveCreator_Widget::onMouseRelease( SUIT_ViewWindow* theWindow, QMouseEven
         }
 
         myCurve->setSeveralPoints( aCoordList, false );
-    
+
         finishCurveModification( aDraggedPoints );
       } else {
         // if the drag of some points has happened, restore the drag selection
@@ -1391,7 +1467,7 @@ void CurveCreator_Widget::insertPointToSelectedSegment( const int theX,
   }
 
   int anInsertPos = -1;
-  int aLastPoint = myCurve->getNbPoints( aSectionId )-1; 
+  int aLastPoint = myCurve->getNbPoints( aSectionId )-1;
   if ( ( aPoint1Id == aLastPoint && aPoint2Id == 0 ) ||
        ( aPoint2Id == aLastPoint && aPoint1Id == 0 ) )
     anInsertPos = -1; // if the section happens between first and last points
@@ -1442,9 +1518,9 @@ void CurveCreator_Widget::moveSelectedPoints( const int theXPosition,
 
     aChangedPos[0] = aChangedPos[0] - aXDelta;
     aChangedPos[1] = aChangedPos[1] - anYDelta;
-    
+
     aCoordList.push_back(
-      std::make_pair(std::make_pair( aSectionId, aPointId ), 
+      std::make_pair(std::make_pair( aSectionId, aPointId ),
                      aChangedPos ));
   }
   myCurve->setSeveralPoints( aCoordList, false );
@@ -1477,7 +1553,7 @@ void CurveCreator_Widget::updateLocalPointView()
 }
 
 /**
- * 
+ *
  */
 void CurveCreator_Widget::setLocalPointContext( const bool theOpen, const bool isUpdateTable )
 {

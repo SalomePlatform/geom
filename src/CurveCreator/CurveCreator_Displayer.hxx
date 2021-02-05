@@ -40,6 +40,12 @@ public:
   void eraseAll( bool isUpdate );
   void erase( const Handle(AIS_InteractiveObject)& theObject, bool isUpdate );
   void Update();
+
+  Handle(AIS_InteractiveContext) getContext()
+  {
+    return myContext;
+  }
+
   //void highlight( const AISObjectsList& theObjects, bool isHL );
 
 protected:

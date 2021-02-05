@@ -33,13 +33,15 @@ struct CURVECREATOR_EXPORT CurveCreator_Section :
   public CurveCreator_ISection
 {
   //! Constructor. Initializes object with default values.
-  CurveCreator_Section() : myName("Section"),myType(CurveCreator::Polyline), myIsClosed(false)
+  CurveCreator_Section() : myName("Section"),myType(CurveCreator::Polyline),
+    myIsClosed(false), myColor (Quantity_NOC_RED)
   { }
 
   std::string               myName;     //!< section name
   CurveCreator::Coordinates myPoints;   //!< points coordinates
   CurveCreator::SectionType myType;     //!< type of the section
   bool                      myIsClosed; //!< closed or not
+  Quantity_Color            myColor;    //!< color of section
 
   //! A virtual method.
   Handle(TColgp_HArray1OfPnt) GetDifferentPoints( int theDimension ) const;

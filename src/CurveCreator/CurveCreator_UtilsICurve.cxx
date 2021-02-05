@@ -21,6 +21,7 @@
 
 #include "CurveCreator.hxx"
 #include <gp_Pnt.hxx>
+#include <TopoDS_Shape.hxx>
 
 const double LOCAL_SELECTION_TOLERANCE = 0.0001;
 

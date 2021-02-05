@@ -22,6 +22,8 @@
 
 #include "CurveCreator_Diff.hxx"
 #include "CurveCreator_Curve.hxx"
+#include "CurveCreator_Section.hxx"
+#include "CurveCreator_Utils.hxx"
 
 #include <list>
 
@@ -166,6 +168,36 @@ bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
     if (!isOK) {
       clear();
     }
+  }
+
+  return isOK;
+}
+
+bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
+                             const CurveCreator_Operation::Type theType,
+                             const int theIntParam1,
+                             const int theIntParam2[3])
+{
+  bool isOK = false;
+
+  if (theCurve != NULL)
+  {
+    clear();
+    myPRedo = new CurveCreator_Operation;
+
+    if (myPRedo->init(theType, theIntParam1, theIntParam2))
+    {
+      Quantity_Color aColor =  theCurve->getColorSection(theIntParam1);
+
+      setNbUndos(1);
+      QColor aQColor = CurveCreator_Utils::colorConv(aColor);
+      int colorArr[3] = {aQColor.red(),aQColor.green(), aQColor.blue()};
+
+      isOK = myPUndo[0].init(theType, theIntParam1, colorArr);
+    }
+
+    if (!isOK)
+      clear();
   }
 
   return isOK;
@@ -343,7 +375,7 @@ bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
                       theCurve->getCoords(aSectionId);
               CurveCreator::Coordinates::const_iterator anIterBegin =
                   aPoints.begin() + (aDim*aPointId);
-              CurveCreator::Coordinates::const_iterator anIterEnd = 
+              CurveCreator::Coordinates::const_iterator anIterEnd =
                 anIterBegin + aDim;
               aPointsToAdd.insert(aPointsToAdd.end(), anIterBegin, anIterEnd);
               aSectionToPointCoords.push_back(std::make_pair(*anIt, aPointsToAdd));
@@ -435,7 +467,7 @@ bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
 
     // Construct redo for SetCoordinates command.
     CurveCreator_ICurve::SectionToPointCoordsList aSectionToPointActualCoords;
-    CurveCreator_ICurve::SectionToPointCoordsList::const_iterator anIt = 
+    CurveCreator_ICurve::SectionToPointCoordsList::const_iterator anIt =
       theOldParamList.begin(), aLast = theOldParamList.end();
     for ( ; anIt != aLast; anIt++ ) {
       CurveCreator::Coordinates anActualCoords = theCurve->getPoint(anIt->first.first, anIt->first.second);

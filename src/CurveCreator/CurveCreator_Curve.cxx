@@ -31,11 +31,14 @@
 #include <AIS_Shape.hxx>
 #include <AIS_InteractiveObject.hxx>
 #include <Geom_CartesianPoint.hxx>
+#include <TopoDS_Iterator.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Lin.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Wire.hxx>
+#include <TopoDS_Shape.hxx>
+#include <AIS_ColoredShape.hxx>
 
 #include <Prs3d_PointAspect.hxx>
 #include <iostream>
@@ -52,8 +55,8 @@ CurveCreator_Curve::CurveCreator_Curve( const CurveCreator::Dimension theDimensi
   myIsLocked (false),
   myDimension (theDimension),
   myDisplayer (NULL),
-  myPointAspectColor (Quantity_NOC_ROYALBLUE4), 
-  myCurveColor (Quantity_NOC_RED),
+  myPointAspectColor (Quantity_NOC_ROYALBLUE4),
+  //myCurveColor (Quantity_NOC_RED),
   myLineWidth (1),
   myNbUndos (0),
   myNbRedos (0),
@@ -256,7 +259,7 @@ void CurveCreator_Curve::getCoordinates( int theISection, int theIPoint, double&
 void CurveCreator_Curve::redisplayCurve(bool preEraseAllObjects)
 {
   //DEBTRACE("redisplayCurve");
-  if( myDisplayer ) 
+  if( myDisplayer )
   {
     if (preEraseAllObjects)
       myDisplayer->eraseAll( false );
@@ -384,7 +387,7 @@ bool CurveCreator_Curve::clearInternal()
   }
 
   mySections.clear();
-  
+
   return true;
 }
 
@@ -480,7 +483,8 @@ int CurveCreator_Curve::getNbSections() const
 //! For internal use only! Undo/Redo are not used here.
 int CurveCreator_Curve::addSectionInternal
         (const std::string& theName, const CurveCreator::SectionType theType,
-         const bool theIsClosed, const CurveCreator::Coordinates &thePoints)
+         const bool theIsClosed, const CurveCreator::Coordinates &thePoints,
+         const Quantity_Color& aColor)
 {
   CurveCreator_Section *aSection = new CurveCreator_Section;
 
@@ -492,6 +496,7 @@ int CurveCreator_Curve::addSectionInternal
   aSection->myType     = theType;
   aSection->myIsClosed = theIsClosed;
   aSection->myPoints   = thePoints;
+  aSection->myColor    = aColor;//getRandColor();  //TODO temp
   mySections.push_back(aSection);
   redisplayCurve(false);
   return mySections.size()-1;
@@ -514,7 +519,9 @@ int CurveCreator_Curve::addSection
                             theName, aCoords, theType, theIsClosed);
   }
 
-  resISection = addSectionInternal(theName, theType, theIsClosed, aCoords);
+  Quantity_Color aRColor = CurveCreator_Utils::getRandColor();
+
+  resISection = addSectionInternal(theName, theType, theIsClosed, aCoords, aRColor);
 
   finishOperation();
   return resISection;
@@ -535,7 +542,7 @@ int CurveCreator_Curve::addSection
                             theName, thePoints, theType, theIsClosed);
   }
 
-  resISection = addSectionInternal(theName, theType, theIsClosed, thePoints);
+  resISection = addSectionInternal(theName, theType, theIsClosed, thePoints, Quantity_NOC_YELLOW);
 
   finishOperation();
   return resISection;
@@ -545,10 +552,13 @@ int CurveCreator_Curve::addSection
 bool CurveCreator_Curve::removeSectionInternal( const int theISection )
 {
   if (theISection == -1) {
+    myRemColors.push_back(mySections.back()->myColor);
     delete mySections.back();
     mySections.pop_back();
   } else {
     CurveCreator::Sections::iterator anIterRm = mySections.begin() + theISection;
+
+    myRemColors.push_back((*anIterRm)->myColor);
 
     delete *anIterRm;
     mySections.erase(anIterRm);
@@ -556,7 +566,7 @@ bool CurveCreator_Curve::removeSectionInternal( const int theISection )
   redisplayCurve(false);
   return true;
 }
-  
+
 //! Removes the given sections.
 bool CurveCreator_Curve::removeSection( const int theISection )
 {
@@ -570,6 +580,49 @@ bool CurveCreator_Curve::removeSection( const int theISection )
 
   finishOperation();
   return res;
+}
+
+bool CurveCreator_Curve::setColorSection( int SectInd, Quantity_Color theNewColor )
+{
+  bool res = false;
+  // Set the difference.
+  startOperation();
+
+  int ColorParam[3] = { (int)( theNewColor.Red() * 255 ),
+    (int)( theNewColor.Green() * 255 ),
+    (int)( theNewColor.Blue() * 255 ) };
+
+  if (addEmptyDiff())
+    myListDiffs.back().init(this, CurveCreator_Operation::SetColorSection, SectInd, ColorParam);
+
+  setColorSectionInternal(SectInd, theNewColor);
+
+  finishOperation();
+  return res;
+}
+
+void CurveCreator_Curve::setColorSectionInternal( int SectInd, Quantity_Color theNewColor )
+{
+  CurveCreator_Section* aSec = (CurveCreator_Section*)(getSection(SectInd));
+  aSec->myColor = theNewColor;
+
+  redisplayCurve(false);
+}
+
+Quantity_Color CurveCreator_Curve::getColorSection( int SectInd ) const
+{
+  CurveCreator_Section* aSec = (CurveCreator_Section*)(getSection(SectInd));
+  return aSec->myColor;
+}
+
+Quantity_Color CurveCreator_Curve::getLastRemovedColor() const
+{
+  return myRemColors.empty() ? Quantity_NOC_BLACK : myRemColors.back();
+}
+
+void CurveCreator_Curve::popLastRemovedColor()
+{
+  myRemColors.pop_back();
 }
 
 /**
@@ -632,7 +685,7 @@ bool CurveCreator_Curve::isClosed( const int theISection ) const
 }
 
 //! For internal use only! Undo/Redo are not used here.
-bool CurveCreator_Curve::setClosedInternal( const int theISection, 
+bool CurveCreator_Curve::setClosedInternal( const int theISection,
                                             const bool theIsClosed )
 {
   CurveCreator_Section* aSection = 0;
@@ -661,7 +714,7 @@ bool CurveCreator_Curve::setClosedInternal( const int theISection,
  *  Set "closed" flag of the specified section (all sections if
  *  \a theISection is -1).
  */
-bool CurveCreator_Curve::setClosed( const int theISection, 
+bool CurveCreator_Curve::setClosed( const int theISection,
                                     const bool theIsClosed )
 {
   bool res = false;
@@ -684,7 +737,7 @@ std::string CurveCreator_Curve::getSectionName( const int theISection ) const
 }
 
 //! For internal use only! Undo/Redo are not used here.
-bool CurveCreator_Curve::setSectionNameInternal( const int theISection, 
+bool CurveCreator_Curve::setSectionNameInternal( const int theISection,
                                                  const std::string& theName )
 {
   bool res = false;
@@ -697,7 +750,7 @@ bool CurveCreator_Curve::setSectionNameInternal( const int theISection,
 }
 
 /** Set name of the specified section */
-bool CurveCreator_Curve::setSectionName( const int theISection, 
+bool CurveCreator_Curve::setSectionName( const int theISection,
                                          const std::string& theName )
 {
   bool res = false;
@@ -721,7 +774,7 @@ CurveCreator::SectionType CurveCreator_Curve::getSectionType
 }
 
 //! For internal use only! Undo/Redo are not used here.
-bool CurveCreator_Curve::setSectionTypeInternal( const int theISection, 
+bool CurveCreator_Curve::setSectionTypeInternal( const int theISection,
                                                  const CurveCreator::SectionType theType )
 {
   CurveCreator_Section* aSection;
@@ -749,7 +802,7 @@ bool CurveCreator_Curve::setSectionTypeInternal( const int theISection,
  *  Set type of the specified section (or all sections
  *  if \a theISection is -1).
  */
-bool CurveCreator_Curve::setSectionType( const int theISection, 
+bool CurveCreator_Curve::setSectionType( const int theISection,
                                          const CurveCreator::SectionType theType )
 {
   bool res = false;
@@ -791,7 +844,7 @@ bool CurveCreator_Curve::addPointsInternal( const CurveCreator::SectionsMap &the
           anIterPosition = aSection->myPoints.end();
         else
           anIterPosition = aSection->myPoints.begin() + toICoord(anIPnt);
-        /*CurveCreator::Coordinates::const_iterator aFirstPosition = 
+        /*CurveCreator::Coordinates::const_iterator aFirstPosition =
           aCoords.begin();*/
         aSection->myPoints.insert(anIterPosition,
                                   aCoords.begin(), aCoords.end());
@@ -845,7 +898,7 @@ bool CurveCreator_Curve::setPointInternal( const CurveCreator::SectionsMap &theS
   for ( ; anIt != theSectionsMap.end(); anIt++ ) {
     int anISection = anIt->first;
     aSection = (CurveCreator_Section*)getSection( anISection );
-    if( aSection ) { 
+    if( aSection ) {
       CurveCreator::PosPointsList aSectionPoints = anIt->second;
       CurveCreator::PosPointsList::const_iterator aPntIt = aSectionPoints.begin();
       for( ; aPntIt != aSectionPoints.end(); aPntIt++ ){
@@ -859,7 +912,7 @@ bool CurveCreator_Curve::setPointInternal( const CurveCreator::SectionsMap &theS
   }
   if(res)
     redisplayCurve(false);
-  
+
   return res;
 }
 
@@ -890,7 +943,7 @@ bool CurveCreator_Curve::setPoint( const int theISection,
 
   finishOperation();
 
-  return res; 
+  return res;
 }
 
 //! Set coordinates of specified points from different sections
@@ -907,7 +960,7 @@ bool CurveCreator_Curve::setSeveralPoints( const SectionToPointCoordsList &theSe
   }
   CurveCreator::SectionsMap aSectionsMap;
   CurveCreator::PosPointsList aPosPoints;
-  CurveCreator_ICurve::SectionToPointCoordsList::const_iterator anIt = 
+  CurveCreator_ICurve::SectionToPointCoordsList::const_iterator anIt =
     theSectionToPntCoords.begin(), aLast = theSectionToPntCoords.end();
   int aSectionId, aPointId;
   for ( ; anIt != aLast; anIt++ ) {
@@ -915,18 +968,18 @@ bool CurveCreator_Curve::setSeveralPoints( const SectionToPointCoordsList &theSe
     aSectionId = anIt->first.first;
     aPointId = anIt->first.second;
     CurveCreator::Coordinates aNewCoords = anIt->second;
-    CurveCreator_PosPoint* aPosPoint = 
+    CurveCreator_PosPoint* aPosPoint =
       new CurveCreator_PosPoint( aPointId, aNewCoords );
     if( aSectionsMap.find(aSectionId) != aSectionsMap.end() )
       aPosPoints = aSectionsMap[aSectionId];
     aPosPoints.push_back( aPosPoint );
     aSectionsMap[aSectionId] = aPosPoints;
-    
+
   }
   res = setPointInternal( aSectionsMap );
   finishOperation();
 
-  return res; 
+  return res;
 }
 
 //! For internal use only! Undo/Redo are not used here.
@@ -1016,9 +1069,28 @@ void CurveCreator_Curve::constructAISObject()
 {
   //DEBTRACE("constructAISObject");
   TopoDS_Shape aShape;
-  CurveCreator_Utils::constructShape( this, aShape );
-  myAISShape = new AIS_Shape( aShape );  
-  myAISShape->SetColor( myCurveColor );
+  mySect2Shape.Clear();
+  CurveCreator_Utils::constructShape( this, aShape, &mySect2Shape );
+  myAISShape = new AIS_ColoredShape( aShape );
+  AIS_ColoredShape* AISColoredShape = dynamic_cast<AIS_ColoredShape*>(myAISShape);
+
+  std::map<int, TopoDS_Shape>::iterator it;
+
+  //for ( it = mySect2Shape.begin(); it != mySect2Shape.end(); it++ )
+  for (int i = 1; i <= mySect2Shape.Extent(); i++ )
+  {
+    CurveCreator_Section* aSect = (CurveCreator_Section*)getSection(mySect2Shape.FindKey(i));
+    Quantity_Color aColor = aSect->myColor;
+    const TopoDS_Shape& aShape = mySect2Shape.FindFromIndex(i); //should contain: one wire + vertices
+    TopoDS_Iterator it(aShape);
+    for (;it.More();it.Next())
+    {
+      if (it.Value().ShapeType() == TopAbs_WIRE)
+        AISColoredShape->SetCustomColor(it.Value(), aColor);
+    }
+  }
+
+  // myAISShape->SetColor( myCurveColor );
   myAISShape->SetWidth( myLineWidth );
   Handle(Prs3d_PointAspect) anAspect = myAISShape->Attributes()->PointAspect();
   anAspect->SetScale( 3.0 );
@@ -1030,7 +1102,7 @@ void CurveCreator_Curve::constructAISObject()
 Handle(AIS_InteractiveObject) CurveCreator_Curve::getAISObject( const bool theNeedToBuild ) const
 {
   //DEBTRACE("getAISObject");
-  if ( !myAISShape && theNeedToBuild ) 
+  if ( !myAISShape && theNeedToBuild )
   {
     CurveCreator_Curve* aCurve = (CurveCreator_Curve*)this;
     aCurve->constructAISObject();

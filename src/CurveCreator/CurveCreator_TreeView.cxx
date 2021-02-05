@@ -19,6 +19,8 @@
 
 #include "CurveCreator_TreeView.h"
 #include "CurveCreator_ICurve.hxx"
+#include "CurveCreator_Curve.hxx"
+#include "CurveCreator_Utils.hxx"
 
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
@@ -28,8 +30,8 @@
 
 #define ID_SECTION -1
 
-CurveCreator_TreeViewModel::CurveCreator_TreeViewModel( CurveCreator_ICurve* theCurve, QObject* parent ) :
-  QAbstractItemModel(parent), myCurve(theCurve)
+CurveCreator_TreeViewModel::CurveCreator_TreeViewModel( CurveCreator_ICurve* theCurve, QObject* parent, bool toDrawColorIcon ) :
+  QAbstractItemModel(parent), myCurve(theCurve), myDrawColorIcon(toDrawColorIcon)
 {
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
   QPixmap aSplineIcon(aResMgr->loadPixmap("GEOM", tr("ICON_CC_SPLINE")));
@@ -65,8 +67,8 @@ CurveCreator_TreeViewModel::CurveCreator_TreeViewModel( CurveCreator_ICurve* the
 
 int	CurveCreator_TreeViewModel::columnCount(const QModelIndex & parent ) const
 {
-  if( parent.internalId() == (quintptr)ID_SECTION )
-    return 2;
+  if( myDrawColorIcon )
+    return 3;
   else
     return 2;
 }
@@ -103,6 +105,13 @@ QVariant	CurveCreator_TreeViewModel::data(const QModelIndex & index, int role ) 
               return myCachedIcons[ICON_SPLINE];
             }
           }
+        }
+        else if (myDrawColorIcon && aColumn == 2)
+        {
+          Quantity_Color color = ((CurveCreator_Curve*)myCurve)->getColorSection(aRow);
+          QPixmap pixmap(16,16);
+          pixmap.fill( CurveCreator_Utils::colorConv(color));
+          return pixmap;
         }
       }
     }
@@ -218,14 +227,14 @@ void CurveCreator_TreeViewModel::setCurve( CurveCreator_ICurve* theCurve )
 }
 
 /*****************************************************************************************/
-CurveCreator_TreeView::CurveCreator_TreeView( CurveCreator_ICurve* theCurve, QWidget *parent) :
+CurveCreator_TreeView::CurveCreator_TreeView( CurveCreator_ICurve* theCurve, QWidget *parent, bool toDrawColorIcon) :
   QTreeView(parent)
 {
   header()->hide();
   header()->setSectionResizeMode(QHeaderView::ResizeToContents);
   setUniformRowHeights(true);
   setContextMenuPolicy( Qt::CustomContextMenu );
-  CurveCreator_TreeViewModel* aModel = new CurveCreator_TreeViewModel(theCurve, this);
+  CurveCreator_TreeViewModel* aModel = new CurveCreator_TreeViewModel(theCurve, this, toDrawColorIcon);
   setModel(aModel);
   setSelectionBehavior(SelectRows);
   setSelectionMode(SingleSelection);

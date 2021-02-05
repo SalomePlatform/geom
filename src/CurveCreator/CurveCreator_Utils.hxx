@@ -32,9 +32,11 @@
 #include <TopoDS_Wire.hxx>
 #include <TColgp_HArray1OfPnt.hxx>
 #include <Geom_BSplineCurve.hxx>
+#include <QColor>
 
 #include <list>
 #include <vector> // TODO: remove
+#include <NCollection_IndexedDataMap.hxx>
 
 class CurveCreator_Curve;
 
@@ -55,6 +57,21 @@ public:
                                                        Handle(V3d_View) theView,
                                                        int& x, int& y );
 
+  /**
+  * Generates a random color
+  */
+  CURVECREATOR_EXPORT static Quantity_Color getRandColor();
+
+  /**
+  * Convert QColor to Quantity_Color
+  */
+  CURVECREATOR_EXPORT static Quantity_Color colorConv(QColor color);
+
+  /**
+  * Convert Quantity_Color to QColor
+  */
+  CURVECREATOR_EXPORT static QColor colorConv(Quantity_Color color);
+
   /*!
    * \brief Returns the point clicked in 3D view.
    *
@@ -70,9 +87,11 @@ public:
    * Generates shape on the curve
    * \param theCurve a curve object, that contains data
    * \param theShape a generated shape
+   * \param Sect2Shape optional out map: section to constructed shape (wire+vertices)
    */
   CURVECREATOR_EXPORT static void constructShape( const CurveCreator_ICurve* theCurve,
-                                                  TopoDS_Shape& theShape );
+                                                  TopoDS_Shape& theShape,
+                                                  NCollection_IndexedDataMap<int, TopoDS_Shape>* Sect2Shape = NULL);
 
   /**
    * Generates a curve from a shape.

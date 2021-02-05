@@ -125,7 +125,7 @@ public:
             const int theIntParam1 );
 
   /**
-   * This method initializes the difference with an operation with 
+   * This method initializes the difference with an operation with
    * list of pairs of integer parameters.
    * It is applicable to the following operations:
    * <UL>
@@ -137,7 +137,7 @@ public:
             const CurveCreator_ICurve::SectionToPointList &theParamList);
 
   /**
-   * This method initializes the difference with an operation with 
+   * This method initializes the difference with an operation with
    * list of pairs of integer parameters with point coordinates.
    * It is applicable to the following operations:
    * <UL>
@@ -149,13 +149,27 @@ public:
             const CurveCreator_ICurve::SectionToPointCoordsList &theParamList);
 
   /**
-   * This method initializes the difference with an operation with 
+   * This method initializes the difference with an operation with
    * list of pairs of integer parameters with point coordinates.
    * \param theCurve the modified curve
    * \param theOldParamList the old parameters (to be saved for undo)
    */
   bool init(const CurveCreator_Curve *theCurve,
             const CurveCreator_ICurve::SectionToPointCoordsList &theOldParamList);
+
+
+  /**
+   * This method initializes the difference with an operation with one
+   * integer and one array of integer[3] parameters.
+   * It is applicable to the following operations:
+   * <UL>
+   *   <LI>ColorSection</LI>
+   * </UL>
+   */
+  bool init(const CurveCreator_Curve *theCurve,
+            const CurveCreator_Operation::Type theType,
+            const int theIntParam1,
+            const int theIntParam2[3]);
 
   /**
    * This method applies undo operation to theCurve.

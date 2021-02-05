@@ -59,7 +59,8 @@ public:
     Join,           //!< Method CurveCreator_Curve::join
     AddSection,     //!< Method CurveCreator_Curve::addSection
     RemoveSection,   //!< Method CurveCreator_Curve::removeSection
-    RenameSection   //!< Method CurveCreator_Curve::renameSection
+    RenameSection,  //!< Method CurveCreator_Curve::renameSection
+    SetColorSection //!< Method CurveCreator_Curve::setColorSection
   };
 
   /**
@@ -107,6 +108,14 @@ public:
             const int theIntParam2);
 
   /**
+   * This method initializes the object with an operation with 4 integer
+   * parameter (1 as first param + 3 as interger array)
+   */
+  bool init(const Type theType, const int theIntParam1,
+            const int theIntParam2[3]);
+
+
+  /**
    * This method initializes the object with an operation with two integer
    * parameters. It is applicable to the following operations:
    * <UL>
@@ -117,15 +126,15 @@ public:
   bool init(const Type theType, const std::list<int> theParamList);
 
   /**
-   * This method initializes the object with an operation with 
-   * list of pairs of integer parameters. 
+   * This method initializes the object with an operation with
+   * list of pairs of integer parameters.
    * It is applicable to the following operations:
    * <UL>
    *   <LI>RemovePoints</LI>
    * </UL>
    * @return true in case of success; false otherwise.
    */
-  bool init(const Type theType, 
+  bool init(const Type theType,
     const CurveCreator_ICurve::SectionToPointList &theParamList1);
 
   /**
@@ -149,7 +158,7 @@ public:
    * </UL>
    * @return true in case of success; false otherwise.
    */
-  bool init(const Type theType, 
+  bool init(const Type theType,
             const CurveCreator_ICurve::SectionToPointCoordsList &theParamList1);
 
   /**
