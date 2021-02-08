@@ -26,6 +26,7 @@ include_directories(
   ${PROJECT_SOURCE_DIR}/src/GEOM
   ${PROJECT_SOURCE_DIR}/src/GEOMImpl
   ${PROJECT_SOURCE_DIR}/src/GEOM_I
+  ${OpenCASCADE_INCLUDE_DIR}
 )
 
 # --- scripts ---
