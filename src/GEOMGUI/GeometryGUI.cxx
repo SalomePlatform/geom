@@ -1563,6 +1563,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   QString clientOCCorVTKorOB_AndSomeVisible = clientOCCorVTKorOB + " and selcount>0 and isVisible";
   QString clientOCCorOB_AndSomeVisible = clientOCCorOB + " and selcount>0 and isVisible";
 
+  QString notGEOMShape = "(not ($component={'GEOM'}) and ($displayer={'Geometry'}))";
+
   QString autoColorPrefix =
     "(client='ObjectBrowser' or client='OCCViewer' or client='VTKViewer') and type='Shape' and selcount=1";
 
@@ -1584,7 +1586,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( separator(), -1, -1 );     // -----------
 
   //QString bringRule = clientOCCorOB + " and ($component={'GEOM'}) and (selcount>0) and isOCC=true and topLevel=false";
-  QString bringRule = clientOCCorOB + " and ($component={'GEOM'}) and isFolder=false and (selcount>0) and isOCC=true";
+  QString bringRule = clientOCCorOB + " and ($displayer={'Geometry'}) and isFolder=false and (selcount>0) and isOCC=true";
   mgr->insert( action(GEOMOp::OpBringToFront ), -1, -1 ); // bring to front
   mgr->setRule(action(GEOMOp::OpBringToFront), bringRule + " and autoBringToFront = false", QtxPopupMgr::VisibleRule );
   mgr->setRule(action(GEOMOp::OpBringToFront), "topLevel=true", QtxPopupMgr::ToggleRule );
@@ -1593,56 +1595,58 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( separator(), -1, -1 );     // -----------
   dispmodeId = mgr->insert(  tr( "MEN_DISPLAY_MODE" ), -1, -1 ); // display mode menu
   mgr->insert( action(  GEOMOp::OpWireframe ), dispmodeId, -1 ); // wireframe
-  mgr->setRule( action( GEOMOp::OpWireframe ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
+  //mgr->setRule( action( GEOMOp::OpWireframe ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpWireframe ), clientOCCorVTK_AndSomeVisible + " and ($displayer={'Geometry'})", QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpWireframe ), clientOCCorVTK + " and displaymode='Wireframe'", QtxPopupMgr::ToggleRule );
   mgr->insert( action(  GEOMOp::OpShading ), dispmodeId, -1 ); // shading
-  mgr->setRule( action( GEOMOp::OpShading ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
+  //  mgr->setRule( action( GEOMOp::OpShading ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpShading ), clientOCCorVTK_AndSomeVisible + " and ($displayer={'Geometry'})", QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpShading ), clientOCCorVTK + " and displaymode='Shading'", QtxPopupMgr::ToggleRule );
   mgr->insert( action(  GEOMOp::OpShadingWithEdges ), dispmodeId, -1 ); // shading with edges
-  mgr->setRule( action( GEOMOp::OpShadingWithEdges ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpShadingWithEdges ), clientOCCorVTK_AndSomeVisible + " and ($displayer={'Geometry'})", QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpShadingWithEdges ), clientOCCorVTK + " and displaymode='ShadingWithEdges'", QtxPopupMgr::ToggleRule );
   mgr->insert( action(  GEOMOp::OpTexture ), dispmodeId, -1 ); // wireframe
   mgr->setRule( action( GEOMOp::OpTexture ), clientOCC_AndSomeVisible, QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpTexture), clientOCC + " and displaymode='Texture'", QtxPopupMgr::ToggleRule );
   mgr->insert( separator(), dispmodeId, -1 );
   mgr->insert( action(  GEOMOp::OpVectors ), dispmodeId, -1 ); // vectors
-  mgr->setRule( action( GEOMOp::OpVectors ), clientOCCorVTK_AndSomeVisible  + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpVectors ), clientOCCorVTK_AndSomeVisible  + " and ($displayer={'Geometry'})", QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpVectors ), clientOCCorVTK + " and isVectorsMode", QtxPopupMgr::ToggleRule );
   mgr->insert( action(  GEOMOp::OpVertices ), dispmodeId, -1 ); // vertices
-  mgr->setRule( action( GEOMOp::OpVertices ), clientOCCorVTK_AndSomeVisible  + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpVertices ), clientOCCorVTK_AndSomeVisible  + " and ($displayer={'Geometry'})", QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpVertices ), clientOCCorVTK + " and isVerticesMode", QtxPopupMgr::ToggleRule );
   mgr->insert( action(  GEOMOp::OpShowName ), dispmodeId, -1 ); // show name
-  mgr->setRule( action( GEOMOp::OpShowName ), clientOCCorVTK_AndSomeVisible  + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpShowName ), clientOCCorVTK_AndSomeVisible  + " and ($displayer={'Geometry'})", QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpShowName ), clientOCCorVTK + " and isNameMode", QtxPopupMgr::ToggleRule );
   mgr->insert( separator(), -1, -1 );     // -----------
 
   mgr->insert( action(  GEOMOp::OpColor ), -1, -1 ); // color
-  mgr->setRule( action( GEOMOp::OpColor ), clientOCCorVTKorOB_AndSomeVisible + " and ($component={'GEOM'})" + "and isPhysicalMaterial=false", QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpColor ), clientOCCorVTKorOB_AndSomeVisible + " and ($displayer={'Geometry'})" + "and isPhysicalMaterial=false", QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpTransparency ), -1, -1 ); // transparency
-  mgr->setRule( action( GEOMOp::OpTransparency ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpTransparency ), clientOCCorVTK_AndSomeVisible + " and ($displayer={'Geometry'})", QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpIsos ), -1, -1 ); // isos
-  mgr->setRule( action( GEOMOp::OpIsos ), clientOCCorVTK_AndSomeVisible + " and selcount>0 and isVisible" + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpIsos ), clientOCCorVTK_AndSomeVisible + " and selcount>0 and isVisible" + " and ($displayer={'Geometry'})", QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpDeflection ), -1, -1 ); // deflection
-  mgr->setRule( action( GEOMOp::OpDeflection ), clientOCCorVTK_AndSomeVisible + " and selcount>0 and isVisible" + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpDeflection ), clientOCCorVTK_AndSomeVisible + " and selcount>0 and isVisible" + " and ($displayer={'Geometry'})", QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpPointMarker ), -1, -1 ); // point marker
-  mgr->setRule( action( GEOMOp::OpPointMarker ), clientOCCorOB + " and $type in {'Shape' 'Group' 'Field' 'FieldStep'} and selcount>0 and isOCC=true", QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpPointMarker ), clientOCCorOB + " and ($type in {'Shape' 'Group' 'Field' 'FieldStep'} or " + notGEOMShape + ") and selcount>0 and isOCC=true", QtxPopupMgr::VisibleRule );
 
   // material properties
   mgr->insert( action(  GEOMOp::OpMaterialProperties ), -1, -1 );
-  mgr->setRule( action( GEOMOp::OpMaterialProperties ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'}) and matMenu=false", QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpMaterialProperties ), clientOCCorVTK_AndSomeVisible + " and ($displayer={'Geometry'}) and matMenu=false", QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpMaterialMenu ), -1, -1 );
-  mgr->setRule( action( GEOMOp::OpMaterialMenu ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'}) and matMenu=true", QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpMaterialMenu ), clientOCCorVTK_AndSomeVisible + " and ($displayer={'Geometry'}) and matMenu=true", QtxPopupMgr::VisibleRule );
 
  // texture
   mgr->insert( action(  GEOMOp::OpSetTexture ), -1, -1 );
-  mgr->setRule( action( GEOMOp::OpSetTexture ), clientOCCorOB_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpSetTexture ), clientOCCorOB_AndSomeVisible + " and ($displayer={'Geometry'})", QtxPopupMgr::VisibleRule );
 
   int lineW = mgr->insert(  tr( "MEN_LINE_WIDTH" ), -1, -1 ); // line width menu
   mgr->insert( action(  GEOMOp::OpEdgeWidth ), lineW, -1 ); // edge width
-  mgr->setRule( action( GEOMOp::OpEdgeWidth ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpEdgeWidth ), clientOCCorVTK_AndSomeVisible + " and ($displayer={'Geometry'})", QtxPopupMgr::VisibleRule );
 
   mgr->insert( action(  GEOMOp::OpIsosWidth ), lineW, -1 ); // isos width
-  mgr->setRule( action( GEOMOp::OpIsosWidth ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpIsosWidth ), clientOCCorVTK_AndSomeVisible + " and ($displayer={'Geometry'})", QtxPopupMgr::VisibleRule );
 
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpAutoColor ), -1, -1 ); // auto color
@@ -1657,9 +1661,14 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule( action( GEOMOp::OpDeleteAnnotation ),  clientOCC + " and annotationsCount>0", QtxPopupMgr::VisibleRule );
   mgr->insert( separator(), -1, -1 );     // -----------
 
-  QString canDisplay = "($component={'GEOM'}) and (selcount>0) and ({true} in $canBeDisplayed) ",
-          onlyComponent = "((type='Component') and selcount=1)",
-          rule = canDisplay + "and ((($type in {%1}) and( %2 )) or " + onlyComponent + ")",
+  //QString canDisplay = "($component={'GEOM'}) and (selcount>0) and ({true} in $canBeDisplayed) ",
+  //        onlyComponent = "((type='Component') and selcount=1)",
+  //        rule = canDisplay + "and ((($type in {%1}) and( %2 )) or " + onlyComponent + ")",
+  //        types = "'Shape' 'Group' 'FieldStep'";
+
+  QString canDisplay = "($displayer={'Geometry'}) and (selcount>0) and ({true} in $canBeDisplayed) ",
+          onlyComponent = "((type='Component') and ($component={'GEOM'}) and selcount=1)",
+          rule = canDisplay + "and ((($type in {%1} or " + notGEOMShape + ") and( %2 )) or " + onlyComponent + ")",
           types = "'Shape' 'Group' 'FieldStep'";
 
   mgr->insert( action(  GEOMOp::OpShow ), -1, -1 ); // display

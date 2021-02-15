@@ -29,28 +29,12 @@
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 
-#ifdef HAVE_FINITE
-#undef HAVE_FINITE // E.A. fix a warning about redefinition of HAVE_FINITE in re-inclusion of Standard_values.h
-#endif
-#ifndef _TColStd_SequenceOfAsciiString_HeaderFile
-#include <TColStd_SequenceOfAsciiString.hxx>
-#endif
-#ifndef _TopTools_SequenceOfShape_HeaderFile
-#include <TopTools_SequenceOfShape.hxx>
-#endif
-#ifndef _Standard_Integer_HeaderFile
-#include <Standard_Integer.hxx>
-#endif
+#include <Standard_Boolean.hxx>
+#include <TCollection_AsciiString.hxx>
+#include <TopoDS_Shape.hxx>
 
-class TCollection_AsciiString;
-class TopoDS_Shape;
-
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
-#include <Standard_Macro.hxx>
-#endif
+#include <map>
+#include <vector>
 
 #ifdef WIN32
   #if defined GEOMCLIENT_EXPORTS || defined GEOMClient_EXPORTS
@@ -61,11 +45,6 @@ class TopoDS_Shape;
 #else
    #define GEOMCLIENT_EXPORT
 #endif
-
-#include <TCollection_AsciiString.hxx>
-#include <TopoDS_Shape.hxx>
-#include <map>
-#include <vector>
 
 /*
  * if define SINGLE_CLIENT is not commented, the method get_client always returns the same GEOM_Client object (singleton object)
@@ -81,42 +60,17 @@ class TopoDS_Shape;
 class GEOMCLIENT_EXPORT GEOM_Client  {
 
  public:
-
-  inline void* operator new(size_t,void* anAddress)
-  {
-    return anAddress;
-  }
-  inline void* operator new(size_t size)
-  {
-    return Standard::Allocate(size);
-  }
-  inline void  operator delete(void *anAddress)
-  {
-    if (anAddress) Standard::Free((Standard_Address&)anAddress);
-  }
   // Methods PUBLIC
   //
-  //Standard_EXPORT
   GEOM_Client();
-  //Standard_EXPORT
   GEOM_Client(Engines::Container_ptr client);
-  //Standard_EXPORT
   GEOM_Client(const GEOM_Client& client);
-  //Standard_EXPORT
-  Standard_Boolean Find( const TCollection_AsciiString& IOR, TopoDS_Shape& S ) ;
-  //Standard_EXPORT
-  Standard_Boolean Find( const TopoDS_Shape& S, TCollection_AsciiString& IOR ) ;
-  //Standard_EXPORT
-  void Bind( const TCollection_AsciiString& IOR, const TopoDS_Shape& S ) ;
-  //Standard_EXPORT
+
   TopoDS_Shape GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr aShape );
-  //Standard_EXPORT
+  Standard_Boolean Find( const TopoDS_Shape& S, TCollection_AsciiString& IOR ) ;
   void RemoveShapeFromBuffer( const TCollection_AsciiString& IOR ) ;
-  //Standard_EXPORT
   void ClearClientBuffer() ;
-  //Standard_EXPORT
-  unsigned int BufferLength() ;
-  TopoDS_Shape Load( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr aShape);
+
 #ifdef SINGLE_CLIENT
   static GEOM_Client& get_client();
 #else
@@ -124,10 +78,17 @@ class GEOMCLIENT_EXPORT GEOM_Client  {
 #endif
 
  private:
+  // Methods PRIVATE
+  //
+  Standard_Boolean Find( const TCollection_AsciiString& IOR, TopoDS_Shape& S ) ;
+  void Bind( const TCollection_AsciiString& IOR, const TopoDS_Shape& S, int Tick ) ;
+  TopoDS_Shape Load( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr aShape);
+
   // Fields PRIVATE
   //
   std::map< TCollection_AsciiString , std::vector<TopoDS_Shape> > _mySubShapes;
   std::map< TCollection_AsciiString , TopoDS_Shape > myShapesMap;
+  std::map< TCollection_AsciiString , int > myTicksMap;
   long  pid_client;
 };
 
