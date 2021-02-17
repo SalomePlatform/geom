@@ -201,13 +201,27 @@ TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_p
 {
   CORBA::String_var     anIOR = geom->GetStringFromIOR(aShape);
   TCollection_AsciiString IOR = anIOR.in();
+
+  // Special treatment for groups: group value (shape) is computed on
+  // first demand, and its tick is set to main shape's tick after that;
+  // tick of modified group is decremented.
+  // There is a not fixed problem: if anyone modifies a group and updates
+  // it before call to this method, the group will not be changed in the buffer
+  bool isModifiedSubShape = false;
   int aShapeTick = aShape->GetTick();
+  if ( !aShape->IsMainShape() ) {
+    int anOldTick = aShapeTick;
+    aShape->GetShapeType(); // compute subshape and update its tick, if not yet
+    aShapeTick = aShape->GetTick();
+    isModifiedSubShape = (anOldTick != aShapeTick);
+  }
 
   std::map< TCollection_AsciiString , int >::iterator i2t = myTicksMap.find( IOR );
   if ( i2t != myTicksMap.end() ) {
-    // The shape was modified, clean the stored one
-    if (i2t->second != aShapeTick)
+    if (i2t->second != aShapeTick || isModifiedSubShape) {
+      // The shape was modified, clean the stored one
       RemoveShapeFromBuffer(IOR);
+    }
   }
 
   TopoDS_Shape S;
@@ -255,6 +269,7 @@ TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_p
 
     S = aCompound;
   }
+
   Bind(IOR, S, aShapeTick);
   return S;
 }
