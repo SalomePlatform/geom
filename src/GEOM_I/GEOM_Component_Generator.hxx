@@ -17,6 +17,12 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <string>
+#pragma once
 
-std::string BuildGEOMInstance();
+#include "GEOM_GEOM_I.hxx"
+
+#include "SALOMEconfig.h"
+
+#include CORBA_SERVER_HEADER(GEOM_Gen)
+
+GEOM_I_EXPORT Engines::EngineComponent_var RetrieveGEOMInstance();

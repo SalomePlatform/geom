@@ -41,6 +41,7 @@
 #include "GEOMUtils_XmlHandler.hxx"
 #include "GEOMGUI_AnnotationMgr.h"
 #include "GEOMGUI_TextTreeSelector.h"
+#include "GEOM_Component_Generator.hxx"
 
 #include "GEOM_Actor.h"
 
@@ -87,6 +88,7 @@
 
 #include <SALOMEDSClient_ClientFactory.hxx>
 #include <SALOMEDSClient_IParameters.hxx>
+#include "SALOME_KernelServices.hxx"
 
 #include <SALOMEDS_SObject.hxx>
 
@@ -195,7 +197,7 @@ bool GeometryGUI::IsInGeomComponent( _PTR(SObject) sobject )
 //=======================================================================
 SALOMEDS::Study_var GeometryGUI::getStudyServant()
 {
-  SALOME_NamingService *aNamingService = SalomeApp_Application::namingService();
+  SALOME_NamingService_Abstract *aNamingService = SalomeApp_Application::namingService();
   CORBA::Object_var aStudyObject = aNamingService->Resolve("/Study");
   SALOMEDS::Study_var aStudy = SALOMEDS::Study::_narrow(aStudyObject);
   return aStudy._retn();
@@ -216,14 +218,22 @@ void GeometryGUI::Modified (bool theIsUpdateActions)
 // function : GeometryGUI::GeometryGUI()
 // purpose  : Constructor
 //=======================================================================
-GeometryGUI::GeometryGUI() :
-  SalomeApp_Module( "GEOM" ),
-  myTopLevelIOList()
+GeometryGUI::GeometryGUI() : SalomeApp_Module( "GEOM" )
 {
   if ( CORBA::is_nil( myComponentGeom ) )
   {
-    Engines::EngineComponent_var comp =
-      SalomeApp_Application::lcc()->FindOrLoad_Component( "FactoryServer", "GEOM" );
+    SALOME_NamingService_Abstract *ns = SalomeApp_Application::namingService();
+    Engines::EngineComponent_var comp;
+    if( dynamic_cast<SALOME_NamingService *>(ns) )
+    {
+      comp = SalomeApp_Application::lcc()->FindOrLoad_Component( "FactoryServer", "GEOM" );
+    }
+    else
+    {
+      comp = RetrieveGEOMInstance();
+      CORBA::Object_var comp2 = CORBA::Object::_narrow(comp);
+      KERNEL::RegisterCompo("GEOM",comp2);
+    }
     myComponentGeom = GEOM::GEOM_Gen::_narrow( comp );
   }
 
