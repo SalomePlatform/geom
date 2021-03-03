@@ -29,14 +29,10 @@
 //      https://tracker.dev.opencascade.org/view.php?id=28457 issue.
 #ifdef HAVE_TBB
  #undef HAVE_TBB
- #include <cv.h>
- #include <highgui.h>
  #include <opencv2/imgproc/imgproc.hpp>
  #include <opencv2/highgui/highgui.hpp>
  #define HAVE_TBB
 #else
- #include <cv.h>
- #include <highgui.h>
  #include <opencv2/imgproc/imgproc.hpp>
  #include <opencv2/highgui/highgui.hpp>
 #endif
