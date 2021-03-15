@@ -26,7 +26,7 @@ ENDIF(SALOME_BUILD_GUI)
 # additional include directories
 INCLUDE_DIRECTORIES(
   ${PTHREAD_INCLUDE_DIR}
-  ${CAS_INCLUDE_DIR}
+  ${OpenCASCADE_INCLUDE_DIR}
   ${KERNEL_INCLUDE_DIRS}
   ${GUI_INCLUDE_DIRS}
   ${PROJECT_SOURCE_DIR}/src/GEOMUtils
@@ -34,15 +34,12 @@ INCLUDE_DIRECTORIES(
 
 # additional preprocessor / compiler flags
 ADD_DEFINITIONS(
-  ${CAS_DEFINITIONS}
   ${OpenCASCADE_DEFINITIONS}
   ${QT_DEFINITIONS}
 )
 
 # libraries to link to
 SET(_link_LIBRARIES
-  ${CAS_KERNEL}
-  ${CAS_TKernel}
   GEOMUtils
 )
 IF(SALOME_BUILD_GUI)
