@@ -28,13 +28,11 @@
 //      This workaround will be removed after correction of the
 //      https://tracker.dev.opencascade.org/view.php?id=28457 issue.
 #ifdef HAVE_TBB
- #undef HAVE_TBB
- #include <opencv2/imgproc/imgproc.hpp>
- #include <opencv2/highgui/highgui.hpp>
- #define HAVE_TBB
+#undef HAVE_TBB
+#include <opencv2/opencv.hpp>
+#define HAVE_TBB
 #else
- #include <opencv2/imgproc/imgproc.hpp>
- #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/opencv.hpp>
 #endif
 
 // Qt

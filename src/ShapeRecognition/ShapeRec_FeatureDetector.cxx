@@ -27,14 +27,6 @@
 #include <stdio.h>
 #include "utilities.h"
 
-#include <opencv2/core/version.hpp>
-
-
-#if CV_MAJOR_VERSION == 3
-#define cvCvtPixToPlane cvSplit
-#endif
-
-
 // TODO : All the following methods but ComputeContours use the C API of OpenCV while ComputContours
 // uses the C++ API of the library.
 // This should be homogenized and preferably by using the C++ API (which is more recent for all the methods
@@ -169,7 +161,7 @@ bool ShapeRec_FeatureDetector::ComputeContours( bool useROI, ShapeRec_Parameters
 
     cvCvtColor(sample_image, sample_hsv, CV_BGR2HSV);
   
-    cvCvtPixToPlane(sample_hsv, sample_h_plane, sample_s_plane, 0, 0);
+    cvSplit(sample_hsv, sample_h_plane, sample_s_plane, 0, 0);
     IplImage* sample_planes[] = { sample_h_plane, sample_s_plane };
   
     // Create the hue / saturation histogram of the SAMPLE image.
@@ -223,7 +215,7 @@ bool ShapeRec_FeatureDetector::ComputeContours( bool useROI, ShapeRec_Parameters
   
     // Get hue and saturation planes of the INPUT image
     cvCvtColor(input_image, input_hsv, CV_BGR2HSV);
-    cvCvtPixToPlane(input_hsv, input_hplane, input_splane, 0, 0);
+    cvSplit(input_hsv, input_hplane, input_splane, 0, 0);
     IplImage* input_planes[] = { input_hplane, input_splane };
     
     // Compute the back projection
