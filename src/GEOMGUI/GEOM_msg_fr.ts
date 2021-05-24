@@ -761,7 +761,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MAKE_FACE_TOLERANCE_TOO_BIG</source>
-        <translation>Impossible de construire une face plane: 
+        <translation>Impossible de construire une face plane :
         la face créée a une tolérance trop élevée</translation>
     </message>
     <message>
@@ -5465,7 +5465,7 @@ les coques et solides d&apos;un autre.</translation>
     </message>
     <message>
         <source>GEOM_PRECISION_HINT</source>
-        <translation>Il est possible d&apos;ajuster la précision de la valeur d&apos;entrée avec 
+        <translation>Il est possible d&apos;ajuster la précision de la valeur d&apos;entrée avec
 le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translation>
     </message>
     <message>
@@ -5562,7 +5562,7 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>Create, import, repair CAD models</source>
-        <translation type="unfinished">Create, import, repair CAD models</translation>
+        <translation type="unfinished">Créer, importer, réparer des modèles CAO</translation>
     </message>
 </context>
 <context>
@@ -5621,19 +5621,19 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>INFO_WELCOME_TO_GEOM</source>
-        <translation type="unfinished">Welcome to Geometry</translation>
+        <translation type="unfinished">Bienvenue dans le module de géométrie</translation>
     </message>
     <message>
         <source>INFO_GRP_CREATE_MODEL</source>
-        <translation type="unfinished">Create model</translation>
+        <translation type="unfinished">Créer un modèle</translation>
     </message>
     <message>
         <source>INFO_VERTICES</source>
-        <translation type="unfinished">vertices</translation>
+        <translation type="unfinished">sommets</translation>
     </message>
     <message>
         <source>INFO_EDGES</source>
-        <translation type="unfinished">edges</translation>
+        <translation type="unfinished">arêtes</translation>
     </message>
     <message>
         <source>INFO_WIRES</source>
@@ -5645,23 +5645,23 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>INFO_SHELLS</source>
-        <translation type="unfinished">shells</translation>
+        <translation type="unfinished">coques</translation>
     </message>
     <message>
         <source>INFO_SOLIDS</source>
-        <translation type="unfinished">solids</translation>
+        <translation type="unfinished">solides</translation>
     </message>
     <message>
         <source>INFO_BOTTOM_UP_CONSTRUCTION</source>
-        <translation type="unfinished">Bottom-up construction</translation>
+        <translation type="unfinished">Construction ascendante</translation>
     </message>
     <message>
         <source>INFO_BOX</source>
-        <translation type="unfinished">box</translation>
+        <translation type="unfinished">boîte</translation>
     </message>
     <message>
         <source>INFO_CYLINDER</source>
-        <translation type="unfinished">cylinder</translation>
+        <translation type="unfinished">cylindre</translation>
     </message>
     <message>
         <source>INFO_CONE</source>
@@ -5669,11 +5669,11 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>INFO_PRIMITIVES</source>
-        <translation type="unfinished">Primitives construction</translation>
+        <translation type="unfinished">Construction de primitives</translation>
     </message>
     <message>
         <source>INFO_BOOLEANS</source>
-        <translation type="unfinished">Boolean operations</translation>
+        <translation type="unfinished">Opérations booléennes</translation>
     </message>
     <message>
         <source>INFO_TRANSFORMATIONS</source>
@@ -5681,11 +5681,11 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>INFO_GRP_IMPORT_MODEL</source>
-        <translation type="unfinished">Import and repair model</translation>
+        <translation type="unfinished">Importer et réparer des modèles</translation>
     </message>
     <message>
         <source>INFO_AVAILABLE_FORMATS</source>
-        <translation type="unfinished">Available formats</translation>
+        <translation type="unfinished">Formats disponibles</translation>
     </message>
 </context>
 <context>
@@ -5964,7 +5964,7 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>ADD_NEW_SECTION</source>
-        <translation>Add new section</translation>
+        <translation>Insérer une nouvelle section</translation>
     </message>
     <message>
         <source>SET_SECTION_PARAMETERS</source>
@@ -6843,8 +6843,8 @@ Voulez-vous continuer?</translation>
     </message>
     <message>
         <source>WARNING_MSG_INVALID_ARGUMENTS</source>
-        <translation>The dimension can not be created for the specified arguments.
-Please specify suitable arguments.</translation>
+        <translation>Les dimensions ne peuvent pas être créées pour ces arguments.
+Fournir des arguments corrects.</translation>
     </message>
 </context>
 <context>
