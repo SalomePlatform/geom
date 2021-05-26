@@ -184,7 +184,8 @@ static GeomFill_Trihedron EvaluateBestSweepMode(const TopoDS_Shape& Spine)
 //=======================================================================
 static Standard_Boolean BuildPipeShell(BRepOffsetAPI_MakePipeShell &theBuilder)
 {
-  theBuilder.SetForceApproxC1(Standard_True);
+  // Commented out for bos #20438
+  //theBuilder.SetForceApproxC1(Standard_True);
 
   theBuilder.Build();
 
