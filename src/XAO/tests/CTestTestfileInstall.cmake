@@ -17,7 +17,7 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-ADD_TEST(GEOM_TestXAO python ${SALOME_TEST_DRIVER} ${TIMEOUT} TestXAO)
+ADD_TEST(GEOM_TestXAO python ${PYTHON_TEST_DRIVER} ${TIMEOUT} TestXAO)
 SET_TESTS_PROPERTIES(GEOM_TestXAO PROPERTIES
     LABELS "${COMPONENT_NAME}"
     ENVIRONMENT "XAO_DATA_DIR=$ENV{GEOM_ROOT_DIR}/bin/salome/test/xao/data")

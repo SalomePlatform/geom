@@ -1,6 +1,6 @@
 # --- salome initialization
 import salome
-salome.salome_init()
+salome.salome_init_without_session()
 
 # --- geom Python interface
 import GEOM
