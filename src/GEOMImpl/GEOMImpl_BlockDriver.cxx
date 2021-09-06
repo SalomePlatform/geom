@@ -63,6 +63,8 @@
 #include <BRepExtrema_ExtPF.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
 
+#include <ShapeUpgrade_UnifySameDomain.hxx>
+
 #include <TopAbs.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
@@ -742,10 +744,19 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(Handle(TFunction_Logbook)& log) c
         Standard_NullObject::Raise("Null Shape given");
       }
 
-      BlockFix_UnionFaces aFaceUnifier;
-  
-      aFaceUnifier.GetOptimumNbFaces() = 0; // To force union faces.
-      aShape = aFaceUnifier.Perform(aBlockOrComp);
+      //BlockFix_UnionFaces aFaceUnifier;
+      //aFaceUnifier.GetOptimumNbFaces() = 0; // To force union faces.
+      //aShape = aFaceUnifier.Perform(aBlockOrComp);
+      // Use OCCT algo ShapeUpgrade_UnifySameDomain instead of BlockFix_UnionFaces:
+      Standard_Boolean isUnifyEdges = Standard_False;
+      Standard_Boolean isUnifyFaces = Standard_True;
+      Standard_Boolean isConcatBSplines = Standard_True;
+      ShapeUpgrade_UnifySameDomain aUnifier (aBlockOrComp,
+                                             isUnifyEdges, isUnifyFaces, isConcatBSplines);
+      aUnifier.SetLinearTolerance(Precision::Confusion());
+      aUnifier.SetAngularTolerance(Precision::Confusion());
+      aUnifier.Build();
+      aShape = aUnifier.Shape();
     } else { // unknown function type
       return 0;
     }

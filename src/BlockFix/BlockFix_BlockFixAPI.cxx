@@ -31,6 +31,8 @@
 #include <BlockFix_UnionEdges.hxx>
 
 #include <ShapeUpgrade_RemoveLocations.hxx>
+#include <TopoDS_Edge.hxx>
+#include <ShapeUpgrade_UnifySameDomain.hxx>
 
 #include <Precision.hxx>
 
@@ -67,10 +69,31 @@ void BlockFix_BlockFixAPI::Perform()
   myShape = BlockFix::RefillProblemFaces(myShape);
 
   // faces unification
-  BlockFix_UnionFaces aFaceUnifier;
-  aFaceUnifier.GetTolerance() = myTolerance;
-  aFaceUnifier.GetOptimumNbFaces() = myOptimumNbFaces;
-  TopoDS_Shape aResult = aFaceUnifier.Perform(myShape);
+  TopoDS_Shape aResult = myShape;
+  if (myOptimumNbFaces > 1) {
+    // use old algo BlockFix_UnionFaces for exactly given resulting number of faces
+    BlockFix_UnionFaces aFaceUnifier;
+    aFaceUnifier.GetTolerance() = myTolerance;
+    aFaceUnifier.GetOptimumNbFaces() = myOptimumNbFaces;
+    aResult = aFaceUnifier.Perform(aResult);
+  }
+  else if (myOptimumNbFaces != -1) {
+    // use OCCT algo ShapeUpgrade_UnifySameDomain
+    ShapeUpgrade_UnifySameDomain Unifier;
+    //only faces
+    Standard_Boolean isUnifyEdges = Standard_False;
+    Standard_Boolean isUnifyFaces = Standard_True;
+    Standard_Boolean isConcatBSplines = Standard_True;
+    Unifier.Initialize(myShape, isUnifyEdges, isUnifyFaces, isConcatBSplines);
+    //Unifier.SetLinearTolerance(myTolerance);
+    Unifier.SetLinearTolerance(Precision::Confusion());
+    Unifier.SetAngularTolerance(Precision::Confusion());
+    Unifier.Build();
+    aResult = Unifier.Shape();
+  }
+  else {
+    // myOptimumNbFaces == -1 means do not union faces
+  }
 
   // avoid problem with degenerated edges appearance
   // due to shape quality regress
@@ -79,8 +102,16 @@ void BlockFix_BlockFixAPI::Perform()
   aResult = RemLoc.GetResult();
 
   // edges unification
-  BlockFix_UnionEdges anEdgeUnifier;
-  myShape = anEdgeUnifier.Perform(aResult,myTolerance);
+  //BlockFix_UnionEdges anEdgeUnifier;
+  //myShape = anEdgeUnifier.Perform(aResult,myTolerance);
+  ShapeUpgrade_UnifySameDomain Unifier;
+  Standard_Boolean isUnifyEdges = Standard_True;
+  Standard_Boolean isUnifyFaces = Standard_False; //only edges
+  Standard_Boolean isConcatBSplines = Standard_True;
+  Unifier.Initialize(aResult, isUnifyEdges, isUnifyFaces, isConcatBSplines);
+  Unifier.SetLinearTolerance(myTolerance);
+  Unifier.Build();
+  myShape = Unifier.Shape();
 
   TopoDS_Shape aRes = BlockFix::FixRanges(myShape,myTolerance);
   myShape = aRes;
