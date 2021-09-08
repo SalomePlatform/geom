@@ -102,6 +102,8 @@
 #include <Standard_TypeMismatch.hxx>
 #include <Standard_ConstructionError.hxx>
 
+#include <Basics_OCCTVersion.hxx>
+
 //=======================================================================
 //function : GetID
 //purpose  :
@@ -744,9 +746,11 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(Handle(TFunction_Logbook)& log) c
         Standard_NullObject::Raise("Null Shape given");
       }
 
-      //BlockFix_UnionFaces aFaceUnifier;
-      //aFaceUnifier.GetOptimumNbFaces() = 0; // To force union faces.
-      //aShape = aFaceUnifier.Perform(aBlockOrComp);
+#if OCC_VERSION_LARGE < 0x07050301
+      BlockFix_UnionFaces aFaceUnifier;
+      aFaceUnifier.GetOptimumNbFaces() = 0; // To force union faces.
+      aShape = aFaceUnifier.Perform(aBlockOrComp);
+#else
       // Use OCCT algo ShapeUpgrade_UnifySameDomain instead of BlockFix_UnionFaces:
       Standard_Boolean isUnifyEdges = Standard_False;
       Standard_Boolean isUnifyFaces = Standard_True;
@@ -757,6 +761,7 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(Handle(TFunction_Logbook)& log) c
       aUnifier.SetAngularTolerance(Precision::Confusion());
       aUnifier.Build();
       aShape = aUnifier.Shape();
+#endif
     } else { // unknown function type
       return 0;
     }

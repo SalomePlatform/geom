@@ -36,6 +36,8 @@
 
 #include <Precision.hxx>
 
+#include <Basics_OCCTVersion.hxx>
+
 IMPLEMENT_STANDARD_RTTIEXT(BlockFix_BlockFixAPI, Standard_Transient)
 
 //=======================================================================
@@ -70,6 +72,12 @@ void BlockFix_BlockFixAPI::Perform()
 
   // faces unification
   TopoDS_Shape aResult = myShape;
+#if OCC_VERSION_LARGE < 0x07050301
+  BlockFix_UnionFaces aFaceUnifier;
+  aFaceUnifier.GetTolerance() = myTolerance;
+  aFaceUnifier.GetOptimumNbFaces() = myOptimumNbFaces;
+  aResult = aFaceUnifier.Perform(aResult);
+#else
   if (myOptimumNbFaces > 1) {
     // use old algo BlockFix_UnionFaces for exactly given resulting number of faces
     BlockFix_UnionFaces aFaceUnifier;
@@ -94,6 +102,7 @@ void BlockFix_BlockFixAPI::Perform()
   else {
     // myOptimumNbFaces == -1 means do not union faces
   }
+#endif
 
   // avoid problem with degenerated edges appearance
   // due to shape quality regress
@@ -102,8 +111,10 @@ void BlockFix_BlockFixAPI::Perform()
   aResult = RemLoc.GetResult();
 
   // edges unification
-  //BlockFix_UnionEdges anEdgeUnifier;
-  //myShape = anEdgeUnifier.Perform(aResult,myTolerance);
+#if OCC_VERSION_LARGE < 0x07050301
+  BlockFix_UnionEdges anEdgeUnifier;
+  myShape = anEdgeUnifier.Perform(aResult,myTolerance);
+#else
   ShapeUpgrade_UnifySameDomain Unifier;
   Standard_Boolean isUnifyEdges = Standard_True;
   Standard_Boolean isUnifyFaces = Standard_False; //only edges
@@ -112,6 +123,7 @@ void BlockFix_BlockFixAPI::Perform()
   Unifier.SetLinearTolerance(myTolerance);
   Unifier.Build();
   myShape = Unifier.Shape();
+#endif
 
   TopoDS_Shape aRes = BlockFix::FixRanges(myShape,myTolerance);
   myShape = aRes;
