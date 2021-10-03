@@ -22,7 +22,6 @@ ADD_SUBDIRECTORY( structelem )
 # scripts / python
 
 SET(_python_SCRIPTS
-  __init__.py
   geomtools.py
   sketcher.py
   )
@@ -30,3 +29,4 @@ SET(_python_SCRIPTS
 # --- rules ---
 
 SALOME_INSTALL_SCRIPTS("${_python_SCRIPTS}" ${SALOME_INSTALL_PYTHON}/salome/geom)
+SALOME_CONFIGURE_FILE(__init__.py __init__.py INSTALL ${SALOME_INSTALL_PYTHON}/salome/geom)
