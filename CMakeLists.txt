@@ -19,19 +19,12 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.8 FATAL_ERROR)
 INCLUDE(CMakeDependentOption)
 
+# Project name
+# ============
+# original
 PROJECT(SalomeGEOM C CXX)
-
-# Versioning
-# ===========
-# Project name, upper case
+# upper case
 STRING(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UC)
-
-SET(${PROJECT_NAME_UC}_MAJOR_VERSION 9)
-SET(${PROJECT_NAME_UC}_MINOR_VERSION 7)
-SET(${PROJECT_NAME_UC}_PATCH_VERSION 0)
-SET(${PROJECT_NAME_UC}_VERSION
-  ${${PROJECT_NAME_UC}_MAJOR_VERSION}.${${PROJECT_NAME_UC}_MINOR_VERSION}.${${PROJECT_NAME_UC}_PATCH_VERSION})
-SET(${PROJECT_NAME_UC}_VERSION_DEV 1)
 
 # Common CMake macros
 # ===================
@@ -42,6 +35,11 @@ IF(EXISTS ${CONFIGURATION_ROOT_DIR})
 ELSE()
   MESSAGE(FATAL_ERROR "We absolutely need the Salome CMake configuration files, please define CONFIGURATION_ROOT_DIR !")
 ENDIF()
+
+# Versioning
+# ===========
+SALOME_SETUP_VERSION(9.7.0 DEVELOPMENT)
+MESSAGE(STATUS "Building ${PROJECT_NAME_UC} ${${PROJECT_NAME_UC}_VERSION} from \"${${PROJECT_NAME_UC}_GIT_SHA1}\"")
 
 # Find KERNEL
 # ===========
@@ -216,7 +214,6 @@ ENDIF()
 
 # Header configuration
 # ====================
-SALOME_XVERSION(${PROJECT_NAME})
 SALOME_CONFIGURE_FILE(GEOM_version.h.in GEOM_version.h INSTALL ${SALOME_INSTALL_HEADERS})
 
 # Configuration export

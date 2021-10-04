@@ -18,3 +18,5 @@
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
+
+__version__ = "@SALOMEGEOM_GIT_SHA1@"
