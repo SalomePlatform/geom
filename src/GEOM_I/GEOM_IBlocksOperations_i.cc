@@ -626,16 +626,20 @@ CORBA::Boolean GEOM_IBlocksOperations_i::CheckCompoundOfBlocks
   Handle(::GEOM_Object) aCompound = GetObjectImpl(theCompound);
   if (aCompound.IsNull()) return isComp;
 
+  GEOM::GEOM_IBlocksOperations::BCErrors_var anErrArray =
+    new GEOM::GEOM_IBlocksOperations::BCErrors();
+
   //Check
   std::list<GEOMImpl_IBlocksOperations::BCError> errList;
   isComp = GetOperations()->CheckCompoundOfBlocks
     (aCompound, theToleranceC1, errList);
-  if (!GetOperations()->IsDone())
+  if (!GetOperations()->IsDone()) {
+    anErrArray->length(0);
+    theErrors = anErrArray._retn();
     return isComp;
+  }
 
   const int nbErr = errList.size();
-  GEOM::GEOM_IBlocksOperations::BCErrors_var anErrArray =
-    new GEOM::GEOM_IBlocksOperations::BCErrors();
   anErrArray->length(nbErr);
 
   // fill the local CORBA array with values from lists
