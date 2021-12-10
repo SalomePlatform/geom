@@ -29,25 +29,23 @@ import GEOM
 from salome.geom import geomBuilder
 geompy = geomBuilder.New()
 
-data_dir = os.getenv('DATA_DIR')
-if data_dir:
-    texture_1 = geompy.LoadTexture(os.path.join(data_dir, "Textures", "texture1.dat"))
-    texture_2 = geompy.LoadTexture(os.path.join(data_dir, "Textures", "texture2.dat"))
-    texture_3 = geompy.LoadTexture(os.path.join(data_dir, "Textures", "texture3.dat"))
-    
-    Vertex_1 = geompy.MakeVertex(0, 0, 0)
-    Vertex_2 = geompy.MakeVertex(100, 0, 0)
-    Vertex_3 = geompy.MakeVertex(0, 100, 0)
-    Vertex_4 = geompy.MakeVertex(0, 0, 100)
-    Vertex_5 = geompy.MakeVertex(100, 0, 100)
-    Vertex_1.SetMarkerTexture(texture_1);
-    Vertex_2.SetMarkerTexture(texture_2);
-    Vertex_3.SetMarkerTexture(texture_3);
-    Vertex_4.SetMarkerStd(GEOM.MT_O_PLUS, GEOM.MS_25);
-    Vertex_5.SetMarkerStd(GEOM.MT_BALL,   GEOM.MS_40);
-    geompy.addToStudy( Vertex_1, "Vertex_1" )
-    geompy.addToStudy( Vertex_2, "Vertex_2" )
-    geompy.addToStudy( Vertex_3, "Vertex_3" )
-    geompy.addToStudy( Vertex_4, "Vertex_4" )
-    geompy.addToStudy( Vertex_5, "Vertex_5" )
-    pass
+data_dir = os.path.join(os.getenv('GEOM_ROOT_DIR'), 'share', 'salome', 'resources', 'geom', 'textures')
+texture_1 = geompy.LoadTexture(os.path.join(data_dir, "texture1.dat"))
+texture_2 = geompy.LoadTexture(os.path.join(data_dir, "texture2.dat"))
+texture_3 = geompy.LoadTexture(os.path.join(data_dir, "texture3.dat"))
+
+Vertex_1 = geompy.MakeVertex(0, 0, 0)
+Vertex_2 = geompy.MakeVertex(100, 0, 0)
+Vertex_3 = geompy.MakeVertex(0, 100, 0)
+Vertex_4 = geompy.MakeVertex(0, 0, 100)
+Vertex_5 = geompy.MakeVertex(100, 0, 100)
+Vertex_1.SetMarkerTexture(texture_1);
+Vertex_2.SetMarkerTexture(texture_2);
+Vertex_3.SetMarkerTexture(texture_3);
+Vertex_4.SetMarkerStd(GEOM.MT_O_PLUS, GEOM.MS_25);
+Vertex_5.SetMarkerStd(GEOM.MT_BALL,   GEOM.MS_40);
+geompy.addToStudy( Vertex_1, "Vertex_1" )
+geompy.addToStudy( Vertex_2, "Vertex_2" )
+geompy.addToStudy( Vertex_3, "Vertex_3" )
+geompy.addToStudy( Vertex_4, "Vertex_4" )
+geompy.addToStudy( Vertex_5, "Vertex_5" )
