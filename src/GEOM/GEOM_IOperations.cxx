@@ -25,7 +25,6 @@
 #include <GEOM_IOperations.hxx>
 
 #include "utilities.h"
-#include <OpUtil.hxx>
 #include <Utils_ExceptHandlers.hxx>
 
 #include <TDataStd_TreeNode.hxx>

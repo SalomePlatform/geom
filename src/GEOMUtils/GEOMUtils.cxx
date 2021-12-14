@@ -24,7 +24,6 @@
 
 #include <GEOMUtils.hxx>
 
-#include <OpUtil.hxx>
 #include <Utils_ExceptHandlers.hxx>
 
 // OCCT Includes

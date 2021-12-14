@@ -41,7 +41,6 @@
 #include "GEOM_ISubShape.hxx"
 
 #include "utilities.h"
-#include <OpUtil.hxx>
 #include <Utils_ExceptHandlers.hxx>
 
 #include <TFunction_DriverTable.hxx>

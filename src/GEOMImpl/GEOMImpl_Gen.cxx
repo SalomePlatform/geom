@@ -29,7 +29,6 @@
 #include <GEOMImpl_Gen.hxx>
 
 #include "utilities.h"
-#include <OpUtil.hxx>
 #include <Utils_ExceptHandlers.hxx>
 
 #include <TFunction_Driver.hxx>

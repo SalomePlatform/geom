@@ -38,7 +38,6 @@
 #include <ShHealOper_ShapeProcess.hxx>
 
 #include <utilities.h>
-#include <OpUtil.hxx>
 #include <Utils_ExceptHandlers.hxx>
 
 #include <BRep_Builder.hxx>

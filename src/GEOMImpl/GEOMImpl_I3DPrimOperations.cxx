@@ -25,7 +25,6 @@
 #include <GEOMImpl_I3DPrimOperations.hxx>
 
 #include "utilities.h"
-#include <OpUtil.hxx>
 #include <Utils_ExceptHandlers.hxx>
 
 #include <TFunction_DriverTable.hxx>
