@@ -50,6 +50,8 @@ SALOMEDS::Study_var GEOM_Gen_Session_i::getStudyServant()
   return aStudy;
 }
 
+#include "GEOM_Gen_No_Session_i.hh"
+
 extern "C"
 {
   GEOM_I_EXPORT  PortableServer::ObjectId* GEOMEngine_factory(CORBA::ORB_ptr orb,
@@ -58,7 +60,17 @@ extern "C"
                                                const char*                   instanceName,
                                                const char*                   interfaceName)
   {
-    GEOM_Gen_Session_i* myGEOM_Gen_i = new GEOM_Gen_Session_i(orb, poa, contId, instanceName, interfaceName);
-    return myGEOM_Gen_i->getId();
+    CORBA::Object_var o = poa->id_to_reference(*contId);
+    Engines::Container_var cont = Engines::Container::_narrow(o);
+    if(cont->is_SSL_mode())
+    {
+      GEOM_Gen_No_Session_i* myGEOM_Gen_i = new GEOM_Gen_No_Session_i(orb, poa, contId, instanceName, interfaceName);
+      return myGEOM_Gen_i->getId();
+    }
+    else
+    {
+      GEOM_Gen_Session_i* myGEOM_Gen_i = new GEOM_Gen_Session_i(orb, poa, contId, instanceName, interfaceName);
+      return myGEOM_Gen_i->getId();
+    }
   }
 }
