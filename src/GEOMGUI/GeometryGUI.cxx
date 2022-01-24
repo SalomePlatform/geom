@@ -223,17 +223,7 @@ GeometryGUI::GeometryGUI() : SalomeApp_Module( "GEOM" )
   if ( CORBA::is_nil( myComponentGeom ) )
   {
     SALOME_NamingService_Abstract *ns = SalomeApp_Application::namingService();
-    Engines::EngineComponent_var comp;
-    if( dynamic_cast<SALOME_NamingService *>(ns) )
-    {
-      comp = SalomeApp_Application::lcc()->FindOrLoad_Component( "FactoryServer", "GEOM" );
-    }
-    else
-    {
-      comp = RetrieveGEOMInstance();
-      CORBA::Object_var comp2 = CORBA::Object::_narrow(comp);
-      KERNEL::RegisterCompo("GEOM",comp2);
-    }
+    Engines::EngineComponent_var comp = SalomeApp_Application::lcc()->FindOrLoad_Component( "FactoryServer", "GEOM" );
     myComponentGeom = GEOM::GEOM_Gen::_narrow( comp );
   }
 
