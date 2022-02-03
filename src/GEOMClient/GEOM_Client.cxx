@@ -254,9 +254,10 @@ TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_p
     subShapes.insert( subShapes.end(), anIndices.cbegin(), anIndices.cend() );
   }
 
-  /* Case of only one subshape */
-  if ( list->length() == 1 && list[0] > 1 ) {
-    S = subShapes[list[0]-1];
+  /* Case of only one subshape, excluding groups of one main shape */
+  if ( list->length() == 1 && !(aShape->GetType() == 37 && list[0] == 1) ) {
+    if (list[0] > 0)
+      S = subShapes[list[0]-1];
   }
   else {
     BRep_Builder B;
