@@ -52,7 +52,8 @@ public:
                 PortableServer::POA_ptr poa,
                 PortableServer::ObjectId * contId,
                 const char *instanceName,
-                const char *interfaceName);
+                const char *interfaceName, bool withRegistry,
+                SALOME_NamingService_Abstract *my_name_service);
   ~GEOM_Superv_i();
 
   // generic method to be put in a super class
@@ -781,8 +782,9 @@ public:
   GEOM::GEOM_Object_ptr MakeSmoothingSurface (GEOM::GEOM_List_ptr thelPoints);
   /*@@ insert new functions before this line @@ do not remove this line @@*/
 
+protected:
+  SALOME_NamingService_Abstract *  name_service = nullptr;
 private:
-  SALOME_NamingService *  name_service;
   GEOM::GEOM_Gen_var      myGeomEngine;
   PortableServer::POA_var myPOA;
 
@@ -805,6 +807,27 @@ private:
 #ifdef WITH_VTK
   GEOM::IVTKOperations_var            myVTKOp;
 #endif
+};
+
+class GEOM_I_SUPERV_EXPORT GEOM_Superv_i_With_Session : public GEOM_Superv_i
+{
+public:
+  GEOM_Superv_i_With_Session(CORBA::ORB_ptr orb,
+                PortableServer::POA_ptr poa,
+                PortableServer::ObjectId * contId,
+                const char *instanceName,
+                const char *interfaceName);
+};
+
+class GEOM_I_SUPERV_EXPORT GEOM_Superv_i_Without_Session : public GEOM_Superv_i
+{
+public:
+  GEOM_Superv_i_Without_Session(CORBA::ORB_ptr orb,
+                PortableServer::POA_ptr poa,
+                PortableServer::ObjectId * contId,
+                const char *instanceName,
+                const char *interfaceName,
+                SALOME_NamingService_Abstract *my_name_service);
 };
 
 #endif

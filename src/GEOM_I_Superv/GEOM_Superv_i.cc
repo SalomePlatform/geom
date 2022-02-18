@@ -23,6 +23,8 @@
 #include "GEOM_Superv_i.hh"
 #include "SALOME_LifeCycleCORBA.hxx"
 #include "Utils_CorbaException.hxx"
+#include "SALOME_Fake_NamingService.hxx"
+#include "SALOME_Container_i.hxx"
 
 #include CORBA_SERVER_HEADER(SALOME_Session)
 #include "SALOMEDSClient_ClientFactory.hxx"
@@ -36,14 +38,13 @@ GEOM_Superv_i::GEOM_Superv_i(CORBA::ORB_ptr orb,
                              PortableServer::POA_ptr poa,
                              PortableServer::ObjectId * contId,
                              const char *instanceName,
-                             const char *interfaceName) :
-  Engines_Component_i(orb, poa, contId, instanceName, interfaceName)
+                             const char *interfaceName, bool withRegistry,
+                             SALOME_NamingService_Abstract *my_name_service):name_service(my_name_service),Engines_Component_i(orb, poa, contId, instanceName, interfaceName, false, withRegistry)
 {
   MESSAGE("GEOM_Superv_i::GEOM_Superv_i");
 
   _thisObj = this ;
   _id = _poa->activate_object(_thisObj);
-  name_service = new SALOME_NamingService(_orb);
   //get RootPOA (the default)
   //myPOA = PortableServer::RefCountServantBase::_default_POA();
   CORBA::Object_var anObj = _orb->resolve_initial_references("RootPOA");
@@ -3744,6 +3745,22 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSmoothingSurface (GEOM::GEOM_List_ptr t
 
 /*@@ insert new functions before this line @@ do not remove this line @@*/
 
+GEOM_Superv_i_With_Session::GEOM_Superv_i_With_Session(CORBA::ORB_ptr orb,
+                PortableServer::POA_ptr poa,
+                PortableServer::ObjectId * contId,
+                const char *instanceName,
+                const char *interfaceName):GEOM_Superv_i(orb,poa,contId,instanceName,interfaceName,true,new SALOME_NamingService(orb))
+{
+}
+
+GEOM_Superv_i_Without_Session::GEOM_Superv_i_Without_Session(CORBA::ORB_ptr orb,
+                PortableServer::POA_ptr poa,
+                PortableServer::ObjectId * contId,
+                const char *instanceName,
+                const char *interfaceName, SALOME_NamingService_Abstract *my_name_service):GEOM_Superv_i(orb,poa,contId,instanceName,interfaceName,false, my_name_service)
+{
+}
+
 //=====================================================================================
 // EXPORTED METHODS
 //=====================================================================================
@@ -3758,9 +3775,23 @@ extern "C"
                                                        const char *instanceName,
                                                        const char * interfaceName)
   {
-    GEOM_Superv_i * myGEOM_Superv_i = new GEOM_Superv_i(orb, poa, contId, instanceName, interfaceName);
-    //Don't understand the reason why this component is registered ???
-//    myGEOM_Superv_i->register_name("/myGEOM_Superv");
-    return myGEOM_Superv_i->getId() ;
+    CORBA::Object_var o = poa->id_to_reference(*contId);
+    Engines::Container_var cont = Engines::Container::_narrow(o);
+    GEOM_Superv_i *myGEOM_Superv_i(nullptr);
+    if(cont->is_SSL_mode())
+    {
+      PortableServer::ServantBase *contPtr = poa->reference_to_servant(cont);
+      Abstract_Engines_Container_i *contPtrEff = dynamic_cast<Abstract_Engines_Container_i *>(contPtr);
+      SALOME_NamingService_Abstract *decoNS = new SALOME_NamingService_Abstract_Decorator(contPtrEff->getNS());
+      myGEOM_Superv_i = new GEOM_Superv_i_Without_Session(orb, poa, contId, instanceName, interfaceName,decoNS);
+      //Don't understand the reason why this component is registered ???
+  //    myGEOM_Superv_i->register_name("/myGEOM_Superv");
+      return myGEOM_Superv_i->getId() ;
+    }
+    else
+    {
+      myGEOM_Superv_i = new GEOM_Superv_i_With_Session(orb, poa, contId, instanceName, interfaceName);
+      return myGEOM_Superv_i->getId() ;
+    }
   }
 }
