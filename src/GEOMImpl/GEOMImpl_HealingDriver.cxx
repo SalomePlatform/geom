@@ -44,6 +44,7 @@
 
 #include <BRep_Builder.hxx>
 #include <BRepAdaptor_Curve.hxx>
+#include <BRepBuilderAPI_Copy.hxx>
 #include <BRepTools_WireExplorer.hxx>
 
 #include <TopExp.hxx>
@@ -645,8 +646,14 @@ void GEOMImpl_HealingDriver::LimitTolerance (GEOMImpl_IHealing* theHI,
   // 1. Make a copy to prevent the original shape changes.
   TopoDS_Shape aShapeCopy;
   {
-    TColStd_IndexedDataMapOfTransientTransient aMapTShapes;
-    TNaming_CopyShape::CopyTool(theOriginalShape, aMapTShapes, aShapeCopy);
+    BRepBuilderAPI_Copy aMC (theOriginalShape);
+    if (aMC.IsDone()) {
+      aShapeCopy = aMC.Shape();
+    }
+    else {
+      TColStd_IndexedDataMapOfTransientTransient aMapTShapes;
+      TNaming_CopyShape::CopyTool(theOriginalShape, aMapTShapes, aShapeCopy);
+    }
   }
 
   // 2. Limit tolerance.
