@@ -96,6 +96,8 @@ void BlockFix_BlockFixAPI::Perform()
     //Unifier.SetLinearTolerance(myTolerance);
     Unifier.SetLinearTolerance(Precision::Confusion());
     Unifier.SetAngularTolerance(Precision::Confusion());
+    //Unifier.SetAngularTolerance(1e-5);
+    //Unifier.SetAngularTolerance(0.1);
     Unifier.Build();
     aResult = Unifier.Shape();
   }
@@ -121,6 +123,7 @@ void BlockFix_BlockFixAPI::Perform()
   Standard_Boolean isConcatBSplines = Standard_True;
   Unifier.Initialize(aResult, isUnifyEdges, isUnifyFaces, isConcatBSplines);
   Unifier.SetLinearTolerance(myTolerance);
+  Unifier.SetAngularTolerance(1e-5);
   Unifier.Build();
   myShape = Unifier.Shape();
 #endif
