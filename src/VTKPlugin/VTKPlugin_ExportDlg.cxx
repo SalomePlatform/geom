@@ -65,7 +65,7 @@ VTKPlugin_ExportDlg::VTKPlugin_ExportDlg( const Handle(SALOME_InteractiveObject)
   SalomeApp_Study* study = dynamic_cast< SalomeApp_Study* >( app->activeStudy() );
   int mgrId = app->activeViewManager()->getGlobalId();
   QVariant v = study->getObjectProperty( mgrId, io->getEntry(), GEOM::propertyName( GEOM::Deflection ), QVariant() );
-  double deflection =  v.isValid() ? v.toDouble() : SUIT_Session::session()->resourceMgr()->doubleValue( "Geometry", "deflection_coef", 0.001 );
+  double deflection =  v.isValid() ? v.toDouble() : SUIT_Session::session()->resourceMgr()->doubleValue( "Geometry", "deflection_coeff", 0.001 );
   myDeflectionSB->setValue( deflection );
 }
 

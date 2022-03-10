@@ -471,7 +471,7 @@ void GEOMToolsGUI::OnDeflection()
   int aMgrId = dynamic_cast< SUIT_ViewModel* >( window )->getViewManager()->getGlobalId();
 
   QVariant v = appStudy->getObjectProperty( aMgrId, selected.First()->getEntry(), GEOM::propertyName( GEOM::Deflection ), QVariant() );
-  double aDC =  v.isValid() ? v.toDouble() : SUIT_Session::session()->resourceMgr()->doubleValue( "Geometry", "deflection_coef", 0.001 );
+  double aDC =  v.isValid() ? v.toDouble() : SUIT_Session::session()->resourceMgr()->doubleValue( "Geometry", "deflection_coeff", 0.001 );
 
   GEOMToolsGUI_DeflectionDlg * DeflectionDlg = new GEOMToolsGUI_DeflectionDlg
     ( SUIT_Session::session()->activeApplication()->desktop() );
