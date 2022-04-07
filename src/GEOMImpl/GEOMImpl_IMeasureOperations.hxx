@@ -198,6 +198,7 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
 
   Standard_EXPORT Standard_Real GetAngleBtwVectors (Handle(GEOM_Object) theVec1, Handle(GEOM_Object) theVec2);
 
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) PatchFace(Handle(GEOM_Object) theShape);
 
   // Methods for receiving radiuses of curvature of curves and surfaces
   // in the given point

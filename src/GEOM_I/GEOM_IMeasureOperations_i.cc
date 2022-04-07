@@ -1072,6 +1072,32 @@ CORBA::Double GEOM_IMeasureOperations_i::GetAngleBtwVectors (GEOM::GEOM_Object_p
   return GetOperations()->GetAngleBtwVectors(aShape1, aShape2);
 }
 
+//=============================================================================
+/*!
+*  PatchFace
+*/
+//=============================================================================
+GEOM::ListOfGO* GEOM_IMeasureOperations_i::PatchFace(GEOM::GEOM_Object_ptr theShape)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  //Get the reference shape
+  Handle(::GEOM_Object) aShapeRef = GetObjectImpl(theShape);
+  if (aShapeRef.IsNull()) return aSeq._retn();
+
+  // Perform patch face operation
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->PatchFace(aShapeRef);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i - 1] = GetObject(Handle(::GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
+}
 
 //=============================================================================
 /*!

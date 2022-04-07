@@ -4661,6 +4661,16 @@ module GEOM
     double GetAngleBtwVectors (in GEOM_Object theShape1, in GEOM_Object theShape2);
 
     /*!
+     *  \brief The function takes a single face with holes and returns a list of faces,
+     *  first of them is the original face without holes, and the other faces are placed
+     *  on the same surface as the original face but bounded by each hole wire.
+     *  If the original face has no holes, it will be returned as an output
+     *  \param theShape face, to perform operation.
+     *  \return ListOfGO, containing the result original face and faces from holes.
+     */
+    ListOfGO PatchFace(in GEOM_Object theShape);
+
+    /*!
      *  \brief Get point coordinates
      */
     void PointCoordinates (in GEOM_Object theShape, out double X, out double Y, out double Z);

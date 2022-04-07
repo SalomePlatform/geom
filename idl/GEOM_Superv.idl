@@ -675,6 +675,11 @@ module GEOM
                            in string            theFileName,
                            in double            theDeflection );
 
+    //-----------------------------------------------------------//
+    // Measure Operations                                        //
+    //-----------------------------------------------------------//
+    GEOM_List PatchFace(in GEOM_Object theShape);
+
     /*@@ insert new functions before this line @@ do not remove this line @@*/
  };
 };

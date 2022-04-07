@@ -23,6 +23,10 @@
 #include <GEOMImpl_IMeasureOperations.hxx>
 #include <GEOMImpl_IMeasure.hxx>
 #include <GEOMImpl_MeasureDriver.hxx>
+
+#include <GEOMImpl_IPatchFace.hxx>
+#include <GEOMImpl_PatchFaceDriver.hxx>
+
 #include <GEOMImpl_Types.hxx>
 
 #include <GEOMUtils.hxx>
@@ -2357,6 +2361,74 @@ Standard_Real GEOMImpl_IMeasureOperations::GetAngleBtwVectors (Handle(GEOM_Objec
   return anAngle;
 }
 
+
+//=============================================================================
+/*!
+ *  PatchFace
+ */
+ //=============================================================================
+Handle(TColStd_HSequenceOfTransient) GEOMImpl_IMeasureOperations::PatchFace(Handle(GEOM_Object) theShape)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull()) return NULL;
+
+  Handle(GEOM_Object) aPatchFace = GetEngine()->AddObject(GEOM_PATCH_FACE);
+  Handle(GEOM_Function) aFunction = aPatchFace->AddFunction(GEOMImpl_PatchFaceDriver::GetID(), 1);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PatchFaceDriver::GetID()) return NULL;
+
+  GEOMImpl_IPatchFace aPI(aFunction);
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return NULL;
+
+  aPI.SetShape(aRefShape);
+  Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
+
+  // Perform
+  try
+  {
+    OCC_CATCH_SIGNALS;
+    if (!GetSolver()->ComputeFunction(aFunction))
+    {
+      SetErrorCode("patch face driver failed");
+      return NULL;
+    }
+
+    // Get result compound and collect all faces into result sequence
+    TopoDS_Shape aResCompound = aFunction->GetValue();
+    TopTools_IndexedMapOfShape anIndices;
+    TopExp::MapShapes(aResCompound, anIndices);
+
+    Handle(TColStd_HArray1OfInteger) anArray;
+    for (TopExp_Explorer anExpW(aResCompound, TopAbs_FACE); anExpW.More(); anExpW.Next())
+    {
+      TopoDS_Shape aValue = anExpW.Value();
+      anArray = new TColStd_HArray1OfInteger(1, 1);
+      anArray->SetValue(1, anIndices.FindIndex(aValue));
+
+      Handle(GEOM_Object) anObj = GetEngine()->AddSubShape(aPatchFace, anArray);
+      if (!anObj.IsNull())
+      {
+        aSeq->Append(anObj);
+      }
+    }
+  }
+  catch (Standard_Failure& aFail)
+  {
+    SetErrorCode(aFail.GetMessageString());
+    return aSeq;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction, true)
+    << "[" << aSeq << "] = geompy.PatchFace(" << theShape << ")";
+
+  SetErrorCode(OK);
+  return aSeq;
+}
 
 //=============================================================================
 /*!

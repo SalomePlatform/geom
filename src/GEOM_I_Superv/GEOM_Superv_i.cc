@@ -61,6 +61,7 @@ GEOM_Superv_i::GEOM_Superv_i(CORBA::ORB_ptr orb,
   myBlocksOp = GEOM::GEOM_IBlocksOperations::_nil();
   myCurvesOp = GEOM::GEOM_ICurvesOperations::_nil();
   myLocalOp = GEOM::GEOM_ILocalOperations::_nil();
+  myMeasureOp = GEOM::GEOM_IMeasureOperations::_nil();
   myGroupOp = GEOM::GEOM_IGroupOperations::_nil();
 }
 
@@ -296,6 +297,20 @@ void GEOM_Superv_i::getLocalOp()
   // get GEOM_ILocalOperations interface
   if (CORBA::is_nil(myLocalOp)) {
     myLocalOp = myGeomEngine->GetILocalOperations();
+  }
+}
+
+//=============================================================================
+//  getMeasureOp:
+//=============================================================================
+void GEOM_Superv_i::getMeasureOp()
+{
+  if (CORBA::is_nil(myGeomEngine))
+    setGeomEngine();
+  // get GEOM_IMeasureOperations interface
+  if (CORBA::is_nil(myMeasureOp))
+  {
+    myMeasureOp = myGeomEngine->GetIMeasureOperations();
   }
 }
 
@@ -3741,6 +3756,21 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSmoothingSurface (GEOM::GEOM_List_ptr t
   }
   endService( " GEOM_Superv_i::MakeSmoothingSurface" );
   return NULL;
+}
+
+//=============================================================================
+//  PatchFace:
+//=============================================================================
+GEOM::GEOM_List_ptr GEOM_Superv_i::PatchFace(GEOM::GEOM_Object_ptr theShape)
+{
+  beginService(" GEOM_Superv_i::PatchFace");
+  MESSAGE("GEOM_Superv_i::PatchFace");
+  getLocalOp();
+
+  GEOM::ListOfGO* aList = myMeasureOp->PatchFace(theShape);
+  GEOM_List_i<GEOM::ListOfGO>* aListPtr = new GEOM_List_i<GEOM::ListOfGO>(*(aList));
+  endService(" GEOM_Superv_i::PatchFace");
+  return aListPtr->_this();
 }
 
 /*@@ insert new functions before this line @@ do not remove this line @@*/

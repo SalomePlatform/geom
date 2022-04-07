@@ -123,6 +123,8 @@
 
 #define GEOM_CURVATURE_VEC 59
 
+#define GEOM_PATCH_FACE 60
+
 //GEOM_Function types
 
 #define COPY_WITH_REF    1

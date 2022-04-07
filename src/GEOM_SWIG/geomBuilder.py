@@ -11784,6 +11784,39 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
 
             return aKindTuple
 
+        ## The function takes a single face with holes and returns a list of faces,
+        #  first of them is the original face without holes, and the other faces are placed
+        #  on the same surface as the original face but bounded by each hole wire.
+        #  If the original face has no holes, it will be returned as an output
+        #  @param theShape Face to perform operation on.
+        #
+        #  @return GEOM.ListOfGO, list created faces, where first of them is the original face without holes
+        @ManageTransactions("MeasuOp")
+        def PatchFace(self, theShape):
+            """
+            The function takes a single face with holes and returns a list of faces,
+            first of them is the original face without holes, and the other faces are placed
+            on the same surface as the original face but bounded by each hole wire.
+            If the original face has no holes, it will be returned as an output
+
+            Parameters:
+                theShape  Face to perform operation on.
+
+            Returns:
+                GEOM.ListOfGO, list created faces, where first of them is the original face without holes
+
+            Example of usage:
+                Circle_1 = geompy.MakeCircle(None, None, 190)
+                Circle_2 = geompy.MakeCircle(None, None, 100)
+                Face_1 = geompy.MakeFaceWires([Circle_1], 1)
+                Face_2 = geompy.MakeFaceWires([Circle_2], 1)
+                Cut_1 = geompy.MakeCutList(Face_1, [Face_2], True)
+                faces = geompy.PatchFace(Cut_1)
+            """
+            aList = self.MeasuOp.PatchFace(theShape)
+            RaiseIfFailed("PatchFace", self.MeasuOp)
+            return aList
+
         ## Returns the string that describes if the shell is good for solid.
         #  This is a support method for MakeSolid.
         #
