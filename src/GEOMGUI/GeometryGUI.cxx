@@ -41,7 +41,6 @@
 #include "GEOMUtils_XmlHandler.hxx"
 #include "GEOMGUI_AnnotationMgr.h"
 #include "GEOMGUI_TextTreeSelector.h"
-#include "GEOM_Component_Generator.hxx"
 
 #include "GEOM_Actor.h"
 
