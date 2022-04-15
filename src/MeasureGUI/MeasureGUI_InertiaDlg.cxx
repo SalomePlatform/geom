@@ -71,9 +71,9 @@ MeasureGUI_InertiaDlg::MeasureGUI_InertiaDlg( GeometryGUI* GUI, QWidget* parent 
   myGrp->TextLabel4_1->setText( "3:1" );
   myGrp->TextLabel4_2->setText( "3:2" );
   myGrp->TextLabel4_3->setText( "3:3" );
-  myGrp->TextLabel5_1->setText( "IX" );
-  myGrp->TextLabel5_2->setText( "IY" );
-  myGrp->TextLabel5_3->setText( "IZ" );
+  myGrp->TextLabel5_1->setText( "Ip1" ); // old name "IX"
+  myGrp->TextLabel5_2->setText( "Ip2" ); // old name "IY"
+  myGrp->TextLabel5_3->setText( "Ip3" ); // old name "IZ"
   myGrp->LineEdit11->setReadOnly( true );
   myGrp->LineEdit12->setReadOnly( true );
   myGrp->LineEdit13->setReadOnly( true );
