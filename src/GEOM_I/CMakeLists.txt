@@ -82,7 +82,6 @@ SET(GEOMEngine_HEADERS
   GEOM_Gen_No_Session_i.hh
   GEOM_GEOM_I.hxx
   GEOM_wrap.hxx
-  GEOM_Component_Generator.hxx
   )
 # --- sources ---
 
@@ -108,7 +107,6 @@ SET(GEOMEngine_SOURCES
   GEOM_Gen_Session_i.cc
   GEOM_Gen_No_Session_i.cc
   GEOM_DumpPython.cc
-  GEOM_Component_Generator.cxx
   )
 
 # --- rules ---

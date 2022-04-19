@@ -25,7 +25,6 @@ SET(SUBDIRS_COMMON
   GEOMImpl GEOM_I GEOMClient GEOM_I_Superv GEOM_SWIG GEOM_PY
   AdvancedEngine
   STLPlugin BREPPlugin STEPPlugin IGESPlugin XAOPlugin Tools
-  SalomeSessionless
   )
 
 ##
