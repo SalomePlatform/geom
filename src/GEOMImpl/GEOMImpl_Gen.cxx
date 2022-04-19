@@ -182,6 +182,7 @@ GEOMImpl_Gen::GEOMImpl_Gen()
    _MeasureOperations = new GEOMImpl_IMeasureOperations( this );
    _GroupOperations = new GEOMImpl_IGroupOperations( this );
    _FieldOperations = new GEOMImpl_IFieldOperations( this );
+   _TestOperations = new GEOMImpl_ITestOperations( this );
 }
 
 //=============================================================================
@@ -337,4 +338,14 @@ GEOMImpl_IGroupOperations* GEOMImpl_Gen::GetIGroupOperations()
 GEOMImpl_IFieldOperations* GEOMImpl_Gen::GetIFieldOperations()
 {
   return _FieldOperations;
+}
+
+//=============================================================================
+/*!
+ * GetITestOperations
+ */
+//=============================================================================
+GEOMImpl_ITestOperations* GEOMImpl_Gen::GetITestOperations()
+{
+  return _TestOperations;
 }

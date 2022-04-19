@@ -4890,7 +4890,25 @@ module GEOM
     long GetNbSubShapes(in GEOM_Object shape, in short fieldDim);
   };
 
- // # GEOM_Gen:
+  // # GEOM_ITestOperations:
+  /*!
+   *  \brief Interface for testing operations.
+   */
+  interface GEOM_ITestOperations : GEOM_IOperations
+  {
+    /*!
+     *  \brief Build a mesh on the given shape.
+     *  \param shape is a source object
+     *  \param linearDeflection is a linear deflection
+     *  \param isRelative says if given value of deflection is relative to shape's bounding box
+     *  \param angularDeflection is an angular deflection for edges in radians
+     *  \return true in case of success; otherwise false.
+     */
+    boolean Tesselate(in GEOM_Object shape, in double linearDeflection,
+                      in boolean isRelative, in double angularDeflection);
+  };
+
+  // # GEOM_Gen:
   /*!
    *  \brief Interface to access other GEOM interfaces.
    *
@@ -5016,6 +5034,7 @@ module GEOM
     GEOM_IBlocksOperations    GetIBlocksOperations   () raises (SALOME::SALOME_Exception);
     GEOM_IGroupOperations     GetIGroupOperations    () raises (SALOME::SALOME_Exception);
     GEOM_IFieldOperations     GetIFieldOperations    () raises (SALOME::SALOME_Exception);
+    GEOM_ITestOperations      GetITestOperations     () raises (SALOME::SALOME_Exception);
 
     GEOM_IOperations GetPluginOperations (in string theLibName) raises (SALOME::SALOME_Exception);
 

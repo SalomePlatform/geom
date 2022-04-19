@@ -1,4 +1,4 @@
-# Copyright (C) 2017-2021  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2015-2021  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,8 +17,11 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-SET(PYTHON_TEST_DRIVER "$ENV{KERNEL_ROOT_DIR}/bin/salome/appliskel/python_test_driver.py")
-SET(COMPONENT_NAME GEOM)
-SET(TIMEOUT        300)
+INCLUDE(tests.set)
 
-SUBDIRS(examples xao other)
+FOREACH(tfile ${ALL_TESTS})
+  GET_FILENAME_COMPONENT(BASE_NAME ${tfile} NAME_WE)
+  SET(TEST_NAME ${COMPONENT_NAME}_${BASE_NAME})
+  ADD_TEST(${TEST_NAME} python ${tfile})
+  SET_TESTS_PROPERTIES(${TEST_NAME} PROPERTIES LABELS "${COMPONENT_NAME};${COMPONENT_NAME}_tests")
+endforeach()

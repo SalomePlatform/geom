@@ -77,6 +77,7 @@ SET(GEOMEngine_HEADERS
   GEOM_ITransformOperations_i.hh
   GEOM_IMeasureOperations_i.hh
   GEOM_IGroupOperations_i.hh
+  GEOM_ITestOperations_i.hh
   GEOM_Gen_i.hh
   GEOM_Gen_Session_i.hh
   GEOM_Gen_No_Session_i.hh
@@ -103,6 +104,7 @@ SET(GEOMEngine_SOURCES
   GEOM_IMeasureOperations_i.cc
   GEOM_IGroupOperations_i.cc
   GEOM_IFieldOperations_i.cc
+  GEOM_ITestOperations_i.cc
   GEOM_Gen_i.cc
   GEOM_Gen_Session_i.cc
   GEOM_Gen_No_Session_i.cc

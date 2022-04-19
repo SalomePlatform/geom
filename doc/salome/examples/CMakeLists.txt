@@ -19,31 +19,36 @@
 
 INCLUDE(tests.set)
 
-SET(TEST_REINIT_SALOME "False")
-SALOME_CONFIGURE_FILE(tests.py.in tests.py)
+SET(TEST_INSTALL_DIRECTORY ${GEOM_TEST_DIR}/examples)
+SET(EXAMPLES_INSTALL_DIRECTORY ${SALOME_INSTALL_DOC}/examples/GEOM)
 
-SALOME_GENERATE_TESTS_ENVIRONMENT(tests_env)
+IF(SALOME_BUILD_TESTS)
 
-IF(GEOM_JOIN_TESTS)
-  ADD_TEST(NAME GEOM_examples COMMAND ${PYTHON_EXECUTABLE} -B ${CMAKE_SOURCE_DIR}/doc/salome/examples/testme.py tests.py)
-ELSE(GEOM_JOIN_TESTS)
+  # Install 'salome test' staff
+  # ---------------------------
+
+  INSTALL(FILES CTestTestfileInstall.cmake
+          DESTINATION ${TEST_INSTALL_DIRECTORY}
+          RENAME CTestTestfile.cmake)
+  INSTALL(FILES tests.set DESTINATION ${TEST_INSTALL_DIRECTORY})
+
+  # Add tests for 'make test'
+  # -------------------------
+
+  SALOME_GENERATE_TESTS_ENVIRONMENT(tests_env)
+
   FOREACH(test ${GOOD_TESTS})
     GET_FILENAME_COMPONENT(testname ${test} NAME_WE)
     ADD_TEST(NAME ${testname}
-             COMMAND ${PYTHON_EXECUTABLE} -B ${CMAKE_SOURCE_DIR}/doc/salome/examples/testme.py ${CMAKE_CURRENT_SOURCE_DIR}/${test})
-    SET_TESTS_PROPERTIES(${testname} PROPERTIES ENVIRONMENT "${tests_env}")
+             COMMAND ${PYTHON_EXECUTABLE} -B ${CMAKE_SOURCE_DIR}/test/test_helper.py ${CMAKE_CURRENT_SOURCE_DIR}/${test})
+    SET_TESTS_PROPERTIES(${testname} PROPERTIES ENVIRONMENT "${tests_env}" LABELS "examples")
   ENDFOREACH()
-ENDIF(GEOM_JOIN_TESTS)
 
-# install Python scripts
-SALOME_INSTALL_SCRIPTS("${EXAMPLES_TESTS}" ${SALOME_INSTALL_DOC}/examples/GEOM)
+ENDIF()
 
-# Application tests
+# Install example scripts and data
+# --------------------------------
 
-SET(TEST_INSTALL_DIRECTORY ${SALOME_INSTALL_SCRIPT_SCRIPTS}/test/examples)
-INSTALL(FILES ${GOOD_TESTS} DESTINATION ${TEST_INSTALL_DIRECTORY})
-
-INSTALL(FILES CTestTestfileInstall.cmake
-        DESTINATION ${TEST_INSTALL_DIRECTORY}
-        RENAME CTestTestfile.cmake)
-INSTALL(FILES tests.set DESTINATION ${TEST_INSTALL_DIRECTORY})
+IF(SALOME_BUILD_TESTS OR SALOME_BUILD_DOC)
+  INSTALL(FILES ${GOOD_TESTS} ${BAD_TESTS} DESTINATION ${EXAMPLES_INSTALL_DIRECTORY})
+ENDIF()
