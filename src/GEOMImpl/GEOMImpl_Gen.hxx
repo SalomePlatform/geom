@@ -40,6 +40,7 @@
 #include "GEOMImpl_IMeasureOperations.hxx"
 #include "GEOMImpl_IGroupOperations.hxx"
 #include "GEOMImpl_IFieldOperations.hxx"
+#include "GEOMImpl_ITestOperations.hxx"
 #include "GEOM_Engine.hxx"
 
 class GEOMIMPL_EXPORT GEOMImpl_Gen : public GEOM_Engine
@@ -74,6 +75,8 @@ class GEOMIMPL_EXPORT GEOMImpl_Gen : public GEOM_Engine
 
   GEOMImpl_IFieldOperations* GetIFieldOperations();
 
+  GEOMImpl_ITestOperations* GetITestOperations();
+
  private:
 
   GEOMImpl_IBasicOperations*     _BasicOperations;
@@ -89,6 +92,7 @@ class GEOMIMPL_EXPORT GEOMImpl_Gen : public GEOM_Engine
   GEOMImpl_IMeasureOperations*   _MeasureOperations;
   GEOMImpl_IGroupOperations*     _GroupOperations;
   GEOMImpl_IFieldOperations*     _FieldOperations;
+  GEOMImpl_ITestOperations*      _TestOperations;
 };
 
 #endif

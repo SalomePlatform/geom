@@ -2467,6 +2467,25 @@ GEOM::GEOM_IFieldOperations_ptr GEOM_Gen_i::GetIFieldOperations()
 }
 
 //============================================================================
+// function : GetITestOperations
+// purpose  :
+//============================================================================
+GEOM::GEOM_ITestOperations_ptr GEOM_Gen_i::GetITestOperations()
+{
+  Unexpect aCatch(SALOME_SalomeException);
+  MESSAGE( "GEOM_Gen_i::GetITestOperations" );
+
+  GEOM::GEOM_Gen_ptr engine = _this();
+
+  GEOM_ITestOperations_i* aServant =
+    new GEOM_ITestOperations_i(_poa, engine, _impl->GetITestOperations());
+
+  // activate the CORBA servant
+  GEOM::GEOM_ITestOperations_var operations = aServant->_this();
+  return operations._retn();
+}
+
+//============================================================================
 // function : GetPluginOperations
 // purpose  :
 //============================================================================

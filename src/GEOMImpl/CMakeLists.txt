@@ -70,6 +70,7 @@ SET(GEOMImpl_HEADERS
   GEOMImpl_IGroupOperations.hxx
   GEOMImpl_IFieldOperations.hxx
   GEOMImpl_IBaseIEOperations.hxx
+  GEOMImpl_ITestOperations.hxx
   GEOMImpl_IGlue.hxx
   GEOMImpl_PointDriver.hxx
   GEOMImpl_IPoint.hxx
@@ -198,6 +199,7 @@ SET(GEOMImpl_SOURCES
   GEOMImpl_IGroupOperations.cxx
   GEOMImpl_IFieldOperations.cxx
   GEOMImpl_IBaseIEOperations.cxx
+  GEOMImpl_ITestOperations.cxx
   GEOMImpl_IPolyline2D.cxx
   GEOMImpl_ITransferData.cxx
   GEOMImpl_Gen.cxx

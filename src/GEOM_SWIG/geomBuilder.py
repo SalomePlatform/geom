@@ -237,6 +237,7 @@
 ##   @}
 ##   @defgroup l2_measure       Using measurement tools
 ##   @defgroup l2_field         Field on Geometry
+##   @defgroup l2_testing       Testing
 
 ## @}
 
@@ -745,6 +746,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
               self.BlocksOp = None
               self.GroupOp  = None
               self.FieldOp  = None
+              self.TestOp   = None
             pass
 
         ## Process object publication in the study, as follows:
@@ -852,6 +854,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             self.BlocksOp = self.GetIBlocksOperations   ()
             self.GroupOp  = self.GetIGroupOperations    ()
             self.FieldOp  = self.GetIFieldOperations    ()
+            self.TestOp   = self.GetITestOperations     ()
 
             notebook.myStudy = self.myStudy
             pass
@@ -13896,6 +13899,37 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             return f
 
         # end of l2_field
+        ## @}
+
+        ## @addtogroup l2_testing
+        ## @{
+
+        ## Build a mesh on the given shape.
+        # @param shape the source shape
+        # @param linear_deflection linear deflection coefficient
+        # @param is_relative says if given value of deflection is relative to shape's bounding box
+        # @param angular_deflection angular deflection for edges in degrees
+        # @return True in case of success; otherwise False.
+        @ManageTransactions("TestOp")
+        def Tesselate(self, shape, linear_deflection=0, is_relative=True, angular_deflection=0):
+            """Build a mesh on the given shape.
+
+            Parameters:
+                shape the source shape
+                linear_deflection linear deflection coefficient
+                is_relative says if given value of deflection is relative to shape's bounding box
+                angular_deflection angular deflection for edges in degrees
+
+            Returns:
+                True in case of success; otherwise False.
+            """
+            if angular_deflection > 0:
+                angular_deflection = angular_deflection * math.pi / 180.
+            r = self.TestOp.Tesselate(shape, linear_deflection, is_relative, angular_deflection)
+            RaiseIfFailed("Tesselate", self.TestOp)
+            return r
+
+        # end of l2_testing
         ## @}
 
 

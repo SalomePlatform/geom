@@ -1,0 +1,7 @@
+This folder contains example Python scripts which are used in the documentation of Geometry module,
+i.e. those mentioned in *.doc files in {root_src}/doc/salome/gui/GEOM/input folder.
+
+These tests are exported into the ${GEOM_ROOT_DIR}/share/doc/salome/examples/GEOM folder and can be
+executed with the `salome test` command, as a part of whole testing procedure.
+
+Other Python scripts aimed for testing purposes must be put into the ${root_src}/test folder!
