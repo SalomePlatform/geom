@@ -4745,6 +4745,94 @@ module GEOM
                                                      in GEOM_Object thePoint,
                                                      in GEOM_Object theDirection);
 
+    //! Methods and structure for implement CheckConformity tool
+
+    /*!
+    *  \brief Structure for store shapes from failed checks.
+    *         If failed check on small edges, then second shape is null
+    */
+    struct PairOfShape
+    {
+      GEOM_Object first;
+      GEOM_Object second;
+    };
+
+    /*!
+    *  \brief Structure for store result of check
+    *  store type of check as number and failed shapes
+    */
+    struct CheckResult
+    {
+      long  type;
+      PairOfShape failedShapes;
+    };
+
+    typedef sequence<PairOfShape> SequenceOfPairOfShape;
+    typedef sequence<CheckResult> CheckResults;
+
+    /*!
+    *  \brief Perform analyse of shape and return all failed checks.
+    *
+    *  \param theShape Shape for check.
+    */
+    CheckResults CheckConformityShape(in GEOM_Object theShape);
+
+    /*!
+    *  \brief Find all self-intersected 2D curves.
+    *
+    *  \param theResults result of check - list of failed checks and sub-shapes.
+    */
+    SequenceOfPairOfShape SelfIntersected2D(in CheckResults theResults);
+
+    /*!
+    *  \brief Find pairs of interfering sub-shapes, by default all pairs of interfering shapes are returned.
+    *         Avaliable types:
+    *         - vertices touched by tolerance;
+    *         - vertex touching an edge in the inner point;
+    *         - vertex lying on the inner point of a face;
+    *         - edges intersecting by inner points;
+    *         - edge touching/intersecting face in the inner point;
+    *         - faces intersection by inner point
+    * 
+    *  \param theResults result of check - list of failed checks and sub-shapes.
+    *  \param theShapeType1 Type of shape.
+    *  \param theShapeType2 Type of shape.
+    */
+    SequenceOfPairOfShape InterferingSubshapes(in CheckResults theResults,
+                                               in long theShapeType1,
+                                               in long theShapeType2);
+
+    /*!
+    *  \brief Find edges, which are fully covered by tolerances of vertices.
+    *
+    *  \param theResults result of check - list of failed checks and sub-shapes.
+    */
+    ListOfGO SmallEdges(in CheckResults theResults);
+
+    /*!
+    *  \brief find remote objects (sub-shape on a shape).
+    *         Avaliable types:
+    *         - vertex far from edge;
+    *         - vertex far from face;
+    *         - edge far from face
+    *
+    *  \param theResults result of check - list of failed checks and sub-shapes.
+    *  \param theShapeType Type of shape.
+    *  \param theSubShapeType Type of sub-shape.
+    *  \param theTolerance tolerance, by default used tolerance of sub-shape.
+    */
+    SequenceOfPairOfShape DistantShapes(in CheckResults theResults,
+                                        in long theShapeType,
+                                        in long theSubShapeType,
+                                        in double theTolerance);
+
+    /*!
+    *  \brief Compute possible tolerance for the shape, minimize tolerance of shape as well
+    *         as tolerance of sub-shapes as much as possible
+    *
+    *  \param theShape Shape for update.
+    */
+    double UpdateTolerance(in GEOM_Object theShape);
   };
 
  // # GEOM_IGroupOperations:

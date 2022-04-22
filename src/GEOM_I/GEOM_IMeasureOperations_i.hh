@@ -170,8 +170,33 @@ class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
                                                              GEOM::GEOM_Object_ptr thePoint,
                                                              GEOM::GEOM_Object_ptr theDirection);
 
+  // Methods for class CheckConformity
+  GEOM::GEOM_IMeasureOperations::SequenceOfPairOfShape* SelfIntersected2D(
+                               const GEOM::GEOM_IMeasureOperations::CheckResults& theResuts);
+
+  GEOM::GEOM_IMeasureOperations::SequenceOfPairOfShape* InterferingSubshapes(
+                                                  const GEOM::GEOM_IMeasureOperations::CheckResults& theResuts,
+                                                  const CORBA::Long theShapeType1,
+                                                  const CORBA::Long theShapeType2);
+
+  GEOM::ListOfGO* SmallEdges(const GEOM::GEOM_IMeasureOperations::CheckResults& theResuts);
+
+  GEOM::GEOM_IMeasureOperations::SequenceOfPairOfShape* DistantShapes(
+      const GEOM::GEOM_IMeasureOperations::CheckResults& theResuts,
+      const CORBA::Long theShapeType,
+      const CORBA::Long theSubShapeType,
+      const CORBA::Double theTolerance);
+
+  GEOM::GEOM_IMeasureOperations::CheckResults* CheckConformityShape(GEOM::GEOM_Object_ptr theShape);
+
+  CORBA::Double UpdateTolerance(GEOM::GEOM_Object_ptr theShape);
+
   ::GEOMImpl_IMeasureOperations* GetOperations()
   { return (::GEOMImpl_IMeasureOperations*)GetImpl(); }
+
+private:
+  void ConvertToList(const GEOM::GEOM_IMeasureOperations::CheckResults& theResuts,
+                     std::list <GEOMImpl_IMeasureOperations::FailedChecks>& theListOfResults);
 };
 
 #endif

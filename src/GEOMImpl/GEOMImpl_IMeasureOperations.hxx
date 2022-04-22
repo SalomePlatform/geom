@@ -217,6 +217,28 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
   Standard_EXPORT Standard_Real MinSurfaceCurvatureByPoint (Handle(GEOM_Object) theSurf,
                                                             Handle(GEOM_Object) thePoint);
 
+  // Methods checking the shapes which are not applicable to modelling operations
+  typedef std::pair< Handle(GEOM_Object), Handle(GEOM_Object)> CoupleOfObjects;
+  struct FailedChecks
+  {
+    Standard_Integer TypeOfCheck;
+    CoupleOfObjects FailedShapes;
+  };
+
+  Standard_EXPORT std::list<CoupleOfObjects> SelfIntersected2D(const std::list<FailedChecks>& theChecks);
+  Standard_EXPORT std::list<CoupleOfObjects> InterferingSubshapes(const std::list<FailedChecks>& theChecks,
+                                                                  const int theShapeType1,
+                                                                  const int theShapeType2);
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) SmallEdges(const std::list<FailedChecks>& theChecks);
+  Standard_EXPORT std::list<CoupleOfObjects> DistantShapes(const std::list<FailedChecks>& theChecks,
+                                                           const int theShapeType,
+                                                           const int theSubShapeType,
+                                                           double theTolerance);
+  Standard_EXPORT void CheckConformityShape(Handle(GEOM_Object) theShape, std::list<FailedChecks>& theChecks);
+
+  Standard_EXPORT double ComputeTolerance(Handle(GEOM_Object) theEdge, Handle(GEOM_Object) theFace);
+  Standard_EXPORT double UpdateTolerance(Handle(GEOM_Object) theShape);
+
   Standard_EXPORT Handle(GEOM_Object) SurfaceCurvatureByPointAndDirection
                                       (Handle(GEOM_Object) theSurf,
                                        Handle(GEOM_Object) thePoint,
