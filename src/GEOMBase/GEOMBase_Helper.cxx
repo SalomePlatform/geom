@@ -943,6 +943,7 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, b
         }
 
         if ( nbObjs ) {
+          SalomeApp_Application::logUserEvent( QString( "Geometry") + ": " + QObject::tr( "OPERATION_APPLIED" ) );
           commitCommand();
           updateObjBrowser();
           if( SUIT_Application* anApp = SUIT_Session::session()->activeApplication() ) {
