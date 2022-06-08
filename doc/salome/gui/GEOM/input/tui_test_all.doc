@@ -108,6 +108,9 @@
 \until geompy.GetSubShapesWithTolerance(Box, GEOM.FACE, GEOM.CC_LE, 1.e-7, "le")
 
 \anchor swig_MakeExtraction
-\until print "DONE"
+\until geompy.MakeExtraction(Box, [16], "Ext_no_vertex")
+
+\anchor swig_CurvatureOnFace
+\until print("DONE")
 
 */

@@ -216,6 +216,11 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
   Standard_EXPORT Standard_Real MinSurfaceCurvatureByPoint (Handle(GEOM_Object) theSurf,
                                                             Handle(GEOM_Object) thePoint);
 
+  Standard_EXPORT Handle(GEOM_Object) SurfaceCurvatureByPointAndDirection
+                                      (Handle(GEOM_Object) theSurf,
+                                       Handle(GEOM_Object) thePoint,
+                                       Handle(GEOM_Object) theDirection);
+
  private:
 
    void FillErrorsSub

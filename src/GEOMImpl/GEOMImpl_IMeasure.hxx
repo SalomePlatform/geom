@@ -30,7 +30,8 @@ class GEOMImpl_IMeasure
     MEASURE_ARG_BASE  = 1,
     MEASURE_ARG_POINT = 2,
     MEASURE_INDEX = 3,
-    MEASURE_USE_ORI = 4
+    MEASURE_USE_ORI = 4,
+    MEASURE_ARG_DIR = 5
   };
  public:
 
@@ -55,6 +56,11 @@ class GEOMImpl_IMeasure
   bool GetUseOri() { return ( _func->GetInteger(MEASURE_USE_ORI) ||
                               !_func->IsDone() ); // old behavior was to useOri
   }
+
+  void SetDirection(Handle(GEOM_Function) theDir)
+  { _func->SetReference(MEASURE_ARG_DIR, theDir); }
+
+  Handle(GEOM_Function) GetDirection() { return _func->GetReference(MEASURE_ARG_DIR); }
 
  private:
 

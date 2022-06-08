@@ -4716,6 +4716,24 @@ module GEOM
      */
     double MinSurfaceCurvatureByPoint (in GEOM_Object theShape, in GEOM_Object thePoint);
 
+    /*!
+     *  \brief Get vector of curvature of surface in the given point along the given direction.
+     *  \param theShape - face.
+     *  \param thePoint - point.
+     *  \param theDirection - direction.
+     *  \note  Before the calculation of curvature, the point and the direction
+     *         are projected to the face, if the point does not lay on it or
+     *         the direction is not tangent to it initially.
+     *  \return Vector of curvature. The returned vector is codirectional with
+     *          the normal to the face in the given point in case of positive
+     *          curvature value and opposite to the normal in case of negative
+     *          curvature. The normal of the returned vector is equal to the
+     *          absolute value of the curvature.
+     */
+    GEOM_Object SurfaceCurvatureByPointAndDirection (in GEOM_Object theShape,
+                                                     in GEOM_Object thePoint,
+                                                     in GEOM_Object theDirection);
+
   };
 
  // # GEOM_IGroupOperations:

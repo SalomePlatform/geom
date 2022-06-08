@@ -2658,6 +2658,63 @@ Standard_Real GEOMImpl_IMeasureOperations::MinSurfaceCurvatureByPoint
   return getSurfaceCurvatures(aSurf, UV.X(), UV.Y(), false);
 }
 
+//=============================================================================
+/*!
+ *  SurfaceCurvatureByPointAndDirection
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IMeasureOperations::SurfaceCurvatureByPointAndDirection
+                                                 (Handle(GEOM_Object) theSurf,
+                                                  Handle(GEOM_Object) thePoint,
+                                                  Handle(GEOM_Object) theDirection)
+{
+  SetErrorCode(KO);
+
+  if (theSurf.IsNull() || thePoint.IsNull() || theDirection.IsNull()) return NULL;
+
+  Handle(GEOM_Function) aSurf = theSurf->GetLastFunction();
+  Handle(GEOM_Function) aPoint = thePoint->GetLastFunction();
+  Handle(GEOM_Function) aDirection = theDirection->GetLastFunction();
+  if (aSurf.IsNull() || aPoint.IsNull() || aDirection.IsNull()) return NULL;
+
+  //Add a new CurvatureVector object
+  //Handle(GEOM_Object) aCV = GetEngine()->AddObject(GEOM_CURVATURE_VEC);
+  Handle(GEOM_Object) aCV = GetEngine()->AddObject(GEOM_VECTOR);
+
+  //Add a new CurvatureVector function
+  Handle(GEOM_Function) aFunction =
+    aCV->AddFunction(GEOMImpl_MeasureDriver::GetID(), CURVATURE_VEC_MEASURE);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_MeasureDriver::GetID()) return NULL;
+
+  GEOMImpl_IMeasure aCI (aFunction);
+  aCI.SetBase(aSurf);
+  aCI.SetPoint(aPoint);
+  aCI.SetDirection(aDirection);
+
+  //Compute the CurvatureVector
+  try {
+    OCC_CATCH_SIGNALS;
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Measure driver failed to compute a surface curvature");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aCV << " = geompy.CurvatureOnFace(" << theSurf
+                               << ", " << thePoint << ", " << theDirection << ")";
+
+  SetErrorCode(OK);
+  return aCV;
+}
+
 //=======================================================================
 //function : FillErrorsSub
 //purpose  : Fill the errors list of subshapes on shape.

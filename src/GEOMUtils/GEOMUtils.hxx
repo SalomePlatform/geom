@@ -216,6 +216,19 @@ namespace GEOMUtils
 					       gp_Pnt& thePnt1, gp_Pnt& thePnt2);
   
   /*!
+   * \brief Computes normal projection of \a thePoint to \a theFace.
+   *
+   * \param thePoint the 3d point
+   * \param theFace the face shape
+   * \param theU the output U parameter of the point on the face
+   * \param theV the output V parameter of the point on the face
+   * \retval the projection (3d point) if found, throws an exception otherwise
+   */
+  Standard_EXPORT gp_Pnt ProjectPointOnFace(const gp_Pnt& thePoint,
+                                            const TopoDS_Shape& theFace,
+                                            double& theU, double& theV);
+  
+  /*!
    * \brief Returns the point clicked in 3D view.
    *
    * \param x The X coordinate in the view.

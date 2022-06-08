@@ -77,6 +77,7 @@ SET(GOOD_TESTS
   import_export.py
   inertia.py
   min_distance.py
+  curvature_face.py
   normal_face.py
   notebook_geom.py
   polyline.py
