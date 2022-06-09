@@ -379,6 +379,12 @@ def RaiseIfFailed (Method_name, Operation):
     if not Operation.IsDone() and Operation.GetErrorCode() != "NOT_FOUND_ANY":
         raise RuntimeError(Method_name + " : " + Operation.GetErrorCode())
 
+def PrintOrRaise(message, raiseException=False):
+    if raiseException:
+        raise RuntimeError(message)
+    else:
+        print(message)
+
 ## Return list of variables value from salome notebook
 ## @ingroup l1_geomBuilder_auxiliary
 def ParseParameters(*parameters):
@@ -4750,7 +4756,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_creation_face "Example"
         @ManageTransactions("ShapesOp")
-        def MakeFace(self, theWire, isPlanarWanted, theName=None):
+        def MakeFace(self, theWire, isPlanarWanted, theName=None, raiseException=False):
             """
             Create a face on the given wire.
 
@@ -4771,7 +4777,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeFace(theWire, isPlanarWanted)
             if isPlanarWanted and anObj is not None and self.ShapesOp.GetErrorCode() == "MAKE_FACE_TOLERANCE_TOO_BIG":
-                print("WARNING: Cannot build a planar face: required tolerance is too big. Non-planar face is built.")
+                PrintOrRaise("WARNING: Cannot build a planar face: required tolerance is too big. Non-planar face is built.",raiseException)
             else:
                 RaiseIfFailed("MakeFace", self.ShapesOp)
             self._autoPublish(anObj, theName, "face")
@@ -4792,7 +4798,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_creation_face "Example"
         @ManageTransactions("ShapesOp")
-        def MakeFaceWires(self, theWires, isPlanarWanted, theName=None):
+        def MakeFaceWires(self, theWires, isPlanarWanted, theName=None, raiseException=False):
             """
             Create a face on the given wires set.
 
@@ -4813,7 +4819,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeFaceWires(ToList(theWires), isPlanarWanted)
             if isPlanarWanted and anObj is not None and self.ShapesOp.GetErrorCode() == "MAKE_FACE_TOLERANCE_TOO_BIG":
-                print("WARNING: Cannot build a planar face: required tolerance is too big. Non-planar face is built.")
+                PrintOrRaise("WARNING: Cannot build a planar face: required tolerance is too big. Non-planar face is built.",raiseException)
             else:
                 RaiseIfFailed("MakeFaceWires", self.ShapesOp)
             self._autoPublish(anObj, theName, "face")
