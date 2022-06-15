@@ -2486,6 +2486,25 @@ GEOM::GEOM_ITestOperations_ptr GEOM_Gen_i::GetITestOperations()
 }
 
 //============================================================================
+// function : GetICanonicalRecognition
+// purpose  :
+//============================================================================
+GEOM::GEOM_ICanonicalRecognition_ptr GEOM_Gen_i::GetICanonicalRecognition()
+{
+  Unexpect aCatch(SALOME_SalomeException);
+  MESSAGE("GEOM_Gen_i::GetICanonicalRecognition");
+
+  GEOM::GEOM_Gen_ptr engine = _this();
+
+  GEOM_ICanonicalRecognition_i* aServant =
+    new GEOM_ICanonicalRecognition_i(_poa, engine, _impl->GetICanonicalRecognition());
+
+  // activate the CORBA servant
+  GEOM::GEOM_ICanonicalRecognition_var operations = aServant->_this();
+  return operations._retn();
+}
+
+//============================================================================
 // function : GetPluginOperations
 // purpose  :
 //============================================================================

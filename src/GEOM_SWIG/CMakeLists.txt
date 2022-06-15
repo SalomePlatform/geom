@@ -71,6 +71,7 @@ SET(_other_SCRIPTS
 SET(_python_SCRIPTS
   geomBuilder.py
   gsketcher.py
+  canonicalrecognition.py
   )
 
 # Advanced scripts

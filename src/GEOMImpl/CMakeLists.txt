@@ -182,6 +182,7 @@ SET(GEOMImpl_HEADERS
   GEOMImpl_PatchFaceDriver.hxx
   GEOMImpl_Types.hxx
   GEOM_GEOMImpl.hxx
+  GEOMImpl_ICanonicalRecognition.hxx
   )
 # --- sources ---
 
@@ -257,6 +258,7 @@ SET(GEOMImpl_SOURCES
   GEOMImpl_GlueDriver.cxx
   GEOMImpl_PatchFaceDriver.cxx
   GEOMImpl_FieldDriver.cxx
+  GEOMImpl_ICanonicalRecognition.cxx
   )
 
 # --- rules ---

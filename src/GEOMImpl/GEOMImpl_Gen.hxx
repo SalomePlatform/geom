@@ -41,6 +41,7 @@
 #include "GEOMImpl_IGroupOperations.hxx"
 #include "GEOMImpl_IFieldOperations.hxx"
 #include "GEOMImpl_ITestOperations.hxx"
+#include "GEOMImpl_ICanonicalRecognition.hxx"
 #include "GEOM_Engine.hxx"
 
 class GEOMIMPL_EXPORT GEOMImpl_Gen : public GEOM_Engine
@@ -77,22 +78,25 @@ class GEOMIMPL_EXPORT GEOMImpl_Gen : public GEOM_Engine
 
   GEOMImpl_ITestOperations* GetITestOperations();
 
+  GEOMImpl_ICanonicalRecognition* GetICanonicalRecognition();
+
  private:
 
-  GEOMImpl_IBasicOperations*     _BasicOperations;
-  GEOMImpl_ITransformOperations* _TransformOperations;
-  GEOMImpl_I3DPrimOperations*    _3DPrimOperations;
-  GEOMImpl_IShapesOperations*    _ShapesOperations;
-  GEOMImpl_IBlocksOperations*    _BlocksOperations;
-  GEOMImpl_IBooleanOperations*   _BooleanOperations;
-  GEOMImpl_IHealingOperations*   _HealingOperations;
-  GEOMImpl_ICurvesOperations*    _CurvesOperations;
-  GEOMImpl_ILocalOperations*     _LocalOperations;
-  GEOMImpl_IInsertOperations*    _InsertOperations;
-  GEOMImpl_IMeasureOperations*   _MeasureOperations;
-  GEOMImpl_IGroupOperations*     _GroupOperations;
-  GEOMImpl_IFieldOperations*     _FieldOperations;
-  GEOMImpl_ITestOperations*      _TestOperations;
+  GEOMImpl_IBasicOperations*      _BasicOperations;
+  GEOMImpl_ITransformOperations*  _TransformOperations;
+  GEOMImpl_I3DPrimOperations*     _3DPrimOperations;
+  GEOMImpl_IShapesOperations*     _ShapesOperations;
+  GEOMImpl_IBlocksOperations*     _BlocksOperations;
+  GEOMImpl_IBooleanOperations*    _BooleanOperations;
+  GEOMImpl_IHealingOperations*    _HealingOperations;
+  GEOMImpl_ICurvesOperations*     _CurvesOperations;
+  GEOMImpl_ILocalOperations*      _LocalOperations;
+  GEOMImpl_IInsertOperations*     _InsertOperations;
+  GEOMImpl_IMeasureOperations*    _MeasureOperations;
+  GEOMImpl_IGroupOperations*      _GroupOperations;
+  GEOMImpl_IFieldOperations*      _FieldOperations;
+  GEOMImpl_ITestOperations*       _TestOperations;
+  GEOMImpl_ICanonicalRecognition* _CanonicalRecognition;
 };
 
 #endif

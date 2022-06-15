@@ -185,6 +185,7 @@ GEOMImpl_Gen::GEOMImpl_Gen()
    _GroupOperations = new GEOMImpl_IGroupOperations( this );
    _FieldOperations = new GEOMImpl_IFieldOperations( this );
    _TestOperations = new GEOMImpl_ITestOperations( this );
+   _CanonicalRecognition = new GEOMImpl_ICanonicalRecognition( this );
 }
 
 //=============================================================================
@@ -210,6 +211,7 @@ GEOMImpl_Gen::~GEOMImpl_Gen()
   delete _MeasureOperations;
   delete _GroupOperations;
   delete _FieldOperations;
+  delete _CanonicalRecognition;
 }
 
 //=============================================================================
@@ -350,4 +352,14 @@ GEOMImpl_IFieldOperations* GEOMImpl_Gen::GetIFieldOperations()
 GEOMImpl_ITestOperations* GEOMImpl_Gen::GetITestOperations()
 {
   return _TestOperations;
+}
+
+//=============================================================================
+/*!
+ * GetICanonicalRecognition
+ */
+//=============================================================================
+GEOMImpl_ICanonicalRecognition* GEOMImpl_Gen::GetICanonicalRecognition()
+{
+  return _CanonicalRecognition;
 }
