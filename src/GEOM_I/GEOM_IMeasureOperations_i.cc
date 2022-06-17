@@ -1443,3 +1443,97 @@ void GEOM_IMeasureOperations_i::ConvertToList(const GEOM::GEOM_IMeasureOperation
     theListOfResults.push_back(aCheck);
   }
 }
+
+//=============================================================================
+/*!
+ *  ShapeProximityCalculator
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::ShapeProximityCalculator(GEOM::GEOM_Object_ptr theShape1,
+                                                                          GEOM::GEOM_Object_ptr theShape2)
+{
+  GEOM::GEOM_Object_var anEmptyCalc;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference shape
+  Handle(::GEOM_Object) aShape1 = GetObjectImpl(theShape1);
+  Handle(::GEOM_Object) aShape2 = GetObjectImpl(theShape2);
+  if (aShape1.IsNull() || aShape2.IsNull())
+    return anEmptyCalc._retn();
+
+  Handle(::GEOM_Object) aCalculator = GetOperations()->ShapeProximityCalculator(aShape1, aShape2);
+  if (!GetOperations()->IsDone() || aCalculator.IsNull())
+    return anEmptyCalc._retn();
+
+  return GetObject(aCalculator);
+}
+
+//=============================================================================
+/*!
+ *  SetShapeSampling
+ */
+ //=============================================================================
+void GEOM_IMeasureOperations_i::SetShapeSampling(GEOM::GEOM_Object_ptr theCalculator,
+                                                 GEOM::GEOM_Object_ptr theShape,
+                                                 CORBA::Long theNbSamples)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the proximity calculator
+  Handle(::GEOM_Object) aCalc = GetObjectImpl(theCalculator);
+  if (aCalc.IsNull())
+    return ;
+  //Get the reference shape
+  Handle(::GEOM_Object) aShape = GetObjectImpl(theShape);
+  if (aShape.IsNull())
+    return ;
+
+  GetOperations()->SetShapeSampling(aCalc, aShape, theNbSamples);
+}
+
+//=============================================================================
+/*!
+ *  GetCoarseProximity
+ */
+ //=============================================================================
+CORBA::Double GEOM_IMeasureOperations_i::GetCoarseProximity(GEOM::GEOM_Object_ptr theCalculator)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference shape
+  Handle(::GEOM_Object) aCalc = GetObjectImpl(theCalculator);
+  if (aCalc.IsNull())
+    return -1.0;
+
+  Standard_Real aProximity = GetOperations()->GetCoarseProximity(aCalc);
+  if (!GetOperations()->IsDone())
+    return -1.0;
+
+  return aProximity;
+}
+
+//=============================================================================
+/*!
+ *  GetPreciseProximity
+ */
+ //=============================================================================
+CORBA::Double GEOM_IMeasureOperations_i::GetPreciseProximity(GEOM::GEOM_Object_ptr theCalculator)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference shape
+  Handle(::GEOM_Object) aCalc = GetObjectImpl(theCalculator);
+  if (aCalc.IsNull())
+    return -1.0;
+
+  Standard_Real aProximity = GetOperations()->GetPreciseProximity(aCalc);
+  if (!GetOperations()->IsDone())
+    return -1.0;
+
+  return aProximity;
+}

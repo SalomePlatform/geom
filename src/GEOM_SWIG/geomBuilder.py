@@ -262,6 +262,7 @@ import functools
 from salome.geom.gsketcher import Sketcher3D, Sketcher2D, Polyline2D
 from salome.geom.canonicalrecognition import CanonicalRecognition
 from salome.geom.conformity import CheckConformity
+from salome.geom.proximity import ShapeProximity
 
 # In case the omniORBpy EnumItem class does not fully support Python 3
 # (for instance in version 4.2.1-2), the comparison ordering methods must be
@@ -14055,6 +14056,21 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             """
             conf = CheckConformity (shape, self)
             return conf
+
+        ## Obtain a shape proximity calculator
+        #  @return An instance of @ref proximity.ShapeProximity "ShapeProximity" interface
+        #
+        #  @ref tui_proximity_page "Example"
+        def ShapeProximity (self):
+            """
+            Obtain a shape proximity calculator.
+
+            Example of usage:
+                prox = geompy.ShapeProximity()
+                value = prox.proximity(shape1, shape2)
+            """
+            prox = ShapeProximity (self)
+            return prox
 
         # end of l2_testing
         ## @}

@@ -84,6 +84,7 @@
 #include <GEOMImpl_MeasureDriver.hxx>
 #include <GEOMImpl_FieldDriver.hxx>
 #include <GEOMImpl_ConformityDriver.hxx>
+#include <GEOMImpl_ShapeProximityDriver.hxx>
 
 //=============================================================================
 /*!
@@ -165,6 +166,7 @@ GEOMImpl_Gen::GEOMImpl_Gen()
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_MeasureDriver::GetID(), new GEOMImpl_MeasureDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_PatchFaceDriver::GetID(), new GEOMImpl_PatchFaceDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_ConformityDriver::GetID(), new GEOMImpl_ConformityDriver());
+   TFunction_DriverTable::Get()->AddDriver(GEOMImpl_ShapeProximityDriver::GetID(), new GEOMImpl_ShapeProximityDriver());
 
    // Field
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_FieldDriver::GetID(), new GEOMImpl_FieldDriver());

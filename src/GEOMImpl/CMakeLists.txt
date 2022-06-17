@@ -95,6 +95,7 @@ SET(GEOMImpl_HEADERS
   GEOMImpl_ILine.hxx
   GEOMImpl_IPatchFace.hxx
   GEOMImpl_IPlane.hxx
+  GEOMImpl_IProximity.hxx
   GEOMImpl_IMarker.hxx
   GEOMImpl_ITranslate.hxx
   GEOMImpl_IMirror.hxx
@@ -182,6 +183,7 @@ SET(GEOMImpl_HEADERS
   GEOMImpl_FillingDriver.hxx
   GEOMImpl_GlueDriver.hxx
   GEOMImpl_PatchFaceDriver.hxx
+  GEOMImpl_ShapeProximityDriver.hxx
   GEOMImpl_Types.hxx
   GEOM_GEOMImpl.hxx
   GEOMImpl_ICanonicalRecognition.hxx
@@ -261,6 +263,7 @@ SET(GEOMImpl_SOURCES
   GEOMImpl_FillingDriver.cxx
   GEOMImpl_GlueDriver.cxx
   GEOMImpl_PatchFaceDriver.cxx
+  GEOMImpl_ShapeProximityDriver.cxx
   GEOMImpl_FieldDriver.cxx
   GEOMImpl_ICanonicalRecognition.cxx
   )

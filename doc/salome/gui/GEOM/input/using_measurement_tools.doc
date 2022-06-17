@@ -21,6 +21,7 @@
 <li>\subpage whatis_page "WhatIs"</li>
 <li>\subpage inspect_object_operation_page "Inspect Object"</li>
 <li>\subpage shape_statistics_operation_page "Shape Statistics"</li>
+<li>\subpage shape_proximity_page "Shapes Proximity"</li>
 </ul>
 
 \n To check their integrity:
