@@ -816,7 +816,8 @@ module GEOM
      *  \param theFace The referenced face.
      *  \return New GEOM_Object, containing the created point.
      */
-    GEOM_Object MakePointOnFace (in GEOM_Object theFace);
+    GEOM_Object MakePointOnFace (in GEOM_Object theFace,
+				 in long        theNumberOfPnts);
 
     /*!
      *  \brief Create a point, on two lines intersection.

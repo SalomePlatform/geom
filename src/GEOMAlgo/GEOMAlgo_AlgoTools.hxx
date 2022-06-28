@@ -42,6 +42,7 @@
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Edge.hxx>
+#include <TopoDS_Compound.hxx>
 
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
@@ -74,6 +75,13 @@ class GEOMAlgo_AlgoTools  {
     static  Standard_Integer PntInFace(const TopoDS_Face& theF,
 				       gp_Pnt& theP,
 				       gp_Pnt2d& theP2D) ;
+
+  //! Computes a set of points inside the face <theF>. <br>
+  //!          Returns 0 in case of success. <br>
+  Standard_EXPORT
+    static  Standard_Integer PointCloudInFace(const TopoDS_Face& theF,
+                                              const int          theNbPnts,
+                                              TopoDS_Compound&   theCompound) ;
 
   Standard_EXPORT
     static  Standard_Boolean IsCompositeShape(const TopoDS_Shape& aS) ;

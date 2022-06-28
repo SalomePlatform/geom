@@ -284,7 +284,8 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnSurfaceByCoord
  *  MakePointOnFace
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnFace (GEOM::GEOM_Object_ptr theFace)
+GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnFace (GEOM::GEOM_Object_ptr theFace,
+                                                                CORBA::Long           theNumberOfPnts)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -296,7 +297,7 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnFace (GEOM::GEOM_Objec
   if (aReference.IsNull()) return aGEOMObject._retn();
 
   //Create the point
-  Handle(::GEOM_Object) anObject = GetOperations()->MakePointOnFace(aReference);
+  Handle(::GEOM_Object) anObject = GetOperations()->MakePointOnFace(aReference, theNumberOfPnts);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

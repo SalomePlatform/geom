@@ -75,7 +75,8 @@ class GEOM_I_EXPORT GEOM_IBasicOperations_i :
                                                     CORBA::Double theYParameter,
                                                     CORBA::Double theZParameter);
 
-   GEOM::GEOM_Object_ptr MakePointOnFace (GEOM::GEOM_Object_ptr theFace);
+   GEOM::GEOM_Object_ptr MakePointOnFace (GEOM::GEOM_Object_ptr theFace,
+                                          CORBA::Long           theNumberOfPnts);
 
    GEOM::GEOM_Object_ptr MakePointOnLinesIntersection (GEOM::GEOM_Object_ptr theLine1,
 						       GEOM::GEOM_Object_ptr theLine2);
