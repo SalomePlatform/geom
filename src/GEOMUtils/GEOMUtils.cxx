@@ -37,6 +37,7 @@
 #include <BRepGProp.hxx>
 #include <BRepTools.hxx>
 
+#include <BRepClass_FaceClassifier.hxx>
 #include <BRepClass3d_SolidClassifier.hxx>
 
 #include <BRepBuilderAPI_MakeFace.hxx>
@@ -63,6 +64,8 @@
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_Array1OfShape.hxx>
+
+#include <GeomAPI_ProjectPointOnSurf.hxx>
 
 #include <Geom_Circle.hxx>
 #include <Geom_Surface.hxx>
@@ -1019,6 +1022,65 @@ Standard_Real GEOMUtils::GetMinDistance
   }
 
   return aResult;
+}
+
+//=======================================================================
+// function : ProjectPointOnFace()
+// purpose  : Returns the projection (3d point) if found, throws an exception otherwise
+//=======================================================================
+gp_Pnt GEOMUtils::ProjectPointOnFace(const gp_Pnt& thePoint,
+                                     const TopoDS_Shape& theFace,
+                                     double& theU, double& theV)
+{
+  if (theFace.IsNull() || theFace.ShapeType() != TopAbs_FACE)
+    Standard_TypeMismatch::Raise
+      ("Projection aborted : the target shape is not a face");
+
+  TopoDS_Face aFace = TopoDS::Face(theFace);
+  Handle(Geom_Surface) surface = BRep_Tool::Surface(aFace);
+  double U1, U2, V1, V2;
+  BRepTools::UVBounds(aFace, U1, U2, V1, V2);
+
+  // projector
+  Standard_Real tol = 1.e-4;        
+  GeomAPI_ProjectPointOnSurf proj;
+  proj.Init(surface, U1, U2, V1, V2, tol);
+  proj.Perform(thePoint);
+  if (!proj.IsDone())
+    StdFail_NotDone::Raise("Projection aborted : the algorithm failed");
+  int nbPoints = proj.NbPoints();
+  if (nbPoints < 1)
+    Standard_ConstructionError::Raise("Projection aborted : No solution found");
+  proj.LowerDistanceParameters(theU, theV);
+  gp_Pnt2d aProjPnt (theU, theV);
+
+  // classifier
+  BRepClass_FaceClassifier aClsf (aFace, aProjPnt, tol);
+  if (aClsf.State() != TopAbs_IN && aClsf.State() != TopAbs_ON) {
+    bool isSol = false;
+    double minDist = RealLast();
+    for (int i = 1; i <= nbPoints; i++) {
+      Standard_Real Ui, Vi;
+      proj.Parameters(i, Ui, Vi);
+      aProjPnt = gp_Pnt2d(Ui, Vi);
+      aClsf.Perform(aFace, aProjPnt, tol);
+      if (aClsf.State() == TopAbs_IN || aClsf.State() == TopAbs_ON) {
+        isSol = true;
+        double dist = proj.Distance(i);
+        if (dist < minDist) {
+          minDist = dist;
+          theU = Ui;
+          theV = Vi;
+        }
+      }
+    }
+    if (!isSol) {
+      Standard_ConstructionError::Raise("Projection aborted : No solution found");
+    }
+  }
+
+  gp_Pnt surfPnt = surface->Value(theU, theV);
+  return surfPnt;
 }
 
 //=======================================================================

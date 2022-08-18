@@ -1188,3 +1188,32 @@ CORBA::Double GEOM_IMeasureOperations_i::MinSurfaceCurvatureByPoint
 
   return GetOperations()->MinSurfaceCurvatureByPoint(aShape,aPoint);
 }
+
+//=============================================================================
+/*!
+ *  SurfaceCurvatureByPointAndDirection
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::SurfaceCurvatureByPointAndDirection
+                                          (GEOM::GEOM_Object_ptr theSurf,
+                                           GEOM::GEOM_Object_ptr thePoint,
+                                           GEOM::GEOM_Object_ptr theDirection)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference shape
+  Handle(::GEOM_Object) aShape = GetObjectImpl(theSurf);
+  Handle(::GEOM_Object) aPoint = GetObjectImpl(thePoint);
+  Handle(::GEOM_Object) aDirection = GetObjectImpl(theDirection);
+  if (aShape.IsNull() || aPoint.IsNull() || aDirection.IsNull()) return aGEOMObject._retn();
+
+  Handle(::GEOM_Object) anObject =
+    GetOperations()->SurfaceCurvatureByPointAndDirection(aShape,aPoint,aDirection);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}

@@ -164,6 +164,10 @@ class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
   CORBA::Double MinSurfaceCurvatureByPoint (GEOM::GEOM_Object_ptr theSurf,
                                             GEOM::GEOM_Object_ptr thePoint);
 
+  GEOM::GEOM_Object_ptr SurfaceCurvatureByPointAndDirection (GEOM::GEOM_Object_ptr theSurf,
+                                                             GEOM::GEOM_Object_ptr thePoint,
+                                                             GEOM::GEOM_Object_ptr theDirection);
+
   ::GEOMImpl_IMeasureOperations* GetOperations()
   { return (::GEOMImpl_IMeasureOperations*)GetImpl(); }
 };

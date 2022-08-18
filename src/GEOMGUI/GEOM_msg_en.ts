@@ -4981,6 +4981,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Compute normal to the face</translation>
     </message>
     <message>
+        <source>MEN_CURVATURE</source>
+        <translation>Vector of curvature</translation>
+    </message>
+    <message>
         <source>TOP_MEASURE_ANGLE</source>
         <translation>Angle</translation>
     </message>

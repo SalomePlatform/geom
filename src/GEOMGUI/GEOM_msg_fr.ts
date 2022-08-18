@@ -4973,6 +4973,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Vecteur normal à une face</translation>
     </message>
     <message>
+        <source>MEN_CURVATURE</source>
+        <translation>Vecteur de courbure</translation>
+    </message>
+    <message>
         <source>TOP_MEASURE_ANGLE</source>
         <translation>Angle</translation>
     </message>

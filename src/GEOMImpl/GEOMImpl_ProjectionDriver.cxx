@@ -127,70 +127,11 @@ Standard_Integer GEOMImpl_ProjectionDriver::Execute(Handle(TFunction_Logbook)& l
     Handle(GEOM_Function) aTargetFunction = TI.GetPlane();
     if (aTargetFunction.IsNull()) return 0;
     TopoDS_Shape aFaceShape = aTargetFunction->GetValue();
-    //if (aFaceShape.IsNull() || aFaceShape.ShapeType() != TopAbs_FACE) {
-    //  Standard_ConstructionError::Raise
-    //    ("Projection aborted : the target shape is not a face");
-    //}
-
-    Standard_Real tol = 1.e-4;        
 
     if (anOriginal.ShapeType() == TopAbs_VERTEX) {
-      if (aFaceShape.IsNull() || aFaceShape.ShapeType() != TopAbs_FACE) {
-        Standard_ConstructionError::Raise
-          ("Projection aborted : the target shape is not a face");
-      }
-      TopoDS_Face aFace = TopoDS::Face(aFaceShape);
-      Handle(Geom_Surface) surface = BRep_Tool::Surface(aFace);
-      double U1, U2, V1, V2;
-      //surface->Bounds(U1, U2, V1, V2);
-      BRepTools::UVBounds(aFace, U1, U2, V1, V2);
-
-      // projector
-      GeomAPI_ProjectPointOnSurf proj;
-      proj.Init(surface, U1, U2, V1, V2, tol);
-
-      gp_Pnt aPnt = BRep_Tool::Pnt(TopoDS::Vertex(anOriginal));
-      proj.Perform(aPnt);
-      if (!proj.IsDone()) {
-        Standard_ConstructionError::Raise
-          ("Projection aborted : the algorithm failed");
-      }
-      int nbPoints = proj.NbPoints();
-      if (nbPoints < 1) {
-        Standard_ConstructionError::Raise("No solution found");
-      }
-
       Standard_Real U, V;
-      proj.LowerDistanceParameters(U, V);
-      gp_Pnt2d aProjPnt (U, V);
-
-      // classifier
-      BRepClass_FaceClassifier aClsf (aFace, aProjPnt, tol);
-      if (aClsf.State() != TopAbs_IN && aClsf.State() != TopAbs_ON) {
-        bool isSol = false;
-        double minDist = RealLast();
-        for (int i = 1; i <= nbPoints; i++) {
-          Standard_Real Ui, Vi;
-          proj.Parameters(i, Ui, Vi);
-          aProjPnt = gp_Pnt2d(Ui, Vi);
-          aClsf.Perform(aFace, aProjPnt, tol);
-          if (aClsf.State() == TopAbs_IN || aClsf.State() == TopAbs_ON) {
-            isSol = true;
-            double dist = proj.Distance(i);
-            if (dist < minDist) {
-              minDist = dist;
-              U = Ui;
-              V = Vi;
-            }
-          }
-        }
-        if (!isSol) {
-          Standard_ConstructionError::Raise("No solution found");
-        }
-      }
-
-      gp_Pnt surfPnt = surface->Value(U, V);
-
+      gp_Pnt aPnt = BRep_Tool::Pnt(TopoDS::Vertex(anOriginal));
+      gp_Pnt surfPnt = GEOMUtils::ProjectPointOnFace(aPnt, aFaceShape, U, V);
       aShape = BRepBuilderAPI_MakeVertex(surfPnt).Shape();
     }
     else {

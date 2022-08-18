@@ -595,5 +595,20 @@ def TestAll (geompy, math):
   geompy.MakeExtraction(Box, [18], "Ext_no_edge")
   geompy.MakeExtraction(Box, [16], "Ext_no_vertex")
 
+  # CurvatureOnFace
+  Cylinder_1 = geompy.MakeCylinderRH(100, 50, 'Cylinder_r100_h150')
+  [Face_1,Face_2,Face_3] = geompy.ExtractShapes(Cylinder_1, geompy.ShapeType["FACE"], True, "Face")
+  curvature_1 = geompy.CurvatureOnFace(Face_2, px, vy, 'curvature_cyl_px_vy')
+  assert(abs(geompy.BasicProperties(curvature_1)[0] - 100) < 1e-07)
+  curvature_zero = geompy.CurvatureOnFace(Face_2, px, vz)
+  assert(geompy.MeasuOp.GetErrorCode() == "ZERO_CURVATURE")
+  assert(not curvature_zero)
+  isExcept = False
+  try:
+    # p0 is on cylinder axis, projection should fail
+    geompy.CurvatureOnFace(Face_2, p0, vy)
+  except:
+    isExcept = True
+  assert(isExcept)
 
   print("DONE")

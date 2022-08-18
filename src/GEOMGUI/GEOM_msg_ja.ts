@@ -4976,6 +4976,10 @@
       <translation>フェースに垂直</translation>
     </message>
     <message>
+      <source>MEN_CURVATURE</source>
+      <translation>Vector_of_curvature</translation>
+    </message>
+    <message>
       <source>TOP_MEASURE_ANGLE</source>
       <translation>角度</translation>
     </message>
