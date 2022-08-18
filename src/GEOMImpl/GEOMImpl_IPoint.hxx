@@ -42,6 +42,8 @@
 
 #define ARG_USE_ORIENTATION 12
 
+#define ARG_NBPNTS 13
+
 class GEOMImpl_IPoint
 {
  public:
@@ -72,12 +74,14 @@ class GEOMImpl_IPoint
 
   void SetParameter(double theParam) { _func->SetReal(ARG_PARAM, theParam); }
   void SetParameter2(double theParam) { _func->SetReal(ARG_PARAM2, theParam); }
+  void SetNumberOfPoints(int theNumberOfPnts) { _func->SetInteger(ARG_NBPNTS, theNumberOfPnts); }
   void SetLength(double theLength) { _func->SetReal(ARG_LENGTH, theLength); }
   void SetTakeOrientationIntoAccount(bool takeOrientationIntoAccount)
         { _func->SetInteger(ARG_USE_ORIENTATION, takeOrientationIntoAccount); }
 
   double GetParameter() { return _func->GetReal(ARG_PARAM); }
   double GetParameter2() { return _func->GetReal(ARG_PARAM2); }
+  int    GetNumberOfPoints() { return _func->GetInteger(ARG_NBPNTS); }
   double GetLength() { return _func->GetReal(ARG_LENGTH); }
   bool   GetTakeOrientationIntoAccount() { return _func->GetInteger(ARG_USE_ORIENTATION); }
 

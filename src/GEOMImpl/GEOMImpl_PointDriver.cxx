@@ -22,6 +22,8 @@
 
 #include <Standard_Stream.hxx>
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <GEOMImpl_PointDriver.hxx>
 #include <GEOMImpl_IPoint.hxx>
 #include <GEOMImpl_Types.hxx>
@@ -57,6 +59,7 @@
 #include <Precision.hxx>
 
 #include <Standard_NullObject.hxx>
+#include <Standard_NotImplemented.hxx>
 
 //=======================================================================
 //function : GetID
@@ -301,13 +304,31 @@ Standard_Integer GEOMImpl_PointDriver::Execute(Handle(TFunction_Logbook)& log) c
   else if (aType == POINT_FACE_ANY) {
     Handle(GEOM_Function) aRefFunc = aPI.GetSurface();
     TopoDS_Shape aRefShape = aRefFunc->GetValue();
+    int aNbPnts = aPI.GetNumberOfPoints();
+    if (aNbPnts < 1) {
+      Standard_TypeMismatch::Raise
+        ("Point On Surface creation aborted : number of points is zero or negative");
+    }
     if (aRefShape.ShapeType() != TopAbs_FACE) {
       Standard_TypeMismatch::Raise
         ("Point On Surface creation aborted : surface shape is not a face");
     }
     TopoDS_Face F = TopoDS::Face(aRefShape);
-    gp_Pnt2d aP2d;
-    GEOMAlgo_AlgoTools::PntInFace(F, aPnt, aP2d);
+    if (aNbPnts == 1)
+    {
+      gp_Pnt2d aP2d;
+      GEOMAlgo_AlgoTools::PntInFace(F, aPnt, aP2d);
+    }
+    else
+    {
+#if OCC_VERSION_LARGE < 0x07050304
+      Standard_NotImplemented::Raise("Point cloud creation aborted. Improper OCCT version: please, use OCCT 7.5.3p4 or newer.");
+#else
+      if (GEOMAlgo_AlgoTools::PointCloudInFace(F, aNbPnts, aCompound) < 0)
+        Standard_ConstructionError::Raise("Point cloud creation aborted : algorithm failed");
+      retCompound = true;
+#endif
+    }
   }
   else if (aType == POINT_LINES_INTERSECTION) {
     Handle(GEOM_Function) aRef1 = aPI.GetLine1();

@@ -66,7 +66,8 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
                                                                  double theYParam,
                                                                  double theZParam);
 
-  Standard_EXPORT Handle(GEOM_Object) MakePointOnFace (Handle(GEOM_Object) theFace);
+  Standard_EXPORT Handle(GEOM_Object) MakePointOnFace (Handle(GEOM_Object) theFace,
+                                                       int                 theNumberOfPnts);
 
   // Vector
   Standard_EXPORT Handle(GEOM_Object) MakeVectorDXDYDZ (double theDX, double theDY, double theDZ);
@@ -142,6 +143,7 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
                       double              theParam2,
                       double              theParam3,
                       const PointLocation theLocation,
+                      int                 theNumberOfPnts = 1,
                       const bool          takeOrientationIntoAccount = false,
                       Handle(GEOM_Object) theRefPoint = 0);
 };

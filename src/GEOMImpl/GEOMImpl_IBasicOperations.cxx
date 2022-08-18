@@ -184,6 +184,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::makePointOnGeom
                      double              theParam2,
                      double              theParam3,
                      const PointLocation theLocation,
+                     int                 theNumberOfPnts,
                      const bool          takeOrientationIntoAccount,
                      Handle(GEOM_Object) theRefPoint)
 {
@@ -250,6 +251,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::makePointOnGeom
       break;
     case PointOn_Face:
       aPI.SetSurface(aRefFunction);
+      aPI.SetNumberOfPoints(theNumberOfPnts);
       break;
     default: break;
     }
@@ -296,7 +298,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::makePointOnGeom
       break;
     case PointOn_Face:
       GEOM::TPythonDump(aFunction) << aPoint << " = geompy.MakeVertexInsideFace("
-                                   << theGeomObj << ")";
+                                   << theGeomObj << ", " << theNumberOfPnts << ")";
       break;
     default: break;
     }
@@ -316,7 +318,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnCurve
                              bool                takeOrientationIntoAccount)
 {
   return makePointOnGeom(theCurve, theParameter, 0.0, 0.0, PointOn_CurveByParam,
-                         takeOrientationIntoAccount);
+                         1, takeOrientationIntoAccount);
 }
 
 //=============================================================================
@@ -344,7 +346,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnCurveByLength
                      Handle(GEOM_Object) theStartPoint)
 {
   return makePointOnGeom(theCurve, theLength, 0.0, 0.0, PointOn_CurveByLength,
-                         false, theStartPoint);
+                         1, false, theStartPoint);
 }
 
 //=============================================================================
@@ -379,9 +381,10 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnSurfaceByCoord
  *  MakePointOnFace
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnFace (Handle(GEOM_Object) theFace)
+Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnFace (Handle(GEOM_Object) theFace,
+                                                                int                 theNumberOfPnts)
 {
-  return makePointOnGeom(theFace, 0., 0., 0., PointOn_Face);
+  return makePointOnGeom(theFace, 0., 0., 0., PointOn_Face, theNumberOfPnts);
 }
 
 //=============================================================================

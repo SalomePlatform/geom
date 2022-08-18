@@ -1441,7 +1441,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #
         #  @ref swig_MakeVertexInsideFace "Example"
         @ManageTransactions("BasicOp")
-        def MakeVertexInsideFace (self, theFace, theName=None):
+        def MakeVertexInsideFace (self, theFace, theNumberOfPnts=1, theName=None):
             """
             Create a point, which lays on the given face.
             The point will lay in arbitrary place of the face.
@@ -1451,6 +1451,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
 
             Parameters:
                 theFace The referenced face.
+                theNumberOfPnts The number of points we want to get, 1 by default.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -1462,7 +1463,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                 p_on_face = geompy.MakeVertexInsideFace(Face)
             """
             # Example: see GEOM_TestAll.py
-            anObj = self.BasicOp.MakePointOnFace(theFace)
+            anObj = self.BasicOp.MakePointOnFace(theFace, theNumberOfPnts)
             RaiseIfFailed("MakeVertexInsideFace", self.BasicOp)
             self._autoPublish(anObj, theName, "vertex")
             return anObj
