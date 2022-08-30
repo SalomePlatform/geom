@@ -65,6 +65,7 @@
 #include <GEOMImpl_FilletDriver.hxx>
 #include <GEOMImpl_Fillet1dDriver.hxx>
 #include <GEOMImpl_Fillet2dDriver.hxx>
+#include <GEOMImpl_PatchFaceDriver.hxx>
 #include <GEOMImpl_TranslateDriver.hxx>
 #include <GEOMImpl_RotateDriver.hxx>
 #include <GEOMImpl_MirrorDriver.hxx>
@@ -161,6 +162,7 @@ GEOMImpl_Gen::GEOMImpl_Gen()
 
    // Measurements
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_MeasureDriver::GetID(), new GEOMImpl_MeasureDriver());
+   TFunction_DriverTable::Get()->AddDriver(GEOMImpl_PatchFaceDriver::GetID(), new GEOMImpl_PatchFaceDriver());
 
    // Field
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_FieldDriver::GetID(), new GEOMImpl_FieldDriver());

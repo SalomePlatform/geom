@@ -69,6 +69,7 @@ public:
   void getBlocksOp();
   void getCurvesOp();
   void getLocalOp();
+  void getMeasureOp();
   void getGroupOp();
   void getAdvancedOp();
   void getSTLPluginOp();
@@ -780,6 +781,11 @@ public:
                                              CORBA::Double theH,
                                              GEOM::pattern thePattern);
   GEOM::GEOM_Object_ptr MakeSmoothingSurface (GEOM::GEOM_List_ptr thelPoints);
+
+  //-----------------------------------------------------------//
+  // Measure Operations                                        //
+  //-----------------------------------------------------------//
+  GEOM::GEOM_List_ptr PatchFace(GEOM::GEOM_Object_ptr theShape);
   /*@@ insert new functions before this line @@ do not remove this line @@*/
 
 protected:
@@ -797,6 +803,7 @@ private:
   GEOM::GEOM_IBlocksOperations_var    myBlocksOp;
   GEOM::GEOM_ICurvesOperations_var    myCurvesOp;
   GEOM::GEOM_ILocalOperations_var     myLocalOp;
+  GEOM::GEOM_IMeasureOperations_var   myMeasureOp;
   GEOM::GEOM_IGroupOperations_var     myGroupOp;
   GEOM::IAdvancedOperations_var       myAdvancedOp;
   GEOM::ISTLOperations_var            mySTLOp;
