@@ -1089,17 +1089,17 @@ gp_Pnt GEOMUtils::ProjectPointOnFace(const gp_Pnt& thePoint,
 //=======================================================================
 gp_Pnt GEOMUtils::ConvertClickToPoint( int x, int y, Handle(V3d_View) aView )
 {
-  V3d_Coordinate XEye, YEye, ZEye, XAt, YAt, ZAt;
-  aView->Eye( XEye, YEye, ZEye );
+  // We can't rely on Eye and At points to get EyeDir, because they collapse
+  // for views with flat bounding boxes. For example if you create a circle and
+  // switch to the top view, then both camera's Eye and At points will fall to zero
+  // inside V3d_View::FitMinMax() method. It's by occt design.
+  // So, we should use camera direction instead.
 
-  aView->At( XAt, YAt, ZAt );
-  gp_Pnt EyePoint( XEye, YEye, ZEye );
-  gp_Pnt AtPoint( XAt, YAt, ZAt );
+  V3d_Coordinate XAt, YAt, ZAt;
+  aView->At(XAt, YAt, ZAt);
+  gp_Pnt AtPoint(XAt, YAt, ZAt);
 
-  gp_Vec EyeVector( EyePoint, AtPoint );
-  gp_Dir EyeDir( EyeVector );
-
-  gp_Pln PlaneOfTheView = gp_Pln( AtPoint, EyeDir );
+  gp_Pln PlaneOfTheView = gp_Pln( AtPoint, aView->Camera()->Direction() );
   Standard_Real X, Y, Z;
   aView->Convert( x, y, X, Y, Z );
   gp_Pnt ConvertedPoint( X, Y, Z );
