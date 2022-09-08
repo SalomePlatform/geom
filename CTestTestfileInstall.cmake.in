@@ -17,6 +17,9 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
+SET(OpenCASCADE_VERSION @OpenCASCADE_VERSION@)
+SET(OpenCASCADE_SP_VERSION @OpenCASCADE_SP_VERSION@)
+
 SET(PYTHON_TEST_DRIVER "$ENV{KERNEL_ROOT_DIR}/bin/salome/appliskel/python_test_driver.py")
 SET(COMPONENT_NAME GEOM)
 SET(TIMEOUT        300)

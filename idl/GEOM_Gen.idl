@@ -4937,6 +4937,48 @@ module GEOM
                       in boolean isRelative, in double angularDeflection);
   };
 
+  // # GEOM_ICanonicalRecognition:
+  /*!
+   *  \brief Interface for canonical recognition operations.
+   */
+  interface GEOM_ICanonicalRecognition : GEOM_IOperations
+  {
+    /*!
+     * check if the shape is planar
+     */
+    boolean isPlane(in GEOM_Object shape, in double tolerance, inout ListOfDouble normal, inout ListOfDouble origin);
+
+    /*!
+     * check if shape is spherical
+     */
+    boolean isSphere(in GEOM_Object shape, in double tolerance, inout ListOfDouble origin, inout double radius);
+
+    /*!
+     * check if shape is conical
+     */
+    boolean isCone(in GEOM_Object shape, in double tolerance, inout ListOfDouble axis, inout ListOfDouble apex, inout double halfAngle);
+
+    /*!
+     * check if shape is cylinder
+     */
+    boolean isCylinder(in GEOM_Object shape, in double tolerance, inout ListOfDouble axis, inout ListOfDouble origin, inout double radius);
+
+    /*!
+     * check if edge / wire is line
+     */
+    boolean isLine(in GEOM_Object edge, in double tolerance, inout ListOfDouble direction, inout ListOfDouble origin);
+
+    /*!
+     * check if edge / wire is circle
+     */
+    boolean isCircle(in GEOM_Object edge, in double tolerance, inout ListOfDouble normal, inout ListOfDouble origin, inout double radius);
+
+    /*!
+     * check if edge / wire is ellipse
+     */
+    boolean isEllipse(in GEOM_Object edge, in double tolerance, inout ListOfDouble normal, inout ListOfDouble dirX, inout ListOfDouble origin, inout double majorRadius, inout double minorRadius);
+  };
+
   // # GEOM_Gen:
   /*!
    *  \brief Interface to access other GEOM interfaces.
@@ -5050,20 +5092,21 @@ module GEOM
 
     // #  Methods to access interfaces for objects creation and transformation
 
-    GEOM_IBasicOperations     GetIBasicOperations    () raises (SALOME::SALOME_Exception);
-    GEOM_ITransformOperations GetITransformOperations() raises (SALOME::SALOME_Exception);
-    GEOM_I3DPrimOperations    GetI3DPrimOperations   () raises (SALOME::SALOME_Exception);
-    GEOM_IShapesOperations    GetIShapesOperations   () raises (SALOME::SALOME_Exception);
-    GEOM_IBooleanOperations   GetIBooleanOperations  () raises (SALOME::SALOME_Exception);
-    GEOM_ICurvesOperations    GetICurvesOperations   () raises (SALOME::SALOME_Exception);
-    GEOM_ILocalOperations     GetILocalOperations    () raises (SALOME::SALOME_Exception);
-    GEOM_IHealingOperations   GetIHealingOperations  () raises (SALOME::SALOME_Exception);
-    GEOM_IInsertOperations    GetIInsertOperations   () raises (SALOME::SALOME_Exception);
-    GEOM_IMeasureOperations   GetIMeasureOperations  () raises (SALOME::SALOME_Exception);
-    GEOM_IBlocksOperations    GetIBlocksOperations   () raises (SALOME::SALOME_Exception);
-    GEOM_IGroupOperations     GetIGroupOperations    () raises (SALOME::SALOME_Exception);
-    GEOM_IFieldOperations     GetIFieldOperations    () raises (SALOME::SALOME_Exception);
-    GEOM_ITestOperations      GetITestOperations     () raises (SALOME::SALOME_Exception);
+    GEOM_IBasicOperations      GetIBasicOperations     () raises (SALOME::SALOME_Exception);
+    GEOM_ITransformOperations  GetITransformOperations () raises (SALOME::SALOME_Exception);
+    GEOM_I3DPrimOperations     GetI3DPrimOperations    () raises (SALOME::SALOME_Exception);
+    GEOM_IShapesOperations     GetIShapesOperations    () raises (SALOME::SALOME_Exception);
+    GEOM_IBooleanOperations    GetIBooleanOperations   () raises (SALOME::SALOME_Exception);
+    GEOM_ICurvesOperations     GetICurvesOperations    () raises (SALOME::SALOME_Exception);
+    GEOM_ILocalOperations      GetILocalOperations     () raises (SALOME::SALOME_Exception);
+    GEOM_IHealingOperations    GetIHealingOperations   () raises (SALOME::SALOME_Exception);
+    GEOM_IInsertOperations     GetIInsertOperations    () raises (SALOME::SALOME_Exception);
+    GEOM_IMeasureOperations    GetIMeasureOperations   () raises (SALOME::SALOME_Exception);
+    GEOM_IBlocksOperations     GetIBlocksOperations    () raises (SALOME::SALOME_Exception);
+    GEOM_IGroupOperations      GetIGroupOperations     () raises (SALOME::SALOME_Exception);
+    GEOM_IFieldOperations      GetIFieldOperations     () raises (SALOME::SALOME_Exception);
+    GEOM_ITestOperations       GetITestOperations      () raises (SALOME::SALOME_Exception);
+    GEOM_ICanonicalRecognition GetICanonicalRecognition() raises (SALOME::SALOME_Exception);
 
     GEOM_IOperations GetPluginOperations (in string theLibName) raises (SALOME::SALOME_Exception);
 

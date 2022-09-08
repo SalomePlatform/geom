@@ -52,6 +52,7 @@
 #include "GEOM_IGroupOperations_i.hh"
 #include "GEOM_IFieldOperations_i.hh"
 #include "GEOM_ITestOperations_i.hh"
+#include "GEOM_ICanonicalRecognition_i.hh"
 #include "GEOMUtils.hxx"
 
 #include <TopTools_IndexedMapOfShape.hxx>
@@ -258,6 +259,8 @@ class GEOM_I_EXPORT GEOM_Gen_i : public POA_GEOM::GEOM_Gen, public Engines_Compo
   //Returns a pointer to TestOperations interface
   virtual GEOM::GEOM_ITestOperations_ptr GetITestOperations()
     ;
+
+  virtual GEOM::GEOM_ICanonicalRecognition_ptr GetICanonicalRecognition();
 
   //Returns a pointer to corresponding plugin operations interface
   virtual GEOM::GEOM_IOperations_ptr GetPluginOperations (const char* theLibName)
