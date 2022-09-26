@@ -1,0 +1,55 @@
+/*! 
+
+\page check_conformity_page Check Conformity
+
+The Check Conformity tool provides the user with a simple python API to analyze, available shape for Boolean Operations or not. \n
+Also tool provide advanced output to indicate imperfections in the input shape.
+
+This is just a TUI functionality.
+
+<b>TUI Commands:</b>
+
+<UL>
+
+<LI> 
+<em>geompy.CheckConformity(shape),</em> \n
+where \n
+\em shape is the shape checked for validity. \n
+</LI>
+
+The following functionality is available from the tool:
+<LI>
+<em>geompy.isValid()</em> 
+
+</LI>
+
+<LI>
+<em>geompy.selfIntersected2D()</em> 
+</LI>
+
+<LI>
+<em>geompy.interferingSubshapes(shapeType1, shapeType2),</em> 
+where \n
+\em shapeType1 is the first type of subshape. \n
+\em shapeType2 is the second type of subshape. \n 
+</LI>
+
+<LI>
+<em>geompy.smallEdges()</em> 
+</LI>
+
+<LI>
+<em>geompy.distantShapes(shapeType, subShapeType, tolerance),</em> 
+where \n
+\em shapeType is the type of shape. \n
+\em subShapeType is the type of subshape. \n
+\em tolerance is available tolerance, by default used tolerance of sub-shape.
+</LI>
+
+<LI>
+<em>geompy.updateTolerance()</em> 
+</LI>
+</UL>
+See also a \ref tui_check_conformity_page "TUI example".
+
+*/

@@ -19,11 +19,13 @@
 
 SET(ALL_TESTS
   test_perf_01.py
+  test_patch_face_01.py
   )
 
 IF(${OpenCASCADE_VERSION}.${OpenCASCADE_SP_VERSION} VERSION_GREATER "7.5.3.3")
     LIST(APPEND ALL_TESTS
       test_point_cloud_on_face.py
       test_CR.py
+      test_conformity.py
     )
 ENDIF()

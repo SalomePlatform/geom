@@ -29,6 +29,7 @@
 <li>\subpage boundaries_page "Check Free Boundaries"</li>
 <li>\subpage free_faces_page "Check Free Faces"</li>
 <li>\subpage check_shape_page "Check Shape"</li>
+<li>\subpage check_conformity_page "Check Conformity"</li>
 <li>\subpage check_compound_of_blocks_page "Check compound of blocks"</li>
 <li>\subpage get_non_blocks_page "Get non blocks"</li>
 <li>\subpage check_self_intersections_page "Detect Self-intersections"</li>

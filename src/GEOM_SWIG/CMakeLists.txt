@@ -72,6 +72,7 @@ SET(_python_SCRIPTS
   geomBuilder.py
   gsketcher.py
   canonicalrecognition.py
+  conformity.py
   )
 
 # Advanced scripts

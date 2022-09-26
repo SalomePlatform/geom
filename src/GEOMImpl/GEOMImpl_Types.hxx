@@ -125,6 +125,8 @@
 
 #define GEOM_PATCH_FACE 60
 
+#define GEOM_CHECKCONFORMITY 62
+
 //GEOM_Function types
 
 #define COPY_WITH_REF    1
@@ -395,6 +397,10 @@
 #define TD_GET_IN_PLACE            1
 #define TD_GET_IN_PLACE_OLD        2
 #define TD_GET_IN_PLACE_BY_HISTORY 3
+
+// Conformity operations
+#define CONFORMITY_UPDATE_TOL       2
+#define CONFORMITY_CHECK_SHAPE      3
 
 // Plugins specified constants
 #define PLUGIN_NAME "Plugin Name"
