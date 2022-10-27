@@ -529,7 +529,12 @@ def TestOtherOperations (geompy, math):
 
   Shell_1 = geompy.MakeShell([Face_1, Rotation_1, Rotation_2, Rotation_3, Rotation_4, Rotation_5])
   Solid_1 = geompy.MakeSolid([Shell_1])
-  NoExtraEdges_1 = geompy.RemoveExtraEdges(Solid_1, True) # doUnionFaces = True
+  #NoExtraEdges_1 = geompy.RemoveExtraEdges(Solid_1, True) # doUnionFaces = True
+
+  box10 = geompy.MakeBoxDXDYDZ(10, 10, 10, "box10")
+  box11 = geompy.MakeTranslation(box10, 10, 0, 0, "box11")
+  FuseB = geompy.MakeFuse(box10, box11, checkSelfInte=False, rmExtraEdges=False, theName="FuseB")
+  NoExtraEdges_1 = geompy.RemoveExtraEdges(FuseB, True) # doUnionFaces = True
 
   geompy.addToStudy(Shell_1, "Shell_1")
   geompy.addToStudy(Solid_1, "Solid_1")
