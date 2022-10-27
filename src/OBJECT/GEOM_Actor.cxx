@@ -73,10 +73,6 @@
 
 //vtkStandardNewMacro(GEOM_Actor)
 
-#ifndef MYDEBUG
-//#define MYDEBUG
-#endif
-
 GEOM_Actor::GEOM_Actor(): 
   isOnlyVertex(false),
 
@@ -127,9 +123,8 @@ GEOM_Actor::GEOM_Actor():
   // defined in this class !!!
   myPolyDataMapper(GEOM_PainterPolyDataMapper::New(),true)
 { 
-#ifdef MYDEBUG
-  MESSAGE (this<< " GEOM_Actor::GEOM_Actor");
-#endif
+
+  MESSAGE(this<< " GEOM_Actor::GEOM_Actor");
 
   myPolyDataMapper->SetInputConnection(myAppendFilter->GetOutputPort()); 
   vtkProperty* aProperty; 
@@ -215,9 +210,8 @@ GEOM_Actor::GEOM_Actor():
  
 GEOM_Actor::~GEOM_Actor() 
 { 
-#ifdef MYDEBUG
-  MESSAGE (this<< " ~GEOM_Actor::GEOM_Actor");
-#endif
+  MESSAGE(this << " ~GEOM_Actor::GEOM_Actor");
+
   myTextActor->Delete();
   myHighlightProp->Delete();
   myPreHighlightProp->Delete();
@@ -319,9 +313,7 @@ void
 GEOM_Actor:: 
 setDisplayMode(int theMode) 
 { 
-#ifdef MYDEBUG
-  MESSAGE ( "GEOM_Actor::setDisplayMode = "<<theMode );
-#endif
+  MESSAGE("GEOM_Actor::setDisplayMode = " << theMode);
 
   if ( theMode == (int)eShadingWithEdges ) {
     // Coloring edges
@@ -356,9 +348,7 @@ void
 GEOM_Actor:: 
 SetSelected(bool theIsSelected) 
 { 
-#ifdef MYDEBUG
-  MESSAGE ( "GEOM_Actor::SetSelected = "<<theIsSelected  );
-#endif
+  MESSAGE("GEOM_Actor::SetSelected = " << theIsSelected);
 
   myIsSelected = theIsSelected; 
   SetVisibility(GetVisibility()); 
@@ -368,10 +358,8 @@ void
 GEOM_Actor:: 
 SetVisibility(int theVisibility) 
 { 
-#ifdef MYDEBUG
-  MESSAGE ( "GEOM_Actor::SetVisibility = "<<theVisibility <<"  myIsSelected="<< myIsSelected
-            << " theVisibility="<<theVisibility<<" myIsPreselected="<<myIsPreselected );
-#endif
+  MESSAGE("GEOM_Actor::SetVisibility = " << theVisibility << "  myIsSelected=" << myIsSelected
+            << " theVisibility=" << theVisibility << " myIsPreselected=" << myIsPreselected);
 
   SALOME_Actor::SetVisibility(theVisibility);
 
@@ -553,18 +541,16 @@ void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
 
 void GEOM_Actor::SetHighlightProperty(vtkProperty* Prop)
 {
-#ifdef MYDEBUG
-  MESSAGE ( "GEOM_Actor::SetHighlightProperty" );
-#endif
+  MESSAGE("GEOM_Actor::SetHighlightProperty");
+
   this->myHighlightActor->GetProperty()->DeepCopy(Prop);
   
 }
 
 void GEOM_Actor::SetWireframeProperty(vtkProperty* Prop)
 {
-#ifdef MYDEBUG
-  MESSAGE ( this << " GEOM_Actor::SetWireframeProperty" );
-#endif
+  MESSAGE(this << " GEOM_Actor::SetWireframeProperty");
+
   // must be filled
   myWireframeFaceActor->SetProperty(Prop);
 }
@@ -602,9 +588,8 @@ vtkProperty* GEOM_Actor::GetFaceEdgeProperty()
 
 void GEOM_Actor::SetShadingProperty(vtkProperty* Prop)
 {
-#ifdef MYDEBUG
-  MESSAGE ( "GEOM_Actor::SetShadingProperty" );
-#endif
+  MESSAGE("GEOM_Actor::SetShadingProperty");
+
   myShadingFaceProp->DeepCopy(Prop);
 }
 
@@ -617,9 +602,7 @@ vtkProperty* GEOM_Actor::GetShadingProperty()
 
 void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *theMapper)
 {
-#ifdef MYDEBUG
-  MESSAGE ( "GEOM_Actor::Render" );
-#endif
+  MESSAGE("GEOM_Actor::Render");
 
   if(!GetVisibility())
     return;
@@ -695,18 +678,13 @@ void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *theMapper)
 
 void GEOM_Actor::ReleaseGraphicsResources(vtkWindow *)
 {
-#ifdef MYDEBUG
-  MESSAGE ( "GEOM_Actor::ReleaseGraphicsResources" );
-#endif  
+  MESSAGE("GEOM_Actor::ReleaseGraphicsResources");
 }
-
-
 
 void GEOM_Actor::ShallowCopy(vtkProp *prop)
 {
-#ifdef MYDEBUG
-  MESSAGE ( "GEOM_Actor::ShallowCopy" );
-#endif
+  MESSAGE("GEOM_Actor::ShallowCopy");
+
   GEOM_Actor *f = GEOM_Actor::SafeDownCast(prop);
   if ( f != NULL )
     {
@@ -717,48 +695,40 @@ void GEOM_Actor::ShallowCopy(vtkProp *prop)
   this->SALOME_Actor::ShallowCopy(prop);
 }
 
-const TopoDS_Shape& GEOM_Actor::getTopo() {
-#ifdef MYDEBUG
-  MESSAGE ( "GEOM_Actor::getTopo" );
-#endif
+const TopoDS_Shape& GEOM_Actor::getTopo()
+{
+  MESSAGE("GEOM_Actor::getTopo");
+
   return myShape;
 }
 
 void GEOM_Actor::setInputShape(const TopoDS_Shape& /*ashape*/, double /*adef1*/,
                                int /*imode*/, bool /*isVector*/)
 {
-#ifdef MYDEBUG
-  MESSAGE ( "GEOM_Actor::setInputShape" );
-#endif
+  MESSAGE("GEOM_Actor::setInputShape");
 }
 
 double GEOM_Actor::isVector()
 {
-#ifdef MYDEBUG
-  MESSAGE ( "GEOM_Actor::isVector" );
-#endif  
+  MESSAGE("GEOM_Actor::isVector");
+
   return 0;
 }
 
 void GEOM_Actor::SubShapeOn()
 {
-#ifdef MYDEBUG
-  MESSAGE ( "GEOM_Actor::SubShapeOn" );
-#endif  
+  MESSAGE("GEOM_Actor::SubShapeOn");
 }
 
 void GEOM_Actor::SubShapeOff()
 {
-#ifdef MYDEBUG
-  MESSAGE ( "GEOM_Actor::SubShapeOff" );
-#endif
+  MESSAGE("GEOM_Actor::SubShapeOff");
 }
 
 void GEOM_Actor::highlight(bool highlight)
 {
-#ifdef MYDEBUG
-  MESSAGE ( this << " GEOM_Actor::highlight highlight="<<highlight );
-#endif
+  MESSAGE(this << " GEOM_Actor::highlight highlight=" << highlight);
+
   SALOME_Actor::highlight(highlight);  
 }
 
@@ -973,9 +943,8 @@ GEOM_Actor
 ::Highlight(bool theIsHighlight)
 {
   myIsSelected = theIsHighlight;
-#ifdef MYDEBUG
-  MESSAGE ( this << " GEOM_Actor::Highlight myIsSelected="<<myIsSelected );
-#endif
+
+  MESSAGE(this << " GEOM_Actor::Highlight myIsSelected=" << myIsSelected);
 
   SALOME_Actor::Highlight(theIsHighlight); // this method call ::highlight(theIsHighlight) in the end
   SetVisibility(GetVisibility());
@@ -990,9 +959,7 @@ GEOM_Actor
                SVTK_SelectionEvent* theSelectionEvent,
                bool theIsHighlight)
 {
-#ifdef MYDEBUG
-  MESSAGE ( this<<" GEOM_Actor::PreHighlight (3) theIsHighlight="<<theIsHighlight );
-#endif
+  MESSAGE(this << " GEOM_Actor::PreHighlight (3) theIsHighlight=" << theIsHighlight);
 
   if ( !GetPickable() )
     return false;  
@@ -1040,14 +1007,12 @@ GEOM_Actor
             bool theIsHighlight)
 {
   // define the selection of object
-#ifdef MYDEBUG
-  MESSAGE ( std::endl << this << " GEOM_Actor::Highlight (3) myIsSelected="<<myIsSelected );
-#endif
+  MESSAGE(std::endl << this << " GEOM_Actor::Highlight (3) myIsSelected=" << myIsSelected);
+
   bool aRet = SALOME_Actor::Highlight(theInteractorStyle,theSelectionEvent,theIsHighlight);
   SetSelected(theIsHighlight);
   if(theIsHighlight)
     SetPreSelected(false);
-  
  
   return aRet;
 }

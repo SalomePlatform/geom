@@ -135,7 +135,7 @@ void EntityGUI_PictureImportDlg::FileSelectionClicked()
 //=================================================================================
 void EntityGUI_PictureImportDlg::ClickOnOk()
 {
-  MESSAGE("EntityGUI_PictureImportDlg::ClickOnOk()")
+  MESSAGE("EntityGUI_PictureImportDlg::ClickOnOk()");
   setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
@@ -147,7 +147,7 @@ void EntityGUI_PictureImportDlg::ClickOnOk()
 //=================================================================================
 bool EntityGUI_PictureImportDlg::ClickOnApply()
 {
-  MESSAGE("EntityGUI_PictureImportDlg::ClickOnApply()")
+  MESSAGE("EntityGUI_PictureImportDlg::ClickOnApply()");
   if ( !onAccept() )
     return false;
   

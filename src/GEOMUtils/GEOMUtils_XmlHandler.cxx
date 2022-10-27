@@ -19,6 +19,7 @@
 
 #include "GEOMUtils_XmlHandler.hxx"
 #include <Basics_Utils.hxx>
+#include "utilities.h"
 
 #include <libxml/parser.h>
 #include <algorithm>
@@ -29,8 +30,6 @@
 #else
 #include <unistd.h>
 #endif
-
-//#define MYDEBUG
 
 namespace
 {
@@ -186,7 +185,6 @@ namespace
 	  return xmlPaths;
   }
 
-#ifdef MYDEBUG
   void dumpinfo(const GEOMUtils::PluginInfo& info)
   {
     printf("DUMPING PLUGIN INFO\n");
@@ -210,7 +208,6 @@ namespace
       printf("-----\n");
     }
   }
-#endif
 }
 
 namespace GEOMUtils
@@ -284,9 +281,10 @@ namespace GEOMUtils
 	//xmlCleanupParser();//vsr: xmlCleanupParser should not be called from the application
       } // end xml doc
     }
-#ifdef MYDEBUG
-    dumpinfo(info);
-#endif
+
+	if (SALOME::VerbosityActivated())
+    	dumpinfo(info);
+
     return info;
   }
 }

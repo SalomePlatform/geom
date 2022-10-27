@@ -83,13 +83,6 @@
 #define C_SQR_BRACKET ']'
 #define PY_NULL "None"
 
-#ifdef _DEBUG_
-static int MYDEBUG = 0;
-using namespace std;
-#else
-static int MYDEBUG = 0;
-#endif
-
 // VSR 29/08/2017: 0023327, 0023428: eliminate unnecessary lines in Python dump
 // Next macro, when defined, causes appearing of SubShapeAllIDs(), SubShapeAllSortedIDs(), GetSameIDs()
 // and other such commands in Python dump.
@@ -1302,10 +1295,10 @@ Handle(TColStd_HSequenceOfInteger) FindEntries(TCollection_AsciiString& theStrin
 void ReplaceVariables(TCollection_AsciiString& theCommand,
                       const TVariablesList&    theVariables)
 {
-  if (MYDEBUG)
+  if (SALOME::VerbosityActivated())
     std::cout<<"Command : "<<theCommand<<std::endl;
 
-  if (MYDEBUG) {
+  if (SALOME::VerbosityActivated()) {
     std::cout<<"All Entries:"<<std::endl;
     TVariablesList::const_iterator it = theVariables.begin();
     for(;it != theVariables.end();it++)
@@ -1319,7 +1312,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
     if( aCommand.Length() == 0 )
       break;
 
-    if (MYDEBUG)
+    if (SALOME::VerbosityActivated())
       std::cout<<"Sub-command : "<<aCommand<<std::endl;
 
     Standard_Integer aStartCommandPos = theCommand.Location(aCommand,1,theCommand.Length());
@@ -1337,7 +1330,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
     //Remove white spaces
     anEntry.RightAdjust();
     anEntry.LeftAdjust();
-    if(MYDEBUG)
+    if(SALOME::VerbosityActivated())
       std::cout<<"Result entry : '" <<anEntry<<"'"<<std::endl;
 
     if ( anEntry.IsEmpty() ) {
@@ -1355,8 +1348,8 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
       anEntry.Remove( 1, 1 );
       anEntry.RightAdjust();
       anEntry.LeftAdjust();
-      if(MYDEBUG)
-		std::cout<<"Sub-entry : '" <<anEntry<<"'"<<std::endl;
+      if(SALOME::VerbosityActivated())
+		    std::cout<<"Sub-entry : '" <<anEntry<<"'"<<std::endl;
     }
 
     //Find variables used for object construction
@@ -1366,15 +1359,15 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
       aStates = (*it).second;
 
     if(!aStates) {
-      if(MYDEBUG)
-		std::cout<<"Valiables list empty!!!"<<std::endl;
+      if(SALOME::VerbosityActivated())
+		    std::cout<<"Valiables list empty!!!"<<std::endl;
       aCommandIndex++;
       continue;
     }
 
     TState aVariables = aStates->GetCurrectState();
 
-    if(MYDEBUG) {
+    if(SALOME::VerbosityActivated()) {
 	   std::cout<<"Variables from SObject:"<<std::endl;
       for (size_t i = 0; i < aVariables.size();i++)
         std::cout<<"\t Variable["<<i<<"] = "<<aVariables[i].myVariable<<std::endl;
@@ -1385,8 +1378,8 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
     while(aCommand.Location(aTotalNbParams,COMMA,1,aCommand.Length()))
       aTotalNbParams++;
 
-    if(MYDEBUG)
-	  std::cout<<"aTotalNbParams = "<<aTotalNbParams<<std::endl;
+    if(SALOME::VerbosityActivated())
+	    std::cout<<"aTotalNbParams = "<<aTotalNbParams<<std::endl;
 
     Standard_Integer aFirstParam = aNbEntries;
 
@@ -1427,14 +1420,14 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
       if ( aStartPos == aEndPos )
         continue; // PAL20889: for "[]"
 
-      if(MYDEBUG)
+      if(SALOME::VerbosityActivated())
         std::cout<<"aStartPos = "<<aStartPos<<", aEndPos = "<<aEndPos<<std::endl;
 
       aVar = aCommand.SubString(aStartPos, aEndPos-1);
       aVar.RightAdjust();
       aVar.LeftAdjust();
 
-      if(MYDEBUG)
+      if(SALOME::VerbosityActivated())
         std::cout<<"Variable: '"<< aVar <<"'"<<std::endl;
 
       // specific case for sketcher
@@ -1454,8 +1447,8 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
             aEndSectionPos = aVar.Length();
 
           aSection = aVar.SubString(aStartSectionPos, aEndSectionPos-1);
-          if(MYDEBUG)
-			std::cout<<"aSection: "<<aSection<<std::endl;
+          if(SALOME::VerbosityActivated())
+			      std::cout<<"aSection: "<<aSection<<std::endl;
 
           Standard_Integer aNbParams = 1;
           while( aSection.Location( aNbParams, ' ', 1, aSection.Length() ) )
@@ -1471,15 +1464,15 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
             else
               aEndParamPos = aSection.Length() + 1;
 
-            if(MYDEBUG)
+            if(SALOME::VerbosityActivated())
               std::cout<<"aParamIndex: "<<aParamIndex<<" aStartParamPos: " <<aStartParamPos<<" aEndParamPos: "<<aEndParamPos<<std::endl;
 
             if ( aStartParamPos == aEndParamPos)
               continue;
 
             aParameter = aSection.SubString(aStartParamPos, aEndParamPos-1);
-            if(MYDEBUG)
-			  std::cout<<"aParameter: "<<aParameter<<std::endl;
+            if(SALOME::VerbosityActivated())
+			        std::cout<<"aParameter: "<<aParameter<<std::endl;
 
             if(iVar >= aVariables.size())
               continue;
@@ -1495,27 +1488,30 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
               aReplacedParameter.InsertAfter(aReplacedParameter.Length(),"'");
             }
 
-            if(MYDEBUG)
-			  std::cout<<"aSection before : "<<aSection<< std::endl;
+            if(SALOME::VerbosityActivated())
+			        std::cout<<"aSection before : "<<aSection<< std::endl;
             aSection.Remove(aStartParamPos, aEndParamPos - aStartParamPos);
             aSection.Insert(aStartParamPos, aReplacedParameter);
-            if(MYDEBUG)
+            if(SALOME::VerbosityActivated())
               std::cout<<"aSection after  : "<<aSection<<std::endl<<std::endl;
             iVar++;
           }
-          if(MYDEBUG)
+
+          if(SALOME::VerbosityActivated())
             std::cout<<"aVar before : "<<aVar<<std::endl;
+
           aVar.Remove(aStartSectionPos, aEndSectionPos - aStartSectionPos);
           aVar.Insert(aStartSectionPos, aSection);
-          if(MYDEBUG)
+
+          if(SALOME::VerbosityActivated())
             std::cout<<"aVar after  : "<<aVar<<std::endl<<std::endl;
         }
 
-        if(MYDEBUG)
+        if(SALOME::VerbosityActivated())
           std::cout<<"aCommand before : "<<aCommand<<std::endl;
         aCommand.Remove(aStartPos, aEndPos - aStartPos);
         aCommand.Insert(aStartPos, aVar);
-        if(MYDEBUG)
+        if(SALOME::VerbosityActivated())
           std::cout<<"aCommand after  : "<<aCommand<<std::endl;
 
         break;
@@ -1552,7 +1548,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
     aStates->IncrementState();
   }
 
-  if (MYDEBUG)
+  if (SALOME::VerbosityActivated())
     std::cout<<"Command : "<<theCommand<<std::endl;
 }
 

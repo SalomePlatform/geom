@@ -88,7 +88,7 @@ void VolumeSection::CenterOfGravity()
       TopoDS_Face F = TopoDS::Face(ex.Current());
       Handle(Poly_Triangulation) Tr = BRep_Tool::Triangulation(F, L);
       if(Tr.IsNull())
-        MESSAGE("Error, null layer" )
+        MESSAGE("Error, null layer" );
       nbNodes = Tr->NbNodes();
       const TColgp_Array1OfPnt& Nodes = Tr->Nodes();
       
@@ -113,8 +113,8 @@ void VolumeSection::CenterOfGravity()
         }
     }
   
-  // Creation du point d'initialisation, c'est € dire le centre de gravit‰ 
-  //g‰om‰trique de la boite englobante
+  // Creation du point d'initialisation, c'est e dire le centre de gravite 
+  // geometrique de la boite englobante
   
   InitPoint.SetX(0.5 * (Xmin + Xmax));
   InitPoint.SetY(0.5 * (Ymin + Ymax));
@@ -141,14 +141,14 @@ Standard_Real VolumeSection::CalculateVolume(Standard_Real Elevation)
       TopoDS_Face F = TopoDS::Face(ex.Current());
       Handle(Poly_Triangulation) Tr = BRep_Tool::Triangulation(F, L);
       if(Tr.IsNull())
-        MESSAGE("Error, null layer" )
+        MESSAGE("Error, null layer" );
       const Poly_Array1OfTriangle& triangles = Tr->Triangles();
       Standard_Integer nbTriangles = Tr->NbTriangles();
       //nbNodes = Tr->NbNodes();
       const TColgp_Array1OfPnt& Nodes = Tr->Nodes();
       
       // Calcul des volumes de chaque triangle, de chaque face 
-      //en tenant compte des triangles coup‰s par le plan de section
+      // en tenant compte des triangles coupes par le plan de section
       
       for (i=1;i<=nbTriangles;i++) 
         {
@@ -234,7 +234,7 @@ Standard_Real VolumeSection::Archimede(Standard_Real Constante , Standard_Real E
   Bsup = Zmax;
   if(Binf>Bsup)
     {
-      MESSAGE("error, Bound + < Bound - in dichotomy")
+      MESSAGE("error, Bound + < Bound - in dichotomy");
       return -1;
     }
   tempBsupVolume = CalculateVolume(Bsup);
@@ -242,7 +242,7 @@ Standard_Real VolumeSection::Archimede(Standard_Real Constante , Standard_Real E
   
   if (Constante>tempBsupVolume || Constante<tempBinfVolume)
     {
-      MESSAGE("error, algorithm start Impossible. Wrong constant value" )
+      MESSAGE("error, algorithm start Impossible. Wrong constant value" );
       return -1;
     }
   
@@ -286,7 +286,7 @@ Standard_Real VolumeSection::Archimede(Standard_Real Constante , Standard_Real E
       
     }
  endMethod:
-  MESSAGE("La ligne de flottaison correspondant a la constante :"<<Constante<<" est a la cote Z = "<<c)
+  MESSAGE("La ligne de flottaison correspondant a la constante :"<<Constante<<" est a la cote Z = "<<c);
   
   return c;
 }
@@ -372,7 +372,7 @@ gp_Pnt VolumeSection::Intersection(gp_Pnt P1,gp_Pnt P2,Standard_Real Hauteur)
   return Point;
 }
 
-//Fonction calculant le volume ‰l‰mentaire de chaque t‰traedre € partir de 3 points
+// Fonction calculant le volume elementaire de chaque tetraedre e partir de 3 points
 Standard_Real VolumeSection::ElementaryVolume(gp_Pnt P1,gp_Pnt P2,gp_Pnt P3)
 {
   Standard_Real Determinant;

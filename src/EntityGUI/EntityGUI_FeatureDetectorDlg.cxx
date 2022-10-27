@@ -505,7 +505,7 @@ bool EntityGUI_FeatureDetectorDlg::ClickOnApply()
 //=================================================================================
 void EntityGUI_FeatureDetectorDlg::ConstructorsClicked(int id)
 {
-  MESSAGE("Constructor id ="<<id)
+  MESSAGE("Constructor id ="<<id);
   myConstructorId = id;
   switch (id)
   {
@@ -671,7 +671,7 @@ ShapeRec_Parameters* EntityGUI_FeatureDetectorDlg::parametersChanged()
 void EntityGUI_FeatureDetectorDlg::setStartPnt(const gp_Pnt& theStartPnt)
 {
   myStartPnt = theStartPnt;
-  MESSAGE("myStartPnt = ("<<theStartPnt.X()<<", "<<theStartPnt.Y()<<")")
+  MESSAGE("myStartPnt = ("<<theStartPnt.X()<<", "<<theStartPnt.Y()<<")");
 }
 
 //=================================================================================
@@ -681,7 +681,7 @@ void EntityGUI_FeatureDetectorDlg::setStartPnt(const gp_Pnt& theStartPnt)
 void EntityGUI_FeatureDetectorDlg::setEndPnt(const gp_Pnt& theEndPnt)
 {
   myEndPnt = theEndPnt;
-  MESSAGE("myEndPnt = ("<<theEndPnt.X()<<", "<<theEndPnt.Y()<<")")
+  MESSAGE("myEndPnt = ("<<theEndPnt.X()<<", "<<theEndPnt.Y()<<")");
   if (setSelectionRect() && myDetector->GetImgHeight() > 0)
     showImageSample();
 }
@@ -814,10 +814,10 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
     
       bool insert;
     
-      MESSAGE("hierarchy.size() =" << hierarchy.size()) 
+      MESSAGE("hierarchy.size() =" << hierarchy.size());
       if ( hierarchy.size() < 1 ) {
-	getOperation()->SetErrorCode( "Impossible detected contours" );
-	return false;
+        getOperation()->SetErrorCode( "Impossible detected contours" );
+        return false;
       }
 
       for( ; idx >= 0; idx = hierarchy[idx][0])

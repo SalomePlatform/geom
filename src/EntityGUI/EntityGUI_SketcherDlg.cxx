@@ -529,7 +529,7 @@ void EntityGUI_SketcherDlg::Init()
 //=================================================================================
 void EntityGUI_SketcherDlg::InitClick()
 {
-  MESSAGE("EntityGUI_SketcherDlg::InitClick()")
+  MESSAGE("EntityGUI_SketcherDlg::InitClick()");
   disconnect( myGeometryGUI->getApp()->selectionMgr(), 0, this, 0 );
   myCheckFlag = 0;
 
@@ -694,7 +694,7 @@ void EntityGUI_SketcherDlg::DestClicked( int constructorId )
 //=================================================================================
 void EntityGUI_SketcherDlg::PointClicked( int constructorId )
 {
-  MESSAGE("PointClicked")
+  MESSAGE("PointClicked");
   myConstructorPntId = constructorId;
   GroupPt->RB_Point3->setEnabled( true );
   int buttonId = GroupPt2->ButtonGroup->checkedId();
@@ -713,7 +713,7 @@ void EntityGUI_SketcherDlg::PointClicked( int constructorId )
 //=================================================================================
 void EntityGUI_SketcherDlg::Point2Clicked( int constructorId )
 {
-  MESSAGE("Point2Clicked")
+  MESSAGE("Point2Clicked");
   InitClick();
 
   // Get setting of step value from file configuration
@@ -1134,7 +1134,7 @@ void EntityGUI_SketcherDlg::ClickOnCancel()
 //=================================================================================
 void EntityGUI_SketcherDlg::ClickOnEnd()
 {
-  MESSAGE("EntityGUI_SketcherDlg::ClickOnEnd()")
+  MESSAGE("EntityGUI_SketcherDlg::ClickOnEnd()");
   if ( sender() == MainWidget->buttonClose ) {
     // Verify validity of commands
     if ( myCommand.count() <= 2 ) {
@@ -1190,7 +1190,7 @@ void EntityGUI_SketcherDlg::ClickOnEnd()
 //=================================================================================
 bool EntityGUI_SketcherDlg::ClickOnApply()
 {
-  MESSAGE("EntityGUI_SketcherDlg::ClickOnApply()")
+  MESSAGE("EntityGUI_SketcherDlg::ClickOnApply()");
   if ( sender() && sender()->inherits( "QPushButton" ) )
     ( (QPushButton*)sender() )->setFocus(); // to update value of currently edited spin-box (PAL11948)
 
@@ -1357,7 +1357,7 @@ void EntityGUI_SketcherDlg::setEnabledRedo( bool value )
 //=================================================================================
 void EntityGUI_SketcherDlg::SelectionIntoArgument()
 {
-  MESSAGE("EntityGUI_SketcherDlg::SelectionIntoArgument")
+  MESSAGE("EntityGUI_SketcherDlg::SelectionIntoArgument");
   myEditCurrentArgument->setText( "" );
 
   LightApp_SelectionMgr* aSelMgr = myGeometryGUI->getApp()->selectionMgr();
@@ -1627,7 +1627,7 @@ void EntityGUI_SketcherDlg::DeactivateActiveDialog()
 //=================================================================================
 void EntityGUI_SketcherDlg::ActivateThisDialog()
 {
-  MESSAGE("EntityGUI_SketcherDlg::ActivateThisDialog()")
+  MESSAGE("EntityGUI_SketcherDlg::ActivateThisDialog()");
   myGeometryGUI->EmitSignalDeactivateDialog();
   setEnabled( true );
   myGeometryGUI->SetActiveDialogBox( this );
@@ -1679,7 +1679,7 @@ void EntityGUI_SketcherDlg::enterEvent( QEvent* )
 //=================================================================================
 void EntityGUI_SketcherDlg::closeEvent( QCloseEvent* e )
 {
-  MESSAGE("EntityGUI_SketcherDlg::closeEvent")
+  MESSAGE("EntityGUI_SketcherDlg::closeEvent");
   //myGeometryGUI->SetState( -1 );
   disconnect( myGeometryGUI->getApp()->selectionMgr(), 0, this, 0 );
   myGeometryGUI->getApp()->updateActions();
@@ -2317,7 +2317,7 @@ bool EntityGUI_SketcherDlg::isValid( QString& msg )
 //=================================================================================
 bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
 {
-  MESSAGE("EntityGUI_SketcherDlg::execute")
+  MESSAGE("EntityGUI_SketcherDlg::execute");
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   int aPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
   int DigNum = qAbs(aPrecision);                   // options for the format of numbers in myNewCommand
@@ -2789,7 +2789,7 @@ gp_Ax3 EntityGUI_SketcherDlg::WPlaneToLCS( GEOM::GEOM_Object_var geomObj )
   gp_Ax3 aLCS;
   if (CORBA::is_nil( geomObj ) || aShape.IsNull())
   {
-    MESSAGE("CORBA::is_nil( geomObj ) || aShape.IsNull()")
+    MESSAGE("CORBA::is_nil( geomObj ) || aShape.IsNull()");
   }
   aLCS.Transform(aShape.Location().Transformation());
   if (aShape.ShapeType() == TopAbs_FACE)

@@ -754,7 +754,7 @@ bool GEOMBase_Helper::openCommand()
   bool res = false;
   if ( !getStudy() || hasCommand() )
   {
-    MESSAGE("Getting out from openCommand()")
+    MESSAGE("Getting out from openCommand()");
       return res;
   }
 
@@ -766,8 +766,8 @@ bool GEOMBase_Helper::openCommand()
   }
   else
   {
-    MESSAGE("anOp->_is_nil() = true")
-      }
+    MESSAGE("anOp->_is_nil() = true");
+  }
 
   return res;
 }
@@ -857,7 +857,7 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, b
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
   if ( !appStudy )
   {
-    MESSAGE("appStudy is empty")
+    MESSAGE("appStudy is empty");
       return false;
   }
   _PTR(Study) aStudy = appStudy->studyDS();
@@ -968,13 +968,13 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, b
   catch( const SALOME::SALOME_Exception& e ) {
     SalomeApp_Tools::QtCatchCorbaException( e );
     abortCommand();
-    MESSAGE("Exception caught")
-      }
+    MESSAGE("Exception caught");
+  }
 
   updateViewer();
 
-  MESSAGE("result ="<<result)
-    return result;
+  MESSAGE("result ="<<result);
+  return result;
 }
 
 

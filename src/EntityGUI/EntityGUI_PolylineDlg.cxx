@@ -671,7 +671,7 @@ gp_Ax3 EntityGUI_PolylineDlg::WPlaneToLCS(GEOM::GeomObjPtr theGeomObj)
   gp_Ax3 aLCS;
 
   if (theGeomObj || aShape.IsNull()) {
-    MESSAGE("CORBA::is_nil(theGeomObj) || aShape.IsNull()")
+    MESSAGE("CORBA::is_nil(theGeomObj) || aShape.IsNull()");
   }
 
   aLCS.Transform(aShape.Location().Transformation());

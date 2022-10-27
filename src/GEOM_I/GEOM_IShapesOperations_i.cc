@@ -977,7 +977,7 @@ GEOM::ListOfLong* GEOM_IShapesOperations_i::GetSubShapesIndices
     Handle(::GEOM_Object) aSh = GetObjectImpl(theSubShapes[ind]);
     if (aSh.IsNull())
     {
-      MESSAGE("NULL shape")
+      MESSAGE("NULL shape");
       return aSeq._retn();
     }
     aShapes.push_back(aSh);

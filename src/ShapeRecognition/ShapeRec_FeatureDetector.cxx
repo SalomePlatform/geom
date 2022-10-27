@@ -257,7 +257,7 @@ bool ShapeRec_FeatureDetector::ComputeContours( bool useROI, ShapeRec_Parameters
   Computes the lines in the image located at imagePath
 */
 bool ShapeRec_FeatureDetector::ComputeLines(){
-  MESSAGE("ShapeRec_FeatureDetector::ComputeLines()")
+  MESSAGE("ShapeRec_FeatureDetector::ComputeLines()");
   // Initialising images
   cv::Mat src, src_gray, detected_edges, dst;
   

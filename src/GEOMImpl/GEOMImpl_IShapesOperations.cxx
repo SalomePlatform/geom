@@ -1846,7 +1846,7 @@ Standard_Integer GEOMImpl_IShapesOperations::GetSubShapeIndex (Handle(GEOM_Objec
 Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetSubShapesIndices (Handle(GEOM_Object) theMainShape,
                                                                                     std::list<Handle(GEOM_Object)> theSubShapes)
 {
-  MESSAGE("GEOMImpl_IShapesOperations::GetSubShapesIndices")
+  MESSAGE("GEOMImpl_IShapesOperations::GetSubShapesIndices");
   SetErrorCode(KO);
   
   Handle(TColStd_HSequenceOfInteger) aSeq = new TColStd_HSequenceOfInteger;
@@ -1854,7 +1854,7 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetSubShapesIndic
   TopoDS_Shape aMainShape = theMainShape->GetValue();
   if (aMainShape.IsNull())
   {
-    MESSAGE("NULL main shape")
+    MESSAGE("NULL main shape");
     return NULL;
   }
   
@@ -1867,7 +1867,7 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetSubShapesIndic
     TopoDS_Shape aSubShape = (*it)->GetValue(); 
     if (aSubShape.IsNull())
     {
-      MESSAGE("NULL subshape")
+      MESSAGE("NULL subshape");
       return NULL;
     }
     int id = anIndices.FindIndex(aSubShape);

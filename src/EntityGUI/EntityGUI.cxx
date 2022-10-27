@@ -352,7 +352,7 @@ bool EntityGUI::OnMouseMove( QMouseEvent* pe, SUIT_Desktop* /*parent*/, SUIT_Vie
 //=====================================================================================
 void EntityGUI::DisplaySimulationShape( const TopoDS_Shape& S1, const TopoDS_Shape& S2 ) 
 {
-  MESSAGE("EntityGUI::DisplaySimulationShape")
+  MESSAGE("EntityGUI::DisplaySimulationShape");
   SalomeApp_Application* app = getGeometryGUI()->getApp();
   if ( !app ) return;
 
@@ -401,7 +401,7 @@ void EntityGUI::DisplaySimulationShape( const TopoDS_Shape& S1, const TopoDS_Sha
 //==================================================================================
 void EntityGUI::EraseSimulationShape()
 {
-  MESSAGE("EntityGUI::EraseSimulationShape")
+  MESSAGE("EntityGUI::EraseSimulationShape");
   SalomeApp_Application* app = getGeometryGUI()->getApp();
   if ( !app ) return;
 

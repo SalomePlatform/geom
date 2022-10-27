@@ -253,9 +253,9 @@ void GEOM_OCCReader::createIsos(const GEOMUtils::Hatcher &theHatcher,
 
   if (anIndices.IsNull() || aParams.IsNull()) {
     if (IsUIso) {
-      MESSAGE("GEOMUtils_Hatcher: null U-isoline indices")
+      MESSAGE("GEOMUtils_Hatcher: null U-isoline indices");
     } else {
-      MESSAGE("GEOMUtils_Hatcher: null V-isoline indices")
+      MESSAGE("GEOMUtils_Hatcher: null V-isoline indices");
     }
   } else {
     const GeomAbs_IsoType aType    = (IsUIso ? GeomAbs_IsoU : GeomAbs_IsoV);
@@ -271,9 +271,9 @@ void GEOM_OCCReader::createIsos(const GEOMUtils::Hatcher &theHatcher,
 
         if (aNbDomains < 0) {
           if (IsUIso) {
-            MESSAGE("GEOMUtils_Hatcher: U iso of parameter: "<<aParam)
+            MESSAGE("GEOMUtils_Hatcher: U iso of parameter: "<<aParam);
           } else {
-            MESSAGE("GEOMUtils_Hatcher: V iso of parameter: "<<aParam)
+            MESSAGE("GEOMUtils_Hatcher: V iso of parameter: "<<aParam);
           }
 
           switch (theHatcher.GetHatcher().Status (aHatchingIndex)) {
