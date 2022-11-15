@@ -218,6 +218,7 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
       TopoDS_Shape aMainShape = GEOM_Client::get_client().GetShape(GeometryGUI::GetGeomGen(), myObject);
       TopExp::MapShapes(aMainShape, aMainMap);
 
+      SALOME_ListIO aSelListToShow;
       SALOME_ListIteratorOfListIO anIter (aSelList);
       for (int i = 0; anIter.More(); anIter.Next(), i++) {
         Handle(SALOME_InteractiveObject) anIO = anIter.Value();
@@ -231,17 +232,28 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
         if (GEOMBase::GetShape(aGeomObj, aShape)) {
           if (aGeomObj->GetType() == GEOM_GROUP || aShape.ShapeType() == TopAbs_FACE) {
             TopExp_Explorer anExp (aShape, TopAbs_FACE);
+            bool isInside = false;
             for (; anExp.More(); anExp.Next()) {
               TopoDS_Shape aSubShape = anExp.Current();
               int anIndex = aMainMap.FindIndex(aSubShape);
-              if (anIndex >= 0) {
+              if (anIndex > 0) {
                 aMap.Add(anIndex);
                 anIds.Add(anIndex);
+                isInside = true;
+                aSelListToShow.Append(anIO);
               }
+            }
+            if (!isInside)
+            {
+              disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+              aSelMgr->AddOrRemoveIndex(anIO, anIds, false);
+              connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+                      this, SLOT(SelectionIntoArgument()));
             }
           }
         }
       }
+
       if (!aMap.IsEmpty()) {
         // highlight local faces, correspondent to OB selection
         disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
@@ -254,6 +266,11 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
           return;
 
         aSelMgr->AddOrRemoveIndex(aSh->getIO(), anIds, false);
+
+        SALOME_ListIteratorOfListIO anIter(aSelListToShow);
+        for (; anIter.More(); anIter.Next()) {
+          aSelMgr->AddOrRemoveIndex(anIter.Value(), anIds, false);
+        }
 
         connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
                 this, SLOT(SelectionIntoArgument()));
