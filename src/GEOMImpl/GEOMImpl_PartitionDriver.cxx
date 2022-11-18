@@ -423,14 +423,16 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(Handle(TFunction_Logbook)& lo
       return 0;
   }
 
-  //Alternative case to check not valid partition IPAL21418
-  TopoDS_Iterator It (aShape, Standard_True, Standard_True);
-  int nbSubshapes = 0;
-  for (; It.More(); It.Next())
-    nbSubshapes++;
-  if (!nbSubshapes)
-    Standard_ConstructionError::Raise("Partition aborted : non valid shape result");
-  //end of IPAL21418
+  if (aShape.ShapeType() != TopAbs_VERTEX) {
+    //Alternative case to check not valid partition IPAL21418
+    TopoDS_Iterator It (aShape, Standard_True, Standard_True);
+    int nbSubshapes = 0;
+    for (; It.More(); It.Next())
+      nbSubshapes++;
+    if (!nbSubshapes)
+      Standard_ConstructionError::Raise("Partition aborted : non valid shape result");
+    //end of IPAL21418
+  }
 
   if ( !GEOMUtils::CheckShape(aShape, true) && !GEOMUtils::FixShapeTolerance(aShape) )
     Standard_ConstructionError::Raise("Partition aborted : non valid shape result");
