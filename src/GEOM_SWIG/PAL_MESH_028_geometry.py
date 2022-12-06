@@ -76,15 +76,25 @@ geompy.addToStudy(Prism_1, "Prism_1")
 
 #Save Study (9.1)
 theHomePath = os.path.expanduser("~")
+
+# Remove study file if it already exists
 theFilenameToSave = theHomePath + "/Pyramid.hdf"
 if os.access(theFilenameToSave, os.F_OK):
     if os.access(theFilenameToSave, os.W_OK):
         os.remove(theFilenameToSave)
-        salome.myStudy.SaveAs(theFilenameToSave, 0, 0)
     else:
         print("You have no enough permissions to overwrite HDF file: ",theFilenameToSave)
+
+# Save study
+salome.myStudy.SaveAs(theFilenameToSave, 0, 0)
+
+# Check and remove result file
+if os.access(theFilenameToSave, os.F_OK):
+    if os.access(theFilenameToSave, os.W_OK):
+        os.remove(theFilenameToSave)
+    else:
+        print("You have no enough permissions to delete HDF file: ",theFilenameToSave)
 else:
-    salome.myStudy.SaveAs(theFilenameToSave, 0, 0)
-    
+    print("ERROR: Failed to save study in HDF file: ",theFilenameToSave)
 
 salome.sg.updateObjBrowser()
