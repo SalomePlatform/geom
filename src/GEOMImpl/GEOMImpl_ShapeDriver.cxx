@@ -1127,7 +1127,6 @@ TopoDS_Wire GEOMImpl_ShapeDriver::MakeWireFromEdges(const Handle(TColStd_HSequen
   }
 
   // IMP 0019766: Building a Wire from unconnected edges by introducing a tolerance
-  // aaajfa
   bool isClosed = false;
   Handle(ShapeAnalysis_Wire) asaw = aFW->Analyzer();
   if (asaw->CheckGap3d(1)) { // between last and first edges
@@ -1136,15 +1135,15 @@ TopoDS_Wire GEOMImpl_ShapeDriver::MakeWireFromEdges(const Handle(TColStd_HSequen
       isClosed = true;
   }
   aFW->ClosedWireMode() = isClosed;
-  // aaajfa
-  //aFW->ClosedWireMode() = Standard_False;
   aFW->FixConnected(theTolerance);
   if (aFW->StatusConnected(ShapeExtend_FAIL)) {
     Standard_ConstructionError::Raise("Wire construction failed: cannot build connected wire");
   }
   // IMP 0019766
+
   if (aFW->StatusConnected(ShapeExtend_DONE3)) {
     // Confused with <prec> but not Analyzer.Precision(), set the same
+    aFW->SetPrecision(theTolerance); // bos #33377, prevent conversion of initial curves to BSplines
     aFW->FixGapsByRangesMode() = Standard_True;
     if (aFW->FixGaps3d()) {
       Handle(ShapeExtend_WireData) sbwd = aFW->WireData();
