@@ -711,24 +711,21 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
     const OpenGl_Aspects* anAspect = theWorkspace->Aspects();
 
     // getting string size will also initialize font library
-#if OCC_VERSION_LARGE >= 0x07040000
+#if OCC_VERSION_LARGE >= 0x07070000
+    Font_Hinting aFH = theWorkspace->View()->RenderingParams().FontHinting;
     myTextDraw->StringSize( aContext,
-      myText, *anAspect, myTextParams->Height(), aDPI,
+      myText, *anAspect, myTextParams->Height(), aDPI, aFH,
       myTextSize.x, myTextSize.a, myTextSize.d );
 #else
     myTextDraw->StringSize( aContext,
-      myText, *anAspect, myTextParams, aDPI,
+      myText, *anAspect, myTextParams->Height(), aDPI,
       myTextSize.x, myTextSize.a, myTextSize.d );
 #endif
 
     myTextDPI = aDPI;
     myTextSize.y = myTextSize.a - myTextSize.d;
 
-# if OCC_VERSION_LARGE >= 0x07040000
     switch ( myTextParams->HorizontalAlignment() )
-#else
-    switch (myTextParams.HAlign)
-#endif
     {
       case Graphic3d_HTA_LEFT:   myTextUnderline.x() = 0.f; break;
       case Graphic3d_HTA_CENTER: myTextUnderline.x() = -myTextSize.x / 2.f; break;
@@ -737,11 +734,7 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
         break;
     }
 
-# if OCC_VERSION_LARGE >= 0x07040000
     switch ( myTextParams->VerticalAlignment() )
-#else
-    switch (myTextParams.VAlign)
-#endif
     {
       case Graphic3d_VTA_TOPFIRSTLINE:
       case Graphic3d_VTA_TOP:    myTextUnderline.y() = -myTextSize.y; break;

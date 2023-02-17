@@ -30,6 +30,14 @@
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <TColStd_HArray1OfExtendedString.hxx>
 
+#include <gp_Cone.hxx>
+#include <gp_Cylinder.hxx>
+#include <gp_Pln.hxx>
+#include <gp_Sphere.hxx>
+#include <gp_Circ.hxx>
+#include <gp_Elips.hxx>
+#include <gp_Lin.hxx>
+
 #include <vector>
 
 class GEOM_Object;

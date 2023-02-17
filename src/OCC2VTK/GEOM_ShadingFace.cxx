@@ -85,21 +85,19 @@ OCC2VTK(const TopoDS_Face& theFace,
       
     Standard_Integer i; 
     int aNbOfNodes = thePts->GetNumberOfPoints();
-    const TColgp_Array1OfPnt& Nodes = aPoly->Nodes();
     Standard_Integer nbNodesInFace = aPoly->NbNodes(); 
     for(i = 1; i <= nbNodesInFace; i++) {
-      gp_Pnt P = Nodes(i);
+      gp_Pnt P = aPoly->Node(i);
       if(!identity) 
         P.Transform(myTransf);
       thePts->InsertNextPoint(P.X(),P.Y(),P.Z());
     }
 
-    const Poly_Array1OfTriangle& Triangles = aPoly->Triangles();
     Standard_Integer nbTriInFace = aPoly->NbTriangles();
     for(i = 1; i <= nbTriInFace; i++){
       // Get the triangle
       Standard_Integer N1,N2,N3;
-      Triangles(i).Get(N1,N2,N3);
+      aPoly->Triangle(i).Get(N1,N2,N3);
       N1 += aNbOfNodes - 1;
       N2 += aNbOfNodes - 1;
       N3 += aNbOfNodes - 1;

@@ -34,6 +34,8 @@
 
 #include <GEOMUtils.hxx>
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <ShapeAnalysis_FreeBounds.hxx>
 #include <ShapeAnalysis_Edge.hxx>
 #include <ShapeFix_Face.hxx>
@@ -85,7 +87,11 @@
 #include <Geom_Conic.hxx>
 #include <Geom_BSplineCurve.hxx>
 #include <Geom_BSplineSurface.hxx>
+#if OCC_VERSION_LARGE < 0x07070000
 #include <GeomAdaptor_HCurve.hxx>
+#else
+#include <GeomAdaptor_Curve.hxx>
+#endif
 #include <GeomFill_BSplineCurves.hxx>
 #include <GeomConvert_ApproxCurve.hxx>
 #include <GeomConvert.hxx>
@@ -160,7 +166,11 @@ static GeomFill_Trihedron EvaluateBestSweepMode(const TopoDS_Shape& Spine)
     Standard_Real fpar, lpar;
     Handle(Geom_Curve) aCurve = BRep_Tool::Curve(anEdge, fpar, lpar);
     GeomAdaptor_Curve GAcurve(aCurve, fpar, lpar);
+#if OCC_VERSION_LARGE < 0x07070000
     Handle(GeomAdaptor_HCurve) GAHcurve = new GeomAdaptor_HCurve(GAcurve);
+#else
+    Handle(GeomAdaptor_Curve) GAHcurve = new GeomAdaptor_Curve(GAcurve);
+#endif
 
     Handle(GeomFill_CorrectedFrenet) aCorrFrenet = new GeomFill_CorrectedFrenet(Standard_True); //for evaluation
     aCorrFrenet->SetCurve(GAHcurve);

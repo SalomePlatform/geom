@@ -90,13 +90,12 @@ void VolumeSection::CenterOfGravity()
       if(Tr.IsNull())
         MESSAGE("Error, null layer" );
       nbNodes = Tr->NbNodes();
-      const TColgp_Array1OfPnt& Nodes = Tr->Nodes();
       
       // Calcul des dimensions de la boite englobante du solide
       
       for(i=1;i<=nbNodes;i++)
         {
-          InitPoint = Nodes(i).Transformed(L.Transformation());
+          InitPoint = Tr->Node(i).Transformed(L.Transformation());
           if(InitPoint.X() < Xmin)
             Xmin = InitPoint.X();
           if(InitPoint.X() > Xmax)
@@ -131,9 +130,9 @@ Standard_Real VolumeSection::CalculateVolume(Standard_Real Elevation)
   Standard_Real Volume=0;
   Standard_Real Determinant=0;
   gp_Pnt P[3];
-  
+
   // Projection du point d'initialisation sur le plan de section
-  
+
   InitPoint.SetZ(Elevation);
 
   for (ex.Init(myShape, TopAbs_FACE); ex.More(); ex.Next()) 
@@ -142,28 +141,25 @@ Standard_Real VolumeSection::CalculateVolume(Standard_Real Elevation)
       Handle(Poly_Triangulation) Tr = BRep_Tool::Triangulation(F, L);
       if(Tr.IsNull())
         MESSAGE("Error, null layer" );
-      const Poly_Array1OfTriangle& triangles = Tr->Triangles();
       Standard_Integer nbTriangles = Tr->NbTriangles();
-      //nbNodes = Tr->NbNodes();
-      const TColgp_Array1OfPnt& Nodes = Tr->Nodes();
-      
+
       // Calcul des volumes de chaque triangle, de chaque face 
       // en tenant compte des triangles coupes par le plan de section
-      
-      for (i=1;i<=nbTriangles;i++) 
+
+      for (i=1;i<=nbTriangles;i++)
         {
           Determinant=0;
           //Gardons la meme orientation des noeuds
           if (F.Orientation()  == TopAbs_REVERSED)
-            triangles(i).Get(noeud[0], noeud[2], noeud[1]);
+            Tr->Triangle(i).Get(noeud[0], noeud[2], noeud[1]);
           else 
-            triangles(i).Get(noeud[0], noeud[1], noeud[2]);
+            Tr->Triangle(i).Get(noeud[0], noeud[1], noeud[2]);
           
-          P[0] = Nodes(noeud[0]).Transformed(L.Transformation());
+          P[0] = Tr->Node(noeud[0]).Transformed(L.Transformation());
           z[0] = P[0].Z();
-          P[1] = Nodes(noeud[1]).Transformed(L.Transformation());
+          P[1] = Tr->Node(noeud[1]).Transformed(L.Transformation());
           z[1] = P[1].Z();
-          P[2] = Nodes(noeud[2]).Transformed(L.Transformation());
+          P[2] = Tr->Node(noeud[2]).Transformed(L.Transformation());
           z[2] = P[2].Z();
 
           // Determination des cas aux limites pour les triangles

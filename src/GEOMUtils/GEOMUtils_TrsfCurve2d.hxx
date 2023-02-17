@@ -28,6 +28,8 @@
 #include <TColStd_HArray1OfReal.hxx>
 #include <TopoDS_Face.hxx>
 
+#include <Basics_OCCTVersion.hxx>
+
 
 namespace GEOMUtils
 {
@@ -37,6 +39,9 @@ namespace GEOMUtils
    */
   class TrsfCurve2d : public Adaptor2d_Curve2d
   {
+#if OCC_VERSION_LARGE >= 0x07070000
+  DEFINE_STANDARD_RTTIEXT(TrsfCurve2d, Adaptor2d_Curve2d)
+#endif
 
   public:
     
@@ -109,7 +114,11 @@ namespace GEOMUtils
     /**
      * Redefined method from the base class.
      */
+#if OCC_VERSION_LARGE < 0x07070000
     Standard_EXPORT Handle(Adaptor2d_HCurve2d) Trim
+#else
+    Standard_EXPORT Handle(Adaptor2d_Curve2d) Trim
+#endif
               (const Standard_Real First, const Standard_Real Last,
                const Standard_Real ) const;
 
@@ -233,6 +242,11 @@ namespace GEOMUtils
     Trsf2d              myTrsf;
 
   };
+
+#if OCC_VERSION_LARGE >= 0x07070000
+  DEFINE_STANDARD_HANDLE(TrsfCurve2d, Adaptor2d_Curve2d)
+#endif
+
 }
 
 #endif

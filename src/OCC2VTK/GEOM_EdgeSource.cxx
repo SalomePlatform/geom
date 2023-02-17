@@ -138,17 +138,16 @@ void GEOM_EdgeSource::OCC2VTK (const TopoDS_Edge& theEdge,
   } else {
     Standard_Integer aNbNodes = aEdgePoly->NbNodes();
     const TColStd_Array1OfInteger& aNodeIds = aEdgePoly->Nodes();
-    const TColgp_Array1OfPnt& anId2Pnts = T->Nodes();
 
-    aP1 = anId2Pnts(aNodeIds(1));
-    aP2 = anId2Pnts(aNodeIds(aNbNodes));
+    aP1 = T->Node(aNodeIds(1));
+    aP2 = T->Node(aNodeIds(aNbNodes));
 
     for(int j = 1; j < aNbNodes; j++) {
       Standard_Integer id1 = aNodeIds(j);
       Standard_Integer id2 = aNodeIds(j+1);
       
-      gp_Pnt pt1 = anId2Pnts(id1);
-      gp_Pnt pt2 = anId2Pnts(id2);
+      gp_Pnt pt1 = T->Node(id1);
+      gp_Pnt pt2 = T->Node(id2);
           
       if(!isidtrsf) {
         // apply edge transformation

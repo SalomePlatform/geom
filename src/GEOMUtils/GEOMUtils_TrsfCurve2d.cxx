@@ -19,7 +19,15 @@
 
 
 #include <GEOMUtils_TrsfCurve2d.hxx>
+
+#include <Geom2d_BezierCurve.hxx>
+#include <Geom2d_BSplineCurve.hxx>
+
+#if OCC_VERSION_LARGE < 0x07070000
 #include <GEOMUtils_HTrsfCurve2d.hxx>
+#else
+IMPLEMENT_STANDARD_RTTIEXT(GEOMUtils::TrsfCurve2d, Adaptor2d_Curve2d)
+#endif
 
 //=======================================================================
 //function : TrsfCurve2d
@@ -134,6 +142,7 @@ void GEOMUtils::TrsfCurve2d::Intervals(TColStd_Array1OfReal &T,
 //function : Trim
 //purpose  :
 //=======================================================================
+#if OCC_VERSION_LARGE < 0x07070000
 Handle(Adaptor2d_HCurve2d) GEOMUtils::TrsfCurve2d::Trim
               (const Standard_Real First, const Standard_Real Last,
                const Standard_Real /*Tol*/) const
@@ -144,6 +153,18 @@ Handle(Adaptor2d_HCurve2d) GEOMUtils::TrsfCurve2d::Trim
 
   return aAHCurve;
 }
+#else
+Handle(Adaptor2d_Curve2d) GEOMUtils::TrsfCurve2d::Trim
+              (const Standard_Real First, const Standard_Real Last,
+               const Standard_Real /*Tol*/) const
+{
+  Handle(Geom2d_Curve)            aCurve = myCurve.Curve();
+  Handle(GEOMUtils::TrsfCurve2d) aAHCurve =
+    new GEOMUtils::TrsfCurve2d(aCurve, First, Last, myTrsf);
+
+  return aAHCurve;
+}
+#endif
 
 //=======================================================================
 //function : IsClosed

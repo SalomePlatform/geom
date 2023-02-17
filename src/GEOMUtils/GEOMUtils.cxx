@@ -96,8 +96,6 @@
 #include <sstream>
 #include <algorithm>
 
-#include <V3d_Coordinate.hxx>
-
 #include <Standard_Failure.hxx>
 #include <Standard_NullObject.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
@@ -1095,7 +1093,7 @@ gp_Pnt GEOMUtils::ConvertClickToPoint( int x, int y, Handle(V3d_View) aView )
   // inside V3d_View::FitMinMax() method. It's by occt design.
   // So, we should use camera direction instead.
 
-  V3d_Coordinate XAt, YAt, ZAt;
+  Standard_Real XAt, YAt, ZAt;
   aView->At(XAt, YAt, ZAt);
   gp_Pnt AtPoint(XAt, YAt, ZAt);
 

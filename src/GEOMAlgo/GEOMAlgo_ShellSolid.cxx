@@ -55,6 +55,9 @@
 #include <BOPAlgo_Builder.hxx>
 
 #include <GEOMAlgo_AlgoTools.hxx>
+
+#include <Basics_OCCTVersion.hxx>
+
 /////////////////////////////////////////////////////////////////////////
 //=======================================================================
 //class : GEOMAlgo_ShellSolidBuilder
@@ -70,7 +73,12 @@ class GEOMAlgo_ShellSolidBuilder : public BOPAlgo_Builder {
 
  protected:
   Standard_EXPORT
+#if OCC_VERSION_LARGE < 0x07070000
     virtual void PerformInternal(const BOPAlgo_PaveFiller& theFiller);
+#else
+    virtual void PerformInternal(const BOPAlgo_PaveFiller& theFiller,
+                                 const Message_ProgressRange& theRange);
+#endif
 };
 
 //=======================================================================
@@ -93,9 +101,13 @@ GEOMAlgo_ShellSolidBuilder::~GEOMAlgo_ShellSolidBuilder()
 //function : PerformInternal
 //purpose  : 
 //=======================================================================
+#if OCC_VERSION_LARGE < 0x07070000
 void GEOMAlgo_ShellSolidBuilder::PerformInternal(const BOPAlgo_PaveFiller& theFiller)
+#else
+void GEOMAlgo_ShellSolidBuilder::PerformInternal(const BOPAlgo_PaveFiller& theFiller,
+                                                 const Message_ProgressRange& theRange)
+#endif
 {
-   //
   myPaveFiller=(BOPAlgo_PaveFiller*)&theFiller;
   myDS=myPaveFiller->PDS();
   myContext=myPaveFiller->Context();
@@ -111,10 +123,21 @@ void GEOMAlgo_ShellSolidBuilder::PerformInternal(const BOPAlgo_PaveFiller& theFi
   if (HasErrors()) {
     return;
   }
+
+#if OCC_VERSION_LARGE >= 0x07070000
+  Message_ProgressScope aPS(theRange, "Building the result of Boolean operation", 100);
   //
+  BOPAlgo_PISteps aSteps (PIOperation_Last);
+  analyzeProgress (100, aSteps);
+#endif
+
   // 3. Fill Images
   // 3.1 Vertice
+#if OCC_VERSION_LARGE < 0x07070000
   FillImagesVertices();
+#else
+  FillImagesVertices(aPS.Next(aSteps.GetStep(PIOperation_TreatVertices)));
+#endif
   if (HasErrors()) {
     return;
   }
@@ -124,7 +147,11 @@ void GEOMAlgo_ShellSolidBuilder::PerformInternal(const BOPAlgo_PaveFiller& theFi
     return;
   }
   // 3.2 Edges
+#if OCC_VERSION_LARGE < 0x07070000
   FillImagesEdges();
+#else
+  FillImagesEdges(aPS.Next(aSteps.GetStep(PIOperation_TreatEdges)));
+#endif
   if (HasErrors()) {
     return;
   }
@@ -135,7 +162,11 @@ void GEOMAlgo_ShellSolidBuilder::PerformInternal(const BOPAlgo_PaveFiller& theFi
   } 
   //
   // 3.3 Wires
+#if OCC_VERSION_LARGE < 0x07070000
   FillImagesContainers(TopAbs_WIRE);
+#else
+  FillImagesContainers(TopAbs_WIRE, aPS.Next(aSteps.GetStep(PIOperation_TreatWires)));
+#endif
   if (HasErrors()) {
     return;
   }
@@ -146,7 +177,11 @@ void GEOMAlgo_ShellSolidBuilder::PerformInternal(const BOPAlgo_PaveFiller& theFi
   }
   
   // 3.4 Faces
+#if OCC_VERSION_LARGE < 0x07070000
   FillImagesFaces();
+#else
+  FillImagesFaces(aPS.Next(aSteps.GetStep(PIOperation_TreatFaces)));
+#endif
   if (HasErrors()) {
     return;
   }

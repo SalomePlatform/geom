@@ -712,15 +712,13 @@ Standard_Boolean GEOM_AISShape::computeMassCenter( const TopoDS_Shape& theShape,
     {
       gp_XY C( 0, 0 );
       double A = 0;
-      const TColgp_Array1OfPnt2d& uvArray = triangulation->UVNodes();
-      const Poly_Array1OfTriangle&  trias = triangulation->Triangles();
       Standard_Integer n1,n2,n3;
-      for ( int iT = trias.Lower(); iT <= trias.Upper(); ++iT )
+      for ( int iT = 1; iT <= triangulation->NbTriangles(); ++iT )
       {
-        trias( iT ).Get( n1,n2,n3 );
-        const gp_Pnt2d& uv1 = uvArray( n1 );
-        const gp_Pnt2d& uv2 = uvArray( n2 );
-        const gp_Pnt2d& uv3 = uvArray( n3 );
+        triangulation->Triangle( iT ).Get( n1,n2,n3 );
+        const gp_Pnt2d& uv1 = triangulation->UVNode( n1 );
+        const gp_Pnt2d& uv2 = triangulation->UVNode( n2 );
+        const gp_Pnt2d& uv3 = triangulation->UVNode( n3 );
         double a = 0.5 * sqrt(( uv1.X() - uv3.X() ) * ( uv2.Y() - uv1.Y() ) -
                               ( uv1.X() - uv2.X() ) * ( uv3.Y() - uv1.Y() ));
         C += ( uv1.XY() + uv2.XY() + uv3.XY() ) / 3. * a;

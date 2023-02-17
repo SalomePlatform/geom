@@ -191,7 +191,7 @@ void AIS_Text::Compute(const Handle(PrsMgr_PresentationManager3d)& /*aPresentati
   asp->Aspect()->SetTextZoomable(aZoomable);
   asp->Aspect()->SetTextAngle(aAngle);
   asp->Aspect()->SetTextFontAspect(aFontAspect);
-  Prs3d_Text::Draw(aPresentation, asp, aText, aPosition); // todo: deprecated OCCT API
+  Prs3d_Text::Draw(aPresentation->CurrentGroup(), asp, aText, aPosition);
 }
 
 bool isSame (double d1, double d2)

@@ -18,6 +18,10 @@
 //
 
 
+#include <Basics_OCCTVersion.hxx>
+
+#if OCC_VERSION_LARGE < 0x07070000
+
 #include <GEOMUtils_HTrsfCurve2d.hxx>
 
 namespace GEOMUtils {
@@ -45,3 +49,5 @@ GEOMUtils::HTrsfCurve2d::HTrsfCurve2d(const Handle(Geom2d_Curve) &theCurve,
 : myCurve (theCurve, theUFirst, theULast, theTrsf)
 {
 }
+
+#endif

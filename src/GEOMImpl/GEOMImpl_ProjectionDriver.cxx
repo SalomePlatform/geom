@@ -24,13 +24,20 @@
 
 #include <GEOMImpl_ProjectionDriver.hxx>
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <GEOMImpl_IMirror.hxx>
 #include <GEOMImpl_IProjection.hxx>
 #include <GEOMImpl_IProjOnCyl.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
 #include <GEOMUtils.hxx>
+
+#if OCC_VERSION_LARGE < 0x07070000
 #include <GEOMUtils_HTrsfCurve2d.hxx>
+#else
+#include <GEOMUtils_TrsfCurve2d.hxx>
+#endif
 
 #include <Approx_Curve2d.hxx>
 #include <Bnd_Box2d.hxx>
@@ -661,11 +668,17 @@ TopoDS_Shape GEOMImpl_ProjectionDriver::projectOnCylinder
       }
 
       // Transform the curve to cylinder's parametric space.
+#if OCC_VERSION_LARGE < 0x07070000
       Handle(GEOMUtils::HTrsfCurve2d) aTrsfCurve =
         new GEOMUtils::HTrsfCurve2d(aCurve, aPar[0], aPar[1], aTrsf2d);
-      Approx_Curve2d                  aConv (aTrsfCurve, aPar[0], aPar[1],
-                                                         aUResol, aVResol, GeomAbs_C1,
-                                             9, 1000);
+#else
+      Handle(GEOMUtils::TrsfCurve2d) aTrsfCurve =
+        new GEOMUtils::TrsfCurve2d(aCurve, aPar[0], aPar[1], aTrsf2d);
+#endif
+
+      Approx_Curve2d aConv (aTrsfCurve, aPar[0], aPar[1],
+                            aUResol, aVResol, GeomAbs_C1,
+                            9, 1000);
 
       if (!aConv.IsDone() && !aConv.HasResult()) {
         return aResult;

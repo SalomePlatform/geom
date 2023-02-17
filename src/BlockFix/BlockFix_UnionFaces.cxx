@@ -73,9 +73,13 @@
 
 #include <TColGeom_HArray2OfSurface.hxx>
 
+#if OCC_VERSION_LARGE < 0x07070000
 #include <GeomAdaptor_HSurface.hxx>
-#include <GeomLib_IsPlanarSurface.hxx>
+#else
+#include <GeomAdaptor_Surface.hxx>
+#endif
 
+#include <GeomLib_IsPlanarSurface.hxx>
 #include <Geom_Surface.hxx>
 #include <Geom_Plane.hxx>
 #include <Geom_OffsetSurface.hxx>
@@ -85,7 +89,9 @@
 #include <Geom_SurfaceOfLinearExtrusion.hxx>
 #include <Geom_RectangularTrimmedSurface.hxx>
 #include <BRepAdaptor_Surface.hxx>
+#if OCC_VERSION_LARGE < 0x07070000
 #include <BRepAdaptor_HSurface.hxx>
+#endif
 #include <LocalAnalysis_SurfaceContinuity.hxx>
 #include <GeomConvert_ApproxSurface.hxx>
 #include <Bnd_Box.hxx>
@@ -300,7 +306,11 @@ static Standard_Boolean IsTangentFaces(const TopoDS_Edge& theEdge,
 
 // Computation of the number of samples on the edge.
   BRepAdaptor_Surface              aBAS(theFace);
+#if OCC_VERSION_LARGE < 0x07070000
   Handle(BRepAdaptor_HSurface)     aBAHS      = new BRepAdaptor_HSurface(aBAS);
+#else
+  Handle(BRepAdaptor_Surface)      aBAHS      = new BRepAdaptor_Surface(aBAS);
+#endif
   Handle(BRepTopAdaptor_TopolTool) aTool      = new BRepTopAdaptor_TopolTool(aBAHS);
   Standard_Integer                 aNbSamples =     aTool->NbSamples();
   const Standard_Integer           aNbSamplesMax =   23;
@@ -903,8 +913,13 @@ Standard_Boolean BlockFix_UnionFaces::IsSameDomain(const TopoDS_Face& aFace,
   if (S1->IsKind(STANDARD_TYPE(Geom_ElementarySurface)) &&
       S2->IsKind(STANDARD_TYPE(Geom_ElementarySurface)))
   {
+#if OCC_VERSION_LARGE < 0x07070000
     Handle(GeomAdaptor_HSurface) aGA1 = new GeomAdaptor_HSurface(S1);
     Handle(GeomAdaptor_HSurface) aGA2 = new GeomAdaptor_HSurface(S2);
+#else
+    Handle(GeomAdaptor_Surface) aGA1 = new GeomAdaptor_Surface(S1);
+    Handle(GeomAdaptor_Surface) aGA2 = new GeomAdaptor_Surface(S2);
+#endif
 
     Handle(BRepTopAdaptor_TopolTool) aTT1 = new BRepTopAdaptor_TopolTool();
     Handle(BRepTopAdaptor_TopolTool) aTT2 = new BRepTopAdaptor_TopolTool();

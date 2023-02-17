@@ -29,9 +29,13 @@
 #include <ShHealOper_FillHoles.hxx>
 #include <ShapeAnalysis_FreeBounds.hxx>
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_Curve.hxx>
+#if OCC_VERSION_LARGE < 0x07070000
 #include <BRepAdaptor_HCurve.hxx>
+#endif
 #include <BRep_Builder.hxx>
 #include <BRepFill_CurveConstraint.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
@@ -284,7 +288,11 @@ Handle(Geom_Surface) ShHealOper_FillHoles::buildSurface(const TopoDS_Wire& theWi
 
       TopoDS_Edge ae = TopoDS::Edge(aIter.Value());
       BRepAdaptor_Curve adC(ae);
-      Handle(BRepAdaptor_HCurve) aHAD= new BRepAdaptor_HCurve(adC);
+#if OCC_VERSION_LARGE < 0x07070000
+      Handle(BRepAdaptor_HCurve) aHAD = new BRepAdaptor_HCurve(adC);
+#else
+      Handle(BRepAdaptor_Curve) aHAD = new BRepAdaptor_Curve(adC);
+#endif
       // Handle(BRepFill_CurveConstraint) aConst =
       //     new BRepFill_CurveConstraint (Handle(Adaptor3d_HCurve)::DownCast(aHAD), (Standard_Integer) GeomAbs_C0, myNbPtsOnCur, myTol3d);
       Handle(GeomPlate_CurveConstraint) aConst =

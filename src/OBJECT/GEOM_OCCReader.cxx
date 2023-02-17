@@ -29,6 +29,8 @@
 
 #include <GEOMUtils_Hatcher.hxx>
 
+#include <Basics_OCCTVersion.hxx>
+
 // VTK Includes
 #include <vtkPoints.h>
 #include <vtkCellArray.h>
@@ -39,7 +41,11 @@
 #include <vtkInformationVector.h>
 
 // OpenCASCADE Includes
+#if OCC_VERSION_LARGE < 0x07070000
 #include <Adaptor3d_HCurve.hxx>
+#else
+#include <Adaptor3d_Curve.hxx>
+#endif
 #include <Poly_Triangulation.hxx>
 #include <Poly_Polygon3D.hxx>
 #include <Poly_PolygonOnTriangulation.hxx>
@@ -622,10 +628,9 @@ void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
   } else {
     nbnodes = aEdgePoly->NbNodes();
     const TColStd_Array1OfInteger& Nodesidx = aEdgePoly->Nodes();
-    const TColgp_Array1OfPnt& theNodesPoly = T->Nodes();
 
-    aP1 = theNodesPoly(1);
-    aP2 = theNodesPoly(nbnodes);
+    aP1 = T->Node(1);
+    aP2 = T->Node(nbnodes);
 
     float coord[3];
     vtkIdType pts[2];
@@ -634,8 +639,8 @@ void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
       Standard_Integer id1 = Nodesidx(j);
       Standard_Integer id2 = Nodesidx(j+1);
       
-      gp_Pnt pt1 = theNodesPoly(id1);
-      gp_Pnt pt2 = theNodesPoly(id2);
+      gp_Pnt pt1 = T->Node(id1);
+      gp_Pnt pt2 = T->Node(id2);
           
       if(!isidtrsf) {
         // apply edge transformation
@@ -853,13 +858,10 @@ void GEOM_OCCReader::TransferFaceSData(const TopoDS_Face& aFace,
 
     Standard_Integer nbNodesInFace = aPoly->NbNodes();
     Standard_Integer nbTriInFace = aPoly->NbTriangles();
-                
-    const Poly_Array1OfTriangle& Triangles = aPoly->Triangles();
-    const TColgp_Array1OfPnt& Nodes = aPoly->Nodes();
       
     Standard_Integer i;
     for(i=1;i<=nbNodesInFace;i++) {
-      gp_Pnt P = Nodes(i);
+      gp_Pnt P = aPoly->Node(i);
       float coord[3];
       if(!identity) P.Transform(myTransf);
       coord[0] = P.X(); coord[1] = P.Y(); coord[2] = P.Z();
@@ -870,7 +872,7 @@ void GEOM_OCCReader::TransferFaceSData(const TopoDS_Face& aFace,
       // Get the triangle
         
       Standard_Integer N1,N2,N3;
-      Triangles(i).Get(N1,N2,N3);
+      aPoly->Triangle(i).Get(N1,N2,N3);
         
       vtkIdType pts[3];
       pts[0] = N1-1; pts[1] = N2-1; pts[2] = N3-1;

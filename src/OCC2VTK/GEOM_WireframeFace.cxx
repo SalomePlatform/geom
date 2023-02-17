@@ -31,9 +31,16 @@
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
  
-#include <Adaptor3d_HCurve.hxx>
 #include <BRep_Tool.hxx>
 #include <TColStd_Array1OfReal.hxx>
+
+#include <Basics_OCCTVersion.hxx>
+
+#if OCC_VERSION_LARGE < 0x07070000
+#include <Adaptor3d_HCurve.hxx>
+#else
+#include <Adaptor3d_Curve.hxx>
+#endif
 
 vtkStandardNewMacro(GEOM_WireframeFace)
  

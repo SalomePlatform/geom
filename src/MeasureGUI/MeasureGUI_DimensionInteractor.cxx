@@ -57,7 +57,6 @@
 #include <Geom_Line.hxx>
 #include <Geom_Plane.hxx>
 #include <NCollection_Sequence.hxx>
-#include <Quantity_Length.hxx>
 
 //=================================================================================
 // function : Constructor

@@ -41,7 +41,13 @@
 #include <TColgp_SequenceOfXYZ.hxx>
 #include <TColStd_Array1OfInteger.hxx>
 
+#include <Basics_OCCTVersion.hxx>
+
+#if OCC_VERSION_LARGE < 0x07070000
 #include <BRepAdaptor_HSurface.hxx>
+#else
+#include <BRepAdaptor_Surface.hxx>
+#endif
 
 #include <BRep_Builder.hxx>
 #include <BRepGProp.hxx>
@@ -117,9 +123,15 @@ TopoDS_Shape AdvancedEngine_SmoothingSurfaceDriver::MakeSmoothingSurfaceUnClosed
 
   GeomPlate_BuildPlateSurface aBuilder(3,10);
   // ** Initialization of surface
+#if OCC_VERSION_LARGE < 0x07070000
   Handle(BRepAdaptor_HSurface) HSI = new BRepAdaptor_HSurface();
   HSI->ChangeSurface().Initialize(aInitShape);
   aBuilder.LoadInitSurface( BRep_Tool::Surface(HSI->ChangeSurface().Face()));
+#else
+  Handle(BRepAdaptor_Surface) HSI = new BRepAdaptor_Surface();
+  HSI->Initialize(aInitShape);
+  aBuilder.LoadInitSurface( BRep_Tool::Surface(HSI->Face()) );
+#endif
 
   Standard_Integer j, j1, j2;
   // cout << "Init surface" << endl;
