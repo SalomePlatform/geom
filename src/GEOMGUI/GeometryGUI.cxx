@@ -60,6 +60,10 @@
 #include <OCCViewer_ViewModel.h>
 #include <OCCViewer_ViewManager.h>
 
+#include <PV3DViewer_ViewWindow.h>
+#include <PV3DViewer_ViewModel.h>
+#include <PV3DViewer_ViewManager.h>
+
 #include <SOCC_ViewModel.h>
 #include <SOCC_ViewWindow.h>
 
@@ -372,6 +376,7 @@ void GeometryGUI::ActiveWorkingPlane()
   SUIT_ViewWindow* window = application()->desktop()->activeWindow();
   bool ViewOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
   bool ViewVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
+  bool ViewPV3D = ( window && window->getViewManager()->getType() == PV3DViewer_ViewModel::Type() );
 
   if ( ViewOCC ) {
     OCCViewer_ViewWindow* vw = dynamic_cast<OCCViewer_ViewWindow*>( window );
@@ -393,6 +398,11 @@ void GeometryGUI::ActiveWorkingPlane()
       camera->SetFocalPoint(0,0,0);
 
       vw->onFitAll();
+    }
+  }
+  else if ( ViewPV3D ) {
+    PV3DViewer_ViewWindow* vw = dynamic_cast<PV3DViewer_ViewWindow*>( window );
+    if ( vw ) {
     }
   }
 }
@@ -2097,6 +2107,7 @@ void GeometryGUI::windows( QMap<int, int>& mappa ) const
 void GeometryGUI::viewManagers( QStringList& lst ) const
 {
   lst.append( OCCViewer_Viewer::Type() );
+  //lst.append( PV3DViewer_ViewModel::Type() );
 }
 
 void GeometryGUI::onViewManagerAdded( SUIT_ViewManager* vm )

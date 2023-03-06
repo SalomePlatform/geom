@@ -44,6 +44,7 @@
 #include <GEOM_AISTrihedron.hxx>
 #include <GEOM_VTKTrihedron.hxx>
 #include <GEOM_VTKPropertyMaterial.hxx>
+#include <GEOM_PainterPolyDataMapper.h>
 
 #include <GEOMGUI_DimensionProperty.h>
 #include <GEOMGUI_AnnotationAttrs.h>
@@ -77,9 +78,30 @@
 #include <SVTK_Prs.h>
 #include <SVTK_ViewModel.h>
 
+#include <SPV3D_Prs.h>
+#include <SPV3D_ViewModel.h>
+
 #include <OCCViewer_ViewWindow.h>
 #include <OCCViewer_ViewPort3d.h>
 #include <OCCViewer_Utilities.h>
+
+#include <BRepBndLib.hxx>
+#include <pqActiveObjects.h>
+#include <pqApplicationCore.h>
+#include <pqObjectBuilder.h>
+#include <vtkSMPropertyHelper.h>
+#include <vtkSMProxy.h>
+#include <vtkSMParaViewPipelineControllerWithRendering.h>
+#include <vtkNamedColors.h>
+#include <vtkPoints.h>
+#include <vtkCamera.h>
+#include <vtkCellArray.h>
+#include <vtkFloatArray.h>
+#include <vtkPointData.h>
+#include <vtkPolyData.h>
+#include <vtkRenderer.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
 
 // OCCT Includes
 #include <AIS_Dimension.hxx>
@@ -125,6 +147,11 @@
 #include <GEOMImpl_Types.hxx>
 
 #include <TColStd_HArray1OfByte.hxx>
+
+#include "vtkSMSourceProxy.h"
+#include "pqServerManagerModel.h"
+#include "vtkPVTrivialProducer.h"
+#include "vtkSMViewProxy.h"
 
 #if OCC_VERSION_LARGE >= 0x070400ff
 #include <Image_SupportedFormats.hxx>
@@ -1690,6 +1717,44 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
 
 //=================================================================
 /*!
+ *  GEOM_Displayer::Update
+ *  Update PV3D presentation
+ *  [ Reimplemented from SALOME_Displayer ]
+ */
+//=================================================================
+void GEOM_Displayer::Update( SALOME_PV3DPrs* prs )
+{
+  SPV3D_Prs* pv3dPrs = dynamic_cast<SPV3D_Prs*>( prs );
+
+  SalomeApp_Study* study = getStudy();
+
+  if ( !pv3dPrs || myShape.IsNull() || !study )
+    return;
+
+  if ( myType == GEOM_MARKER && myShape.ShapeType() == TopAbs_FACE )
+  {
+    // 
+    // specific processing for local coordinate system presentation
+    // 
+    // NYI - Update(PV3DPrs) for the local coordinate system
+  }
+  else
+  {
+    // 
+    // processing for usual geometry presentation
+    // 
+    {
+      pv3dPrs->SetName( myNameInObjBrowser );
+      GEOM_Actor *actor = GEOM_Actor::New();
+      updateActorProperties( actor, true );
+      pv3dPrs->FillUsingActor( actor );
+    }
+  }
+}
+
+
+//=================================================================
+/*!
  *  GEOM_Displayer::BuildPrs
  *  Build presentation according to the current viewer type
  */
@@ -1783,6 +1848,7 @@ SALOME_Prs* GEOM_Displayer::buildPresentation( const QString& entry,
               GEOM::GEOM_BaseObject_var GeomBaseObject = GEOM::GEOM_BaseObject::_narrow( object );
               if ( !GeomBaseObject->_is_nil() )
               {
+                myNameInObjBrowser = getName( GeomBaseObject );
                 myType = GeomBaseObject->GetType();
 
                 // downcast to GEOM object
@@ -2381,11 +2447,15 @@ bool GEOM_Displayer::canBeDisplayed( const QString& entry, const QString& viewer
 {
   _PTR(SObject) anObj = getStudy()->studyDS()->FindObjectID( (const char*)entry.toUtf8() );
   //if ( ! GeometryGUI::IsInGeomComponent( anObj )) return false;
-  GEOM::GEOM_Object_var aGeomObj = GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(anObj)); // enable displaying of GEOM objects
-  GEOM::GEOM_FieldStep_var aFieldStepObj = GEOM::GEOM_FieldStep::_narrow(GeometryGUI::ClientSObjectToObject(anObj)); // enable displaying of GEOM field steps
-  GEOM::GEOM_Gen_var aCompObj = GEOM::GEOM_Gen::_narrow(GeometryGUI::ClientSObjectToObject(anObj)); // enable displaying of whole GEOM component
-  return ( !CORBA::is_nil( aGeomObj ) || !CORBA::is_nil( aFieldStepObj ) || !CORBA::is_nil( aCompObj ) ) &&
-         (viewer_type == SOCC_Viewer::Type() || viewer_type == SVTK_Viewer::Type());
+  CORBA::Object_var anOrbObj = GeometryGUI::ClientSObjectToObject(anObj);
+  bool isCorbaObj = (!CORBA::is_nil(anOrbObj));
+  GEOM::GEOM_Object_var aGeomObj = GEOM::GEOM_Object::_narrow(anOrbObj); // enable displaying of GEOM objects
+  GEOM::GEOM_FieldStep_var aFieldStepObj = GEOM::GEOM_FieldStep::_narrow(anOrbObj); // enable displaying of GEOM field steps
+  GEOM::GEOM_Gen_var aCompObj = GEOM::GEOM_Gen::_narrow(anOrbObj); // enable displaying of whole GEOM component
+  bool isGeomObj = (!CORBA::is_nil( aGeomObj ) || !CORBA::is_nil( aFieldStepObj ) || !CORBA::is_nil( aCompObj ));
+  bool ret = ( isGeomObj ) &&
+         (viewer_type == SOCC_Viewer::Type() || viewer_type == SVTK_Viewer::Type() || viewer_type == SPV3D_ViewModel::Type());
+  return ret;
 }
 
 int GEOM_Displayer::SetDisplayMode( const int theMode )

@@ -38,6 +38,7 @@ class SALOME_View;
 class SALOME_Prs;
 class SALOME_OCCPrs;
 class SALOME_VTKPrs;
+class SALOME_PV3DPrs;
 class SALOME_OCCViewType;
 
 #include <TopoDS_Shape.hxx>
@@ -187,6 +188,7 @@ public:
   /* Reimplemented from SALOME_Displayer */
   virtual void  Update( SALOME_OCCPrs* );
   virtual void  Update( SALOME_VTKPrs* );
+  virtual void  Update( SALOME_PV3DPrs* );
   virtual void  BeforeDisplay( SALOME_View*, const SALOME_OCCPrs* );
   virtual void  AfterDisplay ( SALOME_View*, const SALOME_OCCPrs* );
   virtual void  BeforeErase  ( SALOME_View*, const SALOME_OCCPrs* );
@@ -282,6 +284,7 @@ protected:
   TCollection_AsciiString          myFieldStepName;
   double                           myFieldStepRangeMin;
   double                           myFieldStepRangeMax;
+  std::string                      myNameInObjBrowser;
   std::string                      myName;
   std::string                      myTexture;
   int                              myType;
