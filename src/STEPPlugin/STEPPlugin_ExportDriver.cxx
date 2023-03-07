@@ -25,6 +25,7 @@
 // KERNEL includes
 #include <utilities.h>
 #include <Basics_Utils.hxx>
+#include <Basics_OCCTVersion.hxx>
 
 // GEOM includes
 #include "GEOM_Function.hxx"
@@ -120,14 +121,20 @@ Standard_Integer STEPPlugin_ExportDriver::Execute(Handle(TFunction_Logbook)& /*l
     // Set "C" numeric locale to save numbers correctly
     Kernel_Utils::Localizer loc;
 
-    IFSelect_ReturnStatus status ;
-    //VRV: OCC 4.0 migration
+#if OCC_VERSION_LARGE < 0x07070000
     STEPControl_Writer aWriter;
     Interface_Static::SetCVal("xstep.cascade.unit","M");
     Interface_Static::SetCVal("write.step.unit", aWriteUnit.ToCString());
     Interface_Static::SetIVal("write.step.nonmanifold", 1);
-    status = aWriter.Transfer( aShape, STEPControl_AsIs );
-    //VRV: OCC 4.0 migration
+#else
+    STEPControl_Writer aWriterTmp;
+    Interface_Static::SetCVal("xstep.cascade.unit","M");
+    Interface_Static::SetCVal("write.step.unit", aWriteUnit.ToCString());
+    Interface_Static::SetIVal("write.step.nonmanifold", 1);
+    STEPControl_Writer aWriter;
+#endif
+
+    IFSelect_ReturnStatus status = aWriter.Transfer( aShape, STEPControl_AsIs );
     if( status == IFSelect_RetDone )
       status = aWriter.Write( aFileName.ToCString() );
 
@@ -137,7 +144,7 @@ Standard_Integer STEPPlugin_ExportDriver::Execute(Handle(TFunction_Logbook)& /*l
   }
   catch (Standard_Failure&)
   {
-      //THROW_SALOME_CORBA_EXCEPTION("Exception caught in STEPExport", SALOME::BAD_PARAM);
+    //THROW_SALOME_CORBA_EXCEPTION("Exception caught in STEPExport", SALOME::BAD_PARAM);
   }
   return 0;
 }

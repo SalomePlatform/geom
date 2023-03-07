@@ -24,6 +24,7 @@
 // KERNEL includes
 #include <utilities.h>
 #include <Basics_Utils.hxx>
+#include <Basics_OCCTVersion.hxx>
 
 // GEOM includes
 #include "GEOM_Function.hxx"
@@ -31,10 +32,16 @@
 // OOCT includes
 #include <IGESControl_Controller.hxx>
 #include <IGESControl_Writer.hxx>
+#include <IGESData_IGESModel.hxx>
 #include <Interface_Static.hxx>
+
+#include <XSAlgo.hxx>
+#include <XSAlgo_AlgoContainer.hxx>
 
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Iterator.hxx>
+
+#include <UnitsMethods.hxx>
 
 //=============================================================================
 /*!
@@ -160,6 +167,13 @@ Standard_Integer IGESPlugin_ExportDriver::Execute(Handle(TFunction_Logbook)& /*l
   IGESControl_Controller::Init();
   IGESControl_Writer ICW( "M", aBrepMode ); // export explicitly in meters
   Interface_Static::SetCVal( "xstep.cascade.unit", "M" );
+
+#if OCC_VERSION_LARGE >= 0x07070000
+  Interface_Static::SetCVal("write.iges.unit", "M");
+  XSAlgo::AlgoContainer()->PrepareForTransfer(); // update unit info
+  Standard_Real aScaleFactorMM = UnitsMethods::GetCasCadeLengthUnit();
+  ICW.Model()->ChangeGlobalSection().SetCascadeUnit(aScaleFactorMM);
+#endif
 
   // 09.03.2010 skl for bug 0020726
   // change default value "Average" to "Max"

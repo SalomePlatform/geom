@@ -26,6 +26,8 @@
 
 #include <Utils_ExceptHandlers.hxx>
 
+#include <Basics_OCCTVersion.hxx>
+
 // OCCT Includes
 #include <BRepMesh_IncrementalMesh.hxx>
 
@@ -994,7 +996,9 @@ Standard_Real GEOMUtils::GetMinDistance
 
   // skl 30.06.2008
   // additional workaround for bugs 19899, 19908 and 19910 from Mantis
+#if OCC_VERSION_LARGE < 0x07070000
   aResult = GEOMUtils::GetMinDistanceSingular(theShape1, theShape2, thePnt1, thePnt2);
+#endif
 
   /*
   if (dist > -1.0) {
