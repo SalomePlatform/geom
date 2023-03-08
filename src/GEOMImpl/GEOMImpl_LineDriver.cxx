@@ -20,7 +20,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <Standard_Stream.hxx>
+#include <Basics_OCCTVersion.hxx>
 
 #include <GEOMImpl_LineDriver.hxx>
 #include <GEOMImpl_ILine.hxx>
@@ -113,6 +113,10 @@ Standard_Integer GEOMImpl_LineDriver::Execute(Handle(TFunction_Logbook)& log) co
     }
     BRepAlgoAPI_Section E (aShape1, aShape2, Standard_False);
     E.Approximation(Standard_True);
+#if OCC_VERSION_LARGE >= 0x07070000
+    E.ComputePCurveOn1(Standard_True);
+    E.ComputePCurveOn2(Standard_True);
+#endif
     E.Build();
     if (!E.IsDone()) {
       Standard_ConstructionError::Raise("Line can not be performed on the given faces");
