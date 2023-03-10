@@ -24,6 +24,7 @@
 // KERNEL includes
 #include <utilities.h>
 #include <Basics_Utils.hxx>
+#include <Basics_OCCTVersion.hxx>
 
 // GEOM includes
 #include "GEOM_Function.hxx"
@@ -34,6 +35,7 @@
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Solid.hxx>
 #include <BRep_Tool.hxx>
+#include <BRepBuilderAPI_Sewing.hxx>
 #include <BRep_Builder.hxx>
 #include <TopoDS.hxx>
 #include <Precision.hxx>
@@ -70,7 +72,7 @@ Standard_Integer STLPlugin_ImportDriver::Execute(Handle(TFunction_Logbook)& log)
 
   TCollection_AsciiString aFileName = aData.GetFileName().ToCString();
 
-  MESSAGE( "Import STL to file " << aFileName );
+  MESSAGE( "Import STL from file " << aFileName );
 
   // Set "C" numeric locale to save numbers correctly
   Kernel_Utils::Localizer loc;
@@ -81,6 +83,16 @@ Standard_Integer STLPlugin_ImportDriver::Execute(Handle(TFunction_Logbook)& log)
   aReader.Read( aShape, aData.GetFileName().ToCString() );
 
   if( aShape.IsNull() ) return 0;
+
+#if OCC_VERSION_LARGE >= 0x07070000
+  BRepBuilderAPI_Sewing aSewingTool;
+  aSewingTool.Init(1.0e-06, Standard_True);
+  aSewingTool.Load(aShape);
+  aSewingTool.Perform();
+  TopoDS_Shape aSewedShape = aSewingTool.SewedShape();
+  if (!aSewedShape.IsNull())
+    aShape = aSewedShape;
+#endif
 
   // Fix the orientation of closed shell or solid.
   if( BRep_Tool::IsClosed( aShape ) ) {
