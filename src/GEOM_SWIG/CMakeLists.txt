@@ -73,6 +73,7 @@ SET(_python_SCRIPTS
   gsketcher.py
   canonicalrecognition.py
   conformity.py
+  proximity.py
   )
 
 # Advanced scripts

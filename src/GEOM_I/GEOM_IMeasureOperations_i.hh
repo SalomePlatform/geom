@@ -191,6 +191,15 @@ class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
 
   CORBA::Double UpdateTolerance(GEOM::GEOM_Object_ptr theShape);
 
+  // Methods to compute proximity between two shapes
+  GEOM::GEOM_Object_ptr ShapeProximityCalculator (GEOM::GEOM_Object_ptr theShape1,
+                                                  GEOM::GEOM_Object_ptr theShape2);
+  void SetShapeSampling(GEOM::GEOM_Object_ptr theCalculator,
+                        GEOM::GEOM_Object_ptr theShape,
+                        CORBA::Long theNbSamples);
+  CORBA::Double GetCoarseProximity(GEOM::GEOM_Object_ptr theCalculator);
+  CORBA::Double GetPreciseProximity(GEOM::GEOM_Object_ptr theCalculator);
+
   ::GEOMImpl_IMeasureOperations* GetOperations()
   { return (::GEOMImpl_IMeasureOperations*)GetImpl(); }
 

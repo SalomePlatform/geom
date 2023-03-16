@@ -27,5 +27,7 @@ IF(${OpenCASCADE_VERSION}.${OpenCASCADE_SP_VERSION} VERSION_GREATER "7.5.3.3")
       test_point_cloud_on_face.py
       test_CR.py
       test_conformity.py
+      test_proximity_edge_edge.py
+      test_proximity_face_face.py
     )
 ENDIF()

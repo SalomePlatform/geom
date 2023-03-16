@@ -4833,6 +4833,38 @@ module GEOM
     *  \param theShape Shape for update.
     */
     double UpdateTolerance(in GEOM_Object theShape);
+
+    /*!
+     *  \brief Get the calculator for the proximity value between the given shapes.
+     *  \param theShape1,theShape2 Shapes to find proximity.
+     *  \return The calculator object.
+     */
+    GEOM_Object ShapeProximityCalculator(in GEOM_Object theShape1, in GEOM_Object theShape2);
+
+    /*!
+     *  \brief Set number sample points to compute the coarse proximity.
+     *  \param theCalculator Proximity calculator.
+     *  \param theShape      Shape to be samples.
+     *  \param theNbSamples  Number of samples points.
+     */
+    void SetShapeSampling(in GEOM_Object theCalculator,
+                          in GEOM_Object theShape,
+                          in long theNbSamples);
+
+    /*!
+     *  \brief Compute coarse value of the proximity basing on the polygonal representation of shapes.
+     *  \param theCalculator Proximity calculator.
+     *  \return Proximity value.
+     */
+    double GetCoarseProximity(in GEOM_Object theCalculator);
+
+    /*!
+     *  \brief Compute precise value of the proximity basing on the exact shapes.
+     *  \param theCalculator Proximity calculator.
+     *  \return Proximity value.
+     */
+    double GetPreciseProximity(in GEOM_Object theCalculator);
+
   };
 
  // # GEOM_IGroupOperations:

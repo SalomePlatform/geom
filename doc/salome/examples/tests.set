@@ -135,4 +135,5 @@ SET(GOOD_TESTS
   working_with_groups_ex06.py
   GEOM_Field.py
   check_self_intersections_fast.py # OCC > 6.9.0
+  shape_proximity.py
 )

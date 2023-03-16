@@ -22,6 +22,7 @@
 <li>\subpage tui_check_self_intersections_fast_page</li>
 <li>\subpage tui_fast_intersection_page</li>
 <li>\subpage tui_check_conformity_page</li>
+<li>\subpage tui_shape_proximity_page</li>
 </ul>
 
 */

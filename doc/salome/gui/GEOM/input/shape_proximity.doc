@@ -1,0 +1,52 @@
+/*! 
+
+\page shape_proximity_page Shape Proximity
+
+The Shape Proximity operation calculates maximal of all possible distances between two shapes.
+Considering this case :
+
+\image html Shape_proximity_0.png
+
+The proximity of blue shape to the red one is computed like this :
+For each point of blue the distance to the red is computed using perpendicular projection. The proximity value returned is equal to maximal value of all of this distances.
+To do that the implemented algorithm
+
+1 - sampling shapes by points then calculating the distance from each sample point from one shape to another
+
+2 - find the position which gives the maximal distance
+
+3 - improve the proximity value basing on the exact shapes using the points found on step 2 as a start position
+
+It may happen that for some point of blue shape no distance to red shape exist using perpendicular projection.
+This is typically the case here :
+
+\image html Shape_proximity_1.png
+
+In the case of no perpendicular projection of a point on blue shape exists, instead of perpendicular projection the minimal distance to border point of red shape is considered.
+The distance from EndBlue Point is taken using EndRed Point (black line represents the distance for EndBlue).
+
+This is just a TUI functionality. The provided class
+<pre>
+geompy.ShapeProximity()
+</pre>
+has an interface to compute proximity value with default parameters
+<pre>
+p = geompy.ShapeProximity()
+value = p.proximity(shape1, shape2)
+</pre>
+
+Moreover, it also provides the functionality to customize the calculation. 
+For example, compute coarse proximity value basing on the number of sampling points for each shape, 
+or compute the precise value as a refining operation after the coarse value calculation.
+<pre>
+p = geompy.ShapeProximity()
+p.setShapes(shape1, shape2) # customize calculator with input shapes
+p.setSampling(shape1, 100)  # assign number of sample points for the first shape
+p.setSampling(shape2, 25)   # assign number of sample points for the second shape
+coarse_proximity = p.coarseProximity() # rough proximity value basing on the shape sampling and tessellation
+fine_proximity = p.preciseProximity()  # more precise proximity value using exact shapes
+</pre>
+
+See also a \ref tui_shape_proximity_page "TUI example".
+
+*/
