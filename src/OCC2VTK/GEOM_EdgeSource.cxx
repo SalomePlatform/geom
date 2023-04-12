@@ -40,7 +40,8 @@
 vtkStandardNewMacro(GEOM_EdgeSource)
  
 GEOM_EdgeSource::GEOM_EdgeSource() :
-  myIsVector(false)
+  myIsVector(false),
+  myIsVectorMode(false)
 { 
   this->SetNumberOfInputPorts(0);
 } 
