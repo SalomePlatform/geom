@@ -21,6 +21,7 @@
 //
 
 #include <Standard_Stream.hxx>
+#include <TColStd_HArray1OfReal.hxx>
 
 #include "GEOM_IMeasureOperations_i.hh"
 
@@ -1242,6 +1243,92 @@ GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::SurfaceCurvatureByPointAndDirec
     return aGEOMObject._retn();
 
   return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  XYZtoUV
+ */
+//=============================================================================
+GEOM::ListOfDouble* GEOM_IMeasureOperations_i::XYZtoUV
+                                        (GEOM::GEOM_Object_ptr     theSurf,
+                                         const GEOM::ListOfDouble& theXYZlist,
+                                         CORBA::Boolean            theIsNormalized)
+{
+  GEOM::ListOfDouble_var resUV = new GEOM::ListOfDouble;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference shape
+  Handle(::GEOM_Object) aShape = GetObjectImpl(theSurf);
+  if (aShape.IsNull()) return resUV._retn();
+
+  //Get input XYZ list
+  Handle(TColStd_HArray1OfReal) aXYZlist =
+    new TColStd_HArray1OfReal (0, theXYZlist.length() - 1);
+  {
+    size_t nb = theXYZlist.length(); 
+    for (size_t i = 0; i < nb; ++i)
+      aXYZlist->SetValue(i, theXYZlist[i]);
+  }
+
+  //Call implementation
+  Handle(TColStd_HArray1OfReal) aUVlist =
+    GetOperations()->XYZtoUV(aShape, aXYZlist, theIsNormalized);
+
+  if (GetOperations()->IsDone()) {
+    resUV->length(aUVlist->Length());
+    int i0 = aUVlist->Lower();
+    int nb = aUVlist->Upper(); 
+    for (int i = i0; i <= nb; ++i)
+      resUV[ i-i0 ] = aUVlist->Value(i);
+  }
+
+  return resUV._retn();
+}
+
+//=============================================================================
+/*!
+ *  UVtoXYZ
+ */
+//=============================================================================
+GEOM::ListOfDouble* GEOM_IMeasureOperations_i::UVtoXYZ
+                                        (GEOM::GEOM_Object_ptr     theSurf,
+                                         const GEOM::ListOfDouble& theUVlist,
+                                         CORBA::Boolean            theIsNormalized)
+{
+  GEOM::ListOfDouble_var resXYZ = new GEOM::ListOfDouble;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference shape
+  Handle(::GEOM_Object) aShape = GetObjectImpl(theSurf);
+  if (aShape.IsNull()) return resXYZ._retn();
+
+  //Get input UV list
+  Handle(TColStd_HArray1OfReal) aUVlist =
+    new TColStd_HArray1OfReal (0, theUVlist.length() - 1);
+  {
+    size_t nb = theUVlist.length(); 
+    for (size_t i = 0; i < nb; ++i)
+      aUVlist->SetValue(i, theUVlist[i]);
+  }
+
+  //Call implementation
+  Handle(TColStd_HArray1OfReal) aXYZlist =
+    GetOperations()->UVtoXYZ(aShape, aUVlist, theIsNormalized);
+
+  if (GetOperations()->IsDone()) {
+    resXYZ->length(aXYZlist->Length());
+    int i0 = aXYZlist->Lower();
+    int nb = aXYZlist->Upper(); 
+    for (int i = i0; i <= nb; ++i)
+      resXYZ[ i-i0 ] = aXYZlist->Value(i);
+  }
+
+  return resXYZ._retn();
 }
 
 //=============================================================================

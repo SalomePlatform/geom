@@ -2795,6 +2795,216 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::SurfaceCurvatureByPointAndDirec
 
 //=============================================================================
 /*!
+ *  XYZtoUV
+ */
+ //=============================================================================
+Handle(TColStd_HArray1OfReal) GEOMImpl_IMeasureOperations::XYZtoUV
+                                                  (Handle(GEOM_Object) theSurf,
+                                                   const Handle(TColStd_HArray1OfReal)& theXYZlist,
+                                                   bool isNormalized)
+{
+  SetErrorCode(KO);
+
+  Handle(TColStd_HArray1OfReal) aRet;
+
+  // Check list of coordinates
+  int nbC = theXYZlist->Length();
+  int nbP = nbC / 3;
+  if (nbP * 3 != nbC) {
+    SetErrorCode("Coordinates list length is not divisible by 3");
+    return aRet;
+  }
+
+  // Check face
+  if (theSurf.IsNull()) {
+    SetErrorCode("The shape is NULL");
+    return aRet;
+  }
+
+  Handle(GEOM_Function) aRefShape = theSurf->GetLastFunction();
+  if (aRefShape.IsNull()) {
+    SetErrorCode("The shape is NULL");
+    return aRet;
+  }
+
+  TopoDS_Shape aShape = aRefShape->GetValue();
+  if (aShape.IsNull()) {
+    SetErrorCode("The shape is NULL");
+    return aRet;
+  }
+
+  // The shape can be a face, a shell of one face or a compound with one face
+  TopoDS_Face F;
+  if (aShape.ShapeType() == TopAbs_FACE) {
+    F = TopoDS::Face(aShape);
+  }
+  else if (aShape.ShapeType() < TopAbs_FACE) {
+    TopExp_Explorer Exp (aShape, TopAbs_FACE);
+    if (Exp.More()) {
+      F = TopoDS::Face(Exp.Current());
+      Exp.Next();
+      if (Exp.More()) {
+        SetErrorCode("There should be only one face");
+        return aRet;
+      }
+    }
+  }
+  if (F.IsNull()) {
+    SetErrorCode("There are no faces");
+    return aRet;
+  }
+
+  // Face tolerance
+  Standard_Real squareTolerance = BRep_Tool::Tolerance(F);
+  squareTolerance = squareTolerance * squareTolerance;
+
+  // Compute parameters
+  Handle(Geom_Surface) aSurf = BRep_Tool::Surface(F);
+  aRet = new TColStd_HArray1OfReal (0, nbP * 2 - 1);
+
+  Standard_Real U1,U2, V1,V2;
+  BRepTools::UVBounds(F, U1, U2, V1, V2);
+  Standard_Real dU = U2 - U1;
+  Standard_Real dV = V2 - V1;
+
+  int iCLower = theXYZlist->Lower();
+  for (int iP = 0; iP < nbP; iP++) {
+    gp_Pnt aP (theXYZlist->Value(iCLower + iP * 3),
+               theXYZlist->Value(iCLower + iP * 3 + 1),
+               theXYZlist->Value(iCLower + iP * 3 + 2));
+    Standard_Real U, V;
+    gp_Pnt aPonF = GEOMUtils::ProjectPointOnFace(aP, F, U, V);
+    if (aP.SquareDistance(aPonF) < squareTolerance) {
+      if (isNormalized) {
+        // Normalize parameters to be in [0, 1]
+        U = (U - U1) / dU;
+        V = (V - V1) / dV;
+      }
+      aRet->SetValue(iP * 2    , U);
+      aRet->SetValue(iP * 2 + 1, V);
+    }
+    else {
+      SetErrorCode("Point too far from face");
+      return aRet;
+    }
+  }
+
+  SetErrorCode(OK);
+  return aRet;
+}
+
+//=============================================================================
+/*!
+ *  UVtoXYZ
+ */
+ //=============================================================================
+Handle(TColStd_HArray1OfReal) GEOMImpl_IMeasureOperations::UVtoXYZ
+                                                  (Handle(GEOM_Object) theSurf,
+                                                   const Handle(TColStd_HArray1OfReal)& theUVlist,
+                                                   bool isNormalized)
+{
+  SetErrorCode(KO);
+
+  Handle(TColStd_HArray1OfReal) aRet;
+
+  // Check list of parameters
+  int nbC = theUVlist->Length();
+  int nbP = nbC / 2;
+  if (nbP * 2 != nbC) {
+    SetErrorCode("Parameters list length is not divisible by 2");
+    return aRet;
+  }
+
+  // Check face
+  if (theSurf.IsNull()) {
+    SetErrorCode("The shape is NULL");
+    return aRet;
+  }
+
+  Handle(GEOM_Function) aRefShape = theSurf->GetLastFunction();
+  if (aRefShape.IsNull()) {
+    SetErrorCode("The shape is NULL");
+    return aRet;
+  }
+
+  TopoDS_Shape aShape = aRefShape->GetValue();
+  if (aShape.IsNull()) {
+    SetErrorCode("The shape is NULL");
+    return aRet;
+  }
+
+  // The shape can be a face, a shell of one face or a compound with one face
+  TopoDS_Face F;
+  if (aShape.ShapeType() == TopAbs_FACE) {
+    F = TopoDS::Face(aShape);
+  }
+  else if (aShape.ShapeType() < TopAbs_FACE) {
+    TopExp_Explorer Exp (aShape, TopAbs_FACE);
+    if (Exp.More()) {
+      F = TopoDS::Face(Exp.Current());
+      Exp.Next();
+      if (Exp.More()) {
+        SetErrorCode("There should be only one face");
+        return aRet;
+      }
+    }
+  }
+  if (F.IsNull()) {
+    SetErrorCode("There are no faces");
+    return aRet;
+  }
+
+  // Face tolerance
+  Standard_Real squareTolerance = BRep_Tool::Tolerance(F);
+  squareTolerance = squareTolerance * squareTolerance;
+
+  // Compute coordinates
+  Handle(Geom_Surface) aSurf = BRep_Tool::Surface(F);
+  aRet = new TColStd_HArray1OfReal (0, nbP * 3 - 1);
+
+  Standard_Real U1,U2, V1,V2;
+  BRepTools::UVBounds(F, U1, U2, V1, V2);
+  Standard_Real dU = U2 - U1;
+  Standard_Real dV = V2 - V1;
+
+  Standard_Real tol = 1.e-4;
+  Standard_Real pc = Precision::Confusion();
+
+  int iCLower = theUVlist->Lower();
+  for (int iP = 0; iP < nbP; iP++) {
+    Standard_Real U = theUVlist->Value(iCLower + iP * 2);
+    Standard_Real V = theUVlist->Value(iCLower + iP * 2 + 1);
+
+    if (isNormalized) {
+      // Get real parameters from given normalized ones in [0, 1]
+      if (!(-pc < U && U < 1 + pc) || !(-pc < V && V < 1 + pc)) {
+        SetErrorCode("Normalized parameter is out of range [0,1]");
+        return aRet;
+      }
+      U = U1 + dU * U;
+      V = V1 + dV * V;
+    }
+
+    gp_Pnt2d aP2d (U, V);
+
+    BRepClass_FaceClassifier aClsf (F, aP2d, tol);
+    if (aClsf.State() != TopAbs_IN && aClsf.State() != TopAbs_ON) {
+      SetErrorCode("Given parameters are out of face");
+      return aRet;
+    }
+    gp_Pnt surfPnt = aSurf->Value(U, V);
+
+    aRet->SetValue(iP * 3    , surfPnt.X());
+    aRet->SetValue(iP * 3 + 1, surfPnt.Y());
+    aRet->SetValue(iP * 3 + 2, surfPnt.Z());
+  }
+
+  SetErrorCode(OK);
+  return aRet;
+}
+
+//=============================================================================
+/*!
  *  SelfIntersected2D
  *  Find all self-intersected 2D curves.
  *  \param theChecks list of failed checks, contains type of check and failed shapes

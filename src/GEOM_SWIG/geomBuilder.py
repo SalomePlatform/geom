@@ -11232,6 +11232,74 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                 self._autoPublish(aVec, theName, "curvature")
             return aVec
 
+        ## Convert X,Y,Z points coordinates to UV parameters on the given surface.
+        #  @param theSurf the given face. It can be also a shell or a compound with one face.
+        #  @param theXYZlist float list of size 3*N where N is the number of points
+        #                    for which we want their U,V coordinates.
+        #                    If the user enters a list of size not divisible by 3
+        #                    an exception will be thrown.
+        #  @param theIsNormalized if True, the returned parameters will be in range [0, 1].
+        #
+        #  @return list of float of size 2*N.
+        #
+        #  @ref tui_xyz_to_uv_page "Example"
+        @ManageTransactions("MeasuOp")
+        def XYZtoUV(self, theSurf, theXYZlist, theIsNormalized = True):
+            """
+            Convert X,Y,Z points coordinates to UV parameters on the given surface.
+
+            Parameters:
+                theSurf the given face. It can be also a shell or a compound with one face.
+                theXYZlist float list of size 3*N where N is the number of points
+                           for which we want their U,V coordinates.
+                           If the user enters a list of size not divisible by 3
+                           an exception will be thrown.
+                theIsNormalized if True, the returned parameters will be in range [0, 1].
+
+            Returns:
+                list of float of size 2*N.
+
+            Example of usage:
+                [u1,v1, u2,v2] = geompy.XYZtoUV(Face_1, [0,0,0, 0,10,10])
+            """
+            aUVlist = self.MeasuOp.XYZtoUV(theSurf, theXYZlist, theIsNormalized)
+            RaiseIfFailed("XYZtoUV", self.MeasuOp)
+            return aUVlist
+
+        ## Convert UV parameters on the given surface to 3D points coordinates.
+        #  @param theSurf the given face. It can be also a shell or a compound with one face.
+        #  @param theUVlist float list of size 2*N where N is the number of points
+        #                   for which we want their X,Y,Z coordinates.
+        #                   If the user enters a list of non-even size
+        #                   an exception will be thrown.
+        #  @param theIsNormalized if True, the input parameters are expected to be in range [0, 1].
+        #
+        #  @return list of float of size 3*N.
+        #
+        #  @ref tui_xyz_to_uv_page "Example"
+        @ManageTransactions("MeasuOp")
+        def UVtoXYZ(self, theSurf, theUVlist, theIsNormalized = True):
+            """
+            Convert UV parameters on the given surface to 3D points coordinates.
+
+            Parameters:
+                theSurf the given face. It can be also a shell or a compound with one face.
+                theUVlist float list of size 2*N where N is the number of points
+                          for which we want their X,Y,Z coordinates.
+                          If the user enters a list of non-even size
+                          an exception will be thrown.
+                theIsNormalized if True, the input parameters are expected to be in range [0, 1].
+
+            Returns:
+                list of float of size 3*N.
+
+            Example of usage:
+                [x1,y1,z1, x2,y2,z2] = geompy.UVtoXYZ(Face_1, [0,0, 10,10])
+            """
+            aXYZlist = self.MeasuOp.UVtoXYZ(theSurf, theUVlist, theIsNormalized)
+            RaiseIfFailed("UVtoXYZ", self.MeasuOp)
+            return aXYZlist
+
         ## Get min and max tolerances of sub-shapes of theShape
         #  @param theShape Shape, to get tolerances of.
         #  @return [FaceMin,FaceMax, EdgeMin,EdgeMax, VertMin,VertMax]\n

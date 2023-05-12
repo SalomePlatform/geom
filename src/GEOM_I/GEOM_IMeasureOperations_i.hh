@@ -170,6 +170,15 @@ class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
                                                              GEOM::GEOM_Object_ptr thePoint,
                                                              GEOM::GEOM_Object_ptr theDirection);
 
+  // Methods to convert X,Y,Z coordinates of point to U,V parameters on surface and back
+  GEOM::ListOfDouble* XYZtoUV(GEOM::GEOM_Object_ptr     theSurf,
+                              const GEOM::ListOfDouble& theXYZlist,
+                              CORBA::Boolean            theIsNormalized);
+
+  GEOM::ListOfDouble* UVtoXYZ(GEOM::GEOM_Object_ptr     theSurf,
+                              const GEOM::ListOfDouble& theUVlist,
+                              CORBA::Boolean            theIsNormalized);
+
   // Methods for class CheckConformity
   GEOM::GEOM_IMeasureOperations::SequenceOfPairOfShape* SelfIntersected2D(
                                const GEOM::GEOM_IMeasureOperations::CheckResults& theResuts);

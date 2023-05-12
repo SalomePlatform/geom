@@ -244,6 +244,17 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
                                        Handle(GEOM_Object) thePoint,
                                        Handle(GEOM_Object) theDirection);
 
+  // Methods to convert X,Y,Z coordinates of point to U,V parameters on surface and back
+  Standard_EXPORT Handle(TColStd_HArray1OfReal) XYZtoUV
+                                      (Handle(GEOM_Object) theSurf,
+                                       const Handle(TColStd_HArray1OfReal)& theXYZlist,
+                                       bool isNormalized);
+
+  Standard_EXPORT Handle(TColStd_HArray1OfReal) UVtoXYZ
+                                      (Handle(GEOM_Object) theSurf,
+                                       const Handle(TColStd_HArray1OfReal)& theUVlist,
+                                       bool isNormalized);
+
   // Methods to compute proximity between two shapes
   Standard_EXPORT Handle(GEOM_Object) ShapeProximityCalculator(Handle(GEOM_Object) theShape1,
                                                                Handle(GEOM_Object) theShape2);
