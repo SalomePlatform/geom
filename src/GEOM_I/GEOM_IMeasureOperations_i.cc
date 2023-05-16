@@ -31,6 +31,8 @@
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"
 
+#define WRN_SHAPE_IS_NULL   "WRN_SHAPE_IS_NULL"
+
 /**
  * This function converts shape errors from theErrorsFrom to theErrorsTo.
  * Note that theErrorsTo is not cleared at first.
@@ -690,8 +692,10 @@ char* GEOM_IMeasureOperations_i::PrintShapeErrors
   //Get the reference shape
   Handle(::GEOM_Object) aShape = GetObjectImpl(theShape);
 
-  if (aShape.IsNull()) {
-    return NULL;
+  if (aShape.IsNull())
+  {
+    GetOperations()->SetErrorCode(WRN_SHAPE_IS_NULL);
+    return CORBA::string_dup("");
   }
 
   // Convert the errors sequence
@@ -920,7 +924,12 @@ char* GEOM_IMeasureOperations_i::WhatIs (GEOM::GEOM_Object_ptr theShape)
 
   //Get the reference shape
   Handle(::GEOM_Object) aShape = GetObjectImpl(theShape);
-  if (aShape.IsNull()) return NULL;
+  if (aShape.IsNull())
+  {
+    //Assume the "WhatIs" operation as being done
+    GetOperations()->SetErrorCode(OK);
+    return CORBA::string_dup(WRN_SHAPE_IS_NULL);
+  }
 
   // Get shape parameters
   TCollection_AsciiString aDescription = GetOperations()->WhatIs(aShape);
