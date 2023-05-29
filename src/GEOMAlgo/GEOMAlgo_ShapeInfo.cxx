@@ -32,6 +32,8 @@ static
 static
   void DumpKindOfDef(const GEOMAlgo_KindOfDef aKD);
 static
+  void DumpKindOfPeriod(const GEOMAlgo_KindOfPeriod aKP);
+static
   void DumpPosition(const gp_Ax3& aAx3);
 static
   void DumpLocation(const gp_Pnt& aP);
@@ -72,6 +74,7 @@ void GEOMAlgo_ShapeInfo::Reset()
   myKindOfClosed=GEOMAlgo_KC_UNKNOWN;
   myKindOfName=GEOMAlgo_KN_UNKNOWN;
   myKindOfDef=GEOMAlgo_KD_UNKNOWN;
+  myKindOfPeriod=GEOMAlgo_KP_UNKNOWN;
   //
   myLocation.SetCoord(99., 99., 99.);
   myDirection.SetCoord(1.,0.,0.);
@@ -81,6 +84,15 @@ void GEOMAlgo_ShapeInfo::Reset()
   myLength=-3.;
   myWidth=-3.;
   myHeight=-3.;
+  myDegree=0;
+  myNbPoles=0;
+  myNbKnots=0;
+  myNbWeights=0;
+  myNbMultiplicities=0;
+  myPoles = Handle(TColgp_HArray1OfPnt)();
+  myKnots = Handle(TColStd_HArray1OfReal)();
+  myWeights = Handle(TColStd_HArray1OfReal)();
+  myMultiplicities = Handle(TColStd_HArray1OfInteger)();
 }
 //=======================================================================
 //function : SetType
@@ -206,6 +218,22 @@ void GEOMAlgo_ShapeInfo::SetKindOfDef(const GEOMAlgo_KindOfDef aT)
 GEOMAlgo_KindOfDef GEOMAlgo_ShapeInfo::KindOfDef() const
 {
   return myKindOfDef;
+}
+//=======================================================================
+//function : SetKindOfPeriod
+//purpose  :
+//=======================================================================
+void GEOMAlgo_ShapeInfo::SetKindOfPeriod(const GEOMAlgo_KindOfPeriod aT)
+{
+  myKindOfPeriod=aT;
+}
+//=======================================================================
+//function : KindOfPeriod
+//purpose  :
+//=======================================================================
+GEOMAlgo_KindOfPeriod GEOMAlgo_ShapeInfo::KindOfPeriod() const
+{
+  return myKindOfPeriod;
 }
 //=======================================================================
 //function : SetLocation
@@ -376,6 +404,150 @@ void GEOMAlgo_ShapeInfo::SetHeight(const Standard_Real aH)
 Standard_Real GEOMAlgo_ShapeInfo::Height() const
 {
   return myHeight;
+}
+//=======================================================================
+//function : SetDegree
+//purpose  :
+//=======================================================================
+void GEOMAlgo_ShapeInfo::SetDegree(const Standard_Integer aD)
+{
+  myDegree=aD;
+}
+//=======================================================================
+//function : Degree
+//purpose  :
+//=======================================================================
+Standard_Integer GEOMAlgo_ShapeInfo::Degree() const
+{
+  return myDegree;
+}
+//=======================================================================
+//function : SetNbPoles
+//purpose  :
+//=======================================================================
+void GEOMAlgo_ShapeInfo::SetNbPoles(const Standard_Integer aNb)
+{
+  myNbPoles=aNb;
+}
+//=======================================================================
+//function : NbPoles
+//purpose  :
+//=======================================================================
+Standard_Integer GEOMAlgo_ShapeInfo::NbPoles() const
+{
+  return myNbPoles;
+}
+//=======================================================================
+//function : SetNbKnots
+//purpose  :
+//=======================================================================
+void GEOMAlgo_ShapeInfo::SetNbKnots(const Standard_Integer aNb)
+{
+  myNbKnots=aNb;
+}
+//=======================================================================
+//function : NbKnots
+//purpose  :
+//=======================================================================
+Standard_Integer GEOMAlgo_ShapeInfo::NbKnots() const
+{
+  return myNbKnots;
+}
+//=======================================================================
+//function : SetNbWeights
+//purpose  :
+//=======================================================================
+void GEOMAlgo_ShapeInfo::SetNbWeights(const Standard_Integer aNb)
+{
+  myNbWeights=aNb;
+}
+//=======================================================================
+//function : NbWeights
+//purpose  :
+//=======================================================================
+Standard_Integer GEOMAlgo_ShapeInfo::NbWeights() const
+{
+  return myNbWeights;
+}
+//=======================================================================
+//function : SetNbMultiplicities
+//purpose  :
+//=======================================================================
+void GEOMAlgo_ShapeInfo::SetNbMultiplicities(const Standard_Integer aNb)
+{
+  myNbMultiplicities=aNb;
+}
+//=======================================================================
+//function : NbWeights
+//purpose  :
+//=======================================================================
+Standard_Integer GEOMAlgo_ShapeInfo::NbMultiplicities() const
+{
+  return myNbMultiplicities;
+}
+//=======================================================================
+//function : SetPoles
+//purpose  :
+//=======================================================================
+void GEOMAlgo_ShapeInfo::SetPoles(Handle(TColgp_HArray1OfPnt) P)
+{
+  myPoles = P;
+}
+//=======================================================================
+//function : Poles
+//purpose  :
+//=======================================================================
+Handle(TColgp_HArray1OfPnt) GEOMAlgo_ShapeInfo::Poles() const
+{
+  return myPoles;
+}
+//=======================================================================
+//function : SetKnots
+//purpose  :
+//=======================================================================
+void GEOMAlgo_ShapeInfo::SetKnots(Handle(TColStd_HArray1OfReal) K)
+{
+  myKnots = K;
+}
+//=======================================================================
+//function : Knots
+//purpose  :
+//=======================================================================
+Handle(TColStd_HArray1OfReal) GEOMAlgo_ShapeInfo::Knots() const
+{
+  return myKnots;
+}
+//=======================================================================
+//function : SetWeights
+//purpose  :
+//=======================================================================
+void GEOMAlgo_ShapeInfo::SetWeights(Handle(TColStd_HArray1OfReal) W)
+{
+  myWeights = W;
+}
+//=======================================================================
+//function : Weights
+//purpose  :
+//=======================================================================
+Handle(TColStd_HArray1OfReal) GEOMAlgo_ShapeInfo::Weights() const
+{
+  return myWeights;
+}
+//=======================================================================
+//function : SetMultiplicities
+//purpose  :
+//=======================================================================
+void GEOMAlgo_ShapeInfo::SetMultiplicities(Handle(TColStd_HArray1OfInteger) M)
+{
+  myMultiplicities = M;
+}
+//=======================================================================
+//function : Multiplicities
+//purpose  :
+//=======================================================================
+Handle(TColStd_HArray1OfInteger) GEOMAlgo_ShapeInfo::Multiplicities() const
+{
+  return myMultiplicities;
 }
 //=======================================================================
 //function : TypeToInteger
@@ -711,6 +883,7 @@ void GEOMAlgo_ShapeInfo::DumpEdge()const
   GEOMAlgo_KindOfName aKN;
   GEOMAlgo_KindOfBounds aKB;
   GEOMAlgo_KindOfClosed aKC;
+  GEOMAlgo_KindOfPeriod aKP;
   //
   aNbV=NbSubShapes(TopAbs_VERTEX);
   aKS=KindOfShape();
@@ -769,6 +942,84 @@ void GEOMAlgo_ShapeInfo::DumpEdge()const
     printf("  Pnt1 : %.3lf %.3lf %.3lf\n", aX, aY, aZ);
     myPnt2.Coord(aX, aY, aZ);
     printf("  Pnt2 : %.3lf %.3lf %.3lf\n", aX, aY, aZ);
+  }
+  else if (aKN==GEOMAlgo_KN_CURVEBSPLINE) {
+    aKP=KindOfPeriod();
+    DumpKindOfPeriod(aKP);
+    printf("  Degree    : %d\n", myDegree);
+    printf("  NbPoles   : %d\n", myNbPoles);
+    printf("  NbKnots   : %d\n", myNbKnots);
+    printf("  NbWeights : %d\n", myNbWeights);
+    printf("  NbMultis  : %d\n", myNbMultiplicities);
+
+    if (aKB == GEOMAlgo_KB_TRIMMED) {
+      myPnt1.Coord(aX, aY, aZ);
+      printf("  Pnt1 : %.3lf %.3lf %.3lf\n", aX, aY, aZ);
+      myPnt2.Coord(aX, aY, aZ);
+      printf("  Pnt2 : %.3lf %.3lf %.3lf\n", aX, aY, aZ);
+    }
+
+    Standard_Integer i;
+    if (myNbPoles > 0 && !myPoles.IsNull() && myPoles->Length() == myNbPoles) {
+      bool aHasWeight = (myNbWeights == myNbPoles);
+      printf("  Poles\n");
+      for (i=1; i<=myNbPoles; i++) {
+        const gp_Pnt &aP = myPoles->Value(i);
+        if (aHasWeight)
+          printf("  %3d : %.3lf %.3lf %.3lf  %.3lf\n", i, aP.X(), aP.Y(), aP.Z(), myWeights->Value(i));
+        else
+          printf("  %3d : %.3lf %.3lf %.3lf\n", i, aP.X(), aP.Y(), aP.Z());
+      }
+    }
+
+    if (myNbKnots > 0 && !myKnots.IsNull() && myKnots->Length() == myNbKnots) {
+      bool aHasMulti = (myNbMultiplicities == myNbKnots);
+      printf("  Knots\n");
+      for (i=1; i<=myNbKnots; i++) {
+        if (aHasMulti)
+          printf("  %3d : %.3lf  %.3lf\n", i, myKnots->Value(i), myMultiplicities->Value(i));
+        else
+          printf("  %3d : %.3lf\n", i, myKnots->Value(i));
+      }
+    }
+    
+  }
+  else if (aKN==GEOMAlgo_KN_CURVEBEZIER) {
+    aKP=KindOfPeriod();
+    DumpKindOfPeriod(aKP);
+    printf("  Degree    : %d\n", myDegree);
+    printf("  NbPoles   : %d\n", myNbPoles);
+    printf("  NbWeights : %d\n", myNbWeights);
+    if (aKB == GEOMAlgo_KB_TRIMMED) {
+      myPnt1.Coord(aX, aY, aZ);
+      printf("  Pnt1 : %.3lf %.3lf %.3lf\n", aX, aY, aZ);
+      myPnt2.Coord(aX, aY, aZ);
+      printf("  Pnt2 : %.3lf %.3lf %.3lf\n", aX, aY, aZ);
+    }
+
+    Standard_Integer i;
+    if (myNbPoles > 0 && !myPoles.IsNull() && myPoles->Length() == myNbPoles) {
+      bool aHasWeight = (myNbWeights == myNbPoles);
+      printf("  Poles\n");
+      for (i=1; i<=myNbPoles; i++) {
+        const gp_Pnt &aP = myPoles->Value(i);
+        if (aHasWeight)
+          printf("  %3d : %.3lf %.3lf %.3lf  %.3lf\n", i, aP.X(), aP.Y(), aP.Z(), myWeights->Value(i));
+        else
+          printf("  %3d : %.3lf %.3lf %.3lf\n", i, aP.X(), aP.Y(), aP.Z());
+      }
+    }
+  }
+  else if (aKN==GEOMAlgo_KN_HYPERBOLA) {
+    DumpLocation (myLocation);
+    DumpPosition (myPosition);
+    printf("  Radius1   : %.3lf\n", myRadius1);
+    printf("  Radius2   : %.3lf\n", myRadius2);
+  }
+  else if (aKN==GEOMAlgo_KN_PARABOLA) {
+    DumpLocation (myLocation);
+    DumpPosition (myPosition);
+    printf("  Focal     : %.3lf\n", myRadius1);
   }
   printf("\n");
 }
@@ -869,7 +1120,10 @@ void DumpKindOfShape(const GEOMAlgo_KindOfShape aKS)
     "KS_CIRCLE",
     "KS_LINE",
     "KS_DEGENERATED",
-    "KS_BSPLINE"
+    "KS_BSPLINE",
+    "KS_BEZIER",
+    "KS_HYPERBOLA",
+    "KS_PARABOLA"
     };
   int i;
   //
@@ -903,7 +1157,11 @@ void DumpKindOfName(const GEOMAlgo_KindOfName aKS)
     "KN_TRIANGLE",
     "KN_QUADRANGLE",
     "KN_ARCELLIPSE",
-    "KN_SOLID"
+    "KN_SOLID",
+    "KN_CURVEBSPLINE",
+    "KN_CURVEBEZIER",
+    "KN_HYPERBOLA",
+    "KN_PARABOLA"
     };
   int i;
   //
@@ -919,10 +1177,26 @@ void DumpKindOfDef(const GEOMAlgo_KindOfDef aKD)
   const char *pStr[]={
     "KD_UNKNOWN",
     "KD_SPECIFIED",
-    "KB_ARBITRARY"
+    "KD_ARBITRARY"
   };
   int i;
   //
   i=(Standard_Integer)aKD;
   printf(" KindOfDef: %s\n", pStr[i]);
+}
+//=======================================================================
+//function : DumpKindOfPeriod
+//purpose  :
+//=======================================================================
+void DumpKindOfPeriod(const GEOMAlgo_KindOfPeriod aKP)
+{
+  const char *pStr[]={
+    "KP_UNKNOWN",
+    "KP_PERIODIC",
+    "KP_NONPERIODIC"
+  };
+  int i;
+  //
+  i=(Standard_Integer)aKP;
+  printf(" KindOfPeriod: %s\n", pStr[i]);
 }

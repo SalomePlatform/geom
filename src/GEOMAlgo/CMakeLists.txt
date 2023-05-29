@@ -83,6 +83,7 @@ SET(GEOMAlgo_HEADERS
   GEOMAlgo_KindOfClosed.hxx
   GEOMAlgo_KindOfDef.hxx
   GEOMAlgo_KindOfName.hxx
+  GEOMAlgo_KindOfPeriod.hxx
   GEOMAlgo_KindOfShape.hxx
   GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx
   GEOMAlgo_ListIteratorOfListOfPnt.hxx

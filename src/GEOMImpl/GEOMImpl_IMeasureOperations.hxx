@@ -78,6 +78,10 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
     SK_ARC_ELLIPSE,  // arc of ellipse
     SK_LINE,         // infinite segment
     SK_SEGMENT,      // segment
+    SK_CRV_BSPLINE,  // B-Spline curve (open or closed)
+    SK_CRV_BEZIER,   // Bezier curve (open or closed)
+    SK_HYPERBOLA,    // hyperbola
+    SK_PARABOLA,     // parabola
     SK_EDGE,         // other edge
     // VERTEX
     SK_VERTEX,       // vertex

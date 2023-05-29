@@ -33,10 +33,13 @@
 #include <gp_Cone.hxx>
 #include <gp_Torus.hxx>
 #include <gp_Pln.hxx>
+#include <gp_Hypr.hxx>
+#include <gp_Parab.hxx>
 
 #include <Geom_Curve.hxx>
 #include <Geom_Surface.hxx>
 #include <Geom_BSplineCurve.hxx>
+#include <Geom_BezierCurve.hxx>
 
 #include <GeomAdaptor_Curve.hxx>
 #include <GeomAdaptor_Surface.hxx>
@@ -525,45 +528,122 @@ void GEOMAlgo_ShapeInfoFiller::FillEdge(const TopoDS_Shape& aS)
   }
   // BSplineCurve
   if (aCT==GeomAbs_BSplineCurve) {
-    Standard_Integer aNbKnots, aNbPoles, aDegree;
+    Standard_Integer aNbKnots, aNbPoles, aNbWeights, aNbMultiplicities, aDegree, i;
     Standard_Real aLength;
     gp_XYZ aXYZ1, aXYZ2, aXYZc;
     Handle(Geom_BSplineCurve) aBSp;
     //
     aBSp=aGAC.BSpline();
-    aNbKnots=aBSp->NbKnots();
-    aNbPoles=aBSp->NbPoles();
-    aDegree =aBSp->Degree();
-    if (!(aDegree==1 && aNbKnots==2 && aNbPoles==2)) {
-      return; // unallowed B-Spline curve
+    aDegree = aBSp->Degree();
+    aNbPoles = aBSp->NbPoles();
+    aNbKnots = aBSp->NbKnots();
+    aNbWeights = (aBSp->IsRational() ? aNbPoles : 0);
+    aNbMultiplicities = (aBSp->KnotDistribution() == GeomAbs_Uniform ? 0 : aNbKnots);
+    if (aDegree==1 && aNbKnots==2 && aNbPoles==2) {
+      // This is a single line segment
+      aInfo.SetKindOfShape(GEOMAlgo_KS_BSPLINE);
+      aInfo.SetKindOfClosed(GEOMAlgo_KC_NOTCLOSED);
+      //
+      aInfo.SetKindOfBounds(GEOMAlgo_KB_TRIMMED);
+      aInfo.SetKindOfName(GEOMAlgo_KN_SEGMENT);
+      aGAC.D0(aT1, aP1);
+      aGAC.D0(aT2, aP2);
+      aInfo.SetPnt1(aP1);
+      aInfo.SetPnt2(aP2);
+      //
+      aLength=aP1.Distance(aP2);
+      aInfo.SetLength(aLength);
+      //
+      aXYZ1=aP1.XYZ();
+      aXYZ2=aP2.XYZ();
+      aXYZc=aXYZ1+aXYZ2;
+      aXYZc.Multiply(0.5);
+      aPc.SetXYZ(aXYZc);
+      aInfo.SetLocation(aPc);
+      //
+      if ( aLength >= gp::Resolution() ) {
+        gp_Vec aVec(aPc, aP2);
+        gp_Dir aDir(aVec);
+        aInfo.SetDirection(aDir);
+      }
     }
-    //
-    aInfo.SetKindOfShape(GEOMAlgo_KS_BSPLINE);
-    aInfo.SetKindOfClosed(GEOMAlgo_KC_NOTCLOSED);
-    //
+    else {
+      // We have a higher degree B-Spline curve
+      aInfo.SetKindOfShape(GEOMAlgo_KS_BSPLINE);
+      aInfo.SetKindOfName(GEOMAlgo_KN_CURVEBSPLINE);
+      aInfo.SetKindOfPeriod(aBSp->IsPeriodic() ? GEOMAlgo_KP_PERIODIC : GEOMAlgo_KP_NONPERIODIC);
+      aInfo.SetKindOfBounds(GEOMAlgo_KB_TRIMMED);
+      aInfo.SetKindOfClosed(aBSp->IsClosed() ? GEOMAlgo_KC_CLOSED : GEOMAlgo_KC_NOTCLOSED);
+      aGAC.D0(aT1, aP1);
+      aGAC.D0(aT2, aP2);
+      aInfo.SetPnt1(aP1);
+      aInfo.SetPnt2(aP2);
+      //
+      aInfo.SetDegree(aDegree);
+      aInfo.SetNbKnots(aNbKnots);
+      aInfo.SetNbPoles(aNbPoles);
+      aInfo.SetNbWeights(aNbWeights);
+      aInfo.SetNbMultiplicities(aNbMultiplicities);
+      // Fill the poles
+      Handle(TColgp_HArray1OfPnt) poles = new TColgp_HArray1OfPnt(1, aNbPoles);
+      for (i=1; i<=aNbPoles; i++)
+        poles->SetValue(i, aBSp->Pole(i));
+      aInfo.SetPoles(poles);
+      // Fill the knots
+      Handle(TColStd_HArray1OfReal) knots = new TColStd_HArray1OfReal(1, aNbKnots);
+      for (i=1; i<=aNbKnots; i++)
+        knots->SetValue(i, aBSp->Knot(i));
+      aInfo.SetKnots(knots);
+      // Fill the weights
+      if (aNbWeights > 0) {
+        Handle(TColStd_HArray1OfReal) weights = new TColStd_HArray1OfReal(1, aNbWeights);
+        for (i=1; i<=aNbWeights; i++)
+          weights->SetValue(i, aBSp->Weight(i));
+        aInfo.SetWeights(weights);
+      }
+      // Fill the multiplicities
+      if (aNbMultiplicities > 0) {
+        Handle(TColStd_HArray1OfInteger) mults = new TColStd_HArray1OfInteger(1, aNbMultiplicities);
+        for (i=1; i<=aNbMultiplicities; i++)
+          mults->SetValue(i, aBSp->Multiplicity(i));
+        aInfo.SetMultiplicities(mults);
+      }
+    }
+  }//if (aCT==GeomAbs_BSplineCurve) {
+  // Bezier
+  else if (aCT==GeomAbs_BezierCurve) {
+    Standard_Integer aNbPoles, aNbWeights, aDegree, i;
+    Handle(Geom_BezierCurve) aBC;
+    aBC=aGAC.Bezier();
+    aNbPoles = aBC->NbPoles();
+    aNbWeights = (aBC->IsRational() ? aNbPoles : 0);
+    aDegree = aBC->Degree();
+    aInfo.SetKindOfShape(GEOMAlgo_KS_BEZIER);
+    aInfo.SetKindOfName(GEOMAlgo_KN_CURVEBEZIER);
+    aInfo.SetKindOfPeriod(aBC->IsPeriodic() ? GEOMAlgo_KP_PERIODIC : GEOMAlgo_KP_NONPERIODIC);
     aInfo.SetKindOfBounds(GEOMAlgo_KB_TRIMMED);
-    aInfo.SetKindOfName(GEOMAlgo_KN_SEGMENT);
+    aInfo.SetKindOfClosed(aBC->IsClosed() ? GEOMAlgo_KC_CLOSED : GEOMAlgo_KC_NOTCLOSED);
     aGAC.D0(aT1, aP1);
     aGAC.D0(aT2, aP2);
     aInfo.SetPnt1(aP1);
     aInfo.SetPnt2(aP2);
     //
-    aLength=aP1.Distance(aP2);
-    aInfo.SetLength(aLength);
-    //
-    aXYZ1=aP1.XYZ();
-    aXYZ2=aP2.XYZ();
-    aXYZc=aXYZ1+aXYZ2;
-    aXYZc.Multiply(0.5);
-    aPc.SetXYZ(aXYZc);
-    aInfo.SetLocation(aPc);
-    //
-    if ( aLength >= gp::Resolution() ) {
-      gp_Vec aVec(aPc, aP2);
-      gp_Dir aDir(aVec);
-      aInfo.SetDirection(aDir);
+    aInfo.SetDegree(aDegree);
+    aInfo.SetNbPoles(aNbPoles);
+    aInfo.SetNbWeights(aNbWeights);
+    // Fill the poles
+    Handle(TColgp_HArray1OfPnt) poles = new TColgp_HArray1OfPnt(1, aNbPoles);
+    for (i=1; i<=aNbPoles; i++)
+      poles->SetValue(i, aBC->Pole(i));
+    aInfo.SetPoles(poles);
+    // Fill the weights
+    if (aNbWeights > 0) {
+      Handle(TColStd_HArray1OfReal) weights = new TColStd_HArray1OfReal(1, aNbWeights);
+      for (i=1; i<=aNbWeights; i++)
+        weights->SetValue(i, aBC->Weight(i));
+      aInfo.SetWeights(weights);
     }
-  }
+  }// if (aCT==GeomAbs_BezierCurve) {
   // Line
   else if (aCT==GeomAbs_Line) {
     Standard_Boolean bInf1, bInf2;
@@ -684,13 +764,50 @@ void GEOMAlgo_ShapeInfoFiller::FillEdge(const TopoDS_Shape& aS)
     else {
       aInfo.SetKindOfClosed(GEOMAlgo_KC_NOTCLOSED);
       aInfo.SetKindOfName(GEOMAlgo_KN_ARCELLIPSE);
-      //
-      gp_Vec aVecX(aP, aP1);
-      gp_Dir aDirX(aVecX);
-      gp_Ax2 aAx2new(aP, aAx2.Direction(), aDirX);
-      aInfo.SetPosition(aAx2new);
     }
   }// else if (aCT==GeomAbs_Ellipse) {
+  // Hyperbola
+  else if (aCT==GeomAbs_Hyperbola) {
+    gp_Hypr aHyp;
+    aHyp=aGAC.Hyperbola();
+    aP=aHyp.Location();
+    aAx2=aHyp.Position();
+    aR1=aHyp.MajorRadius();
+    aR2=aHyp.MinorRadius();
+    aInfo.SetKindOfShape(GEOMAlgo_KS_HYPERBOLA);
+    aInfo.SetKindOfName(GEOMAlgo_KN_HYPERBOLA);
+    aInfo.SetKindOfBounds(GEOMAlgo_KB_TRIMMED);
+    aInfo.SetLocation(aP);
+    aInfo.SetPosition(aAx2);
+    aInfo.SetRadius1(aR1);
+    aInfo.SetRadius2(aR2);
+    //
+    aGAC.D0(aT1, aP1);
+    aGAC.D0(aT2, aP2);
+    aInfo.SetPnt1(aP1);
+    aInfo.SetPnt2(aP2);
+    //
+  }// if (aCT==GeomAbs_Hyperbola) {
+  // Parabola
+  else if (aCT==GeomAbs_Parabola) {
+    gp_Parab aPara;
+    aPara=aGAC.Parabola();
+    aP=aPara.Location();
+    aAx2=aPara.Position();
+    aR1=aPara.Focal();
+    aInfo.SetKindOfShape(GEOMAlgo_KS_PARABOLA);
+    aInfo.SetKindOfName(GEOMAlgo_KN_PARABOLA);
+    aInfo.SetKindOfBounds(GEOMAlgo_KB_TRIMMED);
+    aInfo.SetLocation(aP);
+    aInfo.SetPosition(aAx2);
+    aInfo.SetRadius1(aR1);
+    //
+    aGAC.D0(aT1, aP1);
+    aGAC.D0(aT2, aP2);
+    aInfo.SetPnt1(aP1);
+    aInfo.SetPnt2(aP2);
+    //
+  }// if (aCT==GeomAbs_Parabola) {
   //
   FillSubShapes(aS);
 }
@@ -807,7 +924,10 @@ Standard_Boolean GEOMAlgo_ShapeInfoFiller::IsAllowedType
     GeomAbs_Line,
     GeomAbs_Circle,
     GeomAbs_Ellipse,
-    GeomAbs_BSplineCurve 
+    GeomAbs_BSplineCurve,
+    GeomAbs_BezierCurve,
+    GeomAbs_Hyperbola,
+    GeomAbs_Parabola
   };
   //
   bRet=Standard_False;

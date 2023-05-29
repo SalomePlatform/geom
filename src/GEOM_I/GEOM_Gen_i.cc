@@ -2854,6 +2854,18 @@ char* GEOM_Gen_i::getObjectInfo(const char* entry)
       case GEOM::GEOM_IKindOfShape::SEGMENT:
         aTypeInfo = "Segment";
         break;
+      case GEOM::GEOM_IKindOfShape::CRV_BSPLINE:
+        aTypeInfo = "Crv BSpline";
+        break;
+      case GEOM::GEOM_IKindOfShape::CRV_BEZIER:
+        aTypeInfo = "Crv Bezier";
+        break;
+      case GEOM::GEOM_IKindOfShape::HYPERBOLA:
+        aTypeInfo = "Hyperbola";
+        break;
+      case GEOM::GEOM_IKindOfShape::PARABOLA:
+        aTypeInfo = "Parabola";
+        break;
       case GEOM::GEOM_IKindOfShape::EDGE:
         aTypeInfo = "Edge";
         break;

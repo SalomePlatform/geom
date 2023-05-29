@@ -646,7 +646,7 @@ GEOMImpl_IMeasureOperations::ShapeKind GEOMImpl_IMeasureOperations::KindOfShape
         break;
       case GEOMAlgo_KN_ELLIPSE:
         {
-          // (+) geompy.kind.ELLIPSE  xc yc zc  dx dy dz  R_1 R_2
+          // (+) geompy.kind.ELLIPSE  xc yc zc  dx dy dz  R_1 R_2  xVx yVx zVx  xVy yVy zVy
           aKind = SK_ELLIPSE;
 
           gp_Pnt aC = anInfo.Location();
@@ -662,11 +662,21 @@ GEOMImpl_IMeasureOperations::ShapeKind GEOMImpl_IMeasureOperations::KindOfShape
 
           theDoubles->Append(anInfo.Radius1());
           theDoubles->Append(anInfo.Radius2());
+
+          gp_Dir aXD = anAx3.XDirection();
+          theDoubles->Append(aXD.X());
+          theDoubles->Append(aXD.Y());
+          theDoubles->Append(aXD.Z());
+
+          gp_Dir aYD = anAx3.YDirection();
+          theDoubles->Append(aYD.X());
+          theDoubles->Append(aYD.Y());
+          theDoubles->Append(aYD.Z());
         }
         break;
       case GEOMAlgo_KN_ARCELLIPSE:
         {
-          // (+) geompy.kind.ARC_ELLIPSE  xc yc zc  dx dy dz  R_1 R_2  x1 y1 z1  x2 y2 z2
+          // (+) geompy.kind.ARC_ELLIPSE  xc yc zc  dx dy dz  R_1 R_2  x1 y1 z1  x2 y2 z2  xVx yVx zVx  xVy yVy zVy
           aKind = SK_ARC_ELLIPSE;
 
           gp_Pnt aC = anInfo.Location();
@@ -692,6 +702,16 @@ GEOMImpl_IMeasureOperations::ShapeKind GEOMImpl_IMeasureOperations::KindOfShape
           theDoubles->Append(aP2.X());
           theDoubles->Append(aP2.Y());
           theDoubles->Append(aP2.Z());
+
+          gp_Dir aXD = anAx3.XDirection();
+          theDoubles->Append(aXD.X());
+          theDoubles->Append(aXD.Y());
+          theDoubles->Append(aXD.Z());
+
+          gp_Dir aYD = anAx3.YDirection();
+          theDoubles->Append(aYD.X());
+          theDoubles->Append(aYD.Y());
+          theDoubles->Append(aYD.Z());
         }
         break;
       case GEOMAlgo_KN_LINE:
@@ -725,6 +745,163 @@ GEOMImpl_IMeasureOperations::ShapeKind GEOMImpl_IMeasureOperations::KindOfShape
           theDoubles->Append(aP2.X());
           theDoubles->Append(aP2.Y());
           theDoubles->Append(aP2.Z());
+        }
+        break;
+      case GEOMAlgo_KN_CURVEBSPLINE:
+        {
+          // (+) geompy.kind.CRV_BSPLINE  np nk nw nm  x1 y1 z1 ... xnp ynp znp  k1 ... knk  w1 ... wnw  m1 ... mnm
+          aKind = SK_CRV_BSPLINE;
+          Standard_Integer aNbPoles = anInfo.NbPoles();
+          Standard_Integer aNbKnots = anInfo.NbKnots();
+          Standard_Integer aNbWeights = anInfo.NbWeights();
+          Standard_Integer aNbMultiplicities = anInfo.NbMultiplicities();
+
+          theIntegers->Append(anInfo.KindOfPeriod() == GEOMAlgo_KP_PERIODIC ? 1 : 0);
+          theIntegers->Append(anInfo.Degree());
+          theIntegers->Append(aNbPoles);
+          theIntegers->Append(aNbKnots);
+          theIntegers->Append(aNbWeights);
+          theIntegers->Append(aNbMultiplicities);
+          //
+          Standard_Integer i;
+          if (aNbPoles > 0) {
+            Handle(TColgp_HArray1OfPnt) aPoles = anInfo.Poles();
+            if (aPoles.IsNull() || aPoles->Length() != aNbPoles) {
+              SetErrorCode("B-Spline Curve: no or wrong number of poles given");
+              return aKind;
+            }
+            for (i=1; i<=aNbPoles; i++) {
+              const gp_Pnt &aP = aPoles->Value(i);
+              theDoubles->Append(aP.X());
+              theDoubles->Append(aP.Y());
+              theDoubles->Append(aP.Z());
+            }
+          }
+          //
+          if (aNbKnots > 0) {
+            Handle(TColStd_HArray1OfReal) aKnots = anInfo.Knots();
+            if (aKnots.IsNull() || aKnots->Length() != aNbKnots) {
+              SetErrorCode("B-Spline Curve: no or wrong number of knots given");
+              return aKind;
+            }
+            for (i=1; i<=aNbKnots; i++)
+              theDoubles->Append(aKnots->Value(i));
+          }
+          //
+          if (aNbWeights > 0) {
+            Handle(TColStd_HArray1OfReal) aWeights = anInfo.Weights();
+            if (aNbWeights > 0 && (aWeights.IsNull() || aWeights->Length() != aNbWeights)) {
+              SetErrorCode("B-Spline Curve: no or wrong number of weights given");
+              return aKind;
+            }
+            for (i=1; i<=aNbWeights; i++)
+              theDoubles->Append(aWeights->Value(i));
+          }
+          //
+          if (aNbMultiplicities > 0) {
+            Handle(TColStd_HArray1OfInteger) aMults = anInfo.Multiplicities();
+            if (aMults.IsNull() || aMults->Length() != aNbMultiplicities) {
+              SetErrorCode("B-Spline Curve: no or wrong number of multiplicities given");
+              return aKind;
+            }
+            for (i=1; i<=aNbMultiplicities; i++)
+              theIntegers->Append(aMults->Value(i));
+          }
+        }
+        break;
+      case GEOMAlgo_KN_CURVEBEZIER:
+        {
+          // (+) geompy.kind.CRV_BEZIER  np nw  x1 y1 z1 ... xnp ynp znp  w1 ... wnw
+          aKind = SK_CRV_BEZIER;
+          Standard_Integer aNbPoles = anInfo.NbPoles();
+          Standard_Integer aNbWeights = anInfo.NbWeights();
+
+          theIntegers->Append(aNbPoles);
+          theIntegers->Append(aNbWeights);
+          //
+          Standard_Integer i;
+          if (aNbPoles > 0) {
+            Handle(TColgp_HArray1OfPnt) aPoles = anInfo.Poles();
+            if (aPoles.IsNull() || aPoles->Length() != aNbPoles) {
+              SetErrorCode("Bezier Curve: no or wrong number of poles given");
+              return aKind;
+            }
+            for (i=1; i<=aNbPoles; i++) {
+              const gp_Pnt &aP = aPoles->Value(i);
+              theDoubles->Append(aP.X());
+              theDoubles->Append(aP.Y());
+              theDoubles->Append(aP.Z());
+            }
+          }
+          //
+          if (aNbWeights > 0) {
+            Handle(TColStd_HArray1OfReal) aWeights = anInfo.Weights();
+            if (aNbWeights > 0 && (aWeights.IsNull() || aWeights->Length() != aNbWeights)) {
+              SetErrorCode("B-Spline Curve: no or wrong number of weights given");
+              return aKind;
+            }
+            for (i=1; i<=aNbWeights; i++)
+              theDoubles->Append(aWeights->Value(i));
+          }
+        }
+        break;
+      case GEOMAlgo_KN_HYPERBOLA:
+        {
+          // (+) geompy.kind.HYPERBOLA  xc yc zc  dx dy dz  R_1 R_2  xVx yVx zVx  xVy yVy zVy
+          aKind = SK_HYPERBOLA;
+
+          gp_Pnt aC = anInfo.Location();
+          theDoubles->Append(aC.X());
+          theDoubles->Append(aC.Y());
+          theDoubles->Append(aC.Z());
+
+          gp_Ax3 anAx3 = anInfo.Position();
+          gp_Dir aD = anAx3.Direction();
+          theDoubles->Append(aD.X());
+          theDoubles->Append(aD.Y());
+          theDoubles->Append(aD.Z());
+
+          theDoubles->Append(anInfo.Radius1());
+          theDoubles->Append(anInfo.Radius2());
+
+          gp_Dir aXD = anAx3.XDirection();
+          theDoubles->Append(aXD.X());
+          theDoubles->Append(aXD.Y());
+          theDoubles->Append(aXD.Z());
+
+          gp_Dir aYD = anAx3.YDirection();
+          theDoubles->Append(aYD.X());
+          theDoubles->Append(aYD.Y());
+          theDoubles->Append(aYD.Z());
+        }
+        break;
+      case GEOMAlgo_KN_PARABOLA:
+        {
+          // (+) geompy.kind.PARABOLA  xc yc zc  dx dy dz  F  xVx yVx zVx  xVy yVy zVy
+          aKind = SK_PARABOLA;
+
+          gp_Pnt aC = anInfo.Location();
+          theDoubles->Append(aC.X());
+          theDoubles->Append(aC.Y());
+          theDoubles->Append(aC.Z());
+
+          gp_Ax3 anAx3 = anInfo.Position();
+          gp_Dir aD = anAx3.Direction();
+          theDoubles->Append(aD.X());
+          theDoubles->Append(aD.Y());
+          theDoubles->Append(aD.Z());
+
+          theDoubles->Append(anInfo.Radius1());
+
+          gp_Dir aXD = anAx3.XDirection();
+          theDoubles->Append(aXD.X());
+          theDoubles->Append(aXD.Y());
+          theDoubles->Append(aXD.Z());
+
+          gp_Dir aYD = anAx3.YDirection();
+          theDoubles->Append(aYD.X());
+          theDoubles->Append(aYD.Y());
+          theDoubles->Append(aYD.Z());
         }
         break;
       default:

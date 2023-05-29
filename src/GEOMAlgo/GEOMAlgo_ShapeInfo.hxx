@@ -38,6 +38,11 @@
 #include <GEOMAlgo_KindOfBounds.hxx>
 #include <GEOMAlgo_KindOfClosed.hxx>
 #include <GEOMAlgo_KindOfDef.hxx>
+#include <GEOMAlgo_KindOfPeriod.hxx>
+
+#include <TColgp_HArray1OfPnt.hxx>
+#include <TColStd_HArray1OfReal.hxx>
+#include <TColStd_HArray1OfInteger.hxx>
 
 
 //=======================================================================
@@ -98,6 +103,12 @@ class GEOMAlgo_ShapeInfo
 
   Standard_EXPORT
     GEOMAlgo_KindOfDef KindOfDef() const;
+
+  Standard_EXPORT
+    void SetKindOfPeriod(const GEOMAlgo_KindOfPeriod aT) ;
+
+  Standard_EXPORT
+    GEOMAlgo_KindOfPeriod KindOfPeriod() const;
 
   Standard_EXPORT
     void SetLocation(const gp_Pnt& aP) ;
@@ -163,6 +174,60 @@ class GEOMAlgo_ShapeInfo
     Standard_Real Height() const;
 
   Standard_EXPORT
+    void SetDegree(const Standard_Integer aDeg) ;
+
+  Standard_EXPORT
+    Standard_Integer Degree() const;
+
+  Standard_EXPORT
+    void SetNbPoles(const Standard_Integer aNb) ;
+
+  Standard_EXPORT
+    Standard_Integer NbPoles() const;
+
+  Standard_EXPORT
+    void SetNbKnots(const Standard_Integer aNb) ;
+
+  Standard_EXPORT
+    Standard_Integer NbKnots() const;
+
+  Standard_EXPORT
+    void SetNbWeights(const Standard_Integer aNb) ;
+
+  Standard_EXPORT
+    Standard_Integer NbWeights() const;
+
+  Standard_EXPORT
+    void SetNbMultiplicities(const Standard_Integer aNb) ;
+
+  Standard_EXPORT
+    Standard_Integer NbMultiplicities() const;
+
+  Standard_EXPORT
+    void SetPoles(Handle(TColgp_HArray1OfPnt) P) ;
+
+  Standard_EXPORT
+    Handle(TColgp_HArray1OfPnt) Poles() const;
+
+  Standard_EXPORT
+    void SetKnots(Handle(TColStd_HArray1OfReal) K) ;
+
+  Standard_EXPORT
+    Handle(TColStd_HArray1OfReal) Knots() const;
+
+  Standard_EXPORT
+    void SetWeights(Handle(TColStd_HArray1OfReal) W) ;
+
+  Standard_EXPORT
+    Handle(TColStd_HArray1OfReal) Weights() const;
+
+  Standard_EXPORT
+    void SetMultiplicities(Handle(TColStd_HArray1OfInteger) M) ;
+
+  Standard_EXPORT
+    Handle(TColStd_HArray1OfInteger) Multiplicities() const;
+
+  Standard_EXPORT
     void Dump() const;
 
  protected:
@@ -208,6 +273,16 @@ class GEOMAlgo_ShapeInfo
   Standard_Real myHeight;
   gp_Pnt myPnt1;
   gp_Pnt myPnt2;
+  GEOMAlgo_KindOfPeriod myKindOfPeriod;
   Standard_Integer myNbTypes;
+  Standard_Integer myNbKnots;
+  Standard_Integer myNbPoles;
+  Standard_Integer myNbWeights;
+  Standard_Integer myNbMultiplicities;
+  Standard_Integer myDegree;
+  Handle(TColgp_HArray1OfPnt)      myPoles;
+  Handle(TColStd_HArray1OfReal)    myKnots;
+  Handle(TColStd_HArray1OfReal)    myWeights;
+  Handle(TColStd_HArray1OfInteger) myMultiplicities;
 };
 #endif

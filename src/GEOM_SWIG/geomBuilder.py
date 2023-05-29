@@ -683,10 +683,14 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #
         #  - CIRCLE:       [xc yc zc  dx dy dz  R]
         #  - ARC_CIRCLE:   [xc yc zc  dx dy dz  R         x1 y1 z1  x2 y2 z2]
-        #  - ELLIPSE:      [xc yc zc  dx dy dz  R_1  R_2]
-        #  - ARC_ELLIPSE:  [xc yc zc  dx dy dz  R_1  R_2  x1 y1 z1  x2 y2 z2]
+        #  - ELLIPSE:      [xc yc zc  dx dy dz  R_1  R_2  v1x v1y v1z  v2x v2y v2z]
+        #  - ARC_ELLIPSE:  [xc yc zc  dx dy dz  R_1  R_2  x1 y1 z1  x2 y2 z2  v1x v1y v1z  v2x v2y v2z]
         #  - LINE:         [xo yo zo  dx dy dz]
         #  - SEGMENT:      [x1 y1 z1  x2 y2 z2]
+        #  - CRV_BSPLINE:  [periodicity degree nb_poles nb_knots nb_weights nb_multiplicities  xi yi zi  ki  wi  mi]
+        #  - CRV_BEZIER:   [nb_poles nb_weights  xi yi zi  wi]
+        #  - HYPERBOLA:    [xc yc zc  dx dy dz  R_1  R_2  v1x v1y v1z  v2x v2y v2z]
+        #  - PARABOLA:     [xc yc zc  dx dy dz  F  v1x v1y v1z  v2x v2y v2z]
         #  - EDGE:                                                 [nb_vertices]
         #
         #  - VERTEX:       [x  y  z]
@@ -11852,6 +11856,10 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             #if aKind == kind.SOME_KIND:
             #    #  SOME_KIND     int int double int double double
             #    aKindTuple = [aKind, anInts[0], anInts[1], aDbls[0], anInts[2], aDbls[1], aDbls[2]]
+            if aKind == self.kind.CRV_BSPLINE:
+               aKindTuple = [aKind] + anInts[:6] + aDbls + anInts[6:]
+            elif aKind == self.kind.CRV_BEZIER:
+               aKindTuple = [aKind] + anInts[:2] + aDbls + anInts[2:]
 
             return aKindTuple
 

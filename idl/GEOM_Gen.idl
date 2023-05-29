@@ -4305,6 +4305,14 @@ module GEOM
       LINE,         
       /*! segment */
       SEGMENT,      
+      /*! B-Spline curve */
+      CRV_BSPLINE,  
+      /*! Bezier curve */
+      CRV_BEZIER,  
+      /*! hyperbola */
+      HYPERBOLA,  
+      /*! parabola */
+      PARABOLA,  
       /*! other edge */
       EDGE,       
       // VERTEX
