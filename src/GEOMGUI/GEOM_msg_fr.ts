@@ -516,6 +516,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Créer un solide unique</translation>
     </message>
     <message>
+        <source>GEOM_CRV_BEZIER</source>
+        <translation>Courbe de Bézier</translation>
+    </message>
+    <message>
+        <source>GEOM_CRV_BSPLINE</source>
+        <translation>Courbe B-Spline</translation>
+    </message>
+    <message>
         <source>GEOM_CURVE</source>
         <translation>Courbe</translation>
     </message>
@@ -554,6 +562,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_D2</source>
         <translation>D2 :</translation>
+    </message>
+    <message>
+        <source>GEOM_DEGREE</source>
+        <translation>Degré :</translation>
     </message>
     <message>
         <source>GEOM_DETECT</source>
@@ -865,6 +877,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Tol. 3D :</translation>
     </message>
     <message>
+        <source>GEOM_FOCAL_LENGTH</source>
+        <translation>Distance Focale :</translation>
+    </message>
+    <message>
         <source>GEOM_FREE_BOUNDARIES</source>
         <translation>Contours libres</translation>
     </message>
@@ -949,6 +965,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Trous</translation>
     </message>
     <message>
+        <source>GEOM_HYPERBOLA</source>
+        <translation>Hyperbole</translation>
+    </message>
+    <message>
         <source>GEOM_INIT_SHAPE</source>
         <translation>Objet d&apos;origine</translation>
     </message>
@@ -987,6 +1007,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_KEEP_OBJECT</source>
         <translation>Garder l&apos;objet</translation>
+    </message>
+    <message>
+        <source>GEOM_KNOT_I</source>
+        <translation>Noeud #%1 :</translation>
+    </message>
+    <message>
+        <source>GEOM_KNOTS</source>
+        <translation>Noeuds</translation>
     </message>
     <message>
         <source>GEOM_LENGTH</source>
@@ -1225,8 +1253,28 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Noeuds</translation>
     </message>
     <message>
+        <source>GEOM_NON_PERIODIC</source>
+        <translation>Non Périodique</translation>
+    </message>
+    <message>
+        <source>GEOM_NUM_KNOTS</source>
+        <translation>Nombre de Noeuds :</translation>
+    </message>
+    <message>
+        <source>GEOM_NUM_MULTIS</source>
+        <translation>Nombre de Multiplicités :</translation>
+    </message>
+    <message>
+        <source>GEOM_NUM_POLES</source>
+        <translation>Nombre de Pôles :</translation>
+    </message>
+    <message>
         <source>GEOM_NUM_SPLIT_POINTS</source>
         <translation>Nombre de points de découpe</translation>
+    </message>
+    <message>
+        <source>GEOM_NUM_WEIGHTS</source>
+        <translation>Nombre de Poids :</translation>
     </message>
     <message>
         <source>GEOM_OBJECT</source>
@@ -1257,8 +1305,32 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Décaler une surface</translation>
     </message>
     <message>
+        <source>GEOM_PARABOLA</source>
+        <translation>Parabole</translation>
+    </message>
+    <message>
+        <source>GEOM_PARAMETERS</source>
+        <translation>Paramètres</translation>
+    </message>
+    <message>
         <source>GEOM_PATTERN</source>
         <translation>Schema de découpe</translation>
+    </message>
+    <message>
+        <source>GEOM_PERIODIC</source>
+        <translation>Périodique</translation>
+    </message>
+    <message>
+        <source>GEOM_PERIODICITY</source>
+        <translation>Périodicité : </translation>
+    </message>
+    <message>
+        <source>GEOM_POLE_I</source>
+        <translation>Pôle #%1 : </translation>
+    </message>
+    <message>
+        <source>GEOM_POLES</source>
+        <translation>Pôles</translation>
     </message>
     <message>
         <source>GEOM_PROJECTION_ON_FACE</source>

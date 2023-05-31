@@ -263,6 +263,7 @@ QString MeasureGUI_WhatisDlg::getKindOfShape( QString& theParameters )
     return aKindStr;
 
 #define PRINT_DOUBLE(val, tol) QString(" %1").arg( DlgRef::PrintDoubleValue( val, tol ) )
+#define PRINT_INTEGER(val) QString(" %1").arg( val )
 #define TITLE(val) QString("<b>%1</b>").arg(tr(val))
 #define TITLE_I(val, i) QString("<b>%1</b>").arg(tr(val).arg(i))
   switch ( aKind )
@@ -543,7 +544,15 @@ QString MeasureGUI_WhatisDlg::getKindOfShape( QString& theParameters )
       "<br>" + tr( "GEOM_DZ" )             + PRINT_DOUBLE( aDbls[5], aLenPrecision ) +
       "<br>" + TITLE( "GEOM_DIMENSIONS" )  +
       "<br>" + tr( "GEOM_RADIUS_MAJOR" )   + PRINT_DOUBLE( aDbls[6], aLenPrecision ) +
-      "<br>" + tr( "GEOM_RADIUS_MINOR" )   + PRINT_DOUBLE( aDbls[7], aLenPrecision );
+      "<br>" + tr( "GEOM_RADIUS_MINOR" )   + PRINT_DOUBLE( aDbls[7], aLenPrecision ) +
+      "<br>" + TITLE( "GEOM_X_AXIS")       + 
+      "<br>" + "Xx :"                      + PRINT_DOUBLE( aDbls[8], aLenPrecision ) +
+      "<br>" + "Xy :"                      + PRINT_DOUBLE( aDbls[9], aLenPrecision ) +
+      "<br>" + "Xz :"                      + PRINT_DOUBLE( aDbls[10], aLenPrecision ) +
+      "<br>" + TITLE( "GEOM_Y_AXIS")       + 
+      "<br>" + "Yx :"                      + PRINT_DOUBLE( aDbls[11], aLenPrecision ) +
+      "<br>" + "Yy :"                      + PRINT_DOUBLE( aDbls[12], aLenPrecision ) +
+      "<br>" + "Yz :"                      + PRINT_DOUBLE( aDbls[13], aLenPrecision );
     break;
   case GEOM::GEOM_IKindOfShape::ARC_ELLIPSE:
     aKindStr = tr( "GEOM_ARC_ELLIPSE" );
@@ -565,7 +574,15 @@ QString MeasureGUI_WhatisDlg::getKindOfShape( QString& theParameters )
       "<br>" + TITLE_I( "GEOM_POINT_I", 2 ) +
       "<br>" + tr( "GEOM_X_I" ).arg( 2 )    + PRINT_DOUBLE( aDbls[11], aLenPrecision ) +
       "<br>" + tr( "GEOM_Y_I" ).arg( 2 )    + PRINT_DOUBLE( aDbls[12], aLenPrecision ) +
-      "<br>" + tr( "GEOM_Z_I" ).arg( 2 )    + PRINT_DOUBLE( aDbls[13], aLenPrecision );
+      "<br>" + tr( "GEOM_Z_I" ).arg( 2 )    + PRINT_DOUBLE( aDbls[13], aLenPrecision ) +
+      "<br>" + TITLE( "GEOM_X_AXIS")        + 
+      "<br>" + "Xx :"                       + PRINT_DOUBLE( aDbls[14], aLenPrecision ) +
+      "<br>" + "Xy :"                       + PRINT_DOUBLE( aDbls[15], aLenPrecision ) +
+      "<br>" + "Xz :"                       + PRINT_DOUBLE( aDbls[16], aLenPrecision ) +
+      "<br>" + TITLE( "GEOM_Y_AXIS")        + 
+      "<br>" + "Yx :"                       + PRINT_DOUBLE( aDbls[17], aLenPrecision ) +
+      "<br>" + "Yy :"                       + PRINT_DOUBLE( aDbls[18], aLenPrecision ) +
+      "<br>" + "Yz :"                       + PRINT_DOUBLE( aDbls[19], aLenPrecision );
     break;
   case GEOM::GEOM_IKindOfShape::LINE:
     aKindStr = tr( "GEOM_LINE" );
@@ -589,6 +606,135 @@ QString MeasureGUI_WhatisDlg::getKindOfShape( QString& theParameters )
       "<br>" + tr( "GEOM_Y_I" ).arg( 2 )         + PRINT_DOUBLE( aDbls[4], aLenPrecision ) +
       "<br>" + tr( "GEOM_Z_I" ).arg( 2 )         + PRINT_DOUBLE( aDbls[5], aLenPrecision );
     break;
+  case GEOM::GEOM_IKindOfShape::CRV_BSPLINE:
+    {
+      aKindStr = tr( "GEOM_CRV_BSPLINE" );
+      theParameters = TITLE( "GEOM_PARAMETERS" ) +
+        "<br>" + tr( "GEOM_PERIODICITY" )        + tr( anInts[0] ? "GEOM_PERIODIC" : "GEOM_NON_PERIODIC") +
+        "<br>" + tr( "GEOM_DEGREE" )             + PRINT_INTEGER( anInts[1] ) +
+        "<br>" + tr( "GEOM_NUM_POLES" )          + PRINT_INTEGER( anInts[2] ) +
+        "<br>" + tr( "GEOM_NUM_WEIGHTS" )        + PRINT_INTEGER( anInts[4] ) +
+        "<br>" + tr( "GEOM_NUM_KNOTS" )          + PRINT_INTEGER( anInts[3] ) +
+        "<br>" + tr( "GEOM_NUM_MULTIS" )         + PRINT_INTEGER( anInts[5] ) +
+        "<br>" + TITLE( "GEOM_POLES" );
+      // Show max. 5 poles
+      Standard_Integer i, nb = std::min(5, anInts[2]);
+      if (anInts[4] == anInts[2]) {
+        // Each pole has a specific weight associated
+        Standard_Integer widx = anInts[2] * 3 + anInts[3]; // skip poles and knots
+        for (i=0; i<nb; i++) {
+          theParameters +=
+          "<br>" + tr( "GEOM_POLE_I" ).arg( i+1 ) +
+          "("     + PRINT_DOUBLE( aDbls[i*3], aLenPrecision ) +
+          ", "    + PRINT_DOUBLE( aDbls[i*3+1], aLenPrecision ) +
+          ", "    + PRINT_DOUBLE( aDbls[i*3+2], aLenPrecision ) +
+          " )\t" + PRINT_DOUBLE( aDbls[widx+i], aLenPrecision );
+        }
+      } else { 
+        for (i=0; i<nb; i++) {
+          theParameters +=
+          "<br>" + tr( "GEOM_POLE_I" ).arg( i+1 ) + "(" + PRINT_DOUBLE( aDbls[i*3], aLenPrecision ) +
+          ", " + PRINT_DOUBLE( aDbls[i*3+1], aLenPrecision ) +
+          ", " + PRINT_DOUBLE( aDbls[i*3+2], aLenPrecision ) + " )";
+        }
+      }
+      if (nb < anInts[2])
+        theParameters += "<br>...";
+      // Show max. 5 knots
+      theParameters += "<br>" + TITLE( "GEOM_KNOTS" );
+      nb = std::min(5, anInts[3]);
+      Standard_Integer kidx = anInts[2] * 3; // skip poles
+      if (anInts[5] == anInts[3]) {
+        // Each knot has a multiplicity associated
+        for (i=0; i<nb; i++) {
+          theParameters +=
+          "<br>" + tr( "GEOM_KNOT_I" ).arg( i+1 ) + PRINT_DOUBLE( aDbls[kidx+i], aLenPrecision ) +
+          "\t" + PRINT_INTEGER( anInts[6+i] );
+        }
+      } else {
+        // Each pole has a uniform weight of 1 (do not show it)
+        for (i=0; i<nb; i++) {
+          theParameters +=
+            "<br>" + tr( "GEOM_POLE_I" ).arg( i+1 ) + PRINT_DOUBLE( aDbls[kidx+i], aLenPrecision );
+        }
+      }
+      if (nb < anInts[3])
+        theParameters = theParameters + "<br>...";
+    }
+    break;
+  case GEOM::GEOM_IKindOfShape::CRV_BEZIER:
+    {
+      aKindStr = tr( "GEOM_CRV_BEZIER" );
+      theParameters = TITLE( "GEOM_PARAMETERS" ) +
+        "<br>" + tr( "GEOM_NUM_POLES" )          + PRINT_INTEGER( anInts[0] ) +
+        "<br>" + tr( "GEOM_NUM_WEIGHTS" )        + PRINT_INTEGER( anInts[1] ) +
+        "<br>" + TITLE( "GEOM_POLES" );
+      Standard_Integer i, nb = std::min(5, anInts[0]); // show max. 5 poles
+      if (anInts[1] > 0) {
+        Standard_Integer widx = anInts[2] * 3 + anInts[3];
+        for (i=0; i<nb; i++) {
+          theParameters = theParameters +
+          "<br>" + tr( "GEOM_POLE_I" ).arg( i+1 ) + "(" + PRINT_DOUBLE( aDbls[i*3], aLenPrecision ) +
+          ", " + PRINT_DOUBLE( aDbls[i*3+1], aLenPrecision ) +
+          ", " + PRINT_DOUBLE( aDbls[i*3+2], aLenPrecision ) +
+          ") " + PRINT_DOUBLE( aDbls[widx+i], aLenPrecision );
+        }
+      } else {
+        for (i=0; i<nb; i++) {
+          theParameters = theParameters +
+          "<br>" + tr( "GEOM_POLE_I" ).arg( i+1 ) + "(" + PRINT_DOUBLE( aDbls[i*3], aLenPrecision ) +
+          ", " + PRINT_DOUBLE( aDbls[i*3+1], aLenPrecision ) +
+          ", " + PRINT_DOUBLE( aDbls[i*3+2], aLenPrecision ) + ")";
+        }
+      }
+      if (nb < anInts[0])
+        theParameters = theParameters + "<br>...";
+    }
+    break;
+ case GEOM::GEOM_IKindOfShape::HYPERBOLA:
+    aKindStr = tr( "GEOM_HYPERBOLA" );
+    theParameters = TITLE( "GEOM_CENTER" )    +
+      "<br>" + tr( "GEOM_X_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[0], aLenPrecision ) +
+      "<br>" + tr( "GEOM_Y_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[1], aLenPrecision ) +
+      "<br>" + tr( "GEOM_Z_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[2], aLenPrecision ) +
+      "<br>" + TITLE( "GEOM_NORMAL" )         +
+      "<br>" + tr( "GEOM_DX" )                + PRINT_DOUBLE( aDbls[3], aLenPrecision ) +
+      "<br>" + tr( "GEOM_DY" )                + PRINT_DOUBLE( aDbls[4], aLenPrecision ) +
+      "<br>" + tr( "GEOM_DZ" )                + PRINT_DOUBLE( aDbls[5], aLenPrecision ) +
+      "<br>" + TITLE( "GEOM_DIMENSIONS" )     +
+      "<br>" + tr( "GEOM_RADIUS_I" ).arg( 1 ) + PRINT_DOUBLE( aDbls[6], aLenPrecision ) +
+      "<br>" + tr( "GEOM_RADIUS_I" ).arg( 2 ) + PRINT_DOUBLE( aDbls[7], aLenPrecision ) +
+      "<br>" + TITLE( "GEOM_X_AXIS")          + 
+      "<br>" + "Xx :"                         + PRINT_DOUBLE( aDbls[8], aLenPrecision ) +
+      "<br>" + "Xy :"                         + PRINT_DOUBLE( aDbls[9], aLenPrecision ) +
+      "<br>" + "Xz :"                         + PRINT_DOUBLE( aDbls[10], aLenPrecision ) +
+      "<br>" + TITLE( "GEOM_Y_AXIS")          + 
+      "<br>" + "Yx :"                         + PRINT_DOUBLE( aDbls[11], aLenPrecision ) +
+      "<br>" + "Yy :"                         + PRINT_DOUBLE( aDbls[12], aLenPrecision ) +
+      "<br>" + "Yz :"                         + PRINT_DOUBLE( aDbls[13], aLenPrecision );
+    break;
+  case GEOM::GEOM_IKindOfShape::PARABOLA:
+    aKindStr = tr( "GEOM_PARABOLA" );
+    theParameters = TITLE( "GEOM_CENTER" ) +
+      "<br>" + tr( "GEOM_X_I" ).arg( 0 )   + PRINT_DOUBLE( aDbls[0], aLenPrecision ) +
+      "<br>" + tr( "GEOM_Y_I" ).arg( 0 )   + PRINT_DOUBLE( aDbls[1], aLenPrecision ) +
+      "<br>" + tr( "GEOM_Z_I" ).arg( 0 )   + PRINT_DOUBLE( aDbls[2], aLenPrecision ) +
+      "<br>" + TITLE( "GEOM_NORMAL" )      +
+      "<br>" + tr( "GEOM_DX" )             + PRINT_DOUBLE( aDbls[3], aLenPrecision ) +
+      "<br>" + tr( "GEOM_DY" )             + PRINT_DOUBLE( aDbls[4], aLenPrecision ) +
+      "<br>" + tr( "GEOM_DZ" )             + PRINT_DOUBLE( aDbls[5], aLenPrecision ) +
+      "<br>" + TITLE( "GEOM_DIMENSIONS" )  +
+      "<br>" + tr( "GEOM_FOCAL_LENGTH" )   + PRINT_DOUBLE( aDbls[6], aLenPrecision ) +
+      "<br>" + TITLE( "GEOM_X_AXIS")       + 
+      "<br>" + "Xx :"                      + PRINT_DOUBLE( aDbls[7], aLenPrecision ) +
+      "<br>" + "Xy :"                      + PRINT_DOUBLE( aDbls[8], aLenPrecision ) +
+      "<br>" + "Xz :"                      + PRINT_DOUBLE( aDbls[9], aLenPrecision ) +
+      "<br>" + TITLE( "GEOM_Y_AXIS")       + 
+      "<br>" + "Yx :"                      + PRINT_DOUBLE( aDbls[10], aLenPrecision ) +
+      "<br>" + "Yy :"                      + PRINT_DOUBLE( aDbls[11], aLenPrecision ) +
+      "<br>" + "Yz :"                      + PRINT_DOUBLE( aDbls[12], aLenPrecision );
+    break;
+
   case GEOM::GEOM_IKindOfShape::EDGE:
     aKindStr = tr( "GEOM_EDGE" );
     break;

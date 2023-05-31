@@ -516,6 +516,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Create a single solid</translation>
     </message>
     <message>
+        <source>GEOM_CRV_BEZIER</source>
+        <translation>Bézier Curve</translation>
+    </message>
+    <message>
+        <source>GEOM_CRV_BSPLINE</source>
+        <translation>B-Spline Curve</translation>
+    </message>
+    <message>
         <source>GEOM_CURVE</source>
         <translation>Curve</translation>
     </message>
@@ -554,6 +562,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_D2</source>
         <translation>D2 :</translation>
+    </message>
+    <message>
+        <source>GEOM_DEGREE</source>
+        <translation>Degree :</translation>
     </message>
     <message>
         <source>GEOM_DETECT</source>
@@ -865,6 +877,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Tol. 3D :</translation>
     </message>
     <message>
+        <source>GEOM_FOCAL_LENGTH</source>
+        <translation>Focal Length :</translation>
+    </message>
+    <message>
         <source>GEOM_FREE_BOUNDARIES</source>
         <translation>Free boundaries</translation>
     </message>
@@ -949,6 +965,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Holes</translation>
     </message>
     <message>
+        <source>GEOM_HYPERBOLA</source>
+        <translation>Hyperbola</translation>
+    </message>
+    <message>
         <source>GEOM_INIT_SHAPE</source>
         <translation>Initial shape</translation>
     </message>
@@ -987,6 +1007,14 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_KEEP_OBJECT</source>
         <translation>Keep Object</translation>
+    </message>
+    <message>
+        <source>GEOM_KNOT_I</source>
+        <translation>Knot #%1 :</translation>
+    </message>
+    <message>
+        <source>GEOM_KNOTS</source>
+        <translation>Knots</translation>
     </message>
     <message>
         <source>GEOM_LENGTH</source>
@@ -1225,8 +1253,28 @@ Please, select face, shell or solid and try again</translation>
         <translation>Nodes</translation>
     </message>
     <message>
+        <source>GEOM_NON_PERIODIC</source>
+        <translation>Non-Periodic</translation>
+    </message>
+    <message>
+        <source>GEOM_NUM_KNOTS</source>
+        <translation>Number of knots :</translation>
+    </message>
+    <message>
+        <source>GEOM_NUM_MULTIS</source>
+        <translation>Number of multiplicities :</translation>
+    </message>
+    <message>
+        <source>GEOM_NUM_POLES</source>
+        <translation>Number of poles :</translation>
+    </message>
+    <message>
         <source>GEOM_NUM_SPLIT_POINTS</source>
         <translation>Number of splitting points</translation>
+    </message>
+    <message>
+        <source>GEOM_NUM_WEIGHTS</source>
+        <translation>Number of weights :</translation>
     </message>
     <message>
         <source>GEOM_OBJECT</source>
@@ -1257,8 +1305,32 @@ Please, select face, shell or solid and try again</translation>
         <translation>Offset Surface</translation>
     </message>
     <message>
+        <source>GEOM_PARABOLA</source>
+        <translation>Parabola</translation>
+    </message>
+    <message>
+        <source>GEOM_PARAMETERS</source>
+        <translation>Parameters</translation>
+    </message>
+    <message>
         <source>GEOM_PATTERN</source>
         <translation>Division pattern</translation>
+    </message>
+    <message>
+        <source>GEOM_PERIODIC</source>
+        <translation>Periodic</translation>
+    </message>
+    <message>
+        <source>GEOM_PERIODICITY</source>
+        <translation>Periodicity : </translation>
+    </message>
+    <message>
+        <source>GEOM_POLE_I</source>
+        <translation>Pole #%1 : </translation>
+    </message>
+    <message>
+        <source>GEOM_POLES</source>
+        <translation>Poles</translation>
     </message>
     <message>
         <source>GEOM_PROJECTION_ON_FACE</source>

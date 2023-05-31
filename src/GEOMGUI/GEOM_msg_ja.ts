@@ -512,6 +512,14 @@
       <translation>1 つのソリッドを作成します。</translation>
     </message>
     <message>
+        <source>GEOM_CRV_BEZIER</source>
+        <translation>ベジェ曲線</translation>
+    </message>
+    <message>
+        <source>GEOM_CRV_BSPLINE</source>
+        <translation>B-スプライン曲線</translation>
+    </message>
+    <message>
       <source>GEOM_CURVE</source>
       <translation>Curve</translation>
     </message>
@@ -550,6 +558,10 @@
     <message>
       <source>GEOM_D2</source>
       <translation>D2:</translation>
+    </message>
+    <message>
+        <source>GEOM_DEGREE</source>
+        <translation>程度 :</translation>
     </message>
     <message>
       <source>GEOM_DETECT</source>
@@ -860,6 +872,10 @@
       <translation>Tol. 3D :</translation>
     </message>
     <message>
+        <source>GEOM_FOCAL_LENGTH</source>
+        <translation>焦点距離 :</translation>
+    </message>
+    <message>
       <source>GEOM_FREE_BOUNDARIES</source>
       <translation>自由境界</translation>
     </message>
@@ -944,6 +960,10 @@
       <translation>穴</translation>
     </message>
     <message>
+        <source>GEOM_HYPERBOLA</source>
+        <translation>双曲線</translation>
+    </message>
+    <message>
       <source>GEOM_INIT_SHAPE</source>
       <translation>元のオブジェクト</translation>
     </message>
@@ -982,6 +1002,14 @@
     <message>
       <source>GEOM_KEEP_OBJECT</source>
       <translation>オブジェクトを維持します。</translation>
+    </message>
+    <message>
+        <source>GEOM_KNOT_I</source>
+        <translation>結び目 #%1 :</translation>
+    </message>
+    <message>
+        <source>GEOM_KNOTS</source>
+        <translation>結び目</translation>
     </message>
     <message>
       <source>GEOM_LENGTH</source>
@@ -1220,8 +1248,28 @@
       <translation>節点</translation>
     </message>
     <message>
+        <source>GEOM_NON_PERIODIC</source>
+        <translation>非定期的</translation>
+    </message>
+    <message>
+        <source>GEOM_NUM_KNOTS</source>
+        <translation>ノット数 :</translation>
+    </message>
+    <message>
+        <source>GEOM_NUM_MULTIS</source>
+        <translation>多重度の数 :</translation>
+    </message>
+    <message>
+        <source>GEOM_NUM_POLES</source>
+        <translation>極数 :</translation>
+    </message>
+    <message>
       <source>GEOM_NUM_SPLIT_POINTS</source>
       <translation>分割点の数</translation>
+    </message>
+    <message>
+        <source>GEOM_NUM_WEIGHTS</source>
+        <translation>ウェイトの数 :</translation>
     </message>
     <message>
       <source>GEOM_OBJECT</source>
@@ -1252,8 +1300,32 @@
       <translation>サーフェスをオフセット</translation>
     </message>
     <message>
+        <source>GEOM_PARABOLA</source>
+        <translation>放物線</translation>
+    </message>
+    <message>
+        <source>GEOM_PARAMETERS</source>
+        <translation>パラメーター</translation>
+    </message>
+    <message>
       <source>GEOM_PATTERN</source>
       <translation>加工図</translation>
+    </message>
+    <message>
+        <source>GEOM_PERIODIC</source>
+        <translation>定期的</translation>
+    </message>
+    <message>
+        <source>GEOM_PERIODICITY</source>
+        <translation>周期性 : </translation>
+    </message>
+    <message>
+        <source>GEOM_POLE_I</source>
+        <translation>極 #%1 : </translation>
+    </message>
+    <message>
+        <source>GEOM_POLES</source>
+        <translation>極</translation>
     </message>
     <message>
       <source>GEOM_PROJECTION_ON_FACE</source>

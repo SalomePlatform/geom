@@ -749,7 +749,7 @@ GEOMImpl_IMeasureOperations::ShapeKind GEOMImpl_IMeasureOperations::KindOfShape
         break;
       case GEOMAlgo_KN_CURVEBSPLINE:
         {
-          // (+) geompy.kind.CRV_BSPLINE  np nk nw nm  x1 y1 z1 ... xnp ynp znp  k1 ... knk  w1 ... wnw  m1 ... mnm
+          // (+) geompy.kind.CRV_BSPLINE  p d np nk nw nm  x1 y1 z1 ... xnp ynp znp  k1 ... knk  w1 ... wnw  m1 ... mnm
           aKind = SK_CRV_BSPLINE;
           Standard_Integer aNbPoles = anInfo.NbPoles();
           Standard_Integer aNbKnots = anInfo.NbKnots();
