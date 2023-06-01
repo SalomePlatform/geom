@@ -49,14 +49,37 @@ public:
                   const char* author,
                   const char* fileName,
                   const char* shapeFileName );
-  
+
+  std::string ExportXAOMem( Handle(GEOM_Object) shape,
+                            std::list<Handle(GEOM_Object)> groupList,
+                            std::list<Handle(GEOM_Field)> fieldList,
+                            const char* author );
+
   bool ImportXAO( const char* fileName,
                   Handle(GEOM_Object)& shape,
                   Handle(TColStd_HSequenceOfTransient)& subShapes,
                   Handle(TColStd_HSequenceOfTransient)& groups,
                   Handle(TColStd_HSequenceOfTransient)& fields );
 
+  bool ImportXAOMem( const std::string& theXML,
+                     Handle(GEOM_Object)& shape,
+                     Handle(TColStd_HSequenceOfTransient)& subShapes,
+                     Handle(TColStd_HSequenceOfTransient)& groups,
+                     Handle(TColStd_HSequenceOfTransient)& fields );
+
 private:
+  std::string exportXAO( Handle(GEOM_Object) shape,
+                         std::list<Handle(GEOM_Object)> groupList,
+                         std::list<Handle(GEOM_Field)> fieldList,
+                         const char* author,
+                         const char* fileName,
+                         const char* shapeFileName );
+  bool importXAO( const char* fileName,
+                  const std::string& theXML,
+                  Handle(GEOM_Object)& shape,
+                  Handle(TColStd_HSequenceOfTransient)& subShapes,
+                  Handle(TColStd_HSequenceOfTransient)& groups,
+                  Handle(TColStd_HSequenceOfTransient)& fields );
   void importSubShapes( XAO::Geometry* xaoGeometry,
                         Handle(GEOM_Function) function,
                         int shapeType,

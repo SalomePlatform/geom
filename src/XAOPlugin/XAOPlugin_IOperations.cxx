@@ -58,6 +58,8 @@
 
 #include <TopExp.hxx>
 
+#include <algorithm>
+
 XAO::Dimension shapeEnumToDimension(const TopAbs_ShapeEnum& shape)
 {
   XAO::Dimension dim;
@@ -323,12 +325,13 @@ void XAOPlugin_IOperations::exportSubshapes( const Handle(GEOM_Object)& shape, X
 
 //=============================================================================
 /*!
- *  Export a shape to XAO format
- *  \param shape The shape to export
- *  \param groups The list of groups to export
- *  \param fields The list of fields to export
- *  \param fileName The name of the file to exported
- *  \return boolean indicating if export was succeful.
+ *  Export a shape to XAO format file.
+ *  \param shape The shape to export.
+ *  \param groups The list of groups to export.
+ *  \param fields The list of fields to export.
+ *  \param fileName The name of the file to be exported.
+ *  \param shapeFileName The name of the file for shape, if it should be exported separately.
+ *  \return boolean indicating if export was successful.
  */
 //=============================================================================
 bool XAOPlugin_IOperations::ExportXAO( Handle(GEOM_Object) shape,
@@ -338,21 +341,67 @@ bool XAOPlugin_IOperations::ExportXAO( Handle(GEOM_Object) shape,
                                        const char* fileName,
                                        const char* shapeFileName )
 {
-  SetErrorCode(KO);
+  if (!fileName || !strlen(fileName)) {
+    SetErrorCode("Empty file name");
+    return false;
+  }
 
-  if (shape.IsNull()) return false;
+  exportXAO( shape, groupList, fieldList, author, fileName, shapeFileName );
+  return IsDone();
+}
+
+//=============================================================================
+/*!
+ *  Export a shape to XAO format string.
+ *  \param shape The shape to export.
+ *  \param groups The list of groups to export.
+ *  \param fields The list of fields to export.
+ *  \return The exported string.
+ */
+//=============================================================================
+std::string XAOPlugin_IOperations::ExportXAOMem( Handle(GEOM_Object) shape,
+                                                 std::list<Handle(GEOM_Object)> groupList,
+                                                 std::list<Handle(GEOM_Field)> fieldList,
+                                                 const char* author )
+{
+  std::string anXML = exportXAO( shape, groupList, fieldList, author, NULL, NULL );
+  return anXML;
+}
+
+//=============================================================================
+/*!
+ *  Export a shape to XAO format file or string.
+ *  \param shape The shape to export.
+ *  \param groups The list of groups to export.
+ *  \param fields The list of fields to export.
+ *  \param fileName The name of the file to be exported. If empty, export to string.
+ *  \param shapeFileName The name of the file for shape, if it should be exported separately.
+ *  \return The exported string, if fileName is empty, or empty string.
+ */
+//=============================================================================
+std::string XAOPlugin_IOperations::exportXAO( Handle(GEOM_Object) shape,
+                                              std::list<Handle(GEOM_Object)> groupList,
+                                              std::list<Handle(GEOM_Field)> fieldList,
+                                              const char* author,
+                                              const char* fileName,
+                                              const char* shapeFileName )
+{
+  SetErrorCode(KO);
+  std::string anXML ("");
+
+  if (shape.IsNull()) return anXML;
 
   // add a new shape function with parameters
   Handle(GEOM_Function) lastFunction = shape->GetLastFunction();
-  if (lastFunction.IsNull()) return false;
+  if (lastFunction.IsNull()) return anXML;
 
   // add a new result object
   Handle(GEOM_Object) result = GetEngine()->AddObject(GEOM_IMPORT);
 
   // add an Export function
   Handle(GEOM_Function) exportFunction = result->AddFunction(XAOPlugin_Driver::GetID(), EXPORT_SHAPE);
-  if (exportFunction.IsNull()) return false;
-  if (exportFunction->GetDriverGUID() != XAOPlugin_Driver::GetID()) return false;
+  if (exportFunction.IsNull()) return anXML;
+  if (exportFunction->GetDriverGUID() != XAOPlugin_Driver::GetID()) return anXML;
 
   // create the XAO object
   XAO::Xao* xaoObject = new XAO::Xao();
@@ -369,16 +418,36 @@ bool XAOPlugin_IOperations::ExportXAO( Handle(GEOM_Object) shape,
   exportSubshapes(shape, geometry);
   xaoObject->setGeometry(geometry);
 
-  if (!exportGroups(groupList, xaoObject, geometry)) return false;
+  if (!exportGroups(groupList, xaoObject, geometry)) return anXML;
   exportFields(fieldList, xaoObject, geometry);
 
-  // export the XAO to the file
-  xaoObject->exportXAO(fileName, shapeFileName);
+  bool isFile = (fileName && strlen(fileName));
+  if (isFile) {
+    // export the XAO to the file
+    xaoObject->exportXAO(fileName, shapeFileName);
+  }
+  else {
+    // export the XAO to the string
+    anXML = xaoObject->getXML();
+  }
 
   // make a Python command
-  GEOM::TPythonDump pd(exportFunction);
-  std::string convFileName = Kernel_Utils::BackSlashToSlash(fileName);
-  pd << "exported = geompy.ExportXAO(" << shape;
+  GEOM::TPythonDump pd (exportFunction);
+  if (isFile) {
+    pd << "exported = geompy.ExportXAO(";
+  }
+  else {
+    if (!shape->GetName().IsEmpty()) {
+      std::string aGeometryNamePy (shape->GetName().ToCString());
+      std::replace(aGeometryNamePy.begin(), aGeometryNamePy.end(), ' ', '_');
+      pd << "aXAOBuff_" << aGeometryNamePy.c_str() << " = geompy.ExportXAOMem(";
+    }
+    else
+      pd << "aXAOBuff = geompy.ExportXAOMem(";
+  }
+
+  // shape
+  pd << shape;
 
   // list of groups
   pd << ", [";
@@ -404,12 +473,24 @@ bool XAOPlugin_IOperations::ExportXAO( Handle(GEOM_Object) shape,
     }
   }
   pd << "], ";
-  pd << "\"" << author << "\", \"" << convFileName.c_str() << "\", \"" << shapeFileName << "\")";
+
+  // author
+  pd << "\"" << author << "\"";
+
+  // files
+  if (isFile) {
+    std::string convFileName = Kernel_Utils::BackSlashToSlash(fileName);
+    std::string convShapeFileName;
+    if (shapeFileName && strlen(shapeFileName))
+      convShapeFileName = Kernel_Utils::BackSlashToSlash(shapeFileName);
+    pd << ", \"" << convFileName.c_str() << "\", \"" << convShapeFileName.c_str() << "\"";
+  }
+  pd << ")";
 
   SetErrorCode(OK);
   delete xaoObject;
 
-  return true;
+  return anXML;
 }
 
 void XAOPlugin_IOperations::importSubShapes( XAO::Geometry* xaoGeometry,
@@ -440,7 +521,10 @@ void XAOPlugin_IOperations::importSubShapes( XAO::Geometry* xaoGeometry,
       return;
 
     subShape->SetName(name.c_str());
-    subShape->SetType(shapeType);
+
+    // commented out, as it prevents correct operation information filling
+    // type should be a GEOM_SUBSHAPE
+    //subShape->SetType(shapeType);
 
     GEOM_ISubShape aSSI(aFunction);
     aSSI.SetMainShape(function);
@@ -456,13 +540,13 @@ void XAOPlugin_IOperations::importSubShapes( XAO::Geometry* xaoGeometry,
 
 //=============================================================================
 /*!
- *  Import a shape from XAO format
- *  \param fileName The name of the file to import
- *  \param shape The imported shape
- *  \param subShapes The list of imported groups
- *  \param groups The list of imported groups
- *  \param fields The list of imported fields
- *  \return boolean indicating if import was succeful.
+ *  Import a shape from XAO format file.
+ *  \param fileName The name of the file to import.
+ *  \param shape The imported shape.
+ *  \param subShapes The list of imported sub-shapes.
+ *  \param groups The list of imported groups.
+ *  \param fields The list of imported fields.
+ *  \return boolean indicating if import was successful.
  */
 //=============================================================================
 bool XAOPlugin_IOperations::ImportXAO( const char* fileName,
@@ -471,16 +555,69 @@ bool XAOPlugin_IOperations::ImportXAO( const char* fileName,
                                        Handle(TColStd_HSequenceOfTransient)& groups,
                                        Handle(TColStd_HSequenceOfTransient)& fields )
 {
+  if (fileName == NULL || !strlen(fileName)) {
+    SetErrorCode("Empty file name");
+  }
+
+  importXAO( fileName, "", shape, subShapes, groups, fields );
+  return IsDone();
+}
+
+//=============================================================================
+/*!
+ *  Import a shape from XAO format string.
+ *  \param theXML The input buffer.
+ *  \param shape The imported shape.
+ *  \param subShapes The list of imported sub-shapes.
+ *  \param groups The list of imported groups.
+ *  \param fields The list of imported fields.
+ *  \return boolean indicating if import was successful.
+ */
+//=============================================================================
+bool XAOPlugin_IOperations::ImportXAOMem( const std::string& theXML,
+                                          Handle(GEOM_Object)& shape,
+                                          Handle(TColStd_HSequenceOfTransient)& subShapes,
+                                          Handle(TColStd_HSequenceOfTransient)& groups,
+                                          Handle(TColStd_HSequenceOfTransient)& fields )
+{
+  importXAO( NULL, theXML, shape, subShapes, groups, fields );
+  return IsDone();
+}
+
+//=============================================================================
+/*!
+ *  Import a shape from XAO format file.
+ *  \param fileName The name of the file to import.
+ *  \param shape The imported shape.
+ *  \param subShapes The list of imported sub-shapes.
+ *  \param groups The list of imported groups.
+ *  \param fields The list of imported fields.
+ *  \return boolean indicating if import was successful.
+ */
+//=============================================================================
+bool XAOPlugin_IOperations::importXAO( const char* fileName,
+                                       const std::string& theXML,
+                                       Handle(GEOM_Object)& shape,
+                                       Handle(TColStd_HSequenceOfTransient)& subShapes,
+                                       Handle(TColStd_HSequenceOfTransient)& groups,
+                                       Handle(TColStd_HSequenceOfTransient)& fields )
+{
   SetErrorCode(KO);
 
-  if (fileName == NULL || groups.IsNull() || fields.IsNull())
+  if (groups.IsNull() || fields.IsNull())
     return false;
+
+  bool isFile = (fileName && strlen(fileName));
 
   // Read the XAO
   XAO::Xao* xaoObject = new XAO::Xao();
   try
   {
-    xaoObject->importXAO(fileName);
+    if (isFile)
+      xaoObject->importXAO(fileName);
+    else {
+     xaoObject->setXML(theXML);
+    }
   }
   catch (XAO::XAO_Exception& exc)
   {
@@ -503,7 +640,14 @@ bool XAOPlugin_IOperations::ImportXAO( const char* fileName,
   if (function.IsNull()) return false;
   if (function->GetDriverGUID() != XAOPlugin_Driver::GetID()) return false;
 
-  function->SetString( XAOPlugin_Driver::GetFileNameTag(), fileName );
+  // Initialize python dimp here to prevent dumping of sub shapes, groups and fields
+  GEOM::TPythonDump pd(function);
+
+  if (isFile)
+    function->SetString( XAOPlugin_Driver::GetFileNameTag(), fileName );
+  else {
+    function->SetString( XAOPlugin_Driver::GetFileNameTag(), "NO, imported from byte array" );
+  }
 
   // set the geometry
   if (xaoGeometry->getFormat() == XAO::BREP)
@@ -658,7 +802,6 @@ bool XAOPlugin_IOperations::ImportXAO( const char* fileName,
   }
 
   // make a Python command
-  GEOM::TPythonDump pd(function);
   pd << "(imported, " << shape << ", ";
 
   // list of sub shapes
@@ -695,9 +838,21 @@ bool XAOPlugin_IOperations::ImportXAO( const char* fileName,
       pd << obj << ((i < nbFields) ? ", " : "");
     }
   }
-  std::string convFileName =  Kernel_Utils::BackSlashToSlash( fileName );
-  pd << "]";
-  pd << ") = geompy.ImportXAO(\"" << convFileName.c_str() << "\")";
+  pd << "]) = geompy.";
+
+  if (isFile) {
+    std::string convFileName =  Kernel_Utils::BackSlashToSlash( fileName );
+    pd << "ImportXAO(\"" << convFileName.c_str() << "\")";
+  }
+  else {
+    if (!shape->GetName().IsEmpty()) {
+      std::string aGeometryNamePy (shape->GetName().ToCString());
+      std::replace(aGeometryNamePy.begin(), aGeometryNamePy.end(), ' ', '_');
+      pd << "ImportXAOMem(aXAOBuff_" << aGeometryNamePy.c_str() << ")";
+    }
+    else
+      pd << "ImportXAOMem(aXAOBuff)";
+  }
 
   delete xaoObject;
   SetErrorCode(OK);

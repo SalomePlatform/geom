@@ -88,6 +88,16 @@ In the \b File menu select <b>Import/XAO</b>.
 
 \par
 
+It is possible to import a shape from XAO file using the TUI Command:
+
+<em>ok, Shape, Sub_Shapes, Groups, Fields = geompy.ImportXAO(FileName)</em>
+
+It is also possible to import a shape from XAO format memory buffer (bytes array) using the TUI Command:
+
+<em>ok, Shape, Sub_Shapes, Groups, Fields = geompy.ImportXAOMem(aBuffer)</em>
+
+\par
+
 <em>To export a shape in the \b XAO format:</em>
 
 \par
@@ -104,6 +114,12 @@ In this dialog:
 - Select the \b Fields of the chosen shape to be exported.
 - Press "Apply" or "Apply & Close" button to get the result.
 
-It is also possible to export a shape using the TUI Command: <em>geompy.ExportXAO(Shape, Groups, Fields, Author, FileName, ShapeFileName)</em>
+It is possible to export a shape in XAO file using the TUI Command:
+
+<em>geompy.ExportXAO(Shape, Groups, Fields, Author, FileName, ShapeFileName)</em>
+
+It is also possible to export a shape in XAO format memory buffer (bytes array) using the TUI Command:
+
+<em>aBuffer = geompy.ExportXAOMem(Shape, Groups, Fields, Author)</em>
 
 */

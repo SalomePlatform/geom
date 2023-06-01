@@ -49,14 +49,14 @@ XAOPlugin_IOperations_i::~XAOPlugin_IOperations_i()
 
 //=============================================================================
 /*!
- *  Export a shape to XAO format
+ *  Export a shape to XAO format file
  *  \param shape The shape to export
  *  \param groups The list of groups to export
  *  \param fields The list of fields to export
  *  \param author The author of the export
  *  \param fileName The name of the exported file
- *  \param shapeFileName If not empty, save to shape to this external file
- *  \return boolean indicating if export was succeful.
+ *  \param shapeFileName If not empty, save the BREP shape to this external file
+ *  \return boolean indicating if export was successful.
  */
 //=============================================================================
 CORBA::Boolean XAOPlugin_IOperations_i::ExportXAO( GEOM::GEOM_Object_ptr shape,
@@ -66,12 +66,63 @@ CORBA::Boolean XAOPlugin_IOperations_i::ExportXAO( GEOM::GEOM_Object_ptr shape,
                                                    const char* fileName,
                                                    const char* shapeFileName)
 {
-  bool isGood = false;
+  exportXAO( shape, groups, fields, author, true, fileName, shapeFileName );
+  return IsDone();
+}
+
+//=============================================================================
+/*!
+ *  Export a shape to XAO format buffer
+ *  \param shape The shape to export
+ *  \param groups The list of groups to export
+ *  \param fields The list of fields to export
+ *  \param author The author of the export
+ *  \return The output buffer
+ */
+//=============================================================================
+SALOMEDS::TMPFile* XAOPlugin_IOperations_i::ExportXAOMem( GEOM::GEOM_Object_ptr shape,
+                                                          const GEOM::ListOfGO& groups,
+                                                          const GEOM::ListOfFields& fields,
+                                                          const char* author )
+{
+  std::string anXMLBuf = exportXAO( shape, groups, fields, author, false, "", "" );
+
+  int size = anXMLBuf.size();
+  CORBA::Octet* OctetBuf = SALOMEDS::TMPFile::allocbuf(size);
+  memcpy(OctetBuf, anXMLBuf.c_str(), size);
+  SALOMEDS::TMPFile_var SeqFile = new SALOMEDS::TMPFile (size,size,OctetBuf,1);
+  return SeqFile._retn();
+}
+
+//=============================================================================
+/*!
+ *  Export a shape to XAO format
+ *  \param shape The shape to export
+ *  \param groups The list of groups to export
+ *  \param fields The list of fields to export
+ *  \param author The author of the export
+ *  \param toFile Export to file if true, otherwise export to memory buffer (the returned string)
+ *  \param fileName The name of the exported file
+ *  \param shapeFileName If not empty, save the BREP shape to this external file
+ *  \return string The exported buffer if toFile=false, otherwise an empty string
+ */
+//=============================================================================
+std::string XAOPlugin_IOperations_i::exportXAO( GEOM::GEOM_Object_ptr shape,
+                                                const GEOM::ListOfGO& groups,
+                                                const GEOM::ListOfFields& fields,
+                                                const char* author,
+                                                const bool  toFile,
+                                                const char* fileName,
+                                                const char* shapeFileName)
+{
+  std::string anXMLBuff;
   // Set a not done flag
   GetOperations()->SetNotDone();
 
   // Get the reference shape
   Handle(GEOM_Object) reference = GetObjectImpl( shape );
+  if( reference.IsNull() )
+    return anXMLBuff;
 
   // Get the reference groups
   CORBA::ULong ind = 0;
@@ -79,7 +130,7 @@ CORBA::Boolean XAOPlugin_IOperations_i::ExportXAO( GEOM::GEOM_Object_ptr shape,
   for (; ind < groups.length(); ind++)
   {
     Handle(GEOM_Object) gobj = GetObjectImpl( groups[ind] );
-    if (gobj.IsNull()) return false;
+    if (gobj.IsNull()) return anXMLBuff;
     groupsObj.push_back(gobj);
   }
 
@@ -89,17 +140,21 @@ CORBA::Boolean XAOPlugin_IOperations_i::ExportXAO( GEOM::GEOM_Object_ptr shape,
   for( ; ind < fields.length(); ind++ )
   {
     Handle(GEOM_Field) fobj = Handle(GEOM_Field)::DownCast( GetBaseObjectImpl( fields[ind] ) );
-    if( fobj.IsNull() ) return false;
+    if( fobj.IsNull() ) return anXMLBuff;
     fieldsObj.push_back(fobj);
   }
 
-  if( !reference.IsNull() )
+  if ( toFile )
   {
     // Export XAO
-    isGood = GetOperations()->ExportXAO( reference, groupsObj, fieldsObj, author, fileName, shapeFileName );
+    GetOperations()->ExportXAO( reference, groupsObj, fieldsObj, author, fileName, shapeFileName );
+  }
+  else
+  {
+    anXMLBuff = GetOperations()->ExportXAOMem( reference, groupsObj, fieldsObj, author );
   }
 
-  return isGood;
+  return anXMLBuff;
 }
 
 //=============================================================================
@@ -110,10 +165,57 @@ CORBA::Boolean XAOPlugin_IOperations_i::ExportXAO( GEOM::GEOM_Object_ptr shape,
  *  \param subShapes The list of imported subShapes
  *  \param groups The list of imported groups
  *  \param fields The list of imported fields
- *  \return boolean indicating if import was succeful.
+ *  \return boolean indicating if import was successful.
  */
 //=============================================================================
 CORBA::Boolean XAOPlugin_IOperations_i::ImportXAO( const char* fileName,
+						   GEOM::GEOM_Object_out shape,
+						   GEOM::ListOfGO_out subShapes,
+						   GEOM::ListOfGO_out groups,
+						   GEOM::ListOfFields_out fields)
+{
+  SALOMEDS::TMPFile_var aBuff;
+  importXAO( true, fileName, aBuff, shape, subShapes, groups, fields);
+  return IsDone();
+}
+
+//=============================================================================
+/*!
+ *  Import a shape from XAO format memory buffer
+ *  \param fileName The name of the file to import
+ *  \param shape The imported shape
+ *  \param subShapes The list of imported subShapes
+ *  \param groups The list of imported groups
+ *  \param fields The list of imported fields
+ *  \return boolean indicating if import was successful.
+ */
+//=============================================================================
+CORBA::Boolean XAOPlugin_IOperations_i::ImportXAOMem( const SALOMEDS::TMPFile& theBuff,
+                                                      GEOM::GEOM_Object_out shape,
+                                                      GEOM::ListOfGO_out subShapes,
+                                                      GEOM::ListOfGO_out groups,
+                                                      GEOM::ListOfFields_out fields)
+{
+  importXAO( false, NULL, theBuff, shape, subShapes, groups, fields);
+  return IsDone();
+}
+
+//=============================================================================
+/*!
+ *  Import a shape from XAO format
+ *  \param isFile Boolean flag to switch between import from file or from buffer
+ *  \param fileName The name of the file to import from if isFile=true
+ *  \param theBuff The buffer to import from if isFile=false
+ *  \param shape The imported shape
+ *  \param subShapes The list of imported subShapes
+ *  \param groups The list of imported groups
+ *  \param fields The list of imported fields
+ *  \return boolean indicating if import was successful.
+ */
+//=============================================================================
+CORBA::Boolean XAOPlugin_IOperations_i::importXAO( const bool isFile,
+                                                   const char* fileName,
+                                                   const SALOMEDS::TMPFile& theBuff,
 						   GEOM::GEOM_Object_out shape,
 						   GEOM::ListOfGO_out subShapes,
 						   GEOM::ListOfGO_out groups,
@@ -133,9 +235,21 @@ CORBA::Boolean XAOPlugin_IOperations_i::ImportXAO( const char* fileName,
   Handle(TColStd_HSequenceOfTransient) importedGroups = new TColStd_HSequenceOfTransient();
   Handle(TColStd_HSequenceOfTransient) importedFields = new TColStd_HSequenceOfTransient();
   Handle(GEOM_Object) hshape;
-  bool res = GetOperations()->ImportXAO( fileName, hshape, importedSubShapes, importedGroups, importedFields );
 
-  if( !GetOperations()->IsDone() || !res )
+  if (isFile) {
+    GetOperations()->ImportXAO( fileName, hshape, importedSubShapes, importedGroups, importedFields );
+  }
+  else {
+    if (theBuff.length() < 1)
+      return false;
+
+    char* buf = (char*)theBuff.NP_data();
+    //std::string anXMLBuff (buf); // works wrongly
+    std::string anXMLBuff (buf, theBuff.length());
+    GetOperations()->ImportXAOMem( anXMLBuff, hshape, importedSubShapes, importedGroups, importedFields );
+  }
+
+  if( !GetOperations()->IsDone() )
     return false;
 
   // parse fields
@@ -165,7 +279,7 @@ CORBA::Boolean XAOPlugin_IOperations_i::ImportXAO( const char* fileName,
 
   shape = GetObject( hshape );
 
-  return res;
+  return IsDone();
 }
 
 XAOPlugin_IOperations* XAOPlugin_IOperations_i::GetOperations()

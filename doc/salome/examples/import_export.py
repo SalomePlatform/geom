@@ -45,6 +45,9 @@ geompy.ExportVTK(sphere, f_vtk2, 0.1)
 f_xao = os.path.join(tmpdir, "sphere.xao")
 geompy.ExportXAO(sphere, [], [], "author", f_xao)
 
+# export sphere to XAO format memory buffer (bytes array)
+buff_xao = geompy.ExportXAOMem(sphere, [], [], "author")
+
 # import BREP file
 sphere_brep = geompy.ImportBREP(f_brep)
 
@@ -63,6 +66,9 @@ sphere_stl2 = geompy.ImportSTL(f_stl2)
 
 # import XAO file
 ok, sphere_xao, sub_shapes, groups, fields = geompy.ImportXAO(f_xao)
+
+# import XAO data from memory buffer (bytes array)
+ok_mem, sphere_xao_mem, sub_shapes_mem, groups_mem, fields_mem = geompy.ImportXAOMem(buff_xao)
 
 # clean up
 for f in f_brep, f_iges, f_step, f_stl1, f_stl2, f_vtk1, f_vtk2, f_xao:

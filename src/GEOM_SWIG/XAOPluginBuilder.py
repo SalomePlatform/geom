@@ -18,6 +18,7 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
+import GEOM
 from GEOM import IXAOOperations
 
 # Engine Library Name
@@ -57,6 +58,32 @@ def ExportXAO(self, shape, groups, fields, author, fileName, shapeFileName = "")
     RaiseIfFailed("ExportXAO", anOp)
     return res
 
+## Export a shape to XAO format in byte array
+#  @param shape The shape to export
+#  @param groups The list of groups to export
+#  @param fields The list of fields to export
+#  @param author The author of the file
+#  @return Byte array with exported data
+#
+#  @ingroup l2_import_export
+def ExportXAOMem(self, shape, groups, fields, author):
+    """
+    Export a shape to XAO format in byte array
+    
+    Parameters:
+        shape The shape to export
+        groups The list of groups to export
+        fields The list of fields to export
+
+    Returns:
+        Byte array with exported data
+    """
+    from salome.geom.geomBuilder import RaiseIfFailed
+    anOp = GetXAOPluginOperations(self)
+    res = anOp.ExportXAOMem(shape, groups, fields, author)
+    RaiseIfFailed("ExportXAOMem", anOp)
+    return res
+
 ## Import a shape from XAO format
 #  @param fileName The name of the file to import
 #  @param theName Object name; when specified, this parameter is used
@@ -91,7 +118,78 @@ def ImportXAO(self, fileName, theName=None):
     """
     from salome.geom.geomBuilder import RaiseIfFailed
     anOp = GetXAOPluginOperations(self)
-    res = anOp.ImportXAO(fileName)
+    (res, shape, subShapes, groups, fields) = anOp.ImportXAO(fileName)
     RaiseIfFailed("ImportXAO", anOp)
-    self._autoPublish(res[1], theName, "imported")
-    return res
+    if res:
+        # publish imported shape
+        self._autoPublish(shape, theName, "imported")
+        # publish imported sub shapes, groups and fields
+        if theName or self.myMaxNbSubShapesAllowed:
+            for ss in (subShapes + groups + fields):
+                self.addToStudyInFather(shape, ss, ss.GetName())
+                if isinstance( ss, GEOM._objref_GEOM_Field ):
+                    listStepIDs = ss.GetSteps()
+                    for stepID in listStepIDs:
+                        step = ss.GetStep(stepID)
+                        self.addToStudyInFather(ss, step, step.GetName())
+                        pass
+                    pass
+                pass
+            pass
+        pass
+    return (res, shape, subShapes, groups, fields)
+
+## Import a shape from XAO format byte array
+#  @param byteArray byte array with XAO data
+#  @param theName Object name; when specified, this parameter is used
+#         for result publication in the study. Otherwise, if automatic
+#         publication is switched on, default value is used for result name.
+# 
+#  @return tuple (\a res, \a shape, \a subShapes, \a groups, \a fields)
+#       \a res Flag indicating if the import was successful
+#       \a shape The imported shape
+#       \a subShapes The list of imported subShapes
+#       \a groups The list of imported groups
+#       \a fields The list of imported fields
+#
+#  @ingroup l2_import_export
+def ImportXAOMem(self, byteArray, theName=None):
+    """
+    Import a shape from XAO format byte array
+    
+    Parameters:
+        byteArray byte array with XAO data
+        theName Object name; when specified, this parameter is used
+                for result publication in the study. Otherwise, if automatic
+                publication is switched on, default value is used for result name.
+
+    Returns:
+        A tuple (res, shape, subShapes, groups, fields):
+        - res: Flag indicating if the import was successful
+        - shape: The imported shape
+        - subShapes: The list of imported subShapes
+        - groups: The list of imported groups
+        - fields: The list of imported fields
+    """
+    from salome.geom.geomBuilder import RaiseIfFailed
+    anOp = GetXAOPluginOperations(self)
+    (res, shape, subShapes, groups, fields) = anOp.ImportXAOMem(byteArray)
+    RaiseIfFailed("ImportXAOMem", anOp)
+    if res:
+        # publish imported shape
+        self._autoPublish(shape, theName, "imported")
+        # publish imported sub shapes, groups and fields
+        if theName or self.myMaxNbSubShapesAllowed:
+            for ss in (subShapes + groups + fields):
+                self.addToStudyInFather(shape, ss, ss.GetName())
+                if isinstance( ss, GEOM._objref_GEOM_Field ):
+                    listStepIDs = ss.GetSteps()
+                    for stepID in listStepIDs:
+                        step = ss.GetStep(stepID)
+                        self.addToStudyInFather(ss, step, step.GetName())
+                        pass
+                    pass
+                pass
+            pass
+        pass
+    return (res, shape, subShapes, groups, fields)

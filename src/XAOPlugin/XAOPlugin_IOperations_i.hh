@@ -50,13 +50,41 @@ public:
                             const char* fileName,
                             const char* shapeFileName );
 
+  SALOMEDS::TMPFile* ExportXAOMem( GEOM::GEOM_Object_ptr shape,
+                            const GEOM::ListOfGO& groups,
+                            const GEOM::ListOfFields& fields,
+                            const char* author );
+
   CORBA::Boolean ImportXAO( const char* fileName,
                             GEOM::GEOM_Object_out shape,
                             GEOM::ListOfGO_out subShapes,
                             GEOM::ListOfGO_out groups,
                             GEOM::ListOfFields_out fields );
 
+  CORBA::Boolean ImportXAOMem( const SALOMEDS::TMPFile& theBuff,
+                               GEOM::GEOM_Object_out shape,
+                               GEOM::ListOfGO_out subShapes,
+                               GEOM::ListOfGO_out groups,
+                               GEOM::ListOfFields_out fields );
+
   XAOPlugin_IOperations* GetOperations();
+
+private:
+  std::string exportXAO( GEOM::GEOM_Object_ptr shape,
+                         const GEOM::ListOfGO& groups,
+                         const GEOM::ListOfFields& fields,
+                         const char* author,
+                         const bool  toFile,
+                         const char* fileName,
+                         const char* shapeFileName );
+
+  CORBA::Boolean importXAO( const bool isFile,
+                            const char* fileName,
+                            const SALOMEDS::TMPFile& theBuff,
+                            GEOM::GEOM_Object_out shape,
+                            GEOM::ListOfGO_out subShapes,
+                            GEOM::ListOfGO_out groups,
+                            GEOM::ListOfFields_out fields );
 };
 
 #endif
