@@ -618,7 +618,7 @@ QString MeasureGUI_WhatisDlg::getKindOfShape( QString& theParameters )
         "<br>" + tr( "GEOM_NUM_MULTIS" )         + PRINT_INTEGER( anInts[5] ) +
         "<br>" + TITLE( "GEOM_POLES" );
       // Show max. 5 poles
-      Standard_Integer i, nb = std::min(5, anInts[2]);
+      Standard_Integer i, nb = std::min(5L, (long int)anInts[2]);
       if (anInts[4] == anInts[2]) {
         // Each pole has a specific weight associated
         Standard_Integer widx = anInts[2] * 3 + anInts[3]; // skip poles and knots
@@ -642,7 +642,7 @@ QString MeasureGUI_WhatisDlg::getKindOfShape( QString& theParameters )
         theParameters += "<br>...";
       // Show max. 5 knots
       theParameters += "<br>" + TITLE( "GEOM_KNOTS" );
-      nb = std::min(5, anInts[3]);
+      nb = std::min(5L, (long int)anInts[3]);
       Standard_Integer kidx = anInts[2] * 3; // skip poles
       if (anInts[5] == anInts[3]) {
         // Each knot has a multiplicity associated
@@ -669,7 +669,7 @@ QString MeasureGUI_WhatisDlg::getKindOfShape( QString& theParameters )
         "<br>" + tr( "GEOM_NUM_POLES" )          + PRINT_INTEGER( anInts[0] ) +
         "<br>" + tr( "GEOM_NUM_WEIGHTS" )        + PRINT_INTEGER( anInts[1] ) +
         "<br>" + TITLE( "GEOM_POLES" );
-      Standard_Integer i, nb = std::min(5, anInts[0]); // show max. 5 poles
+      Standard_Integer i, nb = std::min(5L, (long int)anInts[0]); // show max. 5 poles
       if (anInts[1] > 0) {
         Standard_Integer widx = anInts[2] * 3 + anInts[3];
         for (i=0; i<nb; i++) {
