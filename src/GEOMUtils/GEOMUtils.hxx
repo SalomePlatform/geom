@@ -74,13 +74,13 @@ namespace GEOMUtils
    * \brief Compute numerical functor for the shape.
    *
    * Resulting value can be used to sort out shapes according to some parameter.
-   * 
+   *
    * Returns a pair of two values (dist, functor) where
    * - \a dist is a some value that is computed according to the center of mass of given shape;
    * - \a functor is a numerical functor value
    *
    * The numerical functor is computed according to the shape's topological properties as follows:
-   * - orientation for vertices 
+   * - orientation for vertices
    * - length for edges and wires
    * - area for faces and shells
    * - volume for solids, compounds, compsolids
@@ -161,7 +161,7 @@ namespace GEOMUtils
    * \retval bool Returns false if the shape has no faces, i.e. impossible to build triangulation.
    */
   Standard_EXPORT bool CheckTriangulation (const TopoDS_Shape& theShape);
-  
+
   /*!
    * \brief Return type of shape for explode. In case of compound it will be a type of its first sub shape.
    * \param theShape The shape to get type of.
@@ -201,7 +201,7 @@ namespace GEOMUtils
   Standard_EXPORT Standard_Real GetMinDistanceSingular(const TopoDS_Shape& aSh1,
 						       const TopoDS_Shape& aSh2,
 						       gp_Pnt& Ptmp1, gp_Pnt& Ptmp2);
-  
+
   /*!
    * \brief Computes minumal distance between two shapes.
    *
@@ -214,7 +214,7 @@ namespace GEOMUtils
   Standard_EXPORT Standard_Real GetMinDistance(const TopoDS_Shape& theShape1,
 					       const TopoDS_Shape& theShape2,
 					       gp_Pnt& thePnt1, gp_Pnt& thePnt2);
-  
+
   /*!
    * \brief Computes normal projection of \a thePoint to \a theFace.
    *
@@ -222,12 +222,14 @@ namespace GEOMUtils
    * \param theFace the face shape
    * \param theU the output U parameter of the point on the face
    * \param theV the output V parameter of the point on the face
+   * \param theTol the tolerance value. Maximum of theTol and 1e-04 will be used for calculation.
    * \retval the projection (3d point) if found, throws an exception otherwise
    */
   Standard_EXPORT gp_Pnt ProjectPointOnFace(const gp_Pnt& thePoint,
                                             const TopoDS_Shape& theFace,
-                                            double& theU, double& theV);
-  
+                                            double& theU, double& theV,
+                                            const double theTol = 1e-04);
+
   /*!
    * \brief Returns the point clicked in 3D view.
    *
@@ -274,7 +276,7 @@ namespace GEOMUtils
    *         operation or \c false otherwise
    */
   Standard_EXPORT bool CheckBOPArguments(const TopoDS_Shape &theShape);
-  
+
   /*!
    * \brief Limit shape tolerance to the given value
    *
@@ -312,13 +314,13 @@ namespace GEOMUtils
 
   /*!
    * \brief Fix curves of the given shape
-   * 
+   *
    * The function checks each curve of the input shape in the following way:
    * - compute deviation of the curve from the underlying surface in a set of points
    *   computed with the certain discretization step value
    * - find maximum tolerance between computed deviation values
    * - limit tolerance of the curve with the computed maximum value
-   * 
+   *
    * \param shape shape being fixed
    * \return \c true if resulting shape is valid
    */
@@ -332,7 +334,7 @@ namespace GEOMUtils
    */
   Standard_EXPORT bool Write( const TopoDS_Shape& shape,
                               const char* fileName );
-  
+
   /*!
    * \brief Extract single SOLID from COMPSOLID or COMPOUND.
    *

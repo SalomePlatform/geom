@@ -1032,7 +1032,8 @@ Standard_Real GEOMUtils::GetMinDistance
 //=======================================================================
 gp_Pnt GEOMUtils::ProjectPointOnFace(const gp_Pnt& thePoint,
                                      const TopoDS_Shape& theFace,
-                                     double& theU, double& theV)
+                                     double& theU, double& theV,
+                                     const double theTol)
 {
   if (theFace.IsNull() || theFace.ShapeType() != TopAbs_FACE)
     Standard_TypeMismatch::Raise
@@ -1044,7 +1045,7 @@ gp_Pnt GEOMUtils::ProjectPointOnFace(const gp_Pnt& thePoint,
   BRepTools::UVBounds(aFace, U1, U2, V1, V2);
 
   // projector
-  Standard_Real tol = 1.e-4;        
+  Standard_Real tol = Max(theTol, 1.e-4);
   GeomAPI_ProjectPointOnSurf proj;
   proj.Init(surface, U1, U2, V1, V2, tol);
   proj.Perform(thePoint);

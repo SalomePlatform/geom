@@ -3032,8 +3032,8 @@ Handle(TColStd_HArray1OfReal) GEOMImpl_IMeasureOperations::XYZtoUV
   }
 
   // Face tolerance
-  Standard_Real squareTolerance = BRep_Tool::Tolerance(F);
-  squareTolerance = squareTolerance * squareTolerance;
+  Standard_Real aTol = BRep_Tool::Tolerance(F);
+  Standard_Real squareTolerance = aTol * aTol;
 
   // Compute parameters
   Handle(Geom_Surface) aSurf = BRep_Tool::Surface(F);
@@ -3049,19 +3049,25 @@ Handle(TColStd_HArray1OfReal) GEOMImpl_IMeasureOperations::XYZtoUV
     gp_Pnt aP (theXYZlist->Value(iCLower + iP * 3),
                theXYZlist->Value(iCLower + iP * 3 + 1),
                theXYZlist->Value(iCLower + iP * 3 + 2));
-    Standard_Real U, V;
-    gp_Pnt aPonF = GEOMUtils::ProjectPointOnFace(aP, F, U, V);
-    if (aP.SquareDistance(aPonF) < squareTolerance) {
-      if (isNormalized) {
-        // Normalize parameters to be in [0, 1]
-        U = (U - U1) / dU;
-        V = (V - V1) / dV;
+    try { // as GEOMUtils::ProjectPointOnFace can throw exceptions
+      Standard_Real U, V;
+      gp_Pnt aPonF = GEOMUtils::ProjectPointOnFace(aP, F, U, V, aTol);
+      if (aP.SquareDistance(aPonF) < squareTolerance) {
+        if (isNormalized) {
+          // Normalize parameters to be in [0, 1]
+          U = (U - U1) / dU;
+          V = (V - V1) / dV;
+        }
+        aRet->SetValue(iP * 2    , U);
+        aRet->SetValue(iP * 2 + 1, V);
       }
-      aRet->SetValue(iP * 2    , U);
-      aRet->SetValue(iP * 2 + 1, V);
+      else {
+        SetErrorCode("Point too far from face");
+        return aRet;
+      }
     }
-    else {
-      SetErrorCode("Point too far from face");
+    catch (Standard_Failure& aFail) {
+      SetErrorCode(aFail.GetMessageString());
       return aRet;
     }
   }
