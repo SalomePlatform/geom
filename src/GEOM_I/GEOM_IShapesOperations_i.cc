@@ -186,7 +186,8 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeEdgeWire
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeWire
                            (const GEOM::ListOfGO& theEdgesAndWires,
-                            const CORBA::Double   theTolerance)
+                            const CORBA::Double   theTolerance,
+                            const GEOM::wire_build_mode theMode)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -204,9 +205,22 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeWire
     aShapes.push_back(aSh);
   }
 
+  // Mode of gaps closing
+  GEOMImpl_WireBuildMode aMode = GEOMImpl_WBM_FixTolerance;
+  switch (theMode) {
+  case GEOM::WBM_Approximation:
+    aMode = GEOMImpl_WBM_Approximation;
+    break;
+  case GEOM::WBM_KeepCurveType:
+    aMode = GEOMImpl_WBM_KeepCurveType;
+    break;
+  default:
+    break;
+  }
+
   // Make Solid
   Handle(::GEOM_Object) anObject =
-    GetOperations()->MakeWire(aShapes, theTolerance);
+    GetOperations()->MakeWire(aShapes, theTolerance, aMode);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

@@ -34,3 +34,9 @@ IF(${OpenCASCADE_VERSION}.${OpenCASCADE_SP_VERSION} VERSION_GREATER "7.5.3.3")
       test_WrappedFace.py
     )
 ENDIF()
+
+IF(${OpenCASCADE_VERSION}.${OpenCASCADE_SP_VERSION} VERSION_GREATER "7.5.3.5")
+    LIST(APPEND ALL_TESTS
+      test_wire_modes.py
+    )
+ENDIF()

@@ -31,6 +31,8 @@
 #include <TopoDS_Wire.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
 
+#include "GEOMImpl_IShapesOperations.hxx"
+
 #include <GEOM_BaseDriver.hxx>
 
 class TopoDS_Face;
@@ -56,7 +58,8 @@ public:
 
   Standard_EXPORT static TopoDS_Wire MakeWireFromEdges
                                      (const Handle(TColStd_HSequenceOfTransient)& theEdgesFuncs,
-                                      const Standard_Real theTolerance);
+                                      const Standard_Real theTolerance,
+                                      const GEOMImpl_WireBuildMode theMode = GEOMImpl_WBM_FixTolerance);
   Standard_EXPORT virtual
   bool GetCreationInformation(std::string&             theOperationName,
                               std::vector<GEOM_Param>& params);

@@ -379,7 +379,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdgeWire
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeWire
                              (std::list<Handle(GEOM_Object)> theShapes,
-                              const Standard_Real            theTolerance)
+                              const Standard_Real            theTolerance,
+                              const GEOMImpl_WireBuildMode   theMode)
 {
   SetErrorCode(KO);
 
@@ -396,6 +397,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeWire
 
   GEOMImpl_IShapes aCI (aFunction);
   aCI.SetTolerance(theTolerance);
+  aCI.SetWireMode(theMode);
 
   Handle(TColStd_HSequenceOfTransient) aShapesSeq = new TColStd_HSequenceOfTransient;
 
@@ -426,7 +428,19 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeWire
 
   //Make a Python command
   GEOM::TPythonDump pd (aFunction);
-  pd << aWire << " = geompy.MakeWire([";
+  pd << aWire;
+  switch (theMode) {
+  case GEOMImpl_WBM_FixTolerance:
+    pd << " = geompy.MakeWire([";
+    break;
+  case GEOMImpl_WBM_Approximation:
+    pd << " = geompy.MakeWireWithMode([";
+    break;
+  case GEOMImpl_WBM_KeepCurveType:
+    pd << " = geompy.MakeWireConstCurveType([";
+    break;
+  default: ;
+  }
 
   // Shapes
   it = theShapes.begin();
@@ -436,7 +450,11 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeWire
       pd << ", " << (*it++);
     }
   }
-  pd << "], " << theTolerance << ")";
+  pd << "], " << theTolerance;
+  if (theMode == GEOMImpl_WBM_Approximation) {
+    pd << ", GEOM.WBM_Approximation";
+  }
+  pd << ")";
 
   SetErrorCode(OK);
   return aWire;

@@ -2153,7 +2153,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeWire (GEOM::GEOM_List_ptr theEdgesAndWi
   if (GEOM_List_i<GEOM::ListOfGO>* aListImplEW =
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theEdgesAndWires, myPOA).in())) {
     getShapesOp();
-    GEOM::GEOM_Object_ptr anObj = myShapesOp->MakeWire(aListImplEW->GetList(), theTolerance);
+    GEOM::GEOM_Object_ptr anObj = myShapesOp->MakeWire(aListImplEW->GetList(), theTolerance, GEOM::WBM_FixTolerance);
     endService( " GEOM_Superv_i::MakeWire" );
     return anObj;
   }

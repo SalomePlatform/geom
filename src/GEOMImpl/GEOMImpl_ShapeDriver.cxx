@@ -22,6 +22,8 @@
 
 #include <GEOMImpl_ShapeDriver.hxx>
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <GEOMImpl_IExtract.hxx>
 #include <GEOMImpl_IIsoline.hxx>
 #include <GEOMImpl_IShapes.hxx>
@@ -436,7 +438,9 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(Handle(TFunction_Logbook)& log) c
     if (aTolerance < Precision::Confusion())
       aTolerance = Precision::Confusion();
 
-    aShape = MakeWireFromEdges(aShapes, aTolerance);
+    Standard_Integer aMode = aCI.GetWireMode();
+
+    aShape = MakeWireFromEdges(aShapes, aTolerance, (GEOMImpl_WireBuildMode)aMode);
   }
   else if (aType == FACE_WIRE) {
     // result may be a face or a compound of faces
@@ -1088,7 +1092,8 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(Handle(TFunction_Logbook)& log) c
 }
 
 TopoDS_Wire GEOMImpl_ShapeDriver::MakeWireFromEdges(const Handle(TColStd_HSequenceOfTransient)& theEdgesFuncs,
-                                                    const Standard_Real theTolerance)
+                                                    const Standard_Real theTolerance,
+                                                    const GEOMImpl_WireBuildMode theMode)
 {
   BRep_Builder B;
 
@@ -1136,14 +1141,30 @@ TopoDS_Wire GEOMImpl_ShapeDriver::MakeWireFromEdges(const Handle(TColStd_HSequen
   }
   aFW->ClosedWireMode() = isClosed;
   aFW->FixConnected(theTolerance);
+
   if (aFW->StatusConnected(ShapeExtend_FAIL)) {
     Standard_ConstructionError::Raise("Wire construction failed: cannot build connected wire");
   }
   // IMP 0019766
 
-  if (aFW->StatusConnected(ShapeExtend_DONE3)) {
-    // Confused with <prec> but not Analyzer.Precision(), set the same
-    aFW->SetPrecision(theTolerance); // bos #33377, prevent conversion of initial curves to BSplines
+  if (theMode == GEOMImpl_WBM_KeepCurveType) {
+#if OCC_VERSION_LARGE > 0x07050305
+    aFW->FixCurves();
+    if (aFW->StatusCurves(ShapeExtend_FAIL1)) {
+      Standard_ConstructionError::Raise("Wire construction failed: cannot update Bezier or B-Spline curve ends, because they don't correspond to the first and last poles");
+    }
+    if (aFW->StatusCurves(ShapeExtend_FAIL)) {
+      Standard_ConstructionError::Raise("Wire construction failed: cannot rebuild curves through new points");
+    }
+#else
+    Standard_NotImplemented::Raise("Wire construction failed: option KeepCurveType is not supported by current OCCT version: please, use OCCT 7.5.3p6 or newer.");
+#endif // OCC_VERSION_LARGE > 0x07050305
+  }
+  else if (aFW->StatusConnected(ShapeExtend_DONE3)) {
+    if (theMode != GEOMImpl_WBM_Approximation) {
+      // Confused with <prec> but not Analyzer.Precision(), set the same
+      aFW->SetPrecision(theTolerance);
+    }
     aFW->FixGapsByRangesMode() = Standard_True;
     if (aFW->FixGaps3d()) {
       Handle(ShapeExtend_WireData) sbwd = aFW->WireData();
@@ -1906,6 +1927,7 @@ GetCreationInformation(std::string&             theOperationName,
     theOperationName = "WIRE";
     AddParam( theParams, "Wires/edges", aCI.GetShapes() );
     AddParam( theParams, "Tolerance", aCI.GetTolerance() );
+    AddParam( theParams, "Mode", aCI.GetWireMode() );
     break;
   case FACE_WIRE:
     theOperationName = "FACE";

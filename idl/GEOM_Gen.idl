@@ -221,6 +221,29 @@ module GEOM
   };
 
   /*!
+   *  \brief Wire construction mode. Regulates the way gaps are closed.
+   *
+   *  Is used in function GEOM_IShapesOperations.MakeWire()
+   */
+  enum wire_build_mode
+  {
+    /*! Do not change curves, just enlarge wire tolerance to cover the gaps */
+    WBM_FixTolerance,
+
+    /*!
+     *  Replace curves, neighbour to the gap,
+     *  with BSplines, connecting in the middle of the gap
+     */
+    WBM_Approximation,
+
+    /*!
+     *  Replace curves, neighbour to the gap, with new curves of the same
+     *  type and close parameters, connecting in the middle of the gap
+     */
+    WBM_KeepCurveType
+  };
+
+  /*!
    * \brief Object creation parameters
    *
    * Is returned by GEOM_Object::GetCreationInformation()
@@ -2034,10 +2057,12 @@ module GEOM
      *  \param theEdgesAndWires List of edge and/or wires.
      *  \param theTolerance Maximum distance between vertices, that will be merged.
      *                      Values less than 1e-07 are equivalent to 1e-07 (Precision::Confusion()).
+     *  \param theMode Mode of gaps filling.
      *  \return New GEOM_Object, containing the created wire.
      */
     GEOM_Object MakeWire (in ListOfGO theEdgesAndWires,
-                          in double   theTolerance);
+                          in double   theTolerance,
+                          in wire_build_mode theMode);
 
     /*!
      *  \brief Create a face on the given wire.

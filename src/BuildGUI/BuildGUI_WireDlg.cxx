@@ -288,7 +288,9 @@ bool BuildGUI_WireDlg::execute (ObjectList& objects)
   for ( int i = 0; i < myEdgesAndWires.count(); i++ )
     objlist[i] = myEdgesAndWires[i].copy();
 
-  GEOM::GEOM_Object_var anObj = anOper->MakeWire(objlist.in(), GroupArgs->SpinBox_DX->value());
+  GEOM::GEOM_Object_var anObj = anOper->MakeWire(objlist.in(),
+                                                 GroupArgs->SpinBox_DX->value(),
+                                                 GEOM::WBM_FixTolerance);
 
   if (!anObj->_is_nil())
     objects.push_back(anObj._retn());

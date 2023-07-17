@@ -56,7 +56,8 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
 				      const CORBA::Double theAngularTolerance);
 
   GEOM::GEOM_Object_ptr MakeWire (const GEOM::ListOfGO& theEdgesAndWires,
-                                  const CORBA::Double   theTolerance);
+                                  const CORBA::Double   theTolerance,
+                                  const GEOM::wire_build_mode theMode);
 
   GEOM::GEOM_Object_ptr MakeFace (GEOM::GEOM_Object_ptr theWire,
                                   CORBA::Boolean  isPlanarWanted);

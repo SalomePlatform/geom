@@ -29,7 +29,7 @@ connect in the middle of the gap.
 
 \image html wiresn.png "Wire"
 
-Our <b>TUI Scripts</b> provide you with useful examples of creation of 
-\ref tui_creation_wire "Advanced Geometric Objects".
+Our <b>TUI Scripts</b> provide you with useful examples of 
+\ref tui_creation_wire "Creation of a Wire".
 
 */

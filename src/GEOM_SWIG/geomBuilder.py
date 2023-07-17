@@ -4717,6 +4717,8 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             return anObj
 
         ## Create a wire from the set of edges and wires.
+        #  To close a gap, enlarges wire tolerance.
+        #
         #  @param theEdgesAndWires List of edges and/or wires.
         #  @param theTolerance Maximum distance between vertices, that will be merged.
         #                      Values less than 1e-07 are equivalent to 1e-07 (Precision::Confusion())
@@ -4731,6 +4733,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         def MakeWire(self, theEdgesAndWires, theTolerance = 1e-07, theName=None):
             """
             Create a wire from the set of edges and wires.
+            To close a gap, enlarges wire tolerance.
 
             Parameters:
                 theEdgesAndWires List of edges and/or wires.
@@ -4744,8 +4747,87 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the created wire.
             """
             # Example: see GEOM_TestAll.py
-            anObj = self.ShapesOp.MakeWire(theEdgesAndWires, theTolerance)
+            anObj = self.ShapesOp.MakeWire(theEdgesAndWires, theTolerance, GEOM.WBM_FixTolerance)
             RaiseIfFailed("MakeWire", self.ShapesOp)
+            self._autoPublish(anObj, theName, "wire")
+            return anObj
+
+        ## Create a wire from the set of edges and wires.
+        #  To close a gap, replaces curves, neighbour to the gap, with new curves
+        #  of the same type and close parameters, connecting in the middle of the gap.
+        #
+        #  @param theEdgesAndWires List of edges and/or wires.
+        #  @param theTolerance Maximum distance between vertices, that will be merged.
+        #                      Values less than 1e-07 are equivalent to 1e-07 (Precision::Confusion())
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing the created wire.
+        #
+        #  @ref tui_creation_wire "Example"
+        @ManageTransactions("ShapesOp")
+        def MakeWireConstCurveType(self, theEdgesAndWires, theTolerance = 1e-07, theName=None):
+            """
+            Create a wire from the set of edges and wires.
+            To close a gap, replaces curves, neighbour to the gap, with new curves
+            of the same type and close parameters, connecting in the middle of the gap.
+
+            Parameters:
+                theEdgesAndWires List of edges and/or wires.
+                theTolerance Maximum distance between vertices, that will be merged.
+                             Values less than 1e-07 are equivalent to 1e-07 (Precision::Confusion()).
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the created wire.
+            """
+            anObj = self.ShapesOp.MakeWire(theEdgesAndWires, theTolerance, GEOM.WBM_KeepCurveType)
+            RaiseIfFailed("MakeWireConstCurveType", self.ShapesOp)
+            self._autoPublish(anObj, theName, "wire")
+            return anObj
+
+        ## Create a wire from the set of edges and wires.
+        #  Possible gaps are closed according to theMode.
+        #
+        #  @param theEdgesAndWires List of edges and/or wires.
+        #  @param theTolerance Maximum distance between vertices, that will be merged.
+        #                      Values less than 1e-07 are equivalent to 1e-07 (Precision::Confusion())
+        #  @param theMode GEOM.wire_build_mode Mode of gaps closing.
+        #                 Possible values are GEOM.WBM_FixTolerance, GEOM.WBM_KeepCurveType
+        #                 and GEOM.WBM_Approximation.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing the created wire.
+        #
+        #  @ref tui_creation_wire "Example"
+        @ManageTransactions("ShapesOp")
+        def MakeWireWithMode(self, theEdgesAndWires, theTolerance = 1e-07,
+                             theMode = GEOM.WBM_Approximation, theName=None):
+            """
+            Create a wire from the set of edges and wires.
+            Possible gaps are closed according to theMode.
+
+            Parameters:
+                theEdgesAndWires List of edges and/or wires.
+                theTolerance Maximum distance between vertices, that will be merged.
+                             Values less than 1e-07 are equivalent to 1e-07 (Precision::Confusion()).
+                theMode GEOM.wire_build_mode Mode of gaps closing.
+                        Possible values are GEOM.WBM_FixTolerance, GEOM.WBM_KeepCurveType
+                        and GEOM.WBM_Approximation.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the created wire.
+            """
+            anObj = self.ShapesOp.MakeWire(theEdgesAndWires, theTolerance, theMode)
+            RaiseIfFailed("MakeWireWithMode", self.ShapesOp)
             self._autoPublish(anObj, theName, "wire")
             return anObj
 

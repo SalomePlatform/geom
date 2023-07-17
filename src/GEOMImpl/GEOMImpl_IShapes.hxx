@@ -41,6 +41,7 @@ class GEOMImpl_IShapes
     SHAPE_ARG_INDICES   = 5, // for Sub-shape
     SHAPE_ARG_TOLERANCE = 6, // linear tolerance (for Wire, Edge)
     SHAPE_ARG_ANGLE_TOL = 7, // angular tolerance (for Edge)
+    SHAPE_ARG_WIRE_MODE = 8, // gaps closing mode (for Wire)
   };
 
   GEOMImpl_IShapes(Handle(GEOM_Function) theFunction): _func(theFunction) {}
@@ -76,6 +77,11 @@ class GEOMImpl_IShapes
   { _func->SetReal(SHAPE_ARG_TOLERANCE, theValue); }
 
   Standard_Real GetTolerance() { return _func->GetReal(SHAPE_ARG_TOLERANCE); }
+
+  void SetWireMode(const Standard_Integer theValue)
+  { _func->SetInteger(SHAPE_ARG_WIRE_MODE, theValue); }
+
+  Standard_Integer GetWireMode() { return _func->GetInteger(SHAPE_ARG_WIRE_MODE); }
 
   void SetAngularTolerance(const Standard_Real theValue)
   { _func->SetReal(SHAPE_ARG_ANGLE_TOL, theValue); }

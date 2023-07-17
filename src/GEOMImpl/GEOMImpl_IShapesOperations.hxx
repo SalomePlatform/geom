@@ -48,6 +48,12 @@ class GEOM_Engine;
 class GEOM_Object;
 class TopoDS_Shape;
 
+enum GEOMImpl_WireBuildMode {
+  GEOMImpl_WBM_FixTolerance  = 1,
+  GEOMImpl_WBM_Approximation = 2,
+  GEOMImpl_WBM_KeepCurveType = 3
+};
+
 class GEOMImpl_IShapesOperations : public GEOM_IOperations
 {
  public:
@@ -94,7 +100,8 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
                                                     const Standard_Real theAngularTolerance);
 
   Standard_EXPORT Handle(GEOM_Object) MakeWire (std::list<Handle(GEOM_Object)> theEdgesAndWires,
-                                                const Standard_Real            theTolerance);
+                                                const Standard_Real            theTolerance,
+                                                const GEOMImpl_WireBuildMode   theMode = GEOMImpl_WBM_FixTolerance);
 
   Standard_EXPORT Handle(GEOM_Object) MakeFace (Handle(GEOM_Object) theWire, const bool isPlanarWanted);
 
