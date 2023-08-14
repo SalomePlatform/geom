@@ -73,7 +73,6 @@
 #include <Geom_Plane.hxx>
 #include <GProp_GProps.hxx>
 #include <GProp_PrincipalProps.hxx>
-#include <ShapeAnalysis.hxx>
 #include <ShapeAnalysis_Surface.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
@@ -2797,7 +2796,7 @@ Standard_Real GEOMImpl_IMeasureOperations::MaxSurfaceCurvatureByParam
 
   //Compute the parameters
   Standard_Real U1,U2,V1,V2;
-  ShapeAnalysis::GetFaceUVBounds(F,U1,U2,V1,V2);
+  BRepTools::UVBounds(F,U1,U2,V1,V2);
   Standard_Real U = U1 + (U2-U1)*theUParam;
   Standard_Real V = V1 + (V2-V1)*theVParam;
 
@@ -2870,7 +2869,7 @@ Standard_Real GEOMImpl_IMeasureOperations::MinSurfaceCurvatureByParam
 
   //Compute the parameters
   Standard_Real U1,U2,V1,V2;
-  ShapeAnalysis::GetFaceUVBounds(F,U1,U2,V1,V2);
+  BRepTools::UVBounds(F,U1,U2,V1,V2);
   Standard_Real U = U1 + (U2-U1)*theUParam;
   Standard_Real V = V1 + (V2-V1)*theVParam;
 

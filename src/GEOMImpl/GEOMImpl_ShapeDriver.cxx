@@ -56,9 +56,9 @@
 #include <BRepClass3d_SolidClassifier.hxx>
 #include <BRepLib.hxx>
 #include <BRepLib_MakeEdge.hxx>
+#include <BRepTools.hxx>
 #include <BRepTools_WireExplorer.hxx>
 
-#include <ShapeAnalysis.hxx>
 #include <ShapeAnalysis_FreeBounds.hxx>
 
 #include <TNaming_CopyShape.hxx>
@@ -869,7 +869,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(Handle(TFunction_Logbook)& log) c
 
       // Construct a real geometric parameter.
       aFace.Orientation(TopAbs_FORWARD);
-      ShapeAnalysis::GetFaceUVBounds(aFace,U1,U2,V1,V2);
+      BRepTools::UVBounds(aFace,U1,U2,V1,V2);
 
       if (isUIso) {
         aParam = U1 + (U2 - U1)*aParam;
@@ -934,7 +934,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(Handle(TFunction_Logbook)& log) c
 
          // Get U, V bounds of the face.
         aFace.Orientation(TopAbs_FORWARD);
-        ShapeAnalysis::GetFaceUVBounds(aFace, aU1, aU2, aV1, aV2);
+        BRepTools::UVBounds(aFace, aU1, aU2, aV1, aV2);
 
         // Get the surface of original type
         while (aType == STANDARD_TYPE(Geom_RectangularTrimmedSurface)) {
@@ -1820,7 +1820,7 @@ TopoDS_Shape GEOMImpl_ShapeDriver::ExtendFace
   Standard_Real        aV2;
 
   // Get U, V bounds of the face.
-  ShapeAnalysis::GetFaceUVBounds(theFace, aU1, aU2, aV1, aV2);
+  BRepTools::UVBounds(theFace, aU1, aU2, aV1, aV2);
 
   const Standard_Real aURange = aU2 - aU1;
   const Standard_Real aVRange = aV2 - aV1;
@@ -2045,6 +2045,7 @@ GetCreationInformation(std::string&             theOperationName,
 IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_ShapeDriver,GEOM_BaseDriver)
 
 //modified by NIZNHY-PKV Wed Dec 28 13:48:31 2011f
+/*
 #include <TopoDS_Iterator.hxx>
 #include <TopTools_HSequenceOfShape.hxx>
 #include <ShapeAnalysis_FreeBounds.hxx>
@@ -2057,7 +2058,6 @@ IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_ShapeDriver,GEOM_BaseDriver)
 //function : KeepEdgesOrder
 //purpose  : 
 //=======================================================================
-/*
 void KeepEdgesOrder(const Handle(TopTools_HSequenceOfShape)& aEdges,
                     const Handle(TopTools_HSequenceOfShape)& aWires)
 {

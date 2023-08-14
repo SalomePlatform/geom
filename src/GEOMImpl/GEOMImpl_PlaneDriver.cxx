@@ -33,7 +33,7 @@
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepTopAdaptor_FClass2d.hxx>
-#include <ShapeAnalysis.hxx>
+#include <BRepTools.hxx>
 
 #include <TopAbs.hxx>
 #include <TopoDS.hxx>
@@ -152,7 +152,7 @@ Standard_Integer GEOMImpl_PlaneDriver::Execute(Handle(TFunction_Logbook)& log) c
     Standard_Real aKoefU = aPI.GetParameterU();
     Standard_Real aKoefV = aPI.GetParameterV();
     Standard_Real aUmin,aUmax,aVmin,aVmax;
-    ShapeAnalysis::GetFaceUVBounds(aFace,aUmin,aUmax,aVmin,aVmax);
+    BRepTools::UVBounds(aFace,aUmin,aUmax,aVmin,aVmax);
     Standard_Real aDeltaU = aUmax - aUmin;
     Standard_Real aDeltaV = aVmax - aVmin;
     Standard_Real aParamU =  aUmin + aDeltaU*aKoefU;

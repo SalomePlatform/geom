@@ -26,8 +26,6 @@
 
 #include <BlockFix_SphereSpaceModifier.hxx>
 
-#include <ShapeAnalysis.hxx>
-
 #include <ShapeFix_Edge.hxx>
 
 #include <TopExp.hxx>
@@ -109,7 +107,7 @@ static Standard_Boolean ModifySurface(const TopoDS_Face&          theFace,
 
   if (aSurf->IsKind(STANDARD_TYPE(Geom_SphericalSurface))) {
     Standard_Real Umin, Umax, Vmin, Vmax;
-    ShapeAnalysis::GetFaceUVBounds (aFace, Umin, Umax, Vmin, Vmax);
+    BRepTools::UVBounds(aFace, Umin, Umax, Vmin, Vmax);
     Standard_Real PI2 = M_PI/2.;
     Handle(Geom_SphericalSurface) aSphere = Handle(Geom_SphericalSurface)::DownCast(aSurf);
     gp_Sphere sp = aSphere->Sphere();

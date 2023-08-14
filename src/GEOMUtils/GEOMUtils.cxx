@@ -87,7 +87,6 @@
 #include <gp_Pln.hxx>
 #include <gp_Lin.hxx>
 
-#include <ShapeAnalysis.hxx>
 #include <ShapeFix_Shape.hxx>
 #include <ShapeFix_ShapeTolerance.hxx>
 
@@ -180,9 +179,7 @@ namespace
 
         // non solid case or any periodic surface (Mantis 22454).
         double U1,U2,V1,V2;
-        // changes for 0020677: EDF 1219 GEOM: MinDistance gives 0 instead of 20.88
-        //S->Bounds(U1,U2,V1,V2); changed by
-        ShapeAnalysis::GetFaceUVBounds(TopoDS::Face(theModifiedShape),U1,U2,V1,V2);
+        BRepTools::UVBounds(TopoDS::Face(theModifiedShape),U1,U2,V1,V2);
         // end of changes for 020677 (dmv)
         Handle(Geom_RectangularTrimmedSurface) TrS1 =
           new Geom_RectangularTrimmedSurface(S,U1,(U1+U2)/2.,V1,V2);

@@ -30,13 +30,12 @@
 #include <GEOM_Function.hxx>
 #include <GEOMAlgo_AlgoTools.hxx>
 
-#include <ShapeAnalysis.hxx>
-
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_Curve.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
+#include <BRepTools.hxx>
 
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
@@ -282,8 +281,7 @@ Standard_Integer GEOMImpl_PointDriver::Execute(Handle(TFunction_Logbook)& log) c
     TopoDS_Face F = TopoDS::Face(aRefShape);
     Handle(Geom_Surface) aSurf = BRep_Tool::Surface(F);
     Standard_Real U1,U2,V1,V2;
-    //aSurf->Bounds(U1,U2,V1,V2);
-    ShapeAnalysis::GetFaceUVBounds(F,U1,U2,V1,V2);
+    BRepTools::UVBounds(F,U1,U2,V1,V2);
     Standard_Real U = U1 + (U2-U1) * aPI.GetParameter();
     Standard_Real V = V1 + (V2-V1) * aPI.GetParameter2();
     aPnt = aSurf->Value(U,V);
