@@ -201,27 +201,29 @@ static void FixResult(const TopoDS_Shape& result,
 //purpose  :
 //=======================================================================
 TopoDS_Shape BlockFix::RotateSphereSpace (const TopoDS_Shape& S,
-                                          const Standard_Real Tol)
+                                          const Standard_Real Tol,
+                                          const Standard_Boolean theTrySmallRotation)
 {
   // Create a modification description
   Handle(BlockFix_SphereSpaceModifier) SR = new BlockFix_SphereSpaceModifier;
   SR->SetTolerance(Tol);
+  SR->SetTrySmallRotation(theTrySmallRotation);
 
   TopTools_DataMapOfShapeShape context;
   BRepTools_Modifier MD;
-  TopoDS_Shape result = ShapeCustom::ApplyModifier ( S, SR, context,MD );
+  TopoDS_Shape result = ShapeCustom::ApplyModifier ( S, SR, context, MD );
 
   Handle(ShapeBuild_ReShape) RS = new ShapeBuild_ReShape;
   FixResult(result,RS,Tol);
   result = RS->Apply(result);
 
   ShapeFix_Edge sfe;
-  for(TopExp_Explorer exp(result,TopAbs_EDGE); exp.More(); exp.Next()) {
+  for (TopExp_Explorer exp (result, TopAbs_EDGE); exp.More(); exp.Next()) {
     TopoDS_Edge E = TopoDS::Edge(exp.Current());
     sfe.FixVertexTolerance (E);
   }
 
-  ShapeFix::SameParameter(result,Standard_False);
+  ShapeFix::SameParameter(result, Standard_False);
   return result;
 }
 

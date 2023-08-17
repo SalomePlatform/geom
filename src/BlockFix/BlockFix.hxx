@@ -39,7 +39,10 @@ class BlockFix_CheckTool;
 class BlockFix {
 
 public:
-  Standard_EXPORT static  TopoDS_Shape RotateSphereSpace(const TopoDS_Shape& S,const Standard_Real Tol);
+  Standard_EXPORT static  TopoDS_Shape RotateSphereSpace
+                                      (const TopoDS_Shape& S,
+                                       const Standard_Real Tol,
+                                       const Standard_Boolean theTrySmallRotation = Standard_True);
   Standard_EXPORT static  TopoDS_Shape RefillProblemFaces(const TopoDS_Shape& S);
   Standard_EXPORT static  TopoDS_Shape FixRanges(const TopoDS_Shape& S,const Standard_Real Tol);
 

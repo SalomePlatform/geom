@@ -36,6 +36,10 @@
 
 #include <Precision.hxx>
 
+#include <BRepTools.hxx>
+#include <BRepBuilderAPI_Copy.hxx>
+#include <BRepCheck_Analyzer.hxx>
+
 #include <Basics_OCCTVersion.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(BlockFix_BlockFixAPI, Standard_Transient)
@@ -64,7 +68,22 @@ void BlockFix_BlockFixAPI::Perform()
 {
   // processing spheres with degenerativities
   TopoDS_Shape aShape = Shape();
-  myShape = BlockFix::RotateSphereSpace(aShape,myTolerance);
+  // Copy the shape to avoid modification of initial shape
+  // while trying the approach with small rotation
+  BRepBuilderAPI_Copy aMC (aShape);
+  if (!aMC.IsDone()) return;
+  TopoDS_Shape aSCopy = aMC.Shape();
+  TopoDS_Shape aNewShape = BlockFix::RotateSphereSpace(aSCopy, myTolerance, Standard_True);
+  BRepCheck_Analyzer ana (aNewShape, false);
+  if (ana.IsValid()) {
+    if (aNewShape == aSCopy)
+      myShape = aShape;
+    else
+      myShape = aNewShape;
+  }
+  else {
+    myShape = BlockFix::RotateSphereSpace(aShape, myTolerance, Standard_False);
+  }
 
   // try to approximate non-canonic surfaces
   // with singularities on boundaries by filling

@@ -25,84 +25,49 @@
 #  Module : GEOM
 #
 # ! Please, if you edit this example file, update also
-# ! GEOM_SRC/doc/salome/gui/GEOM/input/tui_test_others.doc
+# ! GEOM/doc/salome/gui/GEOM/input/tui_test_others.doc
 # ! as some sequences of symbols from this example are used during
 # ! documentation generation to identify certain places of this file
 
 import os
 import GEOM
+import tempfile
 
 def TestExportImport (geompy, shape):
 
   print("Test Export/Import ...", end=' ')
 
-  tmpDir = os.getenv("TEMP")
-  if tmpDir == None:
-    tmpDir = "/tmp"
+  with tempfile.TemporaryDirectory() as tmpDir:
+    # Files for Export/Import testing
+    fileExportImportBREP = os.path.join(tmpDir, "testExportImportBREP.brep")
+    fileExportImportIGES = os.path.join(tmpDir, "testExportImportIGES.iges")
+    fileExportImportSTEP = os.path.join(tmpDir, "testExportImportSTEP.step")
 
-  # Files for Export/Import testing
-  fileExportImport = tmpDir + "/testExportImport.brep"
-  fileExportImportBREP = tmpDir + "/testExportImportBREP.brep"
-  fileExportImportIGES = tmpDir + "/testExportImportIGES.iges"
-  fileExportImportSTEP = tmpDir + "/testExportImportSTEP.step"
+    # ExportBREP, ExportIGES, ExportSTEP
+    geompy.ExportBREP(shape, fileExportImportBREP)
+    geompy.ExportIGES(shape, fileExportImportIGES)
+    geompy.ExportSTEP(shape, fileExportImportSTEP)
 
-  if os.access(fileExportImport, os.F_OK):
-    if os.access(fileExportImport, os.W_OK):
-      os.remove(fileExportImport)
-    else:
-      fileExportImport = tmpDir + "/testExportImport1.brep"
+    # ImportBREP, ImportIGES, ImportSTEP
+    ImportBREP = geompy.ImportBREP(fileExportImportBREP)
+    ImportIGES = geompy.ImportIGES(fileExportImportIGES)
+    ImportSTEP = geompy.ImportSTEP(fileExportImportSTEP)
 
-    if os.access(fileExportImportBREP, os.W_OK):
-      os.remove(fileExportImportBREP)
-    else:
-      fileExportImportBREP = tmpDir + "/testExportImportBREP1.brep"
+    geompy.addToStudy(ImportBREP, "ImportBREP")
+    geompy.addToStudy(ImportIGES, "ImportIGES")
+    geompy.addToStudy(ImportSTEP, "ImportSTEP")
 
-    if os.access(fileExportImportIGES, os.W_OK):
-      os.remove(fileExportImportIGES)
-    else:
-      fileExportImportIGES = tmpDir + "/testExportImportIGES1.iges"
+    # GetIGESUnit and GetSTEPUnit
+    if geompy.GetIGESUnit(fileExportImportIGES) != "M":
+      ImportIGES_scaled = geompy.ImportIGES(fileExportImportIGES, True)
+      geompy.addToStudy(ImportIGES_scaled, "ImportIGES_scaled")
+      pass
 
-    if os.access(fileExportImportSTEP, os.W_OK):
-      os.remove(fileExportImportSTEP)
-    else:
-      fileExportImportSTEP = tmpDir + "/testExportImportSTEP1.step"
-
-  # Export
-  geompy.Export(shape, fileExportImport, "BREP")
-
-  # ExportBREP, ExportIGES, ExportSTEP
-  geompy.ExportBREP(shape, fileExportImportBREP)
-  geompy.ExportIGES(shape, fileExportImportIGES)
-  geompy.ExportSTEP(shape, fileExportImportSTEP)
-
-  # Import
-  Import = geompy.ImportFile(fileExportImport, "BREP")
-
-  geompy.addToStudy(Import, "Import")
-
-  # ImportBREP, ImportIGES, ImportSTEP
-  ImportBREP = geompy.ImportBREP(fileExportImportBREP)
-  ImportIGES = geompy.ImportIGES(fileExportImportIGES)
-  ImportSTEP = geompy.ImportSTEP(fileExportImportSTEP)
-
-  geompy.addToStudy(ImportBREP, "ImportBREP")
-  geompy.addToStudy(ImportIGES, "ImportIGES")
-  geompy.addToStudy(ImportSTEP, "ImportSTEP")
-
-  # GetIGESUnit and GetSTEPUnit
-  if geompy.GetIGESUnit(fileExportImportIGES) != "M":
-    ImportIGES_scaled = geompy.ImportIGES(fileExportImportIGES, True)
-    geompy.addToStudy(ImportIGES_scaled, "ImportIGES_scaled")
-
-  if geompy.GetSTEPUnit(fileExportImportSTEP) != "M":
-    ImportSTEP_scaled = geompy.ImportSTEP(fileExportImportSTEP, True)
-    geompy.addToStudy(ImportSTEP_scaled, "ImportSTEP_scaled")
-
-  # Remove files for Export/Import testing
-  os.remove(fileExportImport)
-  os.remove(fileExportImportBREP)
-  os.remove(fileExportImportIGES)
-  os.remove(fileExportImportSTEP)
+    if geompy.GetSTEPUnit(fileExportImportSTEP) != "M":
+      ImportSTEP_scaled = geompy.ImportSTEP(fileExportImportSTEP, True)
+      geompy.addToStudy(ImportSTEP_scaled, "ImportSTEP_scaled")
+      pass
+    pass
 
   # Test RestoreShape from binary BRep stream
   aStream = shape.GetShapeStream()
@@ -191,7 +156,6 @@ def TestOtherOperations (geompy, math):
   p100 = geompy.MakeVertex(100, 100, 100)
   p300 = geompy.MakeVertex(300, 300, 300)
   Box1 = geompy.MakeBoxTwoPnt(p100, p300)
-  #Partition = geompy.Partition([Box], [Box1], [], [Box])
   Partition = geompy.Partition([Box], [Box1])
   id_Partition = geompy.addToStudy(Partition, "Partition of Box by Box1")
 
@@ -238,20 +202,14 @@ def TestOtherOperations (geompy, math):
 
   # NumberOf
   NumberOfFaces = geompy.NumberOfFaces(Box)
-  if NumberOfFaces != 6:
-    print("Bad number of faces in BOX!")
-
   NumberOfEdges = geompy.NumberOfEdges(Box)
-  if NumberOfEdges != 12:
-    print("Bad number of edges in BOX!")
-
   NumberOfSolids = geompy.NumberOfSolids(Box)
-  if NumberOfSolids != 1:
-    print("Bad number of solids in BOX!")
-
   NumberOfShapes = geompy.NumberOfSubShapes(Box, geompy.ShapeType["SHAPE"])
-  if NumberOfShapes != 34:
-    print("Bad number of shapes in BOX!")
+
+  assert (NumberOfFaces  ==  6), "Bad number of faces in BOX!"
+  assert (NumberOfEdges  == 12), "Bad number of edges in BOX!"
+  assert (NumberOfSolids ==  1), "Bad number of solids in BOX!"
+  assert (NumberOfShapes == 34), "Bad number of shapes in BOX!"
 
   # MakeBlockExplode
   Compound = geompy.MakeCompound([Box, Sphere])
@@ -270,24 +228,20 @@ def TestOtherOperations (geompy, math):
   Cyl  = geompy.MakeCylinderRH(50, 300)
   Cone = geompy.MakeConeR1R2H(150, 10, 400)
 
-  Compound1 = geompy.MakeCompound([Box, Cyl, Cone, Box3, Box2])
+  Compound1 = geompy.MakeCompound([Box, Cyl, Cone, Box3, Box2], "Compound1")
 
+  print("Printing errors of not valid Blocks Compound (EXPECTED):")
   IsValid = geompy.CheckCompoundOfBlocks(Compound1)
-  if IsValid == 0:
-    print("The Blocks Compound is NOT VALID")
-    (NonBlocks, NonQuads) = geompy.GetNonBlocks(Compound1)
-    if NonBlocks is not None:
-      geompy.addToStudyInFather(Compound1, NonBlocks, "Group of non-hexahedral solids")
-    if NonQuads is not None:
-      geompy.addToStudyInFather(Compound1, NonQuads, "Group of non-quadrangular faces")
-  else:
-    print("The Blocks Compound is VALID")
+  # This Blocks Compound is NOT VALID
+  assert (not IsValid)
+  (NonBlocks, NonQuads) = geompy.GetNonBlocks(Compound1)
+  if NonBlocks is not None:
+    geompy.addToStudyInFather(Compound1, NonBlocks, "Group of non-hexahedral solids")
+  if NonQuads is not None:
+    geompy.addToStudyInFather(Compound1, NonQuads, "Group of non-quadrangular faces")
 
   IsValid = geompy.CheckCompoundOfBlocks(Box)
-  if IsValid == 0:
-    print("The Box is NOT VALID")
-  else:
-    print("The Box is VALID")
+  assert (IsValid) # Box is a VALID Blocks Compound
 
   # GetSame
   Cone_ss = geompy.GetSame(Compound1, Cone)
@@ -324,11 +278,7 @@ def TestOtherOperations (geompy, math):
 
   # GetObjectIDs
   GetObjectIDs = geompy.GetObjectIDs(CreateGroup)
-
-  print("Group of Box's faces includes the following IDs:")
-  print("(must be ", f_ind_6, ", ", f_ind_3, " and ", f_ind_5, ")")
-  for ObjectID in GetObjectIDs:
-    print(" ", ObjectID)
+  assert (sorted(GetObjectIDs) == sorted([f_ind_6, f_ind_3, f_ind_5]))
 
   # GetMainShape
   BoxCopy = geompy.GetMainShape(CreateGroup)
@@ -343,10 +293,7 @@ def TestOtherOperations (geompy, math):
 
   # Check
   GetObjectIDs = geompy.GetObjectIDs(CreateGroup)
-  print("Group of Box's faces includes the following IDs:")
-  print("(must be ", f_ind_6, ", ", f_ind_1, " and ", f_ind_2, ")")
-  for ObjectID in GetObjectIDs:
-    print(" ", ObjectID)
+  assert (sorted(GetObjectIDs) == sorted([f_ind_6, f_ind_1, f_ind_2]))
 
   # Boolean Operations on Groups (Union, Intersection, Cut)
   Group_1 = geompy.CreateGroup(Box, geompy.ShapeType["FACE"])
@@ -384,16 +331,10 @@ def TestOtherOperations (geompy, math):
   geompy.addToStudyInFather(Box, Group_C_2_4, 'Group_C_2_4')
   geompy.addToStudyInFather(Box, Group_CL_2_4, 'Group_CL_2_4')
 
-  # -----------------------------------------------------------------------------
-  # enumeration ShapeTypeString as a dictionary
-  # -----------------------------------------------------------------------------
-  ShapeTypeString = {'0':"COMPOUND", '1':"COMPSOLID", '2':"SOLID", '3':"SHELL",
-                     '4':"FACE", '5':"WIRE", '6':"EDGE", '7':"VERTEX", '8':"SHAPE"}
-
   GroupType = geompy.GetType(CreateGroup)
-  print("Type of elements of the created group is ", ShapeTypeString[repr(GroupType)])
+  assert (GroupType == geompy.ShapeType["FACE"])
 
-  # Prepare data for the following operations
+  # Example of sphere partitioning into hexahedral blocks
   p0 = geompy.MakeVertex(0, 0, 0)
   b0 = geompy.MakeBox(-50, -50, -50, 50, 50, 50)
   s0 = geompy.MakeSphereR(100)
@@ -402,88 +343,55 @@ def TestOtherOperations (geompy, math):
   id_s0 = geompy.addToStudy(s0, "s0")
 
   v_0pp = geompy.MakeVectorDXDYDZ( 0,  1,  1)
-  #v_0np = geompy.MakeVectorDXDYDZ( 0, -1,  1)
+  v_0np = geompy.MakeVectorDXDYDZ( 0, -1,  1)
   v_p0p = geompy.MakeVectorDXDYDZ( 1,  0,  1)
-  v_p0n = geompy.MakeVectorDXDYDZ(1,  0,  -1)
+  v_p0n = geompy.MakeVectorDXDYDZ( 1,  0, -1)
   v_pp0 = geompy.MakeVectorDXDYDZ( 1,  1,  0)
-  v_pn0 = geompy.MakeVectorDXDYDZ(1,  -1,  0)
+  v_pn0 = geompy.MakeVectorDXDYDZ( 1, -1,  0)
 
-  #pln_0pp = geompy.MakePlane(p0, v_0pp, 300)
-  #pln_0np = geompy.MakePlane(p0, v_0np, 300)
+  pln_0pp = geompy.MakePlane(p0, v_0pp, 300)
+  pln_0np = geompy.MakePlane(p0, v_0np, 300)
   pln_p0p = geompy.MakePlane(p0, v_p0p, 300)
   pln_p0n = geompy.MakePlane(p0, v_p0n, 300)
   pln_pp0 = geompy.MakePlane(p0, v_pp0, 300)
   pln_pn0 = geompy.MakePlane(p0, v_pn0, 300)
-  #
-  #part_objs = [b0, pln_0pp, pln_0np, pln_p0p, pln_n0p, pln_pp0, pln_np0]
-  #part_tool_1 = geompy.MakePartition(part_objs, [], [], [b0])
-  #part_tool_1 = geompy.MakePartition(part_objs)
-  #
-  #id_part_tool_1 = geompy.addToStudy(part_tool_1, "part_tool_1")
-  #
-  #pt_pnt_1  = geompy.MakeVertex( 55,   0,  55)
-  #pt_pnt_2  = geompy.MakeVertex(  0,  55,  55)
-  #pt_pnt_3  = geompy.MakeVertex(-55,   0,  55)
-  #pt_pnt_4  = geompy.MakeVertex(  0, -55,  55)
-  #pt_pnt_5  = geompy.MakeVertex( 55,  55,   0)
-  #pt_pnt_6  = geompy.MakeVertex( 55, -55,   0)
-  #pt_pnt_7  = geompy.MakeVertex(-55,  55,   0)
-  #pt_pnt_8  = geompy.MakeVertex(-55, -55,   0)
-  #pt_pnt_9  = geompy.MakeVertex( 55,   0, -55)
-  #pt_pnt_10 = geompy.MakeVertex(  0,  55, -55)
-  #pt_pnt_11 = geompy.MakeVertex(-55,   0, -55)
-  #pt_pnt_12 = geompy.MakeVertex(  0, -55, -55)
-  #
-  #pt_face_1  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_1)
-  #pt_face_2  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_2)
-  #pt_face_3  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_3)
-  #pt_face_4  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_4)
-  #pt_face_5  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_5)
-  #pt_face_6  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_6)
-  #pt_face_7  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_7)
-  #pt_face_8  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_8)
-  #pt_face_9  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_9)
-  #pt_face_10 = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_10)
-  #pt_face_11 = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_11)
-  #pt_face_12 = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_12)
-  #
-  #pt_box = geompy.GetBlockNearPoint(part_tool_1, p0)
-  #
-  #comp_parts = [pt_face_1, pt_face_4, pt_face_7, pt_face_10,
-  #              pt_face_2, pt_face_5, pt_face_8, pt_face_11,
-  #              #pt_face_3, pt_face_6, pt_face_9, pt_face_12, pt_box]
-  #              pt_face_3, pt_face_6, pt_face_9, pt_face_12]
-  #part_tool = geompy.MakeCompound(comp_parts)
-  #id_part_tool = geompy.addToStudy(part_tool, "part_tool")
-  #
-  #part = geompy.MakePartition([s0], [part_tool])
-  #
-  #part_tools = [pt_face_1, pt_face_4, pt_face_7, pt_face_10,
-  #              pt_face_2, pt_face_5, pt_face_8, pt_face_11,
-  #              pt_face_3, pt_face_6, pt_face_9, pt_face_12, b0]
-  #part = geompy.MakePartition([s0], part_tools)
 
-  p1 = geompy.MakeVertex(50, 0, 0)
-  p2 = geompy.MakeVertex(-50, 0, 0)
-  p3 = geompy.MakeVertex(0, 50, 0)
-  p4 = geompy.MakeVertex(0, -50, 0)
-  p5 = geompy.MakeVertex(0, 0, 50)
-  p6 = geompy.MakeVertex(0, 0, -50)
+  part_objs = [b0, pln_0pp, pln_0np, pln_p0p, pln_p0n, pln_pp0, pln_pn0]
+  part_tool_1 = geompy.MakePartition(part_objs, KeepNonlimitShapes=1)
+  geompy.addToStudy(part_tool_1, "part_tool_1")
 
-  plnX1 = geompy.MakePlane(p1, vx, 300)
-  plnX2 = geompy.MakePlane(p2, vx, 300)
-  plnY1 = geompy.MakePlane(p3, vy, 300)
-  plnY2 = geompy.MakePlane(p4, vy, 300)
-  plnZ1 = geompy.MakePlane(p5, vz, 300)
-  plnZ2 = geompy.MakePlane(p6, vz, 300)
+  pt_pnt_1  = geompy.MakeVertex( 55,   0,  55)
+  pt_pnt_2  = geompy.MakeVertex(  0,  55,  55)
+  pt_pnt_3  = geompy.MakeVertex(-55,   0,  55)
+  pt_pnt_4  = geompy.MakeVertex(  0, -55,  55)
+  pt_pnt_5  = geompy.MakeVertex( 55,  55,   0)
+  pt_pnt_6  = geompy.MakeVertex( 55, -55,   0)
+  pt_pnt_7  = geompy.MakeVertex(-55,  55,   0)
+  pt_pnt_8  = geompy.MakeVertex(-55, -55,   0)
+  pt_pnt_9  = geompy.MakeVertex( 55,   0, -55)
+  pt_pnt_10 = geompy.MakeVertex(  0,  55, -55)
+  pt_pnt_11 = geompy.MakeVertex(-55,   0, -55)
+  pt_pnt_12 = geompy.MakeVertex(  0, -55, -55)
 
-  #part = geompy.MakePartition([s0], [plnX1,plnX2,plnY1,plnY2,plnZ1,plnZ2])
-  part = geompy.MakePartition([s0], [plnX1])
-  part = geompy.MakePartition([part], [plnX2])
-  part = geompy.MakePartition([part], [plnY1])
-  part = geompy.MakePartition([part], [plnY2])
-  part = geompy.MakePartition([part], [plnZ1])
-  part = geompy.MakePartition([part], [plnZ2])
+  pt_face_1  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_1)
+  pt_face_2  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_2)
+  pt_face_3  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_3)
+  pt_face_4  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_4)
+  pt_face_5  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_5)
+  pt_face_6  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_6)
+  pt_face_7  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_7)
+  pt_face_8  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_8)
+  pt_face_9  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_9)
+  pt_face_10 = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_10)
+  pt_face_11 = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_11)
+  pt_face_12 = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_12)
+
+  part_tools = [pt_face_1, pt_face_4, pt_face_7, pt_face_10,
+                pt_face_2, pt_face_5, pt_face_8, pt_face_11,
+                pt_face_3, pt_face_6, pt_face_9, pt_face_12, b0]
+  part_tool = geompy.MakeCompound(part_tools)
+  geompy.addToStudy(part_tool, "part_tool")
+  part = geompy.MakePartition([s0], [part_tool])
   geompy.addToStudy(part, "part")
 
   # GetFreeFacesIDs
@@ -492,9 +400,9 @@ def TestOtherOperations (geompy, math):
 
   geompy.addToStudy(freeFaces, "freeFaces")
 
-  # RemoveExtraEdges with union of all faces, sharing common surfaces
+  # Example of hexahedral sphere creation
+  # (spherical surface of solid is made of six quasi-quadrangular faces)
   tools = [pln_pp0, pln_pn0, pln_p0p, pln_p0n]
-
   Partition_1 = geompy.MakePartition([Sphere], tools, [], [], geompy.ShapeType["SOLID"], 0, [])
   geompy.addToStudy(Partition_1, "Partition_1")
 
@@ -529,8 +437,8 @@ def TestOtherOperations (geompy, math):
 
   Shell_1 = geompy.MakeShell([Face_1, Rotation_1, Rotation_2, Rotation_3, Rotation_4, Rotation_5])
   Solid_1 = geompy.MakeSolid([Shell_1])
-  #NoExtraEdges_1 = geompy.RemoveExtraEdges(Solid_1, True) # doUnionFaces = True
 
+  # RemoveExtraEdges with union of all faces, sharing common surfaces
   box10 = geompy.MakeBoxDXDYDZ(10, 10, 10, "box10")
   box11 = geompy.MakeTranslation(box10, 10, 0, 0, "box11")
   FuseB = geompy.MakeFuse(box10, box11, checkSelfInte=False, rmExtraEdges=False, theName="FuseB")
@@ -580,9 +488,8 @@ def TestOtherOperations (geompy, math):
   geompy.addToStudyInFather( blackWhiteCopy, subBlackWhite[1], "" )
 
   # CheckAndImprove
-  blocksComp = geompy.CheckAndImprove(part)
-
-  geompy.addToStudy(blocksComp, "blocksComp")
+  blocksComp = geompy.CheckAndImprove(part, "blocksComp")
+  assert (geompy.CheckCompoundOfBlocks(blocksComp))
 
   # Propagate
   listChains = geompy.Propagate(blocksComp)
@@ -717,8 +624,7 @@ def TestOtherOperations (geompy, math):
                                                  tl, tr, bl, br, GEOM.ST_ONIN)
   comp = geompy.MakeCompound(edges_onin_quad)
   geompy.addToStudy(comp, "Edges of F12 ONIN Quadrangle")
-  if len( edges_onin_quad ) != 4:
-    print("Error in GetShapesOnQuadrangle()")
+  assert (len( edges_onin_quad ) == 4), "Error in GetShapesOnQuadrangle()"
 
   # GetShapesOnQuadrangleIDs
   vertices_on_quad_ids = geompy.GetShapesOnQuadrangleIDs(f12, geompy.ShapeType["VERTEX"],
@@ -732,8 +638,7 @@ def TestOtherOperations (geompy, math):
                                        GEOM.ST_ON)
   comp = geompy.MakeCompound(edges_on_box)
   geompy.addToStudy(comp, "Edges of part ON box b0")
-  if len( edges_on_box ) != 12:
-    print("Error in GetShapesOnBox()")
+  assert (len( edges_on_box ) == 12), "Error in GetShapesOnBox()"
 
   # GetShapesOnBoxIDs
   faces_on_box_ids = geompy.GetShapesOnBoxIDs(b0, part, geompy.ShapeType["FACE"],
@@ -742,24 +647,13 @@ def TestOtherOperations (geompy, math):
   geompy.UnionIDs(faces_on_box, faces_on_box_ids)
   geompy.addToStudyInFather(part, faces_on_box, "Group of faces on box b0")
 
-  # Prepare arguments for GetShapesOnShape
-  sph1 = geompy.MakeSphere(50, 50,  50, 40)
-  sph2 = geompy.MakeSphere(50, 50, -50, 40)
-  pcyl = geompy.MakeVertex(50, 50, -50)
-  cyli = geompy.MakeCylinder(pcyl, vz, 40, 100)
-  sh_1 = geompy.MakeFuseList([sph1, cyli, sph2])
-  # As after Fuse we have a compound, we need to obtain a solid from it
-  #shsh = geompy.SubShapeAll(sh_1, geompy.ShapeType["SOLID"])
-  #sh_1 = shsh[0]
-  geompy.addToStudy(sh_1, "sh_1")
-
   # GetShapesOnShape
+  sh_1 = geompy.MakeTranslation(s0, 100, 0, 0, "sh_1")
   faces_in_sh = geompy.GetShapesOnShape(sh_1, part, geompy.ShapeType["FACE"],
                                         GEOM.ST_IN)
   comp = geompy.MakeCompound(faces_in_sh)
   geompy.addToStudy(comp, "Faces of part IN shape sh_1")
-  if len(faces_in_sh) != 11:
-    print("Error in GetShapesOnShape()")
+  assert (len(faces_in_sh) == 7), "Error in GetShapesOnShape()"
 
   # GetShapesOnShapeAsCompound
   faces_in_sh_c = geompy.GetShapesOnShapeAsCompound(sh_1, part, geompy.ShapeType["FACE"],
@@ -772,16 +666,11 @@ def TestOtherOperations (geompy, math):
   edges_in_sh = geompy.CreateGroup(part, geompy.ShapeType["EDGE"])
   geompy.UnionIDs(edges_in_sh, edges_in_sh_ids)
   geompy.addToStudyInFather(part, edges_in_sh, "Group of edges in shape sh_1")
-  if len(edges_in_sh_ids) != 15:
-    print("Error in GetShapesOnShapeIDs()")
+  assert (len(edges_in_sh_ids) == 15), "Error in GetShapesOnShapeIDs()"
 
   # Prepare arguments for GetInPlace and GetInPlaceByHistory
-  box5 = geompy.MakeBoxDXDYDZ(100, 100, 100)
-  box6 = geompy.MakeTranslation(box5, 50, 50, 0)
-
-  geompy.addToStudy(box5, "Box 5")
-  geompy.addToStudy(box6, "Box 6")
-
+  box5 = geompy.MakeBoxDXDYDZ(100, 100, 100, "Box 5")
+  box6 = geompy.MakeTranslation(box5, 50, 50, 0, "Box 6")
   part = geompy.MakePartition([box5], [box6])
   geompy.addToStudy(part, "Partitioned")
 

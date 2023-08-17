@@ -38,18 +38,21 @@
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Iterator.hxx>
 
+#include <BRepGProp.hxx>
+#include <GProp_GProps.hxx>
+
 #include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
 #include <BRepTools.hxx>
 #include <BRepAdaptor_Curve2d.hxx>
 #include <BRepTopAdaptor_FClass2d.hxx>
+#include <BRepClass_FaceClassifier.hxx>
 
 #include <ElSLib.hxx>
 #include <Geom_Circle.hxx>
 #include <Geom_TrimmedCurve.hxx>
 #include <Geom_SphericalSurface.hxx>
 #include <Geom_RectangularTrimmedSurface.hxx>
-
 #include <Geom_Curve.hxx>
 #include <Geom_Surface.hxx>
 
@@ -65,6 +68,8 @@ IMPLEMENT_STANDARD_RTTIEXT(BlockFix_SphereSpaceModifier, BRepTools_Modification)
 //purpose  :
 //=======================================================================
 BlockFix_SphereSpaceModifier::BlockFix_SphereSpaceModifier()
+: myTolerance(Precision::Confusion()),
+  mySmallRotation(Standard_True)
 {
   myMapOfFaces.Clear();
   myMapOfSpheres.Clear();
@@ -86,18 +91,23 @@ void BlockFix_SphereSpaceModifier::SetTolerance(const Standard_Real Tol)
 }
 
 //=======================================================================
+//function : SetTrySmallRotation
+//purpose  :
+//=======================================================================
+void BlockFix_SphereSpaceModifier::SetTrySmallRotation(const Standard_Boolean isSmallRotation)
+{
+  mySmallRotation = isSmallRotation;
+}
+
+//=======================================================================
 //function : NewSurface
 //purpose  :
 //=======================================================================
 static Standard_Boolean ModifySurface(const TopoDS_Face&          theFace,
                                       const Handle(Geom_Surface)& theSurface,
-                                      Handle(Geom_Surface)&       theNewSurface)
+                                      Handle(Geom_Surface)&       theNewSurface,
+                                      const Standard_Boolean      theTrySmallRotation)
 {
-  TopoDS_Face aFace = theFace;
-  aFace.Orientation (TopAbs_FORWARD);
-
-  Handle(Geom_Surface) aNewSurface;
-  
   Handle(Geom_Surface) aSurf = theSurface;
   if (aSurf->IsKind(STANDARD_TYPE(Geom_RectangularTrimmedSurface))) {
     Handle(Geom_RectangularTrimmedSurface) RTS =
@@ -105,142 +115,189 @@ static Standard_Boolean ModifySurface(const TopoDS_Face&          theFace,
     aSurf = RTS->BasisSurface();
   }
 
-  if (aSurf->IsKind(STANDARD_TYPE(Geom_SphericalSurface))) {
-    Standard_Real Umin, Umax, Vmin, Vmax;
-    BRepTools::UVBounds(aFace, Umin, Umax, Vmin, Vmax);
-    Standard_Real PI2 = M_PI/2.;
-    Handle(Geom_SphericalSurface) aSphere = Handle(Geom_SphericalSurface)::DownCast(aSurf);
-    gp_Sphere sp = aSphere->Sphere();
-    Standard_Real Radius = sp.Radius();
-    gp_Ax3 ax3 = sp.Position();
-    gp_Pnt aCentre = sp.Location();
-    
-    TopoDS_Wire aWire = BRepTools::OuterWire (aFace);
-    BRepTopAdaptor_FClass2d aClassifier (aFace, Precision::PConfusion());
-    TopTools_MapOfShape aEmap;
-    const Standard_Real anOffsetValue = 0.01*M_PI;
-    for (Standard_Integer ii = 1; ii <= 2; ii++)
-    {
-      TopoDS_Iterator itw (aWire);
-      for (; itw.More(); itw.Next())
-      {
-        const TopoDS_Edge& anEdge = TopoDS::Edge (itw.Value());
-        if (aEmap.Contains (anEdge) ||
-            anEdge.Orientation() == TopAbs_INTERNAL ||
-            anEdge.Orientation() == TopAbs_EXTERNAL ||
-            BRep_Tool::Degenerated (anEdge) ||
-            BRepTools::IsReallyClosed (anEdge, aFace))
-          continue;
-        
-        BRepAdaptor_Curve2d aBAcurve2d (anEdge, aFace);
-        GeomAbs_CurveType aType = aBAcurve2d.GetType();
-        if (ii == 1 && aType == GeomAbs_Line) //first pass: consider only curvilinear edges
-          continue;
-        
-        Standard_Real aMidPar = (aBAcurve2d.FirstParameter() + aBAcurve2d.LastParameter())/2;
-        gp_Pnt2d aMidP2d;
-        gp_Vec2d aTangent;
-        aBAcurve2d.D1 (aMidPar, aMidP2d, aTangent);
-        if (anEdge.Orientation() == TopAbs_REVERSED)
-          aTangent.Reverse();
-        
-        aTangent.Normalize();
-        gp_Vec2d aNormal (aTangent.Y(), -aTangent.X());
-        aNormal *= anOffsetValue;
-        gp_Pnt2d anUpperPole = aMidP2d.Translated (aNormal);
-        if (anUpperPole.Y() < -PI2 || anUpperPole.Y() > PI2)
-        {
-          aEmap.Add(anEdge);
-          continue;
-        }
-        if (anUpperPole.X() < 0.)
-          anUpperPole.SetX (anUpperPole.X() + 2.*M_PI);
-        else if (anUpperPole.X() > 2.*M_PI)
-          anUpperPole.SetX (anUpperPole.X() - 2.*M_PI);
-        
-        TopAbs_State aStatus = aClassifier.Perform (anUpperPole);
-        if (aStatus != TopAbs_OUT)
-        {
-          aEmap.Add(anEdge);
-          continue;
-        }
-        
-        gp_Pnt anUpperPole3d = aSphere->Value (anUpperPole.X(), anUpperPole.Y());
-        gp_Vec aVec (aCentre, anUpperPole3d);
-        aVec.Reverse();
-        gp_Pnt aLowerPole3d = aCentre.Translated (aVec);
-        Standard_Real aU, aV;
-        ElSLib::Parameters (sp, aLowerPole3d, aU, aV);
-        gp_Pnt2d aLowerPole (aU, aV);
-        aStatus = aClassifier.Perform (aLowerPole);
-        if (aStatus != TopAbs_OUT)
-        {
-          aEmap.Add(anEdge);
-          continue;
-        }
-        
-        //Build a meridian
-        gp_Vec anUp (aCentre, anUpperPole3d);
-        anUp.Normalize();
-        gp_Pnt aMidPnt = aSphere->Value (aMidP2d.X(), aMidP2d.Y());
-        gp_Vec aMidOnEdge (aCentre, aMidPnt);
-        aMidOnEdge.Normalize();
-        gp_Vec AxisOfCircle = anUp ^ aMidOnEdge;
-        gp_Vec XDirOfCircle = anUp ^ AxisOfCircle;
-        gp_Ax2 anAxis (aCentre, AxisOfCircle, XDirOfCircle);
-        Handle(Geom_Circle) aCircle = new Geom_Circle (anAxis, Radius);
-        Handle(Geom_TrimmedCurve) aMeridian = new Geom_TrimmedCurve (aCircle, -PI2, PI2);
-        
-        //Check the meridian
-        Standard_Boolean IsInnerPointFound = Standard_False;
-        Standard_Integer NbSamples = 10;
-        Standard_Real aDelta = M_PI / NbSamples;
-        for (Standard_Integer jj = 1; jj < NbSamples; jj++)
-        {
-          Standard_Real aParam = -PI2 + jj*aDelta;
-          gp_Pnt aPnt = aMeridian->Value (aParam);
-          ElSLib::Parameters (sp, aPnt, aU, aV);
-          gp_Pnt2d aP2d (aU, aV);
-          aStatus = aClassifier.Perform (aP2d);
-          if (aStatus != TopAbs_OUT)
-          {
-            IsInnerPointFound = Standard_True;
-            break;
-          }
-        }
-        if (IsInnerPointFound)
-        {
-          aEmap.Add(anEdge);
-          continue;
-        }
-        
-        gp_Ax3 anAxisOfNewSphere (aCentre, anUp, XDirOfCircle);
-        aNewSurface = new Geom_SphericalSurface (anAxisOfNewSphere, Radius);
-        break;
-      } //for (; itw.More(); itw.Next()) (iteration on outer wire)
-      if (!aNewSurface.IsNull())
-        break;
-    } //for (Standard_Integer ii = 1; ii <= 2; ii++) (two passes)
-  }
-
-  if (aNewSurface.IsNull())
+  if (!aSurf->IsKind(STANDARD_TYPE(Geom_SphericalSurface)))
     return Standard_False;
 
-  theNewSurface = aNewSurface;
-  return Standard_True;
+  Standard_Real PI2 = M_PI/2.;
+  Handle(Geom_SphericalSurface) aSphere = Handle(Geom_SphericalSurface)::DownCast(aSurf);
+  gp_Sphere sp = aSphere->Sphere();
+  Standard_Real Radius = sp.Radius();
+  Standard_Real Umin, Umax, Vmin, Vmax;
+
+  // try with small rotation (old implementation, giving better result in some cases
+  if (theTrySmallRotation) {
+    BRepTools::UVBounds(theFace, Umin, Umax, Vmin, Vmax);
+    if (Vmax > PI2 - Precision::PConfusion() || Vmin < -PI2 + Precision::PConfusion()) {
+      //modified by jgv, 12.11.2012 for issue 21777//
+      Standard_Real HalfArea = 2.*M_PI*Radius*Radius;
+      GProp_GProps Properties;
+      BRepGProp::SurfaceProperties(theFace, Properties);
+      Standard_Real anArea = Properties.Mass();
+      Standard_Real AreaTol = Radius*Radius*1.e-6;
+      if (anArea < HalfArea - AreaTol) { // a chance to avoid singularity
+        gp_Ax3 ax3 = sp.Position();
+        if (Abs(Vmax-Vmin) < PI2) {
+          gp_Ax3 axnew3 (ax3.Axis().Location(), ax3.Direction()^ax3.XDirection(), ax3.XDirection());
+          sp.SetPosition(axnew3);
+          Handle(Geom_SphericalSurface) aNewSphere = new Geom_SphericalSurface(sp);
+          theNewSurface = aNewSphere;
+          return Standard_True;
+        }
+        else {
+          gp_Pnt PC = ax3.Location();
+          Standard_Real Vpar;
+          if (fabs(PI2-Vmax) > fabs(-PI2-Vmin))
+            Vpar = (PI2+Vmax)/2.;
+          else
+            Vpar = (-PI2+Vmin)/2.;
+          Standard_Real Upar = (Umin+Umax)/2.;
+          gp_Pnt PN,PX;
+          aSurf->D0(Upar,Vpar,PN);
+          aSurf->D0(Upar+PI2,0.,PX);
+          gp_Dir newNorm(gp_Vec(PC,PN));
+          gp_Dir newDirX(gp_Vec(PC,PX));
+          gp_Ax3 axnew3(ax3.Axis().Location(), newNorm, newDirX);
+          sp.SetPosition(axnew3);
+
+          // check if both new poles are outside theFace
+          gp_Pnt LP; // lowest pole (opposite to PN)
+          aSurf->D0(Upar + M_PI, -Vpar, LP);
+          BRepClass_FaceClassifier aClsf (theFace, LP, Precision::PConfusion());
+          if (aClsf.State() != TopAbs_IN && aClsf.State() != TopAbs_ON) {
+            Handle(Geom_SphericalSurface) aNewSphere = new Geom_SphericalSurface(sp);
+            theNewSurface = aNewSphere;
+            return Standard_True;
+          }
+        }
+      }
+    }
+    else {
+      // no rotation needed
+      return Standard_False;
+    }
+  }
+
+  // try with big rotation (new implementation)
+  TopoDS_Face aFace = theFace;
+  aFace.Orientation (TopAbs_FORWARD);
+  BRepTools::UVBounds(aFace, Umin, Umax, Vmin, Vmax);
+
+  gp_Pnt aCentre = sp.Location();
+
+  TopoDS_Wire aWire = BRepTools::OuterWire (aFace);
+  BRepTopAdaptor_FClass2d aClassifier (aFace, Precision::PConfusion());
+  TopTools_MapOfShape aEmap;
+  const Standard_Real anOffsetValue = 0.01*M_PI;
+  for (Standard_Integer ii = 1; ii <= 2; ii++) {
+    TopoDS_Iterator itw (aWire);
+    for (; itw.More(); itw.Next()) {
+      const TopoDS_Edge& anEdge = TopoDS::Edge (itw.Value());
+      if (aEmap.Contains (anEdge) ||
+          anEdge.Orientation() == TopAbs_INTERNAL ||
+          anEdge.Orientation() == TopAbs_EXTERNAL ||
+          BRep_Tool::Degenerated (anEdge) ||
+          BRepTools::IsReallyClosed (anEdge, aFace))
+        continue;
+
+      BRepAdaptor_Curve2d aBAcurve2d (anEdge, aFace);
+      GeomAbs_CurveType aType = aBAcurve2d.GetType();
+      if (ii == 1 && aType == GeomAbs_Line) //first pass: consider only curvilinear edges
+        continue;
+
+      Standard_Real aMidPar = (aBAcurve2d.FirstParameter() + aBAcurve2d.LastParameter())/2;
+      gp_Pnt2d aMidP2d;
+      gp_Vec2d aTangent;
+      aBAcurve2d.D1 (aMidPar, aMidP2d, aTangent);
+      if (anEdge.Orientation() == TopAbs_REVERSED)
+        aTangent.Reverse();
+
+      aTangent.Normalize();
+      gp_Vec2d aNormal (aTangent.Y(), -aTangent.X());
+      aNormal *= anOffsetValue;
+      gp_Pnt2d anUpperPole = aMidP2d.Translated (aNormal);
+      if (anUpperPole.Y() < -PI2 || anUpperPole.Y() > PI2) {
+        aEmap.Add(anEdge);
+        continue;
+      }
+      if (anUpperPole.X() < 0.)
+        anUpperPole.SetX (anUpperPole.X() + 2.*M_PI);
+      else if (anUpperPole.X() > 2.*M_PI)
+        anUpperPole.SetX (anUpperPole.X() - 2.*M_PI);
+
+      TopAbs_State aStatus = aClassifier.Perform (anUpperPole);
+      if (aStatus != TopAbs_OUT) {
+        aEmap.Add(anEdge);
+        continue;
+      }
+
+      gp_Pnt anUpperPole3d = aSphere->Value (anUpperPole.X(), anUpperPole.Y());
+      gp_Vec aVec (aCentre, anUpperPole3d);
+      aVec.Reverse();
+      gp_Pnt aLowerPole3d = aCentre.Translated (aVec);
+      Standard_Real aU, aV;
+      ElSLib::Parameters (sp, aLowerPole3d, aU, aV);
+      gp_Pnt2d aLowerPole (aU, aV);
+      aStatus = aClassifier.Perform (aLowerPole);
+      if (aStatus != TopAbs_OUT) {
+        aEmap.Add(anEdge);
+        continue;
+      }
+
+      //Build a meridian
+      gp_Vec anUp (aCentre, anUpperPole3d);
+      anUp.Normalize();
+      gp_Pnt aMidPnt = aSphere->Value (aMidP2d.X(), aMidP2d.Y());
+      gp_Vec aMidOnEdge (aCentre, aMidPnt);
+      aMidOnEdge.Normalize();
+      gp_Vec AxisOfCircle = anUp ^ aMidOnEdge;
+      gp_Vec XDirOfCircle = anUp ^ AxisOfCircle;
+      gp_Ax2 anAxis (aCentre, AxisOfCircle, XDirOfCircle);
+      Handle(Geom_Circle) aCircle = new Geom_Circle (anAxis, Radius);
+      Handle(Geom_TrimmedCurve) aMeridian = new Geom_TrimmedCurve (aCircle, -PI2, PI2);
+
+      //Check the meridian
+      Standard_Boolean IsInnerPointFound = Standard_False;
+      Standard_Integer NbSamples = 10;
+      Standard_Real aDelta = M_PI / NbSamples;
+      for (Standard_Integer jj = 1; jj < NbSamples; jj++) {
+        Standard_Real aParam = -PI2 + jj*aDelta;
+        gp_Pnt aPnt = aMeridian->Value (aParam);
+        ElSLib::Parameters (sp, aPnt, aU, aV);
+        gp_Pnt2d aP2d (aU, aV);
+        aStatus = aClassifier.Perform (aP2d);
+        if (aStatus != TopAbs_OUT) {
+          IsInnerPointFound = Standard_True;
+          break;
+        }
+      }
+      if (IsInnerPointFound) {
+        aEmap.Add(anEdge);
+        continue;
+      }
+
+      gp_Ax3 anAxisOfNewSphere (aCentre, anUp, XDirOfCircle);
+      theNewSurface = new Geom_SphericalSurface (anAxisOfNewSphere, Radius);
+      break;
+    } //for (; itw.More(); itw.Next()) (iteration on outer wire)
+    if (!theNewSurface.IsNull())
+      break;
+  } //for (Standard_Integer ii = 1; ii <= 2; ii++) (two passes)
+
+  return (!theNewSurface.IsNull());
 }
 
 Standard_Boolean BlockFix_SphereSpaceModifier::NewSurface(const TopoDS_Face& F,
-                                                        Handle(Geom_Surface)& S,
-                                                        TopLoc_Location& L,Standard_Real& Tol,
-                                                        Standard_Boolean& RevWires,
-                                                        Standard_Boolean& RevFace)
+                                                          Handle(Geom_Surface)& S,
+                                                          TopLoc_Location& L,
+                                                          Standard_Real& Tol,
+                                                          Standard_Boolean& RevWires,
+                                                          Standard_Boolean& RevFace)
 {
   TopLoc_Location LS;
   Handle(Geom_Surface) SIni = BRep_Tool::Surface(F, LS);
 
   //check if pole of the sphere in the parametric space
-  if(ModifySurface(F, SIni, S)) {
+  if (ModifySurface(F, SIni, S, mySmallRotation)) {
 
     RevWires = Standard_False;
     RevFace = Standard_False;

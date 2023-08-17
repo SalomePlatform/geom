@@ -51,6 +51,8 @@ public:
   Standard_EXPORT ~BlockFix_SphereSpaceModifier();
 
   Standard_EXPORT void SetTolerance (const Standard_Real Toler);
+  Standard_EXPORT void SetTrySmallRotation (const Standard_Boolean isSmallRotation);
+
   Standard_EXPORT Standard_Boolean NewSurface (const TopoDS_Face& F, Handle(Geom_Surface)& S,
                                                TopLoc_Location& L, Standard_Real& Tol,
                                                Standard_Boolean& RevWires, Standard_Boolean& RevFace);
@@ -72,6 +74,7 @@ public:
 
 private:
   Standard_Real myTolerance;
+  Standard_Boolean mySmallRotation;
   TopTools_DataMapOfShapeInteger myMapOfFaces;
   TColStd_IndexedMapOfTransient myMapOfSpheres;
 

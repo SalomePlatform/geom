@@ -23,7 +23,7 @@
 \until id_Orientation
 
 \anchor swig_MakeCommon
-\until id_Section
+\until id_Fuse2
 
 \anchor swig_Partition
 \until id_Partition
@@ -47,7 +47,7 @@
 \until id_MakeBlockExplode
 
 \anchor swig_CheckCompoundOfBlocks
-\until The Box is VALID
+\until VALID Blocks Compound
 
 \anchor swig_GetSame
 \until id_Cone_ss
@@ -68,7 +68,7 @@
 \until Now contains
 
 \anchor swig_GetObjectIDs
-\until print(" ", ObjectID)
+\until sorted
 
 \anchor swig_GetMainShape
 \until BoxCopy
@@ -77,15 +77,17 @@
 \until Now contains
 
 \anchor swig_UnionIDs
-\until print(" ", ObjectID)
+\until sorted
 
 \anchor swig_bop_on_groups
 \until Box, Group_CL_2_4
 
 \anchor swig_GetType
-\until Type of elements
+\until assert
 
 \until freeFaces, "freeFaces"
+
+\until Solid_1 = geompy.MakeSolid
 
 \anchor swig_RemoveExtraEdges
 \until "freeFacesWithoutExtra"
@@ -100,7 +102,7 @@
 \until subBlackWhite[1]
 
 \anchor swig_CheckAndImprove
-\until "blocksComp"
+\until "CheckCompoundOfBlocks"
 
 \anchor swig_Propagate
 \until "propagation chain"
