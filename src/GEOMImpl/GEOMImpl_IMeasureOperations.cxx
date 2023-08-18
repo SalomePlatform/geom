@@ -47,7 +47,6 @@
 // OCCT Includes
 #include <Bnd_Box.hxx>
 #include <BOPAlgo_CheckerSI.hxx>
-#include <TopTools_ListOfShape.hxx>
 #include <BOPDS_DS.hxx>
 #include <BOPDS_MapOfPair.hxx>
 #include <BOPDS_Pair.hxx>
@@ -65,24 +64,29 @@
 #include <BRepGProp.hxx>
 #include <BRepTools.hxx>
 #include <BRep_Tool.hxx>
+
 #include <Geom_Line.hxx>
+#include <Geom_Plane.hxx>
 #include <GeomAPI_ProjectPointOnCurve.hxx>
 #include <GeomAPI_ProjectPointOnSurf.hxx>
 #include <GeomLProp_CLProps.hxx>
 #include <GeomLProp_SLProps.hxx>
-#include <Geom_Plane.hxx>
 #include <GProp_GProps.hxx>
 #include <GProp_PrincipalProps.hxx>
+
+#include <ShapeAnalysis_ShapeTolerance.hxx>
 #include <ShapeAnalysis_Surface.hxx>
+
+#include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
-#include <TopTools_IndexedMapOfShape.hxx>
 #include <TopTools_DataMapIteratorOfDataMapOfIntegerListOfShape.hxx>
-#include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
+
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 #include <set>
@@ -3031,7 +3035,10 @@ Handle(TColStd_HArray1OfReal) GEOMImpl_IMeasureOperations::XYZtoUV
   }
 
   // Face tolerance
-  Standard_Real aTol = BRep_Tool::Tolerance(F);
+  ShapeAnalysis_ShapeTolerance sat;
+  sat.InitTolerance();
+  sat.AddTolerance(F);
+  Standard_Real aTol = sat.GlobalTolerance(1);
   Standard_Real squareTolerance = aTol * aTol;
 
   // Compute parameters
