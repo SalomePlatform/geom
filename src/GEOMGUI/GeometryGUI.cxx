@@ -980,6 +980,8 @@ void GeometryGUI::initialize( CAM_Application* app )
 {
   SalomeApp_Module::initialize( app );
 
+  setActionLoggingEnabled( true ); // enable action logging
+
   // ----- create actions --------------
 
   createGeomAction( GEOMOp::OpDelete,     "DELETE", "", Qt::Key_Delete );

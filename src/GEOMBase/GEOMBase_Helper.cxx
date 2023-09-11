@@ -24,6 +24,8 @@
 //  File   : GEOMBase_Helper.cxx
 //  Author : Sergey ANIKIN, Open CASCADE S.A.S. (sergey.anikin@opencascade.com)
 
+#include <QRegExp>
+
 #include "GEOMBase_Helper.h"
 #include "GEOMBase.h"
 #include "GEOM_Operation.h"
@@ -943,12 +945,20 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, b
         }
 
         if ( nbObjs ) {
+          const QString anOpName( typeid(*this).name() );
+          // The operator name may have the following format: 24PrimitiveGUI_CylinderDlg
+          // clean it up to get the simple operator (here Cylinder) name into the log.
+          const QRegExp rx("^[^\w]*_(.*)Dlg$");
+          const int pos = rx.indexIn(anOpName);
+          SalomeApp_Application::logStructuredUserEvent( "Geom",
+                                                         "geometry",
+                                                         pos == -1 ? anOpName : rx.cap(1),
+                                                         "applied" );
           commitCommand();
           updateObjBrowser();
           if( SUIT_Application* anApp = SUIT_Session::session()->activeApplication() ) {
             LightApp_Application* aLightApp = dynamic_cast<LightApp_Application*>( anApp );
             if(aLightApp) {
-              QString anOpName( typeid(*this).name() );
               aLightApp->emitOperationFinished( "Geometry", anOpName, anEntryList );
 
               if ( !isDisableBrowsing() )
