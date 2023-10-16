@@ -1292,6 +1292,13 @@ gp_Pnt GetMidPnt2d(const TopoDS_Face&     theFace,
       const TopoDS_Edge& anEdge = aWexp.Current();
       if (!aUsedEmap.Add(anEdge)) continue;
       BRepAdaptor_Curve2d aBAcurve2d (anEdge, theFace);
+      // Initialization of curve could fail in constructor,
+      // so we need to check if we actually have a curve here.
+      if (!aBAcurve2d.Curve())
+      {
+        continue;
+      }
+
       Standard_Real aDelta = (aBAcurve2d.LastParameter() - aBAcurve2d.FirstParameter())/aNbSamples;
       for (Standard_Integer ii = 0; ii < aNbSamples; ii++)
       {
