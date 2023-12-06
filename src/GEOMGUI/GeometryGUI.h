@@ -150,7 +150,7 @@ public:
 
   virtual bool                isDraggable( const SUIT_DataObject* what ) const;
   virtual bool                isDropAccepted( const SUIT_DataObject* where ) const;
-  virtual void                dropObjects( const DataObjectList& what, 
+  virtual void                dropObjects( const DataObjectList& what,
                                            SUIT_DataObject* where,
                                            const int row, Qt::DropAction action );
 
@@ -196,9 +196,13 @@ private:
   GEOMGUI*                    getLibrary( const QString& libraryName );
   GEOMPluginGUI*              getPluginLibrary( const QString& libraryName );
   void                        createGeomAction( const int id, const QString& po_id,
+                                                const QString& icon_id,
+                                                const int key, const bool toggle,
+                                                const QString& shortcutAction);
+  void                        createGeomAction( const int id, const QString& po_id,
                                                 const QString& icon_id = QString(""),
-                                                const int key = 0, const bool toggle = false,
-                                                const QString& shortcutAction = QString() );
+                                                const int key = 0, const bool toggle = false);
+
   void                        createPopupItem( const int, const QString& clients, const QString& types,
                                                const bool isSingle = false, const int isVisible = -1,
                                                const bool isExpandAll = false, const bool isOCC = false,
@@ -210,7 +214,7 @@ private:
 public:
   static GEOM::GEOM_Gen_var   myComponentGeom;   // GEOM engine!!!
 
-private:  
+private:
 
   typedef QMap<QString, GEOMGUI*> GUIMap;
 
@@ -231,10 +235,10 @@ private:
   int                          myLocalSelectionMode; //Select Only
 
   GEOMGUI_CreationInfoWdg*     myCreationInfoWdg;
-  
+
   GEOMGUI_TextTreeWdg*        myTextTreeWdg;
   GEOMGUI_AnnotationMgr*      myAnnotationMgr;
-  
+
   SALOME_ListIO                myTopLevelIOList;
 
   friend class DisplayGUI;

@@ -914,9 +914,10 @@ void GeometryGUI::OnMousePress( SUIT_ViewWindow* w, QMouseEvent* e )
 //=======================================================================
 // function : createGeomAction
 // purpose  :
+// \param inModuleActionID is passed further without modifications. It is required by SUIT_ShortcutMgr.
 //=======================================================================
 void GeometryGUI::createGeomAction( const int id, const QString& label, const QString& icolabel,
-                                    const int accel, const bool toggle, const QString& shortcutAction )
+                                    const int accel, const bool toggle, const QString& inModuleActionID )
 {
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   QPixmap icon = icolabel.isEmpty() ? resMgr->loadPixmap( "GEOM", tr( (QString( "ICO_" )+label).toLatin1().constData() ), false )
@@ -930,7 +931,18 @@ void GeometryGUI::createGeomAction( const int id, const QString& label, const QS
                 application()->desktop(),
                 toggle,
                 this, SLOT( OnGUIEvent() ),
-                shortcutAction );
+                inModuleActionID );
+}
+
+//=======================================================================
+// function : createGeomAction
+// purpose  :
+// Generates in module action automatically.
+//=======================================================================
+void GeometryGUI::createGeomAction( const int id, const QString& label, const QString& icolabel,
+                                    const int accel, const bool toggle)
+{
+  createGeomAction( id, label, icolabel, accel, toggle, QString( "STB_%1" ).arg( label ) );
 }
 
 //=======================================================================
@@ -1192,15 +1204,15 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   // Create actions for increase/decrease transparency shortcuts
   createGeomAction( GEOMOp::OpIncrTransparency, "", "", 0, false,
-                    "Geometry:Increase transparency");
+                    "Transparency/Increase");
   createGeomAction( GEOMOp::OpDecrTransparency, "", "", 0, false,
-                    "Geometry:Decrease transparency");
+                    "Transparency/Decrease");
 
   // Create actions for increase/decrease number of isolines
   createGeomAction( GEOMOp::OpIncrNbIsos, "", "", 0, false,
-                    "Geometry:Increase number of isolines");
+                    "Isolines/Increase number");
   createGeomAction( GEOMOp::OpDecrNbIsos, "", "", 0, false,
-                    "Geometry:Decrease number of isolines");
+                    "Isolines/Decrease number");
 
   //createGeomAction( GEOMOp::OpPipeTShape, "PIPETSHAPE" );
   //createGeomAction( GEOMOp::OpDividedDisk, "DIVIDEDDISK" );
@@ -1450,7 +1462,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpCurve,            basicTbId );
   createTool( GEOMOp::OpVector,           basicTbId );
   createTool( GEOMOp::Op2dSketcher,       basicTbId ); //rnc
-  createTool( GEOMOp::Op2dPolylineEditor, basicTbId ); 
+  createTool( GEOMOp::Op2dPolylineEditor, basicTbId );
   createTool( GEOMOp::Op3dSketcher,       basicTbId ); //rnc
   createTool( GEOMOp::OpIsoline,          basicTbId );
   createTool( GEOMOp::OpSurfaceFromFace,  basicTbId );
@@ -1821,7 +1833,7 @@ void GeometryGUI::addPluginActions()
       QString actionTool = stools.last();
       actionTool = actionTool.toUpper().prepend( "TOP_" );
       stools.removeLast();
-      
+
       QString actionStat = adata.statusText.c_str();
       actionStat = actionStat.toUpper().prepend( "STB_" );
 
@@ -1830,12 +1842,13 @@ void GeometryGUI::addPluginActions()
                     icon,
                     tr( actionName.toLatin1().constData() ),
                     tr( actionStat.toLatin1().constData() ),
-                    QKeySequence( tr( adata.accel.c_str() ) ),
+                    QKeySequence( tr( adata.accel.c_str() ) ), // Applied, if does not conflict with shortcuts in SUIT_ShortcutMgr.
                     application()->desktop(),
                     false /*toggle*/,
                     this, SLOT( OnGUIEvent() ),
-                    QString() /*shortcutAction*/ );
-      
+                    QString::fromStdString(pdata.name + "/" + adata.label)
+                  );
+
       int menuId = -1;
       foreach ( QString subMenu, smenus ) {
         QStringList subMenuList = subMenu.split( ":" );
@@ -1844,7 +1857,7 @@ void GeometryGUI::addPluginActions()
         menuId = createMenu( tr( subMenuName.toLatin1().constData() ), menuId, -1, subMenuGroup );
       }
       createMenu( id, menuId, -1 );
-      
+
       if ( !stools.isEmpty() ) {
         QString subTool = stools[0];
         subTool = subTool.toUpper().prepend( "TOOL_" );
@@ -1855,7 +1868,7 @@ void GeometryGUI::addPluginActions()
       // add action id to map
       PluginAction anAction( pdata.clientLib.c_str(), adata.label.c_str() );
       myPluginActions[id] = anAction;
-      
+
       id++;
     }
   }
@@ -1874,7 +1887,7 @@ namespace
 bool GeometryGUI::activateModule( SUIT_Study* study )
 {
   // Fill in: Help Panel
-  SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( application() ); 
+  SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( application() );
   app->infoPanel()->setTitle(tr("INFO_WELCOME_TO_GEOM"));
 
   int gb = app->infoPanel()->addGroup(tr("INFO_GRP_CREATE_MODEL"));
@@ -2247,7 +2260,7 @@ void GeometryGUI::onAutoBringToFront()
   bool isAutoBringToFront = SUIT_Session::session()->resourceMgr()->booleanValue( "Geometry", "auto_bring_to_front", "false" );
   if( !isAutoBringToFront )
     return;
-  
+
   SUIT_ViewWindow* SUIT_window = application()->desktop()->activeWindow();
   if ( !SUIT_window || SUIT_window->getViewManager()->getType() != OCCViewer_Viewer::Type() )
         return;
@@ -2256,12 +2269,12 @@ void GeometryGUI::onAutoBringToFront()
   if (!appStudy) return;
 
   GEOM_Displayer displayer;
-  
+
   SALOME_View* window = displayer.GetActiveView();
   if ( !window ) return;
-  
+
   int aMgrId = dynamic_cast< SUIT_ViewModel* >( window )->getViewManager()->getGlobalId();
-  
+
   SALOME_ListIO selected;
   getApp()->selectionMgr()->selectedObjects( selected );
   if (!myTopLevelIOList.IsEmpty())
@@ -2279,19 +2292,19 @@ void GeometryGUI::onAutoBringToFront()
       if (!isSelected && appStudy->findObjectByEntry(io->getEntry()))
       {
         appStudy->setObjectProperty( aMgrId, io->getEntry(), GEOM::propertyName( GEOM::TopLevel ), false );
-        if ( window->isVisible( io ) ) displayer.Redisplay( io, false );     
+        if ( window->isVisible( io ) ) displayer.Redisplay( io, false );
       }
     }
   }
-  
+
   myTopLevelIOList.Assign(selected);
   for( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() )
   {
     Handle( SALOME_InteractiveObject ) io = It.Value();
     appStudy->setObjectProperty( aMgrId, io->getEntry(), GEOM::propertyName( GEOM::TopLevel ), true );
-    if ( window->isVisible( io ) ) displayer.Redisplay( io, false );     
+    if ( window->isVisible( io ) ) displayer.Redisplay( io, false );
   }
-    
+
   displayer.UpdateViewer();
   GeometryGUI::Modified();
 }
@@ -2499,7 +2512,7 @@ void GeometryGUI::createPreferences()
   addPreference( tr( "PREF_DIMENSIONS_COLOR" ), aDimGroupId,
                  LightApp_Preferences::Color, "Geometry", "dimensions_color" );
 
-  int aDimLineWidthId = addPreference( tr( "PREF_DIMENSIONS_LINE_WIDTH" ), aDimGroupId, 
+  int aDimLineWidthId = addPreference( tr( "PREF_DIMENSIONS_LINE_WIDTH" ), aDimGroupId,
                                        LightApp_Preferences::IntSpin, "Geometry", "dimensions_line_width" );
 
   setPreferenceProperty( aDimLineWidthId, "min", 1 );
@@ -2518,7 +2531,7 @@ void GeometryGUI::createPreferences()
   // add enginier font into combobox
   /*int fontID =*/ QFontDatabase::addApplicationFont( aFontFile );
   Handle(Font_SystemFont) sf = new Font_SystemFont( TCollection_AsciiString("Y14.5M-2009") );
-  sf->SetFontPath( Font_FA_Regular, 
+  sf->SetFontPath( Font_FA_Regular,
     TCollection_AsciiString( aFontFile.toLatin1().data() ) );
   // register font in OCC font manager
   fmgr->RegisterFont( sf, Standard_False );
@@ -2584,7 +2597,7 @@ void GeometryGUI::createPreferences()
 
   addPreference( tr( "PREF_SHAPE_ANNOTATIONS_FONT_COLOR" ), aShapeAnnGroupId, LightApp_Preferences::Color, "Geometry", "shape_annotation_font_color" );
   addPreference( tr( "PREF_SHAPE_ANNOTATIONS_LINE_COLOR" ), aShapeAnnGroupId, LightApp_Preferences::Color, "Geometry", "shape_annotation_line_color" );
-  const int aShapeAnnFont = 
+  const int aShapeAnnFont =
     addPreference( tr( "PREF_SHAPE_ANNOTATIONS_FONT" ), aShapeAnnGroupId, LightApp_Preferences::Font, "Geometry", "shape_annotation_font" );
 
   int aShapeAnnFontFeatures = QtxFontEdit::Family | QtxFontEdit::Size | QtxFontEdit::Bold | QtxFontEdit::Italic;
@@ -2592,7 +2605,7 @@ void GeometryGUI::createPreferences()
   setPreferenceProperty( aShapeAnnFont, "mode", QtxFontEdit::Custom );
   setPreferenceProperty( aShapeAnnFont, "fonts", anOCCFonts );
 
-  const int aShapeAnnLineWidth = 
+  const int aShapeAnnLineWidth =
     addPreference( tr( "PREF_SHAPE_ANNOTATIONS_LINE_WIDTH" ), aShapeAnnGroupId, LightApp_Preferences::IntSpin, "Geometry", "shape_annotation_line_width" );
 
   setPreferenceProperty( aShapeAnnLineWidth, "min", 1 );
@@ -3072,7 +3085,7 @@ void GeometryGUI::storeVisualParameters (int savePoint)
           param = occParam + GEOM::propertyName( GEOM::Color );
           ip->setParameter(entry, param.toStdString(), val.join( GEOM::subSectionSeparator()).toStdString());
         }
-        
+
         if (aProps.contains(GEOM::propertyName( GEOM::Texture ))) {
           param = occParam + GEOM::propertyName( GEOM::Texture );
           ip->setParameter(entry, param.toStdString(), aProps.value(GEOM::propertyName( GEOM::Texture )).toString().toStdString());
@@ -3232,7 +3245,7 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
 
     for (; namesIt != paramNames.end(); ++namesIt, ++valuesIt)
     {
-      // visual parameters are stored in strings as follows: 
+      // visual parameters are stored in strings as follows:
       //   1) ViewerType_ViewIndex_ParamName
       //   2) ViewerType_ParamName (shared for GEOM module)
       // '_' is used as separator and should not be used in viewer type or parameter names.
@@ -3636,7 +3649,7 @@ void GeometryGUI::updateMaterials()
   \brief Check if the module allows "drag" operation of its objects.
 
   Overloaded from LightApp_Module class.
-  
+
   This function is a part of the general drag-n-drop mechanism.
   The goal of this function is to check data object passed as a parameter
   and decide if it can be dragged or no.
@@ -3704,13 +3717,13 @@ bool GeometryGUI::isDropAccepted( const SUIT_DataObject* where ) const
 
 /*!
   \brief Complete drag-n-drop operation.
-  
+
   Overloaded from LightApp_Module class.
 
   This function is a part of the general drag-n-drop mechanism.
   Its goal is to handle dropping of the objects being dragged according
   to the chosen operation (move). The dropping is performed in the
-  context of the parent data object \a where and the \a row (position in the 
+  context of the parent data object \a where and the \a row (position in the
   children index) at which the data should be dropped. If \a row is equal to -1,
   this means that objects are added to the end of the children list.
 
@@ -3753,7 +3766,7 @@ void GeometryGUI::dropObjects( const DataObjectList& what, SUIT_DataObject* wher
     _PTR(SObject) sobj = dataObj->object();
     // check that dropped object is not a parent of target object
     if ( parentIDs.contains( sobj->GetID().c_str() ) ) {
-      return; // it's not allowed to move node into it's child 
+      return; // it's not allowed to move node into it's child
     }
     objects[i] = _CAST(SObject, sobj)->GetSObject();
     count++;

@@ -32,6 +32,7 @@ SET( _res_files
   GEOMDS_Resources
   ShHealing
   Y14.5M-2009.ttf
+  action_assets.json
   3dsketch.png
   isoline.png
   isoline_v.png
@@ -319,7 +320,3 @@ SALOME_CONFIGURE_FILE(GEOMCatalog.xml.in GEOMCatalog.xml INSTALL ${SALOME_GEOM_I
 SALOME_CONFIGURE_FILE(SalomeApp.xml.in SalomeApp.xml INSTALL ${SALOME_GEOM_INSTALL_RES_DATA})
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/SalomeApp.xml RENAME SalomeAppSL.xml DESTINATION ${SALOME_GEOM_INSTALL_RES_DATA})
 SALOME_CONFIGURE_FILE(Plugin.in Plugin INSTALL ${SALOME_GEOM_INSTALL_RES_DATA})
-
-
-
-

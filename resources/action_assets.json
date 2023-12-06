@@ -1,0 +1,3283 @@
+{
+    "GEOM/AdvancedGEOM/DividedCylinder": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Divided Cylinder",
+                "tooltip": "Divided Cylinder"
+            },
+            "fr": {
+                "name": "Cylinder prédécoupé",
+                "tooltip": "Cylinder prédécoupé"
+            },
+            "ja": {
+                "name": "分割シリンダ",
+                "tooltip": "分割シリンダ"
+            }
+        }
+    },
+    "GEOM/AdvancedGEOM/DividedDisk": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Divided Disk",
+                "tooltip": "Divided Disk"
+            },
+            "fr": {
+                "name": "Disque prédécoupé",
+                "tooltip": "Disque prédécoupé"
+            },
+            "ja": {
+                "name": "分割ディスク",
+                "tooltip": "分割ディスク"
+            }
+        }
+    },
+    "GEOM/AdvancedGEOM/SmoothingSurface": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Smoothing Surface",
+                "tooltip": "Smoothing Surface"
+            },
+            "fr": {
+                "name": "Ajustement de surface",
+                "tooltip": "Ajustement de surface"
+            },
+            "ja": {
+                "name": "表面の平滑化",
+                "tooltip": "表面のスムージング"
+            }
+        }
+    },
+    "GEOM/AdvancedGEOM/TShape_Basic": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Pipe TShape",
+                "tooltip": "Create new Pipe TShape object"
+            },
+            "fr": {
+                "name": "Tuyau en T",
+                "tooltip": "Créer un tuyau en T"
+            },
+            "ja": {
+                "name": "T型パイプを作成",
+                "tooltip": "T型パイプを作成"
+            }
+        }
+    },
+    "GEOM/BREPPlugin/Export_BREP": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Export BREP",
+                "tooltip": "Export BREP"
+            },
+            "fr": {
+                "name": "Exporter BREP",
+                "tooltip": "Exporter BREP"
+            },
+            "ja": {
+                "name": "BREPエキスポート",
+                "tooltip": "BREPエキスポート"
+            }
+        }
+    },
+    "GEOM/BREPPlugin/Import_BREP": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Import BREP",
+                "tooltip": "Import BREP"
+            },
+            "fr": {
+                "name": "Importer BREP",
+                "tooltip": "Importer BREP"
+            },
+            "ja": {
+                "name": "BREPインポート",
+                "tooltip": "BREPインポート"
+            }
+        }
+    },
+    "GEOM/IGESPlugin/Export_IGES": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Export IGES",
+                "tooltip": "Export IGES"
+            },
+            "fr": {
+                "name": "Exporter IGES",
+                "tooltip": "Exporter IGES"
+            },
+            "ja": {
+                "name": "IGESエクスポート",
+                "tooltip": "IGESエクスポート"
+            }
+        }
+    },
+    "GEOM/IGESPlugin/Import_IGES": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Import IGES",
+                "tooltip": "Import IGES"
+            },
+            "fr": {
+                "name": "Importer IGES",
+                "tooltip": "Importer IGES"
+            },
+            "ja": {
+                "name": "IGESインポート",
+                "tooltip": "IGESインポート"
+            }
+        }
+    },
+    "GEOM/Isolines/Decrease number": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Decrease number of isolines",
+                "tooltip": "Decrease number of isolines"
+            },
+            "fr": {
+                "name": "Diminuer le nombre d'isolignes",
+                "tooltip": "Diminuer le nombre d'isolignes"
+            },
+            "ja": {
+                "name": "等値線の数を減らす",
+                "tooltip": "等値線の数を減らす"
+            }
+        }
+    },
+    "GEOM/Isolines/Increase number": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Increase number of isolines",
+                "tooltip": "Increase number of isolines"
+            },
+            "fr": {
+                "name": "Augmenter le nombre d'isolignes",
+                "tooltip": "Augmenter le nombre d'isolignes"
+            },
+            "ja": {
+                "name": "等値線の数を増やす",
+                "tooltip": "等値線の数を増やす"
+            }
+        }
+    },
+    "GEOM/STB_3DSKETCH": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "3D Sketch",
+                "tooltip": "Create 3D sketch"
+            },
+            "fr": {
+                "name": "Esquisse 3D",
+                "tooltip": "Créer une esquisse 3D"
+            },
+            "ja": {
+                "name": "３D スケッチ",
+                "tooltip": "3Dスケッチを作成"
+            }
+        }
+    },
+    "GEOM/STB_ALL_SEL_ONLY": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Select All",
+                "tooltip": "Select all Objects"
+            },
+            "fr": {
+                "name": "Sélectionner tout",
+                "tooltip": "Choisir tous les objets"
+            },
+            "ja": {
+                "name": "全選択",
+                "tooltip": "すべてのオブジェクトを選択"
+            }
+        }
+    },
+    "GEOM/STB_ANNOTATION": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Annotation",
+                "tooltip": "Annotation"
+            },
+            "fr": {
+                "name": "Annotation",
+                "tooltip": "Annotation"
+            },
+            "ja": {
+                "name": "注記",
+                "tooltip": "注記"
+            }
+        }
+    },
+    "GEOM/STB_ARC": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Arc",
+                "tooltip": "Create an arc"
+            },
+            "fr": {
+                "name": "Arc",
+                "tooltip": "Créer un arc"
+            },
+            "ja": {
+                "name": "円弧",
+                "tooltip": "円弧を作成"
+            }
+        }
+    },
+    "GEOM/STB_ARCHIMEDE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Archimede",
+                "tooltip": "Archimede operation"
+            },
+            "fr": {
+                "name": "Archimède",
+                "tooltip": "Opération archimède "
+            },
+            "ja": {
+                "name": "アルキメデスの螺旋",
+                "tooltip": "アルキメデス法で水位面を作成します。"
+            }
+        }
+    },
+    "GEOM/STB_BASIC_PROPS": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Basic Properties",
+                "tooltip": "Show basic properties of the shape"
+            },
+            "fr": {
+                "name": "Propriétés de base ",
+                "tooltip": "Montrer les propriétés de base de l'objet"
+            },
+            "ja": {
+                "name": "基本プロパティ",
+                "tooltip": "オブジェクトの基本プロパティを表示"
+            }
+        }
+    },
+    "GEOM/STB_BND_BOX": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Bounding Box",
+                "tooltip": "Compute bounding box of the shape"
+            },
+            "fr": {
+                "name": "Boîte englobante",
+                "tooltip": "Calculer la boîte englobante de l'objet"
+            },
+            "ja": {
+                "name": "境界ボックス",
+                "tooltip": "オブジェクトの境界ボックスを計算"
+            }
+        }
+    },
+    "GEOM/STB_BOX": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Box",
+                "tooltip": "Create a box"
+            },
+            "fr": {
+                "name": "Boîte",
+                "tooltip": "Créer une boîte"
+            },
+            "ja": {
+                "name": "ボックス",
+                "tooltip": "ボックスを作成"
+            }
+        }
+    },
+    "GEOM/STB_BRING_TO_FRONT": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Bring To Front",
+                "tooltip": "Bring To Front"
+            },
+            "fr": {
+                "name": "Afficher au premier plan",
+                "tooltip": "Afficher au premier plan"
+            },
+            "ja": {
+                "name": "手前に表示",
+                "tooltip": "手前に表示します。"
+            }
+        }
+    },
+    "GEOM/STB_CHAMFER": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Chamfer",
+                "tooltip": "Create a chamfer"
+            },
+            "fr": {
+                "name": "Chanfrein",
+                "tooltip": "Créer un chanfrein"
+            },
+            "ja": {
+                "name": "面取り",
+                "tooltip": "面取りを作成"
+            }
+        }
+    },
+    "GEOM/STB_CHANGE_ORIENTATION": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Change Orientation",
+                "tooltip": "Change orientation"
+            },
+            "fr": {
+                "name": "Changer l'orientation",
+                "tooltip": "Changer l'orientation"
+            },
+            "ja": {
+                "name": "向きの変更",
+                "tooltip": "向きを変更します。"
+            }
+        }
+    },
+    "GEOM/STB_CHECK": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Check Shape",
+                "tooltip": "Check shape validity"
+            },
+            "fr": {
+                "name": "Contrôler un objet",
+                "tooltip": "Contrôler une forme"
+            },
+            "ja": {
+                "name": "オブジェクトの確認",
+                "tooltip": "形状の妥当性を確認"
+            }
+        }
+    },
+    "GEOM/STB_CHECK_COMPOUND": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Check Compound of Blocks",
+                "tooltip": "Check compound of blocks"
+            },
+            "fr": {
+                "name": "Contrôler un assemblage de blocs",
+                "tooltip": "Contrôler un assemblage de blocs"
+            },
+            "ja": {
+                "name": "ブロックのアセンブリチェック",
+                "tooltip": "ブロックのアセンブリチェック"
+            }
+        }
+    },
+    "GEOM/STB_CHECK_FREE_BNDS": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Check Free Boundaries",
+                "tooltip": "Check free boundaries"
+            },
+            "fr": {
+                "name": "Contrôler les contours libres",
+                "tooltip": "Vérifier les contours libres"
+            },
+            "ja": {
+                "name": "自由境界の確認",
+                "tooltip": "自由境界をチェック"
+            }
+        }
+    },
+    "GEOM/STB_CHECK_FREE_FACES": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Check Free Faces",
+                "tooltip": "Check free faces"
+            },
+            "fr": {
+                "name": "Contrôler les faces libres",
+                "tooltip": "Contrôler les faces libres"
+            },
+            "ja": {
+                "name": "フリー面の確認",
+                "tooltip": "フリーフェースチェック"
+            }
+        }
+    },
+    "GEOM/STB_CHECK_GEOMETRY": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Check Geometry",
+                "tooltip": "Check Geometry"
+            },
+            "fr": {
+                "name": "Contrôler la géométrie",
+                "tooltip": "Contrôler la géométrie"
+            },
+            "ja": {
+                "name": "ジオメトリチェック",
+                "tooltip": "ジオメトリチェック"
+            }
+        }
+    },
+    "GEOM/STB_CHECK_SELF_INTERSECTIONS": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Detect Self-intersections",
+                "tooltip": "Detect Self-intersections"
+            },
+            "fr": {
+                "name": "Détections des auto-intersections",
+                "tooltip": "Détecte les auto-intersections"
+            },
+            "ja": {
+                "name": "自己交差の確認",
+                "tooltip": "自己交差の確認"
+            }
+        }
+    },
+    "GEOM/STB_CIRCLE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Circle",
+                "tooltip": "Create a circle"
+            },
+            "fr": {
+                "name": "Cercle",
+                "tooltip": "Créer un cercle"
+            },
+            "ja": {
+                "name": "円",
+                "tooltip": "円を作成"
+            }
+        }
+    },
+    "GEOM/STB_CLOSE_CONTOUR": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Close Contour",
+                "tooltip": "Perform close contour"
+            },
+            "fr": {
+                "name": "Fermer le contour",
+                "tooltip": "Fermer le contour"
+            },
+            "ja": {
+                "name": "輪郭を閉じる",
+                "tooltip": "スケッチを終了"
+            }
+        }
+    },
+    "GEOM/STB_CLS_BRING_TO_FRONT": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Clear Top Level State",
+                "tooltip": "Clear Top Level State"
+            },
+            "fr": {
+                "name": "Effacer les objets mis au premier plan",
+                "tooltip": "Effacer les objets mis au premier plan"
+            },
+            "ja": {
+                "name": "トップ レベルの状態をクリア",
+                "tooltip": "フォア グラウンドでオブジェクトを削除します。"
+            }
+        }
+    },
+    "GEOM/STB_COMMON": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Common",
+                "tooltip": "Common"
+            },
+            "fr": {
+                "name": "Intersection",
+                "tooltip": "Intersection"
+            },
+            "ja": {
+                "name": "共有領域",
+                "tooltip": "共有領域"
+            }
+        }
+    },
+    "GEOM/STB_COMPOUND": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Compound",
+                "tooltip": "Build a compound"
+            },
+            "fr": {
+                "name": "Assemblage",
+                "tooltip": "Construire un assemblage"
+            },
+            "ja": {
+                "name": "コンパウンド",
+                "tooltip": "アセンブリをビルド"
+            }
+        }
+    },
+    "GEOM/STB_COMPOUND_SEL_ONLY": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Compound",
+                "tooltip": "Select only a Compounds"
+            },
+            "fr": {
+                "name": "Assemblage",
+                "tooltip": "Ne choisir que des assemblages"
+            },
+            "ja": {
+                "name": "コンパウンド",
+                "tooltip": "アセンブリのみを選択"
+            }
+        }
+    },
+    "GEOM/STB_CONE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Cone",
+                "tooltip": "Create a cone"
+            },
+            "fr": {
+                "name": "Cône",
+                "tooltip": "Créer un cône"
+            },
+            "ja": {
+                "name": "円錐",
+                "tooltip": "円錐を作成"
+            }
+        }
+    },
+    "GEOM/STB_CURVE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Curve",
+                "tooltip": "Create a curve"
+            },
+            "fr": {
+                "name": "Courbe",
+                "tooltip": "Créer une courbe"
+            },
+            "ja": {
+                "name": "曲線",
+                "tooltip": "カーブを作成"
+            }
+        }
+    },
+    "GEOM/STB_CURVE_CREATOR": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "2D Polyline",
+                "tooltip": "Create 2D polyline"
+            },
+            "fr": {
+                "name": "Créateur de courbe",
+                "tooltip": "Créer une courbe"
+            },
+            "ja": {
+                "name": "カーブの作成",
+                "tooltip": "2Dポリラインの作成"
+            }
+        }
+    },
+    "GEOM/STB_CUT": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Cut",
+                "tooltip": "Cut"
+            },
+            "fr": {
+                "name": "Découpe",
+                "tooltip": "Découpe"
+            },
+            "ja": {
+                "name": "カット(&t)",
+                "tooltip": "Cut"
+            }
+        }
+    },
+    "GEOM/STB_CYLINDER": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Cylinder",
+                "tooltip": "Create a cylinder"
+            },
+            "fr": {
+                "name": "Cylindre",
+                "tooltip": "Créer un cylindre"
+            },
+            "ja": {
+                "name": "円筒",
+                "tooltip": "円柱を作成"
+            }
+        }
+    },
+    "GEOM/STB_DELETE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Delete",
+                "tooltip": "Delete object"
+            },
+            "fr": {
+                "name": "Supprimer",
+                "tooltip": "Supprimer un objet"
+            },
+            "ja": {
+                "name": "削除",
+                "tooltip": "オブジェクトを削除"
+            }
+        }
+    },
+    "GEOM/STB_DELETE_ANNOTATION": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Delete",
+                "tooltip": "Delete Annotation"
+            },
+            "fr": {
+                "name": "Supprimer",
+                "tooltip": "Supprimer l'annotation"
+            },
+            "ja": {
+                "name": "削除",
+                "tooltip": "注記の削除"
+            }
+        }
+    },
+    "GEOM/STB_DISK": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Disk",
+                "tooltip": "Create a disk"
+            },
+            "fr": {
+                "name": "Disque",
+                "tooltip": "Créer un disque"
+            },
+            "ja": {
+                "name": "円盤",
+                "tooltip": "円盤を作成"
+            }
+        }
+    },
+    "GEOM/STB_DISPLAY": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Show",
+                "tooltip": "Show object(s)"
+            },
+            "fr": {
+                "name": "Afficher",
+                "tooltip": "Afficher les objets"
+            },
+            "ja": {
+                "name": "表示",
+                "tooltip": "表示オブジェクト"
+            }
+        }
+    },
+    "GEOM/STB_DISPLAY_ALL": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Show All",
+                "tooltip": "Show all"
+            },
+            "fr": {
+                "name": "Afficher tout",
+                "tooltip": "Afficher tout"
+            },
+            "ja": {
+                "name": "全表示",
+                "tooltip": "すべてを表示"
+            }
+        }
+    },
+    "GEOM/STB_DISPLAY_ONLY": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Show Only",
+                "tooltip": "Show only"
+            },
+            "fr": {
+                "name": "Afficher uniquement",
+                "tooltip": "Afficher uniquement"
+            },
+            "ja": {
+                "name": "選択のみ表示",
+                "tooltip": "選択のみ表示"
+            }
+        }
+    },
+    "GEOM/STB_EDGE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Edge",
+                "tooltip": "Build an edge"
+            },
+            "fr": {
+                "name": "Arête",
+                "tooltip": "Créer une arête"
+            },
+            "ja": {
+                "name": "エッジ",
+                "tooltip": "エッジを作成"
+            }
+        }
+    },
+    "GEOM/STB_EDGE_SEL_ONLY": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Edge",
+                "tooltip": "Select only a Edges"
+            },
+            "fr": {
+                "name": "Arête",
+                "tooltip": "Ne choisir que des arêtes"
+            },
+            "ja": {
+                "name": "エッジ",
+                "tooltip": "エッジだけを選択"
+            }
+        }
+    },
+    "GEOM/STB_EDGE_WIDTH": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Edge Width",
+                "tooltip": "Edge Width"
+            },
+            "fr": {
+                "name": "Epaisseur d'arête",
+                "tooltip": "Epaisseur d'arête"
+            },
+            "ja": {
+                "name": "エッジの幅",
+                "tooltip": "エッジの幅"
+            }
+        }
+    },
+    "GEOM/STB_EDIT_ANNOTATION": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Edit",
+                "tooltip": "Edit Annotation"
+            },
+            "fr": {
+                "name": "Editer",
+                "tooltip": "Editer une annotation"
+            },
+            "ja": {
+                "name": "編集",
+                "tooltip": "注記の編集"
+            }
+        }
+    },
+    "GEOM/STB_ELLIPSE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Ellipse",
+                "tooltip": "Create an ellipse"
+            },
+            "fr": {
+                "name": "Ellipse",
+                "tooltip": "Créer un ellipse"
+            },
+            "ja": {
+                "name": "楕円",
+                "tooltip": "楕円を作成"
+            }
+        }
+    },
+    "GEOM/STB_ERASE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Hide",
+                "tooltip": "Hide object(s)"
+            },
+            "fr": {
+                "name": "Cacher",
+                "tooltip": "Cacher le(s) objet(s)"
+            },
+            "ja": {
+                "name": "非表示",
+                "tooltip": "オブジェクトを非表示"
+            }
+        }
+    },
+    "GEOM/STB_ERASE_ALL": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Hide All",
+                "tooltip": "Hide all"
+            },
+            "fr": {
+                "name": "Cacher tout",
+                "tooltip": "Cacher tout"
+            },
+            "ja": {
+                "name": "すべてを非表示",
+                "tooltip": "すべてを非表示"
+            }
+        }
+    },
+    "GEOM/STB_EXPLODE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Explode",
+                "tooltip": "Explode"
+            },
+            "fr": {
+                "name": "Eclater",
+                "tooltip": "Eclater"
+            },
+            "ja": {
+                "name": "展開",
+                "tooltip": "展開"
+            }
+        }
+    },
+    "GEOM/STB_EXPLODE_BLOCKS": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Explode on Blocks",
+                "tooltip": "Explode on Blocks"
+            },
+            "fr": {
+                "name": "Eclater en blocs",
+                "tooltip": "Eclater en blocs"
+            },
+            "ja": {
+                "name": "ブロックで展開",
+                "tooltip": "ブロックで展開"
+            }
+        }
+    },
+    "GEOM/STB_EXTENSION": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Extension",
+                "tooltip": "Extend Edge or Face"
+            },
+            "fr": {
+                "name": "Extension",
+                "tooltip": "Etend l'arête ou la face"
+            },
+            "ja": {
+                "name": "拡張",
+                "tooltip": "エッジまたは面の拡張"
+            }
+        }
+    },
+    "GEOM/STB_EXTRACTION": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Extract and Rebuild",
+                "tooltip": "Extract and Rebuild"
+            },
+            "fr": {
+                "name": "Extrait et reconstruit",
+                "tooltip": "Extrait et reconstruit"
+            },
+            "ja": {
+                "name": "抽出と再構築",
+                "tooltip": "抽出と再構築"
+            }
+        }
+    },
+    "GEOM/STB_EXTRUDED_BOSS": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Extruded boss",
+                "tooltip": "Extruded boss"
+            },
+            "fr": {
+                "name": "Bossage extrudé",
+                "tooltip": "Bossage extrudé"
+            },
+            "ja": {
+                "name": "押出し",
+                "tooltip": "押出し"
+            }
+        }
+    },
+    "GEOM/STB_EXTRUDED_CUT": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Extruded cut",
+                "tooltip": "Extruded cut"
+            },
+            "fr": {
+                "name": "Enlèvement de matière extrudé",
+                "tooltip": "Enlèvement de matière extrudé"
+            },
+            "ja": {
+                "name": "押出しカット",
+                "tooltip": "押出成形材料の除去"
+            }
+        }
+    },
+    "GEOM/STB_EXTRUSION": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Extrusion",
+                "tooltip": "Create an extrusion"
+            },
+            "fr": {
+                "name": "Extrusion",
+                "tooltip": "Créer une extrusion"
+            },
+            "ja": {
+                "name": "押出",
+                "tooltip": "押し出しを作成"
+            }
+        }
+    },
+    "GEOM/STB_FACE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Face",
+                "tooltip": "Build a face"
+            },
+            "fr": {
+                "name": "Face",
+                "tooltip": "Construire une face"
+            },
+            "ja": {
+                "name": "面",
+                "tooltip": "フェースを作成"
+            }
+        }
+    },
+    "GEOM/STB_FACE_SEL_ONLY": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Face",
+                "tooltip": "Select only a Faces"
+            },
+            "fr": {
+                "name": "Face",
+                "tooltip": "Ne choisir que des faces"
+            },
+            "ja": {
+                "name": "面",
+                "tooltip": "フェースだけを選択"
+            }
+        }
+    },
+    "GEOM/STB_FAST_CHECK_INTERSECTIONS": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Fast intersection",
+                "tooltip": "Fast intersection"
+            },
+            "fr": {
+                "name": "Intersection rapide",
+                "tooltip": "Intersection rapide"
+            },
+            "ja": {
+                "name": "クイック交点",
+                "tooltip": "クイック交点"
+            }
+        }
+    },
+    "GEOM/STB_FEATURE_DETECTION": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Shape recognition",
+                "tooltip": "Shape recognition"
+            },
+            "fr": {
+                "name": "Reconnaissance de formes",
+                "tooltip": "Reconnaissance de formes"
+            },
+            "ja": {
+                "name": "形状認識",
+                "tooltip": "パターン認識"
+            }
+        }
+    },
+    "GEOM/STB_FIELD_CREATE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Create Field",
+                "tooltip": "Create a Field"
+            },
+            "fr": {
+                "name": "Créer un champ",
+                "tooltip": "Créer un champ"
+            },
+            "ja": {
+                "name": "フィールドの作成",
+                "tooltip": "フィールドを作成します。"
+            }
+        }
+    },
+    "GEOM/STB_FIELD_EDIT": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Edit Field",
+                "tooltip": "Edit a Field"
+            },
+            "fr": {
+                "name": "Editer un champ",
+                "tooltip": "Editer un champ"
+            },
+            "ja": {
+                "name": "フィールドの編集",
+                "tooltip": "フィールドを編集します。"
+            }
+        }
+    },
+    "GEOM/STB_FILLET": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Fillet 3D",
+                "tooltip": "Create 3D fillet"
+            },
+            "fr": {
+                "name": "Congé 3D",
+                "tooltip": "Créer un congé 3D"
+            },
+            "ja": {
+                "name": "3Dフィレット",
+                "tooltip": "3Dフィレットを作成"
+            }
+        }
+    },
+    "GEOM/STB_FILLET_1D": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Fillet 1D",
+                "tooltip": "Create 1D fillet"
+            },
+            "fr": {
+                "name": "Congé 1D",
+                "tooltip": "Créer un congé 1D"
+            },
+            "ja": {
+                "name": "1D フィレット",
+                "tooltip": "1Dフィレットを作成"
+            }
+        }
+    },
+    "GEOM/STB_FILLET_2D": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Fillet 2D",
+                "tooltip": "Create 2D fillet"
+            },
+            "fr": {
+                "name": "Congé 2D",
+                "tooltip": "Créer un congé 2D"
+            },
+            "ja": {
+                "name": "2D フィレット",
+                "tooltip": "2Dフィレットを作成"
+            }
+        }
+    },
+    "GEOM/STB_FILLING": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Filling",
+                "tooltip": "Create a filling"
+            },
+            "fr": {
+                "name": "Nappe",
+                "tooltip": "Créer une nappe"
+            },
+            "ja": {
+                "name": "埋込み",
+                "tooltip": "埋込みを作成"
+            }
+        }
+    },
+    "GEOM/STB_FUSE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Fuse",
+                "tooltip": "Fuse"
+            },
+            "fr": {
+                "name": "Union",
+                "tooltip": "Union"
+            },
+            "ja": {
+                "name": "結合",
+                "tooltip": "結合"
+            }
+        }
+    },
+    "GEOM/STB_FUSE_EDGES": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Fuse Collinear Edges within a Wire",
+                "tooltip": "Fuse collinear edges within a wire"
+            },
+            "fr": {
+                "name": "Fusionner les arêtes collinéaires au sein d'un contour",
+                "tooltip": "Fusionner les arêtes collinéaires au sein d'un contour"
+            },
+            "ja": {
+                "name": "アウトライン内で共線性のエッジをマージします。",
+                "tooltip": "アウトライン内で共線性のエッジをマージします。"
+            }
+        }
+    },
+    "GEOM/STB_GET_NON_BLOCKS": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Get Non Blocks",
+                "tooltip": "Get non blocks"
+            },
+            "fr": {
+                "name": "Récupérer les solides non blocs",
+                "tooltip": "Récupérer les solides non-blocs"
+            },
+            "ja": {
+                "name": "固体非ブロックを取得します。",
+                "tooltip": "純色のブロックを取得します。"
+            }
+        }
+    },
+    "GEOM/STB_GET_SHAPES_ON_SHAPE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Get Shapes on Shape",
+                "tooltip": "Get shapes on shape"
+            },
+            "fr": {
+                "name": "Trouver les éléments d'un objet",
+                "tooltip": "Trouve les éléments d'un objet"
+            },
+            "ja": {
+                "name": "オブジェクトの要素を見つける",
+                "tooltip": "オブジェクトの要素を見つける"
+            }
+        }
+    },
+    "GEOM/STB_GET_SHARED_SHAPES": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Get Shared Shapes",
+                "tooltip": "Get shared shapes"
+            },
+            "fr": {
+                "name": "Trouver les éléments partagés",
+                "tooltip": "Trouve les éléments partagés"
+            },
+            "ja": {
+                "name": "共有アイテムを取得",
+                "tooltip": "共有アイテムを取得"
+            }
+        }
+    },
+    "GEOM/STB_GLUE_EDGES": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Glue Edges",
+                "tooltip": "Perform glue edges"
+            },
+            "fr": {
+                "name": "Recoller les arêtes",
+                "tooltip": "Recoller les arêtes"
+            },
+            "ja": {
+                "name": "エッジの固着",
+                "tooltip": "エッジ固着"
+            }
+        }
+    },
+    "GEOM/STB_GLUE_FACES": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Glue Faces",
+                "tooltip": "Perform glue faces"
+            },
+            "fr": {
+                "name": "Recoller les faces",
+                "tooltip": "Recoller les faces"
+            },
+            "ja": {
+                "name": "面の固着",
+                "tooltip": "フェース固着"
+            }
+        }
+    },
+    "GEOM/STB_GROUP_CREATE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Create Group",
+                "tooltip": "Create a group"
+            },
+            "fr": {
+                "name": "Créer un groupe",
+                "tooltip": "Créer un groupe"
+            },
+            "ja": {
+                "name": "グループを作成",
+                "tooltip": "グループを作成"
+            }
+        }
+    },
+    "GEOM/STB_GROUP_CUT": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Cut Groups",
+                "tooltip": "Cut Groups"
+            },
+            "fr": {
+                "name": "Découpe de groupes",
+                "tooltip": "Découpe de groupes"
+            },
+            "ja": {
+                "name": "グループのカット",
+                "tooltip": "切断グループ"
+            }
+        }
+    },
+    "GEOM/STB_GROUP_EDIT": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Edit Group",
+                "tooltip": "Edit a group"
+            },
+            "fr": {
+                "name": "Editer",
+                "tooltip": "Editer un groupe"
+            },
+            "ja": {
+                "name": "グループの編集",
+                "tooltip": "グループを編集"
+            }
+        }
+    },
+    "GEOM/STB_GROUP_INTERSECT": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Intersect Groups",
+                "tooltip": "Intersect Groups"
+            },
+            "fr": {
+                "name": "Intersection de groupes",
+                "tooltip": "Intersection de groupes"
+            },
+            "ja": {
+                "name": "グループの交差",
+                "tooltip": "グループの共有領域"
+            }
+        }
+    },
+    "GEOM/STB_GROUP_UNION": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Union Groups",
+                "tooltip": "Union Groups"
+            },
+            "fr": {
+                "name": "Union de groupes",
+                "tooltip": "Union de groupes"
+            },
+            "ja": {
+                "name": "グループの結合",
+                "tooltip": "グループの連合"
+            }
+        }
+    },
+    "GEOM/STB_HEX_SOLID": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Hexahedral Solid",
+                "tooltip": "Hexahedral Solid"
+            },
+            "fr": {
+                "name": "Solide hexaédrique",
+                "tooltip": "Solide hexaédrique"
+            },
+            "ja": {
+                "name": "六面体ソリッド",
+                "tooltip": "Hexahedral_Solid"
+            }
+        }
+    },
+    "GEOM/STB_INERTIA": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Inertia",
+                "tooltip": "Compute moments of intertia of the shape"
+            },
+            "fr": {
+                "name": "Inertie",
+                "tooltip": "Calculer les moments d'inertie de l'objet"
+            },
+            "ja": {
+                "name": "慣性",
+                "tooltip": "オブジェクトの慣性モーメントを計算します。"
+            }
+        }
+    },
+    "GEOM/STB_INSPECT_OBJECT": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Inspect Object",
+                "tooltip": "Inspect Object"
+            },
+            "fr": {
+                "name": "Inspecter un objet",
+                "tooltip": "Inspecter un objet"
+            },
+            "ja": {
+                "name": "オブジェクトの点検",
+                "tooltip": "オブジェクトの点検"
+            }
+        }
+    },
+    "GEOM/STB_ISOLINE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Isoline",
+                "tooltip": "Create U- or V-Isoline"
+            },
+            "fr": {
+                "name": "Isoligne",
+                "tooltip": "Créer une U ou V isoligne"
+            },
+            "ja": {
+                "name": "等高線",
+                "tooltip": "UまたはV方向等高線の作成"
+            }
+        }
+    },
+    "GEOM/STB_ISOS_WIDTH": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Isos Width",
+                "tooltip": "Isos Width"
+            },
+            "fr": {
+                "name": "Epaisseur des isos",
+                "tooltip": "Epaisseur des isos"
+            },
+            "ja": {
+                "name": "Iso イメージの幅",
+                "tooltip": "Iso イメージの幅"
+            }
+        }
+    },
+    "GEOM/STB_LIMIT_TOLERANCE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Limit tolerance",
+                "tooltip": "Limit tolerance"
+            },
+            "fr": {
+                "name": "Tolérance limite",
+                "tooltip": "Tolérance limite"
+            },
+            "ja": {
+                "name": "許容範囲",
+                "tooltip": "許容範囲"
+            }
+        }
+    },
+    "GEOM/STB_LINE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Line",
+                "tooltip": "Create a line"
+            },
+            "fr": {
+                "name": "Ligne",
+                "tooltip": "Créer une ligne"
+            },
+            "ja": {
+                "name": "線",
+                "tooltip": "ラインを作成"
+            }
+        }
+    },
+    "GEOM/STB_LOCAL_CS": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Local Coordinate System",
+                "tooltip": "Create a local coordinate system"
+            },
+            "fr": {
+                "name": "Système de coordonnées local ",
+                "tooltip": "Créer un système local de coordonnées"
+            },
+            "ja": {
+                "name": "ローカル座標系",
+                "tooltip": "ローカル座標系を作成"
+            }
+        }
+    },
+    "GEOM/STB_MANAGE_DIMENSIONS": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Manage dimensions",
+                "tooltip": "Manage measurement dimensions of an object"
+            },
+            "fr": {
+                "name": "Gérer les cotations",
+                "tooltip": "Gérer la cotation d'un objet"
+            },
+            "ja": {
+                "name": "ディメンジョンの管理",
+                "tooltip": "オブジェクトの基準寸法を管理"
+            }
+        }
+    },
+    "GEOM/STB_MASS_CENTER": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Center of Mass",
+                "tooltip": "Compute center of mass of the shape"
+            },
+            "fr": {
+                "name": "Centre de gravité",
+                "tooltip": "Calculer le centre de gravité de l'objet"
+            },
+            "ja": {
+                "name": "重心",
+                "tooltip": "オブジェクトの重心を計算"
+            }
+        }
+    },
+    "GEOM/STB_MATERIALS_LIBRARY": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Materials library",
+                "tooltip": "Displays content of Materials library"
+            },
+            "fr": {
+                "name": "Librairie de materiaux",
+                "tooltip": "Affichier le contenu de la librarie des matériaux"
+            },
+            "ja": {
+                "name": "材料ライブラリ",
+                "tooltip": "材料のライブラリの内容を表示します。"
+            }
+        }
+    },
+    "GEOM/STB_MEASURE_ANGLE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Angle",
+                "tooltip": "Compute angle between two lines or linear edges"
+            },
+            "fr": {
+                "name": "Angle",
+                "tooltip": "Calculer l'angle entre deux lignes ou arêtes linéaires"
+            },
+            "ja": {
+                "name": "角度",
+                "tooltip": "2つのラインまたはエッジ間の角度を計算"
+            }
+        }
+    },
+    "GEOM/STB_MIN_DIST": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Min Distance",
+                "tooltip": "Compute minimum distance between two objects"
+            },
+            "fr": {
+                "name": "Distance minimale ",
+                "tooltip": "Calculer la distance minimale entre deux objets"
+            },
+            "ja": {
+                "name": "最短距離",
+                "tooltip": "2つのオブジェクト間の最小距離を計算"
+            }
+        }
+    },
+    "GEOM/STB_MIRROR": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Mirror Image",
+                "tooltip": "Mirror a shape"
+            },
+            "fr": {
+                "name": "Symétrie",
+                "tooltip": "Refléter un objet"
+            },
+            "ja": {
+                "name": "ミラー",
+                "tooltip": "オブジェクトを反転"
+            }
+        }
+    },
+    "GEOM/STB_MODIFY_LOCATION": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Modify Location",
+                "tooltip": "Modify shape's location"
+            },
+            "fr": {
+                "name": "Modifier la position",
+                "tooltip": "Modifier la position d'un objet"
+            },
+            "ja": {
+                "name": "位置変更",
+                "tooltip": "オブジェクトの位置を変更"
+            }
+        }
+    },
+    "GEOM/STB_MUL_ROTATION": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Multi-Rotation",
+                "tooltip": "Perform multi-rotation"
+            },
+            "fr": {
+                "name": "Multi-rotation",
+                "tooltip": "Effectuer une multi-rotation"
+            },
+            "ja": {
+                "name": "複数回回転",
+                "tooltip": "複数回回転を実行します。"
+            }
+        }
+    },
+    "GEOM/STB_MUL_TRANSFORM": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Multi-Transformation",
+                "tooltip": "Perform multi-transformation"
+            },
+            "fr": {
+                "name": "Multi-transformation",
+                "tooltip": "Effectuer une multi-transformation"
+            },
+            "ja": {
+                "name": "複数回移動",
+                "tooltip": "複数回移動を実行します。"
+            }
+        }
+    },
+    "GEOM/STB_MUL_TRANSLATION": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Multi-Translation",
+                "tooltip": "Perform multi-translation"
+            },
+            "fr": {
+                "name": "Multi-translation",
+                "tooltip": "Effectuer une multi-translation"
+            },
+            "ja": {
+                "name": "複数オブジェクトの移動",
+                "tooltip": "複数オブジェクトの移動を実行"
+            }
+        }
+    },
+    "GEOM/STB_NAME_MODE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Show/Hide names of visible shapes",
+                "tooltip": "Show/Hide names of visible shapes"
+            },
+            "fr": {
+                "name": "Montrer/cacher le nom des objets visibles",
+                "tooltip": "Montrer/cacher le nom des objets visibles"
+            },
+            "ja": {
+                "name": "表示中の形状の名前を表示/非表示",
+                "tooltip": "表示中の形状の名前を表示/非表示"
+            }
+        }
+    },
+    "GEOM/STB_NORMALE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Normal to a Face",
+                "tooltip": "Compute normal to the face"
+            },
+            "fr": {
+                "name": "Vecteur normal à une face",
+                "tooltip": "Vecteur normal à une face"
+            },
+            "ja": {
+                "name": "フェースに垂直",
+                "tooltip": "フェースに垂直"
+            }
+        }
+    },
+    "GEOM/STB_OFFSET": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Offset Surface",
+                "tooltip": "Offset surface"
+            },
+            "fr": {
+                "name": "Décaler une surface",
+                "tooltip": "Décaler une surface "
+            },
+            "ja": {
+                "name": "サーフェスをオフセット",
+                "tooltip": "サーフェスをオフセット"
+            }
+        }
+    },
+    "GEOM/STB_ORIGIN_AND_VECTORS": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Origin and Base Vectors",
+                "tooltip": "Create an origin and base Vectors"
+            },
+            "fr": {
+                "name": "Vecteurs de base et origine",
+                "tooltip": "Créer les vecteurs de base et l'origine"
+            },
+            "ja": {
+                "name": "起源と基本ベクトル",
+                "tooltip": "起源と基底ベクトルを作成します。"
+            }
+        }
+    },
+    "GEOM/STB_PARTITION": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Partition",
+                "tooltip": "Make a partition"
+            },
+            "fr": {
+                "name": "Partition",
+                "tooltip": "Effectuer une partition"
+            },
+            "ja": {
+                "name": "パーティション",
+                "tooltip": "パーティションを作成"
+            }
+        }
+    },
+    "GEOM/STB_PICTURE_IMPORT": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Import picture in viewer",
+                "tooltip": "Import picture in viewer"
+            },
+            "fr": {
+                "name": "Importer une image dans la vue",
+                "tooltip": "Importer une image dans la vue"
+            },
+            "ja": {
+                "name": "ビューアーにイメージをインポート",
+                "tooltip": "ビューアーにイメージをインポートします。"
+            }
+        }
+    },
+    "GEOM/STB_PIPE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Extrusion Along Path",
+                "tooltip": "Create a shape by extrusion along a path"
+            },
+            "fr": {
+                "name": "Extrusion suivant un chemin",
+                "tooltip": "Créer un objet par extrusion suivant un chemin"
+            },
+            "ja": {
+                "name": "経路に沿って押し出し",
+                "tooltip": "経路に沿って押し出し"
+            }
+        }
+    },
+    "GEOM/STB_PIPE_PATH": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Restore Path",
+                "tooltip": "Restore path from a pipe-like shape"
+            },
+            "fr": {
+                "name": "Retrouver le chemin",
+                "tooltip": "Retrouver le chemin à partir d'un objet de type tuyau"
+            },
+            "ja": {
+                "name": "経路の復元",
+                "tooltip": "経路の復元"
+            }
+        }
+    },
+    "GEOM/STB_PLANE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Plane",
+                "tooltip": "Create a plane"
+            },
+            "fr": {
+                "name": "Plan",
+                "tooltip": "Créer un plan"
+            },
+            "ja": {
+                "name": "平面",
+                "tooltip": "平面を作成"
+            }
+        }
+    },
+    "GEOM/STB_POINT": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Point",
+                "tooltip": "Create a point"
+            },
+            "fr": {
+                "name": "Point",
+                "tooltip": "Créer un point"
+            },
+            "ja": {
+                "name": "点",
+                "tooltip": "ポイントを作成"
+            }
+        }
+    },
+    "GEOM/STB_POINT_COORDS": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Point Coordinates",
+                "tooltip": "Display point coordinates"
+            },
+            "fr": {
+                "name": "Coordonnées d'un point ",
+                "tooltip": "Montrer les coordonnées du point"
+            },
+            "ja": {
+                "name": "点の座標",
+                "tooltip": "ポイントの座標を表示"
+            }
+        }
+    },
+    "GEOM/STB_POINT_ON_EDGE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Add Point on Edge",
+                "tooltip": "Add point on edge"
+            },
+            "fr": {
+                "name": "Ajouter un point sur l'arête",
+                "tooltip": "Ajouter un point sur l'arête"
+            },
+            "ja": {
+                "name": "エッジに点を追加",
+                "tooltip": "端にポイントを追加"
+            }
+        }
+    },
+    "GEOM/STB_POP_AUTO_COLOR": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Auto Color",
+                "tooltip": "Auto color"
+            },
+            "fr": {
+                "name": "Couleur automatique",
+                "tooltip": "Couleur automatique"
+            },
+            "ja": {
+                "name": "自動色",
+                "tooltip": "自動色"
+            }
+        }
+    },
+    "GEOM/STB_POP_COLOR": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Color",
+                "tooltip": "Color"
+            },
+            "fr": {
+                "name": "Couleur",
+                "tooltip": "Couleur"
+            },
+            "ja": {
+                "name": "色",
+                "tooltip": "色"
+            }
+        }
+    },
+    "GEOM/STB_POP_CONCEAL_CHILDREN": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Conceal child items",
+                "tooltip": "Conceal child items"
+            },
+            "fr": {
+                "name": "Retirer les sous-éléments",
+                "tooltip": "Cacher les objets fils"
+            },
+            "ja": {
+                "name": "子項目を隠す",
+                "tooltip": "子供オブジェクトを隠す"
+            }
+        }
+    },
+    "GEOM/STB_POP_CREATE_FOLDER": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Create folder",
+                "tooltip": "Create a new folder"
+            },
+            "fr": {
+                "name": "Créer dossier",
+                "tooltip": "Créer un nouveau dossier"
+            },
+            "ja": {
+                "name": "フォルダ作成",
+                "tooltip": "新しいフォルダーを作成します。"
+            }
+        }
+    },
+    "GEOM/STB_POP_CREATE_GROUP": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Create Group",
+                "tooltip": "Create Group"
+            },
+            "fr": {
+                "name": "Créer un groupe",
+                "tooltip": "Créer un groupe"
+            },
+            "ja": {
+                "name": "グループを作成",
+                "tooltip": "グループを作成"
+            }
+        }
+    },
+    "GEOM/STB_POP_DEFLECTION": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Deflection Coefficient",
+                "tooltip": "Deflection Coefficient"
+            },
+            "fr": {
+                "name": "Coefficient de déformation",
+                "tooltip": "Coefficient de déformation"
+            },
+            "ja": {
+                "name": "変形倍率",
+                "tooltip": "変形倍率"
+            }
+        }
+    },
+    "GEOM/STB_POP_DISABLE_AUTO_COLOR": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Disable Auto Color",
+                "tooltip": "Disable auto color"
+            },
+            "fr": {
+                "name": "Désactiver la couleur automatique",
+                "tooltip": "Désactiver la couleur automatique"
+            },
+            "ja": {
+                "name": "自動色無効",
+                "tooltip": "自動カラー補正を無効にします。"
+            }
+        }
+    },
+    "GEOM/STB_POP_DISCLOSE_CHILDREN": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Disclose child items",
+                "tooltip": "Disclose child items"
+            },
+            "fr": {
+                "name": "Publier les sous-éléments",
+                "tooltip": "Afficher les objets fils"
+            },
+            "ja": {
+                "name": "子項目を開示",
+                "tooltip": "子供を表示します。"
+            }
+        }
+    },
+    "GEOM/STB_POP_EDIT_FIELD": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Edit Field",
+                "tooltip": "Edit Field"
+            },
+            "fr": {
+                "name": "Editer champ",
+                "tooltip": "Editer un champ"
+            },
+            "ja": {
+                "name": "フィールドの編集",
+                "tooltip": "フィールドを編集します。"
+            }
+        }
+    },
+    "GEOM/STB_POP_HIDE_ALL_ANNOTATIONS": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Hide all annotations",
+                "tooltip": "Hide all shape annotations for the object"
+            },
+            "fr": {
+                "name": "Cacher toutes les annotations",
+                "tooltip": "Cacher toutes les annotations pour l'objet"
+            },
+            "ja": {
+                "name": "全ての注釈を非表示",
+                "tooltip": "対象オブジェクトにある全ての形状注釈の非表示"
+            }
+        }
+    },
+    "GEOM/STB_POP_HIDE_ALL_DIMENSIONS": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Hide all dimensions",
+                "tooltip": "Show all visible measures (dimension) created for the object"
+            },
+            "fr": {
+                "name": "Cacher toutes les cotations",
+                "tooltip": "Afficher toutes les cotations visibles créées sur l'objet"
+            },
+            "ja": {
+                "name": "すべての寸法を非表示",
+                "tooltip": "オブジェクトのために作成されたすべての見える基準寸法を表示"
+            }
+        }
+    },
+    "GEOM/STB_POP_ISOS": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Isos",
+                "tooltip": "Isolines"
+            },
+            "fr": {
+                "name": "Isos",
+                "tooltip": "Isolignes"
+            },
+            "ja": {
+                "name": "Isos",
+                "tooltip": "輪郭"
+            }
+        }
+    },
+    "GEOM/STB_POP_MATERIAL_PROPERTIES": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Material Properties",
+                "tooltip": "Set Material Properties"
+            },
+            "fr": {
+                "name": "Propriétés des matériaux",
+                "tooltip": "Définir les propriétés du matériau"
+            },
+            "ja": {
+                "name": "材料特性",
+                "tooltip": "マテリアルのプロパティを設定します。"
+            }
+        }
+    },
+    "GEOM/STB_POP_POINT_MARKER": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Point Marker",
+                "tooltip": "Set Point Marker"
+            },
+            "fr": {
+                "name": "Marqueur de point",
+                "tooltip": "Définir un marqueur de point"
+            },
+            "ja": {
+                "name": "ポイント マーカ",
+                "tooltip": "ポイントマーカーを設定"
+            }
+        }
+    },
+    "GEOM/STB_POP_PREDEF_MATER_CUSTOM": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Custom...",
+                "tooltip": "Custom..."
+            },
+            "fr": {
+                "name": "Personnalisé...",
+                "tooltip": "Personnalisé..."
+            },
+            "ja": {
+                "name": "カスタム...",
+                "tooltip": "カスタム."
+            }
+        }
+    },
+    "GEOM/STB_POP_PUBLISH_OBJ": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Publish...",
+                "tooltip": "Publish object"
+            },
+            "fr": {
+                "name": "Publier...",
+                "tooltip": "Publier l'objet"
+            },
+            "ja": {
+                "name": "発行...",
+                "tooltip": "オブジェクトを発行"
+            }
+        }
+    },
+    "GEOM/STB_POP_REDUCE_STUDY": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Reduce study",
+                "tooltip": "Reduce study"
+            },
+            "fr": {
+                "name": "Etude réduite",
+                "tooltip": "Etude réduite"
+            },
+            "ja": {
+                "name": "スタディの削減",
+                "tooltip": "スタディの縮小"
+            }
+        }
+    },
+    "GEOM/STB_POP_SETTEXTURE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Texture",
+                "tooltip": "Add a texture"
+            },
+            "fr": {
+                "name": "Texture",
+                "tooltip": "Ajoute une texture"
+            },
+            "ja": {
+                "name": "テクスチャ",
+                "tooltip": "テクスチャを追加します。"
+            }
+        }
+    },
+    "GEOM/STB_POP_SHADING": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Shading",
+                "tooltip": "Shading"
+            },
+            "fr": {
+                "name": "Ombrage",
+                "tooltip": "Ombrage"
+            },
+            "ja": {
+                "name": "シェーディング",
+                "tooltip": "網かけ"
+            }
+        }
+    },
+    "GEOM/STB_POP_SHADING_WITH_EDGES": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Shading With Edges",
+                "tooltip": "Shading With Edges"
+            },
+            "fr": {
+                "name": "Ombrage avec arêtes",
+                "tooltip": "Ombrage avec arêtes"
+            },
+            "ja": {
+                "name": "エッジ＋シェーディング",
+                "tooltip": "陰影とエッジ"
+            }
+        }
+    },
+    "GEOM/STB_POP_SHOW_ALL_ANNOTATIONS": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Show all annotations",
+                "tooltip": "Show all shape annotations for the object"
+            },
+            "fr": {
+                "name": "Montrer toutes les annotations",
+                "tooltip": "Montrer toutes les annotations pour l'objet"
+            },
+            "ja": {
+                "name": "全ての注釈を表示",
+                "tooltip": "対象オブジェクトにある全ての形状注釈を表示"
+            }
+        }
+    },
+    "GEOM/STB_POP_SHOW_ALL_DIMENSIONS": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Show all dimensions",
+                "tooltip": "Show all hidden measures (dimension) created for the object"
+            },
+            "fr": {
+                "name": "Afficher les cotations ",
+                "tooltip": "Afficher toutes les cotations cachées pour un objet"
+            },
+            "ja": {
+                "name": "すべての寸法を表示",
+                "tooltip": "オブジェクトに作成されたすべての非表示の基準寸法を表示"
+            }
+        }
+    },
+    "GEOM/STB_POP_SHOW_DEPENDENCY_TREE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Show dependency tree",
+                "tooltip": "Show dependency tree"
+            },
+            "fr": {
+                "name": "Montrer l'arbre des dépendances",
+                "tooltip": "Montrer l'arbre des dépendances"
+            },
+            "ja": {
+                "name": "依存ツリーの表示",
+                "tooltip": "依存ツリーの表示"
+            }
+        }
+    },
+    "GEOM/STB_POP_SHOW_NAME": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Show Name",
+                "tooltip": "Show Name"
+            },
+            "fr": {
+                "name": "Montrer le nom",
+                "tooltip": "Montrer le nom"
+            },
+            "ja": {
+                "name": "名前の表示",
+                "tooltip": "名前の表示"
+            }
+        }
+    },
+    "GEOM/STB_POP_SORT_CHILD_ITEMS": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Sort children",
+                "tooltip": "Sort child items"
+            },
+            "fr": {
+                "name": "Trier les descendants",
+                "tooltip": "Trier les descendants"
+            },
+            "ja": {
+                "name": "子供の並べ替え",
+                "tooltip": "子アイテムを並べ替える"
+            }
+        }
+    },
+    "GEOM/STB_POP_TEXTURE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Texture",
+                "tooltip": "Texture"
+            },
+            "fr": {
+                "name": "Texture",
+                "tooltip": "Texture"
+            },
+            "ja": {
+                "name": "テクスチャ",
+                "tooltip": "テクスチャ"
+            }
+        }
+    },
+    "GEOM/STB_POP_TRANSPARENCY": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Transparency",
+                "tooltip": "Transparency"
+            },
+            "fr": {
+                "name": "Transparence",
+                "tooltip": "Transparence"
+            },
+            "ja": {
+                "name": "透明度",
+                "tooltip": "透明度"
+            }
+        }
+    },
+    "GEOM/STB_POP_UNPUBLISH_OBJ": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Unpublish",
+                "tooltip": "Unpublish object"
+            },
+            "fr": {
+                "name": "Dépublier",
+                "tooltip": "Dépublier l'objet"
+            },
+            "ja": {
+                "name": "発行停止",
+                "tooltip": "オブジェクトの発行停止"
+            }
+        }
+    },
+    "GEOM/STB_POP_VECTORS": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Show Edge Direction",
+                "tooltip": "Show Edge Direction"
+            },
+            "fr": {
+                "name": "Afficher l'orientation des arêtes",
+                "tooltip": "Afficher l'orientation des arêtes"
+            },
+            "ja": {
+                "name": "ベクトル方向表示",
+                "tooltip": "エッジの方向を表示します。"
+            }
+        }
+    },
+    "GEOM/STB_POP_VERTICES": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Show Vertices",
+                "tooltip": "Show Vertices"
+            },
+            "fr": {
+                "name": "Montrer les sommets",
+                "tooltip": "Montrer les sommets"
+            },
+            "ja": {
+                "name": "頂点の表示",
+                "tooltip": "頂点の表示"
+            }
+        }
+    },
+    "GEOM/STB_POP_WIREFRAME": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Wireframe",
+                "tooltip": "Wireframe"
+            },
+            "fr": {
+                "name": "Filaire",
+                "tooltip": "Contours"
+            },
+            "ja": {
+                "name": "ワイヤ フレーム",
+                "tooltip": "Wires"
+            }
+        }
+    },
+    "GEOM/STB_PROJECTION": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Projection",
+                "tooltip": "Project a point, an edge or a wire on a face"
+            },
+            "fr": {
+                "name": "Projection",
+                "tooltip": "Projeter un point, une arête ou un contour sur une face"
+            },
+            "ja": {
+                "name": "投影",
+                "tooltip": "ポイント、エッジ、または輪郭上の 1 つの側面を投影"
+            }
+        }
+    },
+    "GEOM/STB_PROJ_ON_CYL": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Projection on Cylinder",
+                "tooltip": "Project a wire or a face on a cylinder"
+            },
+            "fr": {
+                "name": "Projection sur un cylindre",
+                "tooltip": "Projète un contour ou une face sur un cylindre"
+            },
+            "ja": {
+                "name": "円筒の投影",
+                "tooltip": "円筒上のワイヤまたは面を投影"
+            }
+        }
+    },
+    "GEOM/STB_PROPAGATE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Propagate",
+                "tooltip": "Propagate"
+            },
+            "fr": {
+                "name": "Propager",
+                "tooltip": "Propager"
+            },
+            "ja": {
+                "name": "スプレッド",
+                "tooltip": "スプレッド"
+            }
+        }
+    },
+    "GEOM/STB_Q_FACE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Quadrangle Face",
+                "tooltip": "Quadrangle Face"
+            },
+            "fr": {
+                "name": "Face quadrangulaire ",
+                "tooltip": "Face quadrangulaire "
+            },
+            "ja": {
+                "name": "四角形フェース",
+                "tooltip": "四角形フェース"
+            }
+        }
+    },
+    "GEOM/STB_RECTANGLE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Rectangle",
+                "tooltip": "Create rectangular face"
+            },
+            "fr": {
+                "name": "Rectangle",
+                "tooltip": "Créer une face rectangulaire "
+            },
+            "ja": {
+                "name": "四角形",
+                "tooltip": "長方形の面を作成"
+            }
+        }
+    },
+    "GEOM/STB_RELOAD_IMPORTED": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Reload From Disk",
+                "tooltip": "Reload imported shape from its original place on disk"
+            },
+            "fr": {
+                "name": "Recharger à partir du disque",
+                "tooltip": "Recharger l'objet importé depuis le disque"
+            },
+            "ja": {
+                "name": "ディスクから再読み込み",
+                "tooltip": "ディスク上の元の場所からインポートした形状をリロード"
+            }
+        }
+    },
+    "GEOM/STB_REMOVE_EXTRA_EDGES": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Remove Extra Edges",
+                "tooltip": "Remove extra edges"
+            },
+            "fr": {
+                "name": "Supprimer les arêtes inutiles",
+                "tooltip": "Supprimer les arêtes inutiles"
+            },
+            "ja": {
+                "name": "不要なエッジを削除",
+                "tooltip": "不要なエッジを削除"
+            }
+        }
+    },
+    "GEOM/STB_REMOVE_WEBS": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Remove Internal Faces",
+                "tooltip": "Remove internal faces"
+            },
+            "fr": {
+                "name": "Supprimer les faces internes",
+                "tooltip": "Supprimer les faces internes"
+            },
+            "ja": {
+                "name": "内部面の削除",
+                "tooltip": "内部面を削除します。"
+            }
+        }
+    },
+    "GEOM/STB_REVOLUTION": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Revolution",
+                "tooltip": "Create a revolution"
+            },
+            "fr": {
+                "name": "Révolution",
+                "tooltip": "Créer une révolution"
+            },
+            "ja": {
+                "name": "回転押し出し",
+                "tooltip": "回転押し出しの作成"
+            }
+        }
+    },
+    "GEOM/STB_ROTATION": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Rotation",
+                "tooltip": "Rotate a shape"
+            },
+            "fr": {
+                "name": "Rotation",
+                "tooltip": "Tourner un objet"
+            },
+            "ja": {
+                "name": "回転",
+                "tooltip": "オブジェクトを回転"
+            }
+        }
+    },
+    "GEOM/STB_SCALE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Scale Transform",
+                "tooltip": "Scale a shape"
+            },
+            "fr": {
+                "name": "Redimensionner",
+                "tooltip": "Redimensionner un objet"
+            },
+            "ja": {
+                "name": "サイズを変更",
+                "tooltip": "オブジェクトのサイズを変更"
+            }
+        }
+    },
+    "GEOM/STB_SECTION": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Intersection",
+                "tooltip": "Intersection"
+            },
+            "fr": {
+                "name": "Section",
+                "tooltip": "Section"
+            },
+            "ja": {
+                "name": "セクション",
+                "tooltip": "セクション"
+            }
+        }
+    },
+    "GEOM/STB_SEWING": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Sewing",
+                "tooltip": "Perform sewing"
+            },
+            "fr": {
+                "name": "Couture",
+                "tooltip": "Effectuer la couture"
+            },
+            "ja": {
+                "name": "縫合",
+                "tooltip": "縫い合わせ実行"
+            }
+        }
+    },
+    "GEOM/STB_SHADING": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Shading",
+                "tooltip": "Shading"
+            },
+            "fr": {
+                "name": "Ombrage",
+                "tooltip": "Ombrage"
+            },
+            "ja": {
+                "name": "網かけ",
+                "tooltip": "網かけ"
+            }
+        }
+    },
+    "GEOM/STB_SHADING_WITH_EDGES": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Shading With Edges",
+                "tooltip": "Shading with edges"
+            },
+            "fr": {
+                "name": "Ombrage avec arêtes",
+                "tooltip": "Ombrage avec arêtes"
+            },
+            "ja": {
+                "name": "陰影とエッジ",
+                "tooltip": "陰影とエッジ"
+            }
+        }
+    },
+    "GEOM/STB_SHAPE_PROCESS": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Shape Processing",
+                "tooltip": "Perform shape processing "
+            },
+            "fr": {
+                "name": "Traitement de forme",
+                "tooltip": "Effectuer le traitement de formes"
+            },
+            "ja": {
+                "name": "形状処理",
+                "tooltip": "形状処理を実行する"
+            }
+        }
+    },
+    "GEOM/STB_SHAPE_STATISTICS": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Shape Statistics",
+                "tooltip": "Shape Statistics"
+            },
+            "fr": {
+                "name": "Statistiques sur l'objet",
+                "tooltip": "Statistique de l'objet"
+            },
+            "ja": {
+                "name": "形状の統計",
+                "tooltip": "形状の統計"
+            }
+        }
+    },
+    "GEOM/STB_SHELL": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Shell",
+                "tooltip": "Build a shell"
+            },
+            "fr": {
+                "name": "Coque",
+                "tooltip": "Construire une coque"
+            },
+            "ja": {
+                "name": "シェル",
+                "tooltip": "シェルを構築"
+            }
+        }
+    },
+    "GEOM/STB_SHELL_SEL_ONLY": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Shell",
+                "tooltip": "Select only a Shells"
+            },
+            "fr": {
+                "name": "Coque",
+                "tooltip": "Ne choisir que des coques"
+            },
+            "ja": {
+                "name": "シェル",
+                "tooltip": "シェルのみを選択"
+            }
+        }
+    },
+    "GEOM/STB_SHOW_ONLY_CHILDREN": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Show Only Children",
+                "tooltip": "Show Only Children"
+            },
+            "fr": {
+                "name": "Afficher uniquement les enfants",
+                "tooltip": "Afficher uniquement les enfants"
+            },
+            "ja": {
+                "name": "子供だけを表示します。",
+                "tooltip": "子供だけを表示します。"
+            }
+        }
+    },
+    "GEOM/STB_SKETCH": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "2D Sketch",
+                "tooltip": "Create 2D sketch"
+            },
+            "fr": {
+                "name": "Esquisse 2D",
+                "tooltip": "Créer une esquisse 2D"
+            },
+            "ja": {
+                "name": "2D スケッチ",
+                "tooltip": "2Dスケッチを作成"
+            }
+        }
+    },
+    "GEOM/STB_SOLID": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Solid",
+                "tooltip": "Build a solid"
+            },
+            "fr": {
+                "name": "Solide",
+                "tooltip": "Construire un solide"
+            },
+            "ja": {
+                "name": "ソリッド",
+                "tooltip": "ソリッドを構築"
+            }
+        }
+    },
+    "GEOM/STB_SOLID_SEL_ONLY": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Solid",
+                "tooltip": "Select only a Solids"
+            },
+            "fr": {
+                "name": "Solide",
+                "tooltip": "Ne choisir que des solides"
+            },
+            "ja": {
+                "name": "ソリッド",
+                "tooltip": "ソリッドだけを選択"
+            }
+        }
+    },
+    "GEOM/STB_SPHERE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Sphere",
+                "tooltip": "Create a sphere"
+            },
+            "fr": {
+                "name": "Sphère",
+                "tooltip": "Créer une sphère"
+            },
+            "ja": {
+                "name": "球",
+                "tooltip": "球を作成"
+            }
+        }
+    },
+    "GEOM/STB_SUPPERSS_HOLES": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Suppress Holes",
+                "tooltip": "Perform suppress holes"
+            },
+            "fr": {
+                "name": "Supprimer les trous",
+                "tooltip": "Effectuer la suppression des trous"
+            },
+            "ja": {
+                "name": "穴を削除",
+                "tooltip": "穴の削除を実行"
+            }
+        }
+    },
+    "GEOM/STB_SUPPRESS_FACES": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Suppress Faces",
+                "tooltip": "Perform suppress faces"
+            },
+            "fr": {
+                "name": "Supprimer des faces",
+                "tooltip": "Effectuer la suppression des faces"
+            },
+            "ja": {
+                "name": "フェースを削除",
+                "tooltip": "フェースの削除を実行"
+            }
+        }
+    },
+    "GEOM/STB_SUPPRESS_INT_WIRES": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Suppress Internal Wires",
+                "tooltip": "Perform suppress internal wires"
+            },
+            "fr": {
+                "name": "Supprimer des contours internes",
+                "tooltip": "Effectuer la suppression des contours internes"
+            },
+            "ja": {
+                "name": "内部の輪郭を削除します。",
+                "tooltip": "内部ワイヤーの削除を実行"
+            }
+        }
+    },
+    "GEOM/STB_SURFACE_FROM_FACE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Surface From Face",
+                "tooltip": "Create a Surface From Face"
+            },
+            "fr": {
+                "name": "Surface depuis une face",
+                "tooltip": "Créer une surface depuis une face"
+            },
+            "ja": {
+                "name": "面から表面",
+                "tooltip": "面から表面の作成"
+            }
+        }
+    },
+    "GEOM/STB_TEXTURE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Texture",
+                "tooltip": "Texture"
+            },
+            "fr": {
+                "name": "Texture",
+                "tooltip": "Texture"
+            },
+            "ja": {
+                "name": "テクスチャ",
+                "tooltip": "テクスチャ"
+            }
+        }
+    },
+    "GEOM/STB_THICKNESS": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Thickness",
+                "tooltip": "Make a thick solid"
+            },
+            "fr": {
+                "name": "Epaisseur",
+                "tooltip": "Crée un solide par ajout d'épaisseur"
+            },
+            "ja": {
+                "name": "厚み",
+                "tooltip": "厚みのあるソリッドの作成"
+            }
+        }
+    },
+    "GEOM/STB_TOLERANCE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Tolerance",
+                "tooltip": "Compute tolerance of the shape"
+            },
+            "fr": {
+                "name": "Tolérance",
+                "tooltip": "Calculer la tolérance d'un objet"
+            },
+            "ja": {
+                "name": "公差",
+                "tooltip": "オブジェクトの距離を計算"
+            }
+        }
+    },
+    "GEOM/STB_TORUS": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Torus",
+                "tooltip": "Create a torus"
+            },
+            "fr": {
+                "name": "Tore",
+                "tooltip": "Créer un tore"
+            },
+            "ja": {
+                "name": "円環",
+                "tooltip": "円環を作成"
+            }
+        }
+    },
+    "GEOM/STB_TRANSFER_DATA": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Transfer Data",
+                "tooltip": "Transfer Data"
+            },
+            "fr": {
+                "name": "Transfert de données",
+                "tooltip": "Transfert de données"
+            },
+            "ja": {
+                "name": "データ転送",
+                "tooltip": "データ転送"
+            }
+        }
+    },
+    "GEOM/STB_TRANSLATION": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Translation",
+                "tooltip": "Translate shape"
+            },
+            "fr": {
+                "name": "Translation",
+                "tooltip": "Translater un objet"
+            },
+            "ja": {
+                "name": "変換",
+                "tooltip": "オブジェクトを移動"
+            }
+        }
+    },
+    "GEOM/STB_UNION_FACES": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Union Faces",
+                "tooltip": "Union faces"
+            },
+            "fr": {
+                "name": "Unir les Faces",
+                "tooltip": "Unir les faces"
+            },
+            "ja": {
+                "name": "面の共有",
+                "tooltip": "連合に直面しています。"
+            }
+        }
+    },
+    "GEOM/STB_VECTOR": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Vector",
+                "tooltip": "Create a vector"
+            },
+            "fr": {
+                "name": "Vecteur",
+                "tooltip": "Créer un vecteur"
+            },
+            "ja": {
+                "name": "ベクトル",
+                "tooltip": "ベクトルを作成"
+            }
+        }
+    },
+    "GEOM/STB_VECTOR_MODE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Change Edge Presentation Mode",
+                "tooltip": "Change Edge Presentation Mode"
+            },
+            "fr": {
+                "name": "Changer le mode de représentation des arêtes",
+                "tooltip": "Changer le mode de représentation des arêtes"
+            },
+            "ja": {
+                "name": "エッジの表示モードを変更",
+                "tooltip": "エッジの表示モードを変更"
+            }
+        }
+    },
+    "GEOM/STB_VERTEX_SEL_ONLY": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Vertex",
+                "tooltip": "Select only a Points"
+            },
+            "fr": {
+                "name": "Point",
+                "tooltip": "Ne choisir que des points"
+            },
+            "ja": {
+                "name": "基準点",
+                "tooltip": "ポイントのみを選択"
+            }
+        }
+    },
+    "GEOM/STB_VERTICES_MODE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Mode of vertices",
+                "tooltip": "Mode of vertices"
+            },
+            "fr": {
+                "name": "Mode des sommets",
+                "tooltip": "Mode des sommets"
+            },
+            "ja": {
+                "name": "頂点のモード",
+                "tooltip": "頂点のモード"
+            }
+        }
+    },
+    "GEOM/STB_WHAT_IS": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "What is",
+                "tooltip": "What is"
+            },
+            "fr": {
+                "name": "Qu'est-ce que c'est ?",
+                "tooltip": "Qu'est-ce que c'est ?"
+            },
+            "ja": {
+                "name": "選択対象の情報",
+                "tooltip": "Whatis"
+            }
+        }
+    },
+    "GEOM/STB_WIRE": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Wire",
+                "tooltip": "Build a wire"
+            },
+            "fr": {
+                "name": "Contour",
+                "tooltip": "Construire un contour"
+            },
+            "ja": {
+                "name": "ワイヤー",
+                "tooltip": "ワイヤーを構築"
+            }
+        }
+    },
+    "GEOM/STB_WIREFRAME": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Wireframe",
+                "tooltip": "Wireframe"
+            },
+            "fr": {
+                "name": "Filaire",
+                "tooltip": "Contours"
+            },
+            "ja": {
+                "name": "ワイヤ フレーム",
+                "tooltip": "Wires"
+            }
+        }
+    },
+    "GEOM/STB_WIRE_SEL_ONLY": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Wire",
+                "tooltip": "Select only a Wires"
+            },
+            "fr": {
+                "name": "Contour",
+                "tooltip": "Ne choisir que des contours"
+            },
+            "ja": {
+                "name": "ワイヤー",
+                "tooltip": "ワイヤーだけを選択"
+            }
+        }
+    },
+    "GEOM/STEPPlugin/Export_STEP": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Export STEP",
+                "tooltip": "Export STEP"
+            },
+            "fr": {
+                "name": "Exporter STEP",
+                "tooltip": "Exporter STEP"
+            },
+            "ja": {
+                "name": "STEPエクスポート",
+                "tooltip": "STEPエクスポート"
+            }
+        }
+    },
+    "GEOM/STEPPlugin/Import_STEP": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Import STEP",
+                "tooltip": "Import STEP"
+            },
+            "fr": {
+                "name": "Importer STEP",
+                "tooltip": "Importer STEP"
+            },
+            "ja": {
+                "name": "STEPインポート",
+                "tooltip": "STEPインポート"
+            }
+        }
+    },
+    "GEOM/STLPlugin/Export_STL": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Export STL",
+                "tooltip": "Export STL"
+            },
+            "fr": {
+                "name": "Exporter STL",
+                "tooltip": "Exporter STL"
+            },
+            "ja": {
+                "name": "STLエクスポート",
+                "tooltip": "STLエクスポート"
+            }
+        }
+    },
+    "GEOM/STLPlugin/Import_STL": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Import STL",
+                "tooltip": "Import STL"
+            },
+            "fr": {
+                "name": "Importer STL",
+                "tooltip": "Importer STL"
+            },
+            "ja": {
+                "name": "STLインポート",
+                "tooltip": "STLインポート"
+            }
+        }
+    },
+    "GEOM/Transparency/Decrease": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Decrease transparency",
+                "tooltip": "Decrease transparency"
+            },
+            "fr": {
+                "name": "Diminuer la transparence",
+                "tooltip": "Diminuer la transparence"
+            },
+            "ja": {
+                "name": "透明度を下げる",
+                "tooltip": "透明度を下げる"
+            }
+        }
+    },
+    "GEOM/Transparency/Increase": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Increase transparency",
+                "tooltip": "Increase transparency"
+            },
+            "fr": {
+                "name": "Augmenter la transparence",
+                "tooltip": "Augmenter la transparence"
+            },
+            "ja": {
+                "name": "透明度を高める",
+                "tooltip": "透明度を高める"
+            }
+        }
+    },
+    "GEOM/VTKPlugin/Export_VTK": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Export VTK",
+                "tooltip": "Export VTK"
+            },
+            "fr": {
+                "name": "Exporter VTK",
+                "tooltip": "Exporter VTK"
+            },
+            "ja": {
+                "name": "VTKエクスポート",
+                "tooltip": "VTKエクスポート"
+            }
+        }
+    },
+    "GEOM/XAOPlugin/Export_XAO": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Export XAO",
+                "tooltip": "Export XAO"
+            },
+            "fr": {
+                "name": "Exporter XAO",
+                "tooltip": "Exporter XAO"
+            },
+            "ja": {
+                "name": "XAOエクスポート",
+                "tooltip": "XAOのエクスポート"
+            }
+        }
+    },
+    "GEOM/XAOPlugin/Import_XAO": {
+        "iconPath": "",
+        "langDependentAssets": {
+            "en": {
+                "name": "Import XAO",
+                "tooltip": "Import XAO"
+            },
+            "fr": {
+                "name": "Importer XAO",
+                "tooltip": "Importer XAO"
+            },
+            "ja": {
+                "name": "XAOインポート",
+                "tooltip": "XAOのインポート"
+            }
+        }
+    }
+}
