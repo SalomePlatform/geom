@@ -1042,9 +1042,8 @@ gp_Pnt GEOMUtils::ProjectPointOnFace(const gp_Pnt& thePoint,
   BRepTools::UVBounds(aFace, U1, U2, V1, V2);
 
   // projector
-  Standard_Real tol = Max(theTol, 1.e-4);
   GeomAPI_ProjectPointOnSurf proj;
-  proj.Init(surface, U1, U2, V1, V2, tol);
+  proj.Init(surface, U1, U2, V1, V2);
   proj.Perform(thePoint);
   if (!proj.IsDone())
     StdFail_NotDone::Raise("Projection aborted : the algorithm failed");
@@ -1055,6 +1054,7 @@ gp_Pnt GEOMUtils::ProjectPointOnFace(const gp_Pnt& thePoint,
   gp_Pnt2d aProjPnt (theU, theV);
 
   // classifier
+  Standard_Real tol = Max(theTol, 1.e-4);
   BRepClass_FaceClassifier aClsf (aFace, aProjPnt, tol);
   if (aClsf.State() != TopAbs_IN && aClsf.State() != TopAbs_ON) {
     bool isSol = false;
