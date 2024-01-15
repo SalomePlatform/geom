@@ -25,14 +25,28 @@
 #ifndef GEOMAlgo_DataMapOfPassKeyInteger_HeaderFile
 #define GEOMAlgo_DataMapOfPassKeyInteger_HeaderFile
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <GEOMAlgo_PassKey.hxx>
 #include <Standard_Integer.hxx>
+
+#if OCC_VERSION_LARGE < 0x07080000
 #include <GEOMAlgo_PassKeyMapHasher.hxx>
 
 #define _NCollection_MapHasher
 #include <NCollection_DataMap.hxx>
 
 typedef NCollection_DataMap<GEOMAlgo_PassKey, Standard_Integer, GEOMAlgo_PassKeyMapHasher> GEOMAlgo_DataMapOfPassKeyInteger;
+
+#else
+
+#include <NCollection_DataMap.hxx>
+
+typedef NCollection_DataMap<GEOMAlgo_PassKey, Standard_Integer> GEOMAlgo_DataMapOfPassKeyInteger;
+
+#endif // OCC_VERSION_LARGE < 0x07080000
+
+
 typedef GEOMAlgo_DataMapOfPassKeyInteger::Iterator GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger;
 
 #undef _NCollection_MapHasher

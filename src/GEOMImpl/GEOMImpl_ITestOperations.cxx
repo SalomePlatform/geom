@@ -22,11 +22,10 @@
 
 #include <GEOMImpl_ITestOperations.hxx>
 
-#include <BRepBndLib.hxx>
+#include <GEOMUtils.hxx>
+
 #include <BRepBuilderAPI_Copy.hxx>
-#include <BRepMesh_IncrementalMesh.hxx>
-#include <BRepTools.hxx>
-#include <Bnd_Box.hxx>
+
 #include <utilities.h>
 
 #ifndef MAX2
@@ -83,25 +82,22 @@ bool GEOMImpl_ITestOperations::Tesselate(Handle(GEOM_Object) theShape,
 
   // reset error code
   SetErrorCode(KO);
+
   // create a copy of the source shape
   TopoDS_Shape aShape = BRepBuilderAPI_Copy(theShape->GetValue()).Shape();
+
   // use default deflection if necessary
   if (theLinearDeflection <= 0)
     theLinearDeflection = 0.001;
-  // compute absolute deflection if necessary: 0.001
-  if (theIsRelative) {
-    Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
-    Bnd_Box bndBox;
-    BRepBndLib::Add(aShape, bndBox);
-    bndBox.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
-    theLinearDeflection = MAX3(aXmax-aXmin, aYmax-aYmin, aZmax-aZmin) * theLinearDeflection * 4;
-  }
+
   // use default deviation angle if necessary: 20 degrees
   if (theAngularDeflection <= 0)
     theAngularDeflection = 20. * M_PI / 180.;
+
   // compute triangulation
-  BRepTools::Clean(aShape);
-  BRepMesh_IncrementalMesh aMesh(aShape, theLinearDeflection, Standard_False, theAngularDeflection);
+  GEOMUtils::MeshShape(aShape, theLinearDeflection, /*theForced*/ true,
+                       theAngularDeflection, theIsRelative);
+
   // set OK status and return
   SetErrorCode(OK);
   return true;

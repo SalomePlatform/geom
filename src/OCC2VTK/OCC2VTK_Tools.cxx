@@ -30,7 +30,6 @@
 #include <BRepTools.hxx>
 
 #include <BRepBndLib.hxx>
-#include <BRepMesh_IncrementalMesh.hxx>
 #include <Poly_Triangulation.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>

@@ -156,13 +156,6 @@ namespace GEOMUtils
 					TopTools_ListOfShape& theList);
 
   /*!
-   * \brief Build a triangulation on \a theShape if it is absent.
-   * \param theShape The shape to check/build triangulation on.
-   * \retval bool Returns false if the shape has no faces, i.e. impossible to build triangulation.
-   */
-  Standard_EXPORT bool CheckTriangulation (const TopoDS_Shape& theShape);
-
-  /*!
    * \brief Return type of shape for explode. In case of compound it will be a type of its first sub shape.
    * \param theShape The shape to get type of.
    * \retval TopAbs_ShapeEnum Return type of shape for explode.
@@ -348,20 +341,38 @@ namespace GEOMUtils
   Standard_EXPORT TopoDS_Shape ReduceCompound( const TopoDS_Shape& shape );
 
   /*!
-   * \brief Generate triangulation for the shape.
-   *
-   * \param shape shape being meshed
-   * \param deflection deflection coefficient to be used
-   * \param forced if \c true, causes generation of mesh regardless it is already present in the shape
-   */
-  Standard_EXPORT void MeshShape( const TopoDS_Shape shape,
-                                  double deflection, bool forced = true );
-
-  /*!
    * \brief Get default deflection coefficient used for triangulation
    * \return default deflection value
    */
   Standard_EXPORT double DefaultDeflection();
+
+  /*!
+   * \brief Generate triangulation for \a theShape.
+   *
+   * \param theShape shape to be meshed.
+   * \param theDeflection deflection coefficient to be used.
+   * \param theForced if \c true, causes generation of mesh regardless it is already present in the shape.
+   * \param theAngleDeflection angular deflection coefficient to be used.
+   * \param isRelative if true, \a theDeflection is considered relative to \a theShape maximum axial dimension.
+   * \param doPostCheck if true, check mesh generation result and return corresponding boolean value.
+   * \retval bool Returns false in the following cases:
+   *              1. The shape has neither faces nor edges, i.e. impossible to build triangulation or polygon.
+   *              2. \a theForced is false and \a theShape has no mesh or has incomplete mesh.
+   *              3. \a doPostCheck is true and mesh generation failed or produced an incomplete mesh.
+   */
+  Standard_EXPORT bool MeshShape( const TopoDS_Shape theShape,
+                                  const double theDeflection = DefaultDeflection(),
+                                  const bool theForced = true,
+                                  const double theAngleDeflection = 0.5,
+                                  const bool isRelative = true,
+                                  const bool doPostCheck = false);
+
+  /*!
+   * \brief Build a triangulation on \a theShape if it is absent.
+   * \param theShape The shape to check/build triangulation on.
+   * \retval bool Returns false if the shape has no faces, i.e. impossible to build triangulation.
+   */
+  Standard_EXPORT bool CheckTriangulation (const TopoDS_Shape& theShape);
 
   /**
    * \brief Check if the shape is not a closed wire or edge.

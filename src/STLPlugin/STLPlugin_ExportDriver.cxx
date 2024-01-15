@@ -102,6 +102,7 @@ Standard_Integer STLPlugin_ExportDriver::Execute(Handle(TFunction_Logbook)& log)
       BRepBndLib::Add( aShape, bndBox );
       bndBox.Get( aXmin, aYmin, aZmin, aXmax, aYmax, aZmax );
       aDeflection = MAX3( aXmax-aXmin, aYmax-aYmin, aZmax-aZmin ) * aDeflection;
+      aDeflection = MAX2( aDeflection, Precision::Confusion() );
     }
     //Compute triangulation
     BRepTools::Clean( aCopyShape );

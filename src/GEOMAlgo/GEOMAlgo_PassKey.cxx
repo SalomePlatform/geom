@@ -206,6 +206,7 @@ static
   }
   return !bRet;
 }
+#if OCC_VERSION_LARGE < 0x07080000
 //=======================================================================
 //function : HashCode
 //purpose  :
@@ -214,6 +215,7 @@ static
 {
   return ::HashCode(mySum, aUpper);
 }
+#endif
 //=======================================================================
 //function : Dump
 //purpose  :

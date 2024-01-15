@@ -93,6 +93,8 @@
 #include <ProjLib.hxx>
 #include <ElSLib.hxx>
 
+#include <Prs3d.hxx>
+
 #include <vector>
 #include <sstream>
 #include <algorithm>
@@ -678,56 +680,6 @@ void GEOMUtils::AddSimpleShapes (const TopoDS_Shape& theShape, TopTools_ListOfSh
 }
 
 //=======================================================================
-//function : CheckTriangulation
-//purpose  :
-//=======================================================================
-bool GEOMUtils::CheckTriangulation (const TopoDS_Shape& aShape)
-{
-  bool isTriangulation = true;
-
-  TopExp_Explorer exp (aShape, TopAbs_FACE);
-  if (exp.More())
-  {
-    TopLoc_Location aTopLoc;
-    Handle(Poly_Triangulation) aTRF;
-    aTRF = BRep_Tool::Triangulation(TopoDS::Face(exp.Current()), aTopLoc);
-    if (aTRF.IsNull()) {
-      isTriangulation = false;
-    }
-  }
-  else // no faces, try edges
-  {
-    TopExp_Explorer expe (aShape, TopAbs_EDGE);
-    if (!expe.More()) {
-      return false;
-    }
-    TopLoc_Location aLoc;
-    Handle(Poly_Polygon3D) aPE = BRep_Tool::Polygon3D(TopoDS::Edge(expe.Current()), aLoc);
-    if (aPE.IsNull()) {
-      isTriangulation = false;
-    }
-  }
-
-  if (!isTriangulation) {
-    // calculate deflection
-    Standard_Real aDeviationCoefficient = 0.001;
-
-    Bnd_Box B;
-    BRepBndLib::Add(aShape, B);
-    Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
-    B.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
-
-    Standard_Real dx = aXmax - aXmin, dy = aYmax - aYmin, dz = aZmax - aZmin;
-    Standard_Real aDeflection = Max(Max(dx, dy), dz) * aDeviationCoefficient * 4;
-    Standard_Real aHLRAngle = 0.349066;
-
-    BRepMesh_IncrementalMesh Inc (aShape, aDeflection, Standard_False, aHLRAngle);
-  }
-
-  return true;
-}
-
-//=======================================================================
 //function : GetTypeOfSimplePart
 //purpose  :
 //=======================================================================
@@ -1286,44 +1238,110 @@ TopoDS_Shape GEOMUtils::ReduceCompound( const TopoDS_Shape& shape )
   return result;
 }
 
-void GEOMUtils::MeshShape( const TopoDS_Shape shape,
-                           double deflection, bool theForced )
-{
-  Standard_Real aDeflection = ( deflection <= 0 ) ? DefaultDeflection() : deflection;
-  
-  // Is shape triangulated?
-  Standard_Boolean alreadyMeshed = true;
-  TopExp_Explorer ex;
-  TopLoc_Location aLoc;
-  for ( ex.Init( shape, TopAbs_FACE ); ex.More() && alreadyMeshed; ex.Next() ) {
-    const TopoDS_Face& aFace = TopoDS::Face( ex.Current() );
-    Handle(Poly_Triangulation) aPoly = BRep_Tool::Triangulation( aFace, aLoc );
-    alreadyMeshed = !aPoly.IsNull(); 
-  }
-  
-  if ( !alreadyMeshed || theForced ) {
-    // Compute bounding box
-    Bnd_Box B;
-    BRepBndLib::Add( shape, B );
-    if ( B.IsVoid() )
-      return; // NPAL15983 (Bug when displaying empty groups) 
-    Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
-    B.Get( aXmin, aYmin, aZmin, aXmax, aYmax, aZmax );
-    
-    // This magic line comes from Prs3d_ShadedShape.gxx in OCCT
-    aDeflection = MAX3(aXmax-aXmin, aYmax-aYmin, aZmax-aZmin) * aDeflection * 4;
-    
-    // Clean triangulation before compute incremental mesh
-    BRepTools::Clean( shape );
-    
-    // Compute triangulation
-    BRepMesh_IncrementalMesh mesh( shape, aDeflection ); 
-  }
-}
-
+//=======================================================================
+//function : DefaultDeflection
+//purpose  :
+//=======================================================================
 double GEOMUtils::DefaultDeflection()
 {
   return 0.001;
+}
+
+//=======================================================================
+//function : CanBeMeshed
+//purpose  :
+//=======================================================================
+static bool GEOMUtils_CanBeMeshed (const TopoDS_Shape& theShape,
+                                   const bool          theCheckMesh,
+                                   bool&               theHasMesh)
+{
+  // Is shape triangulated?
+  theHasMesh = true;
+
+  TopExp_Explorer ex (theShape, TopAbs_FACE);
+  TopLoc_Location aLoc;
+  if (ex.More()) {
+    if (theCheckMesh) {
+      for ( ; ex.More() && theHasMesh; ex.Next() ) {
+        const TopoDS_Face& aFace = TopoDS::Face( ex.Current() );
+        Handle(Poly_Triangulation) aPoly = BRep_Tool::Triangulation( aFace, aLoc );
+        theHasMesh = !aPoly.IsNull(); 
+      }
+    }
+  }
+  else { // no faces, try edges
+    ex.Init(theShape, TopAbs_EDGE);
+    if (!ex.More()) {
+      return false; // nothing to mesh
+    }
+    if (theCheckMesh) {
+      for ( ; ex.More() && theHasMesh; ex.Next() ) {
+        Handle(Poly_Polygon3D) aPE = BRep_Tool::Polygon3D(TopoDS::Edge(ex.Current()), aLoc);
+        theHasMesh = !aPE.IsNull();
+      }
+    }
+  }
+
+  return true;
+}
+
+//=======================================================================
+//function : MeshShape
+//purpose  :
+//=======================================================================
+bool GEOMUtils::MeshShape( const TopoDS_Shape theShape,
+                           const double theDeflection,
+                           const bool theForced,
+                           const double theAngleDeflection,
+                           const bool isRelative,
+                           const bool doPostCheck)
+{
+  Standard_Real aDeflection = (theDeflection <= 0) ? DefaultDeflection() : theDeflection;
+
+  // Is shape triangulated?
+  bool alreadyMeshed = true;
+  if (!GEOMUtils_CanBeMeshed (theShape, /*theCheckMesh*/true, alreadyMeshed))
+    return false;
+
+  if (alreadyMeshed && !theForced)
+    return true;
+
+  if (isRelative) {
+    // Compute bounding box
+    Bnd_Box B;
+    BRepBndLib::Add(theShape, B);
+    if (B.IsVoid())
+      return false; // NPAL15983 (Bug when displaying empty groups)
+
+    Standard_Real aDeviationCoeff = aDeflection;
+    Standard_Real aMaxChordialDeviation = aDeflection;
+    aDeflection = Prs3d::GetDeflection(B, aDeviationCoeff, aMaxChordialDeviation);
+  }
+
+  // Clean triangulation before compute incremental mesh
+  BRepTools::Clean(theShape);
+
+  // Compute triangulation
+  BRepMesh_IncrementalMesh mesh (theShape, aDeflection, Standard_False, theAngleDeflection); 
+
+  if (!doPostCheck)
+    return true;
+
+  if (!mesh.IsDone())
+    return false;
+
+  GEOMUtils_CanBeMeshed(theShape, /*theCheckMesh*/true, alreadyMeshed);
+  return alreadyMeshed;
+}
+
+//=======================================================================
+//function : CheckTriangulation
+//purpose  :
+//=======================================================================
+bool GEOMUtils::CheckTriangulation (const TopoDS_Shape& theShape)
+{
+  Standard_Real aHLRAngle = 0.349066;
+  return MeshShape(theShape, DefaultDeflection(), false, aHLRAngle);
 }
 
 //=======================================================================

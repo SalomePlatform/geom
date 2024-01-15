@@ -22,7 +22,10 @@
 //  File   : GeometryGUI.cxx
 //  Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 
-#include <Standard_math.hxx>  // E.A. must be included before Python.h to fix compilation on windows
+#include <Basics_OCCTVersion.hxx>
+
+#include <Standard_Real.hxx>  // E.A. must be included before Python.h to fix compilation on windows
+
 #ifdef HAVE_FINITE
 #undef HAVE_FINITE            // VSR: avoid compilation warning on Linux : "HAVE_FINITE" redefined
 #endif
