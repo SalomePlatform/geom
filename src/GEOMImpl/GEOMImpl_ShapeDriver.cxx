@@ -494,6 +494,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(Handle(TFunction_Logbook)& log) c
     Handle(TopTools_HSequenceOfShape) aSeqEdgesIn = new TopTools_HSequenceOfShape;
     TColStd_IndexedDataMapOfTransientTransient aMapTShapes;
 
+    Standard_Real aTolerance = Precision::Confusion();
     for (ind = 1; ind <= nbshapes; ind++) {
       Handle(GEOM_Function) aRefSh_i = Handle(GEOM_Function)::DownCast(aShapes->Value(ind));
       TopoDS_Shape aSh_i = aRefSh_i->GetValue();
@@ -503,7 +504,11 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(Handle(TFunction_Logbook)& log) c
         if (aMapEdges.Add(anExpE_i.Current())) {
           // Copy the original shape.
           TopoDS_Shape aShapeCopy;
-
+          Standard_Real aCurTol = BRep_Tool::MaxTolerance(anExpE_i.Current(), TopAbs_EDGE);
+          if(aCurTol > aTolerance)
+          {
+            aTolerance = aCurTol;
+          }
           TNaming_CopyShape::CopyTool
             (anExpE_i.Current(), aMapTShapes, aShapeCopy);
           aSeqEdgesIn->Append(aShapeCopy);
@@ -517,7 +522,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(Handle(TFunction_Logbook)& log) c
 
     // 2. Connect edges to wires of maximum length
     Handle(TopTools_HSequenceOfShape) aSeqWiresOut;
-    ShapeAnalysis_FreeBounds::ConnectEdgesToWires(aSeqEdgesIn, Precision::Confusion(),
+    ShapeAnalysis_FreeBounds::ConnectEdgesToWires(aSeqEdgesIn, aTolerance,
                                                   /*shared*/Standard_False, aSeqWiresOut);
     //modified by NIZNHY-PKV Wed Dec 28 13:46:55 2011f
     //KeepEdgesOrder(aSeqEdgesIn, aSeqWiresOut);
