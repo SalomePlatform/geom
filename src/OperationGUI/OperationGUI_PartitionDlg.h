@@ -29,6 +29,8 @@
 
 class DlgRef_2Sel1List2Check;
 class QCheckBox;
+class QLabel;
+class SalomeApp_DoubleSpinBox;
 
 //=================================================================================
 // class    : OperationGUI_PartitionDlg
@@ -66,11 +68,15 @@ private:
   GEOM::ListOfGO                     myListKeepInside;
 
   DlgRef_2Sel1List2Check*            GroupPoints;
-  QCheckBox                         *mySelfInte;
+  QCheckBox*                         mySelfInte;
+  QCheckBox*                         myFuzzyChk;
+  QLabel*                            myFuzzyLbl;
+  SalomeApp_DoubleSpinBox*           myFuzzyEdt;
 
 private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
+  void                               UseFuzzyChanged(int state);
   void                               ActivateThisDialog();
   void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();

@@ -428,6 +428,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Detect Self-intersections</translation>
     </message>
     <message>
+        <source>GEOM_USE_FUZZY_PARAMETER</source>
+        <translation>Use Fuzzy Parameter</translation>
+    </message>
+    <message>
+        <source>GEOM_FUZZY_PARAMETER</source>
+        <translation>Fuzzy Parameter</translation>
+    </message>
+    <message>
         <source>GEOM_FAST_CHECK_INTERSECTIONS</source>
         <translation>Fast intersection</translation>
     </message>

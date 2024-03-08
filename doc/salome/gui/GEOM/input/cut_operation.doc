@@ -13,6 +13,8 @@ In this dialog:
 - Click the arrow button and select in the Object Browser or in the Viewer the <b>Main Object</b>, which will be cut by tool objects.
 - Select the <b>Tool objects</b>, which will cut the main object.
 - Activate the corresponding check-box if you wish to <b> Detect Self-intersections </b>.
+- Activate the corresponding check-box if you wish to use a <b> fuzzy parameter </b>.  
+  If activated, you can define the fuzzy tolerance in the <b> fuzzy parameter </b> input box.
 - Activate \ref restore_presentation_parameters_page "Advanced options" if required.
 - Press "Apply" or "Apply & Close" button to get the result (GEOM_Object).
 
@@ -25,15 +27,17 @@ In this dialog:
 
 This operation can be performed using a <b>TUI Command:</b> 
 
-<em>geompy.MakeCutList(theMainShape, theShapesList, checkSelfInte)</em>
+<em>geompy.MakeCutList(theMainShape, theShapesList, checkSelfInte, name, fuzzyParam)</em>
 
-<b>Arguments:</b> Name + a main shape + a list of other shapes + an optional flag for self-intersection check.
+<b>Arguments:</b> a main shape + a list of other shapes + an optional flag for self-intersection 
+check + an optional name + an optional fuzzy parameter.
 
 There is also a special <b>TUI Command:</b> for the Cut operation on two shapes (object and tool) :
 
-<em>geompy.MakeCut(s1, s2, checkSelfInte)</em>
+<em>geompy.MakeCut(s1, s2, checkSelfInte, name, fuzzyParam)</em>
 
-<b>Arguments:</b> Name + the object + the tool + an optional flag for self-intersection check.
+<b>Arguments:</b> the object + the tool + an optional flag for self-intersection check + an
+optional name + an optional fuzzy parameter.
 
 <b>Example:</b>
 

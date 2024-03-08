@@ -40,27 +40,32 @@ class GEOMImpl_IBooleanOperations : public GEOM_IOperations {
                                 (Handle(GEOM_Object)    theShape1,
                                  Handle(GEOM_Object)    theShape2,
                                  const Standard_Integer theOp,
-                                 const Standard_Boolean IsCheckSelfInte);
+                                 const Standard_Boolean IsCheckSelfInte,
+                                 const Standard_Real    theFuzzyParam = -1.);
 
   Standard_EXPORT Handle(GEOM_Object) MakeFuse
                                 (Handle(GEOM_Object) theShape1,
                                  Handle(GEOM_Object) theShape2,
                                  const bool          IsCheckSelfInte,
-                                 const bool          IsRmExtraEdges);
+                                 const bool          IsRmExtraEdges,
+                                 const Standard_Real theFuzzyParam = -1.);
 
   Standard_EXPORT Handle(GEOM_Object) MakeFuseList
                   (const Handle(TColStd_HSequenceOfTransient)& theShapes,
                    const bool                                  IsCheckSelfInte,
-                   const bool                                  IsRmExtraEdges);
+                   const bool                                  IsRmExtraEdges,
+                   const Standard_Real                         theFuzzyParam = -1.);
 
   Standard_EXPORT Handle(GEOM_Object) MakeCommonList
                   (const Handle(TColStd_HSequenceOfTransient)& theShapes,
-                   const Standard_Boolean IsCheckSelfInte);
+                   const Standard_Boolean                      IsCheckSelfInte,
+                   const Standard_Real                         theFuzzyParam = -1.);
 
   Standard_EXPORT Handle(GEOM_Object) MakeCutList
-                  (Handle(GEOM_Object) theMainShape,
+                  (Handle(GEOM_Object)                         theMainShape,
                    const Handle(TColStd_HSequenceOfTransient)& theShapes,
-                   const Standard_Boolean IsCheckSelfInte);
+                   const Standard_Boolean                      IsCheckSelfInte,
+                   const Standard_Real                         theFuzzyParam = -1.);
 
   Standard_EXPORT Handle(GEOM_Object) MakePartition
                   (const Handle(TColStd_HSequenceOfTransient)& theShapes,
@@ -70,12 +75,14 @@ class GEOMImpl_IBooleanOperations : public GEOM_IOperations {
                    const Standard_Integer                      theLimit,
                    const Standard_Boolean                      theRemoveWebs,
                    const Handle(TColStd_HArray1OfInteger)&     theMaterials,
-                   const Standard_Integer theKeepNonlimitShapes,
-                   const Standard_Boolean thePerformSelfIntersections,
-                   const Standard_Boolean IsCheckSelfInte);
+                   const Standard_Integer                      theKeepNonlimitShapes,
+                   const Standard_Boolean                      thePerformSelfIntersections,
+                   const Standard_Boolean                      IsCheckSelfInte,
+                   const Standard_Real                         theFuzzyParam = -1.);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeHalfPartition (Handle(GEOM_Object)    theShape,
-                                                         Handle(GEOM_Object)    thePlane);
+  Standard_EXPORT Handle(GEOM_Object) MakeHalfPartition (Handle(GEOM_Object) theShape,
+                                                         Handle(GEOM_Object) thePlane,
+                                                         const Standard_Real theFuzzyParam = -1.);
 
 private:
 

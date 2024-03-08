@@ -12,6 +12,8 @@ In this dialog:
 - Input or accept the default \b Name of the resulting shape. 
 - Click the arrow button and select in the Object Browser or in the Viewer the <b>Objects</b> the common part which of should be found.
 - Activate the corresponding check-box if you wish to <b> Detect Self-intersections </b>
+- Activate the corresponding check-box if you wish to use a <b> fuzzy parameter </b>.  
+  If activated, you can define the fuzzy tolerance in the <b> fuzzy parameter </b> input box.
 - Activate \ref restore_presentation_parameters_page "Advanced options" if required.
 - Press "Apply" or "Apply & Close" button to get the result (GEOM_Object).
 
@@ -26,15 +28,15 @@ In this dialog:
 	  
 This operation can be performed using a <b>TUI Command:</b> 
 
-<em>geompy.MakeCommonList(theShapesList, checkSelfInte)</em>
+<em>geompy.MakeCommonList(theShapesList, checkSelfInte, name, fuzzyParam)</em>
 
-<b>Arguments:</b> Name + a list of shapes + an optional flag for self-intersection check.
+<b>Arguments:</b> a list of shapes + an optional flag for self-intersection check + an optional name + an optional fuzzy parameter.
 
 There is also a special <b>TUI Command</b> for the Common operation on two shapes :
 
-<em>geompy.MakeCommon(s1, s2, checkSelfInte)</em>
+<em>geompy.MakeCommon(s1, s2, checkSelfInte, name, fuzzyParam)</em>
 
-<b>Arguments:</b> Name + 2 shapes + an optional flag for self-intersection check.
+<b>Arguments:</b> 2 shapes + an optional flag for self-intersection check + an optional name + an optional fuzzy parameter.
 
 <b>Example:</b>
 

@@ -428,6 +428,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Détecter les auto-intersections</translation>
     </message>
     <message>
+        <source>GEOM_USE_FUZZY_PARAMETER</source>
+        <translation>Utiliser le paramètre flou</translation>
+    </message>
+    <message>
+        <source>GEOM_FUZZY_PARAMETER</source>
+        <translation>Paramètre flou</translation>
+    </message>
+    <message>
         <source>GEOM_FAST_CHECK_INTERSECTIONS</source>
         <translation>Intersection rapide</translation>
     </message>

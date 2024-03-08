@@ -62,6 +62,10 @@ If self-intersection is detected, the operation is aborted.
       all self-intersections please use \ref check_self_intersections_page
       "Detect Self-intersection tool".
 
+<b>Use Fuzzy Parameter</b> check box is used to enable the usage of the fuzzy tolerance
+inside the partition algorithm. The fuzzy tolerance itself can be given in the Fuzzy
+Parameter input box.
+
 - Activate \ref restore_presentation_parameters_page "Advanced options" if required.
 
 \note Partition is a complex operation, so its result of it depends
@@ -74,13 +78,13 @@ If self-intersection is detected, the operation is aborted.
 
 <em>geompy.MakePartition(ListOfShapes, ListOfTools, ListOfKeepInside,
 ListOfRemoveInside, Limit, RemoveWebs, ListOfMaterials,
-KeepNonlimitShapes)</em>
+KeepNonlimitShapes, fuzzyParam)</em>
 
 <b>TUI Command (without sub-shapes intersection):</b>
 
 <em>geompy.MakePartitionNonSelfIntersectedShape(ListOfShapes,
 ListOfTools, ListOfKeepInside, ListOfRemoveInside, Limit, RemoveWebs,
-ListOfMaterials, KeepNonlimitShapes, checkSelfInte)</em>
+ListOfMaterials, KeepNonlimitShapes, checkSelfInte, fuzzyParam)</em>
 
 Here,
 - \em ListOfShapes is a list of shapes to be intersected
@@ -91,6 +95,8 @@ Here,
 shapes of low dimension (than \em Limit) in the result.
 - \em checkSelfInte is a flag that indicates if the arguments should
 be checked for self-intersection prior to the operation.
+- \em fuzzyParam is the used fuzzy tolerance inside the partition algorithm.
+This tolerance is ignored, if this parameter is omitted or not positive.
 - Other parameters are obsolete and kept only for compatibility with
 previous versions of SALOME.
 

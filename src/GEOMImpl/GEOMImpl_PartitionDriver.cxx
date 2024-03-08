@@ -125,6 +125,7 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(Handle(TFunction_Logbook)& lo
   GEOMImpl_IPartition aCI (aFunction);
   Standard_Integer aType = aFunction->GetType();
   const Standard_Boolean isCheckSelfInte = aCI.GetCheckSelfIntersection();
+  const Standard_Real    aFuzzyParam     = aCI.GetFuzzyParameter();
 
   TopoDS_Shape aShape;
   GEOMAlgo_Splitter PS;
@@ -311,6 +312,10 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(Handle(TFunction_Logbook)& lo
     PS.SetLimitMode(aCI.GetKeepNonlimitShapes());
     PS.SetLimit((TopAbs_ShapeEnum)aCI.GetLimit());
 
+    if (aFuzzyParam > 0) {
+      PS.SetFuzzyValue(aFuzzyParam);
+    }
+
     // Set parallel processing mode (default is false)
     Standard_Boolean bRunParallel = Standard_True;
     PS.SetRunParallel(bRunParallel);
@@ -405,6 +410,10 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(Handle(TFunction_Logbook)& lo
     // add tool shapes that are in ListTools and not in ListShapes;
     PS.AddTool(aPlaneArg_copy);
     //PS.AddTool(aPlaneArg);
+
+    if (aFuzzyParam > 0) {
+      PS.SetFuzzyValue(aFuzzyParam);
+    }
 
     //skl PS.Compute();
     PS.Perform();
@@ -523,6 +532,7 @@ GetCreationInformation(std::string&             theOperationName,
 
   GEOMImpl_IPartition aCI( function );
   Standard_Integer aType = function->GetType();
+  Standard_Real aFuzzyParam = aCI.GetFuzzyParameter();
 
   theOperationName = "PARTITION";
 
@@ -557,6 +567,9 @@ GetCreationInformation(std::string&             theOperationName,
   default:
     return false;
   }
+
+  if (aFuzzyParam > 0)
+    AddParam( theParams, "Fuzzy Parameter", aFuzzyParam );
   
   return true;
 }

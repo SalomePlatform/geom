@@ -1,6 +1,6 @@
 /*!
 
-\page section_opeartion_page Intersection
+\page section_operation_page Intersection
 
 \b Intersection operation creates a vertex, an edge, a wire or a compound
 of them representing the intersection of two shapes.
@@ -13,6 +13,8 @@ In this dialog:
 - Input or accept the default \b Name of the resulting shape. 
 - Click the arrow button and select in the Object Browser or in the Viewer the intersecting <b>Objects</b>.
 - Activate the corresponding check-box if you wish to <b> Detect Self-intersections</b>. If a self-intersection detected the operation fails.
+- Activate the corresponding check-box if you wish to use a <b> fuzzy parameter </b>.  
+  If activated, you can define the fuzzy tolerance in the <b> fuzzy parameter </b> input box.
 - Activate \ref restore_presentation_parameters_page "Advanced options" if required.
 - Press "Apply" or "Apply & Close" button to get the result (VERTEX, EDGE, WIRE or COMPOUND).
 
@@ -26,9 +28,9 @@ of the GUI module's documentation.
 
 This operation can be performed using a <b>TUI Command:</b> 
 
-<em>geompy.MakeSection(s1, s2, checkSelfInte)</em>
+<em>geompy.MakeSection(s1, s2, checkSelfInte, name, fuzzyParam)</em>
 
-<b>Arguments:</b> Name + 2 shapes + an optional flag for self-intersection check.
+<b>Arguments:</b> 2 shapes + an optional flag for self-intersection check + an optional name + an optional fuzzy parameter.
 
 <b>Example:</b>
 

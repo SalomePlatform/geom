@@ -7762,6 +7762,9 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
+        #  @param theFuzzyParam The fuzzy parameter to be used for the boolean
+        #         operation. If the value is not positive, no fuzzy tolerance will
+        #         be considered for the boolean operation.
         #
         #  @note This algorithm doesn't find all types of self-intersections.
         #        It is tuned to detect vertex/vertex, vertex/edge, edge/edge,
@@ -7775,7 +7778,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_fuse "Example"
         @ManageTransactions("BoolOp")
-        def MakeBoolean(self, theShape1, theShape2, theOperation, checkSelfInte=False, theName=None):
+        def MakeBoolean(self, theShape1, theShape2, theOperation, checkSelfInte=False, theName=None, theFuzzyParam=-1):
             """
             Perform one of boolean operations on two given shapes.
 
@@ -7790,6 +7793,9 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
+                theFuzzyParam The fuzzy parameter to be used for the boolean operation.
+                              If the value is not positive, no fuzzy tolerance will be
+                              considered for the boolean operation.
 
             Note:
                     This algorithm doesn't find all types of self-intersections.
@@ -7804,7 +7810,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the result shape.
             """
             # Example: see GEOM_TestAll.py
-            anObj = self.BoolOp.MakeBoolean(theShape1, theShape2, theOperation, checkSelfInte)
+            anObj = self.BoolOp.MakeBooleanWithFuzzy(theShape1, theShape2, theOperation, checkSelfInte, theFuzzyParam)
             RaiseIfFailed("MakeBoolean", self.BoolOp)
             def_names = { 1: "common", 2: "cut", 3: "fuse", 4: "section" }
             self._autoPublish(anObj, theName, def_names[theOperation])
@@ -7818,6 +7824,9 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
+        #  @param theFuzzyParam The fuzzy parameter to be used for the boolean
+        #         operation. If the value is not positive, no fuzzy tolerance will
+        #         be considered for the boolean operation.
         #
         #  @note This algorithm doesn't find all types of self-intersections.
         #        It is tuned to detect vertex/vertex, vertex/edge, edge/edge,
@@ -7831,7 +7840,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_common "Example 1"
         #  \n @ref swig_MakeCommon "Example 2"
-        def MakeCommon(self, theShape1, theShape2, checkSelfInte=False, theName=None):
+        def MakeCommon(self, theShape1, theShape2, checkSelfInte=False, theName=None, theFuzzyParam=-1):
             """
             Perform Common boolean operation on two given shapes.
 
@@ -7844,6 +7853,9 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
+                theFuzzyParam The fuzzy parameter to be used for the boolean operation.
+                              If the value is not positive, no fuzzy tolerance will be
+                              considered for the boolean operation.
 
             Note:
                     This algorithm doesn't find all types of self-intersections.
@@ -7859,7 +7871,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             """
             # Example: see GEOM_TestOthers.py
             # note: auto-publishing is done in self.MakeBoolean()
-            return self.MakeBoolean(theShape1, theShape2, 1, checkSelfInte, theName)
+            return self.MakeBoolean(theShape1, theShape2, 1, checkSelfInte, theName, theFuzzyParam)
 
         ## Perform Cut boolean operation on two given shapes.
         #  @param theShape1 First argument for boolean operation.
@@ -7869,6 +7881,9 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
+        #  @param theFuzzyParam The fuzzy parameter to be used for the boolean
+        #         operation. If the value is not positive, no fuzzy tolerance will
+        #         be considered for the boolean operation.
         #
         #  @note This algorithm doesn't find all types of self-intersections.
         #        It is tuned to detect vertex/vertex, vertex/edge, edge/edge,
@@ -7882,7 +7897,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_cut "Example 1"
         #  \n @ref swig_MakeCommon "Example 2"
-        def MakeCut(self, theShape1, theShape2, checkSelfInte=False, theName=None):
+        def MakeCut(self, theShape1, theShape2, checkSelfInte=False, theName=None, theFuzzyParam=-1):
             """
             Perform Cut boolean operation on two given shapes.
 
@@ -7895,6 +7910,9 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
+                theFuzzyParam The fuzzy parameter to be used for the boolean operation.
+                              If the value is not positive, no fuzzy tolerance will be
+                              considered for the boolean operation.
 
             Note:
                     This algorithm doesn't find all types of self-intersections.
@@ -7911,7 +7929,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             """
             # Example: see GEOM_TestOthers.py
             # note: auto-publishing is done in self.MakeBoolean()
-            return self.MakeBoolean(theShape1, theShape2, 2, checkSelfInte, theName)
+            return self.MakeBoolean(theShape1, theShape2, 2, checkSelfInte, theName, theFuzzyParam)
 
         ## Perform Fuse boolean operation on two given shapes.
         #  @param theShape1 First argument for boolean operation.
@@ -7923,6 +7941,9 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
+        #  @param theFuzzyParam The fuzzy parameter to be used for the boolean
+        #         operation. If the value is not positive, no fuzzy tolerance will
+        #         be considered for the boolean operation.
         #
         #  @note This algorithm doesn't find all types of self-intersections.
         #        It is tuned to detect vertex/vertex, vertex/edge, edge/edge,
@@ -7938,7 +7959,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #  \n @ref swig_MakeCommon "Example 2"
         @ManageTransactions("BoolOp")
         def MakeFuse(self, theShape1, theShape2, checkSelfInte=False,
-                     rmExtraEdges=False, theName=None):
+                     rmExtraEdges=False, theName=None, theFuzzyParam=-1):
             """
             Perform Fuse boolean operation on two given shapes.
 
@@ -7953,6 +7974,9 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
+                theFuzzyParam The fuzzy parameter to be used for the boolean operation.
+                              If the value is not positive, no fuzzy tolerance will be
+                              considered for the boolean operation.
 
             Note:
                     This algorithm doesn't find all types of self-intersections.
@@ -7968,8 +7992,8 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
 
             """
             # Example: see GEOM_TestOthers.py
-            anObj = self.BoolOp.MakeFuse(theShape1, theShape2,
-                                         checkSelfInte, rmExtraEdges)
+            anObj = self.BoolOp.MakeFuseWithFuzzy(theShape1, theShape2, checkSelfInte,
+                                                  rmExtraEdges, theFuzzyParam)
             RaiseIfFailed("MakeFuse", self.BoolOp)
             self._autoPublish(anObj, theName, "fuse")
             return anObj
@@ -7983,11 +8007,14 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
+        #  @param theFuzzyParam The fuzzy parameter to be used for the boolean
+        #         operation. If the value is not positive, no fuzzy tolerance will
+        #         be considered for the boolean operation.
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_section "Example 1"
         #  \n @ref swig_MakeCommon "Example 2"
-        def MakeSection(self, theShape1, theShape2, checkSelfInte=False, theName=None):
+        def MakeSection(self, theShape1, theShape2, checkSelfInte=False, theName=None, theFuzzyParam=-1):
             """
             Perform Section boolean operation on two given shapes.
 
@@ -8000,13 +8027,16 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
+                theFuzzyParam The fuzzy parameter to be used for the boolean operation.
+                              If the value is not positive, no fuzzy tolerance will be
+                              considered for the boolean operation.
             Returns:
                 New GEOM.GEOM_Object, containing the result shape.
 
             """
             # Example: see GEOM_TestOthers.py
             # note: auto-publishing is done in self.MakeBoolean()
-            return self.MakeBoolean(theShape1, theShape2, 4, checkSelfInte, theName)
+            return self.MakeBoolean(theShape1, theShape2, 4, checkSelfInte, theName, theFuzzyParam)
 
         ## Perform Fuse boolean operation on the list of shapes.
         #  @param theShapesList Shapes to be fused.
@@ -8017,6 +8047,9 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
+        #  @param theFuzzyParam The fuzzy parameter to be used for the boolean
+        #         operation. If the value is not positive, no fuzzy tolerance will
+        #         be considered for the boolean operation.
         #
         #  @note This algorithm doesn't find all types of self-intersections.
         #        It is tuned to detect vertex/vertex, vertex/edge, edge/edge,
@@ -8032,7 +8065,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #  \n @ref swig_MakeCommon "Example 2"
         @ManageTransactions("BoolOp")
         def MakeFuseList(self, theShapesList, checkSelfInte=False,
-                         rmExtraEdges=False, theName=None):
+                         rmExtraEdges=False, theName=None, theFuzzyParam=-1):
             """
             Perform Fuse boolean operation on the list of shapes.
 
@@ -8046,6 +8079,9 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
+                theFuzzyParam The fuzzy parameter to be used for the boolean operation.
+                              If the value is not positive, no fuzzy tolerance will be
+                              considered for the boolean operation.
 
             Note:
                     This algorithm doesn't find all types of self-intersections.
@@ -8061,8 +8097,8 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
 
             """
             # Example: see GEOM_TestOthers.py
-            anObj = self.BoolOp.MakeFuseList(theShapesList, checkSelfInte,
-                                             rmExtraEdges)
+            anObj = self.BoolOp.MakeFuseListWithFuzzy(theShapesList, checkSelfInte,
+                                                      rmExtraEdges, theFuzzyParam)
             RaiseIfFailed("MakeFuseList", self.BoolOp)
             self._autoPublish(anObj, theName, "fuse")
             return anObj
@@ -8074,6 +8110,9 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
+        #  @param theFuzzyParam The fuzzy parameter to be used for the boolean
+        #         operation. If the value is not positive, no fuzzy tolerance will
+        #         be considered for the boolean operation.
         #
         #  @note This algorithm doesn't find all types of self-intersections.
         #        It is tuned to detect vertex/vertex, vertex/edge, edge/edge,
@@ -8088,7 +8127,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #  @ref tui_common "Example 1"
         #  \n @ref swig_MakeCommon "Example 2"
         @ManageTransactions("BoolOp")
-        def MakeCommonList(self, theShapesList, checkSelfInte=False, theName=None):
+        def MakeCommonList(self, theShapesList, checkSelfInte=False, theName=None, theFuzzyParam=-1):
             """
             Perform Common boolean operation on the list of shapes.
 
@@ -8100,6 +8139,9 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
+                theFuzzyParam The fuzzy parameter to be used for the boolean operation.
+                              If the value is not positive, no fuzzy tolerance will be
+                              considered for the boolean operation.
 
             Note:
                     This algorithm doesn't find all types of self-intersections.
@@ -8115,7 +8157,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
 
             """
             # Example: see GEOM_TestOthers.py
-            anObj = self.BoolOp.MakeCommonList(theShapesList, checkSelfInte)
+            anObj = self.BoolOp.MakeCommonListWithFuzzy(theShapesList, checkSelfInte, theFuzzyParam)
             RaiseIfFailed("MakeCommonList", self.BoolOp)
             self._autoPublish(anObj, theName, "common")
             return anObj
@@ -8128,6 +8170,9 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
+        #  @param theFuzzyParam The fuzzy parameter to be used for the boolean
+        #         operation. If the value is not positive, no fuzzy tolerance will
+        #         be considered for the boolean operation.
         #
         #  @note This algorithm doesn't find all types of self-intersections.
         #        It is tuned to detect vertex/vertex, vertex/edge, edge/edge,
@@ -8142,7 +8187,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #  @ref tui_cut "Example 1"
         #  \n @ref swig_MakeCommon "Example 2"
         @ManageTransactions("BoolOp")
-        def MakeCutList(self, theMainShape, theShapesList, checkSelfInte=False, theName=None):
+        def MakeCutList(self, theMainShape, theShapesList, checkSelfInte=False, theName=None, theFuzzyParam=-1):
             """
             Perform Cut boolean operation on one object and the list of tools.
 
@@ -8155,6 +8200,9 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
+                theFuzzyParam The fuzzy parameter to be used for the boolean operation.
+                              If the value is not positive, no fuzzy tolerance will be
+                              considered for the boolean operation.
 
             Note:
                     This algorithm doesn't find all types of self-intersections.
@@ -8170,7 +8218,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
 
             """
             # Example: see GEOM_TestOthers.py
-            anObj = self.BoolOp.MakeCutList(theMainShape, theShapesList, checkSelfInte)
+            anObj = self.BoolOp.MakeCutListWithFuzzy(theMainShape, theShapesList, checkSelfInte, theFuzzyParam)
             RaiseIfFailed("MakeCutList", self.BoolOp)
             self._autoPublish(anObj, theName, "cut")
             return anObj
@@ -8191,10 +8239,12 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #                             target type (equal to Limit) are kept in the result,
         #                             else standalone shapes of lower dimension
         #                             are kept also (if they exist).
-        #
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
+        #  @param theFuzzyParam The fuzzy parameter to be used for the partition
+        #         operation. If the value is not positive, no fuzzy tolerance will
+        #         be considered for the partition operation.
         #
         #  @note Each compound from ListShapes and ListTools will be exploded
         #        in order to avoid possible intersection between shapes from this compound.
@@ -8216,7 +8266,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         @ManageTransactions("BoolOp")
         def MakePartition(self, ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
                           Limit=ShapeType["AUTO"], RemoveWebs=0, ListMaterials=[],
-                          KeepNonlimitShapes=0, theName=None):
+                          KeepNonlimitShapes=0, theName=None, theFuzzyParam=-1):
             """
             Perform partition operation.
 
@@ -8261,10 +8311,10 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                 for s in ListShapes: lim = min(lim, s.GetMaxShapeType())
                 Limit = EnumToLong(lim)
                 pass
-            anObj = self.BoolOp.MakePartition(ListShapes, ListTools,
-                                              ListKeepInside, ListRemoveInside,
-                                              Limit, RemoveWebs, ListMaterials,
-                                              KeepNonlimitShapes);
+            anObj = self.BoolOp.MakePartitionWithFuzzy(ListShapes, ListTools,
+                                                       ListKeepInside, ListRemoveInside,
+                                                       Limit, RemoveWebs, ListMaterials,
+                                                       KeepNonlimitShapes, theFuzzyParam)
             RaiseIfFailed("MakePartition", self.BoolOp)
             self._autoPublish(anObj, theName, "partition")
             return anObj
@@ -8278,6 +8328,9 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #  One additional parameter is provided:
         #  @param checkSelfInte The flag that tells if the arguments should
         #         be checked for self-intersection prior to the operation.
+        #  @param theFuzzyParam The fuzzy parameter to be used for the partition
+        #         operation. If the value is not positive, no fuzzy tolerance will
+        #         be considered for the partition operation.
         #
         #  @note This algorithm doesn't find all types of self-intersections.
         #        It is tuned to detect vertex/vertex, vertex/edge, edge/edge,
@@ -8298,7 +8351,8 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                                                  ListKeepInside=[], ListRemoveInside=[],
                                                  Limit=ShapeType["AUTO"], RemoveWebs=0,
                                                  ListMaterials=[], KeepNonlimitShapes=0,
-                                                 checkSelfInte=False, theName=None):
+                                                 checkSelfInte=False, theName=None,
+                                                 theFuzzyParam=-1):
             """
             Perform partition operation.
             This method may be useful if it is needed to make a partition for
@@ -8334,10 +8388,11 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                 for s in ListShapes: lim = min(lim, s.GetMaxShapeType())
                 Limit = EnumToLong(lim)
                 pass
-            anObj = self.BoolOp.MakePartitionNonSelfIntersectedShape(ListShapes, ListTools,
-                                                                     ListKeepInside, ListRemoveInside,
-                                                                     Limit, RemoveWebs, ListMaterials,
-                                                                     KeepNonlimitShapes, checkSelfInte);
+            anObj = self.BoolOp.MakePartitionNonSelfIntersectedShapeWithFuzzy(ListShapes, ListTools,
+                                                                              ListKeepInside, ListRemoveInside,
+                                                                              Limit, RemoveWebs, ListMaterials,
+                                                                              KeepNonlimitShapes, checkSelfInte,
+                                                                              theFuzzyParam)
             RaiseIfFailed("MakePartitionNonSelfIntersectedShape", self.BoolOp)
             self._autoPublish(anObj, theName, "partition")
             return anObj
@@ -8348,7 +8403,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #  \n @ref swig_Partition "Example 2"
         def Partition(self, ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
                       Limit=ShapeType["AUTO"], RemoveWebs=0, ListMaterials=[],
-                      KeepNonlimitShapes=0, theName=None):
+                      KeepNonlimitShapes=0, theName=None, theFuzzyParam=-1):
             """
             See method geompy.MakePartition for more information.
             """
@@ -8357,7 +8412,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             anObj = self.MakePartition(ListShapes, ListTools,
                                        ListKeepInside, ListRemoveInside,
                                        Limit, RemoveWebs, ListMaterials,
-                                       KeepNonlimitShapes, theName);
+                                       KeepNonlimitShapes, theName, theFuzzyParam)
             return anObj
 
         ## Perform partition of the Shape with the Plane
@@ -8366,6 +8421,9 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
+        #  @param theFuzzyParam The fuzzy parameter to be used for the partition
+        #         operation. If the value is not positive, no fuzzy tolerance will
+        #         be considered for the partition operation.
         #
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
@@ -8388,7 +8446,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_partition "Example"
         @ManageTransactions("BoolOp")
-        def MakeHalfPartition(self, theShape, thePlane, theName=None):
+        def MakeHalfPartition(self, theShape, thePlane, theName=None, theFuzzyParam=-1):
             """
             Perform partition of the Shape with the Plane
 
@@ -8415,7 +8473,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
               Result = geompy.MakePartition([Object], [Plane])
             """
             # Example: see GEOM_TestAll.py
-            anObj = self.BoolOp.MakeHalfPartition(theShape, thePlane)
+            anObj = self.BoolOp.MakeHalfPartitionWithFuzzy(theShape, thePlane, theFuzzyParam)
             RaiseIfFailed("MakeHalfPartition", self.BoolOp)
             self._autoPublish(anObj, theName, "partition")
             return anObj

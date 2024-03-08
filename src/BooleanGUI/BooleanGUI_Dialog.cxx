@@ -41,6 +41,9 @@
 // Comment next line to enable preview in BOP dialog box
 #define NO_PREVIEW
 
+#define DEFAULT_FUZZY_VALUE   1e-5
+
+
 //=================================================================================
 // class    : BooleanGUI_Dialog()
 // purpose  : Constructs a BooleanGUI_Dialog which is a child of 'parent', with the
@@ -78,7 +81,7 @@ BooleanGUI_Dialog::BooleanGUI_Dialog (const int theOperation, GeometryGUI* theGe
     image0 = QPixmap(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_SECTION")));
     aTitle = tr("GEOM_SECTION");
     aCaption = tr("GEOM_SECTION_TITLE");
-    setHelpFileName("section_opeartion_page.html");
+    setHelpFileName("section_operation_page.html");
     break;
   }
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
@@ -130,8 +133,20 @@ BooleanGUI_Dialog::BooleanGUI_Dialog (const int theOperation, GeometryGUI* theGe
   myGroup->TextLabel4->hide();
   myGroup->SpinBox_DX->hide();
   myGroup->SpinBox_DY->hide();
-  myGroup->CheckBox3->hide();
   myGroup->CheckBox1->setText(tr("GEOM_CHECK_SELF_INTERSECTIONS"));
+
+  // Add all "fuzzy parameter" related widgets
+  myGroup->CheckBox3->setText(tr("GEOM_USE_FUZZY_PARAMETER"));
+
+  myFuzzyLbl = new QLabel(myGroup->GroupBox1);
+  myFuzzyLbl->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+  myFuzzyLbl->setText(tr("GEOM_FUZZY_PARAMETER"));
+  myGroup->gridLayout1->addWidget(myFuzzyLbl, 7, 0, 1, 2);
+
+  myFuzzyEdt = new SalomeApp_DoubleSpinBox(myGroup->GroupBox1);
+  initSpinBox( myFuzzyEdt, 1.e-7, 10.0, DEFAULT_FUZZY_VALUE, "length_tol_precision" );
+  myFuzzyEdt->setValue(DEFAULT_FUZZY_VALUE);
+  myGroup->gridLayout1->addWidget(myFuzzyEdt, 7, 2);
 
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
@@ -173,6 +188,11 @@ void BooleanGUI_Dialog::Init()
     myGroup->CheckBox2->setChecked(true);
   }
 
+  // Do not use Fuzzy parameter by default
+  myGroup->CheckBox3->setChecked(false);
+  myFuzzyLbl->setEnabled(false);
+  myFuzzyEdt->setEnabled(false);
+
   myObject1.nullify();
   reset();
  
@@ -184,6 +204,10 @@ void BooleanGUI_Dialog::Init()
 
   if (!myGroup->PushButton2->isHidden()) {
     connect(myGroup->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  }
+
+  if (!myGroup->CheckBox3->isHidden()) {
+    connect(myGroup->CheckBox3, SIGNAL(stateChanged(int)), this, SLOT(UseFuzzyChanged(int)));
   }
 
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
@@ -315,6 +339,21 @@ void BooleanGUI_Dialog::SelectionIntoArgument()
 }
 
 //=================================================================================
+// function : UseFuzzyChanged()
+// purpose  : This slot is called whenever the status of CheckButton3 has changed
+//=================================================================================
+void BooleanGUI_Dialog::UseFuzzyChanged(int state)
+{
+  QCheckBox* send = (QCheckBox*)sender();
+
+  if (send == myGroup->CheckBox3) {
+    bool isChecked = (state != Qt::Unchecked);
+    myFuzzyLbl->setEnabled(isChecked);
+    myFuzzyEdt->setEnabled(isChecked);
+  }
+}
+
+//=================================================================================
 // function : SetEditCurrentArgument()
 // purpose  :
 //=================================================================================
@@ -417,6 +456,8 @@ bool BooleanGUI_Dialog::execute (ObjectList& objects)
 
   GEOM::GEOM_IBooleanOperations_var anOper = GEOM::GEOM_IBooleanOperations::_narrow(getOperation());
   const bool isCheckSelfInte = myGroup->CheckBox1->isChecked();
+  const bool useFuzzyParam = myGroup->CheckBox3->isChecked();
+  const double fuzzyValue = (useFuzzyParam ? myFuzzyEdt->value() : -1);
 
   GEOM::ListOfGO_var anObjects = new GEOM::ListOfGO();
   anObjects->length( myObjects.count() );
@@ -427,24 +468,20 @@ bool BooleanGUI_Dialog::execute (ObjectList& objects)
     case BooleanGUI::FUSE:
       {
         const bool isRmExtraEdges = myGroup->CheckBox2->isChecked();
-
-        anObj = anOper->MakeFuseList
-          (anObjects, isCheckSelfInte, isRmExtraEdges);
+        anObj = anOper->MakeFuseListWithFuzzy(anObjects, isCheckSelfInte, isRmExtraEdges, fuzzyValue);
       }
-    break;
+      break;
     case BooleanGUI::COMMON:
-      anObj = anOper->MakeCommonList(anObjects, isCheckSelfInte);
-    break;
-  case BooleanGUI::CUT:
-      anObj =
-        anOper->MakeCutList(myObject1.get(), anObjects, isCheckSelfInte);
-    break;
-  case BooleanGUI::SECTION:
-      anObj = anOper->MakeBoolean
-        (myObject1.get(), anObjects[0], myOperation, isCheckSelfInte);
-    break;
-  default:
-    break;
+      anObj = anOper->MakeCommonListWithFuzzy(anObjects, isCheckSelfInte, fuzzyValue);
+      break;
+    case BooleanGUI::CUT:
+      anObj = anOper->MakeCutListWithFuzzy(myObject1.get(), anObjects, isCheckSelfInte, fuzzyValue);
+      break;
+    case BooleanGUI::SECTION:
+      anObj = anOper->MakeBooleanWithFuzzy(myObject1.get(), anObjects[0], myOperation, isCheckSelfInte, fuzzyValue);
+      break;
+    default:
+      break;
   }
 
   if (!anObj->_is_nil())

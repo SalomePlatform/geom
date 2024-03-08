@@ -67,6 +67,127 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeBoolean
                                      CORBA::Long           theOp,
                                      CORBA::Boolean        IsCheckSelfInte)
 {
+  return MakeBooleanWithFuzzy(theShape1, theShape2, theOp, IsCheckSelfInte, -1.0);
+}
+
+//=============================================================================
+/*!
+ *  MakeFuse
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeFuse
+                                    (GEOM::GEOM_Object_ptr theShape1,
+                                     GEOM::GEOM_Object_ptr theShape2,
+                                     CORBA::Boolean        IsCheckSelfInte,
+                                     CORBA::Boolean        IsRmExtraEdges)
+{
+  return MakeFuseWithFuzzy(theShape1, theShape2, IsCheckSelfInte, IsRmExtraEdges, -1.0);
+}
+
+//=============================================================================
+/*!
+ *  MakeFuseList
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeFuseList
+                                    (const GEOM::ListOfGO& theShapes,
+                                     CORBA::Boolean        IsCheckSelfInte,
+                                     CORBA::Boolean        IsRmExtraEdges)
+{
+  return MakeFuseListWithFuzzy(theShapes, IsCheckSelfInte, IsRmExtraEdges, -1.0);
+}
+
+//=============================================================================
+/*!
+ *  MakeCommonList
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeCommonList
+                                    (const GEOM::ListOfGO& theShapes,
+                                     CORBA::Boolean        IsCheckSelfInte)
+{
+  return MakeCommonListWithFuzzy(theShapes, IsCheckSelfInte, -1.0);
+}
+
+//=============================================================================
+/*!
+ *  MakeCutList
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeCutList
+                                    (GEOM::GEOM_Object_ptr theMainShape,
+                                     const GEOM::ListOfGO& theShapes,
+                                     CORBA::Boolean        IsCheckSelfInte)
+{
+  return MakeCutListWithFuzzy(theMainShape, theShapes, IsCheckSelfInte, -1.0);
+}
+
+//=============================================================================
+/*!
+ *  MakePartition
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartition
+                                      (const GEOM::ListOfGO&   theShapes,
+                                       const GEOM::ListOfGO&   theTools,
+                                       const GEOM::ListOfGO&   theKeepIns,
+                                       const GEOM::ListOfGO&   theRemoveIns,
+                                       CORBA::Short            theLimit,
+                                       CORBA::Boolean          theRemoveWebs,
+                                       const GEOM::ListOfLong& theMaterials,
+                                       CORBA::Short            theKeepNonlimitShapes)
+{
+  return MakePartitionWithFuzzy(theShapes, theTools, theKeepIns, theRemoveIns, theLimit,
+                                theRemoveWebs, theMaterials, theKeepNonlimitShapes, -1.0);
+}
+
+//=============================================================================
+/*!
+ *  MakePartitionNonSelfIntersectedShape
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartitionNonSelfIntersectedShape
+                                      (const GEOM::ListOfGO&   theShapes,
+                                       const GEOM::ListOfGO&   theTools,
+                                       const GEOM::ListOfGO&   theKeepIns,
+                                       const GEOM::ListOfGO&   theRemoveIns,
+                                       CORBA::Short            theLimit,
+                                       CORBA::Boolean          theRemoveWebs,
+                                       const GEOM::ListOfLong& theMaterials,
+                                       CORBA::Short            theKeepNonlimitShapes,
+                                       CORBA::Boolean          IsCheckSelfInte)
+{
+  return MakePartitionNonSelfIntersectedShapeWithFuzzy(theShapes, theTools, theKeepIns, theRemoveIns,
+                                                       theLimit, theRemoveWebs, theMaterials,
+                                                       theKeepNonlimitShapes, IsCheckSelfInte, -1.0);
+}
+
+//=============================================================================
+/*!
+ *  MakeHalfPartition
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeHalfPartition
+                                                 (GEOM::GEOM_Object_ptr theShape,
+                                                  GEOM::GEOM_Object_ptr thePlane)
+{
+  return MakeHalfPartitionWithFuzzy(theShape, thePlane, -1.0);
+}
+
+
+
+//=============================================================================
+/*!
+ *  MakeBooleanWithFuzzy
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeBooleanWithFuzzy
+                                    (GEOM::GEOM_Object_ptr theShape1,
+                                     GEOM::GEOM_Object_ptr theShape2,
+                                     CORBA::Long           theOp,
+                                     CORBA::Boolean        IsCheckSelfInte,
+                                     CORBA::Double         theFuzzyParam)
+{
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
@@ -80,7 +201,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeBoolean
 
   // Make Boolean
   Handle(::GEOM_Object) anObject =
-    GetOperations()->MakeBoolean(aSh1, aSh2, theOp, IsCheckSelfInte);
+    GetOperations()->MakeBoolean(aSh1, aSh2, theOp, IsCheckSelfInte, theFuzzyParam);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -89,14 +210,15 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeBoolean
 
 //=============================================================================
 /*!
- *  MakeFuse
+ *  MakeFuseWithFuzzy
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeFuse
+GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeFuseWithFuzzy
                                     (GEOM::GEOM_Object_ptr theShape1,
                                      GEOM::GEOM_Object_ptr theShape2,
                                      CORBA::Boolean        IsCheckSelfInte,
-                                     CORBA::Boolean        IsRmExtraEdges)
+                                     CORBA::Boolean        IsRmExtraEdges,
+                                     CORBA::Double         theFuzzyParam)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -111,7 +233,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeFuse
 
   // Make Boolean
   Handle(::GEOM_Object) anObject = GetOperations()->MakeFuse
-    (aSh1, aSh2, IsCheckSelfInte, IsRmExtraEdges);
+    (aSh1, aSh2, IsCheckSelfInte, IsRmExtraEdges, theFuzzyParam);
 
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -121,13 +243,14 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeFuse
 
 //=============================================================================
 /*!
- *  MakeFuseList
+ *  MakeFuseListWithFuzzy
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeFuseList
+GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeFuseListWithFuzzy
                                     (const GEOM::ListOfGO& theShapes,
                                      CORBA::Boolean        IsCheckSelfInte,
-                                     CORBA::Boolean        IsRmExtraEdges)
+                                     CORBA::Boolean        IsRmExtraEdges,
+                                     CORBA::Double         theFuzzyParam)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -143,7 +266,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeFuseList
 
   // Make fusion
   Handle(::GEOM_Object) anObject =
-    GetOperations()->MakeFuseList(aShapes, IsCheckSelfInte, IsRmExtraEdges);
+    GetOperations()->MakeFuseList(aShapes, IsCheckSelfInte, IsRmExtraEdges, theFuzzyParam);
 
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -153,12 +276,13 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeFuseList
 
 //=============================================================================
 /*!
- *  MakeCommonList
+ *  MakeCommonListWithFuzzy
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeCommonList
+GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeCommonListWithFuzzy
                                     (const GEOM::ListOfGO& theShapes,
-                                     CORBA::Boolean        IsCheckSelfInte)
+                                     CORBA::Boolean        IsCheckSelfInte,
+                                     CORBA::Double         theFuzzyParam)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -174,7 +298,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeCommonList
 
   // Make fusion
   Handle(::GEOM_Object) anObject =
-    GetOperations()->MakeCommonList(aShapes, IsCheckSelfInte);
+    GetOperations()->MakeCommonList(aShapes, IsCheckSelfInte, theFuzzyParam);
 
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -184,13 +308,14 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeCommonList
 
 //=============================================================================
 /*!
- *  MakeCutList
+ *  MakeCutListWithFuzzy
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeCutList
+GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeCutListWithFuzzy
                                     (GEOM::GEOM_Object_ptr theMainShape,
                                      const GEOM::ListOfGO& theShapes,
-                                     CORBA::Boolean        IsCheckSelfInte)
+                                     CORBA::Boolean        IsCheckSelfInte,
+                                     CORBA::Double         theFuzzyParam)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -212,7 +337,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeCutList
 
   // Make fusion
   Handle(::GEOM_Object) anObject =
-    GetOperations()->MakeCutList(aMainShape, aShapes, IsCheckSelfInte);
+    GetOperations()->MakeCutList(aMainShape, aShapes, IsCheckSelfInte, theFuzzyParam);
 
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -222,10 +347,10 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeCutList
 
 //=============================================================================
 /*!
- *  MakePartition
+ *  MakePartitionWithFuzzy
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartition
+GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartitionWithFuzzy
                                       (const GEOM::ListOfGO&   theShapes,
                                        const GEOM::ListOfGO&   theTools,
                                        const GEOM::ListOfGO&   theKeepIns,
@@ -233,7 +358,8 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartition
                                        CORBA::Short            theLimit,
                                        CORBA::Boolean          theRemoveWebs,
                                        const GEOM::ListOfLong& theMaterials,
-                                       CORBA::Short theKeepNonlimitShapes)
+                                       CORBA::Short            theKeepNonlimitShapes,
+                                       CORBA::Double           theFuzzyParam)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -267,7 +393,8 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartition
                                    theLimit, theRemoveWebs, aMaterials,
                                    theKeepNonlimitShapes,
                                    /*PerformSelfIntersections*/Standard_True,
-                                   /*IsCheckSelfInte*/Standard_False);
+                                   /*IsCheckSelfInte*/Standard_False,
+                                   theFuzzyParam);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -276,10 +403,10 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartition
 
 //=============================================================================
 /*!
- *  MakePartitionNonSelfIntersectedShape
+ *  MakePartitionNonSelfIntersectedShapeWithFuzzy
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartitionNonSelfIntersectedShape
+GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartitionNonSelfIntersectedShapeWithFuzzy
                                       (const GEOM::ListOfGO&   theShapes,
                                        const GEOM::ListOfGO&   theTools,
                                        const GEOM::ListOfGO&   theKeepIns,
@@ -288,7 +415,8 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartitionNonSelfIntersected
                                        CORBA::Boolean          theRemoveWebs,
                                        const GEOM::ListOfLong& theMaterials,
                                        CORBA::Short theKeepNonlimitShapes,
-                                       CORBA::Boolean          IsCheckSelfInte)
+                                       CORBA::Boolean          IsCheckSelfInte,
+                                       CORBA::Double           theFuzzyParam)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -322,7 +450,8 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartitionNonSelfIntersected
                                    theLimit, theRemoveWebs, aMaterials,
                                    theKeepNonlimitShapes,
                                    /*PerformSelfIntersections*/Standard_False,
-                                   IsCheckSelfInte);
+                                   IsCheckSelfInte,
+                                   theFuzzyParam);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -331,12 +460,13 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartitionNonSelfIntersected
 
 //=============================================================================
 /*!
- *  MakeHalfPartition
+ *  MakeHalfPartitionWithFuzzy
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeHalfPartition
+GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeHalfPartitionWithFuzzy
                                                  (GEOM::GEOM_Object_ptr theShape,
-                                                  GEOM::GEOM_Object_ptr thePlane)
+                                                  GEOM::GEOM_Object_ptr thePlane,
+                                                  CORBA::Double         theFuzzyParam)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -351,7 +481,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeHalfPartition
 
   // Make Half Partition
   Handle(::GEOM_Object) anObject =
-    GetOperations()->MakeHalfPartition(aSh, aPl);
+    GetOperations()->MakeHalfPartition(aSh, aPl, theFuzzyParam);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

@@ -43,12 +43,12 @@ class GEOM_I_EXPORT GEOM_IBooleanOperations_i :
   ~GEOM_IBooleanOperations_i();
 
   GEOM::GEOM_Object_ptr MakeBoolean (GEOM::GEOM_Object_ptr theShape1,
-				     GEOM::GEOM_Object_ptr theShape2,
-				     CORBA::Long           theOp,
+                                     GEOM::GEOM_Object_ptr theShape2,
+                                     CORBA::Long           theOp,
                                      CORBA::Boolean        IsCheckSelfInte);
 
   GEOM::GEOM_Object_ptr MakeFuse (GEOM::GEOM_Object_ptr theShape1,
-				  GEOM::GEOM_Object_ptr theShape2,
+                                  GEOM::GEOM_Object_ptr theShape2,
                                   CORBA::Boolean        IsCheckSelfInte,
                                   CORBA::Boolean        IsRmExtraEdges);
 
@@ -64,27 +64,79 @@ class GEOM_I_EXPORT GEOM_IBooleanOperations_i :
                                      CORBA::Boolean        IsCheckSelfInte);
 
   GEOM::GEOM_Object_ptr MakePartition (const GEOM::ListOfGO&   theShapes,
-				       const GEOM::ListOfGO&   theTools,
-				       const GEOM::ListOfGO&   theKeepInside,
-				       const GEOM::ListOfGO&   theRemoveInside,
-				       CORBA::Short            theLimit,
-				       CORBA::Boolean          theRemoveWebs,
-				       const GEOM::ListOfLong& theMaterials,
-				       CORBA::Short theKeepNonlimitShapes);
+                                       const GEOM::ListOfGO&   theTools,
+                                       const GEOM::ListOfGO&   theKeepInside,
+                                       const GEOM::ListOfGO&   theRemoveInside,
+                                       CORBA::Short            theLimit,
+                                       CORBA::Boolean          theRemoveWebs,
+                                       const GEOM::ListOfLong& theMaterials,
+                                       CORBA::Short            theKeepNonlimitShapes);
 
   GEOM::GEOM_Object_ptr MakePartitionNonSelfIntersectedShape (const GEOM::ListOfGO&   theShapes,
-							      const GEOM::ListOfGO&   theTools,
-							      const GEOM::ListOfGO&   theKeepInside,
-							      const GEOM::ListOfGO&   theRemoveInside,
-							      CORBA::Short            theLimit,
-							      CORBA::Boolean          theRemoveWebs,
-							      const GEOM::ListOfLong& theMaterials,
-							      CORBA::Short theKeepNonlimitShapes,
+                                                              const GEOM::ListOfGO&   theTools,
+                                                              const GEOM::ListOfGO&   theKeepInside,
+                                                              const GEOM::ListOfGO&   theRemoveInside,
+                                                              CORBA::Short            theLimit,
+                                                              CORBA::Boolean          theRemoveWebs,
+                                                              const GEOM::ListOfLong& theMaterials,
+                                                              CORBA::Short            theKeepNonlimitShapes,
                                                               CORBA::Boolean          IsCheckSelfInte);
 
-
   GEOM::GEOM_Object_ptr MakeHalfPartition (GEOM::GEOM_Object_ptr theShape,
-					   GEOM::GEOM_Object_ptr thePlane);
+                                           GEOM::GEOM_Object_ptr thePlane);
+
+  // New interface methods with "Fuzzy parameter" support
+
+  GEOM::GEOM_Object_ptr MakeBooleanWithFuzzy (GEOM::GEOM_Object_ptr theShape1,
+                                              GEOM::GEOM_Object_ptr theShape2,
+                                              CORBA::Long           theOp,
+                                              CORBA::Boolean        IsCheckSelfInte,
+                                              CORBA::Double         theFuzzyParam);
+
+  GEOM::GEOM_Object_ptr MakeFuseWithFuzzy (GEOM::GEOM_Object_ptr theShape1,
+                                           GEOM::GEOM_Object_ptr theShape2,
+                                           CORBA::Boolean        IsCheckSelfInte,
+                                           CORBA::Boolean        IsRmExtraEdges,
+                                           CORBA::Double         theFuzzyParam);
+
+  GEOM::GEOM_Object_ptr MakeFuseListWithFuzzy (const GEOM::ListOfGO& theShapes,
+                                               CORBA::Boolean        IsCheckSelfInte,
+                                               CORBA::Boolean        IsRmExtraEdges,
+                                               CORBA::Double         theFuzzyParam);
+
+  GEOM::GEOM_Object_ptr MakeCommonListWithFuzzy (const GEOM::ListOfGO& theShapes,
+                                                 CORBA::Boolean        IsCheckSelfInte,
+                                                 CORBA::Double         theFuzzyParam);
+
+  GEOM::GEOM_Object_ptr MakeCutListWithFuzzy (GEOM::GEOM_Object_ptr theMainShape,
+                                              const GEOM::ListOfGO& theShapes,
+                                              CORBA::Boolean        IsCheckSelfInte,
+                                              CORBA::Double         theFuzzyParam);
+
+  GEOM::GEOM_Object_ptr MakePartitionWithFuzzy (const GEOM::ListOfGO&   theShapes,
+                                                const GEOM::ListOfGO&   theTools,
+                                                const GEOM::ListOfGO&   theKeepInside,
+                                                const GEOM::ListOfGO&   theRemoveInside,
+                                                CORBA::Short            theLimit,
+                                                CORBA::Boolean          theRemoveWebs,
+                                                const GEOM::ListOfLong& theMaterials,
+                                                CORBA::Short            theKeepNonlimitShapes,
+                                                CORBA::Double           theFuzzyParam);
+
+  GEOM::GEOM_Object_ptr MakePartitionNonSelfIntersectedShapeWithFuzzy (const GEOM::ListOfGO&   theShapes,
+                                                                       const GEOM::ListOfGO&   theTools,
+                                                                       const GEOM::ListOfGO&   theKeepInside,
+                                                                       const GEOM::ListOfGO&   theRemoveInside,
+                                                                       CORBA::Short            theLimit,
+                                                                       CORBA::Boolean          theRemoveWebs,
+                                                                       const GEOM::ListOfLong& theMaterials,
+                                                                       CORBA::Short            theKeepNonlimitShapes,
+                                                                       CORBA::Boolean          IsCheckSelfInte,
+                                                                       CORBA::Double           theFuzzyParam);
+
+  GEOM::GEOM_Object_ptr MakeHalfPartitionWithFuzzy (GEOM::GEOM_Object_ptr theShape,
+                                                    GEOM::GEOM_Object_ptr thePlane,
+                                                    CORBA::Double         theFuzzyParam);
 
   ::GEOMImpl_IBooleanOperations* GetOperations()
   { return (::GEOMImpl_IBooleanOperations*)GetImpl(); }

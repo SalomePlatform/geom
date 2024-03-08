@@ -73,7 +73,8 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeBoolean
                                   (Handle(GEOM_Object)    theShape1,
                                    Handle(GEOM_Object)    theShape2,
                                    const Standard_Integer theOp,
-                                   const Standard_Boolean IsCheckSelfInte)
+                                   const Standard_Boolean IsCheckSelfInte,
+                                   const Standard_Real    theFuzzyParam)
 {
   SetErrorCode(KO);
 
@@ -109,6 +110,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeBoolean
   aCI.SetShape1(aRef1);
   aCI.SetShape2(aRef2);
   aCI.SetCheckSelfIntersection(IsCheckSelfInte);
+  aCI.SetFuzzyParameter(theFuzzyParam);
 
   //Compute the Boolean value
   try {
@@ -137,6 +139,11 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeBoolean
     pd << ", True";
   }
 
+  if (theFuzzyParam > 0) {
+    // Use named argument for the fuzzy parameter
+    pd << ", theFuzzyParam=" << theFuzzyParam;
+  }
+
   pd << ")";
 
   SetErrorCode(OK);
@@ -152,7 +159,8 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeFuse
                                   (Handle(GEOM_Object)    theShape1,
                                    Handle(GEOM_Object)    theShape2,
                                    const bool             IsCheckSelfInte,
-                                   const bool             IsRmExtraEdges)
+                                   const bool             IsRmExtraEdges,
+                                   const Standard_Real    theFuzzyParam)
 {
   SetErrorCode(KO);
 
@@ -181,6 +189,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeFuse
   aCI.SetShape2(aRef2);
   aCI.SetCheckSelfIntersection(IsCheckSelfInte);
   aCI.SetRmExtraEdges(IsRmExtraEdges);
+  aCI.SetFuzzyParameter(theFuzzyParam);
 
   //Compute the Boolean value
   try {
@@ -200,7 +209,12 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeFuse
 
   pd << aBool << " = geompy.MakeFuse(";
   pd << theShape1 << ", " << theShape2 << ", "
-     << IsCheckSelfInte << ", " << IsRmExtraEdges << ")";
+     << IsCheckSelfInte << ", " << IsRmExtraEdges;
+  if (theFuzzyParam > 0) {
+    // Use named argument for the fuzzy parameter
+    pd << ", theFuzzyParam=" << theFuzzyParam;
+  }
+  pd << ")";
 
   SetErrorCode(OK);
   return aBool;
@@ -214,7 +228,8 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeFuse
 Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeFuseList
                   (const Handle(TColStd_HSequenceOfTransient)& theShapes,
                    const bool                                  IsCheckSelfInte,
-                   const bool                                  IsRmExtraEdges)
+                   const bool                                  IsRmExtraEdges,
+                   const Standard_Real                         theFuzzyParam)
 {
   SetErrorCode(KO);
 
@@ -243,6 +258,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeFuseList
   aCI.SetShapes(aShapesSeq);
   aCI.SetCheckSelfIntersection(IsCheckSelfInte);
   aCI.SetRmExtraEdges(IsRmExtraEdges);
+  aCI.SetFuzzyParameter(theFuzzyParam);
 
   //Compute the Boolean value
   try {
@@ -261,7 +277,12 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeFuseList
   GEOM::TPythonDump pd (aFunction);
 
   pd << aBool << " = geompy.MakeFuseList([" << aDescription.ToCString() << "], "
-     << IsCheckSelfInte << ", " << IsRmExtraEdges << ")";
+     << IsCheckSelfInte << ", " << IsRmExtraEdges;
+  if (theFuzzyParam > 0) {
+    // Use named argument for the fuzzy parameter
+    pd << ", theFuzzyParam=" << theFuzzyParam;
+  }
+  pd << ")";
 
   SetErrorCode(OK);
   return aBool;
@@ -274,7 +295,8 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeFuseList
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeCommonList
                   (const Handle(TColStd_HSequenceOfTransient)& theShapes,
-                   const Standard_Boolean IsCheckSelfInte)
+                   const Standard_Boolean IsCheckSelfInte,
+                   const Standard_Real    theFuzzyParam)
 {
   SetErrorCode(KO);
 
@@ -302,6 +324,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeCommonList
 
   aCI.SetShapes(aShapesSeq);
   aCI.SetCheckSelfIntersection(IsCheckSelfInte);
+  aCI.SetFuzzyParameter(theFuzzyParam);
 
   //Compute the Boolean value
   try {
@@ -325,7 +348,10 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeCommonList
   if (IsCheckSelfInte) {
     pd << ", True";
   }
-
+  if (theFuzzyParam > 0) {
+    // Use named argument for the fuzzy parameter
+    pd << ", theFuzzyParam=" << theFuzzyParam;
+  }
   pd << ")";
 
   SetErrorCode(OK);
@@ -340,7 +366,8 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeCommonList
 Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeCutList
                   (Handle(GEOM_Object) theMainShape,
                    const Handle(TColStd_HSequenceOfTransient)& theShapes,
-                   const Standard_Boolean IsCheckSelfInte)
+                   const Standard_Boolean IsCheckSelfInte,
+                   const Standard_Real theFuzzyParam)
 {
   SetErrorCode(KO);
 
@@ -372,6 +399,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeCutList
   aCI.SetShape1(aMainRef);
   aCI.SetShapes(aShapesSeq);
   aCI.SetCheckSelfIntersection(IsCheckSelfInte);
+  aCI.SetFuzzyParameter(theFuzzyParam);
 
   //Compute the Boolean value
   try {
@@ -396,6 +424,11 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeCutList
     pd << ", True";
   }
 
+  if (theFuzzyParam > 0) {
+    // Use named argument for the fuzzy parameter
+    pd << ", theFuzzyParam=" << theFuzzyParam;
+  }
+
   pd << ")";
 
   SetErrorCode(OK);
@@ -417,7 +450,8 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
                               const Handle(TColStd_HArray1OfInteger)&     theMaterials,
                               const Standard_Integer theKeepNonlimitShapes,
                               const Standard_Boolean thePerformSelfIntersections,
-                              const Standard_Boolean IsCheckSelfInte)
+                              const Standard_Boolean IsCheckSelfInte,
+                              const Standard_Real    theFuzzyParam)
 {
   SetErrorCode(KO);
 
@@ -497,6 +531,9 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
     }
   }
 
+  // Fuzzy parameter
+  aCI.SetFuzzyParameter(theFuzzyParam);
+
   //Compute the Partition
   try {
     OCC_CATCH_SIGNALS;
@@ -537,6 +574,11 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
   if (IsCheckSelfInte && !thePerformSelfIntersections) {
     pd << ", True";
   }
+  
+  if (theFuzzyParam > 0) {
+    // Use named argument for the fuzzy parameter
+    pd << ", theFuzzyParam=" << theFuzzyParam;
+  }
 
   pd << ")";
 
@@ -550,7 +592,9 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeHalfPartition
-       (Handle(GEOM_Object) theShape, Handle(GEOM_Object) thePlane)
+       (Handle(GEOM_Object) theShape,
+        Handle(GEOM_Object) thePlane,
+        const Standard_Real theFuzzyParam)
 {
   SetErrorCode(KO);
 
@@ -576,6 +620,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeHalfPartition
 
   aCI.SetShape(aRef1);
   aCI.SetPlane(aRef2);
+  aCI.SetFuzzyParameter(theFuzzyParam);
 
   //Compute the Partition value
   try {
@@ -593,7 +638,12 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeHalfPartition
   //Make a Python command
   GEOM::TPythonDump pd (aFunction);
   pd << aPart << " = geompy.MakeHalfPartition("
-     << theShape << ", " << thePlane << ")";
+     << theShape << ", " << thePlane;
+  if (theFuzzyParam > 0) {
+    // Use named argument for the fuzzy parameter
+    pd << ", theFuzzyParam=" << theFuzzyParam;
+  }
+  pd << ")";
 
   SetErrorCode(OK);
   return aPart;

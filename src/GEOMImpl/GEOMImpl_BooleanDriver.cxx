@@ -123,6 +123,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(Handle(TFunction_Logbook)& log)
   Standard_Integer aType = aFunction->GetType();
   const Standard_Boolean isCheckSelfInte = aCI.GetCheckSelfIntersection();
   const Standard_Boolean isRmExtraEdges  = aCI.GetRmExtraEdges();
+  const Standard_Real    aFuzzyParam     = aCI.GetFuzzyParameter();
 
   TopoDS_Shape aShape;
 
@@ -165,7 +166,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(Handle(TFunction_Logbook)& log)
         TNaming_CopyShape::CopyTool(aShape1, aMapTShapes, aShapeCopy1);
         TNaming_CopyShape::CopyTool(aShape2, aMapTShapes, aShapeCopy2);
 
-        aShape = performOperation (aShapeCopy1, aShapeCopy2, aType);
+        aShape = performOperation (aShapeCopy1, aShapeCopy2, aType, aFuzzyParam);
 
         if (isRmExtraEdges) {
           aShape = RemoveExtraEdges(aShape);
@@ -229,7 +230,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(Handle(TFunction_Logbook)& log)
               aList2.Append(aShape2);
               aCSI.SetArguments(aList2);
               aCSI.Perform();
-	      if (aCSI.HasErrors() || aCSI.DS().Interferences().Extent() > 0) {
+              if (aCSI.HasErrors() || aCSI.DS().Interferences().Extent() > 0) {
                 StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
               }
             }
@@ -237,7 +238,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(Handle(TFunction_Logbook)& log)
             // Copy shape
             aShapeCopy.Nullify();
             TNaming_CopyShape::CopyTool(aShape2, aMapTShapes, aShapeCopy);
-            aShape = performOperation (aShape, aShapeCopy, aSimpleType);
+            aShape = performOperation (aShape, aShapeCopy, aSimpleType, aFuzzyParam);
 
             if (isRmExtraEdges) {
               aShape = RemoveExtraEdges(aShape);
@@ -270,7 +271,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(Handle(TFunction_Logbook)& log)
           aList1.Append(aShape);
           aCSI.SetArguments(aList1);
           aCSI.Perform();
-	  if (aCSI.HasErrors() || aCSI.DS().Interferences().Extent() > 0) {
+          if (aCSI.HasErrors() || aCSI.DS().Interferences().Extent() > 0) {
             StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
           }
         }
@@ -300,7 +301,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(Handle(TFunction_Logbook)& log)
             aList2.Append(aTool);
             aCSI.SetArguments(aList2);
             aCSI.Perform();
-	    if (aCSI.HasErrors() || aCSI.DS().Interferences().Extent() > 0) {
+            if (aCSI.HasErrors() || aCSI.DS().Interferences().Extent() > 0) {
               StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
             }
           }
@@ -308,7 +309,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(Handle(TFunction_Logbook)& log)
           // Copy shape
           aShapeCopy.Nullify();
           TNaming_CopyShape::CopyTool(aTool, aMapTShapes, aShapeCopy);
-          aShape = performOperation (aShape, aShapeCopy, BOOLEAN_CUT);
+          aShape = performOperation (aShape, aShapeCopy, BOOLEAN_CUT, aFuzzyParam);
 
           if (aShape.IsNull()) {
             return 0;
@@ -391,7 +392,8 @@ TopoDS_Shape GEOMImpl_BooleanDriver::makeCompoundShellFromFaces
 TopoDS_Shape GEOMImpl_BooleanDriver::performOperation
                                (const TopoDS_Shape theShape1,
                                 const TopoDS_Shape theShape2,
-                                const Standard_Integer theType)const
+                                const Standard_Integer theType,
+                                const Standard_Real theFuzzyParam) const
 {
   TopoDS_Shape aShape;
 
@@ -414,7 +416,15 @@ TopoDS_Shape GEOMImpl_BooleanDriver::performOperation
       TopTools_ListIteratorOfListOfShape itSub2 (listShape2);
       for (; itSub2.More(); itSub2.Next()) {
         TopoDS_Shape aValue2 = itSub2.Value();
-        BRepAlgoAPI_Common BO (aValue1, aValue2);
+        BRepAlgoAPI_Common BO;
+        TopTools_ListOfShape aArgShapes, aToolShapes;
+        aArgShapes.Append(aValue1);
+        aToolShapes.Append(aValue2);
+        BO.SetArguments(aArgShapes);
+        BO.SetTools(aToolShapes);
+        if (theFuzzyParam > 0)
+          BO.SetFuzzyValue(theFuzzyParam);
+        BO.Build();
         if (!BO.IsDone()) {
           StdFail_NotDone::Raise("Common operation can not be performed on the given shapes");
         }
@@ -475,7 +485,15 @@ TopoDS_Shape GEOMImpl_BooleanDriver::performOperation
       TopTools_ListIteratorOfListOfShape itSub2 (listTools);
       for (; itSub2.More(); itSub2.Next()) {
         TopoDS_Shape aTool = itSub2.Value();
-        BRepAlgoAPI_Cut BO (aCut, aTool);
+        BRepAlgoAPI_Cut BO;
+        TopTools_ListOfShape aArgShapes, aToolShapes;
+        aArgShapes.Append(aCut);
+        aToolShapes.Append(aTool);
+        BO.SetArguments(aArgShapes);
+        BO.SetTools(aToolShapes);
+        if (theFuzzyParam > 0)
+          BO.SetFuzzyValue(theFuzzyParam);
+        BO.Build();
         if (!BO.IsDone()) {
           StdFail_NotDone::Raise("Cut operation can not be performed on the given shapes");
         }
@@ -537,7 +555,15 @@ TopoDS_Shape GEOMImpl_BooleanDriver::performOperation
     }
 
     // Perform
-    BRepAlgoAPI_Fuse BO (theShape1, theShape2);
+    BRepAlgoAPI_Fuse BO;
+    TopTools_ListOfShape aArgShapes, aToolShapes;
+    aArgShapes.Append(theShape1);
+    aToolShapes.Append(theShape2);
+    BO.SetArguments(aArgShapes);
+    BO.SetTools(aToolShapes);
+    if (theFuzzyParam > 0)
+      BO.SetFuzzyValue(theFuzzyParam);
+    BO.Build();
     if (!BO.IsDone()) {
       StdFail_NotDone::Raise("Fuse operation can not be performed on the given shapes");
     }
@@ -566,6 +592,9 @@ TopoDS_Shape GEOMImpl_BooleanDriver::performOperation
       for (; itSub2.More(); itSub2.Next()) {
         TopoDS_Shape aValue2 = itSub2.Value();
         BRepAlgoAPI_Section BO (aValue1, aValue2, Standard_False);
+        // Set the fuzzy parameter, if it is valid (negative value <=> do not use fuzzy tolerance)
+        if (theFuzzyParam > 0)
+          BO.SetFuzzyValue(theFuzzyParam);
         // Set approximation to have an attached 3D BSpline geometry to each edge,
         // where analytic curve is not possible. Without this flag in some cases
         // we obtain BSpline curve of degree 1 (C0), which is slowly
@@ -652,6 +681,7 @@ GetCreationInformation(std::string&             theOperationName,
   GEOMImpl_IBoolean aCI (function);
   Standard_Integer aType = function->GetType();
   Standard_Boolean isCheckSelfInte = aCI.GetCheckSelfIntersection();
+  Standard_Real aFuzzyParam = aCI.GetFuzzyParameter();
 
   switch ( aType ) {
   case BOOLEAN_COMMON:
@@ -699,6 +729,9 @@ GetCreationInformation(std::string&             theOperationName,
   default:
     return false;
   }
+
+  if (aFuzzyParam > 0)
+    AddParam( theParams, "Fuzzy Parameter", aFuzzyParam );
 
   return true;
 }

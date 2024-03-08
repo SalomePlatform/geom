@@ -50,7 +50,8 @@ private:
 
   TopoDS_Shape performOperation(const TopoDS_Shape theShape1,
                                 const TopoDS_Shape theShape2,
-                                const Standard_Integer theType) const;
+                                const Standard_Integer theType,
+                                const Standard_Real theFuzzyParam) const;
 
   TopoDS_Shape makeCompoundShellFromFaces(const TopoDS_Shape theShape) const;
 

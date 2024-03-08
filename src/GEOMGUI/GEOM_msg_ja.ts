@@ -424,6 +424,14 @@
       <translation>自己交差の検出</translation>
     </message>
     <message>
+        <source>GEOM_USE_FUZZY_PARAMETER</source>
+        <translation>ファジーパラメータを使用する</translation>
+    </message>
+    <message>
+        <source>GEOM_FUZZY_PARAMETER</source>
+        <translation>ファジーパラメータ</translation>
+    </message>
+    <message>
       <source>GEOM_FAST_CHECK_INTERSECTIONS</source>
       <translation>クイック交点</translation>
     </message>

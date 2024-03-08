@@ -40,6 +40,7 @@
 
 #define PART_ARG_KEEP_NONLIMIT_SHAPES 9
 #define PART_ARG_CHECK_SELF_INTERSECTION 10
+#define PART_ARG_FUZZY_PARAMETER 11
 
 class GEOMImpl_IPartition
 {
@@ -70,6 +71,9 @@ class GEOMImpl_IPartition
   void SetCheckSelfIntersection (Standard_Boolean theFlag)
   { _func->SetInteger(PART_ARG_CHECK_SELF_INTERSECTION, theFlag ? 1 : 0); }
 
+  void SetFuzzyParameter (Standard_Real theValue)
+  { _func->SetReal(PART_ARG_FUZZY_PARAMETER, theValue); }
+
   int GetLimit() { return _func->GetInteger(PART_ARG_LIMIT); }
 
   int GetKeepNonlimitShapes() { return _func->GetInteger(PART_ARG_KEEP_NONLIMIT_SHAPES); }
@@ -90,6 +94,9 @@ class GEOMImpl_IPartition
 
   Standard_Boolean GetCheckSelfIntersection()
   { return (_func->GetInteger(PART_ARG_CHECK_SELF_INTERSECTION) != 0); }
+
+  Standard_Real GetFuzzyParameter()
+  { return _func->GetReal(PART_ARG_FUZZY_PARAMETER); }
 
  private:
 

@@ -46,6 +46,9 @@
 // Comment next line to enable preview in Partition dialog box
 #define NO_PREVIEW
 
+#define DEFAULT_FUZZY_VALUE   1e-5
+
+
 //=================================================================================
 // class    : OperationGUI_PartitionDlg()
 // purpose  : Constructs a OperationGUI_PartitionDlg which is a child of 'parent', with the
@@ -90,6 +93,21 @@ OperationGUI_PartitionDlg::OperationGUI_PartitionDlg( GeometryGUI* theGeometryGU
   mySelfInte = new QCheckBox(GroupPoints->GroupBox1);
   mySelfInte->setText(tr("GEOM_CHECK_SELF_INTERSECTIONS"));
   GroupPoints->gridLayout1->addWidget(mySelfInte, 5, 0, 1, 3);
+
+  // Add all "fuzzy parameter" related widgets
+  myFuzzyChk = new QCheckBox(GroupPoints->GroupBox1);
+  myFuzzyChk->setText(tr("GEOM_USE_FUZZY_PARAMETER"));
+  GroupPoints->gridLayout1->addWidget(myFuzzyChk, 6, 0, 1, 3);
+
+  myFuzzyLbl = new QLabel(GroupPoints->GroupBox1);
+  myFuzzyLbl->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+  myFuzzyLbl->setText(tr("GEOM_FUZZY_PARAMETER"));
+  GroupPoints->gridLayout1->addWidget(myFuzzyLbl, 7, 0, 1, 2);
+
+  myFuzzyEdt = new SalomeApp_DoubleSpinBox(GroupPoints->GroupBox1);
+  initSpinBox( myFuzzyEdt, 1.e-7, 10.0, DEFAULT_FUZZY_VALUE, "length_tol_precision" );
+  myFuzzyEdt->setValue(DEFAULT_FUZZY_VALUE);
+  GroupPoints->gridLayout1->addWidget(myFuzzyEdt, 7, 2);
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
@@ -148,6 +166,11 @@ void OperationGUI_PartitionDlg::Init()
   GroupPoints->CheckButton1->setChecked( false );
   mySelfInte->setChecked(false);
 
+  // Do not use Fuzzy parameter by default
+  myFuzzyChk->setChecked(false);
+  myFuzzyLbl->setEnabled(false);
+  myFuzzyEdt->setEnabled(false);
+
   mainFrame()->GroupBoxPublish->show();
 
   /* signals and slots connections */
@@ -172,6 +195,8 @@ void OperationGUI_PartitionDlg::Init()
   connect( GroupPoints->CheckButton2, SIGNAL(toggled(bool)), mySelfInte, SLOT(setEnabled(bool)) );
   connect( mySelfInte,                SIGNAL(toggled(bool)), this, SLOT(processPreview()) );
 
+  connect( myFuzzyChk, SIGNAL(stateChanged(int)), this, SLOT(UseFuzzyChanged(int)));
+
   mySelfInte->setEnabled(GroupPoints->CheckButton2->isChecked());
   initName( tr( "GEOM_PARTITION" ) );
 
@@ -188,12 +213,6 @@ void OperationGUI_PartitionDlg::ConstructorsClicked( int constructorId )
 {
   disconnect( myGeomGUI->getApp()->selectionMgr(), 0, this, 0 );
   globalSelection();
-
-  //myListShapes.length( 0 );
-  //myListTools.length( 0 );
-  //myListKeepInside.length( 0 );   // obsolete
-  //myListRemoveInside.length( 0 ); // obsolete
-  //myListMaterials.length( 0 );    // obsolete
 
   switch ( constructorId ) {
   case 0: /*Full partition */
@@ -265,6 +284,22 @@ bool OperationGUI_PartitionDlg::ClickOnApply()
   //  0020854: EDF 1398 GEOM: Ergonomy of Partition GUI window
   //  ConstructorsClicked( getConstructorId() );
   return true;
+}
+
+
+//=================================================================================
+// function : UseFuzzyChanged()
+// purpose  : This slot is called whenever the status of CheckButton3 has changed
+//=================================================================================
+void OperationGUI_PartitionDlg::UseFuzzyChanged(int state)
+{
+  QCheckBox* send = (QCheckBox*)sender();
+
+  if (send == myFuzzyChk) {
+    bool isChecked = (state != Qt::Unchecked);
+    myFuzzyLbl->setEnabled(isChecked);
+    myFuzzyEdt->setEnabled(isChecked);
+  }
 }
 
 
@@ -455,6 +490,9 @@ bool OperationGUI_PartitionDlg::execute (ObjectList& objects)
 
   GEOM::GEOM_IBooleanOperations_var anOper = GEOM::GEOM_IBooleanOperations::_narrow(getOperation());
 
+  bool useFuzzyParam = myFuzzyChk->isChecked();
+  double aFuzzyParam = (useFuzzyParam ? myFuzzyEdt->value() : -1.0);
+
   switch ( getConstructorId() ) {
   case 0:
     {
@@ -464,19 +502,19 @@ bool OperationGUI_PartitionDlg::execute (ObjectList& objects)
       bool aNoSelfIntersection = GroupPoints->CheckButton2->isChecked();
 
       anObj = aNoSelfIntersection ?
-        anOper->MakePartitionNonSelfIntersectedShape(myListShapes, myListTools,
-                                                     myListKeepInside, myListRemoveInside,
-                                                     aLimit, false, myListMaterials, aKeepNonlimitShapes,
-                                                     isDetectSelfInte) :
-        anOper->MakePartition(myListShapes, myListTools,
-                              myListKeepInside, myListRemoveInside,
-                              aLimit, false, myListMaterials, aKeepNonlimitShapes);
+        anOper->MakePartitionNonSelfIntersectedShapeWithFuzzy(myListShapes, myListTools,
+                                                              myListKeepInside, myListRemoveInside,
+                                                              aLimit, false, myListMaterials, aKeepNonlimitShapes,
+                                                              isDetectSelfInte, aFuzzyParam) :
+        anOper->MakePartitionWithFuzzy(myListShapes, myListTools,
+                                       myListKeepInside, myListRemoveInside,
+                                       aLimit, false, myListMaterials, aKeepNonlimitShapes, aFuzzyParam);
       res = true;
     }
     break;
   case 1:
     {
-      anObj = anOper->MakeHalfPartition(myListShapes[0].in(), myListTools[0].in());
+      anObj = anOper->MakeHalfPartitionWithFuzzy(myListShapes[0].in(), myListTools[0].in(), aFuzzyParam);
       res = true;
     }
     break;
@@ -522,13 +560,6 @@ void OperationGUI_PartitionDlg::restoreSubShapes( SALOMEDS::SObject_ptr theSObje
 //=======================================================================
 void OperationGUI_PartitionDlg::ComboTextChanged()
 {
-  //bool IsEnabled = GroupPoints->ComboBox1->currentItem() < 3;
-  //GroupPoints->LineEdit3->setEnabled(IsEnabled);
-  //GroupPoints->LineEdit4->setEnabled(IsEnabled);
-  //GroupPoints->TextLabel4->setEnabled(IsEnabled);
-  //GroupPoints->TextLabel5->setEnabled(IsEnabled);
-  //GroupPoints->PushButton3->setEnabled(IsEnabled);
-  //GroupPoints->PushButton4->setEnabled(IsEnabled);
   processPreview();
 }
 

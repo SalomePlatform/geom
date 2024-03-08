@@ -3397,6 +3397,190 @@ module GEOM
      */
     GEOM_Object MakeHalfPartition (in GEOM_Object theShape,
                                    in GEOM_Object thePlane);
+
+    /*!
+     * [bos#40619] [CEA] Add Fuzzy parameter to partition and boolean operators
+     * New interface methods were added to support a fuzzy parameter in
+     * all boolean and partition operations:
+     *  - MakeBooleanWithFuzzy
+     *  - MakeFuseWithFuzzy
+     *  - MakeFuseListWithFuzzy
+     *  - MakeCommonListWithFuzzy
+     *  - MakeCutListWithFuzzy
+     *  - MakePartitionWithFuzzy
+     *  - MakePartitionNonSelfIntersectedShapeWithFuzzy
+     *  - MakeHalfPartitionWithFuzzy
+     */
+
+      /*!
+     *  \brief Perform one of boolean operations on two given shapes.
+     *  \param theShape1 First argument for boolean operation.
+     *  \param theShape2 Second argument for boolean operation.
+     *  \param theOperation Indicates the operation to be done:
+     *                      1 - Common, 2 - Cut, 3 - Fuse, 4 - Section.
+     *  \param IsCheckSelfInte If TRUE, perform check self intersection
+     *                         of arguments before an operation.
+     *  \param theFuzzyParam The fuzzy tolerance to be used in the boolean
+     *                       algorithm, if the value is positive.
+     *  \return New GEOM_Object, containing the result shape.
+     */
+    GEOM_Object MakeBooleanWithFuzzy (in GEOM_Object theShape1,
+                                      in GEOM_Object theShape2,
+                                      in long        theOperation,
+                                      in boolean     IsCheckSelfInte,
+                                      in double      theFuzzyParam);
+    /*!
+     *  \brief Perform fusion boolean operation on two given shapes.
+     *  \param theShape1 First argument for fuse operation.
+     *  \param theShape2 Second argument for fuse operation.
+     *  \param IsCheckSelfInte If TRUE, perform check self intersection
+     *                         of arguments before an operation.
+     *  \param IsRmExtraEdges If TRUE, perform removal of extra edges
+     *                        during an operation.
+     *  \param theFuzzyParam The fuzzy tolerance to be used in the boolean
+     *                       algorithm, if the value is positive.
+     *  \return New GEOM_Object, containing the result shape.
+     */
+    GEOM_Object MakeFuseWithFuzzy (in GEOM_Object theShape1,
+                                   in GEOM_Object theShape2,
+                                   in boolean     IsCheckSelfInte,
+                                   in boolean     IsRmExtraEdges,
+                                   in double      theFuzzyParam);
+
+    /*!
+     *  \brief Perform fusion boolean operation on list of objects.
+     *  \param theShapes Shapes to be fused.
+     *  \param IsCheckSelfInte If TRUE, perform check self intersection
+     *                         of arguments before an operation.
+     *  \param IsRmExtraEdges If TRUE, perform removal of extra edges
+     *                        during an operation.
+     *  \param theFuzzyParam The fuzzy tolerance to be used in the boolean
+     *                       algorithm, if the value is positive.
+     *  \return New GEOM_Object, containing the result shape.
+     */
+    GEOM_Object MakeFuseListWithFuzzy (in ListOfGO theShapes,
+                                       in boolean  IsCheckSelfInte,
+                                       in boolean  IsRmExtraEdges,
+                                       in double   theFuzzyParam);
+
+    /*!
+     *  \brief Perform common boolean operation on list of objects.
+     *  \param theShapes Shapes for common operation.
+     *  \param IsCheckSelfInte If TRUE, perform check self intersection
+     *                         of arguments before an operation.
+     *  \param theFuzzyParam The fuzzy tolerance to be used in the boolean
+     *                       algorithm, if the value is positive.
+     *  \return New GEOM_Object, containing the result shape.
+     */
+    GEOM_Object MakeCommonListWithFuzzy (in ListOfGO theShapes,
+                                         in boolean  IsCheckSelfInte,
+                                         in double   theFuzzyParam);
+
+    /*!
+     *  \brief Perform cutting of list of objects from theMainShape.
+     *  \param theMainShape the object for cut operation.
+     *  \param theShapes Shapes to be cut from theMainShape (tools).
+     *  \param IsCheckSelfInte If TRUE, perform check self intersection
+     *                         of arguments before an operation.
+     *  \param theFuzzyParam The fuzzy tolerance to be used in the boolean
+     *                       algorithm, if the value is positive.
+     *  \return New GEOM_Object, containing the result shape.
+     */
+    GEOM_Object MakeCutListWithFuzzy (in GEOM_Object theMainShape,
+                                      in ListOfGO    theShapes,
+                                      in boolean     IsCheckSelfInte,
+                                      in double      theFuzzyParam);
+
+    /*!
+     *  \brief Perform partition operation.
+     *
+     *  \param theShapes Shapes to be intersected.
+     *  \param theTools Shapes to intersect theShapes.
+     *  \note  Each compound from ListShapes and ListTools will be exploded in order
+     *         to avoid possible intersection between shapes from this compound.
+     *  \param theLimit Type of resulting shapes (corresponding to TopAbs_ShapeEnum).
+     *  \param theKeepNonlimitShapes: if this parameter == 0, then only shapes of
+     *                             target type (equal to Limit) are kept in the result,
+     *                             else standalone shapes of lower dimension
+     *                             are kept also (if they exist).
+     *  \param theFuzzyParam The fuzzy tolerance to be used in the partition
+     *                       algorithm, if the value is positive.
+     *
+     *  After implementation new version of PartitionAlgo (October 2006)
+     *  other parameters are ignored by current functionality. They are kept
+     *  in this function only for supporting old versions.
+     *  Ignored parameters:
+     *  \param theKeepInside Shapes, outside which the results will be deleted.
+     *         Each shape from theKeepInside must belong to theShapes also.
+     *  \param theRemoveInside Shapes, inside which the results will be deleted.
+     *         Each shape from theRemoveInside must belong to theShapes also.
+     *  \param theRemoveWebs If TRUE, perform Glue 3D algorithm.
+     *  \param theMaterials Material indices for each shape. Make sense, only if theRemoveWebs is TRUE.
+     *
+     *  \return New GEOM_Object, containing the result shapes.
+     */
+    GEOM_Object MakePartitionWithFuzzy (in ListOfGO   theShapes,
+                                        in ListOfGO   theTools,
+                                        in ListOfGO   theKeepInside,
+                                        in ListOfGO   theRemoveInside,
+                                        in short      theLimit,
+                                        in boolean    theRemoveWebs,
+                                        in ListOfLong theMaterials,
+                                        in short      theKeepNonlimitShapes,
+                                        in double     theFuzzyParam);
+
+    /*!
+     *  \brief Perform partition operation.
+     *
+     *  This method may be useful if it is needed to make a partition for
+     *  a compound containing nonintersected shapes. Performance will be better
+     *  since intersection between shapes from compound is not performed.
+     *
+     *  Description of all parameters as in previous method MakePartition().
+     *  One additional parameter is provided:
+     *  \param IsCheckSelfInte If TRUE, perform check self intersection
+     *                         of arguments before an operation.
+     *  \param theFuzzyParam The fuzzy tolerance to be used in the partition
+     *                       algorithm, if the value is positive.
+     *
+     *  \note Passed compounds (via ListShapes or via ListTools)
+     *        have to consist of nonintersecting shapes.
+     *
+     *  \return New GEOM_Object, containing the result shapes.
+     */
+    GEOM_Object MakePartitionNonSelfIntersectedShapeWithFuzzy (in ListOfGO   theShapes,
+                                                               in ListOfGO   theTools,
+                                                               in ListOfGO   theKeepInside,
+                                                               in ListOfGO   theRemoveInside,
+                                                               in short      theLimit,
+                                                               in boolean    theRemoveWebs,
+                                                               in ListOfLong theMaterials,
+                                                               in short      theKeepNonlimitShapes,
+                                                               in boolean    IsCheckSelfInte,
+                                                               in double     theFuzzyParam);
+
+    /*!
+     *  \brief Perform partition of the Shape with the Plane
+     *  \param theShape Shape to be intersected.
+     *  \param thePlane Tool shape, to intersect theShape.
+     *  \param theFuzzyParam The fuzzy tolerance to be used in the partition
+     *                       algorithm, if the value is positive.
+     *  \return New GEOM_Object, containing the result shape.
+     * 
+     *  \note This operation is a shortcut to the more general \ref MakePartition
+     *  operation, where \a theShape specifies single "object" (shape being partitioned)
+     *  and \a thePlane specifies single "tool" (intersector shape). Other parameters of
+     *  \ref MakePartition operation have default values:
+     *  - \a theLimit: GEOM::SHAPE (shape limit corresponds to the type of \a theShape)
+     *  - \a theKeepNonlimitShapes: 0
+     *  - \a theKeepInside, \a theRemoveInside, \a theRemoveWebs,
+     *    \a theMaterials (obsolete parameters): empty
+     *
+     * \sa MakePartition, MakePartitionNonSelfIntersectedShape
+     */
+    GEOM_Object MakeHalfPartitionWithFuzzy (in GEOM_Object theShape,
+                                            in GEOM_Object thePlane,
+                                            in double      theFuzzyParam);
   };
 
  // # GEOM_ICurvesOperations:

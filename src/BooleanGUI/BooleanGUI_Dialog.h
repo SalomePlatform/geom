@@ -31,6 +31,8 @@
 #include "GEOM_GenericObjPtr.h"
 
 class DlgRef_2Sel2Spin3Check;
+class QLabel;
+class SalomeApp_DoubleSpinBox;
 
 //=================================================================================
 // class    : BooleanGUI_Dialog
@@ -68,10 +70,13 @@ private:
   QList<GEOM::GeomObjPtr>            myObjects;
   
   DlgRef_2Sel2Spin3Check*            myGroup;
+  QLabel*                            myFuzzyLbl;
+  SalomeApp_DoubleSpinBox*           myFuzzyEdt;
 
 private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
+  void                               UseFuzzyChanged(int state);
   void                               SetEditCurrentArgument();
   void                               SelectionIntoArgument();
   void                               ActivateThisDialog();

@@ -30,6 +30,7 @@
 #define BOOL_ARG_SHAPES                   3
 #define BOOL_ARG_CHECK_SELF_INTERSECTION  4
 #define BOOL_ARG_RM_EXTRA_EDGES           5
+#define BOOL_ARG_FUZZY_PARAMETER          6
 
 class GEOMImpl_IBoolean
 {
@@ -45,6 +46,8 @@ class GEOMImpl_IBoolean
   { _func->SetInteger(BOOL_ARG_CHECK_SELF_INTERSECTION, theFlag ? 1 : 0); }
   void SetRmExtraEdges (Standard_Boolean theFlag)
   { _func->SetInteger(BOOL_ARG_RM_EXTRA_EDGES, theFlag ? 1 : 0); }
+  void SetFuzzyParameter (Standard_Real theValue)
+  { _func->SetReal(BOOL_ARG_FUZZY_PARAMETER, theValue); }
 
   Handle(GEOM_Function) GetShape1() { return _func->GetReference(BOOL_ARG_SHAPE1); }
   Handle(GEOM_Function) GetShape2() { return _func->GetReference(BOOL_ARG_SHAPE2); }
@@ -54,6 +57,8 @@ class GEOMImpl_IBoolean
   { return (_func->GetInteger(BOOL_ARG_CHECK_SELF_INTERSECTION) != 0); }
   Standard_Boolean GetRmExtraEdges()
   { return (_func->GetInteger(BOOL_ARG_RM_EXTRA_EDGES) != 0); }
+  Standard_Real GetFuzzyParameter()
+  { return _func->GetReal(BOOL_ARG_FUZZY_PARAMETER); }
 
  private:
 
