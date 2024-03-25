@@ -531,10 +531,24 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(Handle(TFunction_Logbook)& log) c
     Handle(TopTools_HSequenceOfShape) aSeqClosedWires = new TopTools_HSequenceOfShape;
     Handle(TopTools_HSequenceOfShape) aSeqOpenWires = new TopTools_HSequenceOfShape;
     for (ind = 1; ind <= aSeqWiresOut->Length(); ind++) {
-      if (aSeqWiresOut->Value(ind).Closed())
-        aSeqClosedWires->Append(aSeqWiresOut->Value(ind));
-      else
-        aSeqOpenWires->Append(aSeqWiresOut->Value(ind));
+      TopoDS_Shape aWireShape = aSeqWiresOut->Value(ind);
+      if (aWireShape.Closed()) {
+        TopoDS_Wire aWire = TopoDS::Wire(aWireShape);
+        BRepTools_WireExplorer wexp (aWire);
+        if (wexp.More()) {
+          TopoDS_Edge anEdge = wexp.Current();
+          wexp.Next();
+          if (!wexp.More()) { // one edge in the wire
+            if (BRep_Tool::Degenerated(anEdge) || !BRep_Tool::IsGeometric(anEdge)) {
+              continue;
+            }
+          }
+        }
+        aSeqClosedWires->Append(aWireShape);
+      }
+      else {
+        aSeqOpenWires->Append(aWireShape);
+      }
     }
 
     if (aSeqClosedWires->Length() < 1) {
