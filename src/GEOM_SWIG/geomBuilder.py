@@ -4878,6 +4878,39 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakeFaceFromSurface", self.ShapesOp)
             self._autoPublish(anObj, theName, "face")
             return anObj
+        
+        ## Create a non-planar face from a list of closed edges and a list of vertices.
+        #  @param theEdges list of Edges(must be closed but not nesessarily belong to the same plane).
+        #  @param theVertices list of vertices through which the result face must pass.
+        #  @param theTolerance tolerance
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing the created face.
+        #
+        #  @ref tui_creation_face "Example"
+        @ManageTransactions("ShapesOp")
+        def MakeWrappedFace(self, theEdges, theVertices, theTolerance, theName=None):
+            """
+            Create a non-planar face from a list of closed edges and a list of vertices.
+
+            Parameters:
+                theEdges list of Edges(must be closed but not nesessarily belong to the same plane).
+                theVertices list of vertices through which the result face must pass.
+                theTolerance tolerance
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the created face.
+            """
+            # Example: see GEOM_TestAll.py
+            anObj = self.ShapesOp.MakeWrappedFace(theEdges, theVertices, theTolerance)
+            RaiseIfFailed("MakeWrappedFace", self.ShapesOp)
+            self._autoPublish(anObj, theName, "face")
+            return anObj
           
         ## Create a face from a set of edges with the given constraints.
         #  @param theConstraints List of edges and constraint faces (as a sequence of a Edge + Face couples):

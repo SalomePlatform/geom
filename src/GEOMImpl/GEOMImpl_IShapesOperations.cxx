@@ -35,6 +35,7 @@
 #include "GEOMImpl_ShapeDriver.hxx"
 #include "GEOMImpl_GlueDriver.hxx"
 #include "GEOMImpl_FillingDriver.hxx"
+#include "GEOMImpl_WrappingDriver.hxx"
 
 #include "GEOMImpl_IExtract.hxx"
 #include "GEOMImpl_IVector.hxx"
@@ -42,6 +43,7 @@
 #include "GEOMImpl_IShapeExtend.hxx"
 #include "GEOMImpl_IGlue.hxx"
 #include "GEOMImpl_IFilling.hxx"
+#include "GEOMImpl_IWrap.hxx"
 
 #include "GEOMImpl_Block6Explorer.hxx"
 #include "GEOMImpl_IHealingOperations.hxx"
@@ -643,6 +645,99 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceFromSurface
   GEOM::TPythonDump (aFunction) << aShape
     << " = geompy.MakeFaceFromSurface(" << theFace << ", " << theWire << ")";
 
+  SetErrorCode(OK);
+
+  return aShape;
+}
+
+//=============================================================================
+/*!
+ *  MakeWrappedFace
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeWrappedFace
+                                              (std::list<Handle(GEOM_Object)> theEdges,
+                                               std::list<Handle(GEOM_Object)> theVertices,
+                                               const Standard_Real theTolerance)
+{
+  SetErrorCode(KO);
+  //Add a new object
+  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GEOM_FACE);
+
+  //Add a new function
+  Handle(GEOM_Function) aFunction =
+    aShape->AddFunction(GEOMImpl_WrappingDriver::GetID(), WRAPPING_FACE);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_WrappingDriver::GetID()) return NULL;
+
+  GEOMImpl_IWrap aCI (aFunction);
+  aCI.SetTolerance(theTolerance);
+
+  // Edges
+  Handle(TColStd_HSequenceOfTransient) anEdgesSeq = new TColStd_HSequenceOfTransient;
+  std::list<Handle(GEOM_Object)>::iterator it = theEdges.begin();
+  for (; it != theEdges.end(); it++) {
+    Handle(GEOM_Object) anEdge = (*it);
+    if ( anEdge.IsNull() || anEdge->GetValue().ShapeType() != TopAbs_EDGE ) {
+      SetErrorCode("NULL argument edge for the face construction");
+      return NULL;
+    }
+    Handle(GEOM_Function) aRefSh = anEdge->GetLastFunction();
+    anEdgesSeq->Append(aRefSh);
+  }
+  aCI.SetEdges(anEdgesSeq);
+
+  // Vertices
+  Handle(TColStd_HSequenceOfTransient) aVerticesSeq = new TColStd_HSequenceOfTransient;
+  it = theVertices.begin();
+  for (; it != theVertices.end(); it++) {
+    Handle(GEOM_Object) aVertex = (*it);
+    if ( aVertex.IsNull() || aVertex->GetValue().ShapeType() != TopAbs_VERTEX ) {
+      SetErrorCode("NULL argument vertex for the face construction");
+      return NULL;
+    }
+    Handle(GEOM_Function) aRefSh = aVertex->GetLastFunction();
+    aVerticesSeq->Append(aRefSh);
+  }
+  aCI.SetVertices(aVerticesSeq);
+
+  //Compute the face
+  try {
+    OCC_CATCH_SIGNALS;
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Wrap driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure& aFail) {
+    SetErrorCode(aFail.GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+  pd << aShape << " = geompy.MakeWrappedFace([";
+
+  // Edges
+  it = theEdges.begin();
+  if (it != theEdges.end()) {
+    pd << (*it++);
+    while (it != theEdges.end()) {
+      pd << ", " << (*it++);
+    }
+  }
+  pd << "], [";
+  // Vertices
+  it = theVertices.begin();
+  if (it != theVertices.end()) {
+    pd << (*it++);
+    while (it != theVertices.end()) {
+      pd << ", " << (*it++);
+    }
+  }
+  pd << "], " << theTolerance << ")";
   SetErrorCode(OK);
 
   return aShape;

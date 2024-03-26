@@ -67,6 +67,10 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
   GEOM::GEOM_Object_ptr MakeFaceFromSurface(GEOM::GEOM_Object_ptr theFace,
                                             GEOM::GEOM_Object_ptr theWire);
 
+  GEOM::GEOM_Object_ptr MakeWrappedFace(const GEOM::ListOfGO& theEdges,
+                                        const GEOM::ListOfGO& theVertices,
+                                        const CORBA::Double theTolerance);
+
   GEOM::GEOM_Object_ptr MakeFaceWithConstraints (const GEOM::ListOfGO& theConstraints);
   
   GEOM::GEOM_Object_ptr MakeShell (const GEOM::ListOfGO& theFacesAndShells);

@@ -327,6 +327,8 @@
 #define SOLID_FACES         19
 #define EXTRACTION          20
 
+#define WRAPPING_FACE 1
+
 #define ARCHIMEDE_TYPE 1
 
 // Shape Healing operators

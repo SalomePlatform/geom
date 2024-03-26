@@ -85,6 +85,7 @@
 #include <GEOMImpl_FieldDriver.hxx>
 #include <GEOMImpl_ConformityDriver.hxx>
 #include <GEOMImpl_ShapeProximityDriver.hxx>
+#include <GEOMImpl_WrappingDriver.hxx>
 
 //=============================================================================
 /*!
@@ -171,6 +172,9 @@ GEOMImpl_Gen::GEOMImpl_Gen()
    // Field
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_FieldDriver::GetID(), new GEOMImpl_FieldDriver());
 
+   // Wrapping
+   TFunction_DriverTable::Get()->AddDriver(GEOMImpl_WrappingDriver::GetID(), new GEOMImpl_WrappingDriver());
+   
    /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
 
    SetEngine(this);

@@ -2066,6 +2066,17 @@ module GEOM
     GEOM_Object MakeFaceFromSurface(in GEOM_Object theFace,
                                     in GEOM_Object theWire);
 
+    /**
+     *  \brief Create non planar face with list of edges and list of vertices
+     *  \param theEdges list of Edges(must be closed but not nesessarily belong to the same plane) .
+     *  \param theVertices list of vertices through which the result face must pass.
+     *  \param theTolerance tolerance.
+     *  \return New GEOM_Object, containing the created face.
+     */
+    GEOM_Object MakeWrappedFace(in ListOfGO theEdges,
+                                in ListOfGO theVertices,
+                                in double   theTolerance);
+
     /*!
      *  \brief Create a face from a set of edges with the given constraints.
      *  \param theConstraints List of edges and constraint faces (as a sequence of a Edge + Face couples):

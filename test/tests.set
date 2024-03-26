@@ -31,5 +31,6 @@ IF(${OpenCASCADE_VERSION}.${OpenCASCADE_SP_VERSION} VERSION_GREATER "7.5.3.3")
       test_proximity_edge_edge.py
       test_proximity_face_face.py
       test_boolean_fuzzy.py
+      test_WrappedFace.py
     )
 ENDIF()

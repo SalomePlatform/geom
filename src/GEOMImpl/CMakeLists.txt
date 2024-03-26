@@ -25,6 +25,7 @@ INCLUDE_DIRECTORIES(
   ${PTHREAD_INCLUDE_DIR}
   ${KERNEL_INCLUDE_DIRS}
   ${PYTHON_INCLUDE_DIRS}
+  ${EIGEN3_INCLUDE_DIR}
   ${PROJECT_SOURCE_DIR}/src/ShHealOper
   ${PROJECT_SOURCE_DIR}/src/GEOM 
   ${PROJECT_SOURCE_DIR}/src/BlockFix
@@ -187,6 +188,8 @@ SET(GEOMImpl_HEADERS
   GEOMImpl_Types.hxx
   GEOM_GEOMImpl.hxx
   GEOMImpl_ICanonicalRecognition.hxx
+  GEOMImpl_WrappingDriver.hxx
+  GEOMImpl_IWrap.hxx
   )
 # --- sources ---
 
@@ -266,6 +269,7 @@ SET(GEOMImpl_SOURCES
   GEOMImpl_ShapeProximityDriver.cxx
   GEOMImpl_FieldDriver.cxx
   GEOMImpl_ICanonicalRecognition.cxx
+  GEOMImpl_WrappingDriver.cxx
   )
 
 # --- rules ---

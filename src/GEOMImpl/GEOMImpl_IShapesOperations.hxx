@@ -104,6 +104,10 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
   Standard_EXPORT Handle(GEOM_Object) MakeFaceFromSurface
                                               (Handle(GEOM_Object) theFace,
                                                Handle(GEOM_Object) theWire);
+
+  Standard_EXPORT Handle(GEOM_Object) MakeWrappedFace(std::list<Handle(GEOM_Object)> theEdges,
+                                                      std::list<Handle(GEOM_Object)> theVertices,
+                                                      const Standard_Real theTolerance);
                                                
   Standard_EXPORT Handle(GEOM_Object) MakeFaceWithConstraints (std::list<Handle(GEOM_Object)> theConstraints);
 

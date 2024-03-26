@@ -312,6 +312,47 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeFaceFromSurface
 
 //=============================================================================
 /*!
+ *  MakeWrappedFace
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeWrappedFace
+                                  (const GEOM::ListOfGO& theEdges,
+                                   const GEOM::ListOfGO& theVertices,
+                                   const CORBA::Double theTolerance)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the edges
+  std::list<Handle(::GEOM_Object)> anEdges;
+  for( CORBA::ULong ind = 0; ind < theEdges.length(); ind++ ) {
+    Handle(::GEOM_Object) anObject = GetObjectImpl( theEdges[ind] );
+    anEdges.push_back(anObject);
+  }
+
+  //Get the vertices
+  std::list<Handle(::GEOM_Object)> aVertices;
+  for( CORBA::ULong ind = 0; ind < theVertices.length(); ind++ ) {
+    Handle(::GEOM_Object) anObject = GetObjectImpl( theVertices[ind] );
+    aVertices.push_back(anObject);
+  }
+
+  //Create the Face
+  Handle(::GEOM_Object) anObject =
+    GetOperations()->MakeWrappedFace(anEdges, aVertices, theTolerance);
+
+  // enable warning status
+  if (anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+
+//=============================================================================
+/*!
  *  MakeFaceWithConstraints
  */
 //=============================================================================
