@@ -336,7 +336,7 @@ void GEOMAlgo_ShapeInfoFiller::FillFace(const TopoDS_Shape& aS)
     aP0=aPln.Location();
     aAx3=aPln.Position();
     //
-    aInfo.SetKindOfShape(GEOMAlgo_KS_PLANE); 
+    aInfo.SetKindOfShape(GEOMAlgo_KS_PLANE);
     aInfo.SetKindOfName(GEOMAlgo_KN_PLANE);
     aInfo.SetKindOfClosed(GEOMAlgo_KC_NOTCLOSED);
     aInfo.SetLocation(aP0);
@@ -420,38 +420,52 @@ void GEOMAlgo_ShapeInfoFiller::FillFace(const TopoDS_Shape& aS)
   //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
   // 4. Cone
   else if (aST==GeomAbs_Cone) {
-    Standard_Real aSemiAngle;
-    gp_Cone aCone;
-    //
-    aCone=aGAS.Cone();
-    aP0=aCone.Location();
-    aAx3=aCone.Position();
+    const gp_Cone aCone=aGAS.Cone();
     //
     aInfo.SetKindOfShape(GEOMAlgo_KS_CONE);
     aInfo.SetKindOfName(GEOMAlgo_KN_CONE);
-    aInfo.SetLocation(aP0);
-    aInfo.SetPosition(aAx3);
     //
     BRepTools::UVBounds(aF, aUMin, aUMax, aVMin, aVMax);
+
     bInfU1=Precision::IsNegativeInfinite(aUMin);
     bInfU2=Precision::IsPositiveInfinite(aUMax);
     bInfV1=Precision::IsNegativeInfinite(aVMin);
     bInfV2=Precision::IsPositiveInfinite(aVMax);
     //
-    bInf=(bInfU1 || bInfU2 || bInfV1 || bInfV2);
+    bInf=bInfV1 || bInfV2;
     if (bInf) {
+      aP0=aAx3.Location();
+      aAx3=aCone.Position();
+      aInfo.SetLocation(aP0);
+      aInfo.SetPosition(aAx3);
       aInfo.SetKindOfBounds(GEOMAlgo_KB_INFINITE);
       return;
     }
     //
     aInfo.SetKindOfBounds(GEOMAlgo_KB_TRIMMED);
     //
-    aSemiAngle=fabs(aCone.SemiAngle());
-    dV=(aVMax-aVMin)*cos(aSemiAngle);
-    
-    aInfo.SetHeight(dV);
-    //
-    FillDetails(aF, aCone);
+    const Standard_Real aSemiAngle = aCone.SemiAngle();
+
+    dV = aVMax - aVMin;
+    Standard_Real H = dV * std::cos(aSemiAngle);
+
+    aAx3 = aCone.Position();
+    Standard_Real aShiftAlongAxisLength = aVMin * std::cos(aSemiAngle); // Required, because R1 does not equal to gp_Cone.RefRadius() in general case, and gp_Cone.Location() corresponds to the latter one.
+    auto aShiftAlongAxis = gp_Vec(aAx3.Direction().XYZ());
+    aShiftAlongAxis *= aShiftAlongAxisLength;
+    aAx3.Translate(aShiftAlongAxis);
+
+    aP0=aAx3.Location();
+    aInfo.SetLocation(aP0);
+    aInfo.SetPosition(aAx3);
+
+    aR1 = aCone.RefRadius() + aVMin * std::sin(aSemiAngle);
+    aR2 = aCone.RefRadius() + aVMax * std::sin(aSemiAngle);
+
+    aInfo.SetRadius1(aR1);
+    aInfo.SetRadius2(aR2);
+    aInfo.SetHeight(H);
+    aInfo.SetKindOfDef(GEOMAlgo_KD_SPECIFIED);
   }
   //
   //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||

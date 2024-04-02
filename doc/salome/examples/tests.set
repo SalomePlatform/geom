@@ -76,6 +76,7 @@ SET(GOOD_TESTS
   get_non_blocks.py
   import_export.py
   inertia.py
+  kind_of_shape_cone.py
   min_distance.py
   curvature_face.py
   normal_face.py

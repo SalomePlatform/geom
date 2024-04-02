@@ -4,4 +4,6 @@
 
 \tui_script{kind_of_shape.py}
 
+\tui_script{kind_of_shape_cone.py}
+
 */

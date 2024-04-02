@@ -103,13 +103,13 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Solid& aSd)
     aKD=aInfoF.KindOfDef();
   }
   if (aKD!=GEOMAlgo_KD_SPECIFIED) {
-    aInfo.SetKindOfName(GEOMAlgo_KN_SOLID); 
+    aInfo.SetKindOfName(GEOMAlgo_KN_SOLID);
     return;
   }
   //
   aNbShells=GEOMAlgo_ShapeInfoFiller::NbShells(aSd);
   if (aNbShells>1) {
-    aInfo.SetKindOfName(GEOMAlgo_KN_SOLID); 
+    aInfo.SetKindOfName(GEOMAlgo_KN_SOLID);
     return;
   }
   //
@@ -396,7 +396,7 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
   if (bSegment) {
   // 2. may be it is TRIANGLE, POLYGON, QUADRANGLE, RECTANGLE
     aInfo.SetKindOfDef(GEOMAlgo_KD_SPECIFIED);
-    aInfo.SetKindOfName(GEOMAlgo_KN_POLYGON); 
+    aInfo.SetKindOfName(GEOMAlgo_KN_POLYGON);
     //
     if (aNbV==3 && aNbE==3) {
       aInfo.SetKindOfName(GEOMAlgo_KN_TRIANGLE);
@@ -480,7 +480,7 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
         //
         aLength=aD1;
         aWidth =aD0;
-        
+
         if (aD0>aD1) {
           aLength=aD0;
           aWidth =aD1;
@@ -515,7 +515,7 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
 void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
                                            const gp_Sphere& )//aSph)
 {
-  
+
   Standard_Integer aNbV, aNbE, aNbSE, aNbDE;
   TopoDS_Edge aE;
   TopExp_Explorer aExp;
@@ -523,7 +523,7 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
   GEOMAlgo_KindOfShape aKSE;//, aKSE;
   //
   GEOMAlgo_ShapeInfo& aInfo=myMapInfo.ChangeFromKey(aF);
-  // 
+  //
   aInfo.SetKindOfDef(GEOMAlgo_KD_ARBITRARY);
   aNbV=aInfo.NbSubShapes(TopAbs_VERTEX);
   aNbE=aInfo.NbSubShapes(TopAbs_EDGE);
@@ -557,7 +557,7 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
 //=======================================================================
 void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
                                            const gp_Cylinder& aCyl)
-     
+
 {
   Standard_Integer aNbV, aNbE, aNbCE, aNbSE;
   Standard_Real aT0, aT1, aHeight;
@@ -628,129 +628,9 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
 //purpose  :
 //=======================================================================
 void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
-                                           const gp_Cone& aCone)
-{
-  Standard_Integer aNbV, aNbE, aNbCE, aNbSE, aNbDE, i;
-  Standard_Real aR[3], aHeight, aRmin, aRmax;
-  gp_Pnt aPC[3], aPD, aPc, aPX[3];
-  TopoDS_Vertex aVD;
-  TopoDS_Edge aE;
-  TopoDS_Iterator aIt;
-  TopExp_Explorer aExp;
-  TopTools_MapOfShape aM;
-  GEOMAlgo_KindOfShape aKSE;
-  GEOMAlgo_KindOfName aKNE;
-  GEOMAlgo_KindOfClosed aKCE;
-  //
-  GEOMAlgo_ShapeInfo& aInfo=myMapInfo.ChangeFromKey(aF);
-  //
-  aInfo.SetKindOfDef(GEOMAlgo_KD_ARBITRARY);
-  //
-  aNbV=aInfo.NbSubShapes(TopAbs_VERTEX);
-  aNbE=aInfo.NbSubShapes(TopAbs_EDGE);
-  if (aNbV==2 && aNbE==3) {
-    i=0;
-    aNbCE=0;
-    aNbSE=0;
-    aNbDE=0;
-    aExp.Init(aF, TopAbs_EDGE);
-    for (; aExp.More(); aExp.Next()) {
-      aE=TopoDS::Edge(aExp.Current());
-      if(aM.Add(aE)) {
-        const GEOMAlgo_ShapeInfo& aInfoE=myMapInfo.FindFromKey(aE);
-        aKNE=aInfoE.KindOfName();
-        aKCE=aInfoE.KindOfClosed();
-        aKSE=aInfoE.KindOfShape();
-        if (aKNE==GEOMAlgo_KN_CIRCLE && aKCE==GEOMAlgo_KC_CLOSED) {
-          aPC[i]=aInfoE.Location();
-          aR[i]=aInfoE.Radius1();
-          //
-          aIt.Initialize(aE);
-          if (aIt.More()) {
-            aVD=*((TopoDS_Vertex*)&aIt.Value());
-          }
-          aPX[i]=BRep_Tool::Pnt(aVD);
-          //
-          ++i;
-          ++aNbCE;
-        }
-        else if (aKNE==GEOMAlgo_KN_SEGMENT) {
-          if (BRep_Tool::IsClosed(aE, aF)) {
-            ++aNbSE;
-          }
-        }
-        else if (aKSE==GEOMAlgo_KS_DEGENERATED) {
-          aIt.Initialize(aE);
-          if (aIt.More()) {
-            aVD=*((TopoDS_Vertex*)&aIt.Value());
-          }
-          //
-          aPD=BRep_Tool::Pnt(aVD);
-          //
-          ++aNbDE;
-        }
-      }
-    }
-    //
-    if ((aNbCE==2 || (aNbCE==1 && aNbDE==1)) && aNbSE==1) {
-      if (aNbDE==1) {
-        aPC[1]=aPD;
-        aR[1]=0.;
-      }
-      //
-      aHeight=aPC[0].Distance(aPC[1]);
-      //
-      
-      gp_Ax2 aAx2new;
-      //
-      if (aR[0]>aR[1]) {
-        aRmin=aR[1];
-        aRmax=aR[0];
-        aPc=aPC[0];
-        gp_Vec aVz(aPC[0], aPC[1]);
-        gp_Vec aVx(aPC[0], aPX[0]);
-        gp_Dir aDz(aVz);
-        gp_Dir aDx(aVx);
-        gp_Ax2 aAx2(aPc, aDz, aDx);
-        aAx2new=aAx2;
-      }
-      else {
-        aRmin=aR[0];
-        aRmax=aR[1];
-        aPc=aPC[1];
-        gp_Vec aVz(aPC[1], aPC[0]);
-        gp_Vec aVx(aPC[1], aPX[1]);
-        gp_Dir aDz(aVz);
-        gp_Dir aDx(aVx);
-        gp_Ax2 aAx2(aPc, aDz, aDx);
-        aAx2new=aAx2;
-      }
-      //
-      gp_Ax3 aAx3(aAx2new);
-      aInfo.SetLocation(aPc);
-      aInfo.SetPosition(aAx3);
-      aInfo.SetRadius1(aRmax);
-      aInfo.SetRadius2(aRmin);
-      aInfo.SetHeight(aHeight);
-      //
-      aInfo.SetKindOfDef(GEOMAlgo_KD_SPECIFIED);
-      return;
-    }//if ((aNbCE==2 || (aNbCE==1 && aNbDE==1)) && aNbSE==1) {
-  }//if (aNbV==2 && aNbE==3) {
-  //
-  aInfo.SetRadius1 (aCone.RefRadius());
-  //
-  aRmin=0.;   // ZZ
-  aInfo.SetRadius2(aRmin);
-}
-//=======================================================================
-//function : FillDetails
-//purpose  :
-//=======================================================================
-void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
                                            const gp_Torus& )
 {
-  
+
   Standard_Integer aNbV, aNbE, aNbSE;
   TopoDS_Edge aE;
   TopExp_Explorer aExp;
@@ -764,10 +644,10 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
   if (aKS!=GEOMAlgo_KS_TORUS) {
     return;
   }
-  
+
   aNbV=aInfo.NbSubShapes(TopAbs_VERTEX);
-  aNbE=aInfo.NbSubShapes(TopAbs_EDGE); 
-  
+  aNbE=aInfo.NbSubShapes(TopAbs_EDGE);
+
   if (aNbV==1 && aNbE==2) {
     aNbSE=0;
     aExp.Init(aF, TopAbs_EDGE);

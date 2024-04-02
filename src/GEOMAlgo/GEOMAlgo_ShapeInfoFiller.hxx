@@ -113,9 +113,6 @@ class GEOMAlgo_ShapeInfoFiller  : public GEOMAlgo_Algo
     void FillDetails(const TopoDS_Face& aF,const gp_Cylinder& aCyl) ;
 
   Standard_EXPORT
-    void FillDetails(const TopoDS_Face& aF,const gp_Cone& aCone) ;
-
-  Standard_EXPORT
     void FillDetails(const TopoDS_Face& aF,const gp_Torus& aTorus) ;
 
   Standard_EXPORT
