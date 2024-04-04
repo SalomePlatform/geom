@@ -637,6 +637,26 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::LimitTolerance (GEOM::GEOM_Obje
   return GetObject(aNewObject);
 }
 
+//=============================================================================
+/*!
+ *  LimitTolerance
+ */
+//=============================================================================
+void GEOM_IHealingOperations_i::FuncToPythonDump (
+  GEOM::GEOM_Object_ptr theObject,
+  GEOM::GEOM_Object_ptr result,
+  const char* imports,
+  const char* funcName,
+  const char* args)
+{
+  // Get the objects
+  Handle(::GEOM_Object) anObject = GetObjectImpl(theObject);
+  Handle(::GEOM_Object) aResult = GetObjectImpl(result);
+
+  // Perform
+  GetOperations()->FuncToPythonDump(anObject, aResult, imports, funcName, args);
+}
+
 //================================================================================
 /*!
  * \brief Return information on what has been done by the last called healing method

@@ -37,6 +37,7 @@ public:
   ~GEOM_Swig_LocalSelector();
   
   std::vector<int> getSelection();
+  void setSelection(const std::vector<int> ids);
 
 protected:
   GEOM::GEOM_Object_var              myObject;

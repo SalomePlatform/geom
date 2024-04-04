@@ -152,6 +152,124 @@ static TCollection_AsciiString GetPublishCommands
 
 void Prettify(TCollection_AsciiString& theScript);
 
+// Helper functions
+namespace
+{
+  // Specifies a way to process a given function
+  enum FunctionProcessType { NOT_PROCESS, TO_PROCESS, UPDATE_DESCRIPTION };
+
+  // Starting string for an edge case where function was dumped from Python code
+  const Standard_CString funcFromPythonStartString = "from salome.geom.geomrepairadv";
+
+
+  //================================================================================
+  /*!
+  * \brief Checks if a description contents a function that was dumped from Python code
+  */
+  //================================================================================
+  bool IsFunctionSetFromPython(const TCollection_AsciiString& aDescr)
+  {
+    // TODO: make it more generic and not depended on geomrepairadv name
+    return aDescr.Search(funcFromPythonStartString) != -1;
+  }
+
+
+  //================================================================================
+  /*!
+  * \brief Removes from description the part before specific import statement
+  */
+  //================================================================================
+  void UpdateFuncFromPythonDescription(TCollection_AsciiString& aDescr)
+  {
+    const Standard_Integer startStringPos = aDescr.Search(funcFromPythonStartString);
+    MESSAGE("Description should start from pos: " << startStringPos);
+    if (startStringPos == -1)
+    {
+      MESSAGE("Can't find a string:\n" << funcFromPythonStartString << " \nin func description!");
+      return;
+    }
+
+    // Remove everything from the beginning till the starting point.
+    // Index starts from 1 not 0!
+    aDescr.Remove(1, startStringPos - 1);
+    MESSAGE("Updated func description: " << aDescr);
+  }
+
+
+  //================================================================================
+  /*!
+  * \brief Finds out how we should process a given function for Python dump
+  */
+  //================================================================================
+  FunctionProcessType GetFunctionProcessingType(const Handle(GEOM_Function)& theFunction, const TDF_LabelMap& theProcessed, const TCollection_AsciiString& aDescr)
+  {
+    MESSAGE("Start check function dependencies...");
+
+    TDF_LabelSequence aSeq;
+    theFunction->GetDependency(aSeq);
+    const Standard_Integer aLen = aSeq.Length();
+
+    for (Standard_Integer i = 1; i <= aLen; i++) {
+      TDF_Label aRefLabel = aSeq.Value(i);
+      Handle(TDF_Reference) aRef;
+      if (!aRefLabel.FindAttribute(TDF_Reference::GetID(), aRef)) {
+        MESSAGE("Can't find TDF_Reference::GetID() attribute. Do not process.");
+        return NOT_PROCESS;
+      }
+
+      if (aRef.IsNull() || aRef->Get().IsNull()) {
+        MESSAGE("Reference to attribute is null. Do not process.");
+        return NOT_PROCESS;
+      }
+
+      Handle(TDataStd_TreeNode) aT;
+      if (!TDataStd_TreeNode::Find(aRef->Get(), aT)) {
+        MESSAGE("Can't find a tree node. Do not process.");
+        return NOT_PROCESS;
+      }
+
+      TDF_Label aDepLabel = aT->Label();
+      Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(aDepLabel);
+      if (aFunction.IsNull()) {
+        MESSAGE("Function is null. Do not process." << aFunction->GetDescription());
+        return NOT_PROCESS;
+      }
+
+      if (!theProcessed.Contains(aDepLabel)) {
+        // Special case for function dumped from Python, because it's appended to
+        // description of other function that should be rejected early.
+        // TODO: it's not clear if we need to check every given function or
+        // checking on this level is enough. At this moment it's better to stay here 
+        // for performance reason.
+        if (IsFunctionSetFromPython(aDescr)) {
+          MESSAGE("Function set from Python. Do process with updated description.");
+          return UPDATE_DESCRIPTION;
+        }
+
+        MESSAGE("The dependency label is not in processed list. Do not process.");
+        return NOT_PROCESS;
+      }
+    }
+
+    MESSAGE("OK. Do process the function.");
+    return TO_PROCESS;
+  }
+
+  //================================================================================
+  /*!
+  * \brief Adds function's object to ignored for Python dump output
+  */
+  //================================================================================
+  void AddFuncObjectToIgnored(const Handle(GEOM_Function)& theFunction, std::set<TCollection_AsciiString>& theIgnoreObjs)
+  {
+    TCollection_AsciiString anObjEntry;
+    TDF_Tool::Entry(theFunction->GetOwnerEntry(), anObjEntry);
+    theIgnoreObjs.insert(anObjEntry);
+  }
+
+}
+
+
 //================================================================================
 /*!
  * \brief Fix up the name of python variable
@@ -1084,62 +1202,62 @@ bool ProcessFunction(Handle(GEOM_Function)&             theFunction,
                      bool&                              theIsDumpCollected)
 {
   theIsDumpCollected = false;
-  if (theFunction.IsNull()) return false;
 
-  if (theProcessed.Contains(theFunction->GetEntry())) return false;
-
-  // pass functions, that depends on nonexisting ones
-  bool doNotProcess = false;
-  TDF_LabelSequence aSeq;
-  theFunction->GetDependency(aSeq);
-  Standard_Integer aLen = aSeq.Length();
-  for (Standard_Integer i = 1; i <= aLen && !doNotProcess; i++) {
-    TDF_Label aRefLabel = aSeq.Value(i);
-    Handle(TDF_Reference) aRef;
-    if (!aRefLabel.FindAttribute(TDF_Reference::GetID(), aRef)) {
-      doNotProcess = true;
-    }
-    else {
-      if (aRef.IsNull() || aRef->Get().IsNull()) {
-        doNotProcess = true;
-      }
-      else {
-        Handle(TDataStd_TreeNode) aT;
-        if (!TDataStd_TreeNode::Find(aRef->Get(), aT)) {
-          doNotProcess = true;
-        }
-        else {
-          TDF_Label aDepLabel = aT->Label();
-          Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(aDepLabel);
-
-          if (aFunction.IsNull()) doNotProcess = true;
-          else if (!theProcessed.Contains(aDepLabel)) doNotProcess = true;
-        }
-      }
-    }
-  }
-
-  if (doNotProcess) {
-    TCollection_AsciiString anObjEntry;
-    TDF_Tool::Entry(theFunction->GetOwnerEntry(), anObjEntry);
-    theIgnoreObjs.insert(anObjEntry);
+  if (theFunction.IsNull()) {
+    MESSAGE("Can't process a null function! Return.");
     return false;
   }
-  theProcessed.Add(theFunction->GetEntry());
 
   TCollection_AsciiString aDescr = theFunction->GetDescription();
-  if(aDescr.Length() == 0) return false;
+  MESSAGE("The function description: " << aDescr);
 
-  //Check if its internal function which doesn't requires dumping
-  if(aDescr == "None") return false;
+  if (theProcessed.Contains(theFunction->GetEntry()))
+    return false;
+
+  // Check if a given function depends on nonexisting ones
+  const FunctionProcessType funcProcessType = GetFunctionProcessingType(theFunction, theProcessed, aDescr);
+  switch (funcProcessType)
+  {
+  case TO_PROCESS:
+    // Just process it
+    break;
+
+  case NOT_PROCESS:
+  {
+    // We don't need this function and its object in a dump
+    AddFuncObjectToIgnored(theFunction, theIgnoreObjs);
+    return false;
+  }
+
+  case UPDATE_DESCRIPTION:
+    // Edge case for a function that was dumped from Python.
+    // Get rid of the parent function description.
+    UpdateFuncFromPythonDescription(aDescr);
+    // A result object is already added by an algo script, then
+    // if we keep it in the dump it will be added twice on the script loading.
+    AddFuncObjectToIgnored(theFunction, theIgnoreObjs);
+    break;
+
+  default:
+    MESSAGE("Wrong type of the function processing!" << funcProcessType);
+    break;
+  }
+
+  theProcessed.Add(theFunction->GetEntry());
+
+  // Check the length only after its fucntion was added to the processed!
+  if(!aDescr.Length())
+    return false;
+
+  // Check if it's an internal function which doesn't require dumping
+  if(aDescr == "None")
+    return false;
 
   //Check the very specific case of RestoreShape function,
   //which is not dumped, but the result can be published by the user.
   //We do not publish such objects to decrease danger of dumped script failure.
   if(aDescr.Value(1) == '#') {
-    TCollection_AsciiString anObjEntry;
-    TDF_Tool::Entry(theFunction->GetOwnerEntry(), anObjEntry);
-    theIgnoreObjs.insert(anObjEntry);
+    AddFuncObjectToIgnored(theFunction, theIgnoreObjs);
     return false;
   }
 
@@ -1156,6 +1274,9 @@ bool ProcessFunction(Handle(GEOM_Function)&             theFunction,
 
   //Replace parameter by notebook variables
   ReplaceVariables(aDescr,theVariables);
+  // Check description, because we could lose entire command during variable processing
+  if (aDescr.IsEmpty())
+    return false;
 
   //Process sketcher functions, replacing string command by calls to Sketcher interface
   if ( ( aDescr.Search( "MakeSketcherOnPlane" ) != -1 ) || ( aDescr.Search( "MakeSketcher" ) != -1 ) ) {
@@ -1295,8 +1416,7 @@ Handle(TColStd_HSequenceOfInteger) FindEntries(TCollection_AsciiString& theStrin
 void ReplaceVariables(TCollection_AsciiString& theCommand,
                       const TVariablesList&    theVariables)
 {
-  if (SALOME::VerbosityActivated())
-    std::cout<<"Command : "<<theCommand<<std::endl;
+  MESSAGE("Command : " << theCommand);
 
   if (SALOME::VerbosityActivated()) {
     std::cout<<"All Entries:"<<std::endl;
@@ -1312,8 +1432,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
     if( aCommand.Length() == 0 )
       break;
 
-    if (SALOME::VerbosityActivated())
-      std::cout<<"Sub-command : "<<aCommand<<std::endl;
+    MESSAGE("Sub-command : " << aCommand);
 
     Standard_Integer aStartCommandPos = theCommand.Location(aCommand,1,theCommand.Length());
     Standard_Integer aEndCommandPos = aStartCommandPos + aCommand.Length();
@@ -1330,8 +1449,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
     //Remove white spaces
     anEntry.RightAdjust();
     anEntry.LeftAdjust();
-    if(SALOME::VerbosityActivated())
-      std::cout<<"Result entry : '" <<anEntry<<"'"<<std::endl;
+    MESSAGE("Result entry : '" << anEntry << "'");
 
     if ( anEntry.IsEmpty() ) {
       aCommandIndex++;
@@ -1348,8 +1466,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
       anEntry.Remove( 1, 1 );
       anEntry.RightAdjust();
       anEntry.LeftAdjust();
-      if(SALOME::VerbosityActivated())
-		    std::cout<<"Sub-entry : '" <<anEntry<<"'"<<std::endl;
+      MESSAGE("Sub-entry : '" << anEntry << "'");
     }
 
     //Find variables used for object construction
@@ -1359,9 +1476,13 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
       aStates = (*it).second;
 
     if(!aStates) {
-      if(SALOME::VerbosityActivated())
-		    std::cout<<"Valiables list empty!!!"<<std::endl;
+      MESSAGE("Can't find an entry among study objects!");
+      // We can't skip this because the entry can be used with automatically assigned name
+      // like "geomObj_1" to create other objects. Some tests will fail without this.
+      // MESSAGE("Can't find an entry among study objects! Skip this command.");
+      // theCommand.Remove(aStartCommandPos, aEndCommandPos - aStartCommandPos);
       aCommandIndex++;
+
       continue;
     }
 
@@ -1378,8 +1499,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
     while(aCommand.Location(aTotalNbParams,COMMA,1,aCommand.Length()))
       aTotalNbParams++;
 
-    if(SALOME::VerbosityActivated())
-	    std::cout<<"aTotalNbParams = "<<aTotalNbParams<<std::endl;
+    MESSAGE("aTotalNbParams = " << aTotalNbParams);
 
     Standard_Integer aFirstParam = aNbEntries;
 
@@ -1420,15 +1540,13 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
       if ( aStartPos == aEndPos )
         continue; // PAL20889: for "[]"
 
-      if(SALOME::VerbosityActivated())
-        std::cout<<"aStartPos = "<<aStartPos<<", aEndPos = "<<aEndPos<<std::endl;
+      MESSAGE("aStartPos = " << aStartPos << ", aEndPos = " << aEndPos);
 
       aVar = aCommand.SubString(aStartPos, aEndPos-1);
       aVar.RightAdjust();
       aVar.LeftAdjust();
 
-      if(SALOME::VerbosityActivated())
-        std::cout<<"Variable: '"<< aVar <<"'"<<std::endl;
+      MESSAGE("Variable: '" << aVar << "'");
 
       // specific case for sketcher
       if(aVar.Location( TCollection_AsciiString("Sketcher:"), 1, aVar.Length() ) != 0) {
@@ -1447,8 +1565,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
             aEndSectionPos = aVar.Length();
 
           aSection = aVar.SubString(aStartSectionPos, aEndSectionPos-1);
-          if(SALOME::VerbosityActivated())
-			      std::cout<<"aSection: "<<aSection<<std::endl;
+          MESSAGE("aSection: " << aSection);
 
           Standard_Integer aNbParams = 1;
           while( aSection.Location( aNbParams, ' ', 1, aSection.Length() ) )
@@ -1464,15 +1581,13 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
             else
               aEndParamPos = aSection.Length() + 1;
 
-            if(SALOME::VerbosityActivated())
-              std::cout<<"aParamIndex: "<<aParamIndex<<" aStartParamPos: " <<aStartParamPos<<" aEndParamPos: "<<aEndParamPos<<std::endl;
+            MESSAGE("aParamIndex: " << aParamIndex << " aStartParamPos: " << aStartParamPos << " aEndParamPos: " << aEndParamPos);
 
             if ( aStartParamPos == aEndParamPos)
               continue;
 
             aParameter = aSection.SubString(aStartParamPos, aEndParamPos-1);
-            if(SALOME::VerbosityActivated())
-			        std::cout<<"aParameter: "<<aParameter<<std::endl;
+            MESSAGE("aParameter: " << aParameter);
 
             if(iVar >= aVariables.size())
               continue;
@@ -1488,31 +1603,25 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
               aReplacedParameter.InsertAfter(aReplacedParameter.Length(),"'");
             }
 
-            if(SALOME::VerbosityActivated())
-			        std::cout<<"aSection before : "<<aSection<< std::endl;
+            MESSAGE("aSection before : " << aSection);
             aSection.Remove(aStartParamPos, aEndParamPos - aStartParamPos);
             aSection.Insert(aStartParamPos, aReplacedParameter);
-            if(SALOME::VerbosityActivated())
-              std::cout<<"aSection after  : "<<aSection<<std::endl<<std::endl;
+            MESSAGE("aSection after  : " << aSection << '\n');
             iVar++;
           }
 
-          if(SALOME::VerbosityActivated())
-            std::cout<<"aVar before : "<<aVar<<std::endl;
+          MESSAGE("aVar before : " << aVar);
 
           aVar.Remove(aStartSectionPos, aEndSectionPos - aStartSectionPos);
           aVar.Insert(aStartSectionPos, aSection);
 
-          if(SALOME::VerbosityActivated())
-            std::cout<<"aVar after  : "<<aVar<<std::endl<<std::endl;
+          MESSAGE("aVar after  : " << aVar << '\n');
         }
 
-        if(SALOME::VerbosityActivated())
-          std::cout<<"aCommand before : "<<aCommand<<std::endl;
+        MESSAGE("aCommand before : " << aCommand);
         aCommand.Remove(aStartPos, aEndPos - aStartPos);
         aCommand.Insert(aStartPos, aVar);
-        if(SALOME::VerbosityActivated())
-          std::cout<<"aCommand after  : "<<aCommand<<std::endl;
+        MESSAGE("aCommand after  : " << aCommand);
 
         break;
       } // end of specific case for sketcher
@@ -1548,8 +1657,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
     aStates->IncrementState();
   }
 
-  if (SALOME::VerbosityActivated())
-    std::cout<<"Command : "<<theCommand<<std::endl;
+  MESSAGE("Command after replacing of the variables: " << theCommand);
 }
 
 //=============================================================================

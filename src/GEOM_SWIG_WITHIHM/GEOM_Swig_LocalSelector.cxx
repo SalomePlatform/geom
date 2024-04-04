@@ -94,3 +94,27 @@ std::vector<int> GEOM_Swig_LocalSelector::getSelection()
   return ids;
 }
 
+void GEOM_Swig_LocalSelector::setSelection(const std::vector<int> ids)
+{
+  MESSAGE("setSelection() start...");
+
+  SalomeApp_Application* app = (SalomeApp_Application*)SUIT_Session::session()->activeApplication();
+  LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  MESSAGE("aSelList.Extent(): " << aSelList.Extent());
+  if (!aSelList.Extent())
+  {
+    return;
+  }
+
+  TColStd_IndexedMapOfInteger idsMap;
+  for (const auto i : ids)
+  {
+    idsMap.Add(i);
+  }
+
+  Handle(SALOME_InteractiveObject) anIO = aSelList.First();
+  aSelMgr->selectObjects(anIO, idsMap, false);
+}

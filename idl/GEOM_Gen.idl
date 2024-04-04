@@ -4292,6 +4292,16 @@ module GEOM
      */
     GEOM_Object LimitTolerance (in GEOM_Object theObject, in double theTolerance);
 
+    /*!
+     *  \brief Provides Python dump functionality for algorithms entirely implemented in Python.
+     *  \param theObject Shape to be processed.
+     *  \param result Shape of the algorithm execution.
+     *  \param imports module import for current functon.
+     *  \param funcName name of a Python function that we need to put into dump.
+     *  \param args arguments of the Python function.
+     */
+    void FuncToPythonDump(in GEOM_Object theObject, in GEOM_Object result, in string imports, in string funcName, in string args);
+
 
     /*!
      *  \brief Return information on what has been done by the last called healing method.

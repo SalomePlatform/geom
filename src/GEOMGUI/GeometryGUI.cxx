@@ -1930,13 +1930,19 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
     PyErr_Print();
   }
   else {
-    PyObject* result =
-      PyObject_CallMethod(pluginsmanager, (char*)"initialize", (char*)"isss", 1, "geom",
-                          tr("MEN_NEW_ENTITY").toUtf8().data(),
-                          tr("GEOM_PLUGINS_OTHER").toUtf8().data());
-    if ( !result )
-      PyErr_Print();
-    Py_XDECREF(result);
+    auto addPluginsManager = [&](const char* managerName, const char* menuName, const char* submenuName) -> void
+    {
+      PyObject* result = PyObject_CallMethod(
+        pluginsmanager, (char*)"initialize", (char*)"isss", 1, managerName, menuName, submenuName);
+
+      if ( !result )
+        PyErr_Print();
+
+      Py_XDECREF(result);
+    };
+
+    addPluginsManager("geom", tr("MEN_NEW_ENTITY").toUtf8().data(), tr("GEOM_PLUGINS_OTHER").toUtf8().data());
+    addPluginsManager("geomrepairadv", tr("MEN_REPAIR").toUtf8().data(), tr("MEN_ADVANCED").toUtf8().data());
   }
   PyGILState_Release(gstate);
   // end of GEOM plugins loading

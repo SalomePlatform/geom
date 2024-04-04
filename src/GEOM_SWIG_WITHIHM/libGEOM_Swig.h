@@ -56,6 +56,7 @@ public:
 
   GEOMGUI_EXPORT void initLocalSelection( const char* theEntry, int theMode);
   GEOMGUI_EXPORT std::vector<int> getLocalSelection();
+  GEOMGUI_EXPORT void setLocalSelection(const std::vector<int> ids);
   GEOMGUI_EXPORT void closeLocalSelection();
 
   GEOMGUI_EXPORT int         getIndexTopology( const char* theSubIOR, const char* theMainIOR );

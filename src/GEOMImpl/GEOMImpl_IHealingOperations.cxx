@@ -1212,3 +1212,32 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::LimitTolerance (Handle(GEOM_Obj
   SetErrorCode(OK);
   return aNewObject;
 }
+
+//=============================================================================
+/*!
+ *  FuncToPythonDump
+ *
+ *  This function doesn't do any healing.
+ *  Provides Python dump functionality for algorithms entirely implemented in Python.
+ */
+//=============================================================================
+  void GEOMImpl_IHealingOperations::FuncToPythonDump(
+    Handle(GEOM_Object) theObject,
+    Handle(GEOM_Object) result,
+    const char* imports,
+    const char* funcName,
+    const char* args
+  )
+  {
+    // Find a function to append a command
+    Handle(GEOM_Function) aFunction = result->GetLastFunction();
+    if (aFunction.IsNull())
+    {
+      MESSAGE("Can't get last function to append Python dump!");
+      return;
+    } 
+
+    // Make a Python command - it will be appended to the given function
+    GEOM::TPythonDump pd (aFunction, true);
+    pd << imports << result << " = " << funcName << "(" << theObject << ", " << args << ")";
+  }

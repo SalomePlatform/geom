@@ -83,6 +83,7 @@ class GEOM_Swig
 
   void initLocalSelection( const char* theEntry, int theMode);
   std::vector<int> getLocalSelection();
+  void setLocalSelection(const std::vector<int> ids);
   void closeLocalSelection();
 
   int         getIndexTopology( const char* theSubIOR, const char* theMainIOR );

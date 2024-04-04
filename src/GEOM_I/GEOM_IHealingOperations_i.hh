@@ -99,6 +99,16 @@ class GEOM_I_EXPORT GEOM_IHealingOperations_i :
    GEOM::GEOM_Object_ptr LimitTolerance (GEOM::GEOM_Object_ptr theObject,
                                          CORBA::Double theTolerance);
 
+   // The only goal is to provide Python dump functionality for 
+   // algorithms entirely implemented in Python.
+   void FuncToPythonDump(
+     GEOM::GEOM_Object_ptr theObject,
+     GEOM::GEOM_Object_ptr result,
+     const char* imports,
+     const char* funcName,
+     const char* args
+   );
+
    ::GEOMImpl_IHealingOperations* GetOperations() { return (::GEOMImpl_IHealingOperations*)GetImpl(); }
 
    GEOM::ModifStatistics* GetStatistics();

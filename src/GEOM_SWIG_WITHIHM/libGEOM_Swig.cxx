@@ -66,6 +66,14 @@ GEOM_Swig::GEOM_Swig( bool updateOB )
 */
 GEOM_Swig::~GEOM_Swig()
 {
+  // Delete selector because of sigsegv in TEventInitLocalSelection::Execute()
+  // when call GEOM_Swig.initLocalSelection() from Python, close the study, create a new one and
+  // call it again.
+  if (myOCCSelector)
+  {
+    delete myOCCSelector;
+    myOCCSelector = nullptr;
+  }
 }
 
 /*!
@@ -577,6 +585,33 @@ std::vector<int> GEOM_Swig::getLocalSelection()
 
   std::vector<int> result = ProcessEvent(new TEventGetLocalSelection());
   return result;
+}
+
+
+/*!libGEOM_Swig
+  \brief Set local subShapes selection on a given shape
+  \param ids sub-shapes ids
+ */
+void GEOM_Swig::setLocalSelection(const std::vector<int> ids)
+{
+  class TEventSetLocalSelection: public SALOME_Event
+  {
+  public:
+    typedef std::vector<int> TResult;
+    TResult myIds;
+    TResult myResult;
+
+    TEventSetLocalSelection(const std::vector<int> _ids) : myIds(_ids) {}
+
+    virtual void Execute()
+    {
+      MESSAGE("TEventSetLocalSelection myLocalSelector: " << myLocalSelector);
+      if (myLocalSelector)
+        myLocalSelector->setSelection(myIds);
+    }
+  };
+
+  ProcessEvent(new TEventSetLocalSelection(ids));
 }
 
 /*!

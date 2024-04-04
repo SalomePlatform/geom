@@ -106,6 +106,17 @@ class GEOMImpl_IHealingOperations : public GEOM_IOperations {
                                                       double theTolerance,
                                                       TopAbs_ShapeEnum theType = TopAbs_SHAPE );
 
+  // This function doesn't do any healing.
+  // The only goal is to provide Python dump functionality for 
+  // algorithms entirely implemented in Python.
+  void FuncToPythonDump(
+    Handle(GEOM_Object) theObject,
+    Handle(GEOM_Object) result,
+    const char* imports,
+    const char* funcName,
+    const char* args
+  );
+
   const ShHealOper_ModifStats* GetStatistics() { return myModifStats; }
 
 private:

@@ -7483,6 +7483,26 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "limitTolerance")
             return anObj
 
+        ## Provides Python dump functionality for algorithms entirely implemented in Python.
+        #  @param theObject Shape to be processed.
+        #  @param result Shape of the algorithm execution.
+        #  @param imports module import for current functon..
+        #  @param funcName name of a Python function that we need to put into dump.
+        #  @param args arguments of the Python function.
+        #
+        def FuncToPythonDump(self, theObject, result, imports, funcName, args):
+            """
+            Provides Python dump functionality for algorithms entirely implemented in Python.
+
+            Parameters:
+                theObject Shape to be processed.
+                result Shape of the algorithm execution.
+                imports module import for current functon.
+                funcName name of a Python function that we need to put into dump.
+                args arguments of the Python function.
+            """
+            self.HealOp.FuncToPythonDump(theObject, result, imports, funcName, args)
+
         ## Get a list of wires (wrapped in GEOM.GEOM_Object-s),
         #  that constitute a free boundary of the given shape.
         #  @param theObject Shape to get free boundary of.
