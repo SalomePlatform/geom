@@ -109,7 +109,7 @@ class GEOMImpl_IHealingOperations : public GEOM_IOperations {
   // This function doesn't do any healing.
   // The only goal is to provide Python dump functionality for 
   // algorithms entirely implemented in Python.
-  void FuncToPythonDump(
+  Standard_EXPORT void FuncToPythonDump(
     Handle(GEOM_Object) theObject,
     Handle(GEOM_Object) result,
     const char* imports,
