@@ -33,6 +33,8 @@
 // OOCT includes
 #include <IFSelect_ReturnStatus.hxx>
 #include <STEPControl_Writer.hxx>
+#include <StepData_StepModel.hxx>
+#include <UnitsMethods.hxx>
 #include <Interface_Static.hxx>
 #include <TCollection_AsciiString.hxx>
 #include <TopoDS_Shape.hxx>
@@ -126,12 +128,22 @@ Standard_Integer STEPPlugin_ExportDriver::Execute(Handle(TFunction_Logbook)& /*l
     Interface_Static::SetCVal("xstep.cascade.unit","M");
     Interface_Static::SetCVal("write.step.unit", aWriteUnit.ToCString());
     Interface_Static::SetIVal("write.step.nonmanifold", 1);
-#else
+#elif OCC_VERSION_LARGE < 0x07080000
     STEPControl_Writer aWriterTmp;
     Interface_Static::SetCVal("xstep.cascade.unit","M");
     Interface_Static::SetCVal("write.step.unit", aWriteUnit.ToCString());
     Interface_Static::SetIVal("write.step.nonmanifold", 1);
     STEPControl_Writer aWriter;
+#else
+    STEPControl_Writer aWriter;
+    Interface_Static::SetCVal("xstep.cascade.unit","M");
+    Interface_Static::SetCVal("write.step.unit", aWriteUnit.ToCString());
+    Interface_Static::SetIVal("write.step.nonmanifold", 1);
+    Handle(StepData_StepModel) aModel = aWriter.Model();
+    aModel->InternalParameters.InitFromStatic();
+    Standard_Integer aWriteUnitInt = Interface_Static::IVal("write.step.unit");
+    Standard_Real aWriteUnitReal = UnitsMethods::GetLengthFactorValue(aWriteUnitInt);
+    aModel->SetWriteLengthUnit(aWriteUnitReal);
 #endif
 
     IFSelect_ReturnStatus status = aWriter.Transfer( aShape, STEPControl_AsIs );

@@ -27,6 +27,8 @@
 //
 #include <GEOMAlgo_PassKeyMapHasher.hxx>
 
+#if OCC_VERSION_LARGE < 0x07080000
+
 //=======================================================================
 //function : HashCode
 //purpose  :
@@ -45,3 +47,18 @@
 {
   return aPK1.IsEqual(aPK2);
 }
+
+#else
+
+size_t GEOMAlgo_PassKeyMapHasher::operator()(const GEOMAlgo_PassKey& aPKey) const
+{
+  return aPKey.GetSum();
+}
+
+bool GEOMAlgo_PassKeyMapHasher::operator()(const GEOMAlgo_PassKey& aPKey1,
+                                           const GEOMAlgo_PassKey& aPKey2) const
+{
+  return aPKey1.IsEqual(aPKey2);
+}
+
+#endif // OCC_VERSION_LARGE < 0x07080000

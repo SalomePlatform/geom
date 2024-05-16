@@ -25,10 +25,16 @@
 #ifndef _GEOMAlgo_ClsfSolid_HeaderFile
 #define _GEOMAlgo_ClsfSolid_HeaderFile
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <Standard.hxx>
 #include <Standard_DefineHandle.hxx>
 #include <TopoDS_Shape.hxx>
+#if OCC_VERSION_LARGE < 0x07080000
 #include <Standard_Address.hxx>
+#else
+#include <Standard_TypeDef.hxx>
+#endif
 #include <GEOMAlgo_Clsf.hxx>
 
 DEFINE_STANDARD_HANDLE(GEOMAlgo_ClsfSolid, GEOMAlgo_Clsf)

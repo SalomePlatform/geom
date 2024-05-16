@@ -33,6 +33,8 @@
 #include <GEOMAlgo_StateCollector.hxx>
 #include <GEOMAlgo_SurfaceTools.hxx>
 
+#include <GEOMUtils.hxx>
+
 #include <Bnd_Box.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepBndLib.hxx>
@@ -606,14 +608,13 @@ void GEOMAlgo_FinderShapeOn2::InnerPoints(const TopoDS_Face& aF,
   //
   aLP.Clear();
   //
-  aTRF=BRep_Tool::Triangulation(aF, aLoc);
-  if (aTRF.IsNull()) {
-    if (!BuildTriangulation(aF)) {
-      myWarningStatus=20; // no triangulation found
-      return;
-    }
-    aTRF=BRep_Tool::Triangulation(aF, aLoc);
+  if (!GEOMUtils::MeshShape(aF, /*deflection*/0.001, /*forced*/false,
+                            /*angle deflection*/0.349066, /*isRelative*/true,
+                            /*doPostCheck*/true)) {
+    myWarningStatus=20; // no triangulation found
+    return;
   }
+  aTRF=BRep_Tool::Triangulation(aF, aLoc);
   //
   const gp_Trsf& aTrsf=aLoc.Transformation();
   //
@@ -745,16 +746,15 @@ void GEOMAlgo_FinderShapeOn2::InnerPoints(const TopoDS_Edge& aE,
   gp_Pnt aP;
   //
   aLP.Clear();
+  if (!GEOMUtils::MeshShape(aE, /*deflection*/0.001, /*forced*/false,
+                            /*angle deflection*/0.349066, /*isRelative*/true,
+                            /*doPostCheck*/true)) {
+    myErrorStatus=20; // no triangulation found
+    return;
+  }
   BRep_Tool::PolygonOnTriangulation(aE, aPTE, aTRE, aLoc);
   if (aTRE.IsNull() || aPTE.IsNull()) {
     Handle(Poly_Polygon3D) aPE = BRep_Tool::Polygon3D(aE, aLoc);
-    if (aPE.IsNull()) {
-      if (!BuildTriangulation(aE)) {
-        myErrorStatus=20; // no triangulation found
-        return;
-      }
-      aPE = BRep_Tool::Polygon3D(aE, aLoc);
-    }
     const gp_Trsf& aTrsf=aLoc.Transformation();
     const TColgp_Array1OfPnt& aNodes=aPE->Nodes();
     //
@@ -817,59 +817,6 @@ void GEOMAlgo_FinderShapeOn2::InnerPoints(const TopoDS_Edge& aE,
     aC3D->D0(aT, aP);
     aLP.Append(aP);
   }
-}
-
-//=======================================================================
-//function : BuildTriangulation
-//purpose  :
-//=======================================================================
-Standard_Boolean
-  GEOMAlgo_FinderShapeOn2::BuildTriangulation (const TopoDS_Shape& theShape)
-{
-  // calculate deflection
-  Standard_Real aDeviationCoefficient = 0.001;
-
-  Bnd_Box B;
-  BRepBndLib::Add(theShape, B);
-  Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
-  B.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
-
-  Standard_Real dx = aXmax - aXmin, dy = aYmax - aYmin, dz = aZmax - aZmin;
-  Standard_Real aDeflection = Max(Max(dx, dy), dz) * aDeviationCoefficient * 4;
-  Standard_Real aHLRAngle = 0.349066;
-
-  // build triangulation
-  BRepMesh_IncrementalMesh Inc (theShape, aDeflection, Standard_False, aHLRAngle);
-
-  // check triangulation
-  bool isTriangulation = true;
-
-  TopExp_Explorer exp (theShape, TopAbs_FACE);
-  if (exp.More())
-  {
-    TopLoc_Location aTopLoc;
-    Handle(Poly_Triangulation) aTRF;
-    aTRF = BRep_Tool::Triangulation(TopoDS::Face(exp.Current()), aTopLoc);
-    if (aTRF.IsNull()) {
-      isTriangulation = false;
-    }
-  }
-  else // no faces, try edges
-  {
-    TopExp_Explorer expe (theShape, TopAbs_EDGE);
-    if (!expe.More()) {
-      isTriangulation = false;
-    }
-    else {
-      TopLoc_Location aLoc;
-      Handle(Poly_Polygon3D) aPE = BRep_Tool::Polygon3D(TopoDS::Edge(expe.Current()), aLoc);
-      if (aPE.IsNull()) {
-        isTriangulation = false;
-      }
-    }
-  }
-
-  return isTriangulation;
 }
 
 //

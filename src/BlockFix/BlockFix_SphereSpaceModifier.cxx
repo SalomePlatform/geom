@@ -138,6 +138,9 @@ static Standard_Boolean ModifySurface(const TopoDS_Face&          theFace,
         gp_Ax3 ax3 = sp.Position();
         if (Abs(Vmax-Vmin) < PI2) {
           gp_Ax3 axnew3 (ax3.Axis().Location(), ax3.Direction()^ax3.XDirection(), ax3.XDirection());
+          if (!ax3.Direct()) {
+            axnew3.YReverse();
+          }
           sp.SetPosition(axnew3);
           Handle(Geom_SphericalSurface) aNewSphere = new Geom_SphericalSurface(sp);
           theNewSurface = aNewSphere;
@@ -157,6 +160,9 @@ static Standard_Boolean ModifySurface(const TopoDS_Face&          theFace,
           gp_Dir newNorm(gp_Vec(PC,PN));
           gp_Dir newDirX(gp_Vec(PC,PX));
           gp_Ax3 axnew3(ax3.Axis().Location(), newNorm, newDirX);
+          if (!ax3.Direct()) {
+            axnew3.YReverse();
+          }
           sp.SetPosition(axnew3);
 
           // check if both new poles are outside theFace
@@ -276,6 +282,10 @@ static Standard_Boolean ModifySurface(const TopoDS_Face&          theFace,
       }
 
       gp_Ax3 anAxisOfNewSphere (aCentre, anUp, XDirOfCircle);
+      gp_Ax3 ax3 = sp.Position();
+      if (!ax3.Direct()) {
+        anAxisOfNewSphere.YReverse();
+      }
       theNewSurface = new Geom_SphericalSurface (anAxisOfNewSphere, Radius);
       break;
     } //for (; itw.More(); itw.Next()) (iteration on outer wire)

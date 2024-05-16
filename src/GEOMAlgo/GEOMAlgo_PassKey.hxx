@@ -28,6 +28,8 @@
 #ifndef _GEOMAlgo_PassKey_HeaderFile
 #define _GEOMAlgo_PassKey_HeaderFile
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <Standard.hxx>
 #include <Standard_Macro.hxx>
 #include <Standard_Integer.hxx>
@@ -88,8 +90,19 @@ class GEOMAlgo_PassKey  {
   Standard_EXPORT
     Standard_Boolean IsEqual(const GEOMAlgo_PassKey& aOther) const;
 
+#if OCC_VERSION_LARGE < 0x07080000
   Standard_EXPORT
     Standard_Integer HashCode(const Standard_Integer Upper) const;
+#endif
+
+  Standard_EXPORT
+  bool operator==(const GEOMAlgo_PassKey& theOther) const
+  {
+    return IsEqual(theOther);
+  }
+
+  Standard_EXPORT
+  size_t GetSum() const { return (size_t)mySum; }
 
   Standard_EXPORT
     Standard_Integer Id(const Standard_Integer aIndex) const;
@@ -102,4 +115,16 @@ class GEOMAlgo_PassKey  {
   Standard_Integer mySum;
   TColStd_IndexedMapOfInteger myMap;
 };
+
+namespace std
+{
+  template <>
+  struct hash<GEOMAlgo_PassKey>
+  {
+    size_t operator()(const GEOMAlgo_PassKey& thePK) const noexcept
+    {
+      return thePK.GetSum();
+    }
+  };
+}
 #endif

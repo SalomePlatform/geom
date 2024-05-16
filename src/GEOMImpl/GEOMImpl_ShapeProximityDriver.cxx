@@ -21,6 +21,8 @@
 #include <GEOMImpl_IProximity.hxx>
 #include <GEOMImpl_Types.hxx>
 
+#include <GEOMUtils.hxx>
+
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_Curve.hxx>
 #include <BRepAdaptor_Surface.hxx>
@@ -37,28 +39,6 @@
 #include <TopoDS.hxx>
 
 namespace {
-  static void tessellateShape(const TopoDS_Shape& theShape)
-  {
-    Standard_Boolean isTessellate = Standard_False;
-    TopLoc_Location aLoc;
-    for (TopExp_Explorer anExp(theShape, TopAbs_FACE); anExp.More() && !isTessellate; anExp.Next())
-    {
-      Handle(Poly_Triangulation) aTria = BRep_Tool::Triangulation(TopoDS::Face(anExp.Value()), aLoc);
-      isTessellate = aTria.IsNull();
-    }
-    for (TopExp_Explorer anExp(theShape, TopAbs_EDGE); anExp.More() && !isTessellate; anExp.Next())
-    {
-      Handle(Poly_Polygon3D) aPoly = BRep_Tool::Polygon3D(TopoDS::Edge(anExp.Value()), aLoc);
-      isTessellate = aPoly.IsNull();
-    }
-
-    if (isTessellate)
-    {
-      BRepMesh_IncrementalMesh aMesher(theShape, 0.1);
-      Standard_ProgramError_Raise_if(!aMesher.IsDone(), "Meshing failed");
-    }
-  }
-
   static Standard_Real paramOnCurve(const BRepAdaptor_Curve& theCurve, const gp_Pnt& thePoint, const Standard_Real theTol)
   {
     Extrema_ExtPC aParamSearch(thePoint, theCurve, theCurve.FirstParameter(), theCurve.LastParameter());
@@ -293,8 +273,8 @@ Standard_Integer GEOMImpl_ShapeProximityDriver::Execute(Handle(TFunction_Logbook
   if (aFunction->GetType() == PROXIMITY_COARSE)
   {
     // tessellate shapes if there is no mesh exists
-    tessellateShape(aShape1);
-    tessellateShape(aShape2);
+    GEOMUtils::MeshShape(aShape1, 0.1, /*theForced*/false, 0.5, /*isRelative*/false);
+    GEOMUtils::MeshShape(aShape2, 0.1, /*theForced*/false, 0.5, /*isRelative*/false);
 
     // compute proximity basing on the tessellation
     BRepExtrema_ShapeProximity aCalcProx;

@@ -60,10 +60,7 @@ SET(GEOMAlgo_HEADERS
   GEOMAlgo_DataMapOfShapeMapOfShape.hxx
   GEOMAlgo_DataMapOfShapePnt.hxx
   GEOMAlgo_Extractor.hxx
-  GEOMAlgo_FinderShapeOn.hxx
-  GEOMAlgo_FinderShapeOn1.hxx
   GEOMAlgo_FinderShapeOn2.hxx
-  GEOMAlgo_FinderShapeOnQuad.hxx
   GEOMAlgo_GetInPlace.hxx
   GEOMAlgo_GetInPlaceAPI.hxx
   GEOMAlgo_GlueAnalyser.hxx
