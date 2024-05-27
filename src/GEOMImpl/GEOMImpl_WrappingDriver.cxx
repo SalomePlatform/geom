@@ -20,6 +20,15 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// These GeomPlate_* headers must be included before Salome ones
+// because of conflicting OK variable/constant between
+// OCCT Plate_Plate.hxx and GEOM GEOM_IOperations.hxx
+#include <GeomPlate_Surface.hxx>
+#include <GeomPlate_BuildPlateSurface.hxx>
+#include <GeomPlate_PointConstraint.hxx>
+#include <GeomPlate_MakeApprox.hxx>
+#include <GeomPlate_BuildAveragePlane.hxx>
+
 #include <GEOMImpl_WrappingDriver.hxx>
 
 #include <GEOMAlgo_Splitter.hxx>
@@ -44,11 +53,6 @@
 #include <Geom_Surface.hxx>
 #include <Geom_Plane.hxx>
 #include <Geom_BSplineSurface.hxx>
-#include <GeomPlate_Surface.hxx>
-#include <GeomPlate_BuildPlateSurface.hxx>
-#include <GeomPlate_PointConstraint.hxx>
-#include <GeomPlate_MakeApprox.hxx>
-#include <GeomPlate_BuildAveragePlane.hxx>
 
 #include <gp_Pnt.hxx>
 #include <gp_Sphere.hxx>
