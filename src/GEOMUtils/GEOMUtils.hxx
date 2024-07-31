@@ -182,20 +182,6 @@ namespace GEOMUtils
   Standard_EXPORT Standard_Boolean PreciseBoundingBox(const TopoDS_Shape &theShape, Bnd_Box &theBox);
 
   /*!
-   * \brief Computes minumal distance between two shapes for singular cases
-   *        (workaround for bugs 19899, 19908 and 19910 from Mantis).
-   *
-   * \param aSh1 the first shape
-   * \param aSh2 the second shape
-   * \param Ptmp1 the output result point on the first shape
-   * \param Ptmp2 the output result point on the second shape
-   * \retval negative value if it is not a singular case; actual distance for singular case.
-   */
-  Standard_EXPORT Standard_Real GetMinDistanceSingular(const TopoDS_Shape& aSh1,
-						       const TopoDS_Shape& aSh2,
-						       gp_Pnt& Ptmp1, gp_Pnt& Ptmp2);
-
-  /*!
    * \brief Computes minumal distance between two shapes.
    *
    * \param theShape1 the first shape

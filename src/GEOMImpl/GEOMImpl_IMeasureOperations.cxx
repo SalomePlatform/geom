@@ -44,6 +44,8 @@
 
 #include <utilities.h>
 
+#include <Basics_OCCTVersion.hxx>
+
 // OCCT Includes
 #include <Bnd_Box.hxx>
 #include <BOPAlgo_CheckerSI.hxx>
@@ -2319,12 +2321,6 @@ Standard_Integer GEOMImpl_IMeasureOperations::ClosestPoints (Handle(GEOM_Object)
   try {
     OCC_CATCH_SIGNALS;
 
-    // skl 30.06.2008
-    // additional workaround for bugs 19899, 19908 and 19910 from Mantis
-    gp_Pnt P1s, P2s;
-    double dist = GEOMUtils::GetMinDistanceSingular(aShape1, aShape2, P1s, P2s);
-    bool singularBetter = dist >= 0;
-
     BRepExtrema_DistShapeShape dst (aShape1, aShape2);
     if (dst.IsDone()) {
       nbSolutions = dst.NbSolution();
@@ -2341,24 +2337,7 @@ Standard_Integer GEOMImpl_IMeasureOperations::ClosestPoints (Handle(GEOM_Object)
         theDoubles->Append(P2.X());
         theDoubles->Append(P2.Y());
         theDoubles->Append(P2.Z());
-        
-        Standard_Real Dist = P1.Distance(P2);
-        singularBetter = singularBetter && dist < Dist;
       }
-    }
-
-    if (singularBetter) {
-      if (theDoubles.IsNull()) theDoubles = new TColStd_HSequenceOfReal;
-      else theDoubles->Clear();
-
-      nbSolutions = 1;
-    
-      theDoubles->Append(P1s.X());
-      theDoubles->Append(P1s.Y());
-      theDoubles->Append(P1s.Z());
-      theDoubles->Append(P2s.X());
-      theDoubles->Append(P2s.Y());
-      theDoubles->Append(P2s.Z());
     }
   }
   catch (Standard_Failure& aFail) {
