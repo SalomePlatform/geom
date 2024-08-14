@@ -1366,8 +1366,8 @@ GEOM::GEOM_IMeasureOperations::SequenceOfPairOfShape* GEOM_IMeasureOperations_i:
   std::list<GEOMImpl_IMeasureOperations::CoupleOfObjects>::iterator anIter(aSelfInters.begin());
   for (Standard_Integer i = 0; i < aLength; i++, ++anIter)
   {
-    aSeq[i].first = GetObject(Handle(::GEOM_Object)::DownCast((*anIter).first));
-    aSeq[i].second = GetObject(Handle(::GEOM_Object)::DownCast((*anIter).second));
+    aSeq[i].first  = GetObject((*anIter).first);
+    aSeq[i].second = GetObject((*anIter).second);
   }
 
   return aSeq._retn();
@@ -1404,8 +1404,8 @@ GEOM::GEOM_IMeasureOperations::SequenceOfPairOfShape* GEOM_IMeasureOperations_i:
   std::list<GEOMImpl_IMeasureOperations::CoupleOfObjects>::iterator anIter(aSelfInterf.begin());
   for (Standard_Integer i = 0; i < aLength; i++, ++anIter)
   {
-    aSeq[i].first = GetObject(Handle(::GEOM_Object)::DownCast((*anIter).first));
-    aSeq[i].second = GetObject(Handle(::GEOM_Object)::DownCast((*anIter).second));
+    aSeq[i].first  = GetObject((*anIter).first);
+    aSeq[i].second = GetObject((*anIter).second);
   }
 
   return aSeq._retn();
@@ -1471,8 +1471,8 @@ GEOM::GEOM_IMeasureOperations::SequenceOfPairOfShape* GEOM_IMeasureOperations_i:
   std::list<GEOMImpl_IMeasureOperations::CoupleOfObjects>::iterator anIter(aDistantS.begin());
   for (Standard_Integer i = 0; i < aLength; i++, ++anIter)
   {
-    aSeq[i].first = GetObject(Handle(::GEOM_Object)::DownCast((*anIter).first));
-    aSeq[i].second = GetObject(Handle(::GEOM_Object)::DownCast((*anIter).second));
+    aSeq[i].first  = GetObject((*anIter).first);
+    aSeq[i].second = GetObject((*anIter).second);
   }
 
   return aSeq._retn();
@@ -1502,8 +1502,8 @@ GEOM::GEOM_IMeasureOperations::CheckResults* GEOM_IMeasureOperations_i::CheckCon
   for (Standard_Integer i = 0; i < aLength; i++, ++anIntIt)
   {
     aRes[i].type = (*anIntIt).TypeOfCheck;
-    aRes[i].failedShapes.first  = GetObject(Handle(::GEOM_Object)::DownCast((*anIntIt).FailedShapes.first));
-    aRes[i].failedShapes.second = GetObject(Handle(::GEOM_Object)::DownCast((*anIntIt).FailedShapes.second));
+    aRes[i].failedShapes.first  = GetObject((*anIntIt).FailedShapes.first);
+    aRes[i].failedShapes.second = GetObject((*anIntIt).FailedShapes.second);
   }
 
   return aRes._retn();
@@ -1530,7 +1530,7 @@ CORBA::Double GEOM_IMeasureOperations_i::UpdateTolerance(GEOM::GEOM_Object_ptr t
 void GEOM_IMeasureOperations_i::ConvertToList(const GEOM::GEOM_IMeasureOperations::CheckResults& theResuts,
                                               std::list<GEOMImpl_IMeasureOperations::FailedChecks>& theListOfResults)
 {
-  for (Standard_Integer i = 0; i < theResuts.length(); ++i)
+  for (size_t i = 0; i < theResuts.length(); ++i)
   {
     GEOMImpl_IMeasureOperations::FailedChecks aCheck;
     aCheck.TypeOfCheck = theResuts[i].type;

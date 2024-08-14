@@ -452,6 +452,10 @@
             <translation>offset.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_OFFSET_PARTIAL</source>
+            <translation>offset_partial.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_PROJECTION_ON_FACE</source>
             <translation>projection.png</translation>
         </message>

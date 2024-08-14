@@ -108,9 +108,11 @@ class GEOMImpl_ITransformOperations : public GEOM_IOperations
                                                    double              theOffset,
                                                    bool                theJoinByPipes);
 
-  Standard_EXPORT Handle(GEOM_Object) OffsetShapeCopy (Handle(GEOM_Object) theObject,
-                                                       double              theOffset,
-                                                       bool                theJoinByPipes);
+  Standard_EXPORT Handle(GEOM_Object) OffsetShapeCopy
+                              (Handle(GEOM_Object) theObject,
+                               double              theOffset,
+                               bool                theJoinByPipes,
+                               const Handle(TColStd_HArray1OfInteger)& theFacesIDs = NULL);
 
   Standard_EXPORT Handle(GEOM_Object) ProjectShapeCopy (Handle(GEOM_Object) theSource,
                                                         Handle(GEOM_Object) theTarget);

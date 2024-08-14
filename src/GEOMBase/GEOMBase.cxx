@@ -823,6 +823,23 @@ QString GEOMBase::GetName( GEOM::GEOM_Object_ptr object )
 }
 
 //=======================================================================
+// function : GetName()
+// purpose  : Get name of objects
+//=======================================================================
+QString GEOMBase::GetName( const QList<GEOM::GeomObjPtr>& objects )
+{
+  QString name;
+
+  int nbSel = objects.count();
+  if (nbSel == 1)
+    name = GEOMBase::GetName( objects[0].get() );
+  else if (nbSel > 1)
+    name = QObject::tr("%1_objects").arg( nbSel );
+
+  return name;
+}
+
+//=======================================================================
 // function : IsShape()
 // purpose  : Return TRUE if object is valid and has shape
 //=======================================================================

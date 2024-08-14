@@ -30,14 +30,14 @@
 #include "GEOMBase_Skeleton.h"
 #include "GEOM_GenericObjPtr.h"
 
-class DlgRef_1Sel1Spin1Check;  
-  
+class DlgRef_2Sel1Spin2Check;
+
 //=================================================================================
 // class    : TransformationGUI_OffsetDlg
 // purpose  :
 //=================================================================================
 class TransformationGUI_OffsetDlg : public GEOMBase_Skeleton
-{ 
+{
   Q_OBJECT
 
 public:
@@ -52,24 +52,26 @@ protected:
   virtual bool                       execute( ObjectList& );
   virtual void                       restoreSubShapes( SALOMEDS::SObject_ptr );
   virtual QList<GEOM::GeomObjPtr>    getSourceObjects();
-  
+
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
   double                             GetOffset() const;
   bool                               GetIsJoinByPipes() const;
-    
+
 private:
   QList<GEOM::GeomObjPtr>            myObjects;
-    
-  DlgRef_1Sel1Spin1Check*            GroupPoints;
-    
+  QList<GEOM::GeomObjPtr>            myFaces;
+
+  DlgRef_2Sel1Spin2Check*            GroupPoints;
+
 private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
+  void                               ConstructorsClicked(int);
   void                               ValueChangedInSpinBox();
   void                               JoinModeChanged();
 };

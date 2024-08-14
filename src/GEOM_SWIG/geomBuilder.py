@@ -9623,6 +9623,51 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "offset")
             return anObj
 
+        ## Create new object as partial offset of the given one.
+        #  Only indexed faces are offset, others keep they original location.
+        #  Gap between adjacent offset surfaces is filled
+        #  by extending and intersecting them.
+        #  @param theObject The base object for the offset.
+        #  @param theOffset Offset value.
+        #  @param theFacesIDs The list of face IDs indicating faces to be offset.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing the offset object.
+        #
+        #  @ref tui_offset "Example"
+        @ManageTransactions("TrsfOp")
+        def MakeOffsetPartial(self, theObject, theOffset, theFacesIDs, theName=None):
+            """
+            Create new object as partial offset of the given one.
+            Only indexed faces are offset, others keep they original location.
+            Gap between adjacent offset surfaces is filled
+            by extending and intersecting them.
+
+            Parameters:
+                theObject The base object for the offset.
+                theOffset Offset value.
+                theFacesIDs The list of face IDs indicating faces to be offset.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the offset object.
+
+            Example of usage:
+                 box = geompy.MakeBox(20, 20, 20, 200, 200, 200)
+                 # create a new object from the box, offsetting its top and front faces
+                 offset = geompy.MakeOffsetPartial(box, 70., [13, 33])
+            """
+            theOffset, Parameters = ParseParameters(theOffset)
+            anObj = self.TrsfOp.OffsetShapePartialCopy(theObject, theOffset, theFacesIDs)
+            RaiseIfFailed("OffsetShapePartialCopy", self.TrsfOp)
+            anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName, "offset")
+            return anObj
+
         ## Create new object as projection of the given one on another.
         #  @param theSource The source object for the projection. It can be a point, edge or wire.
         #         Edge and wire are acceptable if @a theTarget is a face.

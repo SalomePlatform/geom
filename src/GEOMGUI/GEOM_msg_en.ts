@@ -7982,6 +7982,14 @@ Do you want to create new material?</translation>
         <source>GEOM_JOIN_BY_PIPES</source>
         <translation>Join by pipes</translation>
     </message>
+    <message>
+        <source>TOOLTIP_OFFSET</source>
+        <translation>Offset</translation>
+    </message>
+    <message>
+        <source>TOOLTIP_OFFSET_PARTIAL</source>
+        <translation>Partial offset</translation>
+    </message>
 </context>
 <context>
     <name>OperationGUI_ExtractionDlg</name>

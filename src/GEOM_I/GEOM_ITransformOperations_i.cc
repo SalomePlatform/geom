@@ -670,6 +670,47 @@ GEOM_ITransformOperations_i::OffsetShapeCopy (GEOM::GEOM_Object_ptr theObject,
 
 //=============================================================================
 /*!
+ *  OffsetShapePartialCopy
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr
+GEOM_ITransformOperations_i::OffsetShapePartialCopy (GEOM::GEOM_Object_ptr   theObject,
+                                                     CORBA::Double           theOffset,
+                                                     const GEOM::ListOfLong& theFacesIDs)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the basic object
+  Handle(::GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  if (aBasicObject.IsNull()) return aGEOMObject._retn();
+
+  // Get faces IDs.
+  Handle(TColStd_HArray1OfInteger) aFaceIDs;
+  Standard_Integer                 aNbIDs = theFacesIDs.length();
+  if (aNbIDs > 0) {
+    aFaceIDs = new TColStd_HArray1OfInteger (1, aNbIDs);
+    for (Standard_Integer i = 0; i < aNbIDs; i++) {
+      aFaceIDs->SetValue(i + 1, theFacesIDs[i]);
+    }
+  }
+
+  // join by pipes mode is not supported in combination with partial offset
+  bool aJoinByPipes = false;
+
+  //Create the offset shape
+  Handle(::GEOM_Object) anObject =
+    GetOperations()->OffsetShapeCopy(aBasicObject, theOffset, aJoinByPipes, aFaceIDs);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  ProjectShapeCopy
  */
 //=============================================================================

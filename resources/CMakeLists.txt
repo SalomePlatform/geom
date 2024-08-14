@@ -132,6 +132,7 @@ SET( _res_files
   multitranslationsimple.png
   normale.png
   offset.png
+  offset_partial.png
   projection.png
   projection_on_edge.png
   projection_on_wire.png

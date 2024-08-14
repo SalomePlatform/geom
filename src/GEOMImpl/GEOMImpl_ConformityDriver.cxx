@@ -44,28 +44,6 @@ namespace
 {
   //=======================================================================
   //function : ConvertShapesToIndices
-  //purpose  : Convert sub-shapes of shapes to sequence of indices
-  //=======================================================================
-  Handle(TColStd_HArray1OfInteger) ConvertShapesToIndices(const TopoDS_Shape& theShape,
-                                                          const TopTools_ListOfShape& theShapes)
-  {
-    Handle(TColStd_HArray1OfInteger) aSeqOfIDs = new TColStd_HArray1OfInteger(1, theShapes.Size());
-
-    TopTools_IndexedMapOfShape anIndices;
-    TopExp::MapShapes(theShape, anIndices);
-
-    TopTools_ListIteratorOfListOfShape itSub(theShapes);
-    for (int index = 1; itSub.More(); itSub.Next(), ++index)
-    {
-      int id = anIndices.FindIndex(itSub.Value());
-      aSeqOfIDs->SetValue(index, id);
-    }
-
-    return aSeqOfIDs;
-  }
-
-  //=======================================================================
-  //function : ConvertShapesToIndices
   //purpose  : Convert list of pair shapes to sequence of indices
   //=======================================================================
   Handle(TColStd_HArray2OfInteger) ConvertShapesToIndices(
@@ -203,6 +181,8 @@ Standard_Real GEOMImpl_ConformityDriver::updateTolerance(const TopoDS_Shape& the
       case TopAbs_FACE:
         aCurTolerance = BRep_Tool::Tolerance(TopoDS::Face(anExp.Value()));
         break;
+      default:
+        break;
       }
       aTolerance = Min(aTolerance, aCurTolerance);
     }
@@ -227,6 +207,8 @@ Standard_Real GEOMImpl_ConformityDriver::updateTolerance(const TopoDS_Shape& the
         break;
       case TopAbs_FACE:
         aCurTolerance = BRep_Tool::Tolerance(TopoDS::Face(anExp.Value()));
+        break;
+      default:
         break;
       }
       aResTol = Max(aResTol, aCurTolerance);

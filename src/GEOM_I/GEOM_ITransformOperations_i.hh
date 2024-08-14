@@ -142,6 +142,10 @@ class GEOM_I_EXPORT GEOM_ITransformOperations_i :
                                          CORBA::Double         theOffset,
                                          CORBA::Boolean        theJoinByPipes);
 
+  GEOM::GEOM_Object_ptr OffsetShapePartialCopy (GEOM::GEOM_Object_ptr   theObject,
+                                                CORBA::Double           theOffset,
+                                                const GEOM::ListOfLong& theFacesIDs);
+
   GEOM::GEOM_Object_ptr ProjectShapeCopy (GEOM::GEOM_Object_ptr theSource,
                                           GEOM::GEOM_Object_ptr theTarget);
 

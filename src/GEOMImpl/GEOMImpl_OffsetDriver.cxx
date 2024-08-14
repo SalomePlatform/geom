@@ -28,12 +28,13 @@
 #include <GEOM_Function.hxx>
 #include <GEOMUtils.hxx>
 
+#include <BRepClass3d_SolidClassifier.hxx>
 #include <BRepOffsetAPI_MakeOffsetShape.hxx>
 #include <BRepOffsetAPI_MakeThickSolid.hxx>
-#include <TopoDS_Shape.hxx>
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
-#include <BRepClass3d_SolidClassifier.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Shape.hxx>
 #include <Precision.hxx>
 #include <Standard_ConstructionError.hxx>
 #include <StdFail_NotDone.hxx>
@@ -88,24 +89,79 @@ Standard_Integer GEOMImpl_OffsetDriver::Execute(Handle(TFunction_Logbook)& log) 
 
   if ( aType == OFFSET_SHAPE || aType == OFFSET_SHAPE_COPY )
   {
-    BRepOffsetAPI_MakeOffsetShape MO;
     BRepOffset_Mode aMode = BRepOffset_Skin;
-    Standard_Boolean anIntersection = Standard_False, aSelfInter = Standard_False;
-    MO.PerformByJoin( aShapeBase,
-                      aCI.GetValue(),
-                      aTol,
-                      aMode,
-                      anIntersection,
-                      aSelfInter,
-                      aCI.GetJoinByPipes() ? GeomAbs_Arc : GeomAbs_Intersection );
+    Standard_Boolean anIntersection = Standard_False;
+    Standard_Boolean aSelfInter = Standard_False;
 
-    if ( MO.IsDone() ) {
-      aShape = MO.Shape();
-      if ( !GEOMUtils::CheckShape(aShape, true) && !GEOMUtils::FixShapeTolerance(aShape) )
-        Standard_ConstructionError::Raise("Boolean operation aborted : non valid shape result");
+    Handle(TColStd_HArray1OfInteger) aFacesIDs = aCI.GetFaceIDs();
+    if (aFacesIDs.IsNull() || aFacesIDs->Length() < 1) {
+      // Offset entire shape (all faces) with the same offset value
+      BRepOffsetAPI_MakeOffsetShape MO;
+      MO.PerformByJoin( aShapeBase,
+                        anOffset,
+                        aTol,
+                        aMode,
+                        anIntersection,
+                        aSelfInter,
+                        aCI.GetJoinByPipes() ? GeomAbs_Arc : GeomAbs_Intersection );
+
+      if ( MO.IsDone() ) {
+        aShape = MO.Shape();
+        if ( !GEOMUtils::CheckShape(aShape, true) && !GEOMUtils::FixShapeTolerance(aShape) )
+          Standard_ConstructionError::Raise("Offset aborted : non valid shape result");
+      }
+      else {
+        StdFail_NotDone::Raise("Offset construction failed");
+      }
     }
     else {
-      StdFail_NotDone::Raise("Offset construction failed");
+      // Offset selected faces of main shape by given value, other faces by 0
+      BRepOffset_MakeOffset aMakeOffset;
+      aMakeOffset.Initialize(aShapeBase,
+                             anOffset, // set offset on all faces to anOffset
+                             aTol,
+                             aMode,
+                             anIntersection,
+                             aSelfInter,
+                             aCI.GetJoinByPipes() ? GeomAbs_Arc : GeomAbs_Intersection,
+                             Standard_False);
+
+      // put selected faces into a map
+      TopTools_MapOfShape aMapFaces;
+      TopTools_IndexedMapOfShape anIndices;
+      TopExp::MapShapes(aShapeBase, anIndices);
+      Standard_Integer aNbShapes = anIndices.Extent();
+      for (Standard_Integer i = aFacesIDs->Lower(); i <= aFacesIDs->Upper(); ++i) {
+        const Standard_Integer anIndex = aFacesIDs->Value(i);
+        if (anIndex < 1 || anIndex > aNbShapes) {
+          Standard_ConstructionError::Raise("Offset aborted : Invalid face index given");
+        }
+        const TopoDS_Shape &aFace = anIndices.FindKey(anIndex);
+        if (aFace.ShapeType() != TopAbs_FACE) {
+          Standard_ConstructionError::Raise("Offset aborted : Shape by index is not a face");
+        }
+        aMapFaces.Add(aFace);
+      }
+
+      // set offset on non-selected faces to zero
+      TopExp_Explorer anExp (aShapeBase, TopAbs_FACE);
+      for (; anExp.More(); anExp.Next()) {
+        const TopoDS_Shape &aFace = anExp.Current();
+        if (!aMapFaces.Contains(aFace)) {
+          aMakeOffset.SetOffsetOnFace(TopoDS::Face(aFace), 0.0);
+        }
+      }
+
+      // perform offset operation
+      aMakeOffset.MakeOffsetShape();
+      if ( aMakeOffset.IsDone() ) {
+        aShape = aMakeOffset.Shape();
+        if ( !GEOMUtils::CheckShape(aShape, true) && !GEOMUtils::FixShapeTolerance(aShape) )
+          Standard_ConstructionError::Raise("Offset aborted : non valid shape result");
+      }
+      else {
+        StdFail_NotDone::Raise("Offset construction failed");
+      }
     }
   }
   else if (aType == OFFSET_THICKENING || aType == OFFSET_THICKENING_COPY)
@@ -216,6 +272,12 @@ GetCreationInformation(std::string&             theOperationName,
     theOperationName = "OFFSET";
     AddParam( theParams, "Object", aCI.GetShape() );
     AddParam( theParams, "Offset", aCI.GetValue() );
+    {
+      Handle(TColStd_HArray1OfInteger) aFacesIDs = aCI.GetFaceIDs();
+      if (!aFacesIDs.IsNull()) {
+        AddParam(theParams, "Faces IDs", aFacesIDs);
+      }
+    }
     break;
   case OFFSET_THICKENING:
   case OFFSET_THICKENING_COPY:

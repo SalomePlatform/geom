@@ -5,6 +5,10 @@
 \n To produce an <b>Offset Surface</b> in the <b>Main Menu</b> select
 <b>Operations - > Transformation - > Offset Surface</b>
 
+\n There are 2 algorithms for creation of an \b Offset.
+
+\n Firstly, you can offset all faces of selected shape(s) to the same value. 
+
 \n This operation translates each point of an \b Object (a set of
 Objects) along a local normal by a given \b Offset distance (signed
 number, negative value meaning inner offset). Gaps between translated 
@@ -13,11 +17,11 @@ adjacent surfaces are filled in either of two ways:
 - else the surfaces are extended and intersected, so that sharp edges
   are preserved.
 
-\n \b Offset operation is applicable to faces, shells and solids.
-\n \ref restore_presentation_parameters_page "Advanced options".
-
-
 \image html transformation11.png
+
+\n <b>Arguments:</b> Name + Object(s) (face(s), shell(s), solid(s)) + Offset value.
+\n The \b Result will be a \b GEOM_Object. 
+\n \ref restore_presentation_parameters_page "Advanced options".
 
 \n <b>Example:</b>
 
@@ -27,11 +31,27 @@ adjacent surfaces are filled in either of two ways:
 - Gaps filled by pipes: <em>geompy.MakeOffset(Shape, Offset),</em>
 - Gaps filled by intersection: <em>geompy.MakeOffsetIntersectionJoin(Shape, Offset),</em>
 
-where Shape is a shape(s) which has to be an offset, Offset is a value of
+where \b Shape is a shape(s) which has to be an offset, \b Offset is a value of
 the offset.
-\n <b>Arguments:</b> Name + Object (face(s), shell(s), solid(s)) +
-Offset value.
+
+\n Secondly, you can offset only selected faces of the shape to the given value,
+   other faces will stay at their initial places,
+   but could be extended to join with offset faces.
+   Gaps between adjacent surfaces are filled by intersection of extended surfaces.
+
+\image html transformation11a.png
+
+\n <b>Arguments:</b> Name + Object (shell or solid) +
+                     Face(s) of the object + Offset value.
 \n The \b Result will be a \b GEOM_Object. 
+\n \ref restore_presentation_parameters_page "Advanced options".
+
+\n <b>TUI Command:</b> 
+- <em>geompy.MakeOffsetPartial(Shape, Offset, ListOfFacesIDs),</em>
+
+where \b Shape is a shape(s) which has to be an offset,
+      \b Offset is a value of the offset,
+      \b ListOfFacesIDs is a list of integer IDs of sub-faces.
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_offset "Transformation Operations".

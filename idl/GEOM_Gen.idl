@@ -1346,6 +1346,18 @@ module GEOM
                                  in boolean     theJoinByPipes);
 
     /*!
+     *  \brief Create new object as offset of the given one.
+     *         Only indexed faces are offset, others keep they original location.
+     *  \param theObject The base object for the offset.
+     *  \param theOffset Offset value.
+     *  \param theFacesIDs The list of face IDs indicating faces to be offset.
+     *  \return New GEOM_Object, containing the offset object.
+     */
+    GEOM_Object OffsetShapePartialCopy (in GEOM_Object theObject,
+                                        in double      theOffset,
+                                        in ListOfLong  theFacesIDs);
+
+    /*!
      *  \brief Create new object as projection of the given one on a 2D surface.
      *  \param theSource The source object for the projection. It can be a point, edge or wire.
      *  \param theTarget The target object. It can be planar or cylindrical face.

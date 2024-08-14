@@ -7961,6 +7961,21 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
 </context>
 <context>
+    <name>TransformationGUI_OffsetDlg</name>
+    <message>
+        <source>GEOM_JOIN_BY_PIPES</source>
+        <translation>Rejoindre par des tuyaux</translation>
+    </message>
+    <message>
+        <source>TOOLTIP_OFFSET</source>
+        <translation>Décalage</translation>
+    </message>
+    <message>
+        <source>TOOLTIP_OFFSET_PARTIAL</source>
+        <translation>Décalage partiel</translation>
+    </message>
+</context>
+<context>
     <name>OperationGUI_ExtractionDlg</name>
     <message>
         <source>GEOM_EXTRACT_TITLE</source>

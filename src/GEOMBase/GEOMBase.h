@@ -124,6 +124,7 @@ public :
 
   /* Gets name of object */
   static QString      GetName( GEOM::GEOM_Object_ptr object );
+  static QString      GetName( const QList<GEOM::GeomObjPtr>& objects );
 
   /* Check if object has shape */
   static bool         IsShape( GEOM::GEOM_Object_ptr object );

@@ -1090,10 +1090,11 @@ GEOMImpl_ITransformOperations::OffsetShape (Handle(GEOM_Object) theObject,
  *  OffsetShapeCopy
  */
 //=============================================================================
-Handle(GEOM_Object)
-GEOMImpl_ITransformOperations::OffsetShapeCopy( Handle(GEOM_Object) theObject,
-                                                double              theOffset,
-                                                bool                theJoinByPipes)
+Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShapeCopy
+                    (Handle(GEOM_Object)                     theObject,
+                     double                                  theOffset,
+                     bool                                    theJoinByPipes,
+                     const Handle(TColStd_HArray1OfInteger)& theFacesIDs)
 {
   SetErrorCode(KO);
 
@@ -1118,6 +1119,10 @@ GEOMImpl_ITransformOperations::OffsetShapeCopy( Handle(GEOM_Object) theObject,
   aTI.SetValue( theOffset );
   aTI.SetJoinByPipes( theJoinByPipes );
 
+  if (!theFacesIDs.IsNull()) {
+    aTI.SetFaceIDs(theFacesIDs);
+  }
+
   //Compute the offset
   try {
     OCC_CATCH_SIGNALS;
@@ -1132,17 +1137,30 @@ GEOMImpl_ITransformOperations::OffsetShapeCopy( Handle(GEOM_Object) theObject,
   }
 
   //Make a Python command
-  if (theJoinByPipes)
-    GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakeOffset("
-                                 << theObject << ", " << theOffset << ")";
-  else
-    GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakeOffsetIntersectionJoin("
-                                 << theObject << ", " << theOffset << ")";
+  if (theFacesIDs.IsNull()) {
+    if (theJoinByPipes)
+      GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakeOffset("
+                                   << theObject << ", " << theOffset << ")";
+    else
+      GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakeOffsetIntersectionJoin("
+                                   << theObject << ", " << theOffset << ")";
+  }
+  else {
+    GEOM::TPythonDump pd (aFunction);
+    pd << aCopy << " = geompy.MakeOffsetPartial("
+       << theObject << ", " << theOffset << ", [";
+
+    // Dump faces IDs.
+    for (Standard_Integer i = theFacesIDs->Lower(); i <= theFacesIDs->Upper(); ++i) {
+      pd << theFacesIDs->Value(i) << ((i == theFacesIDs->Upper()) ? "" : ", ");
+    }
+
+    pd << "])";
+  }
 
   SetErrorCode(OK);
   return aCopy;
 }
-
 
 //=============================================================================
 /*!
