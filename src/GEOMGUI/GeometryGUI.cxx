@@ -945,7 +945,23 @@ void GeometryGUI::createGeomAction( const int id, const QString& label, const QS
 void GeometryGUI::createGeomAction( const int id, const QString& label, const QString& icolabel,
                                     const int accel, const bool toggle)
 {
-  createGeomAction( id, label, icolabel, accel, toggle, QString( "STB_%1" ).arg( label ) );
+  createGeomAction( id, label, icolabel, accel, toggle, label );
+}
+
+void GeometryGUI::createGeomAction(
+  const int inMenuIdx,
+  const QPair<QString, QString>& inModuleIDLastTokenAndPrefix,
+  const QString& iconID,
+  const bool toggle
+) {
+  const QString& inModuleIDLastToken = inModuleIDLastTokenAndPrefix.first;
+  const QString& inModuleIDPrefix = inModuleIDLastTokenAndPrefix.second;
+
+  QString inModuleActionID = inModuleIDLastToken;
+  if (!inModuleIDPrefix.isEmpty())
+    inModuleActionID = inModuleIDPrefix + "/" + inModuleActionID;
+
+  createGeomAction( inMenuIdx, inModuleIDLastToken, iconID, 0 /*keySequenceIntRepresentation*/, toggle, inModuleActionID );
 }
 
 //=======================================================================
@@ -999,223 +1015,223 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   // ----- create actions --------------
 
-  createGeomAction( GEOMOp::OpDelete,     "DELETE", "", Qt::Key_Delete );
+  createGeomAction( GEOMOp::OpDelete,     {"DELETE", "Edit"} );
 
-  createGeomAction( GEOMOp::OpPoint,      "POINT" );
-  createGeomAction( GEOMOp::OpLine,       "LINE" );
-  createGeomAction( GEOMOp::OpCircle,     "CIRCLE" );
-  createGeomAction( GEOMOp::OpEllipse,    "ELLIPSE" );
-  createGeomAction( GEOMOp::OpArc,        "ARC" );
-  createGeomAction( GEOMOp::OpCurve,      "CURVE" );
-  createGeomAction( GEOMOp::OpIsoline,    "ISOLINE" );
-  createGeomAction( GEOMOp::OpVector,     "VECTOR" );
-  createGeomAction( GEOMOp::OpPlane,      "PLANE" );
-  createGeomAction( GEOMOp::OpLCS,        "LOCAL_CS" );
-  createGeomAction( GEOMOp::OpOriginAndVectors, "ORIGIN_AND_VECTORS" );
-  createGeomAction( GEOMOp::OpSurfaceFromFace,  "SURFACE_FROM_FACE" );
+  createGeomAction( GEOMOp::OpPoint,      {"POINT", "NewEntity/Basic"} );
+  createGeomAction( GEOMOp::OpLine,       {"LINE", "NewEntity/Basic"} );
+  createGeomAction( GEOMOp::OpCircle,     {"CIRCLE", "NewEntity/Basic"} );
+  createGeomAction( GEOMOp::OpEllipse,    {"ELLIPSE", "NewEntity/Basic"} );
+  createGeomAction( GEOMOp::OpArc,        {"ARC", "NewEntity/Basic"} );
+  createGeomAction( GEOMOp::OpCurve,      {"CURVE", "NewEntity/Basic"} );
+  createGeomAction( GEOMOp::OpIsoline,    {"ISOLINE", "NewEntity/Basic"} );
+  createGeomAction( GEOMOp::OpVector,     {"VECTOR", "NewEntity/Basic"} );
+  createGeomAction( GEOMOp::OpPlane,      {"PLANE", "NewEntity/Basic"} );
+  createGeomAction( GEOMOp::OpLCS,        {"LOCAL_CS", "NewEntity/Basic"} );
+  createGeomAction( GEOMOp::OpOriginAndVectors, {"ORIGIN_AND_VECTORS", "NewEntity/Basic"} );
+  createGeomAction( GEOMOp::OpSurfaceFromFace,  {"SURFACE_FROM_FACE", "NewEntity/Basic"} );
 
-  createGeomAction( GEOMOp::OpBox,        "BOX" );
-  createGeomAction( GEOMOp::OpCylinder,   "CYLINDER" );
-  createGeomAction( GEOMOp::OpSphere,     "SPHERE" );
-  createGeomAction( GEOMOp::OpTorus,      "TORUS" );
-  createGeomAction( GEOMOp::OpCone,       "CONE" );
-  createGeomAction( GEOMOp::OpRectangle,  "RECTANGLE" );
-  createGeomAction( GEOMOp::OpDisk,       "DISK" );
+  createGeomAction( GEOMOp::OpBox,        {"BOX", "NewEntity/Primitives"} );
+  createGeomAction( GEOMOp::OpCylinder,   {"CYLINDER", "NewEntity/Primitives"} );
+  createGeomAction( GEOMOp::OpSphere,     {"SPHERE", "NewEntity/Primitives"} );
+  createGeomAction( GEOMOp::OpTorus,      {"TORUS", "NewEntity/Primitives"} );
+  createGeomAction( GEOMOp::OpCone,       {"CONE", "NewEntity/Primitives"} );
+  createGeomAction( GEOMOp::OpRectangle,  {"RECTANGLE", "NewEntity/Primitives"} );
+  createGeomAction( GEOMOp::OpDisk,       {"DISK", "NewEntity/Primitives"} );
 
-  createGeomAction( GEOMOp::OpPrism,       "EXTRUSION" );
-  createGeomAction( GEOMOp::OpRevolution,  "REVOLUTION" );
-  createGeomAction( GEOMOp::OpFilling,     "FILLING" );
-  createGeomAction( GEOMOp::OpPipe,        "PIPE" );
-  createGeomAction( GEOMOp::OpPipePath,    "PIPE_PATH" );
-  createGeomAction( GEOMOp::OpThickness,   "THICKNESS" );
+  createGeomAction( GEOMOp::OpPrism,       {"EXTRUSION", "NewEntity/Generation"} );
+  createGeomAction( GEOMOp::OpRevolution,  {"REVOLUTION", "NewEntity/Generation"} );
+  createGeomAction( GEOMOp::OpFilling,     {"FILLING", "NewEntity/Generation"} );
+  createGeomAction( GEOMOp::OpPipe,        {"PIPE", "NewEntity/Generation"} );
+  createGeomAction( GEOMOp::OpPipePath,    {"PIPE_PATH", "NewEntity/Generation"} );
+  createGeomAction( GEOMOp::OpThickness,   {"THICKNESS", "NewEntity/Generation"} );
 
-  createGeomAction( GEOMOp::OpGroupCreate, "GROUP_CREATE" );
-  createGeomAction( GEOMOp::OpGroupEdit,   "GROUP_EDIT" );
-  createGeomAction( GEOMOp::OpGroupUnion,  "GROUP_UNION" );
-  createGeomAction( GEOMOp::OpGroupIntersect, "GROUP_INTERSECT" );
-  createGeomAction( GEOMOp::OpGroupCut,    "GROUP_CUT" );
+  createGeomAction( GEOMOp::OpGroupCreate, {"GROUP_CREATE", "NewEntity/Group"} );
+  createGeomAction( GEOMOp::OpGroupEdit,   {"GROUP_EDIT", "NewEntity/Group"} );
+  createGeomAction( GEOMOp::OpGroupUnion,  {"GROUP_UNION", "NewEntity/Group"} );
+  createGeomAction( GEOMOp::OpGroupIntersect, {"GROUP_INTERSECT", "NewEntity/Group"} );
+  createGeomAction( GEOMOp::OpGroupCut,    {"GROUP_CUT", "NewEntity/Group"} );
 
-  createGeomAction( GEOMOp::OpCreateField, "FIELD_CREATE" );
-  createGeomAction( GEOMOp::OpEditField,   "FIELD_EDIT" );
+  createGeomAction( GEOMOp::OpCreateField, {"FIELD_CREATE", "NewEntity/Field"} );
+  createGeomAction( GEOMOp::OpEditField,   {"FIELD_EDIT", "NewEntity/Field"} );
 
-  createGeomAction( GEOMOp::OpReimport,    "RELOAD_IMPORTED" );
+  createGeomAction( GEOMOp::OpReimport,    {"RELOAD_IMPORTED", "Selection"} );
 
-  createGeomAction( GEOMOp::OpQuadFace,    "Q_FACE" );
-  createGeomAction( GEOMOp::OpHexaSolid,   "HEX_SOLID" );
+  createGeomAction( GEOMOp::OpQuadFace,    {"Q_FACE", "NewEntity/Blocks"} );
+  createGeomAction( GEOMOp::OpHexaSolid,   {"HEX_SOLID", "NewEntity/Blocks"} );
 
-  createGeomAction( GEOMOp::Op2dSketcher,  "SKETCH" );
-  createGeomAction( GEOMOp::Op3dSketcher,  "3DSKETCH" );
-  createGeomAction( GEOMOp::OpExplode,     "EXPLODE" );
+  createGeomAction( GEOMOp::Op2dSketcher,  {"SKETCH", "NewEntity/Basic"} );
+  createGeomAction( GEOMOp::Op3dSketcher,  {"3DSKETCH", "NewEntity/Basic"} );
+  createGeomAction( GEOMOp::OpExplode,     {"EXPLODE", "NewEntity"} );
 #ifdef WITH_OPENCV
-  createGeomAction( GEOMOp::OpFeatureDetect,"FEATURE_DETECTION" );
+  createGeomAction( GEOMOp::OpFeatureDetect, {"FEATURE_DETECTION", "NewEntity"} );
 #endif
-  createGeomAction( GEOMOp::OpPictureImport,"PICTURE_IMPORT" );
-  createGeomAction( GEOMOp::Op2dPolylineEditor, "CURVE_CREATOR" );
+  createGeomAction( GEOMOp::OpPictureImport, {"PICTURE_IMPORT", "NewEntity"} );
+  createGeomAction( GEOMOp::Op2dPolylineEditor, {"CURVE_CREATOR", "NewEntity/Basic"} );
 
-  createGeomAction( GEOMOp::OpEdge,        "EDGE" );
-  createGeomAction( GEOMOp::OpWire,        "WIRE" );
-  createGeomAction( GEOMOp::OpFace,        "FACE" );
-  createGeomAction( GEOMOp::OpShell,       "SHELL" );
-  createGeomAction( GEOMOp::OpSolid,       "SOLID" );
-  createGeomAction( GEOMOp::OpCompound,    "COMPOUND" );
+  createGeomAction( GEOMOp::OpEdge,        {"EDGE", "NewEntity/Build"} );
+  createGeomAction( GEOMOp::OpWire,        {"WIRE", "NewEntity/Build"} );
+  createGeomAction( GEOMOp::OpFace,        {"FACE", "NewEntity/Build"} );
+  createGeomAction( GEOMOp::OpShell,       {"SHELL", "NewEntity/Build"} );
+  createGeomAction( GEOMOp::OpSolid,       {"SOLID", "NewEntity/Build"} );
+  createGeomAction( GEOMOp::OpCompound,    {"COMPOUND", "NewEntity/Build"} );
 
-  createGeomAction( GEOMOp::OpFuse,        "FUSE" );
-  createGeomAction( GEOMOp::OpCommon,      "COMMON" );
-  createGeomAction( GEOMOp::OpCut,         "CUT" );
-  createGeomAction( GEOMOp::OpSection,     "SECTION" );
+  createGeomAction( GEOMOp::OpFuse,        {"FUSE", "Operations/Boolean"} );
+  createGeomAction( GEOMOp::OpCommon,      {"COMMON", "Operations/Boolean"} );
+  createGeomAction( GEOMOp::OpCut,         {"CUT", "Operations/Boolean"} );
+  createGeomAction( GEOMOp::OpSection,     {"SECTION", "Operations/Boolean"} );
 
-  createGeomAction( GEOMOp::OpTranslate,      "TRANSLATION" );
-  createGeomAction( GEOMOp::OpRotate,         "ROTATION" );
-  createGeomAction( GEOMOp::OpChangeLoc,      "MODIFY_LOCATION" );
-  createGeomAction( GEOMOp::OpMirror,         "MIRROR" );
-  createGeomAction( GEOMOp::OpScale,          "SCALE" );
-  createGeomAction( GEOMOp::OpOffset,         "OFFSET" );
-  createGeomAction( GEOMOp::OpProjection,     "PROJECTION" );
-  createGeomAction( GEOMOp::OpProjOnCyl,      "PROJ_ON_CYL" );
-  createGeomAction( GEOMOp::OpMultiTranslate, "MUL_TRANSLATION" );
-  createGeomAction( GEOMOp::OpMultiRotate,    "MUL_ROTATION" );
-  createGeomAction( GEOMOp::OpExtension,      "EXTENSION" );
+  createGeomAction( GEOMOp::OpTranslate,      {"TRANSLATION", "Operations/Transformation"} );
+  createGeomAction( GEOMOp::OpRotate,         {"ROTATION", "Operations/Transformation"} );
+  createGeomAction( GEOMOp::OpChangeLoc,      {"MODIFY_LOCATION", "Operations/Transformation"} );
+  createGeomAction( GEOMOp::OpMirror,         {"MIRROR", "Operations/Transformation"} );
+  createGeomAction( GEOMOp::OpScale,          {"SCALE", "Operations/Transformation"} );
+  createGeomAction( GEOMOp::OpOffset,         {"OFFSET", "Operations/Transformation"} );
+  createGeomAction( GEOMOp::OpProjection,     {"PROJECTION", "Operations/Transformation"} );
+  createGeomAction( GEOMOp::OpProjOnCyl,      {"PROJ_ON_CYL", "Operations/Transformation"} );
+  createGeomAction( GEOMOp::OpMultiTranslate, {"MUL_TRANSLATION", "Operations/Transformation"} );
+  createGeomAction( GEOMOp::OpMultiRotate,    {"MUL_ROTATION", "Operations/Transformation"} );
+  createGeomAction( GEOMOp::OpExtension,      {"EXTENSION", "Operations/Transformation"} );
 
-  createGeomAction( GEOMOp::OpPartition,      "PARTITION" );
-  createGeomAction( GEOMOp::OpArchimede,      "ARCHIMEDE" );
-  createGeomAction( GEOMOp::OpFillet3d,       "FILLET" );
-  createGeomAction( GEOMOp::OpChamfer,        "CHAMFER" );
-  createGeomAction( GEOMOp::OpShapesOnShape,  "GET_SHAPES_ON_SHAPE" );
-  createGeomAction( GEOMOp::OpSharedShapes,   "GET_SHARED_SHAPES" );
-  createGeomAction( GEOMOp::OpTransferData,   "TRANSFER_DATA" );
-  createGeomAction( GEOMOp::OpExtraction,     "EXTRACTION" );
-  createGeomAction( GEOMOp::OpExtrudedCut,    "EXTRUDED_CUT" );
-  createGeomAction( GEOMOp::OpExtrudedBoss,   "EXTRUDED_BOSS" );
-  createGeomAction( GEOMOp::OpFillet1d,       "FILLET_1D" );
-  createGeomAction( GEOMOp::OpFillet2d,       "FILLET_2D" );
+  createGeomAction( GEOMOp::OpPartition,      {"PARTITION", "Operations"} );
+  createGeomAction( GEOMOp::OpArchimede,      {"ARCHIMEDE", "Operations"} );
+  createGeomAction( GEOMOp::OpFillet3d,       {"FILLET", "Operations"} );
+  createGeomAction( GEOMOp::OpChamfer,        {"CHAMFER", "Operations"} );
+  createGeomAction( GEOMOp::OpShapesOnShape,  {"GET_SHAPES_ON_SHAPE", "Operations"} );
+  createGeomAction( GEOMOp::OpSharedShapes,   {"GET_SHARED_SHAPES", "Operations"} );
+  createGeomAction( GEOMOp::OpTransferData,   {"TRANSFER_DATA", "Operations"} );
+  createGeomAction( GEOMOp::OpExtraction,     {"EXTRACTION", "Operations"} );
+  createGeomAction( GEOMOp::OpExtrudedCut,    {"EXTRUDED_CUT", "Operations"} );
+  createGeomAction( GEOMOp::OpExtrudedBoss,   {"EXTRUDED_BOSS", "Operations"} );
+  createGeomAction( GEOMOp::OpFillet1d,       {"FILLET_1D", "Operations"} );
+  createGeomAction( GEOMOp::OpFillet2d,       {"FILLET_2D", "Operations"} );
 
-  createGeomAction( GEOMOp::OpMultiTransform, "MUL_TRANSFORM" );
-  createGeomAction( GEOMOp::OpExplodeBlock,   "EXPLODE_BLOCKS" );
-  createGeomAction( GEOMOp::OpPropagate,      "PROPAGATE" );
+  createGeomAction( GEOMOp::OpMultiTransform, {"MUL_TRANSFORM", "Operations/Blocks"} );
+  createGeomAction( GEOMOp::OpExplodeBlock,   {"EXPLODE_BLOCKS", "Operations/Blocks"} );
+  createGeomAction( GEOMOp::OpPropagate,      {"PROPAGATE", "Operations/Blocks"} );
 
-  createGeomAction( GEOMOp::OpSewing,           "SEWING" );
-  createGeomAction( GEOMOp::OpGlueFaces,        "GLUE_FACES" );
-  createGeomAction( GEOMOp::OpGlueEdges,        "GLUE_EDGES" );
-  createGeomAction( GEOMOp::OpLimitTolerance,   "LIMIT_TOLERANCE" );
-  createGeomAction( GEOMOp::OpSuppressFaces,    "SUPPRESS_FACES" );
-  createGeomAction( GEOMOp::OpSuppressHoles,    "SUPPERSS_HOLES" );
-  createGeomAction( GEOMOp::OpShapeProcess,     "SHAPE_PROCESS" );
-  createGeomAction( GEOMOp::OpCloseContour,     "CLOSE_CONTOUR" );
-  createGeomAction( GEOMOp::OpRemoveIntWires,   "SUPPRESS_INT_WIRES" );
-  createGeomAction( GEOMOp::OpAddPointOnEdge,   "POINT_ON_EDGE" );
-  createGeomAction( GEOMOp::OpFreeBoundaries,   "CHECK_FREE_BNDS" );
-  createGeomAction( GEOMOp::OpFreeFaces,        "CHECK_FREE_FACES" );
-  createGeomAction( GEOMOp::OpOrientation,      "CHANGE_ORIENTATION" );
-  createGeomAction( GEOMOp::OpRemoveWebs,       "REMOVE_WEBS" );
-  createGeomAction( GEOMOp::OpRemoveExtraEdges, "REMOVE_EXTRA_EDGES" );
-  createGeomAction( GEOMOp::OpFuseEdges,        "FUSE_EDGES" );
-  createGeomAction( GEOMOp::OpUnionFaces,       "UNION_FACES" );
-  createGeomAction( GEOMOp::OpInspectObj,       "INSPECT_OBJECT" );
+  createGeomAction( GEOMOp::OpSewing,           {"SEWING", "Repair"} );
+  createGeomAction( GEOMOp::OpGlueFaces,        {"GLUE_FACES", "Repair"} );
+  createGeomAction( GEOMOp::OpGlueEdges,        {"GLUE_EDGES", "Repair"} );
+  createGeomAction( GEOMOp::OpLimitTolerance,   {"LIMIT_TOLERANCE", "Repair"} );
+  createGeomAction( GEOMOp::OpSuppressFaces,    {"SUPPRESS_FACES", "Repair"} );
+  createGeomAction( GEOMOp::OpSuppressHoles,    {"SUPPERSS_HOLES", "Repair"} );
+  createGeomAction( GEOMOp::OpShapeProcess,     {"SHAPE_PROCESS", "Repair"} );
+  createGeomAction( GEOMOp::OpCloseContour,     {"CLOSE_CONTOUR", "Repair"} );
+  createGeomAction( GEOMOp::OpRemoveIntWires,   {"SUPPRESS_INT_WIRES", "Repair"} );
+  createGeomAction( GEOMOp::OpAddPointOnEdge,   {"POINT_ON_EDGE", "Repair"} );
+  createGeomAction( GEOMOp::OpFreeBoundaries,   {"CHECK_FREE_BNDS", "Repair"} );
+  createGeomAction( GEOMOp::OpFreeFaces,        {"CHECK_FREE_FACES", "Repair"} );
+  createGeomAction( GEOMOp::OpOrientation,      {"CHANGE_ORIENTATION", "Repair"} );
+  createGeomAction( GEOMOp::OpRemoveWebs,       {"REMOVE_WEBS", "Repair"} );
+  createGeomAction( GEOMOp::OpRemoveExtraEdges, {"REMOVE_EXTRA_EDGES", "Repair"} );
+  createGeomAction( GEOMOp::OpFuseEdges,        {"FUSE_EDGES", "Repair"} );
+  createGeomAction( GEOMOp::OpUnionFaces,       {"UNION_FACES", "Repair"} );
+  createGeomAction( GEOMOp::OpInspectObj,       {"INSPECT_OBJECT", "Repair"} );
 
-  createGeomAction( GEOMOp::OpPointCoordinates, "POINT_COORDS" );
-  createGeomAction( GEOMOp::OpProperties,       "BASIC_PROPS" );
-  createGeomAction( GEOMOp::OpCenterMass,       "MASS_CENTER" );
-  createGeomAction( GEOMOp::OpInertia,          "INERTIA" );
-  createGeomAction( GEOMOp::OpNormale,          "NORMALE" );
-  createGeomAction( GEOMOp::OpBoundingBox,      "BND_BOX" );
-  createGeomAction( GEOMOp::OpMinDistance,      "MIN_DIST" );
-  createGeomAction( GEOMOp::OpAngle,            "MEASURE_ANGLE" );
-  createGeomAction( GEOMOp::OpManageDimensions, "MANAGE_DIMENSIONS" );
-  createGeomAction( GEOMOp::OpAnnotation,       "ANNOTATION" );
-  createGeomAction( GEOMOp::OpEditAnnotation,   "EDIT_ANNOTATION" );
-  createGeomAction( GEOMOp::OpDeleteAnnotation, "DELETE_ANNOTATION" );
+  createGeomAction( GEOMOp::OpPointCoordinates, {"POINT_COORDS", "Inspection"} );
+  createGeomAction( GEOMOp::OpProperties,       {"BASIC_PROPS", "Inspection"} );
+  createGeomAction( GEOMOp::OpCenterMass,       {"MASS_CENTER", "Inspection"} );
+  createGeomAction( GEOMOp::OpInertia,          {"INERTIA", "Inspection"} );
+  createGeomAction( GEOMOp::OpNormale,          {"NORMALE", "Inspection"} );
+  createGeomAction( GEOMOp::OpBoundingBox,      {"BND_BOX", "Inspection/Dimensions"} );
+  createGeomAction( GEOMOp::OpMinDistance,      {"MIN_DIST", "Inspection/Dimensions"} );
+  createGeomAction( GEOMOp::OpAngle,            {"MEASURE_ANGLE", "Inspection/Dimensions"} );
+  createGeomAction( GEOMOp::OpManageDimensions, {"MANAGE_DIMENSIONS", "Inspection/Dimensions"} );
+  createGeomAction( GEOMOp::OpAnnotation,       {"ANNOTATION", "Inspection"} );
+  createGeomAction( GEOMOp::OpEditAnnotation,   {"EDIT_ANNOTATION", "Inspection/ANNOTATION"} );
+  createGeomAction( GEOMOp::OpDeleteAnnotation, {"DELETE_ANNOTATION", "Inspection/ANNOTATION"} );
 
-  createGeomAction( GEOMOp::OpTolerance,        "TOLERANCE" );
-  createGeomAction( GEOMOp::OpWhatIs,           "WHAT_IS" );
-  createGeomAction( GEOMOp::OpCheckShape,       "CHECK" );
-  createGeomAction( GEOMOp::OpCheckCompound,    "CHECK_COMPOUND" );
-  createGeomAction( GEOMOp::OpGetNonBlocks,     "GET_NON_BLOCKS" );
-  createGeomAction( GEOMOp::OpCheckSelfInters,  "CHECK_SELF_INTERSECTIONS" );
-  createGeomAction( GEOMOp::OpFastCheckInters,  "FAST_CHECK_INTERSECTIONS" );
+  createGeomAction( GEOMOp::OpTolerance,        {"TOLERANCE", "Inspection"} );
+  createGeomAction( GEOMOp::OpWhatIs,           {"WHAT_IS", "Inspection"} );
+  createGeomAction( GEOMOp::OpCheckShape,       {"CHECK", "Inspection"} );
+  createGeomAction( GEOMOp::OpCheckCompound,    {"CHECK_COMPOUND", "Inspection"} );
+  createGeomAction( GEOMOp::OpGetNonBlocks,     {"GET_NON_BLOCKS", "Inspection"} );
+  createGeomAction( GEOMOp::OpCheckSelfInters,  {"CHECK_SELF_INTERSECTIONS", "Inspection"} );
+  createGeomAction( GEOMOp::OpFastCheckInters,  {"FAST_CHECK_INTERSECTIONS", "Inspection"} );
 #ifndef DISABLE_PLOT2DVIEWER
-  createGeomAction( GEOMOp::OpShapeStatistics,  "SHAPE_STATISTICS" );
+  createGeomAction( GEOMOp::OpShapeStatistics,  {"SHAPE_STATISTICS", "Inspection"} );
 #endif
 
 #ifndef DISABLE_PYCONSOLE
 #ifdef _DEBUG_ // PAL16821
-  createGeomAction( GEOMOp::OpCheckGeom,        "CHECK_GEOMETRY" );
+  createGeomAction( GEOMOp::OpCheckGeom,        {"CHECK_GEOMETRY", "Tools"} );
 #endif
 #endif
 
-  createGeomAction( GEOMOp::OpMaterialsLibrary,   "MATERIALS_LIBRARY" );
-  createGeomAction( GEOMOp::OpDMWireframe,        "WIREFRAME" );
-  createGeomAction( GEOMOp::OpDMShading,          "SHADING" );
-  createGeomAction( GEOMOp::OpDMShadingWithEdges, "SHADING_WITH_EDGES" );
-  createGeomAction( GEOMOp::OpDMTexture,          "TEXTURE" );
-  createGeomAction( GEOMOp::OpShowAll,          "DISPLAY_ALL" );
-  createGeomAction( GEOMOp::OpHideAll,          "ERASE_ALL" );
-  createGeomAction( GEOMOp::OpShow,             "DISPLAY" );
-  createGeomAction( GEOMOp::OpSwitchVectors,    "VECTOR_MODE");
-  createGeomAction( GEOMOp::OpSwitchVertices,   "VERTICES_MODE");
-  createGeomAction( GEOMOp::OpSwitchName,       "NAME_MODE");
-  createGeomAction( GEOMOp::OpSelectVertex,     "VERTEX_SEL_ONLY" ,"", 0, true );
-  createGeomAction( GEOMOp::OpSelectEdge,       "EDGE_SEL_ONLY", "", 0, true );
-  createGeomAction( GEOMOp::OpSelectWire,       "WIRE_SEL_ONLY", "",  0, true );
-  createGeomAction( GEOMOp::OpSelectFace,       "FACE_SEL_ONLY", "", 0, true );
-  createGeomAction( GEOMOp::OpSelectShell,      "SHELL_SEL_ONLY", "",  0, true );
-  createGeomAction( GEOMOp::OpSelectSolid,      "SOLID_SEL_ONLY", "", 0, true );
-  createGeomAction( GEOMOp::OpSelectCompound,   "COMPOUND_SEL_ONLY", "",  0, true );
-  createGeomAction( GEOMOp::OpSelectAll,        "ALL_SEL_ONLY", "",  0, true );
-  createGeomAction( GEOMOp::OpShowOnly,         "DISPLAY_ONLY" );
-  createGeomAction( GEOMOp::OpShowOnlyChildren, "SHOW_ONLY_CHILDREN" );
-  createGeomAction( GEOMOp::OpBringToFront,     "BRING_TO_FRONT", "", 0, true );
-  createGeomAction( GEOMOp::OpClsBringToFront,  "CLS_BRING_TO_FRONT" );
-  createGeomAction( GEOMOp::OpHide,             "ERASE" );
+  createGeomAction( GEOMOp::OpMaterialsLibrary,   {"MATERIALS_LIBRARY", "Tools"} );
+  createGeomAction( GEOMOp::OpDMWireframe,        {"WIREFRAME", "View/DisplayMode"} );
+  createGeomAction( GEOMOp::OpDMShading,          {"SHADING", "View/DisplayMode"} );
+  createGeomAction( GEOMOp::OpDMShadingWithEdges, {"SHADING_WITH_EDGES", "View/DisplayMode"} );
+  createGeomAction( GEOMOp::OpDMTexture,          {"TEXTURE", "View/DisplayMode"} );
+  createGeomAction( GEOMOp::OpShowAll,          {"DISPLAY_ALL", "View"} );
+  createGeomAction( GEOMOp::OpHideAll,          {"ERASE_ALL", "View"} );
+  createGeomAction( GEOMOp::OpShow,             {"DISPLAY", "View"} );
+  createGeomAction( GEOMOp::OpSwitchVectors,    {"VECTOR_MODE", "View/DisplayMode"});
+  createGeomAction( GEOMOp::OpSwitchVertices,   {"VERTICES_MODE", "View/DisplayMode"});
+  createGeomAction( GEOMOp::OpSwitchName,       {"NAME_MODE", "View/DisplayMode"});
+  createGeomAction( GEOMOp::OpSelectVertex,     {"VERTEX_SEL_ONLY", "Selection"}, "", true );
+  createGeomAction( GEOMOp::OpSelectEdge,       {"EDGE_SEL_ONLY", "Selection"}, "", true );
+  createGeomAction( GEOMOp::OpSelectWire,       {"WIRE_SEL_ONLY", "Selection"}, "", true );
+  createGeomAction( GEOMOp::OpSelectFace,       {"FACE_SEL_ONLY", "Selection"}, "", true );
+  createGeomAction( GEOMOp::OpSelectShell,      {"SHELL_SEL_ONLY", "Selection"}, "", true );
+  createGeomAction( GEOMOp::OpSelectSolid,      {"SOLID_SEL_ONLY", "Selection"}, "", true );
+  createGeomAction( GEOMOp::OpSelectCompound,   {"COMPOUND_SEL_ONLY", "Selection"}, "", true );
+  createGeomAction( GEOMOp::OpSelectAll,        {"ALL_SEL_ONLY", "Selection"}, "", true );
+  createGeomAction( GEOMOp::OpShowOnly,         {"DISPLAY_ONLY", "View"} );
+  createGeomAction( GEOMOp::OpShowOnlyChildren, {"SHOW_ONLY_CHILDREN", "View"} );
+  createGeomAction( GEOMOp::OpBringToFront,     {"BRING_TO_FRONT", "View"}, "", true );
+  createGeomAction( GEOMOp::OpClsBringToFront,  {"CLS_BRING_TO_FRONT", "View"} );
+  createGeomAction( GEOMOp::OpHide,             {"ERASE", "View"} );
 
-  createGeomAction( GEOMOp::OpWireframe,        "POP_WIREFRAME", "", 0, true );
-  createGeomAction( GEOMOp::OpShading,          "POP_SHADING", "", 0, true );
-  createGeomAction( GEOMOp::OpShadingWithEdges, "POP_SHADING_WITH_EDGES", "", 0, true );
-  createGeomAction( GEOMOp::OpTexture,          "POP_TEXTURE", "", 0, true );
-  createGeomAction( GEOMOp::OpEdgeWidth,        "EDGE_WIDTH");
-  createGeomAction( GEOMOp::OpIsosWidth,        "ISOS_WIDTH");
-  createGeomAction( GEOMOp::OpVectors,          "POP_VECTORS", "", 0, true );
-  createGeomAction( GEOMOp::OpVertices,         "POP_VERTICES", "", 0, true );
-  createGeomAction( GEOMOp::OpShowName,         "POP_SHOW_NAME", "", 0, true );
-  createGeomAction( GEOMOp::OpDeflection,       "POP_DEFLECTION" );
-  createGeomAction( GEOMOp::OpColor,            "POP_COLOR" );
-  createGeomAction( GEOMOp::OpSetTexture,       "POP_SETTEXTURE" );
-  createGeomAction( GEOMOp::OpTransparency,     "POP_TRANSPARENCY" );
-  createGeomAction( GEOMOp::OpIsos,             "POP_ISOS" );
-  createGeomAction( GEOMOp::OpAutoColor,        "POP_AUTO_COLOR" );
-  createGeomAction( GEOMOp::OpNoAutoColor,      "POP_DISABLE_AUTO_COLOR" );
-  createGeomAction( GEOMOp::OpGroupCreatePopup, "POP_CREATE_GROUP" );
-  createGeomAction( GEOMOp::OpEditFieldPopup,   "POP_EDIT_FIELD" );
-  createGeomAction( GEOMOp::OpDiscloseChildren, "POP_DISCLOSE_CHILDREN" );
-  createGeomAction( GEOMOp::OpConcealChildren,  "POP_CONCEAL_CHILDREN" );
-  createGeomAction( GEOMOp::OpUnpublishObject,  "POP_UNPUBLISH_OBJ" );
-  createGeomAction( GEOMOp::OpPublishObject,    "POP_PUBLISH_OBJ" );
-  createGeomAction( GEOMOp::OpPointMarker,      "POP_POINT_MARKER" );
-  createGeomAction( GEOMOp::OpMaterialProperties,   "POP_MATERIAL_PROPERTIES" );
-  createGeomAction( GEOMOp::OpPredefMaterCustom,    "POP_PREDEF_MATER_CUSTOM" );
-  createGeomAction( GEOMOp::OpMaterialMenu, "POP_MATERIAL_PROPERTIES");
+  createGeomAction( GEOMOp::OpWireframe,        {"POP_WIREFRAME", "Selection/DisplayMode"}, "", true );
+  createGeomAction( GEOMOp::OpShading,          {"POP_SHADING", "Selection/DisplayMode"}, "", true );
+  createGeomAction( GEOMOp::OpShadingWithEdges, {"POP_SHADING_WITH_EDGES", "Selection/DisplayMode"}, "", true );
+  createGeomAction( GEOMOp::OpTexture,          {"POP_TEXTURE", "Selection/DisplayMode"}, "", true );
+  createGeomAction( GEOMOp::OpEdgeWidth,        {"EDGE_WIDTH", "Selection"});
+  createGeomAction( GEOMOp::OpIsosWidth,        {"ISOS_WIDTH", "Selection"});
+  createGeomAction( GEOMOp::OpVectors,          {"POP_VECTORS", "Selection/DisplayMode"}, "", true );
+  createGeomAction( GEOMOp::OpVertices,         {"POP_VERTICES", "Selection/DisplayMode"}, "", true );
+  createGeomAction( GEOMOp::OpShowName,         {"POP_SHOW_NAME", "Selection/DisplayMode"}, "", true );
+  createGeomAction( GEOMOp::OpDeflection,       {"POP_DEFLECTION", "Selection"} );
+  createGeomAction( GEOMOp::OpColor,            {"POP_COLOR", "Selection"} );
+  createGeomAction( GEOMOp::OpSetTexture,       {"POP_SETTEXTURE", "Selection"} );
+  createGeomAction( GEOMOp::OpTransparency,     {"POP_TRANSPARENCY", "Selection"} );
+  createGeomAction( GEOMOp::OpIsos,             {"POP_ISOS", "Selection"} );
+  createGeomAction( GEOMOp::OpAutoColor,        {"POP_AUTO_COLOR", "Selection"} );
+  createGeomAction( GEOMOp::OpNoAutoColor,      {"POP_DISABLE_AUTO_COLOR", "Selection"} );
+  createGeomAction( GEOMOp::OpGroupCreatePopup, {"POP_CREATE_GROUP", "Selection"} );
+  createGeomAction( GEOMOp::OpEditFieldPopup,   {"POP_EDIT_FIELD", "Selection"} );
+  createGeomAction( GEOMOp::OpDiscloseChildren, {"POP_DISCLOSE_CHILDREN", "Selection"} );
+  createGeomAction( GEOMOp::OpConcealChildren,  {"POP_CONCEAL_CHILDREN", "Selection"} );
+  createGeomAction( GEOMOp::OpUnpublishObject,  {"POP_UNPUBLISH_OBJ", "Selection"} );
+  createGeomAction( GEOMOp::OpPublishObject,    {"POP_PUBLISH_OBJ", "Selection"} );
+  createGeomAction( GEOMOp::OpPointMarker,      {"POP_POINT_MARKER", "Selection"} );
+  createGeomAction( GEOMOp::OpMaterialProperties,   {"POP_MATERIAL_PROPERTIES", "Selection"} );
+  createGeomAction( GEOMOp::OpPredefMaterCustom,    {"POP_PREDEF_MATER_CUSTOM", "Selection"} );
+  createGeomAction( GEOMOp::OpMaterialMenu, {"POP_MATERIAL_PROPERTIES", "Selection"});
   action(GEOMOp::OpMaterialMenu)->setMenu( new QMenu() );
-  createGeomAction( GEOMOp::OpCreateFolder, "POP_CREATE_FOLDER" );
-  createGeomAction( GEOMOp::OpSortChildren, "POP_SORT_CHILD_ITEMS" );
+  createGeomAction( GEOMOp::OpCreateFolder, {"POP_CREATE_FOLDER", "Selection"} );
+  createGeomAction( GEOMOp::OpSortChildren, {"POP_SORT_CHILD_ITEMS", "Selection"} );
 #ifndef DISABLE_GRAPHICSVIEW
-  createGeomAction( GEOMOp::OpShowDependencyTree, "POP_SHOW_DEPENDENCY_TREE" );
+  createGeomAction( GEOMOp::OpShowDependencyTree, {"POP_SHOW_DEPENDENCY_TREE", "Selection"} );
 #endif
-  createGeomAction( GEOMOp::OpReduceStudy,        "POP_REDUCE_STUDY" );
-  createGeomAction( GEOMOp::OpShowAllDimensions,  "POP_SHOW_ALL_DIMENSIONS" );
-  createGeomAction( GEOMOp::OpHideAllDimensions,  "POP_HIDE_ALL_DIMENSIONS" );
-  createGeomAction( GEOMOp::OpShowAllAnnotations, "POP_SHOW_ALL_ANNOTATIONS" );
-  createGeomAction( GEOMOp::OpHideAllAnnotations, "POP_HIDE_ALL_ANNOTATIONS" );
+  createGeomAction( GEOMOp::OpReduceStudy,        {"POP_REDUCE_STUDY", "Selection"} );
+  createGeomAction( GEOMOp::OpShowAllDimensions,  {"POP_SHOW_ALL_DIMENSIONS", "Selection"} );
+  createGeomAction( GEOMOp::OpHideAllDimensions,  {"POP_HIDE_ALL_DIMENSIONS", "Selection"} );
+  createGeomAction( GEOMOp::OpShowAllAnnotations, {"POP_SHOW_ALL_ANNOTATIONS", "Selection"} );
+  createGeomAction( GEOMOp::OpHideAllAnnotations, {"POP_HIDE_ALL_ANNOTATIONS", "Selection"} );
 
   // Create actions for increase/decrease transparency shortcuts
   createGeomAction( GEOMOp::OpIncrTransparency, "", "", 0, false,
-                    "Transparency/Increase");
+                    "Selection/POP_TRANSPARENCY/Increase");
   createGeomAction( GEOMOp::OpDecrTransparency, "", "", 0, false,
-                    "Transparency/Decrease");
+                    "Selection/POP_TRANSPARENCY/Decrease");
 
   // Create actions for increase/decrease number of isolines
   createGeomAction( GEOMOp::OpIncrNbIsos, "", "", 0, false,
-                    "Isolines/Increase number");
+                    "Selection/POP_ISOS/Increase number");
   createGeomAction( GEOMOp::OpDecrNbIsos, "", "", 0, false,
-                    "Isolines/Decrease number");
+                    "Selection/POP_ISOS/Decrease number");
 
   //createGeomAction( GEOMOp::OpPipeTShape, "PIPETSHAPE" );
   //createGeomAction( GEOMOp::OpDividedDisk, "DIVIDEDDISK" );
@@ -1849,7 +1865,7 @@ void GeometryGUI::addPluginActions()
                     application()->desktop(),
                     false /*toggle*/,
                     this, SLOT( OnGUIEvent() ),
-                    QString::fromStdString(pdata.name + "/" + adata.label)
+                    QString::fromStdString("Plugins/" + pdata.name + "/" + adata.label)
                   );
 
       int menuId = -1;
