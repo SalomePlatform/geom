@@ -24,6 +24,7 @@ SET(ALL_TESTS
 
 IF(${OpenCASCADE_VERSION}.${OpenCASCADE_SP_VERSION} VERSION_GREATER "7.5.3.3")
     LIST(APPEND ALL_TESTS
+      test_point_cloud_on_face_cone.py
       test_point_cloud_on_face.py
       test_CR.py
       test_conformity.py
