@@ -31,6 +31,7 @@
 #include "GEOM_Swig_LocalSelector.h"
 #include "GEOMGUI_OCCSelector.h"
 #include "OCCViewer_ViewManager.h"
+#include "GEOMBase.h"
 
 #include <SUIT_Desktop.h>
 #include <SUIT_Session.h>
@@ -430,6 +431,19 @@ void GEOM_Swig::setNameMode( const char* theEntry, bool theOn, bool theUpdateVie
 */
 void GEOM_Swig::setColor( const char* theEntry, int theRed, int theGreen, int theBlue, bool theUpdateViewer )
 {
+  // Update geom object color
+  GEOM::GEOM_Object_var GeomObject = GEOMBase::GetObjectFromEntry(theEntry);
+  if (!CORBA::is_nil(GeomObject))
+  {
+    SALOMEDS::Color aSColor;
+    aSColor.R = theRed / 255.0;
+    aSColor.G = theGreen / 255.0;
+    aSColor.B = theBlue / 255.0;
+
+    GeomObject->SetColor(aSColor);
+  }
+
+  // Update a color property stored in LightApp_Study view manager map
   ProcessVoidEvent( new TSetPropertyEvent( theEntry, GEOM::propertyName( GEOM::Color ), 
                                            QColor( theRed, theGreen, theBlue ), theUpdateViewer ) );
 }

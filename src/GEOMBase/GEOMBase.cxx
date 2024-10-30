@@ -488,6 +488,32 @@ void GEOMBase::ConvertListOfIOInListOfGO( const SALOME_ListIO& IObjects,
   }
 }
 
+//=======================================================================
+// function : GetObjectFromEntry()
+// purpose  : Get the GEOM_Object from the study entry.
+//=======================================================================
+GEOM::GEOM_Object_ptr GEOMBase::GetObjectFromEntry(const char* entry)
+{
+  GEOM::GEOM_Object_var object;
+
+  if (entry)
+  {
+    SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>(SUIT_Session::session()->activeApplication()->activeStudy());
+    if (study)
+    {
+      _PTR(Study) studyDS = study->studyDS();
+      _PTR(SObject) obj = studyDS->FindObjectID(entry);
+      if (GeometryGUI::IsInGeomComponent(obj))
+      {
+        CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject(obj);
+        object = GEOM::GEOM_Object::_narrow(corbaObj);
+      }
+    }
+  }
+
+  return object._retn();
+}
+
 //=================================================================================
 // function : CreateArrowForLinearEdge()
 // purpose  : Create a cone topology to be used to display an arrow in the middle

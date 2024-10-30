@@ -95,6 +95,8 @@ public :
 
   static QString      GetIORFromObject( GEOM::GEOM_Object_ptr object );
 
+  static GEOM::GEOM_Object_ptr GetObjectFromEntry(const char* entry);
+
   /* Geometry */
   static bool         VertexToPoint( const TopoDS_Shape& shape, gp_Pnt& point );
 
