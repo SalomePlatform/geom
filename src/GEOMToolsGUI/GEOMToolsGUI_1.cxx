@@ -37,6 +37,7 @@
 #include "GEOMToolsGUI_MaterialPropertiesDlg.h"
 #include "GEOMToolsGUI_LineWidthDlg.h"
 #include "GEOMToolsGUI_ReduceStudyDlg.h"
+#include "GEOM_ColorUtils.hxx"
 #include <Material_Model.h>
 
 #include <GEOM_VTKPropertyMaterial.hxx>
@@ -186,7 +187,7 @@ void GEOMToolsGUI::OnAutoColor()
 #endif                    // GENERAL_AUTOCOLOR
 
 #ifdef SIMPLE_AUTOCOLOR   // simplified algorithm for auto-colors
-    SALOMEDS::Color aColor = GEOM_Displayer::getPredefinedUniqueColor();
+    SALOMEDS::Color aColor = GEOM_ColorUtils::getPredefinedUniqueColor();
 #else                     // old algorithm  for auto-colors
     SALOMEDS::Color aColor = GEOM_Displayer::getUniqueColor( aReservedColors );
     aReservedColors.append( aColor );

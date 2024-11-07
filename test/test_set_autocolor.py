@@ -1,4 +1,5 @@
-# Copyright (C) 2015-2024  CEA, EDF, OPEN CASCADE
+#!/usr/bin/env python3
+# Copyright (C) 2007-2024  CEA, EDF, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,28 +18,26 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-SET(ALL_TESTS
-  test_perf_01.py
-  test_patch_face_01.py
-  test_set_autocolor.py
-  )
+# Testing of setting and getting an automatically set color
 
-IF(${OpenCASCADE_VERSION}.${OpenCASCADE_SP_VERSION} VERSION_GREATER "7.5.3.3")
-    LIST(APPEND ALL_TESTS
-      test_point_cloud_on_face_cone.py
-      test_point_cloud_on_face.py
-      test_CR.py
-      test_conformity.py
-      test_kind_of_shape.py
-      test_proximity_edge_edge.py
-      test_proximity_face_face.py
-      test_boolean_fuzzy.py
-      test_WrappedFace.py
-    )
-ENDIF()
+import salome
+salome.salome_init()
 
-IF(${OpenCASCADE_VERSION}.${OpenCASCADE_SP_VERSION} VERSION_GREATER "7.5.3.5")
-    LIST(APPEND ALL_TESTS
-      test_wire_modes.py
-    )
-ENDIF()
+from salome.geom import geomBuilder
+geompy = geomBuilder.New()
+
+# Create a box and extract its faces
+Box_1 = geompy.MakeBoxDXDYDZ(200, 200, 200)
+faces = geompy.ExtractShapes(Box_1, geompy.ShapeType["FACE"], True)
+Box_1.SetAutoColor(1)
+geompy.addToStudy(Box_1, 'Box_1')
+
+# Add each face to the study with a numeric name
+for i, face in enumerate(faces, start=1):
+    geompy.addToStudyInFather(Box_1, face, f'Face_{i}')
+
+# Check color of each face
+for face in faces:
+    color = face.GetColor()
+    print(f'{face.GetName()}: {color}')
+    assert color.R != -1 and color.G != -1 and color.B != -1, 'Auto color must be different than (-1, -1, -1)'

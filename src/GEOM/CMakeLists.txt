@@ -26,11 +26,13 @@ INCLUDE_DIRECTORIES(
   ${KERNEL_INCLUDE_DIRS}
   ${PROJECT_SOURCE_DIR}/src/SKETCHER
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${PROJECT_BINARY_DIR}/idl
   )
 
 # additional preprocessor / compiler flags
 ADD_DEFINITIONS(
   ${OpenCASCADE_DEFINITIONS}
+  ${OMNIORB_DEFINITIONS}
   )
 
 # libraries to link to
@@ -39,6 +41,7 @@ SET(_link_LIBRARIES
   ${KERNEL_SALOMELocalTrace}
   ${KERNEL_OpUtil}
   GEOMSketcher
+  ${QT_LIBRARIES}
   )
 
 # --- headers ---
@@ -57,6 +60,7 @@ SET(GEOM_HEADERS
   GEOM_PythonDump.hxx
   GEOM_DataMapOfAsciiStringTransient.hxx
   GEOM_BaseObject.hxx
+  GEOM_ColorUtils.hxx
   )
 
 # --- sources ---
@@ -73,6 +77,7 @@ SET(GEOM_SOURCES
   GEOM_BaseDriver.cxx
   GEOM_SubShapeDriver.cxx
   GEOM_PythonDump.cxx
+  GEOM_ColorUtils.cxx
   )
 
 # --- rules ---

@@ -114,6 +114,10 @@ class GEOM_Object : public GEOM_BaseObject
   Standard_EXPORT static Handle(TColStd_HSequenceOfTransient)
     GetLastFunctions( const std::list< Handle(GEOM_Object) >& theObjects );
 
+protected:
+  // Toggles an auto color mode for sub-shapes of GEOM_Object
+  Standard_EXPORT void SetAutoColorSubShapes(bool theAutoColor);
+
 public:
   DEFINE_STANDARD_RTTIEXT(GEOM_Object,GEOM_BaseObject)
 };

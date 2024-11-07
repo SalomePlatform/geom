@@ -22,6 +22,9 @@
 
 #include "GEOM_Object.hxx"
 
+#include "GEOM_Engine.hxx"
+#include "GEOM_ColorUtils.hxx"
+
 #include <TDataStd_Integer.hxx>
 #include <TDataStd_Real.hxx>
 #include <TDataStd_RealArray.hxx>
@@ -157,6 +160,18 @@ GEOM_Object::Color GEOM_Object::GetColor()
 void GEOM_Object::SetAutoColor(bool theAutoColor)
 {
   TDataStd_Integer::Set(_label.FindChild(AUTO_COLOR_LABEL), (int)theAutoColor);
+
+  // Set color for the object here, othrewise it will stay default forever, despite 
+  // the color displayed in viewver being defined on GEOM_Displayer::getColor() call.
+  // It's not clear if we need to reset color when auto color is disabled.
+  if (theAutoColor)
+  {
+    const SALOMEDS::Color color = GEOM_ColorUtils::getPredefinedUniqueColor();
+    SetColor({ color.R, color.G, color.B });
+  }
+
+  // Set color for all sub-shapes objects
+  SetAutoColorSubShapes(theAutoColor);
 }
 
 //=============================================================================
@@ -295,6 +310,35 @@ GEOM_Object::GetLastFunctions( const std::list< Handle(GEOM_Object) >& theObject
   }
   return funs;
 }
+
+//=============================================================================
+/*!
+ *  Toggles an auto color mode for sub-shapes of GEOM_Object
+ */
+//=============================================================================
+void GEOM_Object::SetAutoColorSubShapes(bool theAutoColor)
+{
+  const int nbFunctions = GetNbFunctions();
+  for (int i = 1; i <= nbFunctions; i++)
+  {
+    Handle(GEOM_Function) aFunction = GetFunction(i);
+    if (aFunction.IsNull())
+      continue;
+
+    const TDataStd_ListOfExtendedString& aListEntries = aFunction->GetSubShapeReferences();
+    for (TDataStd_ListIteratorOfListOfExtendedString anIt(aListEntries); anIt.More(); anIt.Next())
+    {
+      const TCollection_AsciiString anEntry = anIt.Value();
+      Handle(GEOM_Object) aSubObj =
+        Handle(GEOM_Object)::DownCast(GEOM_Engine::GetEngine()->GetObject(anEntry.ToCString(), false));
+      if (aSubObj.IsNull())
+        continue;
+
+      aSubObj->SetAutoColor(theAutoColor);
+    }
+  }
+}
+
 
 IMPLEMENT_STANDARD_RTTIEXT(GEOM_Object, GEOM_BaseObject )
 

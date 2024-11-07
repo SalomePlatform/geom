@@ -209,7 +209,6 @@ public:
   SalomeApp_Study* getStudy() const;
 
   static SALOMEDS::Color getUniqueColor( const QList<SALOMEDS::Color>& );
-  static SALOMEDS::Color getPredefinedUniqueColor();
 
   /*Get color of the geom object*/
   static SALOMEDS::Color getColor(GEOM::GEOM_Object_var aGeomObject, bool& hasColor);

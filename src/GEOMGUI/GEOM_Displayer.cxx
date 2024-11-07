@@ -51,6 +51,7 @@
 #include <GEOMGUI_AnnotationMgr.h>
 
 #include <GEOMUtils.hxx>
+#include "GEOM_ColorUtils.hxx"
 
 #include <Material_Model.h>
 
@@ -294,19 +295,6 @@ namespace
         aPixmapCacheMap.remove( aPixmapCacheMap.key( aPixmap ) );
       }
     }
-  }
-
-  uint randomize( uint size )
-  {
-    static bool initialized = false;
-    if ( !initialized ) {
-      qsrand( QDateTime::currentDateTime().toTime_t() );
-      initialized = true;
-    }
-    uint v = qrand();
-    v = uint( (double)( v ) / RAND_MAX * size );
-    v = qMax( uint(0), qMin ( v, size-1 ) );
-    return v;
   }
 } // namespace
 
@@ -2490,36 +2478,6 @@ bool GEOM_Displayer::HasDisplayMode() const
   return myHasDisplayMode;
 }
 
-SALOMEDS::Color GEOM_Displayer::getPredefinedUniqueColor()
-{
-  static QList<QColor> colors;
-
-  if ( colors.isEmpty() ) {
-
-    for (int s = 0; s < 2 ; s++)
-    {
-      for (int v = 100; v >= 40; v = v - 20)
-      {
-        for (int h = 0; h < 359 ; h = h + 60)
-        {
-          colors.append(QColor::fromHsv(h, 255 - s * 127, v * 255 / 100));
-        }
-      }
-    }
-  }
-
-  static int currentColor = randomize( colors.size() );
-
-  SALOMEDS::Color color;
-  color.R = (double)colors[currentColor].red()   / 255.0;
-  color.G = (double)colors[currentColor].green() / 255.0;
-  color.B = (double)colors[currentColor].blue()  / 255.0;
-
-  currentColor = (currentColor+1) % colors.count();
-
-  return color;
-}
-
 SALOMEDS::Color GEOM_Displayer::getUniqueColor( const QList<SALOMEDS::Color>& theReservedColors )
 {
   int aHue = -1;
@@ -2777,7 +2735,7 @@ SALOMEDS::Color GEOM_Displayer::getColor(GEOM::GEOM_Object_var theGeomObject, bo
             GEOM::GEOM_Object_var aMainObject = theGeomObject->GetMainShape();
             if ( !CORBA::is_nil( aMainObject ) && aMainObject->GetAutoColor() ) {
 #ifdef SIMPLE_AUTOCOLOR  // simplified algorithm for auto-colors
-              aSColor = getPredefinedUniqueColor();
+              aSColor = GEOM_ColorUtils::getPredefinedUniqueColor();
               hasColor = true;
 #else                    // old algorithm  for auto-colors
               QList<SALOMEDS::Color> aReservedColors;
