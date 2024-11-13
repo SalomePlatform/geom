@@ -25,6 +25,8 @@
 
 #include "GEOM_IOperations.hxx"
 
+#include <GeomAnaTool_Tools.hxx>
+
 #include <BRepCheck_Analyzer.hxx>
 #include <BRepCheck_Status.hxx>
 #include <TopoDS_Shape.hxx>
@@ -149,30 +151,34 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
                                      Standard_Real& EdgeMin, Standard_Real& EdgeMax,
                                      Standard_Real& VertMin, Standard_Real& VertMax);
 
-  struct ShapeError {
-    BRepCheck_Status error;
-    std::list<int>   incriminated;
-  };
-
   Standard_EXPORT bool CheckShape (Handle(GEOM_Object)     theShape,
                                    const Standard_Boolean  theIsCheckGeom,
-                                   std::list<ShapeError>  &theErrors);
+                                   std::list<GeomAnaTool::ShapeError>  &theErrors);
 
   Standard_EXPORT TCollection_AsciiString PrintShapeErrors
                                   (Handle(GEOM_Object)          theShape,
-                                   const std::list<ShapeError> &theErrors);
+                                   const std::list<GeomAnaTool::ShapeError> &theErrors);
+
+  Standard_EXPORT bool ExtractBOPFailure
+                       (const Handle(TColStd_HSequenceOfTransient)& theShapes,
+                        const bool                                  theUseTimer,
+                        const bool                                  theTopoOnly,
+                        const bool                                  theRunParallel,
+                        const bool                                  theDoExact,
+                        Handle(GEOM_Object)&                        theResultShape,
+                        std::list<GeomAnaTool::ShapeError>&         theErrors);
 
   Standard_EXPORT bool CheckSelfIntersections (Handle(GEOM_Object) theShape,
                                                const SICheckLevel  theCheckLevel,
                                                Handle(TColStd_HSequenceOfInteger)& theIntersections);
-  
+
   Standard_EXPORT bool CheckSelfIntersectionsFast (Handle(GEOM_Object) theShape,
-                                                   float  deflection, 
+                                                   float  deflection,
                                                    double tolerance,
                                                    Handle(TColStd_HSequenceOfInteger)& theIntersections);
 
   Standard_EXPORT bool CheckBOPArguments (const Handle(GEOM_Object) &theShape);
-  
+
   Standard_EXPORT bool FastIntersect (Handle(GEOM_Object) theShape1, Handle(GEOM_Object) theShape2,
                                       double tolerance, float deflection,
                                       Handle(TColStd_HSequenceOfInteger)& theIntersections1,
@@ -270,21 +276,6 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
                                         const Standard_Integer theNbSamples);
 
  private:
-
-   void FillErrorsSub
-           (const BRepCheck_Analyzer                   &theAna,
-            const TopoDS_Shape                         &theShape,
-            const TopAbs_ShapeEnum                     theSubType,
-                  TopTools_DataMapOfIntegerListOfShape &theMapErrors) const;
-   void FillErrors
-             (const BRepCheck_Analyzer                   &theAna,
-              const TopoDS_Shape                         &theShape,
-                    TopTools_DataMapOfIntegerListOfShape &theMapErrors,
-                    TopTools_MapOfShape                  &theMapShapes) const;
-
-  void FillErrors (const BRepCheck_Analyzer &theAna,
-                   const TopoDS_Shape       &theShape,
-                   std::list<ShapeError>    &theErrors) const;
 
   Standard_Real getSurfaceCurvatures (const Handle(Geom_Surface)& aSurf,
                                       Standard_Real theUParam,

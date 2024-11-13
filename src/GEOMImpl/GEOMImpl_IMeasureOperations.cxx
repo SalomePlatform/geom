@@ -34,6 +34,9 @@
 #include <GEOMImpl_IConformity.hxx>
 #include <GEOMImpl_ConformityDriver.hxx>
 
+#include <GEOMImpl_IPartition.hxx>
+#include <GEOMImpl_PartitionDriver.hxx>
+
 #include <GEOMUtils.hxx>
 
 #include <GEOMAlgo_AlgoTools.hxx>
@@ -45,6 +48,10 @@
 #include <utilities.h>
 
 #include <Basics_OCCTVersion.hxx>
+
+// CommonGeomLib Includes
+#include <GeomAnaTool_Tools.hxx>
+#include <GeomAnaTool_ExtractBOPFailure.hxx>
 
 // OCCT Includes
 #include <Bnd_Box.hxx>
@@ -176,7 +183,7 @@ GEOMImpl_IMeasureOperations::ShapeKind GEOMImpl_IMeasureOperations::KindOfShape
     theDoubles->Append(aC.X());
     theDoubles->Append(aC.Y());
     theDoubles->Append(aC.Z());
-    
+
     gp_Dir aD = anAx3.XDirection();
     theDoubles->Append(aD.X());
     theDoubles->Append(aD.Y());
@@ -580,7 +587,7 @@ GEOMImpl_IMeasureOperations::ShapeKind GEOMImpl_IMeasureOperations::KindOfShape
           {
             // (+) geompy.kind.PLANAR  xo yo zo  dx dy dz  nb_edges nb_vertices
             aKind = SK_PLANAR;
-            
+
             theIntegers->Append(anInfo.NbSubShapes(TopAbs_EDGE));
             theIntegers->Append(anInfo.NbSubShapes(TopAbs_VERTEX));
           }
@@ -1376,7 +1383,7 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetBoundingBox
 
   //Make a Python command
   GEOM::TPythonDump aPd(aFunction);
-  
+
   aPd << aBnd << " = geompy.MakeBoundingBox(" << theShape;
 
   if (precise) {
@@ -1460,7 +1467,7 @@ void GEOMImpl_IMeasureOperations::GetTolerance
 //=============================================================================
 bool GEOMImpl_IMeasureOperations::CheckShape (Handle(GEOM_Object)     theShape,
                                               const Standard_Boolean  theIsCheckGeom,
-                                              std::list<ShapeError>  &theErrors)
+                                              std::list<GeomAnaTool::ShapeError> &theErrors)
 {
   SetErrorCode(KO);
   theErrors.clear();
@@ -1484,7 +1491,7 @@ bool GEOMImpl_IMeasureOperations::CheckShape (Handle(GEOM_Object)     theShape,
     if (ana.IsValid()) {
       isValid = true;
     } else {
-      FillErrors(ana, aShape, theErrors);
+      GeomAnaTool::FillErrors(ana, aShape, theErrors);
     }
   }
   catch (Standard_Failure& aFail) {
@@ -1503,7 +1510,7 @@ bool GEOMImpl_IMeasureOperations::CheckShape (Handle(GEOM_Object)     theShape,
 //=============================================================================
 TCollection_AsciiString GEOMImpl_IMeasureOperations::PrintShapeErrors
                                  (Handle(GEOM_Object)          theShape,
-                                  const std::list<ShapeError> &theErrors)
+                                  const std::list<GeomAnaTool::ShapeError> &theErrors)
 {
   TCollection_AsciiString aDump;
 
@@ -1527,7 +1534,7 @@ TCollection_AsciiString GEOMImpl_IMeasureOperations::PrintShapeErrors
   if (!theErrors.empty()) {
     // The shape is not valid. Prepare errors for dump.
     TopTools_IndexedMapOfShape anIndices;
-    std::list<ShapeError>::const_iterator anIter = theErrors.begin();
+    std::list<GeomAnaTool::ShapeError>::const_iterator anIter = theErrors.begin();
     Standard_Integer nbv, nbe, nbw, nbf, nbs, nbo;
     nbv = nbe = nbw = nbf = nbs = nbo = 0;
 
@@ -1713,6 +1720,111 @@ TCollection_AsciiString GEOMImpl_IMeasureOperations::PrintShapeErrors
   return aDump;
 }
 
+
+//=============================================================================
+/*!
+ *  ExtractBOPFailure
+ */
+//=============================================================================
+bool GEOMImpl_IMeasureOperations::ExtractBOPFailure
+                       (const Handle(TColStd_HSequenceOfTransient)& theShapes,
+                        const bool                                  theUseTimer,
+                        const bool                                  theTopoOnly,
+                        const bool                                  theRunParallel,
+                        const bool                                  theDoExact,
+                        Handle(GEOM_Object)&                        theResultShape,
+                        std::list<GeomAnaTool::ShapeError>&         theErrors)
+{
+  SetErrorCode(OK);
+  theErrors.clear();
+
+  if (theShapes.IsNull()) return false;
+
+  Standard_Integer aNbShapes = theShapes->Length();
+  if (!aNbShapes) return false;
+
+  Handle(TColStd_HSequenceOfTransient) aShapesSeq = new TColStd_HSequenceOfTransient;
+
+  TopTools_ListOfShape aList;
+  for (int i = 1; i <= aNbShapes; i++) {
+    Handle(GEOM_Object) aGeomObj = Handle(GEOM_Object)::DownCast(theShapes->Value(i));
+    if (aGeomObj.IsNull())
+      continue;
+
+    Handle(GEOM_Function) aRefShape = aGeomObj->GetLastFunction();
+    if (aRefShape.IsNull())
+      continue;
+
+    TopoDS_Shape aShape = aRefShape->GetValue();
+    if (aShape.IsNull())
+      continue;
+
+    aShapesSeq->Append(aRefShape);
+    aList.Append(aShape);
+  }
+
+  // Call the GeomAnaTool API to extract BOP failures
+  bool isValid = false;
+  try
+  {
+    OCC_CATCH_SIGNALS;
+    GeomAnaTool_ExtractBOPFailure aTool (aList);
+    aTool.SetUseTimer(theUseTimer);
+    aTool.SetCheckGeometry(!theTopoOnly); // Either topo only or topo+geometry
+    aTool.SetRunParallel(theRunParallel);
+    aTool.SetExactCheck(theDoExact);
+    aTool.Perform();
+
+    // Check, if there are execution errors
+    const Handle(Message_Report) aReport = aTool.GetReport();
+    Standard_SStream anOS;
+    aReport->Dump(anOS);
+    if (!anOS.str().empty()) {
+      SetErrorCode(anOS.str().c_str());
+      if (aTool.HasFailureAlerts()) {
+        return false;
+      }
+    }
+
+    TopoDS_Shape aShapeRes = aTool.Result();
+    if (aShapeRes.IsNull()) {
+      return false;
+    }
+
+    // Create Partition object.
+    theResultShape = GetEngine()->AddObject(GEOM_PARTITION);
+    Handle(GEOM_Function) aFunction = theResultShape->AddFunction
+      (GEOMImpl_PartitionDriver::GetID(), PARTITION_GENERAL_FUSE);
+    // For creation information filling
+    GEOMImpl_IPartition aCI (aFunction);
+    aCI.SetShapes(aShapesSeq);
+    // Set General Fuse result right here
+    // (without driver execution, as we already have the result shape)
+    aFunction->SetValue(aShapeRes);
+
+    theErrors = aTool.ShapeErrors();
+    isValid = theErrors.size() == 0;
+
+    //Make a Python command
+    GEOM::TPythonDump aPD (aFunction);
+    aPD << "(isBOPFailure, " << theResultShape
+        << ", anErrors) = geompy.ExtractBOPFailure([";
+    for (int i = 1; i <= aNbShapes; i++) {
+      aPD << Handle(GEOM_Object)::DownCast(theShapes->Value(i));
+      if (i < aNbShapes) aPD << ", ";
+    }
+    aPD << "], " << theUseTimer << ", " << theTopoOnly
+        << ", " << theRunParallel << ", " << theDoExact << ")";
+  }
+  catch(Standard_Failure& aFail)
+  {
+    SetErrorCode(aFail.GetMessageString());
+    return false;
+  }
+
+  return isValid;
+}
+
 //=============================================================================
 /*!
  *  CheckSelfIntersections
@@ -1832,11 +1944,11 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersectionsFast
 
   // Launch the checker
   aTool.Perform();
-  
+
   const BRepExtrema_MapOfIntegerPackedMapOfInteger& intersections = aTool.OverlapElements();
-  
+
   std::set<Standard_Integer> processed;
-  
+
   for (BRepExtrema_MapOfIntegerPackedMapOfInteger::Iterator it(intersections); it.More(); it.Next()) {
     Standard_Integer idxLeft = it.Key();
     if (processed.count(idxLeft) > 0) continue; // already added
@@ -1954,14 +2066,14 @@ bool GEOMImpl_IMeasureOperations::FastIntersect (Handle(GEOM_Object) theShape1, 
 
   // 1. Launch the checker
   aBSP.Perform();
- 
+
   // 2. Get sets of IDs of overlapped faces
   for (BRepExtrema_MapOfIntegerPackedMapOfInteger::Iterator anIt1 (aBSP.OverlapSubShapes1()); anIt1.More(); anIt1.Next())
   {
     const TopoDS_Shape& aS1 = aBSP.GetSubShape1(anIt1.Key());
     theIntersections1->Append(anIndices1.FindIndex(aS1));
   }
-  
+
   for (BRepExtrema_MapOfIntegerPackedMapOfInteger::Iterator anIt2 (aBSP.OverlapSubShapes2()); anIt2.More(); anIt2.Next())
   {
     const TopoDS_Shape& aS2 = aBSP.GetSubShape2(anIt2.Key());
@@ -2330,7 +2442,7 @@ Standard_Integer GEOMImpl_IMeasureOperations::ClosestPoints (Handle(GEOM_Object)
       for (int i = 1; i <= nbSolutions; i++) {
         P1 = dst.PointOnShape1(i);
         P2 = dst.PointOnShape2(i);
-        
+
         theDoubles->Append(P1.X());
         theDoubles->Append(P1.Y());
         theDoubles->Append(P1.Z());
@@ -3502,161 +3614,6 @@ double GEOMImpl_IMeasureOperations::ComputeTolerance(Handle(GEOM_Object) theEdge
   double aParam = 0.0;
   BOPTools_AlgoTools::ComputeTolerance(aFace, aEdge, aMaxDist, aParam);
   return aMaxDist;
-}
-
-//=======================================================================
-//function : FillErrorsSub
-//purpose  : Fill the errors list of subshapes on shape.
-//=======================================================================
-void GEOMImpl_IMeasureOperations::FillErrorsSub
-           (const BRepCheck_Analyzer                   &theAna,
-            const TopoDS_Shape                         &theShape,
-            const TopAbs_ShapeEnum                     theSubType,
-                  TopTools_DataMapOfIntegerListOfShape &theMapErrors) const
-{
-  TopExp_Explorer anExp(theShape, theSubType);
-  TopTools_MapOfShape aMapSubShapes;
-
-  for (; anExp.More(); anExp.Next()) {
-    const TopoDS_Shape &aSubShape = anExp.Current();
-
-    if (aMapSubShapes.Add(aSubShape)) {
-      const Handle(BRepCheck_Result) &aRes = theAna.Result(aSubShape);
-
-      for (aRes->InitContextIterator();
-           aRes->MoreShapeInContext(); 
-           aRes->NextShapeInContext()) {
-        if (aRes->ContextualShape().IsSame(theShape)) {
-          BRepCheck_ListIteratorOfListOfStatus itl(aRes->StatusOnShape());
-
-          if (itl.Value() != BRepCheck_NoError) {
-            // Add all errors for theShape and its sub-shape.
-            for (;itl.More(); itl.Next()) {
-              const Standard_Integer aStat = (Standard_Integer)itl.Value();
-
-              if (!theMapErrors.IsBound(aStat)) {
-                TopTools_ListOfShape anEmpty;
-
-                theMapErrors.Bind(aStat, anEmpty);
-              }
-
-              TopTools_ListOfShape &theShapes = theMapErrors.ChangeFind(aStat);
-
-              theShapes.Append(aSubShape);
-              theShapes.Append(theShape);
-            }
-          }
-        }
-
-        break;
-      }
-    }
-  }
-}
-
-//=======================================================================
-//function : FillErrors
-//purpose  : Fill the errors list.
-//=======================================================================
-void GEOMImpl_IMeasureOperations::FillErrors
-             (const BRepCheck_Analyzer                   &theAna,
-              const TopoDS_Shape                         &theShape,
-                    TopTools_DataMapOfIntegerListOfShape &theMapErrors,
-                    TopTools_MapOfShape                  &theMapShapes) const
-{
-  if (theMapShapes.Add(theShape)) {
-    // Fill errors of child shapes.
-    for (TopoDS_Iterator iter(theShape); iter.More(); iter.Next()) {
-      FillErrors(theAna, iter.Value(), theMapErrors, theMapShapes);
-    }
-
-    // Fill errors of theShape.
-    const Handle(BRepCheck_Result) &aRes = theAna.Result(theShape);
-
-    if (!aRes.IsNull()) {
-      BRepCheck_ListIteratorOfListOfStatus itl(aRes->Status());
-
-      if (itl.Value() != BRepCheck_NoError) {
-        // Add all errors for theShape.
-        for (;itl.More(); itl.Next()) {
-          const Standard_Integer aStat = (Standard_Integer)itl.Value();
-
-          if (!theMapErrors.IsBound(aStat)) {
-            TopTools_ListOfShape anEmpty;
-
-            theMapErrors.Bind(aStat, anEmpty);
-          }
-
-          theMapErrors.ChangeFind(aStat).Append(theShape);
-        }
-      }
-    }
-
-    // Add errors of subshapes on theShape.
-    const TopAbs_ShapeEnum aType = theShape.ShapeType();
-
-    switch (aType) {
-    case TopAbs_EDGE:
-      FillErrorsSub(theAna, theShape, TopAbs_VERTEX, theMapErrors);
-      break;
-    case TopAbs_FACE:
-      FillErrorsSub(theAna, theShape, TopAbs_WIRE, theMapErrors);
-      FillErrorsSub(theAna, theShape, TopAbs_EDGE, theMapErrors);
-      FillErrorsSub(theAna, theShape, TopAbs_VERTEX, theMapErrors);
-      break;
-    case TopAbs_SOLID:
-      FillErrorsSub(theAna, theShape, TopAbs_SHELL, theMapErrors);
-      break;
-    default:
-      break;
-    }
-  }
-}
-
-//=======================================================================
-//function : FillErrors
-//purpose  : Fill the errors list.
-//=======================================================================
-void GEOMImpl_IMeasureOperations::FillErrors
-                  (const BRepCheck_Analyzer    &theAna,
-                   const TopoDS_Shape          &theShape,
-                         std::list<ShapeError> &theErrors) const
-{
-  // Fill the errors map.
-  TopTools_DataMapOfIntegerListOfShape aMapErrors;
-  TopTools_MapOfShape                  aMapShapes;
-
-  FillErrors(theAna, theShape, aMapErrors, aMapShapes);
-
-  // Map sub-shapes and their indices
-  TopTools_IndexedMapOfShape anIndices;
-
-  TopExp::MapShapes(theShape, anIndices);
-
-  TopTools_DataMapIteratorOfDataMapOfIntegerListOfShape aMapIter(aMapErrors);
-
-  for (; aMapIter.More(); aMapIter.Next()) {
-    ShapeError anError;
-
-    anError.error = (BRepCheck_Status)aMapIter.Key();
-
-    TopTools_ListIteratorOfListOfShape aListIter(aMapIter.Value());
-    TopTools_MapOfShape                aMapUnique;
-
-    for (; aListIter.More(); aListIter.Next()) {
-      const TopoDS_Shape &aShape = aListIter.Value();
-
-      if (aMapUnique.Add(aShape)) {
-        const Standard_Integer anIndex = anIndices.FindIndex(aShape);
-
-        anError.incriminated.push_back(anIndex);
-      }
-    }
-
-    if (!anError.incriminated.empty()) {
-      theErrors.push_back(anError);
-    }
-  }
 }
 
 //=======================================================================

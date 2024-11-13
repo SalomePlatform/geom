@@ -22,6 +22,7 @@
 
 #include <Standard_Stream.hxx>
 #include <TColStd_HArray1OfReal.hxx>
+#include <TColStd_HSequenceOfTransient.hxx>
 
 #include "GEOM_IMeasureOperations_i.hh"
 
@@ -42,7 +43,7 @@
  */
 static void ConvertShapeError
     (const GEOM::GEOM_IMeasureOperations::ShapeErrors         &theErrorsFrom,
-           std::list<GEOMImpl_IMeasureOperations::ShapeError> &theErrorsTo)
+           std::list<GeomAnaTool::ShapeError> &theErrorsTo)
 {
   int aNbErr = theErrorsFrom.length();
   int i = 0;
@@ -51,7 +52,7 @@ static void ConvertShapeError
     const GEOM::GEOM_IMeasureOperations::ShapeError anErr = theErrorsFrom[i];
     const GEOM::GEOM_IMeasureOperations::ShapeErrorType aType = anErr.error;
     const GEOM::ListOfLong anIncrims = anErr.incriminated;
-    GEOMImpl_IMeasureOperations::ShapeError anErrStruct;
+    GeomAnaTool::ShapeError anErrStruct;
 
     switch (aType) {
     case GEOM::GEOM_IMeasureOperations::InvalidPointOnCurve:
@@ -176,7 +177,7 @@ static void ConvertShapeError
  * \param theErrorsTo result errors.
  */
 static void ConvertShapeError
-    (const std::list<GEOMImpl_IMeasureOperations::ShapeError> &theErrorsFrom,
+    (const std::list<GeomAnaTool::ShapeError> &theErrorsFrom,
            GEOM::GEOM_IMeasureOperations::ShapeErrors_out     &theErrorsTo)
 {
   const int aNbErr = theErrorsFrom.size();
@@ -186,7 +187,7 @@ static void ConvertShapeError
   anErrArray->length(aNbErr);
 
   // fill the local CORBA array with values from lists
-  std::list<GEOMImpl_IMeasureOperations::ShapeError>::const_iterator
+  std::list<GeomAnaTool::ShapeError>::const_iterator
     anIt = theErrorsFrom.begin();
   int i = 0;
 
@@ -644,7 +645,7 @@ CORBA::Boolean GEOM_IMeasureOperations_i::CheckShape
     return 0;
   }
 
-  std::list<GEOMImpl_IMeasureOperations::ShapeError> anErrList;
+  std::list<GeomAnaTool::ShapeError> anErrList;
   bool isOk = GetOperations()->CheckShape(aShape, false, anErrList);
 
   ConvertShapeError(anErrList, theErrors);
@@ -672,7 +673,7 @@ CORBA::Boolean GEOM_IMeasureOperations_i::CheckShapeWithGeometry
     return 0;
   }
 
-  std::list<GEOMImpl_IMeasureOperations::ShapeError> anErrList;
+  std::list<GeomAnaTool::ShapeError> anErrList;
   bool isOk = GetOperations()->CheckShape(aShape, true, anErrList);
 
   ConvertShapeError(anErrList, theErrors);
@@ -699,7 +700,7 @@ char* GEOM_IMeasureOperations_i::PrintShapeErrors
   }
 
   // Convert the errors sequence
-  std::list<GEOMImpl_IMeasureOperations::ShapeError> anErrList;
+  std::list<GeomAnaTool::ShapeError> anErrList;
 
   ConvertShapeError(theErrors, anErrList);
 
@@ -707,6 +708,66 @@ char* GEOM_IMeasureOperations_i::PrintShapeErrors
     GetOperations()->PrintShapeErrors(aShape, anErrList);
 
   return CORBA::string_dup(aDescr.ToCString());
+}
+
+//=============================================================================
+/*!
+ *  ExtractBOPFailure
+ */
+//=============================================================================
+CORBA::Boolean GEOM_IMeasureOperations_i::ExtractBOPFailure
+             (const GEOM::ListOfGO&                                theShapes,
+                    CORBA::Boolean                                 theUseTimer,
+                    CORBA::Boolean                                 theTopoOnly,
+                    CORBA::Boolean                                 theRunParallel,
+                    CORBA::Boolean                                 theDoExact,
+                    GEOM::GEOM_Object_out                          theResultShape,
+                    GEOM::GEOM_IMeasureOperations::ShapeErrors_out theErrors)
+{
+  GEOM::GEOM_Object_var aNullRes;
+  theResultShape = aNullRes._retn();
+
+  // Set the not done flag
+  theErrors = new GEOM::GEOM_IMeasureOperations::ShapeErrors;
+  GetOperations()->SetNotDone();
+
+  // Check for existing shapes
+  int aNbShapes = theShapes.length();
+  if (!aNbShapes)
+  {
+    return 0;
+  }
+
+  // Create the sequence of GEOM objects for the failure shapes
+  Handle(TColStd_HSequenceOfTransient) aSeqShapes = new TColStd_HSequenceOfTransient;
+  for (int i = 0; i < aNbShapes; i++)
+  {
+    Handle(::GEOM_Object) aShape = GetObjectImpl(theShapes[i]);
+    if (!aShape.IsNull())
+    {
+      aSeqShapes->Append(aShape);
+    }
+  }
+
+  if (!aSeqShapes->Length())
+  {
+    return 0;
+  }
+
+  // Perform partition operation and check for failures
+  Handle(::GEOM_Object) aResultShape;
+  std::list<GeomAnaTool::ShapeError> anErrList;
+  bool isOk = GetOperations()->ExtractBOPFailure
+    (aSeqShapes, theUseTimer, theTopoOnly, theRunParallel,
+     theDoExact, aResultShape, anErrList);
+
+  if (!aResultShape.IsNull()) {
+    theResultShape = GetObject(aResultShape);
+  }
+
+  ConvertShapeError(anErrList, theErrors);
+
+  return isOk;
 }
 
 //=============================================================================

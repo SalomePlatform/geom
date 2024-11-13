@@ -22,6 +22,7 @@
 # additional include directories
 INCLUDE_DIRECTORIES(
   ${OpenCASCADE_INCLUDE_DIR}
+  ${CommonGeomLib_INCLUDE_DIRS}
   ${PTHREAD_INCLUDE_DIR}
   ${KERNEL_INCLUDE_DIRS}
   ${PYTHON_INCLUDE_DIRS}
@@ -46,6 +47,7 @@ ADD_DEFINITIONS(
 
 # libraries to link to
 SET(_link_LIBRARIES
+  ${CommonGeomLib_GeomAnaTool}
   ${OpenCASCADE_ModelingAlgorithms_LIBRARIES}
   ${PYTHON_LIBRARIES}
   ShHealOper GEOMbasic BlockFix GEOMAlgo GEOMUtils GEOMSketcher GEOMArchimede XAO

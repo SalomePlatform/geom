@@ -98,6 +98,15 @@ class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
              (      GEOM::GEOM_Object_ptr                       theShape,
               const GEOM::GEOM_IMeasureOperations::ShapeErrors &theErrors);
 
+  CORBA::Boolean ExtractBOPFailure
+             (const GEOM::ListOfGO&                                theShapes,
+                    CORBA::Boolean                                 theUseTimer,
+                    CORBA::Boolean                                 theTopoOnly,
+                    CORBA::Boolean                                 theRunParallel,
+                    CORBA::Boolean                                 theDoExact,
+                    GEOM::GEOM_Object_out                          theResultShape,
+                    GEOM::GEOM_IMeasureOperations::ShapeErrors_out theErrors);
+
   CORBA::Boolean CheckSelfIntersections (GEOM::GEOM_Object_ptr theShape,
                                          CORBA::Long           theCheckLevel,
                                          GEOM::ListOfLong_out  theIntersections);

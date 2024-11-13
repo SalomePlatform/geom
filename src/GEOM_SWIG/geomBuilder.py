@@ -3113,7 +3113,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "cylinder")
             return anObj
-            
+
         ## Create a portion of cylinder with given base point, axis, radius, height and angle.
         #  @param thePnt Central point of cylinder base.
         #  @param theAxis Cylinder axis.
@@ -3196,7 +3196,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "cylinder")
             return anObj
-            
+
         ## Create a portion of cylinder with given radius, height and angle at
         #  the origin of coordinate system. Axis of the cylinder
         #  will be collinear to the OZ axis of the coordinate system.
@@ -3999,7 +3999,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing the created pipe if 
+        #  @return New GEOM.GEOM_Object, containing the created pipe if
         #          \a IsGenerateGroups is not set. Otherwise it returns a
         #          list of GEOM.GEOM_Object. Its first element is the created pipe, the
         #          remaining ones are created groups.
@@ -4039,7 +4039,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing the created pipe if 
+                New GEOM.GEOM_Object, containing the created pipe if
                 IsGenerateGroups is not set. Otherwise it returns a
                 list of GEOM.GEOM_Object. Its first element is the created pipe, the
                 remaining ones are created groups.
@@ -4076,7 +4076,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing the created pipe if 
+        #  @return New GEOM.GEOM_Object, containing the created pipe if
         #          \a IsGenerateGroups is not set. Otherwise it returns new
         #          GEOM.ListOfGO. Its first element is the created pipe, the
         #          remaining ones are created groups.
@@ -4112,7 +4112,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing the created pipe if 
+                New GEOM.GEOM_Object, containing the created pipe if
                 IsGenerateGroups is not set. Otherwise it returns new
                 GEOM.ListOfGO. Its first element is the created pipe, the
                 remaining ones are created groups.
@@ -4197,7 +4197,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing the created solids if 
+        #  @return New GEOM.GEOM_Object, containing the created solids if
         #          \a IsGenerateGroups is not set. Otherwise it returns new
         #          GEOM.ListOfGO. Its first element is the created solids, the
         #          remaining ones are created groups.
@@ -4242,7 +4242,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing the created solids if 
+                New GEOM.GEOM_Object, containing the created solids if
                 IsGenerateGroups is not set. Otherwise it returns new
                 GEOM.ListOfGO. Its first element is the created solids, the
                 remaining ones are created groups.
@@ -4320,7 +4320,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing the created solids if 
+        #  @return New GEOM.GEOM_Object, containing the created solids if
         #          \a IsGenerateGroups is not set. Otherwise it returns new
         #          GEOM.ListOfGO. Its first element is the created solids, the
         #          remaining ones are created groups.
@@ -4345,7 +4345,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing the created solids if 
+                New GEOM.GEOM_Object, containing the created solids if
                 IsGenerateGroups is not set. Otherwise it returns new
                 GEOM.ListOfGO. Its first element is the created solids, the
                 remaining ones are created groups.
@@ -4378,7 +4378,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing the created pipe if 
+        #  @return New GEOM.GEOM_Object, containing the created pipe if
         #          \a IsGenerateGroups is not set. Otherwise it returns new
         #          GEOM.ListOfGO. Its first element is the created pipe, the
         #          remaining ones are created groups.
@@ -4408,7 +4408,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing the created pipe if 
+                New GEOM.GEOM_Object, containing the created pipe if
                 IsGenerateGroups is not set. Otherwise it returns new
                 GEOM.ListOfGO. Its first element is the created pipe, the
                 remaining ones are created groups.
@@ -4433,7 +4433,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #  @param theThickness Thickness of the resulting solid
         #  @param theFacesIDs the list of face IDs to be removed from the
         #         result. It is ignored if \a theShape is a face or a shell.
-        #         It is empty by default. 
+        #         It is empty by default.
         #  @param theInside If true the thickness is applied towards inside
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
@@ -4456,7 +4456,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                  theThickness Thickness of the resulting solid
                  theFacesIDs the list of face IDs to be removed from the
                           result. It is ignored if theShape is a face or a
-                          shell. It is empty by default. 
+                          shell. It is empty by default.
                  theInside If true the thickness is applied towards inside
                  theName Object name; when specified, this parameter is used
                          for result publication in the study. Otherwise, if automatic
@@ -4483,7 +4483,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #  @param theThickness Thickness of the resulting solid
         #  @param theFacesIDs the list of face IDs to be removed from the
         #         result. It is ignored if \a theShape is a face or a shell.
-        #         It is empty by default. 
+        #         It is empty by default.
         #  @param theInside If true the thickness is applied towards inside
         #
         #  @return The modified shape
@@ -4503,7 +4503,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                 theThickness Thickness of the resulting solid
                 theFacesIDs the list of face IDs to be removed from the
                          result. It is ignored if \a theShape is a face or
-                         a shell. It is empty by default. 
+                         a shell. It is empty by default.
                 theInside If true the thickness is applied towards inside
 
             Returns:
@@ -4960,7 +4960,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakeFaceFromSurface", self.ShapesOp)
             self._autoPublish(anObj, theName, "face")
             return anObj
-        
+
         ## Create a non-planar face from a list of closed edges and a list of vertices.
         #  @param theEdges list of Edges(must be closed but not nesessarily belong to the same plane).
         #  @param theVertices list of vertices through which the result face must pass.
@@ -4993,7 +4993,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakeWrappedFace", self.ShapesOp)
             self._autoPublish(anObj, theName, "face")
             return anObj
-          
+
         ## Create a face from a set of edges with the given constraints.
         #  @param theConstraints List of edges and constraint faces (as a sequence of a Edge + Face couples):
         #         - edges should form a closed wire;
@@ -5002,9 +5002,9 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
-        # 
+        #
         # @return New GEOM.GEOM_Object, containing the created face.
-        # 
+        #
         # @ref tui_creation_face "Example"
         @ManageTransactions("ShapesOp")
         def MakeFaceWithConstraints(self, theConstraints, theName=None):
@@ -5123,7 +5123,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakeCompound", self.ShapesOp)
             self._autoPublish(anObj, theName, "compound")
             return anObj
-        
+
         ## Create a solid (or solids) from the set of faces and/or shells.
         #  @param theFacesOrShells List of faces and/or shells.
         #  @param isIntersect If TRUE, forces performing intersections
@@ -11981,6 +11981,56 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                 operation; FALSE otherwise.
             """
             return self.MeasuOp.CheckBOPArguments(theShape)
+
+
+        ## Performs general fuse BOP on the given list of shapes
+        #  and extracts CheckShape information from its invalid result.
+        #  @param theShapes List of shapes for the BOP.
+        #  @param theTimer If True, the execution time of the operation is measured.
+        #  @param theTopo If True, only the topological entities will be checked.
+        #  @param theParallel If True, the operation will be executed in parallel.
+        #  @param theExact If True, an exact check will be performed.
+        #  @param theVerbose If True, prints execution errors and resulting shape errors.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #  @return (isValid, shapeResult, listOfErrors), where
+        #          isValid - a boolean value (whether result shape is valid or not),
+        #          shapeResult - the result shape itself as GEOM::Object,
+        #          listOfErrors - the list of GEOM.GEOM_IMeasureOperations.ShapeError.
+        def ExtractBOPFailure(self, theShapes, theTimer=False, theTopo=False, theParallel=False, theExact=False, theVerbose=False, theName=None):
+            """
+            Performs general fuse BOP on the given list of shapes
+            and extracts CheckShape information from its invalid result.
+
+            Parameters:
+                theShapes List of shapes for the BOP.
+                theTimer If True, the time of the operation is measured.
+                theTopo If True, only the topological entities will be checked.
+                theParallel If True, the operation will be executed in parallel.
+                theExact If True, an exact check will be performed.
+                theVerbose If True, prints execution errors and resulting shape errors.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                (isValid, shapeResult, listOfErrors), where
+                  isValid - a boolean value (whether result shape is valid or not),
+                  shapeResult - the result shape itself as GEOM::Object,
+                  listOfErrors - the list of GEOM.GEOM_IMeasureOperations.ShapeError.
+            """
+            (IsValid, ShapeRes, ShapeErrors) = self.MeasuOp.ExtractBOPFailure(theShapes, theTimer, theTopo, theParallel, theExact)
+            if theVerbose:
+                if not self.MeasuOp.IsDone():
+                    print("== ExtractBOPFailure execution trace:")
+                    print(self.MeasuOp.GetErrorCode())
+                if not IsValid:
+                    print("== ExtractBOPFailure result errors:")
+                    self.PrintShapeErrors(ShapeRes, ShapeErrors)
+            if ShapeRes:
+                self._autoPublish(ShapeRes, theName, "InvalidBOPResult")
+            return (IsValid, ShapeRes, ShapeErrors)
 
         ## Detect intersections of the given shapes with algorithm based on mesh intersections.
         #  @param theShape1 First source object

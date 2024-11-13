@@ -1,0 +1,32 @@
+/*! 
+
+\page check_bop_page Extract BOP Failure
+
+The Extract BOP Failure tool makes it possible to analyse a BOP or Partition failure, in case the result is invalid. \n
+It performs the general fuse BOP and returns the resulting shape and the list of errors from Check Shape point of view.
+
+This is a TUI-only functionality.
+
+<b>TUI Command:</b>
+
+<UL>
+
+<LI> 
+<em>(IsValid, ShapeRes, ShapeErrors) = geompy.ExtractBOPFailure(theShapes, theTimer=False, theTopo=False, theParallel=False, theExact=False, theVerbose=True),</em> \n
+where \n
+\em theShapes is the list of argument shapes for BOP. \n
+\em theTimer - if True, the time of the operation is measured. \n
+\em theTopo - if True, only the topological entities will be checked, otherwise geometry and topology are checked. \n
+\em theParallel - if True, the operation will be executed in parallel. \n
+\em theExact - if True, an exact check will be performed. \n
+\em theVerbose - if True, prints execution errors and check results. \n
+\em Returns: \n
+\em IsValid - a boolean value (whether result shape is valid or not) \n
+\em ShapeRes - the result shape itself \n
+\em ShapeErrors - the list of GEOM.GEOM_IMeasureOperations.ShapeError \n
+</LI>
+
+</UL>
+See also a \ref tui_check_bop_page "TUI example".
+
+*/

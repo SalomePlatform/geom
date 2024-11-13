@@ -4797,6 +4797,25 @@ module GEOM
     string PrintShapeErrors (in GEOM_Object theShape,
                              in ShapeErrors theErrors);
 
+    // /*!
+    //  *  \brief Extract and identify any problem in the source shapes used in a Boolean Operation.
+    //  *  \param theShapes Shapes being used in the Boolean Operation
+    //  *  \param theUseTimer Whether to chronometrize computation time
+    //  *  \param theTopoOnly Whether to check topology only
+    //  *  \param theRunParallel Whether to run the computations in parallel
+    //  *  \param theDoExact Whether to perform exact checking
+    //  *  \param theResultShape Output parameter. The result of BOP General Fuse. Indices of its sub-shapes are reported in theErrors structure.
+    //  *  \param theErrors Output parameter. Structure, containing discovered errors and incriminated sub-shapes.
+    //  *  \return TRUE, if the input shapes "seem to be valid" for BOP.
+    //  */
+    boolean ExtractBOPFailure (in ListOfGO     theShapes,
+                               in boolean      theUseTimer,
+                               in boolean      theTopoOnly,
+                               in boolean      theRunParallel,
+                               in boolean      theDoExact,
+                               out GEOM_Object theResultShape,
+                               out ShapeErrors theErrors);
+
     /*!
      *  \brief Check a topology of the given shape on self-intersections presence.
      *  \param theShape Shape to check validity of.

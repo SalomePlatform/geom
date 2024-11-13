@@ -58,6 +58,8 @@ SET(GOOD_TESTS
   check_compound_of_blocks.py
   check_self_intersections.py
   check_shape.py
+  check_conformity.py
+  check_bop.py
   complex_objs_ex01.py
   complex_objs_ex02.py
   complex_objs_ex03.py

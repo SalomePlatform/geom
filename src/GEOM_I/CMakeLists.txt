@@ -25,6 +25,7 @@ INCLUDE_DIRECTORIES(
   ${PTHREAD_INCLUDE_DIR}
   ${OpenCASCADE_INCLUDE_DIR}
   ${KERNEL_INCLUDE_DIRS}
+  ${CommonGeomLib_INCLUDE_DIRS}
   ${PROJECT_SOURCE_DIR}/src/GEOMImpl
   ${PROJECT_SOURCE_DIR}/src/GEOM
   ${PROJECT_SOURCE_DIR}/src/GEOMAlgo
@@ -47,6 +48,7 @@ ENDIF(WIN32)
 
 # libraries to link to
 SET(_link_LIBRARIES
+  ${CommonGeomLib_GeomAnaTool}
   GEOMImpl
   GEOMUtils
   SalomeIDLGEOM

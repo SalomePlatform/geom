@@ -564,6 +564,9 @@ GetCreationInformation(std::string&             theOperationName,
     AddParam( theParams, "Object", aCI.GetShape() );
     AddParam( theParams, "Plane", aCI.GetPlane() );
     break;
+  case PARTITION_GENERAL_FUSE:
+    AddParam( theParams, "Objects", aCI.GetShapes() );
+    break;
   default:
     return false;
   }
