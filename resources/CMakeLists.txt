@@ -33,6 +33,7 @@ SET( _res_files
   ShHealing
   Y14.5M-2009.ttf
   action_assets.json
+  action_id_mutations.json
   3dsketch.png
   isoline.png
   isoline_v.png

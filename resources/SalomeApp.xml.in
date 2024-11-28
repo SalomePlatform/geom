@@ -114,6 +114,9 @@
   <section name="action_assets">
     <parameter name="%GEOM_ROOT_DIR%/share/salome/resources/geom/action_assets.json" value=""/>
   </section>
+  <section name="actionID_mutations">
+    <parameter name="%GEOM_ROOT_DIR%/share/salome/resources/geom/action_id_mutations.json" value=""/>
+  </section>
   <section name="shortcuts_vA1.0:GEOM">
     <parameter name="Edit/DELETE" value="Del"/>
     <parameter name="Inspection/ANNOTATION" value=""/>
