@@ -22,21 +22,56 @@
 
 #include "GEOM_ColorUtils.hxx"
 
-#include <QRandomGenerator>
-#include <QColor>
+#include <vector>
+#include <cmath>
+#include <random>
 
+namespace
+{
+    struct ColorRGB
+    {
+        double r{0.0};
+        double g{0.0};
+        double b{0.0};
+    };
+
+    ColorRGB fromHsv(const int h, const int s, const int v)
+    {
+        const double hh = h / 60.0;
+        const double ss = s / 255.0;
+        const double vv = v / 255.0;
+    
+        const int i = static_cast<int>(std::floor(hh)) % 6;
+        const double f = hh - std::floor(hh);
+        const double p = vv * (1.0 - ss);
+        const double q = vv * (1.0 - f * ss);
+        const double t = vv * (1.0 - (1.0 - f) * ss);
+    
+        switch (i)
+        {
+            case 0: return { vv, t, p };
+            case 1: return { q, vv, p };
+            case 2: return { p, vv, t };
+            case 3: return { p, q, vv };
+            case 4: return { t, p, vv };
+            case 5: return { vv, p, q };
+            default: return { 0.0, 0.0, 0.0 };
+        }
+    }
+}
 
 SALOMEDS::Color GEOM_ColorUtils::getPredefinedUniqueColor()
 {
-    static QList<QColor> colors = []() {
-        QList<QColor> tempColors;
+    static const std::vector<ColorRGB> colors = []()
+    {
+        std::vector<ColorRGB> tempColors;
         for (int s = 0; s < 2; s++)
         {
-            for (int v = 100; v >= 40; v = v - 20)
+            for (int v = 100; v >= 40; v -= 20)
             {
-                for (int h = 0; h < 359; h = h + 60)
+                for (int h = 0; h < 359; h += 60)
                 {
-                    tempColors.append(QColor::fromHsv(h, 255 - s * 127, v * 255 / 100));
+                    tempColors.push_back(fromHsv(h, 255 - s * 127, v * 255 / 100));
                 }
             }
         }
@@ -45,17 +80,22 @@ SALOMEDS::Color GEOM_ColorUtils::getPredefinedUniqueColor()
 
     static int currentColor = randomize(colors.size());
 
-    SALOMEDS::Color color;
-    color.R = (double)colors[currentColor].red()   / 255.0;
-    color.G = (double)colors[currentColor].green() / 255.0;
-    color.B = (double)colors[currentColor].blue()  / 255.0;
+    const SALOMEDS::Color color
+    {
+        colors[currentColor].r,
+        colors[currentColor].g,
+        colors[currentColor].b
+    };
 
-    currentColor = (currentColor+1) % colors.count();
+    currentColor = (currentColor + 1) % colors.size();
 
     return color;
 }
 
 int GEOM_ColorUtils::randomize(int size)
 {
-    return QRandomGenerator::global()->bounded(size);
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(0, size - 1);
+    return dis(gen);
 }
