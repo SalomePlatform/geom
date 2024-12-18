@@ -1093,10 +1093,13 @@ void CurveCreator_Curve::constructAISObject()
   // myAISShape->SetColor( myCurveColor );
   myAISShape->SetWidth( myLineWidth );
   Handle(Prs3d_PointAspect) anAspect = myAISShape->Attributes()->PointAspect();
-  anAspect->SetScale( 3.0 );
-  anAspect->SetTypeOfMarker(Aspect_TOM_O_POINT);
-  anAspect->SetColor(myPointAspectColor);
-  myAISShape->Attributes()->SetPointAspect( anAspect );
+  if (!anAspect.IsNull())
+  {
+    anAspect->SetScale( 3.0 );
+    anAspect->SetTypeOfMarker(Aspect_TOM_O_POINT);
+    anAspect->SetColor(myPointAspectColor);
+    myAISShape->Attributes()->SetPointAspect( anAspect );
+  }
 }
 
 Handle(AIS_InteractiveObject) CurveCreator_Curve::getAISObject( const bool theNeedToBuild ) const
