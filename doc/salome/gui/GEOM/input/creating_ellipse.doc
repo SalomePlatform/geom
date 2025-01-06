@@ -19,14 +19,10 @@ corresponds to OX axis of the global coordinate system.
 <EM> Vmaj' = (Vn * Vmaj) * Vn</em>, where \em Vn is a normal vector and
 \em Vmaj is an original vector of the major axis.
 
-\n <b>TUI Command (without the major axis):</b> <em>geompy.MakeEllipse(Point, Vector, RadiusMajor, RadiusMinor)</em>
+\n <b>TUI Command (without the major axis):</b> <em>geompy.MakeEllipse(Point, Vector, RadiusMajor, RadiusMinor, VectorMajor=None)</em>
 \n <b>Arguments:</b> Name + 1 vertex (for the center) + 1 edge (for
-the direction) + 1 X Radius + 1 Y Radius.
-
-\n <b>TUI Command (with the major axis):</b> <em>geompy.MakeEllipseVec(Point, Vector, RadiusMajor, RadiusMinor, VectorMajor)</em>
-\n <b>Arguments:</b> Name + 1 vertex (for the center) + 1 edge (for
-the normal direction) + 1 X Radius + 1 Y Radius + 1 edge (for the
-major axis direction).
+the direction) + 1 X Radius + 1 Y Radius + 1 optional edge (for the major axis direction).
+\n If the <b>VectorMajor</b> argument is omitted, the ellipse's major axis will be along the X-axis.
 
 \image html ellipse.png
 
