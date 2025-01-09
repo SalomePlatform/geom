@@ -22,6 +22,7 @@
 # additional include directories
 INCLUDE_DIRECTORIES(
   ${OpenCASCADE_INCLUDE_DIR}
+  ${SALOMEBOOTSTRAP_INCLUDE_DIRS}
   ${KERNEL_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
@@ -34,7 +35,7 @@ ADD_DEFINITIONS(
 # libraries to link to
 SET(_link_LIBRARIES
   ${OpenCASCADE_ApplicationFramework_LIBRARIES} ${OpenCASCADE_ModelingAlgorithms_LIBRARIES}
-  ${KERNEL_SALOMELocalTrace}
+  ${SALOMEBOOTSTRAP_SALOMELocalTrace}
   )
 
 # --- headers ---

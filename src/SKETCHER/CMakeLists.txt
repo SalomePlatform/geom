@@ -22,6 +22,7 @@
 # additional include directories
 INCLUDE_DIRECTORIES(
   ${OpenCASCADE_INCLUDE_DIR}
+  ${SALOMEBOOTSTRAP_INCLUDE_DIRS}
   ${KERNEL_INCLUDE_DIRS}
   ${PTHREAD_INCLUDE_DIR}
   )
@@ -36,7 +37,7 @@ SET(_link_LIBRARIES
   ${OpenCASCADE_FoundationClasses_LIBRARIES}
   ${OpenCASCADE_ModelingAlgorithms_LIBRARIES}
   ${OpenCASCADE_ModelingData_LIBRARIES}
-  ${KERNEL_SALOMELocalTrace}
+  ${SALOMEBOOTSTRAP_SALOMELocalTrace}
   )
 
 # --- headers ---

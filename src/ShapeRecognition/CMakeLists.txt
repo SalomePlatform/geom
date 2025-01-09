@@ -22,6 +22,7 @@
 
 # additional include directories
 INCLUDE_DIRECTORIES(
+  ${SALOMEBOOTSTRAP_INCLUDE_DIRS}
   ${KERNEL_INCLUDE_DIRS}
   ${OPENCV_INCLUDE_DIR}
   ${QT_INCLUDES}
@@ -39,7 +40,7 @@ SET(QT_QTCORE_LIB ${Qt5Core_LIBRARIES})
 SET(_link_LIBRARIES
   ${OpenCV_LIBS}
   ${QT_QTCORE_LIB}
-  ${KERNEL_SALOMELocalTrace}
+  ${SALOMEBOOTSTRAP_SALOMELocalTrace}
   )
 
 # --- headers ---

@@ -22,6 +22,7 @@
 # additional include directories
 INCLUDE_DIRECTORIES(
   ${OpenCASCADE_INCLUDE_DIR}
+  ${SALOMEBOOTSTRAP_INCLUDE_DIRS}
   ${KERNEL_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${PROJECT_SOURCE_DIR}/src/GEOMUtils
@@ -37,7 +38,7 @@ SET(_link_LIBRARIES
   VTK::FiltersCore
   ${OpenCASCADE_FoundationClasses_LIBRARIES}
   ${OpenCASCADE_ModelingAlgorithms_LIBRARIES}
-  ${KERNEL_SALOMELocalTrace}
+  ${SALOMEBOOTSTRAP_SALOMELocalTrace}
   GEOMUtils
   )
 

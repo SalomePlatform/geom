@@ -22,6 +22,7 @@
 # additional include directories
 INCLUDE_DIRECTORIES(
   ${OpenCASCADE_INCLUDE_DIR}
+  ${SALOMEBOOTSTRAP_INCLUDE_DIRS}
   ${KERNEL_INCLUDE_DIRS}
   ${PROJECT_SOURCE_DIR}/src/GEOMUtils
   ${PROJECT_SOURCE_DIR}/src/GEOM
@@ -38,7 +39,7 @@ SET(_link_LIBRARIES
   ${OpenCASCADE_FoundationClasses_LIBRARIES}
   ${OpenCASCADE_ModelingAlgorithms_LIBRARIES}
   GEOMbasic GEOMUtils
-  ${KERNEL_SALOMELocalTrace}
+  ${SALOMEBOOTSTRAP_SALOMELocalTrace}
   )
 
 # --- headers ---
