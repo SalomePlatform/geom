@@ -55,7 +55,11 @@ Standard_Integer GEOM_SubShapeDriver::Execute(Handle(TFunction_Logbook)& log) co
 
   GEOM_ISubShape aCI (aFunction);
 
-  TDF_Label aLabel = aCI.GetMainShape()->GetOwnerEntry();
+  TDF_Label aLabel;
+  if( aCI.GetMainShape() )
+    aLabel = aCI.GetMainShape()->GetOwnerEntry();
+  else
+    return 0;
   if (aLabel.IsRoot()) return 0;
   Handle(GEOM_Object) anObj = GEOM_Object::GetObject(aLabel);
   if (anObj.IsNull()) return 0;
