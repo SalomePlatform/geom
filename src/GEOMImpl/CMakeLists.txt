@@ -30,8 +30,6 @@ INCLUDE_DIRECTORIES(
   ${EIGEN3_INCLUDE_DIR}
   ${PROJECT_SOURCE_DIR}/src/ShHealOper
   ${PROJECT_SOURCE_DIR}/src/GEOM 
-  ${PROJECT_SOURCE_DIR}/src/BlockFix
-  ${PROJECT_SOURCE_DIR}/src/GEOMAlgo 
   ${PROJECT_SOURCE_DIR}/src/GEOMUtils
   ${PROJECT_SOURCE_DIR}/src/SKETCHER
   ${PROJECT_SOURCE_DIR}/src/ARCHIMEDE
@@ -49,9 +47,11 @@ ADD_DEFINITIONS(
 # libraries to link to
 SET(_link_LIBRARIES
   ${CommonGeomLib_GeomAnaTool}
+  ${CommonGeomLib_BlockFix}
+  ${CommonGeomLib_GEOMAlgo}
   ${OpenCASCADE_ModelingAlgorithms_LIBRARIES}
   ${PYTHON_LIBRARIES}
-  ShHealOper GEOMbasic BlockFix GEOMAlgo GEOMUtils GEOMSketcher GEOMArchimede XAO
+  ShHealOper GEOMbasic GEOMUtils GEOMSketcher GEOMArchimede XAO
   ${SALOMEBOOTSTRAP_SALOMELocalTrace}
   )
 

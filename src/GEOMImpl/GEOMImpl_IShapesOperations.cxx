@@ -55,17 +55,18 @@
 #include "GEOM_PythonDump.hxx"
 
 #include "GEOMUtils.hxx"
+#include "GEOMUtils_GetInPlace.hxx"
 
 #include "GEOMAlgo_ClsfBox.hxx"
 #include "GEOMAlgo_ClsfQuad.hxx"
 #include "GEOMAlgo_ClsfSolid.hxx"
 #include "GEOMAlgo_ClsfSurf.hxx"
 #include "GEOMAlgo_FinderShapeOn2.hxx"
-#include "GEOMAlgo_GetInPlace.hxx"
-#include "GEOMAlgo_GetInPlaceAPI.hxx"
 #include "GEOMAlgo_GlueDetector.hxx"
 
 #include <utilities.h>
+
+#include <GEOMAlgo_GetInPlace.hxx>
 
 #include <BRepAdaptor_Curve.hxx>
 #include <BRepAdaptor_Surface.hxx>
@@ -4560,9 +4561,9 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   }
 
   // Searching for the sub-shapes inside the ShapeWhere shape
-  GEOMAlgo_GetInPlace aGIP;
+  GEOMAlgo_GetInPlace aGIP (aWhere, aWhat);
 
-  if (!GEOMAlgo_GetInPlaceAPI::GetInPlace(aWhere, aWhat, aGIP)) {
+  if (aGIP.ErrorStatus()) {
     SetErrorCode("Error in GEOMAlgo_GetInPlace");
     return NULL;
   }
@@ -4659,7 +4660,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlaceOld
   TopoDS_Shape           aWhat  = theShapeWhat->GetValue();
   TopTools_ListOfShape   aModifiedList;
   const Standard_Integer iErr   =
-    GEOMAlgo_GetInPlaceAPI::GetInPlaceOld(aWhere, aWhat, aModifiedList);
+    GEOMUtils_GetInPlace::GetInPlaceOld(aWhere, aWhat, aModifiedList);
 
   if (iErr) {
     switch (iErr) {
@@ -4768,7 +4769,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlaceByHistory
 
   // process shape
   TopTools_ListOfShape aModifiedList;
-  bool isFound = GEOMAlgo_GetInPlaceAPI::GetInPlaceByHistory
+  bool isFound = GEOMUtils_GetInPlace::GetInPlaceByHistory
     (aWhereFunction, aWhereIndices, aWhat, aModifiedList);
 
   if (!isFound || aModifiedList.Extent() < 1) {
@@ -4850,7 +4851,7 @@ void GEOMImpl_IShapesOperations::GetInPlaceMap (Handle(GEOM_Object) theShapeWher
   Handle(GEOM_Function) aWhereFunction = theShapeWhere->GetLastFunction();
   if (aWhereFunction.IsNull()) return;
 
-  bool isFound = GEOMAlgo_GetInPlaceAPI::GetInPlaceMap( aWhereFunction, aWhat, theResVec );
+  bool isFound = GEOMUtils_GetInPlace::GetInPlaceMap( aWhereFunction, aWhat, theResVec );
 
   if ( isFound )
     SetErrorCode(OK);

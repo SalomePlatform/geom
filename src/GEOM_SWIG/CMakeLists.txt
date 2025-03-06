@@ -20,7 +20,6 @@
 include_directories(
   ${PROJECT_BINARY_DIR}/idl
   ${PROJECT_SOURCE_DIR}/src/GEOMUtils
-  ${PROJECT_SOURCE_DIR}/src/GEOMAlgo
   ${PROJECT_SOURCE_DIR}/src/GEOM
   ${PROJECT_SOURCE_DIR}/src/GEOMImpl
   ${PROJECT_SOURCE_DIR}/src/GEOM_I

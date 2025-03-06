@@ -21,7 +21,7 @@
 # Common packages
 ##
 SET(SUBDIRS_COMMON
-  ARCHIMEDE BlockFix GEOMAlgo SKETCHER GEOM ShHealOper GEOMUtils XAO XAO_Swig 
+  ARCHIMEDE SKETCHER GEOM ShHealOper GEOMUtils XAO XAO_Swig 
   GEOMImpl GEOM_I GEOMClient GEOM_I_Superv GEOM_SWIG GEOM_PY
   AdvancedEngine
   STLPlugin BREPPlugin STEPPlugin IGESPlugin XAOPlugin Tools

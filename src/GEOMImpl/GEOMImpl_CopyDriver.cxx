@@ -26,8 +26,9 @@
 #include "GEOMImpl_Types.hxx"
 #include "GEOM_Function.hxx"
 #include "GEOM_Object.hxx"
-#include "GEOMAlgo_GetInPlace.hxx"
-#include "GEOMAlgo_GetInPlaceAPI.hxx"
+#include "GEOMUtils_GetInPlace.hxx"
+
+#include <GEOMAlgo_GetInPlace.hxx>
 
 #include <TopoDS_Shape.hxx>
 #include <TopExp.hxx>
@@ -273,10 +274,9 @@ Standard_Boolean GEOMImpl_CopyDriver::getInPlace
            TopTools_IndexedDataMapOfShapeListOfShape &theMapSourceDest) const
 {
   // Searching for the sub-shapes inside theDestinationShape shape
-  GEOMAlgo_GetInPlace aGIP;
+  GEOMAlgo_GetInPlace aGIP (theDestinationShape, theSourceShape);
 
-  if (!GEOMAlgo_GetInPlaceAPI::GetInPlace
-          (theDestinationShape, theSourceShape, aGIP)) {
+  if (aGIP.ErrorStatus()) {
     return Standard_False;
   }
 
@@ -348,7 +348,7 @@ Standard_Boolean GEOMImpl_CopyDriver::getInPlaceOld
     }
 
     // Call old GetInPlace.
-    iErr = GEOMAlgo_GetInPlaceAPI::GetInPlaceOld
+    iErr = GEOMUtils_GetInPlace::GetInPlaceOld
       (theDestinationShape, aSource, aModifiedList);
 
     if (iErr == 3) {
@@ -399,7 +399,7 @@ Standard_Boolean GEOMImpl_CopyDriver::getInPlaceByHistory
 
     // Call GetInPlaceByHistory.
     TopTools_ListOfShape aModifiedList;
-    const Standard_Boolean isFound = GEOMAlgo_GetInPlaceAPI::GetInPlaceByHistory
+    const Standard_Boolean isFound = GEOMUtils_GetInPlace::GetInPlaceByHistory
       (theDestinationRef, aDestIndices, aSource, aModifiedList);
 
     if (isFound && !aModifiedList.IsEmpty()) {

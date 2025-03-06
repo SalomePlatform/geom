@@ -22,10 +22,12 @@
 # additional include directories
 INCLUDE_DIRECTORIES(
   ${OpenCASCADE_INCLUDE_DIR}
+  ${CommonGeomLib_INCLUDE_DIRS}
   ${PTHREAD_INCLUDE_DIR}
   ${LIBXML2_INCLUDE_DIR}
   ${SALOMEBOOTSTRAP_INCLUDE_DIRS}
   ${KERNEL_INCLUDE_DIRS}
+  ${PROJECT_SOURCE_DIR}/src/GEOM
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
@@ -40,7 +42,9 @@ SET(_link_LIBRARIES
   ${OpenCASCADE_ModelingData_LIBRARIES} 
   ${OpenCASCADE_ModelingAlgorithms_LIBRARIES} 
   ${OpenCASCADE_Visualization_LIBRARIES}
+  ${CommonGeomLib_GEOMAlgo}
   ${LIBXML2_LIBRARIES}
+  GEOMbasic
   ${SALOMEBOOTSTRAP_SALOMELocalTrace}
   )
 
@@ -48,6 +52,7 @@ SET(_link_LIBRARIES
 
 SET(GEOMUtils_HEADERS
   GEOMUtils.hxx
+  GEOMUtils_GetInPlace.hxx
   GEOMUtils_Hatcher.hxx
   GEOMUtils_HTrsfCurve2d.hxx
   GEOMUtils_ShapeStatistics.hxx
@@ -59,6 +64,7 @@ SET(GEOMUtils_HEADERS
 
 SET(GEOMUtils_SOURCES
   GEOMUtils.cxx
+  GEOMUtils_GetInPlace.cxx
   GEOMUtils_Hatcher.cxx
   GEOMUtils_HTrsfCurve2d.cxx
   GEOMUtils_ShapeStatistics.cxx

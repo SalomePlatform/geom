@@ -19,12 +19,12 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:     GEOMAlgo_GetInPlaceAPI.cxx
+// File:     GEOMUtils_GetInPlace.cxx
 // Created:
 // Author:   Sergey KHROMOV
 
 
-#include <GEOMAlgo_GetInPlaceAPI.hxx>
+#include <GEOMUtils_GetInPlace.hxx>
 #include <GEOMAlgo_GetInPlace.hxx>
 #include <GEOM_Object.hxx>
 #include <GEOMUtils.hxx>
@@ -48,71 +48,10 @@
 #include <TColStd_MapOfInteger.hxx>
 
 //=======================================================================
-//function : GetInPlace
-//purpose  : 
-//=======================================================================
-Standard_Boolean GEOMAlgo_GetInPlaceAPI::GetInPlace
-                      (const TopoDS_Shape        &theWhere,
-                       const TopoDS_Shape        &theWhat,
-                             GEOMAlgo_GetInPlace &theGIP)
-{
-  if (theWhere.IsNull() || theWhat.IsNull()) {
-    return Standard_False;
-  }
-
-  // Compute confusion tolerance.
-  Standard_Real    aTolConf = Precision::Confusion();
-  Standard_Integer i;
-
-  for (i = 0; i < 2; ++i) {
-    TopExp_Explorer anExp(i == 0 ? theWhere : theWhat, TopAbs_VERTEX);
-
-    for (; anExp.More(); anExp.Next()) {
-      const TopoDS_Vertex aVtx = TopoDS::Vertex(anExp.Current());
-      const Standard_Real aTolVtx = BRep_Tool::Tolerance(aVtx);
-
-      if (aTolVtx > aTolConf) {
-        aTolConf = aTolVtx;
-      }
-    }
-  }
-
-  // Compute mass tolerance.
-  Bnd_Box       aBoundingBox;
-  Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
-  Standard_Real aMassTol;
-
-  BRepBndLib::Add(theWhere, aBoundingBox);
-  BRepBndLib::Add(theWhat,  aBoundingBox);
-  aBoundingBox.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
-  aMassTol = Max(aXmax - aXmin, aYmax - aYmin);
-  aMassTol = Max(aMassTol, aZmax - aZmin);
-  aMassTol *= aTolConf;
-
-  // Searching for the sub-shapes inside the ShapeWhere shape
-  theGIP.SetTolerance(aTolConf);
-  theGIP.SetTolMass(aMassTol);
-  theGIP.SetTolCG(aTolConf);
-
-  theGIP.SetArgument(theWhat);
-  theGIP.SetShapeWhere(theWhere);
-
-  theGIP.Perform();
-
-  int iErr = theGIP.ErrorStatus();
-
-  if (iErr) {
-    return Standard_False;
-  }
-
-  return Standard_True;
-}
-
-//=======================================================================
 //function : GetInPlaceOld
 //purpose  : 
 //=======================================================================
-Standard_Integer GEOMAlgo_GetInPlaceAPI::GetInPlaceOld
+Standard_Integer GEOMUtils_GetInPlace::GetInPlaceOld
             (const TopoDS_Shape         &theWhere,
              const TopoDS_Shape         &theWhat,
                    TopTools_ListOfShape &theShapesInPlace)
@@ -227,7 +166,7 @@ Standard_Integer GEOMAlgo_GetInPlaceAPI::GetInPlaceOld
 //function : GetNormal
 //purpose  : 
 //=======================================================================
-gp_Vec GEOMAlgo_GetInPlaceAPI::GetNormal
+gp_Vec GEOMUtils_GetInPlace::GetNormal
                          (const TopoDS_Face                &theFace,
                           const BRepExtrema_DistShapeShape &theExtrema)
 {
@@ -269,9 +208,9 @@ gp_Vec GEOMAlgo_GetInPlaceAPI::GetNormal
 //function : GetShapeProperties
 //purpose  : 
 //=======================================================================
-void GEOMAlgo_GetInPlaceAPI::GetShapeProperties(const TopoDS_Shape  &theShape,
-                                                      Standard_Real  theTab[],
-                                                      gp_Pnt        &theVertex)
+void GEOMUtils_GetInPlace::GetShapeProperties(const TopoDS_Shape  &theShape,
+                                                    Standard_Real  theTab[],
+                                                    gp_Pnt        &theVertex)
 {
   GProp_GProps  aProps;
   gp_Pnt        aCenterMass;
@@ -305,7 +244,7 @@ void GEOMAlgo_GetInPlaceAPI::GetShapeProperties(const TopoDS_Shape  &theShape,
 //function : GetInPlaceByHistory
 //purpose  : 
 //=======================================================================
-Standard_Boolean GEOMAlgo_GetInPlaceAPI::GetInPlaceByHistory
+Standard_Boolean GEOMUtils_GetInPlace::GetInPlaceByHistory
                       (const Handle(GEOM_Function)      &theWhereFunction,
                        const TopTools_IndexedMapOfShape &theWhereIndices,
                        const TopoDS_Shape               &theWhat,
@@ -430,13 +369,13 @@ Standard_Boolean GEOMAlgo_GetInPlaceAPI::GetInPlaceByHistory
 }
 
 //=======================================================================
-//function : GetInPlaceByHistory
+//function : GetInPlaceMap (by history)
 //purpose  : 
 //=======================================================================
 Standard_Boolean
-GEOMAlgo_GetInPlaceAPI::GetInPlaceMap (const Handle(GEOM_Function)       & theWhereFunction,
-                                       const TopoDS_Shape                & theWhat,
-                                       std::vector< std::vector< int > > & theResVec)
+GEOMUtils_GetInPlace::GetInPlaceMap (const Handle(GEOM_Function)       & theWhereFunction,
+                                     const TopoDS_Shape                & theWhat,
+                                     std::vector< std::vector< int > > & theResVec)
 {
   //theResVec.clear();
 
@@ -507,8 +446,8 @@ GEOMAlgo_GetInPlaceAPI::GetInPlaceMap (const Handle(GEOM_Function)       & theWh
 
   if ( !isFound ) // use GetInPlace()
   {
-    GEOMAlgo_GetInPlace gip;
-    if ( ! GetInPlace( theWhere, theWhat, gip ))
+    GEOMAlgo_GetInPlace gip (theWhere, theWhat);
+    if (gip.ErrorStatus())
       return false;
 
     const TopTools_DataMapOfShapeListOfShape& img = gip.Images();

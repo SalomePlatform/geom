@@ -135,9 +135,7 @@ ENDIF(SALOME_GEOM_BUILD_GUI)
 
 # Exposed GEOM targets:
 SET(GEOM_GEOMArchimede GEOMArchimede)
-SET(GEOM_BlockFix BlockFix)
 SET(GEOM_GEOMbasic GEOMbasic)
-SET(GEOM_GEOMAlgo GEOMAlgo)
 SET(GEOM_GEOMClient GEOMClient)
 SET(GEOM_GEOMImpl GEOMImpl)
 SET(GEOM_GEOMUtils GEOMUtils)

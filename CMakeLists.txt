@@ -254,7 +254,7 @@ INCLUDE(CMakePackageConfigHelpers)
 # List of targets in this project we want to make visible to the rest of the world.
 # They all have to be INSTALL'd with the option "EXPORT ${PROJECT_NAME}TargetGroup"
 SET(_${PROJECT_NAME}_exposed_targets
-  GEOMArchimede BlockFix GEOMbasic GEOMAlgo GEOMClient GEOMImpl
+  GEOMArchimede GEOMbasic GEOMClient GEOMImpl
   GEOMUtils GEOMEngine GEOM_SupervEngine GEOMSketcher
   SalomeIDLGEOM SalomeIDLGEOMSuperv SalomeIDLAdvancedGEOM ShHealOper XAO AdvancedEngine
   SalomeIDLSTLPlugin SalomeIDLBREPPlugin SalomeIDLSTEPPlugin SalomeIDLIGESPlugin SalomeIDLXAOPlugin

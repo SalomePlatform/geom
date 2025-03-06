@@ -19,12 +19,12 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:        GEOMAlgo_GetInPlaceAPI.hxx
+// File:        GEOMUtils_GetInPlace.hxx
 // Created:
 // Author:      Sergey KHROMOV
 
-#ifndef _GEOMAlgo_GetInPlaceAPI_HeaderFile
-#define _GEOMAlgo_GetInPlaceAPI_HeaderFile
+#ifndef _GEOMUtils_GetInPlace_HeaderFile
+#define _GEOMUtils_GetInPlace_HeaderFile
 
 #include <GEOM_Function.hxx>
 
@@ -34,32 +34,19 @@
 
 #include <vector>
 
-class GEOMAlgo_GetInPlace;
 class BRepExtrema_DistShapeShape;
 class TopoDS_Face;
 class TopoDS_Shape;
 
 /**
- * This is an API class for all GetInPlace algorithm.
- * It facilitates using different GetInPlace algorithms:
- * a new one(GEOMAlgo_GetInPlace), an old one and
- * GetInPlaceByHistory.
+ * This is an API class for two GetInPlace algorithms:
+ * 1. Old GetInPlace algorithm (in contra to new GEOMAlgo_GetInPlace),
+ * 2. GetInPlaceByHistory.
  */
-class GEOMAlgo_GetInPlaceAPI
+class GEOMUtils_GetInPlace
 {
 
 public:
-
-  /**
-   *  \brief New GetInPlace method implementation.
-   *  Initializes the GEOMAlgo_GetInPlace object with correct parameters and
-   *  performs computation (calls theGIP's method Perform. Returns
-   *  Standard_True in face of success; Standard_False otherwise.
-   */
-  Standard_EXPORT static Standard_Boolean GetInPlace
-                      (const TopoDS_Shape        &theWhere,
-                       const TopoDS_Shape        &theWhat,
-                             GEOMAlgo_GetInPlace &theGIP);
 
   /*!
    *  \brief Old implementation of GetInPlace algorithm.
