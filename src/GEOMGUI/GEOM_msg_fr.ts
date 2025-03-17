@@ -3681,6 +3681,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>SupprimerContoursInt</translation>
     </message>
     <message>
+        <source>Rotate3Pnts_PointsAreCollinear_msg</source>
+        <translation>Les points sélectionnés sont colinéaires avec le point central.</translation>
+    </message>
+    <message>
         <source>SEWING_NEW_OBJ_NAME</source>
         <translation>Couture</translation>
     </message>

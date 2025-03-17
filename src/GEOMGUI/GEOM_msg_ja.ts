@@ -3684,6 +3684,10 @@
       <translation>RemoveIntWires</translation>
     </message>
     <message>
+      <source>Rotate3Pnts_PointsAreCollinear_msg</source>
+      <translation>選択されたポイントは中心点と同一直線上にあります。</translation>
+    </message>
+    <message>
       <source>SEWING_NEW_OBJ_NAME</source>
       <translation>Sewing</translation>
     </message>

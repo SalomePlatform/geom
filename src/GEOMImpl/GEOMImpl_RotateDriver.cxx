@@ -55,6 +55,9 @@
 #include <gp_Dir.hxx>
 #include <gp_Ax1.hxx>
 
+#include <StdFail_NotDone.hxx>
+
+
 //=======================================================================
 //function : GetID
 //purpose  :
@@ -139,6 +142,10 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(Handle(TFunction_Logbook)& log) 
 
     gp_Vec aVec1 (aCP, aP1);
     gp_Vec aVec2 (aCP, aP2);
+    if (aVec1.IsParallel(aVec2, Precision::Angular())) {
+      StdFail_NotDone::Raise( "Rotate3Pnts_PointsAreCollinear_msg" );
+      return 0;
+    }
     gp_Dir aDir (aVec1 ^ aVec2);
     gp_Ax1 anAx1 (aCP, aDir);
     Standard_Real anAngle = aVec1.Angle(aVec2);

@@ -3689,6 +3689,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>RemoveIntWires</translation>
     </message>
     <message>
+        <source>Rotate3Pnts_PointsAreCollinear_msg</source>
+        <translation>Selected points are collinear with the center point.</translation>
+    </message>
+    <message>
         <source>SEWING_NEW_OBJ_NAME</source>
         <translation>Sewing</translation>
     </message>
