@@ -3685,6 +3685,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Les points sélectionnés sont colinéaires avec le point central.</translation>
     </message>
     <message>
+        <source>Rotate3Pnts_PointCoincidentCenter_msg</source>
+        <translation>Un point sélectionné coïncide avec le point central.</translation>
+    </message>
+    <message>
         <source>SEWING_NEW_OBJ_NAME</source>
         <translation>Couture</translation>
     </message>

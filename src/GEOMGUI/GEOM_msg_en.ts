@@ -3693,6 +3693,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Selected points are collinear with the center point.</translation>
     </message>
     <message>
+        <source>Rotate3Pnts_PointCoincidentCenter_msg</source>
+        <translation>A selected point is coincident with the center point.</translation>
+    </message>
+    <message>
         <source>SEWING_NEW_OBJ_NAME</source>
         <translation>Sewing</translation>
     </message>

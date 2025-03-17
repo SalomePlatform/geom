@@ -142,6 +142,10 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(Handle(TFunction_Logbook)& log) 
 
     gp_Vec aVec1 (aCP, aP1);
     gp_Vec aVec2 (aCP, aP2);
+    if (aVec1.Magnitude() < Precision::Confusion() || aVec2.Magnitude() < Precision::Confusion()) {
+      StdFail_NotDone::Raise( "Rotate3Pnts_PointCoincidentCenter_msg" );
+      return 0;
+    }
     if (aVec1.IsParallel(aVec2, Precision::Angular())) {
       StdFail_NotDone::Raise( "Rotate3Pnts_PointsAreCollinear_msg" );
       return 0;
