@@ -205,6 +205,13 @@ namespace
   {
     MESSAGE("Start check function dependencies...");
 
+    // Special case for function dumped from Python, because it's appended to
+    // description of other function that should be rejected early.
+    if (IsFunctionSetFromPython(aDescr)) {
+      MESSAGE("Function set from Python. Do process with updated description.");
+      return UPDATE_DESCRIPTION;
+    }
+
     TDF_LabelSequence aSeq;
     theFunction->GetDependency(aSeq);
     const Standard_Integer aLen = aSeq.Length();
@@ -236,16 +243,6 @@ namespace
       }
 
       if (!theProcessed.Contains(aDepLabel)) {
-        // Special case for function dumped from Python, because it's appended to
-        // description of other function that should be rejected early.
-        // TODO: it's not clear if we need to check every given function or
-        // checking on this level is enough. At this moment it's better to stay here 
-        // for performance reason.
-        if (IsFunctionSetFromPython(aDescr)) {
-          MESSAGE("Function set from Python. Do process with updated description.");
-          return UPDATE_DESCRIPTION;
-        }
-
         MESSAGE("The dependency label is not in processed list. Do not process.");
         return NOT_PROCESS;
       }
@@ -1264,12 +1261,15 @@ bool ProcessFunction(Handle(GEOM_Function)&             theFunction,
   // 0020001 PTv, check for critical functions, which require dump of objects
   if (theIsPublished)
   {
-    // currently, there is only one function "RestoreGivenSubShapes",
-    // later this check could be replaced by iterations on list of such functions
-    if (aDescr.Search( "RestoreGivenSubShapes" ) != -1)
+    if (aDescr.Search("RestoreGivenSubShapes") != -1 ||
+        aDescr.Search("RestoreSubShapes") != -1 ||
+        // Publish right after import, to prevent broken linkage with possible child objects.
+        // If we create a group of sub-objects from an imported brep before the source was published,
+        // the group will be displayed as unrelated to a source in the Salome object browser.
+        aDescr.Search("ImportBREP") != -1) 
+    {
       theIsDumpCollected = true;
-    else if (aDescr.Search( "RestoreSubShapes" ) != -1)
-      theIsDumpCollected = true;
+    }
   }
 
   //Replace parameter by notebook variables
