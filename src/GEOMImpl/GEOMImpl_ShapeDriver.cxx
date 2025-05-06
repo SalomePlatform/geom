@@ -46,7 +46,6 @@
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_Curve.hxx>
 #include <BRepAlgo_FaceRestrictor.hxx>
-#include <BRepBuilderAPI_Copy.hxx>
 #include <BRepBuilderAPI_Sewing.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
@@ -1075,9 +1074,12 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(Handle(TFunction_Logbook)& log) c
   // Check shape validity
   BRepCheck_Analyzer ana (aShape, true);
   if (!ana.IsValid()) {
-    //Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
-    // For Mantis issue 0021772: EDF 2336 GEOM: Non valid face created from two circles
-    Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape (aShape);
+    // Copy shape before healing to avoid undesired change of arguments
+    TopoDS_Shape aShapeCopy;
+    TColStd_IndexedDataMapOfTransientTransient aMapTShapes;
+    TNaming_CopyShape::CopyTool(aShape, aMapTShapes, aShapeCopy);
+
+    Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape (aShapeCopy);
     aSfs->Perform();
     aShape = aSfs->Shape();
   }
