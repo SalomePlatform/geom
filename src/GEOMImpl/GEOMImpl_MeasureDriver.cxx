@@ -275,6 +275,14 @@ Standard_Integer GEOMImpl_MeasureDriver::Execute(Handle(TFunction_Logbook)& log)
         anEdgeShapes.Add(exp.Current());
         TopoDS_Edge E = TopoDS::Edge(exp.Current());
         TopExp::Vertices(E, aV1, aV2);
+        if((E.Orientation() == TopAbs_REVERSED && aWire.Orientation() == TopAbs_FORWARD) ||
+           (E.Orientation() == TopAbs_FORWARD && aWire.Orientation() == TopAbs_REVERSED))
+        {
+          TopoDS_Vertex aV = aV1;
+          aV1 = aV2;
+          aV2 = aV;
+        }
+
         if ( aVertexShapes.Extent() == 0)
           aVertexShapes.Add(aV1);
         if ( !aV1.IsSame( aVertexShapes(aVertexShapes.Extent()) ) )
