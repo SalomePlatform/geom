@@ -746,6 +746,14 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(Handle(TFunction_Logbook)& log) c
         Standard_NullObject::Raise("Null Shape given");
       }
 
+      Standard_Real aTol = Precision::Confusion();
+      TopExp_Explorer expF (aBlockOrComp, TopAbs_FACE);
+      for (; expF.More(); expF.Next())
+      {
+        TopoDS_Face aF = TopoDS::Face(expF.Current());
+        aTol = Max(BRep_Tool::Tolerance(aF), aTol);
+      }
+
 #if OCC_VERSION_LARGE < 0x07050301
       BlockFix_UnionFaces aFaceUnifier;
       aFaceUnifier.GetOptimumNbFaces() = 0; // To force union faces.
@@ -757,8 +765,8 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(Handle(TFunction_Logbook)& log) c
       Standard_Boolean isConcatBSplines = Standard_True;
       ShapeUpgrade_UnifySameDomain aUnifier (aBlockOrComp,
                                              isUnifyEdges, isUnifyFaces, isConcatBSplines);
-      aUnifier.SetLinearTolerance(Precision::Confusion());
-      aUnifier.SetAngularTolerance(Precision::Confusion());
+      aUnifier.SetLinearTolerance(aTol);
+      aUnifier.SetAngularTolerance(aTol);
       aUnifier.Build();
       aShape = aUnifier.Shape();
 #endif
