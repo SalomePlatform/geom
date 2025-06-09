@@ -241,6 +241,88 @@ void GEOMUtils_GetInPlace::GetShapeProperties(const TopoDS_Shape  &theShape,
 }
 
 //=======================================================================
+//function : IsShapeHasHistory
+//purpose  : 
+//=======================================================================
+Standard_Boolean GEOMUtils_GetInPlace::IsShapeHasHistory
+                      (const Handle(GEOM_Function) &theWhereFunction,
+                       const TopoDS_Shape &theWhat)
+{
+  if (theWhereFunction.IsNull() || theWhat.IsNull())
+    return Standard_False;
+
+  // Check if there is any history
+  TDF_Label aHistoryLabel = theWhereFunction->GetHistoryEntry(Standard_False);
+  if (aHistoryLabel.IsNull())
+    return Standard_False;
+
+  // Check if theWhat is an argument or a part of argument of theWhereFunction
+  TDF_LabelSequence aLabelSeq;
+  theWhereFunction->GetDependency(aLabelSeq);
+  Standard_Integer nbArg = aLabelSeq.Length();
+  for (Standard_Integer iarg = 1; iarg <= nbArg; iarg++)
+  {
+    TDF_Label anArgumentRefLabel = aLabelSeq.Value(iarg);
+    Handle(GEOM_Object) anArgumentObject = GEOM_Object::GetReferencedObject(anArgumentRefLabel);
+
+    if (anArgumentObject.IsNull())
+      continue;
+
+    TopoDS_Shape anArgumentShape = anArgumentObject->GetValue();
+    TopTools_IndexedMapOfShape anArgumentIndices;
+    TopExp::MapShapes(anArgumentShape, anArgumentIndices);
+
+    if (anArgumentIndices.Contains(theWhat)) 
+    {
+      return Standard_True;
+    }
+  }
+
+  // Check if theWhat has container type (compound/compsolid/shell/wire) and consists of shapes,
+  // that are all an arguments or a parts of arguments of theWhereFunction
+  TopTools_MapOfShape mapShape;
+  if (theWhat.ShapeType() == TopAbs_COMPOUND ||
+      theWhat.ShapeType() == TopAbs_COMPSOLID) {
+    // recursive processing of compound/compsolid
+    TopoDS_Iterator anIt (theWhat, Standard_True, Standard_True);
+    for (; anIt.More(); anIt.Next()) {
+      if (mapShape.Add(anIt.Value())) {
+        TopoDS_Shape curWhat = anIt.Value();
+        if (!IsShapeHasHistory(theWhereFunction, curWhat))
+          return Standard_False;
+      }
+    }
+    return Standard_True;
+  }
+  else if (theWhat.ShapeType() == TopAbs_SHELL) {
+    // try to replace a shell by its faces images
+    TopExp_Explorer anExp (theWhat, TopAbs_FACE);
+    for (; anExp.More(); anExp.Next()) {
+      if (mapShape.Add(anExp.Current())) {
+        TopoDS_Shape curWhat = anExp.Current();
+        if (!IsShapeHasHistory(theWhereFunction, curWhat))
+          return Standard_False;
+      }
+    }
+    return Standard_True;
+  }
+  else if (theWhat.ShapeType() == TopAbs_WIRE) {
+    // try to replace a wire by its edges images
+    TopExp_Explorer anExp (theWhat, TopAbs_EDGE);
+    for (; anExp.More(); anExp.Next()) {
+      if (mapShape.Add(anExp.Current())) {
+        TopoDS_Shape curWhat = anExp.Current();
+        if (!IsShapeHasHistory(theWhereFunction, curWhat))
+          return Standard_False;
+      }
+    }
+    return Standard_True;
+  }
+
+  return Standard_False;
+}
+
+//=======================================================================
 //function : GetInPlaceByHistory
 //purpose  : 
 //=======================================================================

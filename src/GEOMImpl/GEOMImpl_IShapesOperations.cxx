@@ -4560,6 +4560,15 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
     return NULL;
   }
 
+  Handle(GEOM_Function) aWhereFunction = theShapeWhere->GetLastFunction();
+  if (aWhereFunction.IsNull()) return nullptr;
+
+  bool isHistory = GEOMUtils_GetInPlace::IsShapeHasHistory(aWhereFunction, aWhat);
+  if(isHistory) {
+    // Use InPlaceByHistory algorithm.
+    return GetInPlaceByHistory(theShapeWhere, theShapeWhat);
+  }
+
   // Searching for the sub-shapes inside the ShapeWhere shape
   GEOMAlgo_GetInPlace aGIP (aWhere, aWhat);
 
