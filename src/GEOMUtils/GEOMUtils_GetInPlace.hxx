@@ -64,6 +64,14 @@ public:
              const TopoDS_Shape         &theWhat,
                    TopTools_ListOfShape &theShapesInPlace);
 
+  /**
+   *  \brief IsShapeHasHistory method implementation.
+   *  Checks whether the given shape has a modification history 
+   *  recorded in the context of the specified GEOM function.
+   */
+   Standard_EXPORT static Standard_Boolean IsShapeHasHistory
+            (const Handle(GEOM_Function) &theWhereFunction,
+             const TopoDS_Shape &theWhat);
 
   /**
    *  \brief GetInPlaceByHistory method implementation.
