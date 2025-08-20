@@ -714,12 +714,12 @@ TCollection_AsciiString GEOM_Engine::DumpPython(std::vector<TObjectData>& theObj
   }
   
   if( isMultiFile )
-    aScript  = "import salome\n";
+    aScript  = "from salome.kernel import salome\n";
 
-  aScript += "import GEOM\n";
+  aScript += "from salome.kernel import GEOM\n";
   aScript += "from salome.geom import geomBuilder\n";
   aScript += "import math\n";
-  aScript += "import SALOMEDS\n\n";
+  aScript += "from salome.kernel import SALOMEDS\n\n";
   if( isMultiFile )
     aScript += "def RebuildData():";
 

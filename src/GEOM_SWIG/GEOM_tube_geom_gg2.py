@@ -30,9 +30,9 @@
 #==============================================================================
 # Geometrie du cas test
 #
-import salome
+from salome.kernel import salome
 salome.salome_init()
-import GEOM
+from salome.kernel import GEOM
 from salome.geom import geomBuilder
 geompy = geomBuilder.New()
 #
@@ -167,7 +167,7 @@ assemblageId = geompy.addToStudy(assemblage, "assemblage")
 # Display
 #
 gg = salome.ImportComponentGUI("GEOM")
-import salome_ComponentGUI
+from salome.kernel import salome_ComponentGUI
 if not isinstance(gg, type(salome_ComponentGUI)):
     gg.initGeomGen()
     gg.createAndDisplayGO(baseId)

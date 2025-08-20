@@ -18,8 +18,8 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-from GEOM import ISTEPOperations
-import GEOM
+from salome.kernel.GEOM import ISTEPOperations
+from salome.kernel import GEOM
 
 # Engine Library Name
 __libraryName__ = "STEPPluginEngine"

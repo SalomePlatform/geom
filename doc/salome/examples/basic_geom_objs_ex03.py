@@ -1,8 +1,8 @@
 # Creation of a Circle
 
-import salome
+from salome.kernel import salome
 salome.salome_init_without_session()
-import GEOM
+from salome.kernel import GEOM
 from salome.geom import geomBuilder
 geompy = geomBuilder.New()
 gg = salome.ImportComponentGUI("GEOM")

@@ -1,12 +1,12 @@
 # Creation of a Local Coordinate System
 
-import salome
+from salome.kernel import salome
 salome.salome_init_without_session()
-import GEOM
+from salome.kernel import GEOM
 from salome.geom import geomBuilder
 geompy = geomBuilder.New()
 import math
-import SALOMEDS
+from salome.kernel import SALOMEDS
 
 #Create vertexes, vectors and shapes to construct local CS
 Vertex_1 = geompy.MakeVertex(50, 50, 50)

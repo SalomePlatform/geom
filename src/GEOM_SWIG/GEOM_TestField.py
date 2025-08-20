@@ -107,7 +107,7 @@ def TestField (geomBuilder, math):
 
     # Field operations
 
-    import GEOM
+    from salome.kernel import GEOM
     CheckFieldCreation(shape,"fBool1",GEOM.FDT_Bool, 0, ['b1'], 1)
     CheckFieldCreation(shape,"fInt1", GEOM.FDT_Int,  1, ['i1','i2'], 2)
     CheckFieldCreation(shape,"fDbl1", 2,  3, ['d3'], 3)
@@ -157,7 +157,7 @@ def TestField (geomBuilder, math):
     dumpFile = tempfile.NamedTemporaryFile().name
     pyFile = dumpFile+".py"
     # dump the study
-    import salome
+    from salome.kernel import salome
     assert( salome.myStudy.DumpStudy(os.path.dirname(dumpFile), os.path.basename(dumpFile), 1, 0))
     exec(compile(open( pyFile ).read(), pyFile, 'exec'))
     os.remove( pyFile )

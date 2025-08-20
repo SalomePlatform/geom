@@ -50,7 +50,7 @@
 ## For example, consider the following Python script:
 ##
 ## @code
-## import salome
+## from salome.kernel import salome
 ## from salome.geom import geomBuilder
 ## geompy = geomBuilder.New()
 ## box = geompy.MakeBoxDXDYDZ(100, 100, 100) # box is not published in the study yet
@@ -113,7 +113,7 @@
 ## For example:
 ##
 ## @code
-## import salome
+## from salome.kernel import salome
 ## from salome.geom import geomBuilder
 ## geompy = geomBuilder.New()
 ## geompy.addToStudyAuto() # enable automatic publication
@@ -155,7 +155,7 @@
 ## For example:
 ##
 ## @code
-## import salome
+## from salome.kernel import salome
 ## from salome.geom import geomBuilder
 ## geompy = geomBuilder.New()
 ## box = geompy.MakeBoxDXDYDZ(100, 100, 100, "Box")
@@ -246,15 +246,15 @@ import omniORB
 # initialize SALOME session in try/except block
 # to avoid problems in some cases, e.g. when generating documentation
 try:
-    import salome
+    from salome.kernel import salome
     salome.salome_init()
-    from salome import *
+    from salome.kernel.salome import *
 except:
     pass
 
-from salome_notebook import *
+from salome.kernel.salome_notebook import *
 
-import GEOM
+from salome.kernel import GEOM
 import math
 import os
 import functools
@@ -14583,7 +14583,7 @@ omniORB.registerObjref(GEOM._objref_GEOM_Field._NP_RepositoryId, geomField)
 #
 #  Typical use is:
 #  \code
-#    import salome
+#    from salome.kernel import salome
 #    salome.salome_init()
 #    from salome.geom import geomBuilder
 #    geompy = geomBuilder.New()
@@ -14596,7 +14596,7 @@ def New( instance=None):
     interface to GEOM operations.
 
     Typical use is:
-        import salome
+        from salome.kernel import salome
         salome.salome_init()
         from salome.geom import geomBuilder
         geompy = geomBuilder.New()
@@ -14636,7 +14636,7 @@ if plugins is not None:
         try:
             exec( "from salome.%s.%s import *" % (pluginName, pluginBuilderName))
         except Exception as e:
-            from salome_utils import verbose
+            from salome.kernel.salome_utils import verbose
             print("Exception while loading %s: %s" % ( pluginBuilderName, e ))
             continue
         exec( "from salome.%s import %s" % (pluginName, pluginBuilderName))

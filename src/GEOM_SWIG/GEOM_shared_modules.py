@@ -31,9 +31,9 @@
 
 from launchConfigureParser import verbose
 
-if verbose(): print("============== import GEOM =======================")
+if verbose(): print("============== from salome.kernel import GEOM =======================")
 
-import GEOM
+from salome.kernel import GEOM
 
 # this function is required
 

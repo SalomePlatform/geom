@@ -18,7 +18,7 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-from GEOM import ISTLOperations
+from salome.kernel.GEOM import ISTLOperations
 
 # Engine Library Name
 __libraryName__ = "STLPluginEngine"

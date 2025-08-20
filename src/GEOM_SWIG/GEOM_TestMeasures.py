@@ -21,7 +21,7 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-import salome_version
+from salome.kernel import salome_version
 
 def TestMeasureOperations (geompy, math):
 

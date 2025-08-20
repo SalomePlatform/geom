@@ -1,4 +1,4 @@
-import salome, GEOM
+from salome.kernel import salome, GEOM
 from salome.geom import geomBuilder
 geompy = geomBuilder.New()
 

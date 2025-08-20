@@ -2,20 +2,20 @@
 # Faces of the prism are not perpendicular to cone axis, therefore contour-wires of resulting cone fragments are composed of lines and 2-order curves.
 
 import sys
-import salome
+from salome.kernel import salome
 
 salome.salome_init()
-import salome_notebook
+from salome.kernel import salome_notebook
 notebook = salome_notebook.NoteBook()
 
 ###
 ### GEOM component
 ###
 
-import GEOM
+from salome.kernel import GEOM
 from salome.geom import geomBuilder
 import math
-import SALOMEDS
+from salome.kernel import SALOMEDS
 
 
 def approximatelyEqual(a, b, epsilon = 1e-5):

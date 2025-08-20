@@ -33,8 +33,8 @@ structural element and to build the corresponding markers (trihedrons).
 
 import math
 
-from salome.kernel.logger import Logger
-from salome.kernel import termcolor
+from salome.kernel.salome.kernel.logger import Logger
+from salome.kernel.salome.kernel import termcolor
 logger = Logger("salome.geom.structelem.orientation", color = termcolor.RED)
 
 ## This class is used to compute the orientation of 1D elements and to build

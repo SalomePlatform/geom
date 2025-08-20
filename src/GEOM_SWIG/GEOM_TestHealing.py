@@ -395,7 +395,7 @@ def TestRemoveWebs (geompy):
 
 def TestSewGluing(geompy):
 
-  import GEOM
+  from salome.kernel import GEOM
   box1 = geompy.MakeBox(0,0,0, 1,1,1)
   box2 = geompy.MakeBox(1,0,0, 2,1,1)
   comp = geompy.MakeCompound( [box1, box2] )

@@ -19,12 +19,12 @@
 #
 
 import sys
-import salome
+from salome.kernel import salome
 
-import GEOM
+from salome.kernel import GEOM
 from salome.geom import geomBuilder
 import math
-import SALOMEDS
+from salome.kernel import SALOMEDS
 import time
 
 geompy = None

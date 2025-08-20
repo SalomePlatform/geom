@@ -26,7 +26,7 @@
 #  Author : Damien COQUERET, Open CASCADE
 #  Module : GEOM
 #
-import salome
+from salome.kernel import salome
 from salome.geom import geomBuilder
 geompy = geomBuilder.New()
 

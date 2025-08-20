@@ -1,6 +1,7 @@
 # Sewing
 
-import salome, math
+from salome.kernel import salome
+import math
 salome.salome_init_without_session()
 from salome.geom import geomBuilder
 

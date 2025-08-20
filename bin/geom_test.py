@@ -23,11 +23,11 @@ import unittest
 class TestGeometry(unittest.TestCase):
 
     def setUp(self):
-        import salome
+        from salome.kernel import salome
         salome.salome_init()
 
     def processGuiEvents(self):
-        import salome
+        from salome.kernel import salome
         if salome.sg.hasDesktop():
             salome.sg.updateObjBrowser();
             import SalomePyQt

@@ -96,12 +96,12 @@ Example::
 
 import types
 
-import salome
+from salome.kernel import salome
 
-from salome.kernel.logger import Logger
-from salome.kernel import termcolor
+from salome.kernel.salome.kernel.logger import Logger
+from salome.kernel.salome.kernel import termcolor
 logger = Logger("salome.geom.structelem", color = termcolor.RED)
-from salome.kernel.studyedit import getStudyEditor
+from salome.kernel.salome.kernel.studyedit import getStudyEditor
 
 __all__ = ["parts", "orientation"]
 
@@ -109,7 +109,7 @@ from salome.geom.geomtools import getGeompy
 from salome.geom.structelem import parts
 from salome.geom.structelem.parts import InvalidParameterError
 
-import GEOM
+from salome.kernel import GEOM
 
 ## This class manages the structural elements in the study. It is used to
 #  create a new structural element from a list of commands.
@@ -492,12 +492,12 @@ class StructuralElement:
 
 
 def TEST_CreateGeometry():
-    import salome
+    from salome.kernel import salome
     salome.salome_init()
-    import GEOM
+    from salome.kernel import GEOM
     from salome.geom import geomBuilder
     geompy = geomBuilder.New()
-    import SALOMEDS
+    from salome.kernel import SALOMEDS
     geompy.init_geom()
     Box_1 = geompy.MakeBoxDXDYDZ(200, 200, 200)
     edges = geompy.SubShapeAllSorted(Box_1, geompy.ShapeType["EDGE"])

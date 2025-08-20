@@ -18,8 +18,8 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-import GEOM
-from GEOM import IXAOOperations
+from salome.kernel import GEOM
+from salome.kernel.GEOM import IXAOOperations
 
 # Engine Library Name
 __libraryName__ = "XAOPluginEngine"

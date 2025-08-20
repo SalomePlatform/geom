@@ -18,7 +18,7 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-from GEOM import IVTKOperations
+from salome.kernel.GEOM import IVTKOperations
 
 # Engine Library Name
 __libraryName__ = "VTKPluginEngine"

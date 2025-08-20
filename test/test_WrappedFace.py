@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 
 import sys
-import salome
+from salome.kernel import salome
 salome.salome_init()
-import GEOM
+from salome.kernel import GEOM
 from salome.geom import geomBuilder
 import math
 from inspect import getfile
 from os.path import abspath, dirname, join
-import SALOMEDS
+from salome.kernel import SALOMEDS
 
 geompy = geomBuilder.New()
 

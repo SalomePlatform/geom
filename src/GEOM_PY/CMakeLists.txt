@@ -28,5 +28,5 @@ SET(_python_SCRIPTS
 
 # --- rules ---
 
-SALOME_INSTALL_SCRIPTS("${_python_SCRIPTS}" ${SALOME_INSTALL_PYTHON}/salome/geom)
-SALOME_CONFIGURE_FILE(__init__.py __init__.py INSTALL ${SALOME_INSTALL_PYTHON}/salome/geom)
+SALOME_INSTALL_SCRIPTS("${_python_SCRIPTS}" ${SALOME_GEOM_INSTALL_PYTHON}/salome/geom)
+SALOME_CONFIGURE_FILE(__init__.py __init__.py INSTALL ${SALOME_GEOM_INSTALL_PYTHON}/salome/geom)

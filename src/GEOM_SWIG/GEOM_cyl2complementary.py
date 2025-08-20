@@ -31,14 +31,14 @@
 # Import
 # ------
 #
-import salome
+from salome.kernel import salome
 salome.salome_init()
-import GEOM
+from salome.kernel import GEOM
 from salome.geom import geomBuilder
 geompy = geomBuilder.New()
 
 geomgui = salome.ImportComponentGUI("GEOM") 
-import salome_ComponentGUI
+from salome.kernel import salome_ComponentGUI
 def addToStudy(shape, name):
     i = geompy.addToStudy(shape, name)
     salome.sg.updateObjBrowser()

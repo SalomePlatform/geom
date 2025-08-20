@@ -1,10 +1,10 @@
 # Sample: KindOfShape method for Edges
 
-import salome
+from salome.kernel import salome
 from inspect import getfile
 from os.path import abspath, dirname, join
 salome.salome_init_without_session()
-import GEOM
+from salome.kernel import GEOM
 
 from salome.geom import geomBuilder
 geompy = geomBuilder.New()

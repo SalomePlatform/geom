@@ -18,7 +18,7 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-from GEOM import IBREPOperations
+from salome.kernel.GEOM import IBREPOperations
 
 # Engine Library Name
 __libraryName__ = "BREPPluginEngine"

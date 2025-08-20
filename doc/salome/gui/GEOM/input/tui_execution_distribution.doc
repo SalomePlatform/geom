@@ -12,7 +12,7 @@ We need to instantiate GEOM and SMESH Engines on these containers.
 
 The standard way of geometry initialization in a Python script is:
 \code
-import salome
+from salome.kernel import salome
 salome.salome_init()
 
 from salome.geom import geomBuilder

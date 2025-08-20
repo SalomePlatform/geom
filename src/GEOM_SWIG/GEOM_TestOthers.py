@@ -30,7 +30,7 @@
 # ! documentation generation to identify certain places of this file
 
 import os
-import GEOM
+from salome.kernel import GEOM
 import tempfile
 
 def TestExportImport (geompy, shape):

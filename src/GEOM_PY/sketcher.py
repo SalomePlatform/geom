@@ -56,11 +56,11 @@ Additional examples can be found as unit tests in the source code.
 
 geompyEnable = True
 try:
-    from salome.kernel.deprecation import is_called_by_sphinx
+    from salome.kernel.salome.kernel.deprecation import is_called_by_sphinx
     if not is_called_by_sphinx():
-        import salome
+        from salome.kernel import salome
         salome.salome_init()
-        import GEOM
+        from salome.kernel import GEOM
         from salome.geom import geomBuilder
         geompy = geomBuilder.New()
         pass

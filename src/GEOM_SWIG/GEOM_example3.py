@@ -26,14 +26,14 @@
 #  Author : Paul RASCLE, EDF
 #  Module : GEOM
 #
-import salome
+from salome.kernel import salome
 salome.salome_init()
-import GEOM
+from salome.kernel import GEOM
 from salome.geom import geomBuilder
 geompy = geomBuilder.New()
 import math
 from time import sleep
-import salome_ComponentGUI
+from salome.kernel import salome_ComponentGUI
 
 gg = salome.ImportComponentGUI("GEOM")
 
@@ -89,7 +89,7 @@ id_cage = geompy.addToStudy(cage,"cage")
 if not isinstance(gg, type(salome_ComponentGUI)):
     gg.createAndDisplayGO(id_cage)
 
-from salome import sg
+from salome.kernel.salome import sg
 sleep(1)
 sg.EraseAll()
 for id in idList:

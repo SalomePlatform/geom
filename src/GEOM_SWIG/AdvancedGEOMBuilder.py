@@ -17,7 +17,7 @@
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-from GEOM import IAdvancedOperations
+from salome.kernel.GEOM import IAdvancedOperations
 
 # Engine Library Name
 __libraryName__ = "AdvancedEngine"

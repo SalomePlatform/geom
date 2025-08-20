@@ -58,11 +58,9 @@ def generate(plugin_name, output):
           pass
 
     plugin_module_name = plugin_name + "Builder"
-    plugin_module = "salome.{}.{}".format(plugin_name, plugin_module_name)
     import_str = "from salome.{} import {}".format(plugin_name, plugin_module_name)
     execLine = "from salome.{} import {}\n" \
-               "import {}\n" \
-               "mod = {}".format(plugin_name, plugin_module_name, plugin_module, plugin_module)
+               "mod = {}".format(plugin_name, plugin_module_name, plugin_module_name)
     print(execLine)
     namespace = {}
     exec(execLine , namespace)

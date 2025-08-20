@@ -31,16 +31,16 @@ This module provides tools to facilitate the use of geom engine and geom
 objects in Salome.
 """
 
-import salome
+from salome.kernel import salome
 GEOM = None    # GEOM module is loaded only when needed
 
-from salome.kernel.logger import Logger
-from salome.kernel import termcolor
+from salome.kernel.salome.kernel.logger import Logger
+from salome.kernel.salome.kernel import termcolor
 logger = Logger("salome.geom.geomtools", color = termcolor.RED)
 
-from salome.kernel.studyedit import getStudyEditor
-from salome.kernel.services import IDToObject, IDToSObject
-from salome.kernel.deprecation import is_called_by_sphinx
+from salome.kernel.salome.kernel.studyedit import getStudyEditor
+from salome.kernel.salome.kernel.services import IDToObject, IDToSObject
+from salome.kernel.salome.kernel.deprecation import is_called_by_sphinx
 from salome.geom import geomBuilder
 
 try:
@@ -97,7 +97,7 @@ class GeomStudyTools:
     def __init__(self, studyEditor = None):
         global GEOM
         if GEOM is None:
-            GEOM = __import__("GEOM")
+            from salome.kernel import GEOM
         if studyEditor is None:
             studyEditor = getStudyEditor()
         self.editor = studyEditor
@@ -347,14 +347,14 @@ def TEST_createAndDeleteShape():
     entry from the study, and finally destroy the underlying GEOM
     object).
     """
-    import salome
+    from salome.kernel import salome
     salome.salome_init()
     study   = salome.myStudy
 
     from salome.geom import geomtools
     geompy = geomtools.getGeompy()
     
-    from salome.kernel.studyedit import getStudyEditor
+    from salome.kernel.salome.kernel.studyedit import getStudyEditor
     studyEditor = getStudyEditor()
 
     gst = geomtools.GeomStudyTools(studyEditor)

@@ -19,8 +19,8 @@
 #
 
 import os, sys, string
-from salome_utils import getLogDir, generateFileName, uniteFiles
-from setenv import add_path, get_lib_dir, salome_subdir
+from salome.kernel.salome_utils import getLogDir, generateFileName, uniteFiles
+from salome.kernel.setenv_impl import add_path, get_lib_dir, salome_subdir
 
 # -----------------------------------------------------------------------------
 

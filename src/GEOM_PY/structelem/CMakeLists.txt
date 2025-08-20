@@ -27,4 +27,4 @@ SET(_python_SCRIPTS
 
 # --- rules ---
 
-SALOME_INSTALL_SCRIPTS("${_python_SCRIPTS}" ${SALOME_INSTALL_PYTHON}/salome/geom/structelem)
+SALOME_INSTALL_SCRIPTS("${_python_SCRIPTS}" ${SALOME_GEOM_INSTALL_PYTHON}/salome/geom/structelem)

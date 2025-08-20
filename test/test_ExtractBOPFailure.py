@@ -21,7 +21,7 @@
 
 from inspect import getfile
 from os.path import abspath, dirname, join
-import salome
+from salome.kernel import salome
 from salome.geom import geomBuilder
 geompy = geomBuilder.New()
 

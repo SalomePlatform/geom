@@ -32,7 +32,7 @@
 # ! documentation generation to identify certain places of this file
 
 def TestAll (geompy, math):
-  import GEOM
+  from salome.kernel import GEOM
   
   #Create base Variables
   nbtimes1  = 5      #Short
@@ -459,7 +459,7 @@ def TestAll (geompy, math):
   id_Pipe       = geompy.addToStudy(Pipe,       "Pipe")
   id_Sewing     = geompy.addToStudy(Sewing,     "Sewing")
 
-  import salome_version
+  from salome.kernel import salome_version
   if int(salome_version.getXVersion(), 16) >= int('0x060600', 16):
     [Face5, Face6] = geompy.SubShapes(Box, [31, 33])
     [b1_e1, b1_e2, b1_e3, b1_e4] = geompy.SubShapes(Box, [12, 22, 25, 29])

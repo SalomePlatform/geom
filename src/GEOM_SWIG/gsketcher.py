@@ -1163,7 +1163,7 @@ class Sketcher2D:
         from salome.geom.geomBuilder import ParseSketcherCommand, RaiseIfFailed
         Command,Parameters = ParseSketcherCommand(self.myCommand)
 
-        import GEOM
+        from salome.kernel import GEOM
         if isinstance(WorkingPlane, list): wire = self.geompyD.CurvesOp.MakeSketcher(Command, WorkingPlane)
         if isinstance(WorkingPlane, GEOM._objref_GEOM_Object): wire = self.geompyD.CurvesOp.MakeSketcherOnPlane(Command, WorkingPlane)
 
@@ -1212,7 +1212,7 @@ class Sketcher2D:
         from salome.geom.geomBuilder import ParseSketcherCommand, RaiseIfFailed
         Command,Parameters = ParseSketcherCommand(self.myCommand)
 
-        import GEOM
+        from salome.kernel import GEOM
         if isinstance(WorkingPlane, list): face = self.geompyD.CurvesOp.MakeSketcher(Command, WorkingPlane)
         if isinstance(WorkingPlane, GEOM._objref_GEOM_Object): face = self.geompyD.CurvesOp.MakeSketcherOnPlane(Command, WorkingPlane)
 
@@ -1345,7 +1345,7 @@ class Polyline2D:
             resultObj = pl.result(WorkingPlane)
         """
         from salome.geom.geomBuilder import RaiseIfFailed
-        import GEOM
+        from salome.kernel import GEOM
         if isinstance(theWorkingPlane, list):
             aResult = self.geompyD.CurvesOp.MakePolyline2D(
                          self.myCoordsList, self.myNameList, self.myTypeList,

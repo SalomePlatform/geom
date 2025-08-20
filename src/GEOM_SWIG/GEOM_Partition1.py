@@ -43,9 +43,9 @@ colis_center = sqrt(2.0)*colis_step/2
 
 # --
 
-import salome
+from salome.kernel import salome
 salome.salome_init()
-import GEOM
+from salome.kernel import GEOM
 from salome.geom import geomBuilder
 geompy = geomBuilder.New()
 

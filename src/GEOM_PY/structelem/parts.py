@@ -37,11 +37,11 @@ class :class:`~salome.geom.structelem.StructuralElementManager`.
 
 import math
 
-import salome
-import SALOMEDS
+from salome.kernel import salome
+from salome.kernel import SALOMEDS
 
-from salome.kernel.logger import Logger
-from salome.kernel import termcolor
+from salome.kernel.salome.kernel.logger import Logger
+from salome.kernel.salome.kernel import termcolor
 logger = Logger("salome.geom.structelem.parts", color = termcolor.RED)
 from salome.geom.geomtools import getGeompy
 
