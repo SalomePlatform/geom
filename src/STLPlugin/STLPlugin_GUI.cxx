@@ -150,7 +150,7 @@ bool STLPlugin_GUI::importSTL( SUIT_Desktop* parent )
           errors.append( QString( "%1 : %2" ).arg( fileName ).arg( stlOp->GetErrorCode() ) );
         }
       }
-      catch( const SALOME::SALOME_Exception& e )
+      catch( const SALOME_CMOD::SALOME_Exception& e )
       {
         transaction.abort();
       }
@@ -234,7 +234,7 @@ bool STLPlugin_GUI::exportSTL( SUIT_Desktop* parent )
         return false;
       }
     }
-    catch ( const SALOME::SALOME_Exception& e )
+    catch ( const SALOME_CMOD::SALOME_Exception& e )
     {
       transaction.abort();
       return false;

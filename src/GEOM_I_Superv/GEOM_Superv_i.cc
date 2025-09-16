@@ -3589,7 +3589,7 @@ void GEOM_Superv_i::ExportVTK(  GEOM::GEOM_Object_ptr theObject,
   endService( " GEOM_Superv_i::ExportVTK" );
 #else
   std::string message("GEOM_Superv_i::ExportVTK functionality is unavailable");
-  THROW_SALOME_CORBA_EXCEPTION(message.c_str(), SALOME::INTERNAL_ERROR);
+  THROW_SALOME_CORBA_EXCEPTION(message.c_str(), SALOME_CMOD::INTERNAL_ERROR);
 #endif
 }
 

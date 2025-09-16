@@ -330,7 +330,7 @@ bool RepairGUI_FreeFacesDlg::execute( ObjectList& objects )
         if ( aPrs )
           displayPreview( aPrs, true );
       }
-      catch( const SALOME::SALOME_Exception& e )
+      catch( const SALOME_CMOD::SALOME_Exception& e )
       {
         SalomeApp_Tools::QtCatchCorbaException( e );
         buttonOk()->setEnabled(false);

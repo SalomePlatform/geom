@@ -61,7 +61,7 @@ void GEOM_Operation::startOperation()
       myIOperation->StartOperation();
       setState( Running );
     }
-    catch ( const SALOME::SALOME_Exception& e ) {
+    catch ( const SALOME_CMOD::SALOME_Exception& e ) {
       SalomeApp_Tools:: QtCatchCorbaException( e );
     }
   }
@@ -83,7 +83,7 @@ void GEOM_Operation::commitOperation()
       myIOperation->FinishOperation();
       setState( Waiting );
     }
-    catch ( const SALOME::SALOME_Exception& e ) {
+    catch ( const SALOME_CMOD::SALOME_Exception& e ) {
       SalomeApp_Tools:: QtCatchCorbaException( e );
     }
   }
@@ -119,7 +119,7 @@ void GEOM_Operation::abortOperation()
     try {
       myIOperation->AbortOperation();
     }
-    catch ( const SALOME::SALOME_Exception& e ) {
+    catch ( const SALOME_CMOD::SALOME_Exception& e ) {
       SalomeApp_Tools::QtCatchCorbaException( e );
     }
   }

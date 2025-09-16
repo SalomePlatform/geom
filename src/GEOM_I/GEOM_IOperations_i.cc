@@ -237,7 +237,7 @@ void GEOM_IOperations_i::UpdateGUIForObject(GEOM::GEOM_Object_ptr theObj)
     if (anEngine) {
       SALOME_NamingService *aNameService = anEngine->GetNS();
       CORBA::Object_var aSessionObj = aNameService->Resolve("/Kernel/Session");
-      SALOME::Session_var aSession = SALOME::Session::_narrow(aSessionObj);
+      SALOME_CMOD::Session_var aSession = SALOME_CMOD::Session::_narrow(aSessionObj);
   
       if (!aSession->_is_nil())
       {

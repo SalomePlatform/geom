@@ -106,7 +106,7 @@ Standard_Integer VTKPlugin_ExportDriver::Execute(Handle(TFunction_Logbook)& /*lo
   }
   catch( Standard_Failure& )
   {
-    //THROW_SALOME_CORBA_EXCEPTION("Exception caught in ExportVTK", SALOME::BAD_PARAM);
+    //THROW_SALOME_CORBA_EXCEPTION("Exception caught in ExportVTK", SALOME_CMOD::BAD_PARAM);
   }
   return 0;
 }

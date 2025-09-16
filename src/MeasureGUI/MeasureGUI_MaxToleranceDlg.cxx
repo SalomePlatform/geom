@@ -168,7 +168,7 @@ bool MeasureGUI_MaxToleranceDlg::getParameters( double& theMinFaceToler,
                             theMinFaceToler, theMaxFaceToler,   theMinEdgeToler,
                             theMaxEdgeToler, theMinVertexToler, theMaxVertexToler );
     }
-    catch( const SALOME::SALOME_Exception& e ) {
+    catch( const SALOME_CMOD::SALOME_Exception& e ) {
       SalomeApp_Tools::QtCatchCorbaException( e );
       return false;
     }

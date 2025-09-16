@@ -313,7 +313,7 @@ void MeasureGUI_DistanceDlg::processObject()
   try {
     nbSols = anOper->ClosestPoints(myObj1.get(), myObj2.get(), myDbls);
   }
-  catch (const SALOME::SALOME_Exception& e) {
+  catch (const SALOME_CMOD::SALOME_Exception& e) {
     SalomeApp_Tools::QtCatchCorbaException(e);
     return;
   }
@@ -515,7 +515,7 @@ void MeasureGUI_DistanceDlg::redisplayPreview()
     if (SALOME_Prs* aPrs = buildPrs())
       displayPreview(aPrs);
   }
-  catch (const SALOME::SALOME_Exception& e) {
+  catch (const SALOME_CMOD::SALOME_Exception& e) {
     SalomeApp_Tools::QtCatchCorbaException(e);
   }
 }

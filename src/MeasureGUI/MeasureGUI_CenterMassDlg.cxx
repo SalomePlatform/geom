@@ -315,7 +315,7 @@ bool MeasureGUI_CenterMassDlg::getParameters( double& theX, double& theY, double
 
       return true;
     }
-    catch( const SALOME::SALOME_Exception& e ) {
+    catch( const SALOME_CMOD::SALOME_Exception& e ) {
       SalomeApp_Tools::QtCatchCorbaException( e );
       return false;
     }

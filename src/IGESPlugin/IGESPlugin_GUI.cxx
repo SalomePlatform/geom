@@ -189,7 +189,7 @@ bool IGESPlugin_GUI::importIGES( SUIT_Desktop* parent )
           errors.append( QString( "%1 : %2" ).arg( fileName ).arg( igesOp->GetErrorCode() ) );
         }
       }
-      catch( const SALOME::SALOME_Exception& e )
+      catch( const SALOME_CMOD::SALOME_Exception& e )
       {
         transaction.abort();
       }
@@ -272,7 +272,7 @@ bool IGESPlugin_GUI::exportIGES( SUIT_Desktop* parent )
         return false;
       }
     }
-    catch ( const SALOME::SALOME_Exception& e )
+    catch ( const SALOME_CMOD::SALOME_Exception& e )
     {
       transaction.abort();
       return false;

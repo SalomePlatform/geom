@@ -296,7 +296,7 @@ module GEOM
   /*!
    *  \brief A common root of objects in GEOM module
    */
-  interface GEOM_BaseObject : SALOME::GenericObj
+  interface GEOM_BaseObject : SALOME_CMOD::GenericObj
   {
     /*!
      *  \brief Set name of the object.
@@ -704,7 +704,7 @@ module GEOM
   /*!
    *  \brief Basic methods of all geometric operations
    */
-  interface GEOM_IOperations : SALOME::GenericObj
+  interface GEOM_IOperations : SALOME_CMOD::GenericObj
   {
     /*!
      *  \brief To know, if the operation was successfully performed
@@ -5509,23 +5509,23 @@ module GEOM
 
     // #  Methods to access interfaces for objects creation and transformation
 
-    GEOM_IBasicOperations      GetIBasicOperations     () raises (SALOME::SALOME_Exception);
-    GEOM_ITransformOperations  GetITransformOperations () raises (SALOME::SALOME_Exception);
-    GEOM_I3DPrimOperations     GetI3DPrimOperations    () raises (SALOME::SALOME_Exception);
-    GEOM_IShapesOperations     GetIShapesOperations    () raises (SALOME::SALOME_Exception);
-    GEOM_IBooleanOperations    GetIBooleanOperations   () raises (SALOME::SALOME_Exception);
-    GEOM_ICurvesOperations     GetICurvesOperations    () raises (SALOME::SALOME_Exception);
-    GEOM_ILocalOperations      GetILocalOperations     () raises (SALOME::SALOME_Exception);
-    GEOM_IHealingOperations    GetIHealingOperations   () raises (SALOME::SALOME_Exception);
-    GEOM_IInsertOperations     GetIInsertOperations    () raises (SALOME::SALOME_Exception);
-    GEOM_IMeasureOperations    GetIMeasureOperations   () raises (SALOME::SALOME_Exception);
-    GEOM_IBlocksOperations     GetIBlocksOperations    () raises (SALOME::SALOME_Exception);
-    GEOM_IGroupOperations      GetIGroupOperations     () raises (SALOME::SALOME_Exception);
-    GEOM_IFieldOperations      GetIFieldOperations     () raises (SALOME::SALOME_Exception);
-    GEOM_ITestOperations       GetITestOperations      () raises (SALOME::SALOME_Exception);
-    GEOM_ICanonicalRecognition GetICanonicalRecognition() raises (SALOME::SALOME_Exception);
+    GEOM_IBasicOperations      GetIBasicOperations     () raises (SALOME_CMOD::SALOME_Exception);
+    GEOM_ITransformOperations  GetITransformOperations () raises (SALOME_CMOD::SALOME_Exception);
+    GEOM_I3DPrimOperations     GetI3DPrimOperations    () raises (SALOME_CMOD::SALOME_Exception);
+    GEOM_IShapesOperations     GetIShapesOperations    () raises (SALOME_CMOD::SALOME_Exception);
+    GEOM_IBooleanOperations    GetIBooleanOperations   () raises (SALOME_CMOD::SALOME_Exception);
+    GEOM_ICurvesOperations     GetICurvesOperations    () raises (SALOME_CMOD::SALOME_Exception);
+    GEOM_ILocalOperations      GetILocalOperations     () raises (SALOME_CMOD::SALOME_Exception);
+    GEOM_IHealingOperations    GetIHealingOperations   () raises (SALOME_CMOD::SALOME_Exception);
+    GEOM_IInsertOperations     GetIInsertOperations    () raises (SALOME_CMOD::SALOME_Exception);
+    GEOM_IMeasureOperations    GetIMeasureOperations   () raises (SALOME_CMOD::SALOME_Exception);
+    GEOM_IBlocksOperations     GetIBlocksOperations    () raises (SALOME_CMOD::SALOME_Exception);
+    GEOM_IGroupOperations      GetIGroupOperations     () raises (SALOME_CMOD::SALOME_Exception);
+    GEOM_IFieldOperations      GetIFieldOperations     () raises (SALOME_CMOD::SALOME_Exception);
+    GEOM_ITestOperations       GetITestOperations      () raises (SALOME_CMOD::SALOME_Exception);
+    GEOM_ICanonicalRecognition GetICanonicalRecognition() raises (SALOME_CMOD::SALOME_Exception);
 
-    GEOM_IOperations GetPluginOperations (in string theLibName) raises (SALOME::SALOME_Exception);
+    GEOM_IOperations GetPluginOperations (in string theLibName) raises (SALOME_CMOD::SALOME_Exception);
 
     // # Objects Management
 

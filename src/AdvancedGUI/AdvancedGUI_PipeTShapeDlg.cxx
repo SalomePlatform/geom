@@ -833,7 +833,7 @@ void AdvancedGUI_PipeTShapeDlg::DisplayPreview (const bool activate, const bool 
         obj->UnRegister();
     }
     HexMeshCheckBox->setChecked(hexMeshState);
-  } catch (const SALOME::SALOME_Exception& e) {
+  } catch (const SALOME_CMOD::SALOME_Exception& e) {
     SalomeApp_Tools::QtCatchCorbaException(e);
   }
 

@@ -222,7 +222,7 @@ bool MeasureGUI_AngleDlg::getParameters (double& theAngle)
     try {
       theAngle = anOper->GetAngle(myObj.get(), myObj2.get());
     }
-    catch(const SALOME::SALOME_Exception& e) {
+    catch(const SALOME_CMOD::SALOME_Exception& e) {
       SalomeApp_Tools::QtCatchCorbaException(e);
       return false;
     }

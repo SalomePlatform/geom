@@ -231,7 +231,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::SObject_ptr theSObjec
   } else {
     if (!theSObject->ReferencedObject(aResultSO))
       aResultSO = SALOMEDS::SObject::_duplicate(theSObject); //SRN: Added Aug 24,2004 : for  the method AddInStudy with theFather argumenet != NULL
-    //THROW_SALOME_CORBA_EXCEPTION("Publish in study supervision graph error",SALOME::BAD_PARAM);
+    //THROW_SALOME_CORBA_EXCEPTION("Publish in study supervision graph error",SALOME_CMOD::BAD_PARAM);
   }
   CORBA::String_var aGeomObjIOR = _orb->object_to_string(theObject);
   aResultSO->SetAttrString("AttributeIOR",aGeomObjIOR);
@@ -2533,7 +2533,7 @@ GEOM::GEOM_IOperations_ptr GEOM_Gen_i::GetPluginOperations(const char* theLibNam
     }
   }
   catch (SALOME_Exception& S_ex) {
-    THROW_SALOME_CORBA_EXCEPTION(S_ex.what(), SALOME::BAD_PARAM);
+    THROW_SALOME_CORBA_EXCEPTION(S_ex.what(), SALOME_CMOD::BAD_PARAM);
   }
 
   return operations._retn();

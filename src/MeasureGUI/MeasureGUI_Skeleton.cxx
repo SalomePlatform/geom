@@ -332,7 +332,7 @@ void MeasureGUI_Skeleton::redisplayPreview()
     if ( SALOME_Prs* aPrs = buildPrs() )
       displayPreview( aPrs );
   }
-  catch ( const SALOME::SALOME_Exception& e ) {
+  catch ( const SALOME_CMOD::SALOME_Exception& e ) {
     SalomeApp_Tools::QtCatchCorbaException( e );
   }
   

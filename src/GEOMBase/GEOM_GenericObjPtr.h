@@ -37,7 +37,7 @@ namespace GEOM
     \brief A smart pointer for the SALOME GenericObj interface.
 
     This class can be used in conjunction with the references to the CORBA objects which
-    interfaces are inherited from the SALOME::GenericObj CORBA interface.
+    interfaces are inherited from the SALOME_CMOD::GenericObj CORBA interface.
 
     The smart pointer class automatically invokes Register() / UnRegister() functions of th
     interface in order to prevent memory leaks and other such problems caused by improper

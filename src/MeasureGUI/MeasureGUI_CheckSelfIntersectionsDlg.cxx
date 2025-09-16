@@ -592,7 +592,7 @@ bool MeasureGUI_CheckSelfIntersectionsDlg::findSelfIntersections
       isOK = false;
     }
   }
-  catch (const SALOME::SALOME_Exception& e) {
+  catch (const SALOME_CMOD::SALOME_Exception& e) {
     SalomeApp_Tools::QtCatchCorbaException(e);
     isOK = false;
   }
@@ -675,7 +675,7 @@ void MeasureGUI_CheckSelfIntersectionsDlg::onSubShapesListSelectionChanged()
         SALOME_Prs* aPrs = !aSubShape.IsNull() ? getDisplayer()->BuildPrs(aSubShape) : 0;
         if (aPrs) displayPreview(aPrs, true);
       }
-      catch (const SALOME::SALOME_Exception& e) {
+      catch (const SALOME_CMOD::SALOME_Exception& e) {
         SalomeApp_Tools::QtCatchCorbaException(e);
       }
     }

@@ -398,7 +398,7 @@ bool MeasureGUI_AnnotationDlg::ClickOnApply()
         showError();
         return false;
       }
-  } catch ( const SALOME::SALOME_Exception& e ) {
+  } catch ( const SALOME_CMOD::SALOME_Exception& e ) {
     SalomeApp_Tools::QtCatchCorbaException( e );
     abortCommand();
     return false;
@@ -860,7 +860,7 @@ void MeasureGUI_AnnotationDlg::redisplayPreview()
 
       if ( SALOME_Prs* aPrs = buildPrs() )
         displayPreview( aPrs );
-      } catch ( const SALOME::SALOME_Exception& e ) {
+      } catch ( const SALOME_CMOD::SALOME_Exception& e ) {
         SalomeApp_Tools::QtCatchCorbaException( e );
       } catch ( ... ) {
     }

@@ -312,7 +312,7 @@ bool MeasureGUI_CheckCompoundOfBlocksDlg::getBCErrors( bool& theIsCompoundOfBloc
       //if (anOper->IsDone() && !aErrs._is_nil())
         theErrors = aErrs;
     }
-    catch ( const SALOME::SALOME_Exception& e ) {
+    catch ( const SALOME_CMOD::SALOME_Exception& e ) {
       SalomeApp_Tools::QtCatchCorbaException( e );
       return false;
     }
@@ -488,7 +488,7 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::onSubShapesListSelectionChanged()
         if ( aPrs )
           displayPreview( aPrs, true );
       }
-      catch ( const SALOME::SALOME_Exception& e ) {
+      catch ( const SALOME_CMOD::SALOME_Exception& e ) {
         SalomeApp_Tools::QtCatchCorbaException( e );
       }
     }

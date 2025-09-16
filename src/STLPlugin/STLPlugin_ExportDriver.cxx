@@ -113,7 +113,7 @@ Standard_Integer STLPlugin_ExportDriver::Execute(Handle(TFunction_Logbook)& log)
   }
   catch( Standard_Failure& )
   {
-    //THROW_SALOME_CORBA_EXCEPTION("Exception caught in ExportSTL", SALOME::BAD_PARAM);
+    //THROW_SALOME_CORBA_EXCEPTION("Exception caught in ExportSTL", SALOME_CMOD::BAD_PARAM);
   }
   return 0;
 }

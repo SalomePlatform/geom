@@ -201,7 +201,7 @@ bool MeasureGUI_InertiaDlg::getParameters( gp_Mat& I,
 
         theIXYZ.SetCoord( x, y, z );
     }
-    catch ( const SALOME::SALOME_Exception& e ) {
+    catch ( const SALOME_CMOD::SALOME_Exception& e ) {
       SalomeApp_Tools::QtCatchCorbaException( e );
       return false;
     }

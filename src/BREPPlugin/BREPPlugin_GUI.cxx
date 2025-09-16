@@ -152,7 +152,7 @@ bool BREPPlugin_GUI::importBREP( SUIT_Desktop* parent )
           errors.append( QString( "%1 : %2" ).arg( fileName ).arg( brepOp->GetErrorCode() ) );
         }
       }
-      catch( const SALOME::SALOME_Exception& e )
+      catch( const SALOME_CMOD::SALOME_Exception& e )
       {
         transaction.abort();
       }
@@ -231,7 +231,7 @@ bool BREPPlugin_GUI::exportBREP( SUIT_Desktop* parent )
 	return false;
       }
     }
-    catch ( const SALOME::SALOME_Exception& e )
+    catch ( const SALOME_CMOD::SALOME_Exception& e )
     {
       transaction.abort();
       return false;

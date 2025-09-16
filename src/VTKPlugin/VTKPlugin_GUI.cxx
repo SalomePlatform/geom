@@ -153,7 +153,7 @@ bool VTKPlugin_GUI::exportVTK( SUIT_Desktop* parent )
         return false;
       }
     }
-    catch ( const SALOME::SALOME_Exception& e )
+    catch ( const SALOME_CMOD::SALOME_Exception& e )
     {
       transaction.abort();
       return false;

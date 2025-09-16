@@ -312,7 +312,7 @@ void GEOMBase_Helper::displayPreview( const bool   display,
       }
     }
   }
-  catch( const SALOME::SALOME_Exception& e ) {
+  catch( const SALOME_CMOD::SALOME_Exception& e ) {
     SalomeApp_Tools::QtCatchCorbaException( e );
   }
 
@@ -975,7 +975,7 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, b
       }
     }
   }
-  catch( const SALOME::SALOME_Exception& e ) {
+  catch( const SALOME_CMOD::SALOME_Exception& e ) {
     SalomeApp_Tools::QtCatchCorbaException( e );
     abortCommand();
     MESSAGE("Exception caught");

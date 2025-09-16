@@ -479,7 +479,7 @@ bool MeasureGUI_FastCheckIntersectionsDlg::findIntersections()
   try {
     HasInte = anOper->FastIntersect(myObj1.get(), myObj2.get(), getTolerance(), getDeflection(), myInters1, myInters2);
   }
-  catch (const SALOME::SALOME_Exception& e) {
+  catch (const SALOME_CMOD::SALOME_Exception& e) {
     SalomeApp_Tools::QtCatchCorbaException(e);
     isOK = false;
   }
@@ -555,7 +555,7 @@ void MeasureGUI_FastCheckIntersectionsDlg::previewSubShapesListSelection(QListWi
         if (aPrs)
           displayPreview(aPrs, true);
       }
-      catch (const SALOME::SALOME_Exception& e) {
+      catch (const SALOME_CMOD::SALOME_Exception& e) {
         SalomeApp_Tools::QtCatchCorbaException(e);
       }
     }

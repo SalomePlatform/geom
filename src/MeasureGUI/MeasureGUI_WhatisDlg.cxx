@@ -220,7 +220,7 @@ bool MeasureGUI_WhatisDlg::getParameters( QString& theText )
   {
     theText = anOper->WhatIs( myObj.get() );
   }
-  catch( const SALOME::SALOME_Exception& e )
+  catch( const SALOME_CMOD::SALOME_Exception& e )
   {
     SalomeApp_Tools::QtCatchCorbaException( e );
     return false;
@@ -254,7 +254,7 @@ QString MeasureGUI_WhatisDlg::getKindOfShape( QString& theParameters )
   {
     aKind = anOper->KindOfShape( myObj.get(), anInts, aDbls );
   }
-  catch( const SALOME::SALOME_Exception& e ) {
+  catch( const SALOME_CMOD::SALOME_Exception& e ) {
     SalomeApp_Tools::QtCatchCorbaException( e );
     return aKindStr;
   }

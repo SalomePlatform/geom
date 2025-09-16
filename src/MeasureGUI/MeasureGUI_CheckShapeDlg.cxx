@@ -280,7 +280,7 @@ bool MeasureGUI_CheckShapeDlg::getErrors
       if (anOper->IsDone() && aErrs->length() > 0)
         theErrors = aErrs;
     }
-    catch( const SALOME::SALOME_Exception& e ) {
+    catch( const SALOME_CMOD::SALOME_Exception& e ) {
       SalomeApp_Tools::QtCatchCorbaException( e );
       return false;
     }
@@ -571,7 +571,7 @@ void MeasureGUI_CheckShapeDlg::onSubShapesListSelectionChanged()
           displayPreview(aPrs, true);
         }
       }
-      catch (const SALOME::SALOME_Exception& e) {
+      catch (const SALOME_CMOD::SALOME_Exception& e) {
         SalomeApp_Tools::QtCatchCorbaException(e);
       }
     }

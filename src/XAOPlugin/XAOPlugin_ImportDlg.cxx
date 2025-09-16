@@ -182,7 +182,7 @@ bool XAOPlugin_ImportDlg::ClickOnApply()
         return false;
       }
   }
-  catch( const SALOME::SALOME_Exception& e ) {
+  catch( const SALOME_CMOD::SALOME_Exception& e ) {
     SalomeApp_Tools::QtCatchCorbaException( e );
     abortCommand();
     return false;
