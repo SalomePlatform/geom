@@ -956,6 +956,10 @@
       <translation>公差の制限</translation>
     </message>
     <message>
+        <source>GEOM_EXACT_TOLERANCE</source>
+        <translation>エッジ公差の正確なチェック</translation>
+    </message>
+    <message>
       <source>GEOM_HEIGHT</source>
       <translation>高さ:</translation>
     </message>
@@ -6753,10 +6757,14 @@
     </message>
   </context>
   <context>
-    <name>MeasureGUI_1Sel1TextView1Check_QTD</name>
+    <name>MeasureGUI_1Sel1Check1TextView2ListBox_QTD</name>
     <message>
       <source>CHECK_SHAPE_GEOMETRY</source>
       <translation>ジオメトリもチェック</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_EXACT</source>
+        <translation>エッジ公差の正確なチェック</translation>
     </message>
   </context>
   <context>

@@ -1467,6 +1467,7 @@ void GEOMImpl_IMeasureOperations::GetTolerance
 //=============================================================================
 bool GEOMImpl_IMeasureOperations::CheckShape (Handle(GEOM_Object)     theShape,
                                               const Standard_Boolean  theIsCheckGeom,
+                                              const Standard_Boolean  theIsExact,
                                               std::list<GeomAnaTool::ShapeError> &theErrors)
 {
   SetErrorCode(KO);
@@ -1483,11 +1484,14 @@ bool GEOMImpl_IMeasureOperations::CheckShape (Handle(GEOM_Object)     theShape,
     return false;
   }
 
+  // Exact checking works only with enabled geometry checking
+  Standard_Boolean isCheckGeom = theIsCheckGeom || theIsExact;
+
   //Compute the parameters
   bool isValid = false;
   try {
     OCC_CATCH_SIGNALS;
-    BRepCheck_Analyzer ana (aShape, theIsCheckGeom);
+    BRepCheck_Analyzer ana (aShape, isCheckGeom, Standard_False, theIsExact);
     if (ana.IsValid()) {
       isValid = true;
     } else {

@@ -24,7 +24,11 @@
 // Created:   14.04.04 10:58:04
 // Author:    Galina KULIKOVA
 //
+
 #include <ShHealOper_ShapeProcess.hxx>
+
+#include <GEOMAlgo_AlgoTools.hxx>
+
 #include <ShapeProcessAPI_ApplySequence.hxx>
 #include <ShapeProcess_Context.hxx>
 #include <TCollection_AsciiString.hxx>
@@ -101,17 +105,19 @@ void ShHealOper_ShapeProcess::Perform(const TopoDS_Shape& theOldShape,
   // PAL6487: san -- preserve the original shape from being modified
 
   theNewShape = myOperations.PrepareShape(anOldShape,mySaveHistoryMode,myLevel);
-  if(mySaveHistoryMode)
+  bool isTolChanged = GEOMAlgo_AlgoTools::FixCurveOnSurfaceTolerances( theNewShape );
+
+  if (mySaveHistoryMode)
     myMapModifications = myOperations.Map();
   myDone = !anOldShape.IsSame(theNewShape);
-  if(!myDone) {
-    Standard_Real aendTol =aSatol.Tolerance(theNewShape,0);
-    myDone = (fabs(ainitTol - aendTol) > Precision::Confusion());
+  if (!myDone) {
+    Standard_Real aendTol = aSatol.Tolerance(theNewShape,0);
+    myDone = (fabs(ainitTol - aendTol) > Precision::Confusion() || isTolChanged);
     if ( myDone ) {
-      if ( ainitTol > aendTol )
-        myStatistics.AddModif( "Tolerance fixed (decreased)" );
-      else
+      if ( aendTol > ainitTol || isTolChanged )
         myStatistics.AddModif( "Tolerance fixed (increased)" );
+      else
+        myStatistics.AddModif( "Tolerance fixed (decreased)" );
     }
   }
 

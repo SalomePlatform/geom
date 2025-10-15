@@ -85,11 +85,15 @@ RepairGUI_LimitToleranceDlg::RepairGUI_LimitToleranceDlg(GeometryGUI* theGeometr
   initSpinBox(myTolEdt, 0., 100., DEFAULT_TOLERANCE_VALUE, "len_tol_precision");
   myTolEdt->setValue(DEFAULT_TOLERANCE_VALUE);
 
+  myExactAdjustChk = new QCheckBox (tr("GEOM_EXACT_TOLERANCE"), GroupPoints->Box);
+  myExactAdjustChk->setChecked(false);
+
   QGridLayout* boxLayout = new QGridLayout(GroupPoints->Box);
   boxLayout->setMargin(0); boxLayout->setSpacing(6);
   boxLayout->addWidget(aTolLab,  0, 0);
   boxLayout->addWidget(myTolEdt, 0, 2);
-
+  boxLayout->addWidget(myExactAdjustChk, 1, 0, 1, 2);
+  
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
   layout->addWidget(GroupPoints);
@@ -299,7 +303,8 @@ bool RepairGUI_LimitToleranceDlg::execute(ObjectList& objects)
   objects.clear();
 
   GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow(getOperation());
-  GEOM::GEOM_Object_var anObj = anOper->LimitTolerance(myObject, myTolEdt->value());
+  GEOM::GEOM_Object_var anObj =
+    anOper->LimitTolerance(myObject, myTolEdt->value(), myExactAdjustChk->isChecked());
   aResult = !anObj->_is_nil();
   if (aResult) {
     QStringList aParameters;

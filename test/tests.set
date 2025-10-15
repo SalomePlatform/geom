@@ -22,6 +22,7 @@ SET(ALL_TESTS
   test_patch_face_01.py
   test_set_autocolor.py
   test_ExtractBOPFailure.py
+  test_check_shape_exact.py
 )
 
 IF(${OpenCASCADE_VERSION}.${OpenCASCADE_SP_VERSION} VERSION_GREATER "7.5.3.3")

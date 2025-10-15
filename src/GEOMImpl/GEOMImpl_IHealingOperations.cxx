@@ -1161,7 +1161,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientationCopy (Handle(G
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IHealingOperations::LimitTolerance (Handle(GEOM_Object) theObject,
                                                                  double theTolerance,
-                                                                 TopAbs_ShapeEnum theType)
+                                                                 bool theExactAdjust)
 {
   // Set error code, check parameters
   SetErrorCode(KO);
@@ -1189,7 +1189,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::LimitTolerance (Handle(GEOM_Obj
   GEOMImpl_IHealing HI (aFunction);
   HI.SetOriginal(aLastFunction);
   HI.SetTolerance(theTolerance);
-  HI.SetType(theType);
+  HI.SetExactAdjust(theExactAdjust);
   HI.SetStatistics( myModifStats );
 
   // Compute
@@ -1207,7 +1207,8 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::LimitTolerance (Handle(GEOM_Obj
 
   // Make a Python command
   GEOM::TPythonDump(aFunction) << aNewObject << " = geompy.LimitTolerance("
-                               << theObject << ", " << theTolerance << ")";
+                               << theObject << ", " << theTolerance
+                               << ", " << theExactAdjust << ")";
 
   SetErrorCode(OK);
   return aNewObject;

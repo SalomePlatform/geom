@@ -7571,6 +7571,9 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         ## Try to limit tolerance of the given object by value \a theTolerance.
         #  @param theObject Shape to be processed.
         #  @param theTolerance Required tolerance value.
+        #  @param theExactAdjust If TRUE, take into account exact tolerance of edges.
+        #         In some cases, this may result in edge tolerances being increased
+        #         to values greater than both the original and required ones.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -7579,13 +7582,17 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_limit_tolerance "Example"
         @ManageTransactions("HealOp")
-        def LimitTolerance(self, theObject, theTolerance = 1e-07, theName=None):
+        def LimitTolerance(self, theObject, theTolerance = 1e-07,
+                           theExactAdjust = False, theName=None):
             """
             Try to limit tolerance of the given object by value theTolerance.
 
             Parameters:
                 theObject Shape to be processed.
                 theTolerance Required tolerance value.
+                theExactAdjust If TRUE, take into account exact tolerance of edges.
+                    In some cases, this may result in edge tolerances being increased
+                    to values greater than both the original and required ones.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -7593,7 +7600,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             Returns:
                 New GEOM.GEOM_Object, containing processed shape.
             """
-            anObj = self.HealOp.LimitTolerance(theObject, theTolerance)
+            anObj = self.HealOp.LimitTolerance(theObject, theTolerance, theExactAdjust)
             RaiseIfFailed("LimitTolerance", self.HealOp)
             self._autoPublish(anObj, theName, "limitTolerance")
             return anObj
@@ -11840,22 +11847,25 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         #  @param theShape Shape to check validity of.
         #  @param theIsCheckGeom If FALSE, only the shape's topology will be checked, \n
         #                        if TRUE, the shape's geometry will be checked also.
-        #  @param theReturnStatus If 0 and if theShape is invalid, a description
-        #                         of problem is printed.
-        #                         If 1 isValid flag and the description of
-        #                         problem is returned.
-        #                         If 2 isValid flag and the list of error data
-        #                         is returned.
-        #  @return TRUE, if the shape "seems to be valid".
-        #          If theShape is invalid, prints a description of problem.
-        #          If theReturnStatus is equal to 1 the description is returned
-        #          along with IsValid flag.
-        #          If theReturnStatus is equal to 2 the list of error data is
-        #          returned along with IsValid flag.
+        #  @param theReturnStatus It can be one of [-1, 0, 1, 2].
+        #                         Regulates the return value and output of the function.
+        #  @param theIsExact If TRUE, take into account exact tolerance of edges.
+        #                    It can take more time. Exact tolerance can be greater
+        #                    than the approximate one, which is calculated
+        #                    only in some points of edge.
+        #  @return (isValid [, Description or ErrorDataList])
+        #          where isValid is TRUE, if the shape "seems to be valid".
+        #          If theReturnStatus is equal to -1, returns IsValid flag only.
+        #          If theReturnStatus is equal to 0 (default), returns IsValid flag only,
+        #             but additionally prints a problem description, if theShape is invalid.
+        #          If theReturnStatus is equal to 1, the description string is
+        #             returned along with IsValid flag.
+        #          If theReturnStatus is equal to 2, the list of error data is
+        #             returned along with IsValid flag.
         #
         #  @ref tui_check_shape_page "Example"
         @ManageTransactions("MeasuOp")
-        def CheckShape(self,theShape, theIsCheckGeom = 0, theReturnStatus = 0):
+        def CheckShape(self, theShape, theIsCheckGeom = False, theReturnStatus = 0, theIsExact = False):
             """
             Check a topology of the given shape.
 
@@ -11863,33 +11873,33 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                 theShape Shape to check validity of.
                 theIsCheckGeom If FALSE, only the shape's topology will be checked,
                                if TRUE, the shape's geometry will be checked also.
-                theReturnStatus If 0 and if theShape is invalid, a description
-                                of problem is printed.
-                                If 1 IsValid flag and the description of
-                                problem is returned.
-                                If 2 IsValid flag and the list of error data
-                                is returned.
+                theReturnStatus It can be one of [-1, 0, 1, 2].
+                                Regulates the return value and output of the function.
+                theIsExact If TRUE, take into account exact tolerance of edges.
+                           It can take more time. Exact tolerance can be greater
+                           than the approximate one, which is calculated
+                           only in some points of edge.
 
             Returns:
-                TRUE, if the shape "seems to be valid".
-                If theShape is invalid, prints a description of problem.
-                If theReturnStatus is equal to 1 the description is returned
-                along with IsValid flag.
-                If theReturnStatus is equal to 2 the list of error data is
-                returned along with IsValid flag.
+                (isValid [, Description or ErrorDataList])
+                where isValid is TRUE, if the shape "seems to be valid".
+                If theReturnStatus is equal to -1, returns IsValid flag only.
+                If theReturnStatus is equal to 0 (default), returns IsValid flag only,
+                   but additionally prints a problem description, if theShape is invalid.
+                If theReturnStatus is equal to 1, the description string is
+                   returned along with IsValid flag.
+                If theReturnStatus is equal to 2, the list of error data is
+                   returned along with IsValid flag.
             """
             # Example: see GEOM_TestMeasures.py
-            if theIsCheckGeom:
-                (IsValid, ShapeErrors) = self.MeasuOp.CheckShapeWithGeometry(theShape)
-                RaiseIfFailed("CheckShapeWithGeometry", self.MeasuOp)
-            else:
-                (IsValid, ShapeErrors) = self.MeasuOp.CheckShape(theShape)
-                RaiseIfFailed("CheckShape", self.MeasuOp)
-            if IsValid == 0:
-                if theReturnStatus == 0:
-                    Descr = self.MeasuOp.PrintShapeErrors(theShape, ShapeErrors)
-                    print(Descr)
-            if theReturnStatus == 1:
+            (IsValid, ShapeErrors) = self.MeasuOp.CheckShapeOpts(theShape, theIsCheckGeom, theIsExact)
+            RaiseIfFailed("CheckShapeOpts", self.MeasuOp)
+            if theReturnStatus == 0:
+              if not IsValid:
+                Descr = self.MeasuOp.PrintShapeErrors(theShape, ShapeErrors)
+                print(Descr)
+              return IsValid
+            elif theReturnStatus == 1:
               Descr = self.MeasuOp.PrintShapeErrors(theShape, ShapeErrors)
               return (IsValid, Descr)
             elif theReturnStatus == 2:

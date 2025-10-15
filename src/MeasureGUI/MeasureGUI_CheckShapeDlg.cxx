@@ -130,6 +130,9 @@ void MeasureGUI_CheckShapeDlg::Init()
   connect( myGrp->CheckBox1, SIGNAL( toggled( bool) ), 
            this, SLOT( SelectionIntoArgument() ) );
 
+  connect( myGrp->CheckBox2, SIGNAL( toggled( bool) ), 
+           this, SLOT( SelectionIntoArgument() ) );
+
   initName( tr( "GEOM_CHECK_SHAPE_NAME") );
   buttonOk()->setEnabled( false );
   buttonApply()->setEnabled( false );
@@ -161,7 +164,7 @@ bool MeasureGUI_CheckShapeDlg::ClickOnApply()
 }
 
 //=================================================================================
-// function : SelectionIntoArgument
+// function : extractPrefix
 // purpose  :
 //=================================================================================
 bool MeasureGUI_CheckShapeDlg::extractPrefix() const
@@ -272,10 +275,8 @@ bool MeasureGUI_CheckShapeDlg::getErrors
     try {
       GEOM::GEOM_IMeasureOperations::ShapeErrors_var aErrs;
       bool isCheckGeometry = myGrp->CheckBox1->isChecked();
-      if ( isCheckGeometry )
-        theIsValid = anOper->CheckShapeWithGeometry( myObj, aErrs );
-      else
-        theIsValid = anOper->CheckShape( myObj, aErrs );
+      bool isCheckExact    = myGrp->CheckBox2->isChecked();
+      theIsValid = anOper->CheckShapeOpts( myObj, isCheckGeometry, isCheckExact, aErrs );
 
       if (anOper->IsDone() && aErrs->length() > 0)
         theErrors = aErrs;

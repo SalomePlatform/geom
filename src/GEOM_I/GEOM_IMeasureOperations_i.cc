@@ -629,6 +629,8 @@ CORBA::Boolean GEOM_IMeasureOperations_i::CheckShape
              (GEOM::GEOM_Object_ptr                          theShape,
               GEOM::GEOM_IMeasureOperations::ShapeErrors_out theErrors)
 {
+  return CheckShapeOpts(theShape, false, false, theErrors);
+  /*
   //Set a not done flag
   GetOperations()->SetNotDone();
 
@@ -646,15 +648,49 @@ CORBA::Boolean GEOM_IMeasureOperations_i::CheckShape
   }
 
   std::list<GeomAnaTool::ShapeError> anErrList;
-  bool isOk = GetOperations()->CheckShape(aShape, false, anErrList);
+  bool isOk = GetOperations()->CheckShape(aShape, false, false, anErrList);
 
   ConvertShapeError(anErrList, theErrors);
 
   return isOk;
+  */
 }
 
 CORBA::Boolean GEOM_IMeasureOperations_i::CheckShapeWithGeometry
              (GEOM::GEOM_Object_ptr                          theShape,
+              GEOM::GEOM_IMeasureOperations::ShapeErrors_out theErrors)
+{
+  return CheckShapeOpts(theShape, true, false, theErrors);
+  /*
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (CORBA::is_nil(theShape))
+  {
+    return 0;
+  }
+
+  //Get the reference shape
+  Handle(::GEOM_Object) aShape = GetObjectImpl(theShape);
+
+  if (aShape.IsNull())
+  {
+    return 0;
+  }
+
+  std::list<GeomAnaTool::ShapeError> anErrList;
+  bool isOk = GetOperations()->CheckShape(aShape, false, true, anErrList);
+
+  ConvertShapeError(anErrList, theErrors);
+
+  return isOk;
+  */
+}
+
+CORBA::Boolean GEOM_IMeasureOperations_i::CheckShapeOpts
+             (GEOM::GEOM_Object_ptr                          theShape,
+              CORBA::Boolean                                 theWithGeometry,
+              CORBA::Boolean                                 theExact,
               GEOM::GEOM_IMeasureOperations::ShapeErrors_out theErrors)
 {
   //Set a not done flag
@@ -674,7 +710,7 @@ CORBA::Boolean GEOM_IMeasureOperations_i::CheckShapeWithGeometry
   }
 
   std::list<GeomAnaTool::ShapeError> anErrList;
-  bool isOk = GetOperations()->CheckShape(aShape, true, anErrList);
+  bool isOk = GetOperations()->CheckShape(aShape, theWithGeometry, theExact, anErrList);
 
   ConvertShapeError(anErrList, theErrors);
 

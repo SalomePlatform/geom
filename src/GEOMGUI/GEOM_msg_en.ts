@@ -961,6 +961,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Limit tolerance</translation>
     </message>
     <message>
+        <source>GEOM_EXACT_TOLERANCE</source>
+        <translation>Exact check of edge tolerances</translation>
+    </message>
+    <message>
         <source>GEOM_HEIGHT</source>
         <translation>Height :</translation>
     </message>
@@ -6768,10 +6772,14 @@ Number of sketch points too small</translation>
     </message>
 </context>
 <context>
-    <name>MeasureGUI_1Sel1TextView1Check_QTD</name>
+    <name>MeasureGUI_1Sel1Check1TextView2ListBox_QTD</name>
     <message>
         <source>CHECK_SHAPE_GEOMETRY</source>
         <translation>Check also geometry</translation>
+    </message>
+    <message>
+        <source>CHECK_SHAPE_EXACT</source>
+        <translation>Exact check of edge tolerances</translation>
     </message>
 </context>
 <context>

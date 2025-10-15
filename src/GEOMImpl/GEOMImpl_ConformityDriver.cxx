@@ -91,7 +91,7 @@ GEOMImpl_ConformityDriver::GEOMImpl_ConformityDriver()
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer GEOMImpl_ConformityDriver::Execute(Handle(TFunction_Logbook)& log) const
+Standard_Integer GEOMImpl_ConformityDriver::Execute(Handle(TFunction_Logbook)& ) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
@@ -189,7 +189,7 @@ Standard_Real GEOMImpl_ConformityDriver::updateTolerance(const TopoDS_Shape& the
   }
 
   TopoDS_Shape aShape = theShape;
-  GEOMUtils::FixShapeTolerance(aShape, aTolerance, Standard_True);
+  GEOMUtils::FixShapeTolerance(aShape, TopAbs_SHAPE, aTolerance, Standard_True);
 
   Standard_Real aResTol = 0.;
   for (const auto& aType : { TopAbs_VERTEX, TopAbs_EDGE, TopAbs_FACE })

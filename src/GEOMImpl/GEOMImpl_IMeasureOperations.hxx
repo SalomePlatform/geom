@@ -153,6 +153,7 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
 
   Standard_EXPORT bool CheckShape (Handle(GEOM_Object)     theShape,
                                    const Standard_Boolean  theIsCheckGeom,
+                                   const Standard_Boolean  theIsExact,
                                    std::list<GeomAnaTool::ShapeError>  &theErrors);
 
   Standard_EXPORT TCollection_AsciiString PrintShapeErrors

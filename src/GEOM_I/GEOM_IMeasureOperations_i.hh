@@ -94,6 +94,12 @@ class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
              (GEOM::GEOM_Object_ptr                          theShape,
               GEOM::GEOM_IMeasureOperations::ShapeErrors_out theErrors);
 
+  CORBA::Boolean CheckShapeOpts
+             (GEOM::GEOM_Object_ptr                          theShape,
+              CORBA::Boolean                                 theWithGeometry,
+              CORBA::Boolean                                 theExact,
+              GEOM::GEOM_IMeasureOperations::ShapeErrors_out theErrors);
+
   char* PrintShapeErrors
              (      GEOM::GEOM_Object_ptr                       theShape,
               const GEOM::GEOM_IMeasureOperations::ShapeErrors &theErrors);

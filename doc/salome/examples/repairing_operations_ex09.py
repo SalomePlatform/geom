@@ -20,8 +20,8 @@ try:
 except:
     # limit tolerance
     tolerance = 1e-07
-    shape1_lt = geompy.LimitTolerance(shape1, tolerance)
-    shape2_lt = geompy.LimitTolerance(shape2, tolerance)
+    shape1_lt = geompy.LimitTolerance(shape1, tolerance, True)
+    shape2_lt = geompy.LimitTolerance(shape2, tolerance, False)
 
     # process shape
     good_shape1 = geompy.ProcessShape(shape1_lt, ["FixShape"], ["FixShape.Tolerance3d"], ["1e-7"])

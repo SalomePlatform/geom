@@ -638,7 +638,7 @@ void GEOMImpl_HealingDriver::LimitTolerance (GEOMImpl_IHealing* theHI,
                                              TopoDS_Shape& theOutShape) const
 {
   Standard_Real aTol = theHI->GetTolerance();
-  TopAbs_ShapeEnum aType = theHI->GetType();
+  Standard_Boolean anExactAdjust = theHI->GetExactAdjust();
 
   if (aTol < Precision::Confusion())
     aTol = Precision::Confusion();
@@ -657,7 +657,7 @@ void GEOMImpl_HealingDriver::LimitTolerance (GEOMImpl_IHealing* theHI,
   }
 
   // 2. Limit tolerance.
-  if (!GEOMUtils::FixShapeTolerance(aShapeCopy, aType, aTol))
+  if (!GEOMUtils::FixShapeTolerance(aShapeCopy, TopAbs_SHAPE, aTol, false, anExactAdjust))
     StdFail_NotDone::Raise("Non valid shape result");
 
   // 3. Set the result
@@ -1120,7 +1120,7 @@ GetCreationInformation(std::string&             theOperationName,
     theOperationName = "LIMIT_TOLERANCE";
     AddParam( theParams, "Selected shape", aCI.GetOriginal() );
     AddParam( theParams, "Tolerance", aCI.GetTolerance() );
-    AddParam( theParams, "Type", aCI.GetType() );
+    AddParam( theParams, "Exact adjust", aCI.GetExactAdjust() );
     break;
   case FUSE_COLLINEAR_EDGES:
     theOperationName = "FUSE_EDGES";

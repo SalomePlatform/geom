@@ -4336,9 +4336,14 @@ module GEOM
      *  \brief Try to limit tolerance of the given object by value \a theTolerance.
      *  \param theObject Shape to be processed.
      *  \param theTolerance Required tolerance value.
+     *  \param theExactAdjust If true, take into account exact tolerance of edges.
+     *         In some cases, this may result in edge tolerances being increased
+     *         to values greater than both the original and required ones.
      *  \return New GEOM_Object, containing processed shape.
      */
-    GEOM_Object LimitTolerance (in GEOM_Object theObject, in double theTolerance);
+    GEOM_Object LimitTolerance (in GEOM_Object theObject,
+                                in double theTolerance,
+                                in boolean theExactAdjust);
 
     /*!
      *  \brief Provides Python dump functionality for algorithms entirely implemented in Python.
@@ -4786,6 +4791,19 @@ module GEOM
      */
     boolean CheckShapeWithGeometry (in GEOM_Object  theShape,
                                     out ShapeErrors theErrors);
+
+    /*!
+     *  \brief Check a topology and a geometry of the given shape.
+     *  \param theShape Shape to check validity of.
+     *  \param theWithGeometry If true, check also shape's geometry.
+     *  \param theExact If true, take into account exact tolerance of edges. It can take more time. Exact tolerance can be greater than the approximate one, which is calculated only in some points of edge.
+     *  \param theErrors Structure, containing discovered errors and incriminated sub-shapes.
+     *  \return TRUE, if the shape "seems to be valid".
+     */
+    boolean CheckShapeOpts (in GEOM_Object  theShape,
+                            in boolean      theWithGeometry,
+                            in boolean      theExact,
+                            out ShapeErrors theErrors);
 
     /*!
      *  \brief Convert sequence of shape errors, returned by

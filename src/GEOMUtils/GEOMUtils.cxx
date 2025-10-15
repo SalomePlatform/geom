@@ -891,9 +891,13 @@ void GEOMUtils::ConvertStringToTree( const std::string& dependencyStr,
 }
 
 bool GEOMUtils::CheckShape( TopoDS_Shape& shape,
-                            bool checkGeometry )
+                            bool checkGeometry,
+                            bool isExact )
 {
-  BRepCheck_Analyzer analyzer( shape, checkGeometry );
+  // Exact checking works only with enabled geometry checking
+  Standard_Boolean isCheckGeom = checkGeometry || isExact;
+
+  BRepCheck_Analyzer analyzer( shape, isCheckGeom, Standard_False, isExact );
   return analyzer.IsValid();
 }
 
@@ -923,27 +927,17 @@ bool GEOMUtils::CheckBOPArguments(const TopoDS_Shape &theShape)
 bool GEOMUtils::FixShapeTolerance( TopoDS_Shape& shape,
                                    TopAbs_ShapeEnum type,
                                    Standard_Real tolerance,
-                                   bool checkGeometry )
+                                   bool checkGeometry,
+                                   bool isExactAdjust )
 {
   ShapeFix_ShapeTolerance aSft;
   aSft.LimitTolerance( shape, tolerance, tolerance, type );
+  if (isExactAdjust)
+    GEOMAlgo_AlgoTools::FixCurveOnSurfaceTolerances( shape );
   Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape( shape );
   aSfs->Perform();
   shape = aSfs->Shape();
-  return CheckShape( shape, checkGeometry );
-}
-
-bool GEOMUtils::FixShapeTolerance( TopoDS_Shape& shape,
-                                   Standard_Real tolerance,
-                                   bool checkGeometry )
-{
-  return FixShapeTolerance( shape, TopAbs_SHAPE, tolerance, checkGeometry );
-}
-
-bool GEOMUtils::FixShapeTolerance( TopoDS_Shape& shape,
-                                   bool checkGeometry )
-{
-  return FixShapeTolerance( shape, Precision::Confusion(), checkGeometry );
+  return CheckShape( shape, checkGeometry, isExactAdjust );
 }
 
 bool GEOMUtils::FixShapeCurves( TopoDS_Shape& shape )

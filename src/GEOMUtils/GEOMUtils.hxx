@@ -243,9 +243,12 @@ namespace GEOMUtils
    * \param shape input shape object
    * \param checkGeometry when set to \c true, causes check of underlying geometry
    *        in addition to the topology
+   * \param isExact when set to \c true, causes exact check of curves on surfaces
    * \return \c true if shape is valid or \c false otherwise
    */
-  Standard_EXPORT bool CheckShape( TopoDS_Shape& shape, bool checkGeometry = false );
+  Standard_EXPORT bool CheckShape( TopoDS_Shape& shape,
+                                   bool checkGeometry = false,
+                                   bool isExact = false );
 
   /*!
    * \brief Check boolean and partition operations arguments
@@ -272,24 +275,10 @@ namespace GEOMUtils
    *       passing \c true to \a checkGeometry parameter
    */
   Standard_EXPORT bool FixShapeTolerance( TopoDS_Shape& shape,
-                                          TopAbs_ShapeEnum type,
+                                          TopAbs_ShapeEnum type = TopAbs_SHAPE,
                                           Standard_Real tolerance = Precision::Confusion(),
-                                          bool checkGeometry = false );
-
-  /*!
-   * \brief Limit shape tolerance to the given value
-   * This is overloaded function, it behaves exactly as previous one
-   */
-  Standard_EXPORT bool FixShapeTolerance( TopoDS_Shape& shape,
-                                          Standard_Real tolerance = Precision::Confusion(),
-                                          bool checkGeometry = false );
-
-  /*!
-   * \brief Limit shape tolerance to the given value
-   * This is overloaded function, it behaves exactly as previous one
-   */
-  Standard_EXPORT bool FixShapeTolerance( TopoDS_Shape& shape,
-                                          bool checkGeometry );
+                                          bool checkGeometry = false,
+                                          bool isExactAdjust = false );
 
   /*!
    * \brief Fix curves of the given shape

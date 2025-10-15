@@ -11,6 +11,10 @@ In this dialog:
 
 - \b Object - the checked object. \b Selection button allows picking it in the viewer or in the object browser. 
 - <b>Check also geometry</b> option allows testing the geometry of the object as well.
+- If <b>Exact check of edge tolerances</b> is checked, exact calculation of gaps
+   between curves of edges and surfaces of faces will be performed.
+   If maximum deviation exceeds tolerance of edge, the shape reported as invalid.
+   It takes more time, but gives better results.
 - \b Errors list informs of possible errors. 
 - <b>Incriminated Sub-shapes</b> field outputs the list of sub-shapes that cause problem. It is possible to select them in the list and publish in the study for further analysis by clicking \b Apply or <b>Apply and Close</b> button. 
 
@@ -19,7 +23,7 @@ In this dialog:
 <UL>
 
 <LI>
-<em>geompy.CheckShape(theShape, theIsCheckGeom = 0, theReturnStatus = 0),</em> \n
+<em>geompy.CheckShape(theShape, theIsCheckGeom = False, theReturnStatus = 0, theIsExact = False),</em> \n
 where \n
 \em theShape is the shape checked for validity. \n
 \em theIsCheckGeom is the flag that tells if geometry should be checked also.\n
@@ -30,6 +34,7 @@ where \n
 <LI>1 - \em IsValid status and the description of problem are returned.</LI>
 <LI>2 - \em IsValid status and the list of error data are returned.</LI>
 </UL>
+\em theIsExact is the flag to switch on/off exact calculation of edge tolerances.\n
 </LI>
 
 <LI>
@@ -39,7 +44,7 @@ where \n
 \em theShapeErrors are the shape errors obtained by CheckShape. \n
 \em theReturnStatus is the flag that can have the following values:
 <UL>
-<LI>0 - the problem description is printed and \em IsValid status is returned.</LI>
+<LI>0 - the problem description is printed and nothing is returned.</LI>
 <LI>1 - the problem description is returned.</LI>
 </UL>
 </LI>

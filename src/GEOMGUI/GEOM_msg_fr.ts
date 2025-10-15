@@ -961,6 +961,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Limiter la tolérance</translation>
     </message>
     <message>
+        <source>GEOM_EXACT_TOLERANCE</source>
+        <translation>Vérification précise des tolérances des arêtes</translation>
+    </message>
+    <message>
         <source>GEOM_HEIGHT</source>
         <translation>Hauteur :</translation>
     </message>
@@ -6748,10 +6752,14 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
 </context>
 <context>
-    <name>MeasureGUI_1Sel1TextView1Check_QTD</name>
+    <name>MeasureGUI_1Sel1Check1TextView2ListBox_QTD</name>
     <message>
         <source>CHECK_SHAPE_GEOMETRY</source>
         <translation>Vérifier la géométrie</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_EXACT</source>
+        <translation>Vérification précise des tolérances des arêtes</translation>
     </message>
 </context>
 <context>
