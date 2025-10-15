@@ -104,7 +104,7 @@ class GEOMImpl_IHealingOperations : public GEOM_IOperations {
 
   Standard_EXPORT Handle(GEOM_Object) LimitTolerance( Handle(GEOM_Object) theObject,
                                                       double theTolerance,
-                                                      TopAbs_ShapeEnum theType = TopAbs_SHAPE );
+                                                      bool theExactAdjust );
 
   // This function doesn't do any healing.
   // The only goal is to provide Python dump functionality for 

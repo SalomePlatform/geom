@@ -55,10 +55,10 @@
       <property name="verticalSpacing" >
        <number>6</number>
       </property>
-      <item row="4" column="2" >
+      <item row="5" column="2" >
        <widget class="QListWidget" name="ListBox2" />
       </item>
-      <item row="4" column="0" colspan="2" >
+      <item row="5" column="0" colspan="2" >
        <widget class="QListWidget" name="ListBox1" />
       </item>
       <item row="0" column="2" >
@@ -74,11 +74,18 @@
       <item row="1" column="0" colspan="3" >
        <widget class="QCheckBox" name="CheckBox1" >
         <property name="text" >
-         <string>Check also geometry</string>
+         <string>CHECK_SHAPE_GEOMETRY</string>
         </property>
        </widget>
       </item>
       <item row="2" column="0" colspan="3" >
+       <widget class="QCheckBox" name="CheckBox2" >
+        <property name="text" >
+         <string>CHECK_SHAPE_EXACT</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="3" >
        <widget class="QTextBrowser" name="TextView1" >
         <property name="minimumSize" >
          <size>
@@ -88,14 +95,14 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0" >
+      <item row="4" column="0" >
        <widget class="QLabel" name="TextLabel2" >
         <property name="text" >
          <string>TL2</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="2" >
+      <item row="4" column="2" >
        <widget class="QLabel" name="TextLabel3" >
         <property name="text" >
          <string>TL3</string>
@@ -131,6 +138,7 @@
   <tabstop>PushButton1</tabstop>
   <tabstop>LineEdit1</tabstop>
   <tabstop>CheckBox1</tabstop>
+  <tabstop>CheckBox2</tabstop>
   <tabstop>TextView1</tabstop>
  </tabstops>
  <resources/>

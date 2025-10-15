@@ -8,7 +8,7 @@ geompy = geomBuilder.New()
 
 # create a box
 box = geompy.MakeBoxDXDYDZ(100,30,100)
-(IsValid, err) = geompy.CheckShape(box, 0, 2)
+(IsValid, err) = geompy.CheckShape(box, False, 2, True)
 if IsValid == 0:
     geompy.PrintShapeErrors(box, err)
     raise RuntimeError("Invalid box created")

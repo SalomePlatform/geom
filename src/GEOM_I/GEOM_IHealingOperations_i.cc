@@ -616,7 +616,8 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::ChangeOrientationCopy (GEOM::GE
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::LimitTolerance (GEOM::GEOM_Object_ptr theObject,
-                                                                 CORBA::Double theTolerance)
+                                                                 CORBA::Double theTolerance,
+                                                                 CORBA::Boolean theExactAdjust)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -630,7 +631,7 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::LimitTolerance (GEOM::GEOM_Obje
 
   // Perform
   Handle(::GEOM_Object) aNewObject =
-    GetOperations()->LimitTolerance(anObject, theTolerance);
+    GetOperations()->LimitTolerance(anObject, theTolerance, theExactAdjust);
   if (!GetOperations()->IsDone() || aNewObject.IsNull())
     return aGEOMObject._retn();
 

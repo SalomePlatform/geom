@@ -514,7 +514,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFace (Handle(GEOM_Object) th
 
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aFace << " = geompy.MakeFace("
-    << theWire << ", " << (int)isPlanarWanted << ")";
+    << theWire << ", " << isPlanarWanted << ")";
 
   // to provide warning
   if (!isWarning) SetErrorCode(OK);
@@ -592,7 +592,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceWires
       pd << ", " << (*it++);
     }
   }
-  pd << "], " << (int)isPlanarWanted << ")";
+  pd << "], " << isPlanarWanted << ")";
 
   // to provide warning
   if (!isWarning) SetErrorCode(OK);

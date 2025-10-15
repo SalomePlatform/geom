@@ -44,7 +44,7 @@ public:
     ARG_IS_BY_PARAMETER         =  9,
     ARG_SUBSHAPE_INDEX          = 10,
     ARG_LIST_SHAPES             = 11,
-    ARG_TYPE                    = 12
+    ARG_EXACT_ADJUST            = 12
   };
 
   GEOMImpl_IHealing(Handle(GEOM_Function) theFunction): _func(theFunction) {}
@@ -76,8 +76,8 @@ public:
   void SetTolerance( Standard_Real val ) { _func->SetReal(ARG_TOLERANCE, val); }
   Standard_Real GetTolerance() { return _func->GetReal(ARG_TOLERANCE); }
 
-  void SetType( TopAbs_ShapeEnum val ) { _func->SetInteger(ARG_TYPE, (Standard_Integer)val); }
-  TopAbs_ShapeEnum GetType() { TopAbs_ShapeEnum type = (TopAbs_ShapeEnum)(_func->GetInteger(ARG_TYPE)); return _func->IsDone() ? type : TopAbs_SHAPE; }
+  void SetExactAdjust( Standard_Boolean val ) { _func->SetInteger(ARG_EXACT_ADJUST, val ? 1 : 0); }
+  Standard_Boolean GetExactAdjust() { return (_func->GetInteger(ARG_EXACT_ADJUST) != 0 ); }
 
   void SetDevideEdgeValue( Standard_Real val ) { _func->SetReal(ARG_DEV_EDGE_VALUE, val); }
   Standard_Real GetDevideEdgeValue() { return _func->GetReal(ARG_DEV_EDGE_VALUE); }

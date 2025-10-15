@@ -97,7 +97,8 @@ class GEOM_I_EXPORT GEOM_IHealingOperations_i :
    GEOM::GEOM_Object_ptr ChangeOrientationCopy (GEOM::GEOM_Object_ptr theObject);
 
    GEOM::GEOM_Object_ptr LimitTolerance (GEOM::GEOM_Object_ptr theObject,
-                                         CORBA::Double theTolerance);
+                                         CORBA::Double theTolerance,
+                                         CORBA::Boolean theExactAdjust);
 
    // The only goal is to provide Python dump functionality for 
    // algorithms entirely implemented in Python.

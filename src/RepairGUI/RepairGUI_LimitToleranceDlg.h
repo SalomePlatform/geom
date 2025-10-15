@@ -66,6 +66,7 @@ private:
 
   DlgRef_1SelExt*                    GroupPoints;
   SalomeApp_DoubleSpinBox*           myTolEdt;
+  QCheckBox*                         myExactAdjustChk;
 
 private slots:
   void                               ClickOnOk();
