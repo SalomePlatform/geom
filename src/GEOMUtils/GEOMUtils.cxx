@@ -593,6 +593,34 @@ TopAbs_ShapeEnum GEOMUtils::GetTypeOfSimplePart (const TopoDS_Shape& theShape)
 }
 
 //=======================================================================
+//function : GetCommonShapeType
+//purpose  :
+//=======================================================================
+TopAbs_ShapeEnum GEOMUtils::GetCommonShapeType (const TopoDS_Shape& theShape)
+{
+  if (theShape.IsNull()) {
+    return TopAbs_SHAPE;
+  }
+  TopAbs_ShapeEnum aType = theShape.ShapeType();
+  if (aType != TopAbs_COMPOUND) {
+    return aType;
+  }
+
+  TopAbs_ShapeEnum aCommonType = TopAbs_SHAPE;
+  TopoDS_Iterator It (theShape, Standard_False, Standard_False);
+  for (; It.More(); It.Next()) {
+    TopAbs_ShapeEnum aSubType = GetCommonShapeType(It.Value());
+    if (aCommonType == TopAbs_SHAPE) {
+      aCommonType = aSubType;
+    }
+    else if (aCommonType != aSubType) {
+      return TopAbs_SHAPE;
+    }
+  }
+  return aCommonType;
+}
+
+//=======================================================================
 //function : GetEdgeNearPoint
 //purpose  :
 //=======================================================================

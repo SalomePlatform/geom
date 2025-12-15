@@ -407,9 +407,21 @@ module GEOM
      *  In contrast to the shape type, this function returns type of the most
      *  top-level sub-shape of the COMPOUND or COMPSOLID, if there is only one
      *  sub-shape there.
-     *  \sa GetShapeType()
+     *  \sa GetShapeType(), GetCommonShapeType()
      */
     shape_type GetTopologyType();
+
+    /*!
+     *  \brief Get the common shape type of the top-level shapes contained in the object.
+     *
+     *  In contrast to the topology type, this function returns the common type of
+     *  the top-level sub-shapes of the COMPOUND or COMPSOLID, if there are multiple
+     *  sub-shapes there.
+     *  If there is no common shape type (GetMinShapeType() and GetMaxShapeType() return
+     *  different values) for the same COMPOUND/COMPSOLID, the generic SHAPE value is returned.
+     *  \sa GetShapeType(), GetTopologyType(), GetMinShapeType(), GetMaxShapeType()
+     */
+    shape_type GetCommonShapeType();
 
     /*!
      *  \brief Get a minimal type of the top-level shapes contained in the object.
@@ -418,7 +430,7 @@ module GEOM
      *  exactly the same value as GetShapeType().
      *  Note, that compounds are processed recursively.
      *
-     *  \sa GetShapeType(), GetTopologyType(), GetMaxShapeType()
+     *  \sa GetShapeType(), GetCommonShapeType(), GetTopologyType(), GetMaxShapeType()
      */
     shape_type GetMinShapeType();
 
@@ -429,7 +441,7 @@ module GEOM
      *  exactly the same value as GetShapeType().
      *  Note, that compounds are processed recursively.
      *
-     *  \sa GetShapeType(), GetTopologyType(), GetMinShapeType()
+     *  \sa GetShapeType(), GetCommonShapeType(), GetTopologyType(), GetMinShapeType()
      */
     shape_type GetMaxShapeType();
 
