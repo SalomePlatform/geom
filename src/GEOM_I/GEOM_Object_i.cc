@@ -115,6 +115,18 @@ GEOM::shape_type GEOM_Object_i::GetTopologyType()
   return (GEOM::shape_type)shape.ShapeType();
 }
 
+//=============================================================================
+/*!
+ *  GetCommonShapeType
+ */
+//=============================================================================
+GEOM::shape_type GEOM_Object_i::GetCommonShapeType()
+{
+  TopoDS_Shape shape = _impl->GetValue();
+  return (GEOM::shape_type)GEOMUtils::GetCommonShapeType( shape );
+}
+
+
 static GEOM::shape_type getMinMaxShapeType( const TopoDS_Shape& shape, bool ismin )
 {
   if ( shape.IsNull() )

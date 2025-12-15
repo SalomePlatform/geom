@@ -163,6 +163,17 @@ namespace GEOMUtils
   Standard_EXPORT TopAbs_ShapeEnum GetTypeOfSimplePart (const TopoDS_Shape& theShape);
 
   /*!
+   * \brief Get the common shape type of the top-level shapes contained in the given shape.
+   *
+     *  In contrast to GetTypeOfSimplePart(), this function returns the common type of
+     *  the top-level sub-shapes of the COMPOUND, if there are multiple sub-shapes.
+     *  If there is no common shape type for the same COMPOUND, the generic SHAPE value is returned.
+   * \param theShape The shape to get common type of.
+   * \retval TopAbs_ShapeEnum Returns the common shape type.
+   */
+  Standard_EXPORT TopAbs_ShapeEnum GetCommonShapeType (const TopoDS_Shape& theShape);
+
+  /*!
    * \brief Find an edge of theShape, closest to thePoint.
    *
    * \param theShape The shape to explore.
