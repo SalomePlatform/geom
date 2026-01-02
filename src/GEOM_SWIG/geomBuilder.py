@@ -4961,32 +4961,33 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "face")
             return anObj
 
-        ## Create a non-planar face from a list of closed edges and a list of vertices.
-        #  @param theEdges list of Edges(must be closed but not nesessarily belong to the same plane).
-        #  @param theVertices list of vertices through which the result face must pass.
-        #  @param theTolerance tolerance
-        #  @param theName Object name; when specified, this parameter is used
-        #         for result publication in the study. Otherwise, if automatic
-        #         publication is switched on, default value is used for result name.
-        #
-        #  @return New GEOM.GEOM_Object, containing the created face.
+        ## Create a bounded face with list of edges and list of vertices.
+        #  The list of edges defines the boundary of the desired face and all vertices should lie on it.
+        #  The result can be a COMPOUND shape with multiple faces, if the underlying surface is somehow split within the given boundary, 
+        #  e.g. by the seam edge of a sphere.
+        #  @param theEdges list of Edges defining the boundary of the result face (must be closed but not nesessarily belong to the same plane).
+        #  @param theVertices list of vertices through which the result face must pass (within the given tolerance).
+        #  @param theTolerance tolerance.
+        #  @return New GEOM_Object, containing the created shape (FACE or COMPOUND).
         #
         #  @ref tui_creation_face "Example"
         @ManageTransactions("ShapesOp")
         def MakeWrappedFace(self, theEdges, theVertices, theTolerance, theName=None):
             """
-            Create a non-planar face from a list of closed edges and a list of vertices.
+            Create a bounded face with list of edges and list of vertices.
+            The list of edges defines the boundary of the desired face and all vertices should lie on it.
+            The result can be a COMPOUND shape with multiple faces, if the underlying surface is somehow split within the given boundary, 
+            e.g. by the seam edge of a sphere.
 
             Parameters:
-                theEdges list of Edges(must be closed but not nesessarily belong to the same plane).
-                theVertices list of vertices through which the result face must pass.
+                theEdges list of Edges defining the boundary of the result face (must be closed but not nesessarily belong to the same plane).
+                theVertices list of vertices through which the result face must pass (within the given tolerance).
                 theTolerance tolerance
-                theName Object name; when specified, this parameter is used
-                        for result publication in the study. Otherwise, if automatic
-                        publication is switched on, default value is used for result name.
+                theName Object name; when specified, this parameter is used for result publication in the study.
+                        Otherwise, if automatic publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing the created face.
+                New GEOM.GEOM_Object, containing the created shape (FACE or COMPOUND).
             """
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeWrappedFace(theEdges, theVertices, theTolerance)
