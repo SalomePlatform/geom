@@ -42,6 +42,7 @@
 
 #include <BRep_Tool.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepPrimAPI_MakeSphere.hxx>
 #if OCC_VERSION_LARGE < 0x07070000
 #include <BRepAdaptor_HSurface.hxx>
@@ -57,6 +58,7 @@
 #include <gp_Pnt.hxx>
 #include <gp_Sphere.hxx>
 #include <TopExp_Explorer.hxx>
+#include <TopTools_ListOfShape.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Wire.hxx>
@@ -68,6 +70,7 @@
 #include <Standard_NullObject.hxx>
 
 #include <numeric>
+#include <set>
 #include <vector>
 
 #include <Eigen/Dense>
@@ -88,6 +91,17 @@ const Standard_GUID &GEOMImpl_WrappingDriver::GetID()
 //=======================================================================
 GEOMImpl_WrappingDriver::GEOMImpl_WrappingDriver()
 {
+}
+
+//=======================================================================
+// function : operator<
+// purpose  : required operator to insert gp_Pnt into a std::set
+//=======================================================================
+bool operator<(const gp_Pnt& me, const gp_Pnt& other)
+{
+  return (me.X() < other.X()) ||
+          (me.X() == other.X() && me.Y() < other.Y()) ||
+          (me.X() == other.X() && me.Y() == other.Y() && me.Z() < other.Z());
 }
 
 //=======================================================================
@@ -124,64 +138,76 @@ static void createPointsOnEdges(const Handle(TColStd_HSequenceOfTransient) & the
 }
 
 //================================================================================
-// function : maxDistanceToFace
-// purpose  : finds max distanse between points and a face
+// function : hasPointOnFace
+// purpose  : Checks, whether at least one point in thePoints lies on theFace 
+//            within theTolerance.
+//            If none of the points lies on the surface, Standard_False is returned.
 //================================================================================
-static Standard_Real maxDistanceToFace(const std::vector<gp_Pnt>& thePoints,
+static Standard_Boolean hasPointOnFace(const std::vector<gp_Pnt>& thePoints,
                                        const TopoDS_Face& theFace,
                                        const Standard_Real theTolerance)
 {
-  Standard_Real U, V;
-  Standard_Real aMaxDist = 0.;
-  for(auto& aPnt : thePoints)
+  for (auto& aPnt : thePoints)
   {
-    gp_Pnt aProj = GEOMUtils::ProjectPointOnFace(aPnt, theFace,U,V,theTolerance);
-    Standard_Real aDist = aProj.Distance(aPnt);
-    if(aDist > aMaxDist)
+    Standard_Real aDist = GEOMUtils::DistanceToProjectionOnFace(aPnt, theFace, theTolerance);
+    if (aDist > -1 && aDist < theTolerance)
     {
-      aMaxDist = aDist;
+      return Standard_True;
     }
   }
-  return aMaxDist;
+  return Standard_False;
 }
 
 //================================================================================
 // function : divideSphericalShape
-// purpose  : divide spherical shape into two piece 
-//            and choose that part that has the points
+// purpose  : divide spherical shape into two regions
+//            and choose that region that contains the points
+//            NOTE: a single region may have multiple faces (e.g. if the region is
+//            split by the seam edge of the sphere)
+//            In this case, a COMPOUND of all such faces is returned.
 //================================================================================
 static void divideSphericalShape(TopoDS_Shape &theShape,
                                  const TopoDS_Wire &theWire,
                                  const std::vector<gp_Pnt> &thePoints,
                                  const Standard_Real theTolerance)
 {
-    TopExp_Explorer anExp(theShape, TopAbs_FACE);
-    const TopoDS_Face& aFace = TopoDS::Face(anExp.Current());
-    TopoDS_Face aToolFace;
-    GEOMImpl_Block6Explorer::MakeFace(theWire, false, aToolFace);
-    if(!aToolFace.IsNull())
+  TopExp_Explorer anExp(theShape, TopAbs_FACE);
+  const TopoDS_Face& aFace = TopoDS::Face(anExp.Current());
+
+  // Split the sphere and choose the part which contains the points
+  GEOMAlgo_Splitter PS;
+  PS.AddArgument(aFace);
+  PS.AddTool(theWire);
+  PS.SetRunParallel(Standard_True);
+  PS.SetLimit(TopAbs_FACE);
+  PS.Perform();
+  TopoDS_Shape aResultShape = PS.Shape();
+  if (!aResultShape.IsNull())
+  {
+    TopTools_ListOfShape aFaces;
+    anExp.Init(aResultShape, TopAbs_FACE);
+    for (; anExp.More(); anExp.Next()) 
     {
-        //split sphere and choose right part 
-        GEOMAlgo_Splitter PS;
-        PS.AddArgument(aFace);
-        PS.AddTool(aToolFace);
-        PS.SetLimit(TopAbs_FACE);
-        PS.Perform();
-        TopoDS_Shape aResultShape = PS.Shape();
-        if(!aResultShape.IsNull())
-        {
-            anExp.Init(aResultShape, TopAbs_FACE);
-            for (; anExp.More(); anExp.Next()) 
-            {
-                Standard_Real aDist = maxDistanceToFace(thePoints, TopoDS::Face(anExp.Current()), theTolerance);
-                if(aDist < theTolerance)
-                {
-                    theShape = TopoDS::Face(anExp.Current());
-                    break;
-                }
-            }
-        }
+      if (hasPointOnFace(thePoints, TopoDS::Face(anExp.Current()), theTolerance))
+      {
+        // At least one point lies on the face
+        theShape = anExp.Current();
+        aFaces.Append(theShape);
+      }
     }
+    if (aFaces.Extent() > 1)
+    {
+      // Create a COMPOUND of all faces
+      TopoDS_Compound aComp;
+      BRep_Builder aB;
+      aB.MakeCompound(aComp);
+      for (const auto& aFace : aFaces)
+      {
+        aB.Add(aComp,aFace);
+      }
+      theShape = aComp;
+    }
+  }
 }
 
 //================================================================================
@@ -352,7 +378,26 @@ TopoDS_Shape GEOMImpl_WrappingDriver::createWrappedFace(const TopoDS_Wire &theWi
   if(isSphere(theAllPoints, aCenter, aRadius, theTolerance))
   {
     aShape = BRepPrimAPI_MakeSphere(aCenter, aRadius).Shape();
-    divideSphericalShape(aShape, theWire, thePoints, theTolerance);
+
+    // Throw away points, that lie on the wire (to obtain correct result)
+    std::vector<gp_Pnt> aSurfPoints;
+    for (auto& aPnt : thePoints)
+    {
+      BRepBuilderAPI_MakeVertex mkVertex (aPnt);
+      TopoDS_Shape aV = mkVertex.Shape();
+      gp_Pnt aP1, aP2;
+      Standard_Real aDist = GEOMUtils::GetMinDistance(aV, theWire, aP1, aP2);
+      if (aDist > theTolerance)
+      {
+        aSurfPoints.push_back(aPnt);
+      }
+    }
+    if (!aSurfPoints.size())
+    {
+      Standard_ConstructionError::Raise("Cannot select a region of the spherical surface. Please, provide at least one point, that doesn't lie on the given edges.");
+    }
+
+    divideSphericalShape(aShape, theWire, aSurfPoints, theTolerance);
     return aShape;
   }
 

@@ -848,6 +848,65 @@ gp_Pnt GEOMUtils::ProjectPointOnFace(const gp_Pnt& thePoint,
 }
 
 //=======================================================================
+// function : DistanceToProjectionOnFace()
+// purpose  : Returns distance from thePoint to theFace
+//            -1 if projection of thePoint lays outside of theFace
+//=======================================================================
+Standard_Real GEOMUtils::DistanceToProjectionOnFace(const gp_Pnt& thePoint,
+                                                    const TopoDS_Shape& theFace,
+                                                    const double theTol)
+{
+  Standard_Real aMinDist = -1;
+
+  if (theFace.IsNull() || theFace.ShapeType() != TopAbs_FACE)
+    Standard_TypeMismatch::Raise
+      ("Projection aborted : the target shape is not a face");
+
+  TopoDS_Face aFace = TopoDS::Face(theFace);
+  Handle(Geom_Surface) surface = BRep_Tool::Surface(aFace);
+  double U1, U2, V1, V2;
+  BRepTools::UVBounds(aFace, U1, U2, V1, V2);
+
+  // projector
+  GeomAPI_ProjectPointOnSurf proj;
+  proj.Init(surface, U1, U2, V1, V2);
+  proj.Perform(thePoint);
+  if (!proj.IsDone())
+    return aMinDist;
+
+  int nbPoints = proj.NbPoints();
+  if (nbPoints < 1)
+    return aMinDist;
+
+  Standard_Real Ui, Vi;
+  proj.LowerDistanceParameters(Ui, Vi);
+  gp_Pnt2d aProjPnt (Ui, Vi);
+
+  // classifier
+  Standard_Real tol = Max(theTol, 1.e-4);
+  BRepClass_FaceClassifier aClsf (aFace, aProjPnt, tol);
+  if (aClsf.State() == TopAbs_IN || aClsf.State() == TopAbs_ON) {
+    aMinDist = proj.LowerDistance();
+  }
+  else {
+    for (int i = 1; i <= nbPoints; i++) {
+      Standard_Real Ui, Vi;
+      proj.Parameters(i, Ui, Vi);
+      aProjPnt = gp_Pnt2d(Ui, Vi);
+      aClsf.Perform(aFace, aProjPnt, tol);
+      if (aClsf.State() == TopAbs_IN || aClsf.State() == TopAbs_ON) {
+        double dist = proj.Distance(i);
+        if (dist < aMinDist || aMinDist == -1.0) {
+          aMinDist = dist;
+        }
+      }
+    }
+  }
+
+  return aMinDist;
+}
+
+//=======================================================================
 // function : ConvertClickToPoint()
 // purpose  : Returns the point clicked in 3D view
 //=======================================================================

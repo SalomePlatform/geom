@@ -221,6 +221,18 @@ namespace GEOMUtils
                                             const double theTol = 1e-04);
 
   /*!
+   * \brief Computes distance from \a thePoint to its normal projection on \a theFace.
+   *
+   * \param thePoint the 3d point
+   * \param theFace the face shape
+   * \param theTol the tolerance value. Maximum of theTol and 1e-04 will be used for calculation.
+   * \retval distance from \a thePoint to the projection point. If projection point is not found or is OUT of face boundary, -1 is returned.
+   */
+  Standard_EXPORT Standard_Real DistanceToProjectionOnFace(const gp_Pnt& thePoint,
+                                                           const TopoDS_Shape& theFace,
+                                                           const double theTol = 1e-04);
+
+  /*!
    * \brief Returns the point clicked in 3D view.
    *
    * \param x The X coordinate in the view.
