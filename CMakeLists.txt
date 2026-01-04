@@ -26,6 +26,8 @@ PROJECT(SalomeGEOM C CXX)
 # upper case
 STRING(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UC)
 
+SET (SALOME_USE_PYSIDE $ENV{SALOME_USE_PYSIDE})
+
 # Common CMake macros
 # ===================
 SET(CONFIGURATION_ROOT_DIR $ENV{CONFIGURATION_ROOT_DIR} CACHE PATH "Path to the Salome CMake configuration files")
@@ -35,6 +37,10 @@ IF(EXISTS ${CONFIGURATION_ROOT_DIR})
 ELSE()
   MESSAGE(FATAL_ERROR "We absolutely need the Salome CMake configuration files, please define CONFIGURATION_ROOT_DIR !")
 ENDIF()
+
+# Use PySide2/Shiboken2 or PyQt5/SIP5
+# ===================================
+SET (SALOME_USE_PYSIDE $ENV{SALOME_USE_PYSIDE} CACHE BOOL "Use PySide or PyQt")
 
 # Versioning
 # ===========
@@ -141,8 +147,10 @@ ENDIF(SALOME_BUILD_GUI)
 IF(SALOME_BUILD_GUI)
   # Qt
   FIND_PACKAGE(SalomeQt5 REQUIRED)
-  # PyQt
-  FIND_PACKAGE(SalomePyQt5 REQUIRED)
+  if (NOT SALOME_USE_PYSIDE)
+    # PyQt
+    FIND_PACKAGE(SalomePyQt5 REQUIRED)
+  endif(NOT SALOME_USE_PYSIDE)
 ENDIF(SALOME_BUILD_GUI)
 
 ##

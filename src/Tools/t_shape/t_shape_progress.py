@@ -20,7 +20,12 @@
 # Author : Renaud Nédélec (OpenCascade S.A.S)
 
 from salome.geom.t_shape import t_shape_builder
-from qtsalome import *
+import SalomePyQt
+if SalomePyQt.usePySide():
+    from PySide2.QtWidgets import QProgressDialog
+    from PySide2.QtCore import Qt
+else:
+    from PyQt5.Qt import *
 
 class t_shape_progress(QProgressDialog):
     _totSteps = 0
