@@ -18,7 +18,8 @@
 #
 
 IF(SALOME_BUILD_GUI)
-  INCLUDE(UsePyQt)
+  INCLUDE(SalomeQtPythonBindings)
+  SALOME_SETUP_QT_PYTHON_BINDINGS()
 ENDIF()
 
 # --- scripts ---
@@ -43,7 +44,7 @@ IF(SALOME_BUILD_GUI)
     )
 
   # scripts / pyuic wrappings
-  PYQT_WRAP_UIC(_pyuic_SCRIPTS ${_pyuic_FILES} TARGET_NAME _target_name_pyuic)
+  SALOME_WRAP_UIC(_pyuic_SCRIPTS ${_pyuic_FILES} TARGET_NAME _target_name_pyuic)
 ENDIF()
 
 # --- rules ---
@@ -57,3 +58,5 @@ IF(SALOME_BUILD_GUI)
   # to avoid races problems when compiling in parallel
   ADD_DEPENDENCIES(${_target_name_pyuic_py} ${_target_name_pyuic})
 ENDIF()
+
+

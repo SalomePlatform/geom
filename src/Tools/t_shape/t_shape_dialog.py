@@ -20,7 +20,12 @@
 # Author : Renaud Nédélec (OpenCascade S.A.S)
 
 import sys
-from qtsalome import *
+import os
+import SalomePyQt
+if SalomePyQt.usePySide():
+  from PySide2.QtWidgets import QWidget, QApplication
+else:
+  from PyQt5.Qt import *
 
 from salome.geom.t_shape.t_shape_dialog_ui import Ui_Dialog
 

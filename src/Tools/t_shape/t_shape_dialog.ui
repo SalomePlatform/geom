@@ -177,7 +177,7 @@
   </connection>
   <connection>
    <sender>cb_buildSolid</sender>
-   <signal>clicked(bool)</signal>
+   <signal>toggled(bool)</signal>
    <receiver>label_5</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
@@ -193,7 +193,7 @@
   </connection>
   <connection>
    <sender>cb_buildSolid</sender>
-   <signal>clicked(bool)</signal>
+   <signal>toggled(bool)</signal>
    <receiver>dsb_solidThickness</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
