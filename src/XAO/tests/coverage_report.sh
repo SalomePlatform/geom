@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (C) 2013-2025  CEA, EDF, OPEN CASCADE
+# Copyright (C) 2013-2026  CEA, EDF, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
