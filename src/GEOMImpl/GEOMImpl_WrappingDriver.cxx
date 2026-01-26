@@ -32,6 +32,7 @@
 #include <GEOMImpl_WrappingDriver.hxx>
 
 #include <GEOMAlgo_Splitter.hxx>
+#include <GEOMAlgo_AlgoTools.hxx>
 #include <GEOMUtils.hxx>
 
 #include <GEOMImpl_ShapeDriver.hxx>
@@ -184,28 +185,96 @@ static void divideSphericalShape(TopoDS_Shape &theShape,
   TopoDS_Shape aResultShape = PS.Shape();
   if (!aResultShape.IsNull())
   {
-    TopTools_ListOfShape aFaces;
+    // Some edges from the wire may have been split into multiple edges
+    // Get the list of all new edges corresponding to the original wire edges
+
+    // Iterate through all edges of the original wire and collect new edges
+    TopTools_ListOfShape aNewWireEdges;
+    for (TopExp_Explorer wExp(theWire, TopAbs_EDGE); wExp.More(); wExp.Next())
+    {
+      const TopoDS_Edge& aWireEdge = TopoDS::Edge(wExp.Current());
+      const TopTools_ListOfShape& aPSModified = PS.Modified(aWireEdge);
+      if (!aPSModified.IsEmpty())
+      {
+        for (TopTools_ListIteratorOfListOfShape it(aPSModified); it.More(); it.Next())
+        {
+          const TopoDS_Edge& aModifiedEdge = TopoDS::Edge(it.Value());
+          aNewWireEdges.Append(aModifiedEdge);
+        }
+      }
+      else
+      {
+        aNewWireEdges.Append(aWireEdge);
+      }
+    }
+
+    // Explore all faces in the result shape and find the region containing at least one of the points
+    TopTools_ListOfShape aRegionFaces;
     anExp.Init(aResultShape, TopAbs_FACE);
     for (; anExp.More(); anExp.Next()) 
     {
       if (hasPointOnFace(thePoints, TopoDS::Face(anExp.Current()), theTolerance))
       {
         // At least one point lies on the face
-        theShape = anExp.Current();
-        aFaces.Append(theShape);
+        TopoDS_Face aFace = TopoDS::Face(anExp.Current());
+
+        // Create the region (may consist of multiple faces) containing the face
+        Standard_Integer err = GEOMAlgo_AlgoTools::FindRegion(aResultShape, aFace, aNewWireEdges, aRegionFaces);
+        if (err != 0)
+        {
+          Standard_ConstructionError::Raise("Error in region growing for spherical face");
+        }
+
+        // The region was found => stop the loop
+        break;
       }
     }
-    if (aFaces.Extent() > 1)
+
+    // Verify that all points are contained in the found region
+    Standard_Boolean allPointsFound = Standard_True;
+    for (auto& aPnt : thePoints)
     {
-      // Create a COMPOUND of all faces
-      TopoDS_Compound aComp;
-      BRep_Builder aB;
-      aB.MakeCompound(aComp);
-      for (const auto& aFace : aFaces)
+      Standard_Boolean pointFound = Standard_False;
+      for (TopTools_ListIteratorOfListOfShape aIt(aRegionFaces); aIt.More(); aIt.Next())
       {
-        aB.Add(aComp,aFace);
+        const TopoDS_Face& aFace = TopoDS::Face(aIt.Value());
+        Standard_Real aDist = GEOMUtils::DistanceToProjectionOnFace(aPnt, aFace, theTolerance);
+        if (aDist > -1 && aDist < theTolerance)
+        {
+          pointFound = Standard_True;
+          break;
+        }
       }
-      theShape = aComp;
+      if (!pointFound)
+      {
+        allPointsFound = Standard_False;
+        break;
+      }
+    }
+    if (!allPointsFound)
+    {
+      Standard_ConstructionError::Raise("Not all points belong to the found spherical surface region");
+    }
+
+    if (aRegionFaces.Extent() > 0)
+    {
+      if (aRegionFaces.Extent() == 1)
+      {
+        // Single face in the region
+        theShape = aRegionFaces.First();
+      }
+      else
+      {
+        // Create a COMPOUND of all faces
+        TopoDS_Compound aComp;
+        BRep_Builder aB;
+        aB.MakeCompound(aComp);
+        for (const auto& aFace : aRegionFaces)
+        {
+          aB.Add(aComp,aFace);
+        }
+        theShape = aComp;
+      }
     }
   }
 }
