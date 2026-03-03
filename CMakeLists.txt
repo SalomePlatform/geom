@@ -26,8 +26,6 @@ PROJECT(SalomeGEOM C CXX)
 # upper case
 STRING(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UC)
 
-SET (SALOME_USE_PYSIDE $ENV{SALOME_USE_PYSIDE})
-
 # Common CMake macros
 # ===================
 SET(CONFIGURATION_ROOT_DIR $ENV{CONFIGURATION_ROOT_DIR} CACHE PATH "Path to the Salome CMake configuration files")
