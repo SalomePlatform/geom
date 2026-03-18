@@ -19,7 +19,7 @@
 #
 
 import sys
-from salome.kernel import salome
+import salome
 salome.salome_init()
 from salome.geom import geomBuilder
 import math

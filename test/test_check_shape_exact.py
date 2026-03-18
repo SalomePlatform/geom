@@ -18,10 +18,10 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-from salome.kernel import salome
+import salome
 salome.salome_init_without_session()
 
-from salome.kernel import GEOM
+import GEOM
 from salome.geom import geomBuilder
 geompy = geomBuilder.New()
 
