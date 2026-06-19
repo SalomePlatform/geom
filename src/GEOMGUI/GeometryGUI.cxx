@@ -278,7 +278,7 @@ GEOMGUI* GeometryGUI::getLibrary( const QString& libraryName )
 #if defined(WIN32)
     QString dirs = Qtx::getenv( "PATH" );
 #elif defined(__APPLE__)
-    QString dirs = Qtx::getenv( "DYLD_LIBRARY_PATH" );
+    QString dirs = Qtx::getenv( "LD_LIBRARY_PATH" );
 #else
     QString dirs = Qtx::getenv( "LD_LIBRARY_PATH" );
 #endif
@@ -287,7 +287,6 @@ GEOMGUI* GeometryGUI::getLibrary( const QString& libraryName )
 #else
     QString sep  = ":";
 #endif
-
     if ( !dirs.isEmpty() ) {
       QStringList dirList = dirs.split(sep, QString::SkipEmptyParts ); // skip empty entries
       QListIterator<QString> it( dirList ); it.toBack();
@@ -756,9 +755,9 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
     //libName = "AdvancedGUI";
     //break;
   default:
+
     if (myPluginActions.contains(id)) {
       libName = myPluginActions[id].first;
-
       GEOMPluginGUI* library = 0;
       if ( !libName.isEmpty() ) {
 #if defined(WIN32)
@@ -810,7 +809,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
       library->OnGUIEvent( id, desk, theParam);
   }
   else
-    SUIT_MessageBox::critical( desk, tr( "GEOM_ERROR" ), tr( "GEOM_ERR_LIB_NOT_FOUND" ), tr( "GEOM_BUT_OK" ) );
+    SUIT_MessageBox::critical( desk, tr( "GEOM_ERROR" ), libName.toStdString().c_str(), tr( "GEOM_BUT_OK" ) );
 
   updateCreationInfo();
 }
